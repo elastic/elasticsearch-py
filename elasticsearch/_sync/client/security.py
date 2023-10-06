@@ -33,9 +33,7 @@ class SecurityClient(NamespacedClient):
         grant_type: t.Union["t.Literal['access_token', 'password']", str],
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -82,9 +80,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -117,9 +113,7 @@ class SecurityClient(NamespacedClient):
         *,
         username: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         password_hash: t.Optional[str] = None,
@@ -174,11 +168,9 @@ class SecurityClient(NamespacedClient):
     def clear_api_key_cache(
         self,
         *,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        ids: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -213,9 +205,7 @@ class SecurityClient(NamespacedClient):
         *,
         application: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -247,14 +237,12 @@ class SecurityClient(NamespacedClient):
     def clear_cached_realms(
         self,
         *,
-        realms: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        realms: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        usernames: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        usernames: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Evicts users from the user cache. Can completely clear the cache or evict specific
@@ -288,11 +276,9 @@ class SecurityClient(NamespacedClient):
     def clear_cached_roles(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -326,11 +312,9 @@ class SecurityClient(NamespacedClient):
         *,
         namespace: str,
         service: str,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -372,9 +356,7 @@ class SecurityClient(NamespacedClient):
         *,
         error_trace: t.Optional[bool] = None,
         expiration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         name: t.Optional[str] = None,
@@ -441,9 +423,7 @@ class SecurityClient(NamespacedClient):
         service: str,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -499,11 +479,9 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         application: str,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -548,9 +526,7 @@ class SecurityClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -592,9 +568,7 @@ class SecurityClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -638,9 +612,7 @@ class SecurityClient(NamespacedClient):
         service: str,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -688,9 +660,7 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -732,9 +702,7 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -776,9 +744,7 @@ class SecurityClient(NamespacedClient):
         *,
         uid: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -820,9 +786,7 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -864,9 +828,7 @@ class SecurityClient(NamespacedClient):
         *,
         uid: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -907,9 +869,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -939,9 +899,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -970,9 +928,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         id: t.Optional[str] = None,
         name: t.Optional[str] = None,
@@ -1035,9 +991,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1067,11 +1021,9 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         application: t.Optional[str] = None,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1107,11 +1059,9 @@ class SecurityClient(NamespacedClient):
     def get_role(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1146,11 +1096,9 @@ class SecurityClient(NamespacedClient):
     def get_role_mapping(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1190,9 +1138,7 @@ class SecurityClient(NamespacedClient):
         namespace: t.Optional[str] = None,
         service: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1234,9 +1180,7 @@ class SecurityClient(NamespacedClient):
         namespace: str,
         service: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1274,9 +1218,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         grant_type: t.Optional[
             t.Union[
                 "t.Literal['_kerberos', 'client_credentials', 'password', 'refresh_token']",
@@ -1335,13 +1277,9 @@ class SecurityClient(NamespacedClient):
     def get_user(
         self,
         *,
-        username: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        username: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         with_profile_uid: t.Optional[bool] = None,
@@ -1383,9 +1321,7 @@ class SecurityClient(NamespacedClient):
         *,
         application: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         priviledge: t.Optional[str] = None,
@@ -1428,12 +1364,10 @@ class SecurityClient(NamespacedClient):
     def get_user_profile(
         self,
         *,
-        uid: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        uid: t.Union[str, t.Sequence[str]],
+        data: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1478,9 +1412,7 @@ class SecurityClient(NamespacedClient):
         grant_type: t.Union["t.Literal['access_token', 'password']", str],
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -1544,34 +1476,19 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         user: t.Optional[str] = None,
-        application: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        application: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         cluster: t.Optional[
-            t.Union[
-                t.List[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ]
-                ],
-                t.Tuple[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ],
-                    ...,
-                ],
+            t.Sequence[
+                t.Union[
+                    "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                    str,
+                ]
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        index: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        index: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1616,11 +1533,9 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         privileges: t.Mapping[str, t.Any],
-        uids: t.Union[t.List[str], t.Tuple[str, ...]],
+        uids: t.Sequence[str],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1665,12 +1580,10 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         id: t.Optional[str] = None,
-        ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        ids: t.Optional[t.Sequence[str]] = None,
         name: t.Optional[str] = None,
         owner: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1731,9 +1644,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm_name: t.Optional[str] = None,
@@ -1783,9 +1694,7 @@ class SecurityClient(NamespacedClient):
         *,
         privileges: t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -1830,41 +1739,26 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         name: str,
-        applications: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        applications: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         cluster: t.Optional[
-            t.Union[
-                t.List[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ]
-                ],
-                t.Tuple[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ],
-                    ...,
-                ],
+            t.Sequence[
+                t.Union[
+                    "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                    str,
+                ]
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         global_: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
-        indices: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
-        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1936,18 +1830,16 @@ class SecurityClient(NamespacedClient):
         name: str,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
-        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        roles: t.Optional[t.Sequence[str]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
-        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        run_as: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates and updates role mappings.
@@ -2004,9 +1896,7 @@ class SecurityClient(NamespacedClient):
         email: t.Optional[t.Union[None, str]] = None,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         full_name: t.Optional[t.Union[None, str]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2016,7 +1906,7 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
-        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        roles: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Adds and updates users in the native realm. These users are commonly referred
@@ -2078,27 +1968,19 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
         with_limited_by: t.Optional[bool] = None,
@@ -2176,11 +2058,9 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         content: str,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        ids: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm: t.Optional[str] = None,
@@ -2230,13 +2110,11 @@ class SecurityClient(NamespacedClient):
     def saml_complete_logout(
         self,
         *,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        ids: t.Union[str, t.Sequence[str]],
         realm: str,
         content: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query_string: t.Optional[str] = None,
@@ -2293,9 +2171,7 @@ class SecurityClient(NamespacedClient):
         query_string: str,
         acs: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm: t.Optional[str] = None,
@@ -2353,9 +2229,7 @@ class SecurityClient(NamespacedClient):
         *,
         token: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh_token: t.Optional[str] = None,
@@ -2403,9 +2277,7 @@ class SecurityClient(NamespacedClient):
         *,
         acs: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm: t.Optional[str] = None,
@@ -2454,9 +2326,7 @@ class SecurityClient(NamespacedClient):
         *,
         realm_name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2490,11 +2360,9 @@ class SecurityClient(NamespacedClient):
     def suggest_user_profiles(
         self,
         *,
-        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        data: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         hint: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         name: t.Optional[str] = None,
@@ -2554,9 +2422,7 @@ class SecurityClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -2615,9 +2481,7 @@ class SecurityClient(NamespacedClient):
         uid: str,
         data: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
