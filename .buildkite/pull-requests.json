@@ -1,0 +1,9 @@
+{
+  "jobs": [
+    {
+      "enabled": true,
+      "pipeline_slug": "elasticsearch-py",
+      "allow_org_users": true
+    }
+  ]
+}
