@@ -31,15 +31,11 @@ class MonitoringClient(NamespacedClient):
         self,
         *,
         interval: t.Union["t.Literal[-1]", "t.Literal[0]", str],
-        operations: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        operations: t.Sequence[t.Mapping[str, t.Any]],
         system_api_version: str,
         system_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

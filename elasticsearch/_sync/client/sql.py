@@ -32,9 +32,7 @@ class SqlClient(NamespacedClient):
         *,
         cursor: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -71,9 +69,7 @@ class SqlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -109,9 +105,7 @@ class SqlClient(NamespacedClient):
         id: str,
         delimiter: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -168,9 +162,7 @@ class SqlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -213,9 +205,7 @@ class SqlClient(NamespacedClient):
         fetch_size: t.Optional[int] = None,
         field_multi_value_leniency: t.Optional[bool] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         index_using_frozen: t.Optional[bool] = None,
@@ -330,9 +320,7 @@ class SqlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         fetch_size: t.Optional[int] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         time_zone: t.Optional[str] = None,
