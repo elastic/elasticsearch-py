@@ -14,7 +14,7 @@ Requirements
 Installation
 ------------
 
-To install the latest version of the client, run the following command:
+To install the client, run the following command:
 
 .. code-block:: console
 
