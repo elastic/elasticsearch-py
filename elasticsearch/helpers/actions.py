@@ -482,7 +482,7 @@ def bulk(
     ignore_status: Union[int, Collection[int]] = (),
     *args: Any,
     **kwargs: Any,
-) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
+) -> tuple[int, list[dict[str, Any]], Union[int, list[dict[str, Any]]]]:
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -515,11 +515,12 @@ def bulk(
 
     # list of errors to be collected is not stats_only
     errors = []
+    success_items = []
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
     for ok, item in streaming_bulk(
-        client, actions, ignore_status=ignore_status, *args, **kwargs  # type: ignore[misc]
+            client, actions, ignore_status=ignore_status, *args, **kwargs  # type: ignore[misc]
     ):
         # go through request-response pairs and detect failures
         if not ok:
@@ -528,8 +529,9 @@ def bulk(
             failed += 1
         else:
             success += 1
+            success_items.append(item)
 
-    return success, failed if stats_only else errors
+    return success, success_items, failed if stats_only else errors
 
 
 def parallel_bulk(
