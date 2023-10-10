@@ -24,22 +24,19 @@ To install the latest version of the client, run the following command:
 Connecting
 ----------
 
-You can connect to the Elastic Cloud using an API key and the Elasticsearch 
-endpoint.
+You can connect to the Elastic Cloud using an API key and the Cloud ID.
 
 .. code-block:: python
 
     from elasticsearch import Elasticsearch
     
     client = Elasticsearch(
-    "https://...",  # Elasticsearch endpoint
-    api_key=('api-key-id', 'api-key-secret'),  # API key ID and secret
+    cloud_id="YOUR_CLOUD_ID",
+    api_key="YOUR_API_KEY"
     )
 
-Your Elasticsearch endpoint can be found on the **My deployment** page of your 
-deployment:
-
-.. image:: ../guide/images/es-endpoint.jpg
+Your Cloud ID can be found on the **My deployment** page of your deployment 
+under **Cloud ID**.
 
 You can generate an API key on the **Management** page under Security.
 
