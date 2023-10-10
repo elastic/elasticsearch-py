@@ -1,8 +1,8 @@
 Quickstart 
 ==========
 
-This guide shows you how to install Elasticsearch and perform basic operations 
-with it by using the Python client.
+This guide shows you how to install the Elasticsearch Python client and perform basic
+operations like indexing or searching documents.
 
 Requirements
 ------------
@@ -24,7 +24,7 @@ To install the latest version of the client, run the following command:
 Connecting
 ----------
 
-You can connect to the Elastic Cloud using an API key and the Cloud ID.
+You can connect to Elastic Cloud using an API key and the Cloud ID.
 
 .. code-block:: python
 
@@ -62,7 +62,7 @@ This is how you create the `my_index` index:
 Indexing documents
 ^^^^^^^^^^^^^^^^^^
 
-This is a simple way of indexing a documentby using the index API:
+This indexes a document with the index API:
 
 .. code-block:: python
 
