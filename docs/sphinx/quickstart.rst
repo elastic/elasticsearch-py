@@ -29,11 +29,8 @@ You can connect to the Elastic Cloud using an API key and the Cloud ID.
 .. code-block:: python
 
     from elasticsearch import Elasticsearch
-    
-    client = Elasticsearch(
-    cloud_id="YOUR_CLOUD_ID",
-    api_key="YOUR_API_KEY"
-    )
+
+    client = Elasticsearch(cloud_id="YOUR_CLOUD_ID", api_key="YOUR_API_KEY")
 
 Your Cloud ID can be found on the **My deployment** page of your deployment 
 under **Cloud ID**.
@@ -77,7 +74,7 @@ This is a simple way of indexing a documentby using the index API:
         document={
             "foo": "foo",
             "bar": "bar",
-        }
+        },
     )
 
 
@@ -102,12 +99,8 @@ This is how you can create a single match query with the Python client:
 .. code-block:: python
 
     from elasticsearch import Elasticsearch
-    
-    client.search(index="my_index", query={
-        "match": {
-            "foo": "foo"
-        }
-    })
+
+    client.search(index="my_index", query={"match": {"foo": "foo"}})
 
 
 Updating documents
@@ -119,10 +112,14 @@ This is how you can update a document, for example to add a new field:
 
     from elasticsearch import Elasticsearch
 
-    client.update(index="my_index", id="my_document_id", doc={
-        "foo": "bar",
-        "new_field": "new value",
-    })
+    client.update(
+        index="my_index",
+        id="my_document_id",
+        doc={
+            "foo": "bar",
+            "new_field": "new value",
+        },
+    )
 
 
 Deleting documents
