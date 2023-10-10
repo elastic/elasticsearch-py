@@ -7,7 +7,7 @@ with it by using the Python client.
 Requirements
 ------------
 
-- `Python <https://www.python.org/>_` 3.6 or newer
+- `Python <https://www.python.org/>`_ 3.6 or newer
 - `pip <https://pip.pypa.io/en/stable/>`_
 
 
