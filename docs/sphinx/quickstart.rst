@@ -44,7 +44,9 @@ Using the client
 ----------------
 
 Time to use Elasticsearch! This section walks you through the most important 
-operations of Elasticsearch.
+operations of Elasticsearch. The following examples assume that the Python 
+client has already initiated and don't contain the Elasticsearch `include` 
+statement.
 
 
 Creating an index
@@ -53,8 +55,6 @@ Creating an index
 This is how you create the `my_index` index:
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch 
 
     client.indices.create(index="my_index")
 
@@ -65,8 +65,6 @@ Indexing documents
 This indexes a document with the index API:
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch
 
     client.index(
         index="my_index",
@@ -84,8 +82,6 @@ Getting documents
 You can get documents by using the following code:
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch
     
     client.get(index="my_index", id="my_document_id")
 
@@ -98,8 +94,6 @@ This is how you can create a single match query with the Python client:
 
 .. code-block:: python
 
-    from elasticsearch import Elasticsearch
-
     client.search(index="my_index", query={"match": {"foo": "foo"}})
 
 
@@ -109,8 +103,6 @@ Updating documents
 This is how you can update a document, for example to add a new field:
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch
 
     client.update(
         index="my_index",
@@ -126,8 +118,6 @@ Deleting documents
 ^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch
     
     client.delete(index="my_index", id="my_document_id")
 
@@ -136,7 +126,5 @@ Deleting an index
 ^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
-
-    from elasticsearch import Elasticsearch
     
     client.indices.delete(index="my_index")
