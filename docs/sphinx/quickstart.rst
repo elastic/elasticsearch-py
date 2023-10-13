@@ -45,8 +45,7 @@ Using the client
 
 Time to use Elasticsearch! This section walks you through the most important 
 operations of Elasticsearch. The following examples assume that the Python 
-client has already initiated and don't contain the Elasticsearch `include` 
-statement.
+client was instantiated as above.
 
 
 Creating an index
@@ -94,7 +93,7 @@ This is how you can create a single match query with the Python client:
 
 .. code-block:: python
 
-    client.search(index="my_index", query={"match": {"foo": "foo"}})
+    client.search(index="my_index", query={"match": {"foo": {"query": "foo"}}})
 
 
 Updating documents
