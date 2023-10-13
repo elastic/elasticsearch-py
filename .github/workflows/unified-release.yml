@@ -22,4 +22,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: "Assemble ${{ env.STACK_VERSION }}"
-        run: "./.ci/make.sh assemble ${{ env.STACK_VERSION }}"
+        run: "./.buildkite/make.sh assemble ${{ env.STACK_VERSION }}"
