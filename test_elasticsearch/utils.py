@@ -30,7 +30,7 @@ from elasticsearch import (
 )
 
 SOURCE_DIR = Path(__file__).absolute().parent.parent
-CA_CERTS = str(SOURCE_DIR / ".ci/certs/ca.crt")
+CA_CERTS = str(SOURCE_DIR / ".buildkite/certs/ca.crt")
 
 
 def es_url() -> str:
