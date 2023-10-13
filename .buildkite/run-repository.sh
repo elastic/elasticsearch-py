@@ -24,7 +24,7 @@ echo -e "\033[34;1mINFO:\033[0m PYTHON_CONNECTION_CLASS ${PYTHON_CONNECTION_CLAS
 echo -e "\033[1m>>>>> Build [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
 docker build \
-       --file .ci/Dockerfile \
+       --file .buildkite/Dockerfile \
        --tag elastic/elasticsearch-py \
        --build-arg "PYTHON_VERSION=${PYTHON_VERSION}" \
        --build-arg "BUILDER_UID=$(id -u)" \
