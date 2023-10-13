@@ -2,7 +2,7 @@
   "jobs": [
     {
       "enabled": true,
-      "pipeline_slug": "elasticsearch-py",
+      "pipeline_slug": "elasticsearch-py-integration-tests",
       "allow_org_users": true
     }
   ]
