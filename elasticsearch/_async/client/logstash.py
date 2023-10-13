@@ -62,7 +62,7 @@ class LogstashClient(NamespacedClient):
     async def get_pipeline(
         self,
         *,
-        id: t.Union[str, t.Sequence[str]],
+        id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -75,8 +75,6 @@ class LogstashClient(NamespacedClient):
 
         :param id: Comma-separated list of pipeline identifiers.
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'id'")
         if id not in SKIP_IN_PATH:
             __path = f"/_logstash/pipeline/{_quote(id)}"
         else:
