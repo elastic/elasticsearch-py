@@ -3320,7 +3320,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         explain: t.Optional[bool] = None,
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
-        fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        fields: t.Optional[t.Sequence[t.Union[t.Mapping[str, t.Any], str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
