@@ -3370,7 +3370,7 @@ class AsyncElasticsearch(BaseClient):
                 t.Union[str, t.Mapping[str, t.Any]],
             ]
         ] = None,
-        source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
+        source: t.Optional[t.Union[bool, t.Sequence[str]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stats: t.Optional[t.Sequence[str]] = None,
