@@ -28,12 +28,14 @@ SOURCE_FILES = (
     "test_elasticsearch/",
     "utils/",
 )
+# Allow building aiohttp when no wheels are available (eg. for recent Python versions)
+INSTALL_ENV = {"AIOHTTP_NO_EXTENSIONS": "1"}
 
 
-@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
-    session.install(".")
-    session.install("-r", "dev-requirements.txt")
+    session.install(".[async,requests]", env=INSTALL_ENV, silent=False)
+    session.install("-r", "dev-requirements.txt", silent=False)
 
     python_version = tuple(int(x) for x in session.python.split("."))
     junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
@@ -77,7 +79,7 @@ def lint(session):
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
     # Workaround to make '-r' to still work despite uninstalling aiohttp below.
-    session.install(".[async,requests]")
+    session.install(".[async,requests]", env=INSTALL_ENV)
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.
