@@ -1,0 +1,26 @@
+steps:
+  - label: ":elasticsearch: ES {{matrix.stack_version }} :python: Python {{ matrix.python }} ({{ matrix.connection_class }})"
+    agents:
+      provider: "gcp"
+    env:
+      PYTHON_VERSION: "{{ matrix.python }}"
+      TEST_SUITE: "platinum"
+      STACK_VERSION: "{{ matrix.stack_version }}"
+      PYTHON_CONNECTION_CLASS: "{{ matrix.connection_class }}"
+    matrix:
+      setup:
+        python:
+          - "2.7"
+          - "3.6"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "3.11"
+        connection_class:
+          - "Urllib3HttpConnection"
+          - "RequestsHttpConnection"
+        stack_version:
+          - "7.17.0-SNAPSHOT"
+          - "8.0.0-SNAPSHOT"
+    command: ./.buildkite/run-tests

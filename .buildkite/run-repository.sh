@@ -24,28 +24,25 @@ echo -e "\033[34;1mINFO:\033[0m PYTHON_CONNECTION_CLASS ${PYTHON_CONNECTION_CLAS
 echo -e "\033[1m>>>>> Build [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
 docker build \
-       --file .ci/Dockerfile \
+       --file .buildkite/Dockerfile \
        --tag elastic/elasticsearch-py \
-       --build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+       --build-arg "PYTHON_VERSION=${PYTHON_VERSION}" \
+       --build-arg "BUILDER_UID=$(id -u)" \
+       --build-arg "BUILDER_GID=$(id -g)" \
        .
 
 echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
-if [[ "$STACK_VERSION" == "8.0.0-SNAPSHOT" ]]; then
-  export ELASTIC_CLIENT_APIVERSIONING="true"
-fi
-
 mkdir -p junit
 docker run \
-  -u "$(id -u)" \
+  -u "$(id -u):$(id -g)" \
   --network=${network_name} \
   --env "STACK_VERSION=${STACK_VERSION}" \
   --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
-  --env "ELASTIC_CLIENT_APIVERSIONING=${ELASTIC_CLIENT_APIVERSIONING:-false}" \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  python setup.py test
+  nox -s test-${PYTHON_VERSION}
