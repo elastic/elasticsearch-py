@@ -3320,7 +3320,9 @@ class MlClient(NamespacedClient):
         if vocabulary is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
         if scores is not None and len(scores) != len(vocabulary):
-            raise ValueError("The value length for the 'scores' and 'vocabulary' parameters is not the same")
+            raise ValueError(
+                "The value length for the 'scores' and 'vocabulary' parameters is not the same"
+            )
         __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}

@@ -3313,14 +3313,16 @@ class MlClient(NamespacedClient):
         :param model_id: The unique identifier of the trained model.
         :param vocabulary: The model vocabulary, which must not be empty.
         :param merges: The optional model merges if required by the tokenizer.
-        :param scores: The optional model scores if required by the tokenizer.
+        :param scores: The optional vocabulary value scores if required by the tokenizer.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         if vocabulary is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
         if scores is not None and len(scores) != len(vocabulary):
-            raise ValueError("The value length for the 'scores' and 'vocabulary' parameters is not the same")
+            raise ValueError(
+                "The value length for the 'scores' and 'vocabulary' parameters is not the same"
+            )
         __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
