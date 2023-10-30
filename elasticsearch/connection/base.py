@@ -29,7 +29,6 @@ except ImportError:
     import json
 
 from .. import __versionstr__
-from ..compat import PY2
 from ..exceptions import (
     HTTP_EXCEPTIONS,
     ElasticsearchWarning,
@@ -259,9 +258,6 @@ class Connection(object):
             except AttributeError:
                 pass
 
-        if response is not None:
-            response = loggable_response_body(response)
-
         logger.info(
             "%s %s [status:%s request:%.3fs]", method, full_url, status_code, duration
         )
@@ -302,9 +298,6 @@ class Connection(object):
             except AttributeError:
                 pass
 
-        if response is not None:
-            response = loggable_response_body(response)
-
         logger.debug("> %s", body)
 
         self._log_trace(method, path, body, status_code, response, duration)
@@ -342,18 +335,3 @@ class Connection(object):
             s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
             return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
         return "ApiKey " + api_key
-
-
-def loggable_response_body(response):
-    # If 'response' isn't unicode we need to try converting it to
-    # unicode otherwise it's likely binary so should be encoded
-    # properly. On Python 3.x this works out fine.
-    if PY2 and not isinstance(response, unicode):  # noqa
-        try:
-            response = response.decode("utf-8")
-        except (AttributeError, UnicodeError):
-            # Encodes unprintable characters to '\xXX' hex
-            # like how is done in Python 3.x in bytes.__repr__
-            response = u"b" + repr(response).decode("utf-8")
-
-    return response

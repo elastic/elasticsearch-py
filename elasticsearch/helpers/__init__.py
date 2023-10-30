@@ -17,6 +17,7 @@
 
 import sys
 
+from .._async.helpers import async_bulk, async_reindex, async_scan, async_streaming_bulk
 from .actions import (
     _chunk_actions,
     _process_bulk_chunk,
@@ -40,21 +41,8 @@ __all__ = [
     "reindex",
     "_chunk_actions",
     "_process_bulk_chunk",
+    "async_scan",
+    "async_bulk",
+    "async_reindex",
+    "async_streaming_bulk",
 ]
-
-
-try:
-    # Asyncio only supported on Python 3.6+
-    if sys.version_info < (3, 6):
-        raise ImportError
-
-    from .._async.helpers import (
-        async_bulk,
-        async_reindex,
-        async_scan,
-        async_streaming_bulk,
-    )
-
-    __all__ += ["async_scan", "async_bulk", "async_reindex", "async_streaming_bulk"]
-except (ImportError, SyntaxError):
-    pass

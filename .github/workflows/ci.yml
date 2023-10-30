@@ -23,22 +23,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
         experimental: [false]
         runs-on: ["ubuntu-latest"]
         include:
-          - python-version: 2.7
-            experimental: false
-            runs-on: "ubuntu-20.04"
-          - python-version: 3.5
-            experimental: false
-            runs-on: "ubuntu-20.04"
           - python-version: 3.6
             experimental: false
-            runs-on: "ubuntu-20.04"
-
-          - python-version: 3.11
-            experimental: true
             runs-on: "ubuntu-20.04"
 
     runs-on: ${{ matrix.runs-on }}
@@ -55,5 +45,8 @@ jobs:
         run: |
           python -m pip install -r dev-requirements.txt
       - name: Run Tests
-        run: |
-          python setup.py test
+        run: python setup.py test
+        env:
+          # Workaround for development versions of Python
+          # https://github.com/aio-libs/aiohttp/issues/7675
+          AIOHTTP_NO_EXTENSIONS: 1

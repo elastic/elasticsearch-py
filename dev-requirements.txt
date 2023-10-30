@@ -7,26 +7,18 @@ sphinx
 jinja2
 python-dateutil
 
-# Testing the 'search_mvt' API response
-mapbox-vector-tile; python_version!="3.4.*"
-# For mapbox-vector-tile, package broke Python 2 support without an annotation.
-# See: protocolbuffers/protobuf#8984
-protobuf<3.18; python_version!="3.4.*"
+mapbox-vector-tile
 
-# No wheels for Python 3.10 yet!
-numpy; python_version<"3.10"
-pandas; python_version<"3.10"
+numpy
+pandas
 
-# PyYAML 5.3 dropped support for Python 3.4 while
-# not amending that requirement to the package. :(
-pyyaml>=5.4; python_version>="3.6"
-pyyaml<5.3; python_version<"3.6"
+pyyaml>=5.4
 
 isort
-black; python_version>="3.6"
+black
 twine
 
 # Requirements for testing [async] extra
-aiohttp; python_version>="3.6"
-pytest-asyncio; python_version>="3.6"
-unasync; python_version>="3.6"
+aiohttp
+pytest-asyncio
+unasync

@@ -94,10 +94,6 @@ def run_all(argv=None):
         ]
 
         ignores = []
-        # Python 3.6+ is required for async
-        if sys.version_info < (3, 6):
-            ignores.append("test_elasticsearch/test_async/")
-
         # GitHub Actions, run non-server tests
         if "GITHUB_ACTION" in environ:
             ignores.extend(

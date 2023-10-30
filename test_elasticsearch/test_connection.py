@@ -31,7 +31,6 @@ from requests.auth import AuthBase
 from urllib3._collections import HTTPHeaderDict
 
 from elasticsearch import Elasticsearch, __versionstr__
-from elasticsearch.compat import reraise_exceptions
 from elasticsearch.connection import (
     Connection,
     RequestsHttpConnection,
@@ -445,9 +444,6 @@ class TestUrllib3Connection(TestCase):
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
 
-    @pytest.mark.skipif(
-        not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"
-    )
     def test_recursion_error_reraised(self):
         conn = Urllib3HttpConnection()
 
@@ -875,9 +871,6 @@ class TestRequestsConnection(TestCase):
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
 
-    @pytest.mark.skipif(
-        not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"
-    )
     def test_recursion_error_reraised(self):
         conn = RequestsHttpConnection()
 
