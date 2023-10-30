@@ -80,7 +80,6 @@ class AsyncConnection(Connection):
 
 
 class AIOHttpConnection(AsyncConnection):
-
     HTTP_CLIENT_META = ("ai", _client_meta_version(aiohttp.__version__))
 
     def __init__(

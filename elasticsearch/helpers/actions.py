@@ -225,7 +225,7 @@ def _process_bulk_chunk(
     raise_on_error=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Send a bulk request to elasticsearch and process the output.
@@ -278,9 +278,8 @@ def streaming_bulk(
     yield_ok=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -319,7 +318,6 @@ def streaming_bulk(
     for bulk_data, bulk_actions in _chunk_actions(
         actions, chunk_size, max_chunk_bytes, client.transport.serializer
     ):
-
         for attempt in range(max_retries + 1):
             to_retry, to_retry_data = [], []
             if attempt:
@@ -336,10 +334,9 @@ def streaming_bulk(
                         raise_on_error,
                         ignore_status,
                         *args,
-                        **kwargs
+                        **kwargs,
                     ),
                 ):
-
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we get 429, and we are not
@@ -431,7 +428,7 @@ def parallel_bulk(
     expand_action_callback=expand_action,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Parallel version of the bulk helper run in multiple threads at once.
@@ -477,7 +474,7 @@ def parallel_bulk(
                     bulk_chunk[0],
                     ignore_status=ignore_status,
                     *args,
-                    **kwargs
+                    **kwargs,
                 )
             ),
             _chunk_actions(
@@ -502,7 +499,7 @@ def scan(
     request_timeout=None,
     clear_scroll=True,
     scroll_kwargs=None,
-    **kwargs
+    **kwargs,
 ):
     """
     Simple abstraction on top of the
@@ -624,7 +621,7 @@ def scan(
                 scroll_id=scroll_id,
                 ignore=(404,),
                 params={"__elastic_client_meta": (("h", "s"),)},
-                **transport_kwargs
+                **transport_kwargs,
             )
 
 
@@ -640,7 +637,6 @@ def reindex(
     scan_kwargs={},
     bulk_kwargs={},
 ):
-
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.
@@ -713,5 +709,5 @@ def reindex(
         target_client,
         _change_doc_index(docs, target_index, op_type),
         chunk_size=chunk_size,
-        **kwargs
+        **kwargs,
     )

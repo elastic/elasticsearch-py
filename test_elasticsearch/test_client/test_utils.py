@@ -25,7 +25,7 @@ import pytest
 
 from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
 
-from ..test_cases import SkipTest, TestCase
+from ..test_cases import TestCase
 
 
 class TestQueryParams(TestCase):

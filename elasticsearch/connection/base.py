@@ -82,9 +82,8 @@ class Connection(object):
         api_key=None,
         opaque_id=None,
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
-
         if cloud_id:
             try:
                 _, cloud_id = cloud_id.split(":")

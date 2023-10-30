@@ -118,7 +118,7 @@ class ConnectionPool(object):
         timeout_cutoff=5,
         selector_class=RoundRobinSelector,
         randomize_hosts=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg connections: list of tuples containing the

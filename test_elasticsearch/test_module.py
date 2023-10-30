@@ -16,10 +16,7 @@
 #  under the License.
 
 import importlib
-import sys
 import warnings
-
-import pytest
 
 import elasticsearch
 

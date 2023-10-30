@@ -153,7 +153,6 @@ class AsyncYamlRunner(YamlRunner):
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
         for k in PARAMS_RENAMES:
-
             # Don't do the 'doc_type' rename for APIs that actually want 'type'
             if k == "type" and method in APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE:
                 continue

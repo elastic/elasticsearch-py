@@ -15,8 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import sys
-
 from .._async.helpers import async_bulk, async_reindex, async_scan, async_streaming_bulk
 from .actions import (
     _chunk_actions,

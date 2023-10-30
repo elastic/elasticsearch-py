@@ -442,7 +442,7 @@ class TestUrllib3Connection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual(u"你好\uda6a", data)
+        self.assertEqual("你好\uda6a", data)
 
     def test_recursion_error_reraised(self):
         conn = Urllib3HttpConnection()
@@ -869,7 +869,7 @@ class TestRequestsConnection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual(u"你好\uda6a", data)
+        self.assertEqual("你好\uda6a", data)
 
     def test_recursion_error_reraised(self):
         conn = RequestsHttpConnection()

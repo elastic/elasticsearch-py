@@ -52,7 +52,7 @@ def query_params(
     response_mimetypes: Optional[List[str]] = ...,
     body_params: Optional[List[str]] = ...,
     body_name: Optional[str] = ...,
-    body_required: Optional[bool] = ...
+    body_required: Optional[bool] = ...,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]: ...
 def _bulk_body(
     serializer: Serializer, body: Union[str, bytes, Mapping[str, Any], Iterable[Any]]

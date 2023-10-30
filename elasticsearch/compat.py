@@ -16,12 +16,13 @@
 #  under the License.
 
 import asyncio
-
-string_types = str, bytes
+from collections.abc import Mapping
+from queue import Queue
 from urllib.parse import quote, quote_plus, unquote, urlencode, urlparse
 
+string_types = str, bytes
+
 map = map
-from queue import Queue
 
 
 def to_str(x, encoding="ascii"):
@@ -35,8 +36,6 @@ def to_bytes(x, encoding="ascii"):
         return x.encode(encoding)
     return x
 
-
-from collections.abc import Mapping
 
 reraise_exceptions = (RecursionError, asyncio.CancelledError)
 

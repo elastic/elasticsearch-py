@@ -67,7 +67,7 @@ class AsyncTransport(Transport):
         retry_on_timeout=False,
         send_get_body_as="GET",
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
@@ -166,7 +166,6 @@ class AsyncTransport(Transport):
 
         # ... and we can start sniffing in the background.
         if self.sniffing_task is None and self.sniff_on_start:
-
             # Create an asyncio.Event for future calls to block on
             # until the initial sniffing task completes.
             self._sniff_on_start_event = asyncio.Event()
@@ -467,7 +466,6 @@ class AsyncTransport(Transport):
         # Ensure that there's only one async exec within this section
         # at a time to not emit unnecessary index API calls.
         async with self._verify_elasticsearch_lock:
-
             # Product check has already been completed while we were
             # waiting our turn, no need to do again.
             if self._verified_elasticsearch is not None:
