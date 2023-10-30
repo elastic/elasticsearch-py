@@ -21,19 +21,6 @@ jobs:
           # Workaround for development versions of Python
           # https://github.com/aio-libs/aiohttp/issues/7675
           AIOHTTP_NO_EXTENSIONS: 1
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-      - name: Set up Python 3.x
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
-      - name: Install dependencies
-        run: python3 -m pip install nox
-      - name: Build the docs
-        run: nox -s docs
 
   test-linux:
     strategy:
