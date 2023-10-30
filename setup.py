@@ -86,10 +86,11 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    python_requires=">=3.6, <4",
+    python_requires=">=3.6",
     install_requires=install_requires,
     extras_require={
         "requests": ["requests>=2.4.0, <3.0.0"],
