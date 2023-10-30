@@ -13,7 +13,7 @@ before writing too much code.
 ## Running Elasticsearch locally
 
 We've provided a script to start an Elasticsearch cluster of a certain version
-found at `.ci/run-elasticsearch.sh`.
+found at `.buildkite/run-elasticsearch.sh`.
 
 There are several environment variables that control integration tests:
 
