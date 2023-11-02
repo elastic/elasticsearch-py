@@ -19,21 +19,6 @@ jobs:
       - name: Lint the code
         run: nox -s lint
 
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.7
-      - name: Install dependencies
-        run: |
-          python3.7 -m pip install nox
-      - name: Build the docs
-        run: nox -s docs
-
   test-linux:
     strategy:
       fail-fast: false
