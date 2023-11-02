@@ -94,16 +94,30 @@ For example if using FastAPI that might look like this:
 
  .. code-block:: python
 
+    import os
+    from contextlib import asynccontextmanager
+
     from fastapi import FastAPI
     from elasticsearch import AsyncElasticsearch
 
-    app = FastAPI()
-    es = AsyncElasticsearch()
+    ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
+    es = None
 
-    # This gets called once the app is shutting down.
-    @app.on_event("shutdown")
-    async def app_shutdown():
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        global es
+        es = AsyncElasticsearch(ELASTICSEARCH_URL)
+        yield
         await es.close()
+
+    app = FastAPI(lifespan=lifespan)
+
+    @app.get("/")
+    async def main():
+        return await es.info()
+
+You can run this example by saving it to ``main.py`` and executing
+``ELASTICSEARCH_URL=http://localhost:9200 uvicorn main:app``.
 
 
 Async Helpers
