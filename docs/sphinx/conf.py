@@ -3,8 +3,9 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-import os
 import datetime
+import os
+
 import elasticsearch
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -36,8 +37,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"Elasticsearch"
-copyright = u"%d, Elasticsearch B.V" % datetime.date.today().year
+project = "Elasticsearch"
+copyright = "%d, Elasticsearch B.V" % datetime.date.today().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -91,13 +92,7 @@ pygments_style = "sphinx"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-on_rtd = os.environ.get("READTHEDOCS", None) == "True"
-
-if not on_rtd:  # only import and set the theme if we're building docs locally
-    import sphinx_rtd_theme
-
-    html_theme = "sphinx_rtd_theme"
-    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -194,8 +189,8 @@ latex_documents = [
     (
         "index",
         "Elasticsearch.tex",
-        u"Elasticsearch Documentation",
-        u"Honza Král",
+        "Elasticsearch Documentation",
+        "Honza Král",
         "manual",
     )
 ]
@@ -226,7 +221,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ("index", "elasticsearch-py", u"Elasticsearch Documentation", [u"Honza Král"], 1)
+    ("index", "elasticsearch-py", "Elasticsearch Documentation", ["Honza Král"], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -242,8 +237,8 @@ texinfo_documents = [
     (
         "index",
         "Elasticsearch",
-        u"Elasticsearch Documentation",
-        u"Honza Král",
+        "Elasticsearch Documentation",
+        "Honza Král",
         "Elasticsearch",
         "One line description of project.",
         "Miscellaneous",
