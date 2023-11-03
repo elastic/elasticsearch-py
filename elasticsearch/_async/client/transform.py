@@ -29,6 +29,7 @@ class TransformClient(NamespacedClient):
         self,
         *,
         transform_id: str,
+        delete_dest_index: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
@@ -42,6 +43,9 @@ class TransformClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/delete-transform.html>`_
 
         :param transform_id: Identifier for the transform.
+        :param delete_dest_index: If this value is true, the destination index is deleted
+            together with the transform. If false, the destination index will not be
+            deleted
         :param force: If this value is false, the transform must be stopped before it
             can be deleted. If true, the transform is deleted regardless of its current
             state.
@@ -52,6 +56,8 @@ class TransformClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}"
         __query: t.Dict[str, t.Any] = {}
+        if delete_dest_index is not None:
+            __query["delete_dest_index"] = delete_dest_index
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
