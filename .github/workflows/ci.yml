@@ -17,10 +17,6 @@ jobs:
         run: python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
-        env:
-          # Workaround for development versions of Python
-          # https://github.com/aio-libs/aiohttp/issues/7675
-          AIOHTTP_NO_EXTENSIONS: 1
 
   test-linux:
     strategy:
@@ -48,10 +44,3 @@ jobs:
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
           NOX_SESSION: ${{ matrix.nox-session }}
-          # Workaround for development versions of Python
-          # https://github.com/aio-libs/aiohttp/issues/7675
-          AIOHTTP_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/frozenlist/issues/285
-          FROZENLIST_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/yarl/issues/680
-          YARL_NO_EXTENSIONS: 1
