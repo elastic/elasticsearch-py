@@ -3303,6 +3303,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         merges: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
+        scores: t.Optional[t.Sequence[float]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a trained model vocabulary
@@ -3312,6 +3313,7 @@ class MlClient(NamespacedClient):
         :param model_id: The unique identifier of the trained model.
         :param vocabulary: The model vocabulary, which must not be empty.
         :param merges: The optional model merges if required by the tokenizer.
+        :param scores: The optional vocabulary value scores if required by the tokenizer.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
@@ -3332,6 +3334,8 @@ class MlClient(NamespacedClient):
             __body["merges"] = merges
         if pretty is not None:
             __query["pretty"] = pretty
+        if scores is not None:
+            __body["scores"] = scores
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
