@@ -12,9 +12,10 @@ jobs:
       - name: Set up Python 3.x
         uses: actions/setup-python@v4
         with:
-          python-version: 3.x
+          python-version: "3.11"
       - name: Install dependencies
-        run: python3 -m pip install nox
+        run: |
+          python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
@@ -28,7 +29,7 @@ jobs:
 
     runs-on: ${{ matrix.runs-on }}
     name: test-${{ matrix.python-version }}
-    continue-on-error: true
+    continue-on-error: false
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -37,7 +38,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
-        run: python -m pip install nox
+        run: |
+          python -m pip install nox
       - name: Run Tests
         shell: bash
         run: .ci/run-nox.sh
