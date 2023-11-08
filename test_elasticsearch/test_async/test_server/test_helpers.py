@@ -16,6 +16,7 @@
 #  under the License.
 
 import asyncio
+import logging
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
@@ -619,8 +620,10 @@ class TestScan(object):
             scroll_mock.assert_not_called()
             clear_mock.assert_not_called()
 
-    @patch("elasticsearch._async.helpers.logger")
-    async def test_logger(self, logger_mock, async_client, scan_teardown):
+    async def test_logger(
+        self, caplog: pytest.LogCaptureFixture, async_client, scan_teardown
+    ):
+        caplog.set_level(logging.WARNING, logger="elasticsearch.helpers")
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
@@ -640,12 +643,16 @@ class TestScan(object):
                     clear_scroll=False,
                 )
             ]
-            logger_mock.warning.assert_called()
 
+        assert caplog.messages == [
+            "Scroll request has only succeeded on 4 (+0 skipped) shards out of 5."
+        ]
+
+        caplog.clear()
         with patch.object(
             async_client, "options", return_value=async_client
         ), patch.object(async_client, "scroll", MockScroll()):
-            try:
+            with pytest.raises(ScanError):
                 _ = [
                     x
                     async for x in helpers.async_scan(
@@ -656,14 +663,10 @@ class TestScan(object):
                         clear_scroll=False,
                     )
                 ]
-            except ScanError:
-                pass
-            logger_mock.warning.assert_called_with(
-                "Scroll request has only succeeded on %d (+%d skipped) shards out of %d.",
-                4,
-                0,
-                5,
-            )
+
+        assert caplog.messages == [
+            "Scroll request has only succeeded on 4 (+0 skipped) shards out of 5."
+        ]
 
     async def test_clear_scroll(self, async_client, scan_teardown):
         bulk = []
