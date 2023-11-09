@@ -14,8 +14,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install dependencies
-        run: |
-          python3 -m pip install nox
+        run: python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
@@ -23,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         nox-session: [""]
         runs-on: ["ubuntu-latest"]
 
@@ -38,18 +37,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
-        run: |
-          python -m pip install nox
+        run: python -m pip install nox
       - name: Run Tests
         shell: bash
         run: .ci/run-nox.sh
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
           NOX_SESSION: ${{ matrix.nox-session }}
-          # TEMPORARY for 3.11
-          # https://github.com/aio-libs/aiohttp/issues/6600
-          AIOHTTP_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/frozenlist/issues/285
-          FROZENLIST_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/yarl/issues/680
-          YARL_NO_EXTENSIONS: 1
