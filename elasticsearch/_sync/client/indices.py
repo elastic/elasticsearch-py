@@ -830,7 +830,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-template.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -878,7 +878,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-template-v1.html>`_
 
         :param name: The name of the legacy index template to delete. Wildcard (`*`)
             expressions are supported.
@@ -1190,7 +1190,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular index template exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-templates.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -1235,7 +1235,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular index template exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-template-exists-v1.html>`_
 
         :param name: The comma separated names of the index templates
         :param flat_settings: Return settings in flat format (default: false)
@@ -1925,7 +1925,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-template.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -2149,7 +2149,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-template-v1.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (`*`) expressions are supported. To return all index templates,
@@ -2576,7 +2576,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates or updates an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-template.html>`_
 
         :param name: Index or template name
         :param composed_of: An ordered list of component template names. Component templates
@@ -2896,7 +2896,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates or updates an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates-v1.html>`_
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
@@ -3509,7 +3509,7 @@ class IndicesClient(NamespacedClient):
         """
         Simulate matching the given index name against the index templates in the system
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-index.html>`_
 
         :param name: Index or template name to simulate
         :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
@@ -3612,7 +3612,7 @@ class IndicesClient(NamespacedClient):
         """
         Simulate resolving the given template name or body
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-template.html>`_
 
         :param name: Name of the index template to simulate. To test a template configuration
             before you add it to the cluster, omit this parameter and specify the template
