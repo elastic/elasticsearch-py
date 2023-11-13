@@ -37,7 +37,6 @@
 === 8.11.0 (2023-11-13)
 
 - Support Python 3.12
-- Removed deprecation warnings when using `body` parameter
 - Added missing `scores` parameter to create trained model vocabulary API
 - Added missing `delete_dest_index` parameter to delete transform API
 
