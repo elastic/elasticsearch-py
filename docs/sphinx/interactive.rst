@@ -102,8 +102,6 @@ In the `06-synonyms-api.ipynb <https://github.com/elastic/elasticsearch-labs/blo
 Other notebooks
 ---------------
 
-.. https://github.com/elastic/elasticsearch-labs/tree/main/notebooks/generative-ai
-
 - `Generative AI <https://github.com/elastic/elasticsearch-labs/tree/main/notebooks/generative-ai>`_. Notebooks that demonstrate various use cases for Elasticsearch as the retrieval engine and vector store for LLM-powered applications.
 - `Integrations <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/integrations>`_. Notebooks that demonstrate how to integrate popular services and projects with Elasticsearch, including OpenAI, Hugging Face, and LlamaIndex
 - `Langchain <https://github.com/elastic/elasticsearch-labs/tree/main/notebooks/langchain>`_. Notebooks that demonstrate how to integrate Elastic with LangChain, a framework for developing applications powered by language models.
