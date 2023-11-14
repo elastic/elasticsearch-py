@@ -17,10 +17,10 @@ The following notebooks are available:
 0. `Quick start <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/00-quick-start.ipynb>`_
 1. `Keyword, querying, filtering <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/01-keyword-querying-filtering.ipynb>`_
 2. `Hybrid search <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/02-hybrid-search.ipynb>`_
-3. `Semantic search with ELSER <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/03-semantic-search-with-elser.ipynb>`_
-4. `Multilingual semantic search <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/04-multilingual-semantic-search.ipynb>`_
+3. `Semantic search with ELSER <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/03-ELSER.ipynb>`_
+4. `Multilingual semantic search <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/04-multilingual.ipynb>`_
 5. `Query rules <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/05-query-rules.ipynb>`_
-6. `Synonyms API quick start <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/06-synonyms-api-quick-start.ipynb>`_
+6. `Synonyms API quick start <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/06-synonyms-api.ipynb>`_
 
 Here's a brief overview of what you'll learn in each notebook.
 
@@ -60,7 +60,7 @@ In the `02-hybrid-search.ipynb <https://github.com/elastic/elasticsearch-labs/bl
 Semantic search with ELSER
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the `03-ELSER.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/03-semantic-search-with-elser.ipynb>`_ notebook, you'll learn how to:
+In the `03-ELSER.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/03-ELSER.ipynb>`_ notebook, you'll learn how to:
 
 - Use the Elastic Learned Sparse Encoder (ELSER) for text expansion-powered semantic search, out of the box — without training, fine-tuning, or embeddings generation.
 - Download and deploy the ELSER model in your Elastic environment.
@@ -74,7 +74,7 @@ In the `03-ELSER.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/
 Multilingual semantic search
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the `04-multilingual.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/04-multilingual-semantic-search.ipynb>`_ notebook, you'll learn how to:
+In the `04-multilingual.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/04-multilingual.ipynb>`_ notebook, you'll learn how to:
 
 - Use a multilingual embedding model for semantic search across languages.
 - Transform fields in the sample dataset into embeddings using the Sentence Transformer model and index them into Elasticsearch.
@@ -92,7 +92,7 @@ In the `05-query-rules.ipynb <https://github.com/elastic/elasticsearch-labs/blob
 Synonyms API quick start
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the `06-synonyms-api.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/06-synonyms-api-quick-start.ipynb>`_ notebook, you'll learn how to:
+In the `06-synonyms-api.ipynb <https://github.com/elastic/elasticsearch-labs/blob/main/notebooks/search/06-synonyms-api.ipynb>`_ notebook, you'll learn how to:
 
 - Use the synonyms management API to create a synonyms set to enhance your search recall.
 - Configure an index to use search-time synonyms.
