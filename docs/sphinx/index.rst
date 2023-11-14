@@ -65,11 +65,6 @@ Example Usage
         print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 
 
-Interactive examples
---------------------
-
-The `elasticsearch-labs <https://github.com/elastic/elasticsearch-labs>`_ repo contains interactive and executable Python notebooks, sample apps, and resources for testing out Elasticsearch, using the Python client. These examples are mainly focused on vector search, hybrid search and generative AI use cases, but you'll also find examples of basic operations like creating index mappings and performing lexical search.
-
 
 Features
 --------
@@ -111,6 +106,7 @@ Contents
    :maxdepth: 3
 
    quickstart
+   interactive
    api
    exceptions
    async
