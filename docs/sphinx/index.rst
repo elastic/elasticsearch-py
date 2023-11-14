@@ -33,7 +33,7 @@ Language clients are forward compatible; meaning that clients support communicat
 with greater or equal minor versions of Elasticsearch. Elasticsearch language clients
 are only backwards compatible with default distributions and without guarantees made.
 
-If you have a need to have multiple versions installed at the same time versions are
+If you need multiple versions installed at the same time, versions are
 also released, such as ``elasticsearch7`` and ``elasticsearch8``.
 
 
