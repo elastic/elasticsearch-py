@@ -37,7 +37,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Deletes a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-search-application.html>`_
 
         :param name: The name of the search application to delete
         """
