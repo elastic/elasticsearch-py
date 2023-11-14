@@ -3582,6 +3582,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         cache_size: t.Optional[t.Union[int, str]] = None,
+        deployment_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -3605,6 +3606,7 @@ class MlClient(NamespacedClient):
         :param cache_size: The inference cache size (in memory outside the JVM heap)
             per node for the model. The default value is the same size as the `model_size_bytes`.
             To disable the cache, `0b` can be provided.
+        :param deployment_id: A unique identifier for the deployment of the model.
         :param number_of_allocations: The number of model allocations on each node where
             the model is deployed. All allocations on a node share the same copy of the
             model in memory but use a separate set of threads to evaluate the model.
@@ -3631,6 +3633,8 @@ class MlClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if cache_size is not None:
             __query["cache_size"] = cache_size
+        if deployment_id is not None:
+            __query["deployment_id"] = deployment_id
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
