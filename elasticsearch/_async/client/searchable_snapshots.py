@@ -126,14 +126,19 @@ class SearchableSnapshotsClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "index",
+            "ignore_index_settings",
+            "index_settings",
+            "renamed_index",
+        ),
     )
     async def mount(
         self,
         *,
         repository: str,
         snapshot: str,
-        index: str,
+        index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -146,6 +151,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         renamed_index: t.Optional[str] = None,
         storage: t.Optional[str] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Mount a snapshot as a searchable index.
@@ -169,33 +175,34 @@ class SearchableSnapshotsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        if index is None:
+        if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_mount"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if index is not None:
-            __body["index"] = index
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ignore_index_settings is not None:
-            __body["ignore_index_settings"] = ignore_index_settings
-        if index_settings is not None:
-            __body["index_settings"] = index_settings
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if renamed_index is not None:
-            __body["renamed_index"] = renamed_index
         if storage is not None:
             __query["storage"] = storage
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if index is not None:
+                __body["index"] = index
+            if ignore_index_settings is not None:
+                __body["ignore_index_settings"] = ignore_index_settings
+            if index_settings is not None:
+                __body["index_settings"] = index_settings
+            if renamed_index is not None:
+                __body["renamed_index"] = renamed_index
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
