@@ -14,21 +14,16 @@ arguments are required for all
    aliased as ``from_``.
 
 
-Elasticsearch
--------------
+Contents
+--------
 
-.. py:module:: elasticsearch
+.. toctree::
+   :maxdepth: 3
 
-.. autoclass:: Elasticsearch
-   :members:
+   elasticsearch 
+   async-search
 
-.. py:module:: elasticsearch.client
 
-Async Search
-------------
-
-.. autoclass:: AsyncSearchClient
-   :members:
 
 Autoscaling
 -----------
