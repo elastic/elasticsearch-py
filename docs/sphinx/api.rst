@@ -21,15 +21,10 @@ Contents
    :maxdepth: 3
 
    elasticsearch 
-   async-search
+   autoscaling
 
 
 
-Autoscaling
------------
-
-.. autoclass:: AutoscalingClient
-   :members:
 
 Cat
 ---
