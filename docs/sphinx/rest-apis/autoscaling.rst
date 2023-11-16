@@ -2,7 +2,7 @@
 
 Autoscaling
 -----------
-.. py:module:: elasticsearch
-    
+.. py:module:: elasticsearch.client
+
 .. autoclass:: AutoscalingClient
    :members:

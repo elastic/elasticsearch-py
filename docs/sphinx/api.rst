@@ -20,59 +20,19 @@ Contents
 .. toctree::
    :maxdepth: 3
 
-   elasticsearch 
-   autoscaling
+   rest-apis/elasticsearch 
+   rest-apis/autoscaling
+   rest-apis/cat
+   rest-apis/ccr
+   rest-apis/cluster
+   rest-apis/dangling-indices
+   rest-apis/enrich-policies
+   rest-apis/eql
+   rest-apis/fleet
+   rest-apis/snapshottable-features 
 
 
 
-
-Cat
----
-
-.. autoclass:: CatClient
-   :members:
-
-Cross-Cluster Replication (CCR)
--------------------------------
-
-.. autoclass:: CcrClient
-   :members:
-
-Cluster
--------
-
-.. autoclass:: ClusterClient
-   :members:
-
-Dangling Indices
-----------------
-
-.. autoclass:: DanglingIndicesClient
-   :members:
-
-Enrich Policies
----------------
-
-.. autoclass:: EnrichClient
-   :members:
-
-Event Query Language (EQL)
---------------------------
-
-.. autoclass:: EqlClient
-   :members:
-
-Snapshottable Features
-----------------------
-
-.. autoclass:: FeaturesClient
-   :members:
-
-Fleet
------
-
-.. autoclass:: FleetClient
-   :members:
 
 Graph Explore
 -------------
