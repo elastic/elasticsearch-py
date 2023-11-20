@@ -29,163 +29,29 @@ Contents
    rest-apis/enrich-policies
    rest-apis/eql
    rest-apis/fleet
+   rest-apis/graph-explore
+   rest-apis/index-lifecycle-management 
+   rest-apis/indices 
+   rest-apis/ingest-pipelines 
+   rest-apis/license 
+   rest-apis/migration 
+   rest-apis/ml 
+   rest-apis/monitoring 
+   rest-apis/nodes 
+   rest-apis/query-rules 
+   rest-apis/rollup-indices 
+   rest-apis/search-application 
+   rest-apis/searchable-snapshots 
+   rest-apis/security 
+   rest-apis/shutdown 
+   rest-apis/snapshot-lifecycle-management 
+   rest-apis/snapshots 
    rest-apis/snapshottable-features 
-
-
-
-
-Graph Explore
--------------
-
-.. autoclass:: GraphClient
-   :members:
-
-Index Lifecycle Management (ILM)
---------------------------------
-
-.. autoclass:: IlmClient
-   :members:
-
-Indices
--------
-
-.. autoclass:: IndicesClient
-   :members:
-
-Ingest Pipelines
-----------------
-
-.. autoclass:: IngestClient
-   :members:
-
-License
--------
-
-.. autoclass:: LicenseClient
-   :members:
-
-Logstash
---------
-
-.. autoclass:: LogstashClient
-   :members:
-
-Migration
----------
-
-.. autoclass:: MigrationClient
-   :members:
-
-Machine Learning (ML)
----------------------
-
-.. autoclass:: MlClient
-   :members:
-
-Monitoring
-----------
-
-.. autoclass:: MonitoringClient
-   :members:
-
-Nodes
------
-
-.. autoclass:: NodesClient
-   :members:
-
-Query rules
------------
-
-.. autoclass:: QueryRulesetClient
-   :members:
-
-Rollup Indices
---------------
-
-.. autoclass:: RollupClient
-   :members:
-
-Search Applications
--------------------
-
-.. autoclass:: SearchApplicationClient
-   :members:
-
-Searchable Snapshots
---------------------
-
-.. autoclass:: SearchableSnapshotsClient
-   :members:
-
-Security
---------
-
-.. autoclass:: SecurityClient
-   :members:
-
-Shutdown
---------
-
-.. autoclass:: ShutdownClient
-   :members:
-
-Snapshot Lifecycle Management (SLM)
------------------------------------
-
-.. autoclass:: SlmClient
-   :members:
-
-Snapshots
----------
-
-.. autoclass:: SnapshotClient
-   :members:
-
-SQL
----
-
-.. autoclass:: SqlClient
-   :members:
-
-Synonyms
---------
-
-.. autoclass:: SynonymsClient
-   :members:
-
-TLS/SSL
--------
-
-.. autoclass:: SslClient
-   :members:
-
-Tasks
------
-
-.. autoclass:: TasksClient
-   :members:
-
-Text Structure
---------------
-
-.. autoclass:: TextStructureClient
-   :members:
-
-Transforms
-----------
-
-.. autoclass:: TransformClient
-   :members:
-
-Watcher
--------
-
-.. autoclass:: WatcherClient
-   :members:
-
-X-Pack
-------
-
-.. autoclass:: XPackClient
-   :members:
+   rest-apis/sql
+   rest-apis/synonyms
+   rest-apis/tls-ssl
+   rest-apis/tasks
+   rest-apis/text-structure 
+   rest-apis/transforms
+   rest-apis/watcher
+   rest-apis/x-pack
