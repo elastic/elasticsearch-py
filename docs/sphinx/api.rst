@@ -10,8 +10,8 @@ arguments are required for all calls.
 .. note::
 
    Some API parameters in Elasticsearch are reserved keywords in Python.
-   For example the ``from`` query parameter for pagination would be
-   aliased as ``from_``.
+   For example the ``from`` query parameter for pagination would be aliased as 
+   ``from_``.
 
 .. toctree::
    :maxdepth: 1
