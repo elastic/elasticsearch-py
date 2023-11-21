@@ -1,4 +1,4 @@
-.. _snapshot-lifecycle-management
+.. _snapshot-lifecycle-management:
 
 Snapshot Lifecycle Management (SLM)
 -----------------------------------

@@ -1,4 +1,4 @@
-.. _x-pack
+.. _x-pack:
 
 X-Pack
 ------

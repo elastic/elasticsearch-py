@@ -1,4 +1,4 @@
-.. _tls-ssl
+.. _tls-ssl:
 
 TLS/SSL
 -------
