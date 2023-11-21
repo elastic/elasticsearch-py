@@ -14,7 +14,7 @@ arguments are required for all calls.
    aliased as ``from_``.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    rest-apis/elasticsearch
    rest-apis/autoscaling
