@@ -30,6 +30,7 @@ arguments are required for all calls.
    api/indices
    api/ingest-pipelines
    api/license
+   api/logstash
    api/migration
    api/ml
    api/monitoring
