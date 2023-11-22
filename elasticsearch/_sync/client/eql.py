@@ -78,7 +78,7 @@ class EqlClient(NamespacedClient):
         """
         Returns async results from previously executed Event Query Language (EQL) search
 
-        `< https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param keep_alive: Period for which the search and its results are stored on
@@ -123,7 +123,7 @@ class EqlClient(NamespacedClient):
         Returns the status of a previously submitted async or stored Event Query Language
         (EQL) search
 
-        `< https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-status-api.html>`_
 
         :param id: Identifier for the search.
         """
