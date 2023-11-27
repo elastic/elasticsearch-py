@@ -6,6 +6,11 @@ common ground for all {es}-related code in Python. For this reason, the client
 is designed to be unopinionated and extendable. An API reference is available 
 on https://elasticsearch-py.readthedocs.io[Read the Docs].
 
+https://www.elastic.co/downloads/elasticsearch[Download the latest version of Elasticsearch]
+or
+https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page[sign-up] for a 
+free trial of Elastic Cloud.
+
 
 [discrete]
 === Compatibility
