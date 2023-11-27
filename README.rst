@@ -2,9 +2,9 @@
 
    <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
 
-**`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_**
+`**Download the latest version of Elasticsearch** <https://www.elastic.co/downloads/elasticsearch>`_
 or
-**`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_**
+`**sign-up** <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
 **for a free trial of Elastic Cloud**.
 
 Elasticsearch Python Client
