@@ -1,9 +1,0 @@
-// indices/put-mapping.asciidoc:100
-
-[source, python]
-----
-resp = client.indices.create(
-    index="publications",
-)
-print(resp)
-----
