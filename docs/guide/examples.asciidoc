@@ -16,7 +16,7 @@ the Python client.
 === Indexing a document
   
 To index a document, you need to specify three pieces of information: `index`, 
-`id`, and a `body`:
+`id`, and a `document`:
 
 [source,py]
 ----------------------------
@@ -26,7 +26,7 @@ es = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
-    'text': 'Interensting content...',
+    'text': 'Interesting content...',
     'timestamp': datetime.now(),
 }
 resp = es.index(index="test-index", id=1, document=doc)
@@ -79,7 +79,7 @@ for hit in resp['hits']['hits']:
 === Updating a document
 
 To update a document, you need to specify three pieces of information: `index`, 
-`id`, and a `body`:
+`id`, and a `doc`:
 
 [source,py]
 ----------------------------
@@ -90,10 +90,10 @@ client = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
-    'text': 'Interensting modified content...',
+    'text': 'Interesting modified content...',
     'timestamp': datetime.now(),
 }
-resp = client.update(index="test-index", id=1, document=doc)
+resp = client.update(index="test-index", id=1, doc=doc)
 print(resp['result'])
 ----------------------------
 
