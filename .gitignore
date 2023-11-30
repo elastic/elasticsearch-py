@@ -145,3 +145,6 @@ test_elasticsearch/cover
 test_elasticsearch/local.py
 .ci/output
 junit/
+
+# sample code for GitHub issues
+issues/
