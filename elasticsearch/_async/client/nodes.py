@@ -237,7 +237,7 @@ class NodesClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("secure_settings_password",),
     )
     async def reload_secure_settings(
         self,
@@ -249,6 +249,7 @@ class NodesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         secure_settings_password: t.Optional[str] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Reloads secure settings.
@@ -265,7 +266,7 @@ class NodesClient(NamespacedClient):
         else:
             __path = "/_nodes/reload_secure_settings"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -274,10 +275,11 @@ class NodesClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if secure_settings_password is not None:
-            __body["secure_settings_password"] = secure_settings_password
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if secure_settings_password is not None:
+                __body["secure_settings_password"] = secure_settings_password
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

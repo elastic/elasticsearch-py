@@ -219,17 +219,18 @@ class SynonymsClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("synonyms_set",),
     )
     async def put_synonym(
         self,
         *,
         id: str,
-        synonyms_set: t.Sequence[t.Mapping[str, t.Any]],
+        synonyms_set: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a synonyms set
@@ -241,13 +242,11 @@ class SynonymsClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if synonyms_set is None:
+        if synonyms_set is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms_set'")
         __path = f"/_synonyms/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if synonyms_set is not None:
-            __body["synonyms_set"] = synonyms_set
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -256,24 +255,28 @@ class SynonymsClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if synonyms_set is not None:
+                __body["synonyms_set"] = synonyms_set
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("synonyms",),
     )
     async def put_synonym_rule(
         self,
         *,
         set_id: str,
         rule_id: str,
-        synonyms: t.Sequence[str],
+        synonyms: t.Optional[t.Sequence[str]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a synonym rule in a synonym set
@@ -288,13 +291,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'set_id'")
         if rule_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'rule_id'")
-        if synonyms is None:
+        if synonyms is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms'")
         __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if synonyms is not None:
-            __body["synonyms"] = synonyms
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -303,6 +304,9 @@ class SynonymsClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if synonyms is not None:
+                __body["synonyms"] = synonyms
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body

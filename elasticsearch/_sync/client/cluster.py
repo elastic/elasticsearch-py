@@ -25,7 +25,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 class ClusterClient(NamespacedClient):
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("current_node", "index", "primary", "shard"),
     )
     def allocation_explain(
         self,
@@ -40,6 +40,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         primary: t.Optional[bool] = None,
         shard: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Provides explanations for shard allocations in the cluster.
@@ -59,10 +60,8 @@ class ClusterClient(NamespacedClient):
             for.
         """
         __path = "/_cluster/allocation/explain"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if current_node is not None:
-            __body["current_node"] = current_node
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -73,14 +72,17 @@ class ClusterClient(NamespacedClient):
             __query["include_disk_info"] = include_disk_info
         if include_yes_decisions is not None:
             __query["include_yes_decisions"] = include_yes_decisions
-        if index is not None:
-            __body["index"] = index
         if pretty is not None:
             __query["pretty"] = pretty
-        if primary is not None:
-            __body["primary"] = primary
-        if shard is not None:
-            __body["shard"] = shard
+        if not __body:
+            if current_node is not None:
+                __body["current_node"] = current_node
+            if index is not None:
+                __body["index"] = index
+            if primary is not None:
+                __body["primary"] = primary
+            if shard is not None:
+                __body["shard"] = shard
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -593,14 +595,14 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("template", "allow_auto_create", "meta", "version"),
         parameter_aliases={"_meta": "meta"},
     )
     def put_component_template(
         self,
         *,
         name: str,
-        template: t.Mapping[str, t.Any],
+        template: t.Optional[t.Mapping[str, t.Any]] = None,
         allow_auto_create: t.Optional[bool] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -612,6 +614,7 @@ class ClusterClient(NamespacedClient):
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         version: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a component template
@@ -649,15 +652,11 @@ class ClusterClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if template is None:
+        if template is None and body is None:
             raise ValueError("Empty value passed for parameter 'template'")
         __path = f"/_component_template/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if template is not None:
-            __body["template"] = template
-        if allow_auto_create is not None:
-            __body["allow_auto_create"] = allow_auto_create
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -668,19 +667,24 @@ class ClusterClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if meta is not None:
-            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if template is not None:
+                __body["template"] = template
+            if allow_auto_create is not None:
+                __body["allow_auto_create"] = allow_auto_create
+            if meta is not None:
+                __body["_meta"] = meta
+            if version is not None:
+                __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("persistent", "transient"),
     )
     def put_settings(
         self,
@@ -696,6 +700,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         transient: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the cluster settings.
@@ -710,7 +715,7 @@ class ClusterClient(NamespacedClient):
         """
         __path = "/_cluster/settings"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -721,14 +726,15 @@ class ClusterClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if persistent is not None:
-            __body["persistent"] = persistent
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if transient is not None:
-            __body["transient"] = transient
+        if not __body:
+            if persistent is not None:
+                __body["persistent"] = persistent
+            if transient is not None:
+                __body["transient"] = transient
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -764,7 +770,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("commands",),
     )
     def reroute(
         self,
@@ -782,6 +788,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         retry_failed: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to manually change the allocation of individual shards in the cluster.
@@ -803,10 +810,8 @@ class ClusterClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         """
         __path = "/_cluster/reroute"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if commands is not None:
-            __body["commands"] = commands
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if dry_run is not None:
             __query["dry_run"] = dry_run
         if error_trace is not None:
@@ -827,6 +832,9 @@ class ClusterClient(NamespacedClient):
             __query["retry_failed"] = retry_failed
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if commands is not None:
+                __body["commands"] = commands
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

@@ -179,7 +179,7 @@ class IngestClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("description", "meta", "on_failure", "processors", "version"),
         parameter_aliases={"_meta": "meta"},
     )
     async def put_pipeline(
@@ -200,6 +200,7 @@ class IngestClient(NamespacedClient):
         processors: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a pipeline.
@@ -232,10 +233,8 @@ class IngestClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ingest/pipeline/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -246,25 +245,28 @@ class IngestClient(NamespacedClient):
             __query["if_version"] = if_version
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if meta is not None:
-            __body["_meta"] = meta
-        if on_failure is not None:
-            __body["on_failure"] = on_failure
         if pretty is not None:
             __query["pretty"] = pretty
-        if processors is not None:
-            __body["processors"] = processors
         if timeout is not None:
             __query["timeout"] = timeout
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if meta is not None:
+                __body["_meta"] = meta
+            if on_failure is not None:
+                __body["on_failure"] = on_failure
+            if processors is not None:
+                __body["processors"] = processors
+            if version is not None:
+                __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("docs", "pipeline"),
     )
     async def simulate(
         self,
@@ -277,6 +279,7 @@ class IngestClient(NamespacedClient):
         pipeline: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         verbose: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to simulate a pipeline with example documents.
@@ -296,22 +299,23 @@ class IngestClient(NamespacedClient):
             __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
         else:
             __path = "/_ingest/pipeline/_simulate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if docs is not None:
-            __body["docs"] = docs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if pipeline is not None:
-            __body["pipeline"] = pipeline
         if pretty is not None:
             __query["pretty"] = pretty
         if verbose is not None:
             __query["verbose"] = verbose
+        if not __body:
+            if docs is not None:
+                __body["docs"] = docs
+            if pipeline is not None:
+                __body["pipeline"] = pipeline
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
