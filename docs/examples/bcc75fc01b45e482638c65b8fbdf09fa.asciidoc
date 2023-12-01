@@ -1,0 +1,9 @@
+// getting-started.asciidoc:228
+
+[source, python]
+----
+resp = client.search(
+    index="books",
+)
+print(resp)
+----
