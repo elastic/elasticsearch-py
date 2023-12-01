@@ -54,6 +54,7 @@ from .fleet import FleetClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
+from .inference import InferenceClient
 from .ingest import IngestClient
 from .license import LicenseClient
 from .logstash import LogstashClient
@@ -435,6 +436,7 @@ class Elasticsearch(BaseClient):
         self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
+        self.inference = InferenceClient(self)
         self.nodes = NodesClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)

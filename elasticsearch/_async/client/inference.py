@@ -15,8 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import typing as t
 
-class C:
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+
+
+class InferenceClient(NamespacedClient):
     @_rewrite_parameters()
     async def delete_model(
         self,

@@ -16,7 +16,15 @@
 #  under the License.
 
 
-class C:
+import typing as t
+
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+
+
+class InferenceClient(NamespacedClient):
     @_rewrite_parameters()
     def delete_model(
         self,
