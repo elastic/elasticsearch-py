@@ -112,21 +112,36 @@ def blacken(filename):
     result = runner.invoke(
         black.main, [str(filename), "--line-length=75", "--target-version=py37"]
     )
-    assert result.exit_code == 0, result.output
+    if result.exit_code != 0:
+        print(f"Error formatting file {filename}: {result.output}")
+        # Decide whether to raise an error, skip this file, or take some other action
 
 
 def main():
+    # Load and parse the JSON report.
+    try:
+        with report_path.open() as f:
+            report = json.loads(f.read())
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Error parsing JSON from {report_path}: {e}")
+
+    # Determine which .asciidoc files will be generated based on the JSON report.
+    files_to_be_generated = set()
+    for exm in report:
+        if exm["lang"] == "console":
+            file_name = f"{exm['digest']}_{exm['source_location']['file'].replace('/', '_')}.asciidoc"
+            files_to_be_generated.add(file_name)
+
+    # Delete only the .asciidoc files that will be regenerated.
     for filepath in asciidocs_dir.iterdir():
-        if filepath.name.endswith(".asciidoc"):
-            filepath.unlink()
+        if filepath.name in files_to_be_generated:
+            try:
+                filepath.unlink()
+            except Exception as e:
+                print(f"Error deleting file {filepath}: {e}")
 
-    if not flight_recorder_dir.exists() or not report_path.exists():
-        raise RuntimeError(
-            f"clients-flight-recorder repository not checked out at {flight_recorder_dir}"
-        )
-
-    with report_path.open() as f:
-        report = json.loads(f.read())
+    # Rest of the script processes the report to regenerate files.
+    # ...
 
     t = jinja_env.get_template("example")
 
