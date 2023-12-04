@@ -141,7 +141,6 @@ def main():
                 print(f"Error deleting file {filepath}: {e}")
 
     # Rest of the script processes the report to regenerate files.
-    # ...
 
     t = jinja_env.get_template("example")
 
