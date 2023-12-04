@@ -2,11 +2,6 @@
 
    <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
 
-`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
-or
-`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
-for a free trial of Elastic Cloud.
-
 Elasticsearch Python Client
 ===========================
 
@@ -45,6 +40,11 @@ Features
 
 Installation
 ------------
+
+`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
+or
+`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
+for a free trial of Elastic Cloud.
 
 Refer to the `Installation section <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_installation>`_ 
 of the getting started documentation.
