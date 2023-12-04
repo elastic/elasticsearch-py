@@ -100,7 +100,8 @@ class LogstashClient(NamespacedClient):
         self,
         *,
         id: str,
-        pipeline: t.Mapping[str, t.Any],
+        pipeline: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -116,8 +117,12 @@ class LogstashClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if pipeline is None:
-            raise ValueError("Empty value passed for parameter 'pipeline'")
+        if pipeline is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'pipeline' and 'body', one of them should be set."
+            )
+        elif pipeline is not None and body is not None:
+            raise ValueError("Cannot set both 'pipeline' and 'body'")
         __path = f"/_logstash/pipeline/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -128,7 +133,7 @@ class LogstashClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = pipeline
+        __body = pipeline if pipeline is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body

@@ -154,7 +154,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("license", "licenses"),
     )
     def post(
         self,
@@ -166,6 +166,7 @@ class LicenseClient(NamespacedClient):
         license: t.Optional[t.Mapping[str, t.Any]] = None,
         licenses: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the license for the cluster.
@@ -179,7 +180,7 @@ class LicenseClient(NamespacedClient):
         """
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -188,12 +189,13 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if license is not None:
-            __body["license"] = license
-        if licenses is not None:
-            __body["licenses"] = licenses
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if license is not None:
+                __body["license"] = license
+            if licenses is not None:
+                __body["licenses"] = licenses
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

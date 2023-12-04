@@ -25,16 +25,17 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 class SqlClient(NamespacedClient):
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("cursor",),
     )
     async def clear_cursor(
         self,
         *,
-        cursor: str,
+        cursor: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Clears the SQL cursor
@@ -43,13 +44,11 @@ class SqlClient(NamespacedClient):
 
         :param cursor: Cursor to clear.
         """
-        if cursor is None:
+        if cursor is None and body is None:
             raise ValueError("Empty value passed for parameter 'cursor'")
         __path = "/_sql/close"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if cursor is not None:
-            __body["cursor"] = cursor
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -58,6 +57,9 @@ class SqlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if cursor is not None:
+                __body["cursor"] = cursor
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -192,7 +194,24 @@ class SqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "catalog",
+            "columnar",
+            "cursor",
+            "fetch_size",
+            "field_multi_value_leniency",
+            "filter",
+            "index_using_frozen",
+            "keep_alive",
+            "keep_on_completion",
+            "page_timeout",
+            "params",
+            "query",
+            "request_timeout",
+            "runtime_mappings",
+            "time_zone",
+            "wait_for_completion_timeout",
+        ),
         ignore_deprecated_options={"params", "request_timeout"},
     )
     async def query(
@@ -223,6 +242,7 @@ class SqlClient(NamespacedClient):
         wait_for_completion_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Executes a SQL request
@@ -261,62 +281,63 @@ class SqlClient(NamespacedClient):
             the search doesn’t finish within this period, the search becomes async.
         """
         __path = "/_sql"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if catalog is not None:
-            __body["catalog"] = catalog
-        if columnar is not None:
-            __body["columnar"] = columnar
-        if cursor is not None:
-            __body["cursor"] = cursor
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if fetch_size is not None:
-            __body["fetch_size"] = fetch_size
-        if field_multi_value_leniency is not None:
-            __body["field_multi_value_leniency"] = field_multi_value_leniency
-        if filter is not None:
-            __body["filter"] = filter
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if format is not None:
             __query["format"] = format
         if human is not None:
             __query["human"] = human
-        if index_using_frozen is not None:
-            __body["index_using_frozen"] = index_using_frozen
-        if keep_alive is not None:
-            __body["keep_alive"] = keep_alive
-        if keep_on_completion is not None:
-            __body["keep_on_completion"] = keep_on_completion
-        if page_timeout is not None:
-            __body["page_timeout"] = page_timeout
-        if params is not None:
-            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if request_timeout is not None:
-            __body["request_timeout"] = request_timeout
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if time_zone is not None:
-            __body["time_zone"] = time_zone
-        if wait_for_completion_timeout is not None:
-            __body["wait_for_completion_timeout"] = wait_for_completion_timeout
+        if not __body:
+            if catalog is not None:
+                __body["catalog"] = catalog
+            if columnar is not None:
+                __body["columnar"] = columnar
+            if cursor is not None:
+                __body["cursor"] = cursor
+            if fetch_size is not None:
+                __body["fetch_size"] = fetch_size
+            if field_multi_value_leniency is not None:
+                __body["field_multi_value_leniency"] = field_multi_value_leniency
+            if filter is not None:
+                __body["filter"] = filter
+            if index_using_frozen is not None:
+                __body["index_using_frozen"] = index_using_frozen
+            if keep_alive is not None:
+                __body["keep_alive"] = keep_alive
+            if keep_on_completion is not None:
+                __body["keep_on_completion"] = keep_on_completion
+            if page_timeout is not None:
+                __body["page_timeout"] = page_timeout
+            if params is not None:
+                __body["params"] = params
+            if query is not None:
+                __body["query"] = query
+            if request_timeout is not None:
+                __body["request_timeout"] = request_timeout
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if time_zone is not None:
+                __body["time_zone"] = time_zone
+            if wait_for_completion_timeout is not None:
+                __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("query", "fetch_size", "filter", "time_zone"),
     )
     async def translate(
         self,
         *,
-        query: str,
+        query: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         fetch_size: t.Optional[int] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -324,6 +345,7 @@ class SqlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         time_zone: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Translates SQL into Elasticsearch queries
@@ -335,27 +357,28 @@ class SqlClient(NamespacedClient):
         :param filter: Elasticsearch query DSL for additional filtering.
         :param time_zone: ISO-8601 time zone ID for the search.
         """
-        if query is None:
+        if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
         __path = "/_sql/translate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if query is not None:
-            __body["query"] = query
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if fetch_size is not None:
-            __body["fetch_size"] = fetch_size
-        if filter is not None:
-            __body["filter"] = filter
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if time_zone is not None:
-            __body["time_zone"] = time_zone
+        if not __body:
+            if query is not None:
+                __body["query"] = query
+            if fetch_size is not None:
+                __body["fetch_size"] = fetch_size
+            if filter is not None:
+                __body["filter"] = filter
+            if time_zone is not None:
+                __body["time_zone"] = time_zone
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body

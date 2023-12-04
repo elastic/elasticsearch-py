@@ -168,18 +168,27 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "cron",
+            "groups",
+            "index_pattern",
+            "page_size",
+            "rollup_index",
+            "headers",
+            "metrics",
+            "timeout",
+        ),
         ignore_deprecated_options={"headers"},
     )
     async def put_job(
         self,
         *,
         id: str,
-        cron: str,
-        groups: t.Mapping[str, t.Any],
-        index_pattern: str,
-        page_size: int,
-        rollup_index: str,
+        cron: t.Optional[str] = None,
+        groups: t.Optional[t.Mapping[str, t.Any]] = None,
+        index_pattern: t.Optional[str] = None,
+        page_size: t.Optional[int] = None,
+        rollup_index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
@@ -187,6 +196,7 @@ class RollupClient(NamespacedClient):
         metrics: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a rollup job.
@@ -235,50 +245,51 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if cron is None:
+        if cron is None and body is None:
             raise ValueError("Empty value passed for parameter 'cron'")
-        if groups is None:
+        if groups is None and body is None:
             raise ValueError("Empty value passed for parameter 'groups'")
-        if index_pattern is None:
+        if index_pattern is None and body is None:
             raise ValueError("Empty value passed for parameter 'index_pattern'")
-        if page_size is None:
+        if page_size is None and body is None:
             raise ValueError("Empty value passed for parameter 'page_size'")
-        if rollup_index is None:
+        if rollup_index is None and body is None:
             raise ValueError("Empty value passed for parameter 'rollup_index'")
         __path = f"/_rollup/job/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if cron is not None:
-            __body["cron"] = cron
-        if groups is not None:
-            __body["groups"] = groups
-        if index_pattern is not None:
-            __body["index_pattern"] = index_pattern
-        if page_size is not None:
-            __body["page_size"] = page_size
-        if rollup_index is not None:
-            __body["rollup_index"] = rollup_index
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if headers is not None:
-            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
-        if metrics is not None:
-            __body["metrics"] = metrics
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if cron is not None:
+                __body["cron"] = cron
+            if groups is not None:
+                __body["groups"] = groups
+            if index_pattern is not None:
+                __body["index_pattern"] = index_pattern
+            if page_size is not None:
+                __body["page_size"] = page_size
+            if rollup_index is not None:
+                __body["rollup_index"] = rollup_index
+            if headers is not None:
+                __body["headers"] = headers
+            if metrics is not None:
+                __body["metrics"] = metrics
+            if timeout is not None:
+                __body["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("aggregations", "aggs", "query", "size"),
     )
     async def rollup_search(
         self,
@@ -294,6 +305,7 @@ class RollupClient(NamespacedClient):
         rest_total_hits_as_int: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         typed_keys: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Enables searching rolled-up data using the standard query DSL.
@@ -313,12 +325,8 @@ class RollupClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_rollup_search"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
-        if aggs is not None:
-            __body["aggs"] = aggs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -327,14 +335,19 @@ class RollupClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
-        if size is not None:
-            __body["size"] = size
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if query is not None:
+                __body["query"] = query
+            if size is not None:
+                __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body

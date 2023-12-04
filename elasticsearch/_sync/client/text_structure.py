@@ -30,7 +30,8 @@ class TextStructureClient(NamespacedClient):
     def find_structure(
         self,
         *,
-        text_files: t.Sequence[t.Any],
+        text_files: t.Optional[t.Sequence[t.Any]] = None,
+        body: t.Optional[t.Sequence[t.Any]] = None,
         charset: t.Optional[str] = None,
         column_names: t.Optional[str] = None,
         delimiter: t.Optional[str] = None,
@@ -116,8 +117,12 @@ class TextStructureClient(NamespacedClient):
             the file
         :param timestamp_format: The Java time format of the timestamp field in the text.
         """
-        if text_files is None:
-            raise ValueError("Empty value passed for parameter 'text_files'")
+        if text_files is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'text_files' and 'body', one of them should be set."
+            )
+        elif text_files is not None and body is not None:
+            raise ValueError("Cannot set both 'text_files' and 'body'")
         __path = "/_text_structure/find_structure"
         __query: t.Dict[str, t.Any] = {}
         if charset is not None:
@@ -148,7 +153,7 @@ class TextStructureClient(NamespacedClient):
             __query["timestamp_field"] = timestamp_field
         if timestamp_format is not None:
             __query["timestamp_format"] = timestamp_format
-        __body = text_files
+        __body = text_files if text_files is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",

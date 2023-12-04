@@ -212,7 +212,8 @@ class SearchApplicationClient(NamespacedClient):
         self,
         *,
         name: str,
-        search_application: t.Mapping[str, t.Any],
+        search_application: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -231,8 +232,12 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if search_application is None:
-            raise ValueError("Empty value passed for parameter 'search_application'")
+        if search_application is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'search_application' and 'body', one of them should be set."
+            )
+        elif search_application is not None and body is not None:
+            raise ValueError("Cannot set both 'search_application' and 'body'")
         __path = f"/_application/search_application/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if create is not None:
@@ -245,7 +250,7 @@ class SearchApplicationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = search_application
+        __body = search_application if search_application is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -286,7 +291,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
     async def search(
@@ -298,6 +303,7 @@ class SearchApplicationClient(NamespacedClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Perform a search against a search application
@@ -312,17 +318,18 @@ class SearchApplicationClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_application/search_application/{_quote(name)}/_search"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if params is not None:
-            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if params is not None:
+                __body["params"] = params
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

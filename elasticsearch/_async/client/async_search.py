@@ -155,7 +155,41 @@ class AsyncSearchClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "aggs",
+            "collapse",
+            "docvalue_fields",
+            "explain",
+            "ext",
+            "fields",
+            "from_",
+            "highlight",
+            "indices_boost",
+            "knn",
+            "min_score",
+            "pit",
+            "post_filter",
+            "profile",
+            "query",
+            "rescore",
+            "runtime_mappings",
+            "script_fields",
+            "search_after",
+            "seq_no_primary_term",
+            "size",
+            "slice",
+            "sort",
+            "source",
+            "stats",
+            "stored_fields",
+            "suggest",
+            "terminate_after",
+            "timeout",
+            "track_scores",
+            "track_total_hits",
+            "version",
+        ),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -260,6 +294,7 @@ class AsyncSearchClient(NamespacedClient):
         wait_for_completion_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Executes a search request asynchronously.
@@ -396,8 +431,8 @@ class AsyncSearchClient(NamespacedClient):
             __path = f"/{_quote(index)}/_async_search"
         else:
             __path = "/_async_search"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -409,10 +444,6 @@ class AsyncSearchClient(NamespacedClient):
         ):
             __query["sort"] = sort
             sort = None
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
-        if aggs is not None:
-            __body["aggs"] = aggs
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if allow_partial_search_results is not None:
@@ -425,106 +456,54 @@ class AsyncSearchClient(NamespacedClient):
             __query["batched_reduce_size"] = batched_reduce_size
         if ccs_minimize_roundtrips is not None:
             __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
-        if collapse is not None:
-            __body["collapse"] = collapse
         if default_operator is not None:
             __query["default_operator"] = default_operator
         if df is not None:
             __query["df"] = df
-        if docvalue_fields is not None:
-            __body["docvalue_fields"] = docvalue_fields
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if explain is not None:
-            __body["explain"] = explain
-        if ext is not None:
-            __body["ext"] = ext
-        if fields is not None:
-            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if from_ is not None:
-            __body["from"] = from_
-        if highlight is not None:
-            __body["highlight"] = highlight
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if indices_boost is not None:
-            __body["indices_boost"] = indices_boost
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
         if keep_on_completion is not None:
             __query["keep_on_completion"] = keep_on_completion
-        if knn is not None:
-            __body["knn"] = knn
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if min_compatible_shard_node is not None:
             __query["min_compatible_shard_node"] = min_compatible_shard_node
-        if min_score is not None:
-            __body["min_score"] = min_score
-        if pit is not None:
-            __body["pit"] = pit
-        if post_filter is not None:
-            __body["post_filter"] = post_filter
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if profile is not None:
-            __body["profile"] = profile
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
         if request_cache is not None:
             __query["request_cache"] = request_cache
-        if rescore is not None:
-            __body["rescore"] = rescore
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if script_fields is not None:
-            __body["script_fields"] = script_fields
         if scroll is not None:
             __query["scroll"] = scroll
-        if search_after is not None:
-            __body["search_after"] = search_after
         if search_type is not None:
             __query["search_type"] = search_type
-        if seq_no_primary_term is not None:
-            __body["seq_no_primary_term"] = seq_no_primary_term
-        if size is not None:
-            __body["size"] = size
-        if slice is not None:
-            __body["slice"] = slice
-        if sort is not None:
-            __body["sort"] = sort
-        if source is not None:
-            __body["_source"] = source
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
-        if stats is not None:
-            __body["stats"] = stats
-        if stored_fields is not None:
-            __body["stored_fields"] = stored_fields
-        if suggest is not None:
-            __body["suggest"] = suggest
         if suggest_field is not None:
             __query["suggest_field"] = suggest_field
         if suggest_mode is not None:
@@ -533,20 +512,77 @@ class AsyncSearchClient(NamespacedClient):
             __query["suggest_size"] = suggest_size
         if suggest_text is not None:
             __query["suggest_text"] = suggest_text
-        if terminate_after is not None:
-            __body["terminate_after"] = terminate_after
-        if timeout is not None:
-            __body["timeout"] = timeout
-        if track_scores is not None:
-            __body["track_scores"] = track_scores
-        if track_total_hits is not None:
-            __body["track_total_hits"] = track_total_hits
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        if version is not None:
-            __body["version"] = version
         if wait_for_completion_timeout is not None:
             __query["wait_for_completion_timeout"] = wait_for_completion_timeout
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if collapse is not None:
+                __body["collapse"] = collapse
+            if docvalue_fields is not None:
+                __body["docvalue_fields"] = docvalue_fields
+            if explain is not None:
+                __body["explain"] = explain
+            if ext is not None:
+                __body["ext"] = ext
+            if fields is not None:
+                __body["fields"] = fields
+            if from_ is not None:
+                __body["from"] = from_
+            if highlight is not None:
+                __body["highlight"] = highlight
+            if indices_boost is not None:
+                __body["indices_boost"] = indices_boost
+            if knn is not None:
+                __body["knn"] = knn
+            if min_score is not None:
+                __body["min_score"] = min_score
+            if pit is not None:
+                __body["pit"] = pit
+            if post_filter is not None:
+                __body["post_filter"] = post_filter
+            if profile is not None:
+                __body["profile"] = profile
+            if query is not None:
+                __body["query"] = query
+            if rescore is not None:
+                __body["rescore"] = rescore
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if script_fields is not None:
+                __body["script_fields"] = script_fields
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if seq_no_primary_term is not None:
+                __body["seq_no_primary_term"] = seq_no_primary_term
+            if size is not None:
+                __body["size"] = size
+            if slice is not None:
+                __body["slice"] = slice
+            if sort is not None:
+                __body["sort"] = sort
+            if source is not None:
+                __body["_source"] = source
+            if stats is not None:
+                __body["stats"] = stats
+            if stored_fields is not None:
+                __body["stored_fields"] = stored_fields
+            if suggest is not None:
+                __body["suggest"] = suggest
+            if terminate_after is not None:
+                __body["terminate_after"] = terminate_after
+            if timeout is not None:
+                __body["timeout"] = timeout
+            if track_scores is not None:
+                __body["track_scores"] = track_scores
+            if track_total_hits is not None:
+                __body["track_total_hits"] = track_total_hits
+            if version is not None:
+                __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

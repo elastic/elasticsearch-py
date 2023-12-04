@@ -212,7 +212,7 @@ class IlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("legacy_template_to_delete", "node_attribute"),
     )
     def migrate_to_data_tiers(
         self,
@@ -224,6 +224,7 @@ class IlmClient(NamespacedClient):
         legacy_template_to_delete: t.Optional[str] = None,
         node_attribute: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Migrates the indices and ILM policies away from custom node attribute allocation
@@ -239,7 +240,7 @@ class IlmClient(NamespacedClient):
         """
         __path = "/_ilm/migrate_to_data_tiers"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if dry_run is not None:
             __query["dry_run"] = dry_run
         if error_trace is not None:
@@ -248,12 +249,13 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if legacy_template_to_delete is not None:
-            __body["legacy_template_to_delete"] = legacy_template_to_delete
-        if node_attribute is not None:
-            __body["node_attribute"] = node_attribute
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if legacy_template_to_delete is not None:
+                __body["legacy_template_to_delete"] = legacy_template_to_delete
+            if node_attribute is not None:
+                __body["node_attribute"] = node_attribute
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -264,7 +266,7 @@ class IlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("current_step", "next_step"),
     )
     def move_to_step(
         self,
@@ -276,6 +278,7 @@ class IlmClient(NamespacedClient):
         human: t.Optional[bool] = None,
         next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Manually moves an index into the specified step and executes that step.
@@ -289,20 +292,21 @@ class IlmClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/_ilm/move/{_quote(index)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if current_step is not None:
-            __body["current_step"] = current_step
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if next_step is not None:
-            __body["next_step"] = next_step
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if current_step is not None:
+                __body["current_step"] = current_step
+            if next_step is not None:
+                __body["next_step"] = next_step
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -313,7 +317,7 @@ class IlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("policy",),
     )
     def put_lifecycle(
         self,
@@ -328,6 +332,7 @@ class IlmClient(NamespacedClient):
         policy: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a lifecycle policy
@@ -346,7 +351,7 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_ilm/policy/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -355,12 +360,13 @@ class IlmClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if policy is not None:
-            __body["policy"] = policy
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if policy is not None:
+                __body["policy"] = policy
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

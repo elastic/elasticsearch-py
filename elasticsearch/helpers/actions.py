@@ -714,7 +714,7 @@ def scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
+        resp = client.search(body=query, **search_kwargs)
 
     scroll_id = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
