@@ -1,4 +1,7 @@
 // tab-widgets/api-call.asciidoc:13
 
+[source, python]
+----
 resp = es.info()
+----
 print(resp)
