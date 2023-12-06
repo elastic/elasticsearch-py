@@ -3,5 +3,5 @@
 [source, python]
 ----
 resp = es.info()
-----
 print(resp)
+----
