@@ -1837,6 +1837,7 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
+        role_templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         roles: t.Optional[t.Sequence[str]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
@@ -1852,6 +1853,7 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param role_templates:
         :param roles:
         :param rules:
         :param run_as:
@@ -1875,6 +1877,8 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
+        if role_templates is not None:
+            __body["role_templates"] = role_templates
         if roles is not None:
             __body["roles"] = roles
         if rules is not None:
