@@ -5,6 +5,11 @@ Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
+`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
+or
+`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
+for a free trial of Elastic Cloud.
+
 
 Installation
 ------------

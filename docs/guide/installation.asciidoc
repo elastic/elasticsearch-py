@@ -1,6 +1,11 @@
 [[installation]]
 == Installation
 
+**[Download the latest version of Elasticsearch](https://www.elastic.co/downloads/elasticsearch)**
+or
+**[sign-up](https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page)**
+**for a free trial of Elastic Cloud**.
+
 The Python client for {es} can be installed with pip:
 
 [source,sh]
