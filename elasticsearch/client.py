@@ -37,6 +37,7 @@ from ._sync.client.fleet import FleetClient as FleetClient  # noqa: F401
 from ._sync.client.graph import GraphClient as GraphClient  # noqa: F401
 from ._sync.client.ilm import IlmClient as IlmClient  # noqa: F401
 from ._sync.client.indices import IndicesClient as IndicesClient  # noqa: F401
+from ._sync.client.inference import InferenceClient as InferenceClient  # noqa: F401
 from ._sync.client.ingest import IngestClient as IngestClient  # noqa: F401
 from ._sync.client.license import LicenseClient as LicenseClient  # noqa: F401
 from ._sync.client.logstash import LogstashClient as LogstashClient  # noqa: F401
