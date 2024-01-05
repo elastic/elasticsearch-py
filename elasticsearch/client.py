@@ -32,6 +32,7 @@ from ._sync.client.dangling_indices import (  # noqa: F401
 )
 from ._sync.client.enrich import EnrichClient as EnrichClient  # noqa: F401
 from ._sync.client.eql import EqlClient as EqlClient  # noqa: F401
+from ._sync.client.esql import EsqlClient as EsqlClient  # noqa: F401
 from ._sync.client.features import FeaturesClient as FeaturesClient  # noqa: F401
 from ._sync.client.fleet import FleetClient as FleetClient  # noqa: F401
 from ._sync.client.graph import GraphClient as GraphClient  # noqa: F401

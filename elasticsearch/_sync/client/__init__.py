@@ -49,6 +49,7 @@ from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .esql import EsqlClient
 from .features import FeaturesClient
 from .fleet import FleetClient
 from .graph import GraphClient
@@ -446,6 +447,7 @@ class Elasticsearch(BaseClient):
         self.dangling_indices = DanglingIndicesClient(self)
         self.enrich = EnrichClient(self)
         self.eql = EqlClient(self)
+        self.esql = EsqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.license = LicenseClient(self)

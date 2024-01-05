@@ -24,6 +24,7 @@ arguments are required for all calls.
    api/dangling-indices
    api/enrich-policies
    api/eql
+   api/esql
    api/fleet
    api/graph-explore
    api/index-lifecycle-management
