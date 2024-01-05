@@ -38,7 +38,7 @@ class InferenceClient(NamespacedClient):
         """
         Delete model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/delete-inference-api.html>`_
 
         :param task_type: The model task type
         :param model_id: The unique identifier of the inference model.
@@ -76,7 +76,7 @@ class InferenceClient(NamespacedClient):
         """
         Get a model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/get-inference-api.html>`_
 
         :param task_type: The model task type
         :param model_id: The unique identifier of the inference model.
@@ -119,7 +119,7 @@ class InferenceClient(NamespacedClient):
         """
         Perform inference on a model
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/post-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/post-inference-api.html>`_
 
         :param task_type: The model task type
         :param model_id: The unique identifier of the inference model.
@@ -175,7 +175,7 @@ class InferenceClient(NamespacedClient):
         """
         Configure a model for use in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/put-inference-api.html>`_
 
         :param task_type: The model task type
         :param model_id: The unique identifier of the inference model.
