@@ -10,7 +10,7 @@ arguments are required for all calls.
 .. note::
 
    Some API parameters in Elasticsearch are reserved keywords in Python.
-   For example the ``from`` query parameter for pagination would be aliased as 
+   For example the ``from`` query parameter for pagination would be aliased as
    ``from_``.
 
 .. toctree::
@@ -28,6 +28,7 @@ arguments are required for all calls.
    api/graph-explore
    api/index-lifecycle-management
    api/indices
+   api/inference
    api/ingest-pipelines
    api/license
    api/logstash
