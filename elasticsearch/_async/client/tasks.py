@@ -41,7 +41,7 @@ class TasksClient(NamespacedClient):
         """
         Cancels a task, if it can be cancelled through an API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/tasks.html>`_
 
         :param task_id: ID of the task.
         :param actions: Comma-separated list or wildcard expression of actions used to
@@ -92,7 +92,7 @@ class TasksClient(NamespacedClient):
         """
         Returns information about a task.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/tasks.html>`_
 
         :param task_id: ID of the task.
         :param timeout: Period to wait for a response. If no response is received before
@@ -145,7 +145,7 @@ class TasksClient(NamespacedClient):
         """
         Returns a list of tasks.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/tasks.html>`_
 
         :param actions: Comma-separated list or wildcard expression of actions used to
             limit the request.

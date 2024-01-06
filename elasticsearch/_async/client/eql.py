@@ -38,7 +38,7 @@ class EqlClient(NamespacedClient):
         Deletes an async EQL search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/eql-search-api.html>`_
 
         :param id: Identifier for the search to delete. A search ID is provided in the
             EQL search API's response for an async search. A search ID is also provided
@@ -78,7 +78,7 @@ class EqlClient(NamespacedClient):
         """
         Returns async results from previously executed Event Query Language (EQL) search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/get-async-eql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param keep_alive: Period for which the search and its results are stored on
@@ -123,7 +123,7 @@ class EqlClient(NamespacedClient):
         Returns the status of a previously submitted async or stored Event Query Language
         (EQL) search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-eql-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/get-async-eql-status-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -205,7 +205,7 @@ class EqlClient(NamespacedClient):
         """
         Returns results matching a query expressed in Event Query Language (EQL)
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/eql-search-api.html>`_
 
         :param index: The name of the index to scope the operation
         :param query: EQL query you wish to run.
