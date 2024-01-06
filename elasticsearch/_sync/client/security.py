@@ -935,6 +935,7 @@ class SecurityClient(NamespacedClient):
     def get_api_key(
         self,
         *,
+        active_only: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -951,6 +952,11 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
 
+        :param active_only: A boolean flag that can be used to query API keys that are
+            currently active. An API key is considered active if it is neither invalidated,
+            nor expired at query time. You can specify this together with other parameters
+            such as `owner` or `name`. If `active_only` is false, the response will include
+            both active and inactive (expired or invalidated) keys.
         :param id: An API key id. This parameter cannot be used with any of `name`, `realm_name`
             or `username`.
         :param name: An API key name. This parameter cannot be used with any of `id`,
@@ -969,6 +975,8 @@ class SecurityClient(NamespacedClient):
         """
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
+        if active_only is not None:
+            __query["active_only"] = active_only
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1875,7 +1883,14 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("enabled", "metadata", "roles", "rules", "run_as"),
+        body_fields=(
+            "enabled",
+            "metadata",
+            "role_templates",
+            "roles",
+            "rules",
+            "run_as",
+        ),
     )
     def put_role_mapping(
         self,
@@ -1890,6 +1905,7 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
+        role_templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         roles: t.Optional[t.Sequence[str]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
@@ -1906,6 +1922,7 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param role_templates:
         :param roles:
         :param rules:
         :param run_as:
@@ -1930,6 +1947,8 @@ class SecurityClient(NamespacedClient):
                 __body["enabled"] = enabled
             if metadata is not None:
                 __body["metadata"] = metadata
+            if role_templates is not None:
+                __body["role_templates"] = role_templates
             if roles is not None:
                 __body["roles"] = roles
             if rules is not None:
