@@ -2513,13 +2513,14 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("metadata", "role_descriptors"),
+        body_fields=("expiration", "metadata", "role_descriptors"),
     )
     async def update_api_key(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2533,6 +2534,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.12/security-api-update-api-key.html>`_
 
         :param id: The ID of the API key to update.
+        :param expiration: Expiration time for the API key.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
             It supports nested data structure. Within the metadata object, keys beginning
             with _ are reserved for system usage.
@@ -2559,6 +2561,8 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
+            if expiration is not None:
+                __body["expiration"] = expiration
             if metadata is not None:
                 __body["metadata"] = metadata
             if role_descriptors is not None:
