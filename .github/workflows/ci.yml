@@ -42,7 +42,7 @@ jobs:
           python -m pip install nox
       - name: Run Tests
         shell: bash
-        run: .ci/run-nox.sh
+        run: .buildkite/run-nox.sh
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
           NOX_SESSION: ${{ matrix.nox-session }}
