@@ -62,13 +62,13 @@ in the ``examples/fastapi-apm`` directory.
 Frequently Asked Questions
 --------------------------
 
-NameError / ImportError when importing ``AsyncElasticsearch``?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ValueError when initializing ``AsyncElasticsearch``?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or
-``ImportError`` you should ensure that you have ``aiohttp`` installed in your
-environment (check with ``$ python -m pip freeze | grep aiohttp``). Otherwise, async
-support won't be available.
+If when trying to use ``AsyncElasticsearch`` you receive ``ValueError: You must
+have 'aiohttp' installed to use AiohttpHttpNode`` you should ensure that you
+have ``aiohttp`` installed in your environment (check with ``$ python -m pip
+freeze | grep aiohttp``). Otherwise, async support won't be available.
 
 What about the ``elasticsearch-async`` package?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
