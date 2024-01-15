@@ -32,12 +32,11 @@ SOURCE_FILES = (
 INSTALL_ENV = {"AIOHTTP_NO_EXTENSIONS": "1"}
 
 
-@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
+@nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
     session.install(".[async,requests]", env=INSTALL_ENV, silent=False)
     session.install("-r", "dev-requirements.txt", silent=False)
 
-    python_version = tuple(int(x) for x in session.python.split("."))
     junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
     pytest_argv = [
         "pytest",
@@ -49,10 +48,6 @@ def test(session):
         "--cache-clear",
         "-vv",
     ]
-    # Python 3.6+ is required for async
-    if python_version < (3, 6):
-        pytest_argv.append("--ignore=test_elasticsearch/test_async/")
-
     session.run(*pytest_argv)
 
 
