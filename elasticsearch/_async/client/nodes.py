@@ -28,12 +28,10 @@ class NodesClient(NamespacedClient):
     async def clear_repositories_metering_archive(
         self,
         *,
-        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        node_id: t.Union[str, t.Sequence[str]],
         max_archive_version: int,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -70,11 +68,9 @@ class NodesClient(NamespacedClient):
     async def get_repositories_metering_info(
         self,
         *,
-        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        node_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -107,13 +103,9 @@ class NodesClient(NamespacedClient):
     async def hot_threads(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_idle_threads: t.Optional[bool] = None,
         interval: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -188,16 +180,10 @@ class NodesClient(NamespacedClient):
     async def info(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -251,39 +237,36 @@ class NodesClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("secure_settings_password",),
     )
     async def reload_secure_settings(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         secure_settings_password: t.Optional[str] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Reloads secure settings.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
 
-        :param node_id: A comma-separated list of node IDs to span the reload/reinit
-            call. Should stay empty because reloading usually involves all cluster nodes.
-        :param secure_settings_password:
-        :param timeout: Explicit operation timeout
+        :param node_id: The names of particular nodes in the cluster to target.
+        :param secure_settings_password: The password for the Elasticsearch keystore.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if node_id not in SKIP_IN_PATH:
             __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
         else:
             __path = "/_nodes/reload_secure_settings"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -292,10 +275,11 @@ class NodesClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if secure_settings_password is not None:
-            __body["secure_settings_password"] = secure_settings_password
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if secure_settings_password is not None:
+                __body["secure_settings_password"] = secure_settings_password
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -309,28 +293,14 @@ class NodesClient(NamespacedClient):
     async def stats(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        index_metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        completion_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        index_metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        completion_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        fielddata_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         groups: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
@@ -343,7 +313,7 @@ class NodesClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        types: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns statistical information about nodes in the cluster.
@@ -367,8 +337,8 @@ class NodesClient(NamespacedClient):
         :param include_segment_file_sizes: If true, the call reports the aggregated disk
             usage of each one of the Lucene index files (only applies if segment stats
             are requested).
-        :param include_unloaded_segments: If set to true segment stats will include stats
-            for segments that are not currently loaded into memory
+        :param include_unloaded_segments: If `true`, the response includes information
+            from segments that are not loaded into memory.
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -433,16 +403,10 @@ class NodesClient(NamespacedClient):
     async def usage(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -455,8 +419,10 @@ class NodesClient(NamespacedClient):
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
             to, leave empty to get information from all nodes
-        :param metric: Limit the information returned to the specified metrics
-        :param timeout: Explicit operation timeout
+        :param metric: Limits the information returned to the specific metrics. A comma-separated
+            list of the following options: `_all`, `rest_actions`.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
             __path = f"/_nodes/{_quote(node_id)}/usage/{_quote(metric)}"

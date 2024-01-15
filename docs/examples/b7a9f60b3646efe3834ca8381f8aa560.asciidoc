@@ -1,0 +1,9 @@
+// setup/logging-config.asciidoc:169
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"persistent": {"logger.org.elasticsearch.discovery": None}},
+)
+print(resp)
+----

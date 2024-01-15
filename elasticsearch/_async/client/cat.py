@@ -28,31 +28,19 @@ class CatClient(NamespacedClient):
     async def aliases(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -60,7 +48,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -126,18 +114,14 @@ class CatClient(NamespacedClient):
     async def allocation(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -145,7 +129,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -212,11 +196,9 @@ class CatClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -224,7 +206,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -285,13 +267,11 @@ class CatClient(NamespacedClient):
     async def count(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -299,7 +279,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -362,18 +342,14 @@ class CatClient(NamespacedClient):
     async def fielddata(
         self,
         *,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -381,7 +357,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -447,11 +423,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -459,7 +433,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         time: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
@@ -526,11 +500,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -538,7 +510,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> TextApiResponse:
         """
@@ -594,34 +566,22 @@ class CatClient(NamespacedClient):
     async def indices(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         health: t.Optional[t.Union["t.Literal['green', 'red', 'yellow']", str]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
@@ -632,7 +592,7 @@ class CatClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         pri: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         time: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
@@ -719,11 +679,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -731,7 +689,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -793,30 +751,19 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         h: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -829,24 +776,15 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'create_time', 'description', 'dest_index', 'failure_reason', 'id', 'model_memory_limit', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'progress', 'source_index', 'state', 'type', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -922,30 +860,19 @@ class CatClient(NamespacedClient):
         datafeed_id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         h: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -958,24 +885,15 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['ae', 'bc', 'id', 'na', 'ne', 'ni', 'nn', 's', 'sba', 'sc', 'seah', 'st']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -1059,30 +977,19 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         h: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -1095,24 +1002,15 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['assignment_explanation', 'buckets.count', 'buckets.time.exp_avg', 'buckets.time.exp_avg_hour', 'buckets.time.max', 'buckets.time.min', 'buckets.time.total', 'data.buckets', 'data.earliest_record', 'data.empty_buckets', 'data.input_bytes', 'data.input_fields', 'data.input_records', 'data.invalid_dates', 'data.last', 'data.last_empty_bucket', 'data.last_sparse_bucket', 'data.latest_record', 'data.missing_fields', 'data.out_of_order_timestamps', 'data.processed_fields', 'data.processed_records', 'data.sparse_buckets', 'forecasts.memory.avg', 'forecasts.memory.max', 'forecasts.memory.min', 'forecasts.memory.total', 'forecasts.records.avg', 'forecasts.records.max', 'forecasts.records.min', 'forecasts.records.total', 'forecasts.time.avg', 'forecasts.time.max', 'forecasts.time.min', 'forecasts.time.total', 'forecasts.total', 'id', 'model.bucket_allocation_failures', 'model.by_fields', 'model.bytes', 'model.bytes_exceeded', 'model.categorization_status', 'model.categorized_doc_count', 'model.dead_category_count', 'model.failed_category_count', 'model.frequent_category_count', 'model.log_time', 'model.memory_limit', 'model.memory_status', 'model.over_fields', 'model.partition_fields', 'model.rare_category_count', 'model.timestamp', 'model.total_category_count', 'node.address', 'node.ephemeral_id', 'node.id', 'node.name', 'opened_time', 'state']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -1200,31 +1098,20 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         from_: t.Optional[int] = None,
         h: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -1237,24 +1124,15 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -1266,15 +1144,19 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
-        :param model_id: The ID of the trained models stats to fetch
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            trained models. (This includes `_all` string or when no trained models have
-            been specified)
-        :param bytes: The unit in which to display byte values
+        :param model_id: A unique identifier for the trained model.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no models that match; contains the `_all` string
+            or no identifiers and there are no matches; contains wildcard expressions
+            and there are only partial matches. If `true`, the API returns an empty array
+            when there are no matches and the subset of results when there are partial
+            matches. If `false`, the API returns a 404 status code when there are no
+            matches or only partial matches.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param from_: skips a number of trained models
-        :param h: Comma-separated list of column names to display
+        :param from_: Skips the specified number of transforms.
+        :param h: A comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1282,8 +1164,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: Comma-separated list of column names or column aliases to sort by
-        :param size: specifies a max number of trained models to get
+        :param s: A comma-separated list of column names or aliases used to sort the
+            response.
+        :param size: The maximum number of transforms to display.
         :param v: When set to `true` will enable verbose output.
         """
         if model_id not in SKIP_IN_PATH:
@@ -1331,11 +1214,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1343,7 +1224,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1403,12 +1284,10 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         full_id: t.Optional[t.Union[bool, str]] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
@@ -1417,7 +1296,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1485,11 +1364,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1497,7 +1374,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1554,11 +1431,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1566,7 +1441,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1622,18 +1497,16 @@ class CatClient(NamespacedClient):
     async def recovery(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         active_only: t.Optional[bool] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1641,7 +1514,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1714,11 +1587,9 @@ class CatClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1726,7 +1597,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1782,16 +1653,14 @@ class CatClient(NamespacedClient):
     async def segments(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1799,7 +1668,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1807,8 +1676,10 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
-        :param bytes: The unit in which to display byte values
+        :param index: A comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -1862,16 +1733,14 @@ class CatClient(NamespacedClient):
     async def shards(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         bytes: t.Optional[
             t.Union["t.Literal['b', 'gb', 'kb', 'mb', 'pb', 'tb']", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1879,7 +1748,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1887,8 +1756,10 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
-        :param bytes: The unit in which to display byte values
+        :param index: A comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -1942,15 +1813,11 @@ class CatClient(NamespacedClient):
     async def snapshots(
         self,
         *,
-        repository: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        repository: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1959,7 +1826,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -1967,13 +1834,16 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
 
-        :param repository: Name of repository from which to fetch the snapshot information
+        :param repository: A comma-separated list of snapshot repositories used to limit
+            the request. Accepts wildcard expressions. `_all` returns all repositories.
+            If any repository fails during the request, Elasticsearch returns an error.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
-        :param ignore_unavailable: Set to true to ignore unavailable snapshots
+        :param ignore_unavailable: If `true`, the response does not include information
+            from unavailable snapshots.
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating
@@ -2022,24 +1892,22 @@ class CatClient(NamespacedClient):
     async def tasks(
         self,
         *,
-        actions: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        actions: t.Optional[t.Sequence[str]] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        parent_task: t.Optional[int] = None,
+        node_id: t.Optional[t.Sequence[str]] = None,
+        parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -2048,9 +1916,9 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param actions: A comma-separated list of actions that should be returned. Leave
-            empty to return all.
-        :param detailed: Return detailed task information (default: false)
+        :param actions: The task action names, which are used to limit the response.
+        :param detailed: If `true`, the response includes detailed information about
+            shard recoveries.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2061,8 +1929,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param node_id:
-        :param parent_task:
+        :param node_id: Unique node identifiers, which are used to limit the response.
+        :param parent_task_id: The parent task identifier, which is used to limit the
+            response.
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
@@ -2092,8 +1961,8 @@ class CatClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if node_id is not None:
             __query["node_id"] = node_id
-        if parent_task is not None:
-            __query["parent_task"] = parent_task
+        if parent_task_id is not None:
+            __query["parent_task_id"] = parent_task_id
         if pretty is not None:
             __query["pretty"] = pretty
         if s is not None:
@@ -2111,11 +1980,9 @@ class CatClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -2123,7 +1990,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -2131,7 +1998,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
 
-        :param name: A pattern that returned template names must match
+        :param name: The name of the template to return. Accepts wildcard expressions.
+            If omitted, all templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2183,15 +2051,11 @@ class CatClient(NamespacedClient):
     async def thread_pool(
         self,
         *,
-        thread_pool_patterns: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        thread_pool_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -2199,7 +2063,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         time: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
@@ -2211,8 +2075,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
 
-        :param thread_pool_patterns: List of thread pool names used to limit the request.
-            Accepts wildcard expressions.
+        :param thread_pool_patterns: A comma-separated list of thread pool names used
+            to limit the request. Accepts wildcard expressions.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2226,7 +2090,7 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
-        :param time: Unit used to display time values.
+        :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if thread_pool_patterns not in SKIP_IN_PATH:
@@ -2272,31 +2136,20 @@ class CatClient(NamespacedClient):
         transform_id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         from_: t.Optional[int] = None,
         h: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -2309,24 +2162,15 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['changes_last_detection_time', 'checkpoint', 'checkpoint_duration_time_exp_avg', 'checkpoint_progress', 'create_time', 'delete_time', 'description', 'dest_index', 'docs_per_second', 'documents_deleted', 'documents_indexed', 'documents_processed', 'frequency', 'id', 'index_failure', 'index_time', 'index_total', 'indexed_documents_exp_avg', 'last_search_time', 'max_page_search_size', 'pages_processed', 'pipeline', 'processed_documents_exp_avg', 'processing_time', 'reason', 'search_failure', 'search_time', 'search_total', 'source_index', 'state', 'transform_type', 'trigger_count', 'version']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
@@ -2341,14 +2185,19 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 
-        :param transform_id: The id of the transform for which to get stats. '_all' or
-            '*' implies all transforms
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            transforms. (This includes `_all` string or when no transforms have been
-            specified)
+        :param transform_id: A transform identifier or a wildcard expression. If you
+            do not specify one of these options, the API returns information for all
+            transforms.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no transforms that match; contains the `_all` string
+            or no identifiers and there are no matches; contains wildcard expressions
+            and there are only partial matches. If `true`, it returns an empty transforms
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the request returns a 404 status code when there
+            are no matches or only partial matches.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param from_: skips a number of transform configs, defaults to 0
+        :param from_: Skips the specified number of transforms.
         :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
@@ -2359,8 +2208,8 @@ class CatClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node.
         :param s: Comma-separated list of column names or column aliases used to sort
             the response.
-        :param size: specifies a max number of transforms to get, defaults to 100
-        :param time: Unit used to display time values.
+        :param size: The maximum number of transforms to obtain.
+        :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if transform_id not in SKIP_IN_PATH:

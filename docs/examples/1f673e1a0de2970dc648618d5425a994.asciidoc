@@ -1,0 +1,14 @@
+// docs/reindex.asciidoc:267
+
+[source, python]
+----
+resp = client.indices.refresh()
+print(resp)
+
+resp = client.search(
+    index="my-new-index-000001",
+    size="0",
+    filter_path="hits.total",
+)
+print(resp)
+----

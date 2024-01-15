@@ -29,15 +29,11 @@ class TasksClient(NamespacedClient):
         self,
         *,
         task_id: t.Optional[t.Union[int, str]] = None,
-        actions: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        actions: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        nodes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        nodes: t.Optional[t.Sequence[str]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
@@ -47,14 +43,11 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param task_id: Cancel the task with specified task id (node_id:task_number)
-        :param actions: A comma-separated list of actions that should be cancelled. Leave
-            empty to cancel all.
-        :param nodes: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
-        :param parent_task_id: Cancel tasks with specified parent task id (node_id:task_number).
-            Set to -1 to cancel all.
+        :param task_id: ID of the task.
+        :param actions: Comma-separated list or wildcard expression of actions used to
+            limit the request.
+        :param nodes: Comma-separated list of node IDs or names used to limit the request.
+        :param parent_task_id: Parent task ID used to limit the tasks.
         :param wait_for_completion: Should the request block until the cancellation of
             the task and its descendant tasks is completed. Defaults to false
         """
@@ -90,9 +83,7 @@ class TasksClient(NamespacedClient):
         *,
         task_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -103,10 +94,11 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param task_id: Return the task with specified id (node_id:task_number)
-        :param timeout: Explicit operation timeout
-        :param wait_for_completion: Wait for the matching tasks to complete (default:
-            false)
+        :param task_id: ID of the task.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param wait_for_completion: If `true`, the request blocks until the task has
+            completed.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -133,14 +125,10 @@ class TasksClient(NamespacedClient):
     async def list(
         self,
         *,
-        actions: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        actions: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         group_by: t.Optional[
             t.Union["t.Literal['nodes', 'none', 'parents']", str]
         ] = None,
@@ -148,7 +136,7 @@ class TasksClient(NamespacedClient):
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        node_id: t.Optional[t.Sequence[str]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,

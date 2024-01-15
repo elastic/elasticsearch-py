@@ -30,9 +30,7 @@ class IngestClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -45,9 +43,13 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
 
-        :param id: Pipeline ID
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param id: Pipeline ID or wildcard expression of pipeline IDs used to limit the
+            request. To delete all ingest pipelines in a cluster, use a value of `*`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -75,16 +77,14 @@ class IngestClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns statistical information about geoip databases
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
         """
         __path = "/_ingest/geoip/stats"
         __query: t.Dict[str, t.Any] = {}
@@ -107,9 +107,7 @@ class IngestClient(NamespacedClient):
         *,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -122,8 +120,11 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
 
-        :param id: Comma separated list of pipeline ids. Wildcards supported
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param id: Comma-separated list of pipeline IDs to retrieve. Wildcard (`*`) expressions
+            are supported. To get all ingest pipelines, omit this parameter or use `*`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param summary: Return pipelines without their definitions (default: false)
         """
         if id not in SKIP_IN_PATH:
@@ -153,16 +154,14 @@ class IngestClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
         """
         __path = "/_ingest/processor/grok"
         __query: t.Dict[str, t.Any] = {}
@@ -180,7 +179,7 @@ class IngestClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("description", "meta", "on_failure", "processors", "version"),
         parameter_aliases={"_meta": "meta"},
     )
     async def put_pipeline(
@@ -189,29 +188,24 @@ class IngestClient(NamespacedClient):
         id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         if_version: t.Optional[int] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
-        on_failure: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        on_failure: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
-        processors: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        processors: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
@@ -239,10 +233,8 @@ class IngestClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ingest/pipeline/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -253,73 +245,77 @@ class IngestClient(NamespacedClient):
             __query["if_version"] = if_version
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if meta is not None:
-            __body["_meta"] = meta
-        if on_failure is not None:
-            __body["on_failure"] = on_failure
         if pretty is not None:
             __query["pretty"] = pretty
-        if processors is not None:
-            __body["processors"] = processors
         if timeout is not None:
             __query["timeout"] = timeout
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if meta is not None:
+                __body["_meta"] = meta
+            if on_failure is not None:
+                __body["on_failure"] = on_failure
+            if processors is not None:
+                __body["processors"] = processors
+            if version is not None:
+                __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("docs", "pipeline"),
     )
     async def simulate(
         self,
         *,
         id: t.Optional[str] = None,
-        docs: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pipeline: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         verbose: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to simulate a pipeline with example documents.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
 
-        :param id: Pipeline ID
-        :param docs:
-        :param pipeline:
-        :param verbose: Verbose mode. Display data output for each processor in executed
-            pipeline
+        :param id: Pipeline to test. If you don’t specify a `pipeline` in the request
+            body, this parameter is required.
+        :param docs: Sample documents to test in the pipeline.
+        :param pipeline: Pipeline to test. If you don’t specify the `pipeline` request
+            path parameter, this parameter is required. If you specify both this and
+            the request path parameter, the API only uses the request path parameter.
+        :param verbose: If `true`, the response includes output data for each processor
+            in the executed pipeline.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
         else:
             __path = "/_ingest/pipeline/_simulate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if docs is not None:
-            __body["docs"] = docs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if pipeline is not None:
-            __body["pipeline"] = pipeline
         if pretty is not None:
             __query["pretty"] = pretty
         if verbose is not None:
             __query["verbose"] = verbose
+        if not __body:
+            if docs is not None:
+                __body["docs"] = docs
+            if pipeline is not None:
+                __body["pipeline"] = pipeline
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body

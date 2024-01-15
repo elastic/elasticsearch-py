@@ -1,0 +1,9 @@
+// indices/delete-index.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.delete(
+    index="my-index-000001",
+)
+print(resp)
+----

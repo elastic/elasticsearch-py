@@ -1,0 +1,10 @@
+// docs/update-by-query.asciidoc:369
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="my-index-000001",
+    body={"query": {"term": {"user.id": "kimchy"}}, "max_docs": 1},
+)
+print(resp)
+----

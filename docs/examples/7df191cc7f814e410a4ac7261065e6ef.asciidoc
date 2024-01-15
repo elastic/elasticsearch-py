@@ -1,7 +1,10 @@
-// docs/update-by-query.asciidoc:413
+// docs/update-by-query.asciidoc:468
 
 [source, python]
 ----
-resp = client.tasks.list(detailed="true", actions="*byquery")
+resp = client.tasks.list(
+    detailed="true",
+    actions="*byquery",
+)
 print(resp)
 ----

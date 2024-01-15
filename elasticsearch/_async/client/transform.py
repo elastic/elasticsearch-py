@@ -29,10 +29,9 @@ class TransformClient(NamespacedClient):
         self,
         *,
         transform_id: str,
+        delete_dest_index: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -44,6 +43,9 @@ class TransformClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-transform.html>`_
 
         :param transform_id: Identifier for the transform.
+        :param delete_dest_index: If this value is true, the destination index is deleted
+            together with the transform. If false, the destination index will not be
+            deleted
         :param force: If this value is false, the transform must be stopped before it
             can be deleted. If true, the transform is deleted regardless of its current
             state.
@@ -54,6 +56,8 @@ class TransformClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}"
         __query: t.Dict[str, t.Any] = {}
+        if delete_dest_index is not None:
+            __query["delete_dest_index"] = delete_dest_index
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -77,15 +81,11 @@ class TransformClient(NamespacedClient):
     async def get_transform(
         self,
         *,
-        transform_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        transform_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -142,12 +142,10 @@ class TransformClient(NamespacedClient):
     async def get_transform_stats(
         self,
         *,
-        transform_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        transform_id: t.Union[str, t.Sequence[str]],
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -197,7 +195,17 @@ class TransformClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "description",
+            "dest",
+            "frequency",
+            "latest",
+            "pivot",
+            "retention_policy",
+            "settings",
+            "source",
+            "sync",
+        ),
     )
     async def preview_transform(
         self,
@@ -206,9 +214,7 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -219,6 +225,7 @@ class TransformClient(NamespacedClient):
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Previews a transform.
@@ -251,36 +258,37 @@ class TransformClient(NamespacedClient):
             __path = f"/_transform/{_quote(transform_id)}/_preview"
         else:
             __path = "/_transform/_preview"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
-        if dest is not None:
-            __body["dest"] = dest
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if latest is not None:
-            __body["latest"] = latest
-        if pivot is not None:
-            __body["pivot"] = pivot
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if source is not None:
-            __body["source"] = source
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if dest is not None:
+                __body["dest"] = dest
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if latest is not None:
+                __body["latest"] = latest
+            if pivot is not None:
+                __body["pivot"] = pivot
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if source is not None:
+                __body["source"] = source
+            if sync is not None:
+                __body["sync"] = sync
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -291,21 +299,30 @@ class TransformClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "dest",
+            "source",
+            "description",
+            "frequency",
+            "latest",
+            "meta",
+            "pivot",
+            "retention_policy",
+            "settings",
+            "sync",
+        ),
         parameter_aliases={"_meta": "meta"},
     )
     async def put_transform(
         self,
         *,
         transform_id: str,
-        dest: t.Mapping[str, t.Any],
-        source: t.Mapping[str, t.Any],
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
         defer_validation: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -316,6 +333,7 @@ class TransformClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a transform.
@@ -354,45 +372,46 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        if dest is None:
+        if dest is None and body is None:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if source is None:
+        if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
         __path = f"/_transform/{_quote(transform_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if dest is not None:
-            __body["dest"] = dest
-        if source is not None:
-            __body["source"] = source
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_validation is not None:
             __query["defer_validation"] = defer_validation
-        if description is not None:
-            __body["description"] = description
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if latest is not None:
-            __body["latest"] = latest
-        if meta is not None:
-            __body["_meta"] = meta
-        if pivot is not None:
-            __body["pivot"] = pivot
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if dest is not None:
+                __body["dest"] = dest
+            if source is not None:
+                __body["source"] = source
+            if description is not None:
+                __body["description"] = description
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if latest is not None:
+                __body["latest"] = latest
+            if meta is not None:
+                __body["_meta"] = meta
+            if pivot is not None:
+                __body["pivot"] = pivot
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if sync is not None:
+                __body["sync"] = sync
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -404,9 +423,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -448,9 +465,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -490,9 +505,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -538,9 +551,7 @@ class TransformClient(NamespacedClient):
         transform_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -603,7 +614,16 @@ class TransformClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "description",
+            "dest",
+            "frequency",
+            "meta",
+            "retention_policy",
+            "settings",
+            "source",
+            "sync",
+        ),
         parameter_aliases={"_meta": "meta"},
     )
     async def update_transform(
@@ -614,9 +634,7 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -626,6 +644,7 @@ class TransformClient(NamespacedClient):
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a transform.
@@ -655,35 +674,36 @@ class TransformClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_update"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_validation is not None:
             __query["defer_validation"] = defer_validation
-        if description is not None:
-            __body["description"] = description
-        if dest is not None:
-            __body["dest"] = dest
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if meta is not None:
-            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if source is not None:
-            __body["source"] = source
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if dest is not None:
+                __body["dest"] = dest
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if meta is not None:
+                __body["_meta"] = meta
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if source is not None:
+                __body["source"] = source
+            if sync is not None:
+                __body["sync"] = sync
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -695,9 +715,7 @@ class TransformClient(NamespacedClient):
         *,
         dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,

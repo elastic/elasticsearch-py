@@ -1,7 +1,0 @@
-// api-conventions.asciidoc:571
-
-[source, python]
-----
-resp = client.search(index="twitter", size="surprise_me")
-print(resp)
-----

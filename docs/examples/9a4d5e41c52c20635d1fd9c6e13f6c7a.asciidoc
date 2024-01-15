@@ -1,4 +1,4 @@
-// docs/reindex.asciidoc:764
+// docs/reindex.asciidoc:827
 
 [source, python]
 ----

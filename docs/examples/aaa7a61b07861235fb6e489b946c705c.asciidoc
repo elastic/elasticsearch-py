@@ -1,0 +1,13 @@
+// docs/index_.asciidoc:487
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    version="2",
+    version_type="external",
+    body={"user": {"id": "elkbee"}},
+)
+print(resp)
+----

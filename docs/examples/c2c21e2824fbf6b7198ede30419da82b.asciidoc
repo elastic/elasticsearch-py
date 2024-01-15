@@ -1,7 +1,0 @@
-// search/request/scroll.asciidoc:186
-
-[source, python]
-----
-resp = client.clear_scroll(scroll_id="_all")
-print(resp)
-----

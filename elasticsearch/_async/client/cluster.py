@@ -25,16 +25,14 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 class ClusterClient(NamespacedClient):
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("current_node", "index", "primary", "shard"),
     )
     async def allocation_explain(
         self,
         *,
         current_node: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_disk_info: t.Optional[bool] = None,
         include_yes_decisions: t.Optional[bool] = None,
@@ -42,6 +40,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         primary: t.Optional[bool] = None,
         shard: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Provides explanations for shard allocations in the cluster.
@@ -61,10 +60,8 @@ class ClusterClient(NamespacedClient):
             for.
         """
         __path = "/_cluster/allocation/explain"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if current_node is not None:
-            __body["current_node"] = current_node
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -75,14 +72,17 @@ class ClusterClient(NamespacedClient):
             __query["include_disk_info"] = include_disk_info
         if include_yes_decisions is not None:
             __query["include_yes_decisions"] = include_yes_decisions
-        if index is not None:
-            __body["index"] = index
         if pretty is not None:
             __query["pretty"] = pretty
-        if primary is not None:
-            __body["primary"] = primary
-        if shard is not None:
-            __body["shard"] = shard
+        if not __body:
+            if current_node is not None:
+                __body["current_node"] = current_node
+            if index is not None:
+                __body["index"] = index
+            if primary is not None:
+                __body["primary"] = primary
+            if shard is not None:
+                __body["shard"] = shard
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -96,11 +96,9 @@ class ClusterClient(NamespacedClient):
     async def delete_component_template(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -115,8 +113,11 @@ class ClusterClient(NamespacedClient):
 
         :param name: Comma-separated list or wildcard expression of component template
             names used to limit the request.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -144,9 +145,7 @@ class ClusterClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_removal: t.Optional[bool] = None,
@@ -184,11 +183,9 @@ class ClusterClient(NamespacedClient):
     async def exists_component_template(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -237,9 +234,7 @@ class ClusterClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
@@ -254,13 +249,16 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
-        :param name: The comma separated names of the component templates
-        :param flat_settings:
+        :param name: Comma-separated list of component template names used to limit the
+            request. Wildcard (`*`) expressions are supported.
+        :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
             template (default: false)
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param local: If `true`, the request retrieves information from the local node
+            only. If `false`, information is retrieved from the master node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_component_template/{_quote(name)}"
@@ -293,9 +291,7 @@ class ClusterClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
@@ -310,10 +306,14 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-get-settings.html>`_
 
-        :param flat_settings: Return settings in flat format (default: false)
-        :param include_defaults: Whether to return all default clusters setting.
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param flat_settings: If `true`, returns settings in flat format.
+        :param include_defaults: If `true`, returns default cluster settings from the
+            local node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path = "/_cluster/settings"
         __query: t.Dict[str, t.Any] = {}
@@ -342,29 +342,17 @@ class ClusterClient(NamespacedClient):
     async def health(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         level: t.Optional[
             t.Union["t.Literal['cluster', 'indices', 'shards']", str]
@@ -471,13 +459,55 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    async def info(
+        self,
+        *,
+        target: t.Union[
+            t.Sequence[
+                t.Union[
+                    "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']", str
+                ]
+            ],
+            t.Union[
+                "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']", str
+            ],
+        ],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns different information about the cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-info.html>`_
+
+        :param target: Limits the information returned to the specific target. Supports
+            a comma-separated list, such as http,ingest.
+        """
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target'")
+        __path = f"/_info/{_quote(target)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     async def pending_tasks(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -491,9 +521,11 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-pending.html>`_
 
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+        :param local: If `true`, the request retrieves information from the local node
+            only. If `false`, information is retrieved from the master node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         __path = "/_cluster/pending_tasks"
         __query: t.Dict[str, t.Any] = {}
@@ -519,16 +551,10 @@ class ClusterClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        node_ids: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        node_names: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        node_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -569,20 +595,18 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("template", "allow_auto_create", "meta", "version"),
         parameter_aliases={"_meta": "meta"},
     )
     async def put_component_template(
         self,
         *,
         name: str,
-        template: t.Mapping[str, t.Any],
+        template: t.Optional[t.Mapping[str, t.Any]] = None,
         allow_auto_create: t.Optional[bool] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -590,13 +614,22 @@ class ClusterClient(NamespacedClient):
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         version: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a component template
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
-        :param name: The name of the template
+        :param name: Name of the component template to create. Elasticsearch includes
+            the following built-in component templates: `logs-mappings`; 'logs-settings`;
+            `metrics-mappings`; `metrics-settings`;`synthetics-mapping`; `synthetics-settings`.
+            Elastic Agent uses these templates to configure backing indices for its data
+            streams. If you use Elastic Agent and want to overwrite one of these templates,
+            set the `version` for your replacement template higher than the current version.
+            If you don’t use Elastic Agent and want to disable all built-in component
+            and index templates, set `stack.templates.enabled` to `false` using the cluster
+            update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
         :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
@@ -604,25 +637,26 @@ class ClusterClient(NamespacedClient):
             created using that template even if auto-creation of indices is disabled
             via `actions.auto_create_index`. If set to `false` then data streams matching
             the template must always be explicitly created.
-        :param create: Whether the index template should only be added if new or can
-            also replace an existing one
-        :param master_timeout: Specify timeout for connection to master
+        :param create: If `true`, this request cannot replace or update existing component
+            templates.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param meta: Optional user metadata about the component template. May have any
-            contents. This map is not automatically generated by Elasticsearch.
+            contents. This map is not automatically generated by Elasticsearch. This
+            information is stored in the cluster state, so keeping it short is preferable.
+            To unset `_meta`, replace the template without specifying this information.
         :param version: Version number used to manage component templates externally.
             This number isn't automatically generated or incremented by Elasticsearch.
+            To unset a version, replace the template without specifying a version.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if template is None:
+        if template is None and body is None:
             raise ValueError("Empty value passed for parameter 'template'")
         __path = f"/_component_template/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if template is not None:
-            __body["template"] = template
-        if allow_auto_create is not None:
-            __body["allow_auto_create"] = allow_auto_create
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -633,27 +667,30 @@ class ClusterClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if meta is not None:
-            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if template is not None:
+                __body["template"] = template
+            if allow_auto_create is not None:
+                __body["allow_auto_create"] = allow_auto_create
+            if meta is not None:
+                __body["_meta"] = meta
+            if version is not None:
+                __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("persistent", "transient"),
     )
     async def put_settings(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -663,6 +700,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         transient: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the cluster settings.
@@ -677,7 +715,7 @@ class ClusterClient(NamespacedClient):
         """
         __path = "/_cluster/settings"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -688,14 +726,15 @@ class ClusterClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if persistent is not None:
-            __body["persistent"] = persistent
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if transient is not None:
-            __body["transient"] = transient
+        if not __body:
+            if persistent is not None:
+                __body["persistent"] = persistent
+            if transient is not None:
+                __body["transient"] = transient
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -706,9 +745,7 @@ class ClusterClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -733,30 +770,25 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("commands",),
     )
     async def reroute(
         self,
         *,
-        commands: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        commands: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         explain: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
         retry_failed: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to manually change the allocation of individual shards in the cluster.
@@ -778,10 +810,8 @@ class ClusterClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         """
         __path = "/_cluster/reroute"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if commands is not None:
-            __body["commands"] = commands
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if dry_run is not None:
             __query["dry_run"] = dry_run
         if error_trace is not None:
@@ -803,6 +833,9 @@ class ClusterClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         if not __body:
+            if commands is not None:
+                __body["commands"] = commands
+        if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
@@ -815,33 +848,19 @@ class ClusterClient(NamespacedClient):
     async def state(
         self,
         *,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -921,13 +940,9 @@ class ClusterClient(NamespacedClient):
     async def stats(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -940,11 +955,11 @@ class ClusterClient(NamespacedClient):
 
         :param node_id: Comma-separated list of node filters used to limit returned information.
             Defaults to all nodes in the cluster.
-        :param flat_settings: Return settings in flat format (default: false)
+        :param flat_settings: If `true`, returns settings in flat format.
         :param timeout: Period to wait for each node to respond. If a node does not respond
             before its timeout expires, the response does not include its stats. However,
-            timed out nodes are included in the response’s _nodes.failed property. Defaults
-            to no timeout.
+            timed out nodes are included in the response’s `_nodes.failed` property.
+            Defaults to no timeout.
         """
         if node_id not in SKIP_IN_PATH:
             __path = f"/_cluster/stats/nodes/{_quote(node_id)}"

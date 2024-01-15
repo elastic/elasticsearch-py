@@ -1,7 +1,7 @@
-// setup/install/check-running.asciidoc:7
+// tab-widgets/api-call.asciidoc:13
 
 [source, python]
 ----
-resp = client.info()
+resp = es.info()
 print(resp)
 ----

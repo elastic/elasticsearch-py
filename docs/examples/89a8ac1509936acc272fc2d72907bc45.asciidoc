@@ -1,7 +1,0 @@
-// docs/get.asciidoc:269
-
-[source, python]
-----
-resp = client.get_source(index="twitter", id="1")
-print(resp)
-----

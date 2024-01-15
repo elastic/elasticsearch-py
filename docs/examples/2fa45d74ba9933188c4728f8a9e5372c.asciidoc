@@ -1,0 +1,23 @@
+// docs/index_.asciidoc:227
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={
+        "persistent": {
+            "action.auto_create_index": "my-index-000001,index10,-index1*,+ind*"
+        }
+    },
+)
+print(resp)
+
+resp = client.cluster.put_settings(
+    body={"persistent": {"action.auto_create_index": "false"}},
+)
+print(resp)
+
+resp = client.cluster.put_settings(
+    body={"persistent": {"action.auto_create_index": "true"}},
+)
+print(resp)
+----

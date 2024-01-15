@@ -29,11 +29,9 @@ class FleetClient(NamespacedClient):
         self,
         *,
         index: str,
-        checkpoints: t.Optional[t.Union[t.List[int], t.Tuple[int, ...]]] = None,
+        checkpoints: t.Optional[t.Sequence[int]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -89,9 +87,8 @@ class FleetClient(NamespacedClient):
     async def msearch(
         self,
         *,
-        searches: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        searches: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[str] = None,
         allow_no_indices: t.Optional[bool] = None,
         allow_partial_search_results: t.Optional[bool] = None,
@@ -99,25 +96,13 @@ class FleetClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -130,9 +115,7 @@ class FleetClient(NamespacedClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         typed_keys: t.Optional[bool] = None,
-        wait_for_checkpoints: t.Optional[
-            t.Union[t.List[int], t.Tuple[int, ...]]
-        ] = None,
+        wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Multi Search API where the search will only be executed after specified checkpoints
@@ -181,8 +164,12 @@ class FleetClient(NamespacedClient):
             has become visible for search. Defaults to an empty list which will cause
             Elasticsearch to immediately execute the search.
         """
-        if searches is None:
-            raise ValueError("Empty value passed for parameter 'searches'")
+        if searches is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'searches' and 'body', one of them should be set."
+            )
+        elif searches is not None and body is not None:
+            raise ValueError("Cannot set both 'searches' and 'body'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_fleet/_fleet_msearch"
         else:
@@ -222,7 +209,7 @@ class FleetClient(NamespacedClient):
             __query["typed_keys"] = typed_keys
         if wait_for_checkpoints is not None:
             __query["wait_for_checkpoints"] = wait_for_checkpoints
-        __body = searches
+        __body = searches if searches is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
@@ -232,7 +219,40 @@ class FleetClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "aggs",
+            "collapse",
+            "docvalue_fields",
+            "explain",
+            "ext",
+            "fields",
+            "from_",
+            "highlight",
+            "indices_boost",
+            "min_score",
+            "pit",
+            "post_filter",
+            "profile",
+            "query",
+            "rescore",
+            "runtime_mappings",
+            "script_fields",
+            "search_after",
+            "seq_no_primary_term",
+            "size",
+            "slice",
+            "sort",
+            "source",
+            "stats",
+            "stored_fields",
+            "suggest",
+            "terminate_after",
+            "timeout",
+            "track_scores",
+            "track_total_hits",
+            "version",
+        ),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -255,44 +275,26 @@ class FleetClient(NamespacedClient):
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
         default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
-        docvalue_fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
-        fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indices_boost: t.Optional[
-            t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
-        ] = None,
+        indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         min_compatible_shard_node: t.Optional[str] = None,
@@ -307,12 +309,7 @@ class FleetClient(NamespacedClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         request_cache: t.Optional[bool] = None,
         rescore: t.Optional[
-            t.Union[
-                t.Mapping[str, t.Any],
-                t.Union[
-                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-                ],
-            ]
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -320,10 +317,7 @@ class FleetClient(NamespacedClient):
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
@@ -333,24 +327,15 @@ class FleetClient(NamespacedClient):
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
-        source_excludes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        source_includes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        stored_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        stats: t.Optional[t.Sequence[str]] = None,
+        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
@@ -364,9 +349,8 @@ class FleetClient(NamespacedClient):
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
-        wait_for_checkpoints: t.Optional[
-            t.Union[t.List[int], t.Tuple[int, ...]]
-        ] = None,
+        wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Search API where the search will only be executed after specified checkpoints
@@ -476,8 +460,8 @@ class FleetClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_fleet/_fleet_search"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -489,10 +473,6 @@ class FleetClient(NamespacedClient):
         ):
             __query["sort"] = sort
             sort = None
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
-        if aggs is not None:
-            __body["aggs"] = aggs
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if allow_partial_search_results is not None:
@@ -505,100 +485,50 @@ class FleetClient(NamespacedClient):
             __query["batched_reduce_size"] = batched_reduce_size
         if ccs_minimize_roundtrips is not None:
             __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
-        if collapse is not None:
-            __body["collapse"] = collapse
         if default_operator is not None:
             __query["default_operator"] = default_operator
         if df is not None:
             __query["df"] = df
-        if docvalue_fields is not None:
-            __body["docvalue_fields"] = docvalue_fields
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if explain is not None:
-            __body["explain"] = explain
-        if ext is not None:
-            __body["ext"] = ext
-        if fields is not None:
-            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if from_ is not None:
-            __body["from"] = from_
-        if highlight is not None:
-            __body["highlight"] = highlight
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if indices_boost is not None:
-            __body["indices_boost"] = indices_boost
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if min_compatible_shard_node is not None:
             __query["min_compatible_shard_node"] = min_compatible_shard_node
-        if min_score is not None:
-            __body["min_score"] = min_score
-        if pit is not None:
-            __body["pit"] = pit
-        if post_filter is not None:
-            __body["post_filter"] = post_filter
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if profile is not None:
-            __body["profile"] = profile
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
         if request_cache is not None:
             __query["request_cache"] = request_cache
-        if rescore is not None:
-            __body["rescore"] = rescore
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if script_fields is not None:
-            __body["script_fields"] = script_fields
         if scroll is not None:
             __query["scroll"] = scroll
-        if search_after is not None:
-            __body["search_after"] = search_after
         if search_type is not None:
             __query["search_type"] = search_type
-        if seq_no_primary_term is not None:
-            __body["seq_no_primary_term"] = seq_no_primary_term
-        if size is not None:
-            __body["size"] = size
-        if slice is not None:
-            __body["slice"] = slice
-        if sort is not None:
-            __body["sort"] = sort
-        if source is not None:
-            __body["_source"] = source
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
-        if stats is not None:
-            __body["stats"] = stats
-        if stored_fields is not None:
-            __body["stored_fields"] = stored_fields
-        if suggest is not None:
-            __body["suggest"] = suggest
         if suggest_field is not None:
             __query["suggest_field"] = suggest_field
         if suggest_mode is not None:
@@ -607,20 +537,75 @@ class FleetClient(NamespacedClient):
             __query["suggest_size"] = suggest_size
         if suggest_text is not None:
             __query["suggest_text"] = suggest_text
-        if terminate_after is not None:
-            __body["terminate_after"] = terminate_after
-        if timeout is not None:
-            __body["timeout"] = timeout
-        if track_scores is not None:
-            __body["track_scores"] = track_scores
-        if track_total_hits is not None:
-            __body["track_total_hits"] = track_total_hits
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        if version is not None:
-            __body["version"] = version
         if wait_for_checkpoints is not None:
             __query["wait_for_checkpoints"] = wait_for_checkpoints
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if collapse is not None:
+                __body["collapse"] = collapse
+            if docvalue_fields is not None:
+                __body["docvalue_fields"] = docvalue_fields
+            if explain is not None:
+                __body["explain"] = explain
+            if ext is not None:
+                __body["ext"] = ext
+            if fields is not None:
+                __body["fields"] = fields
+            if from_ is not None:
+                __body["from"] = from_
+            if highlight is not None:
+                __body["highlight"] = highlight
+            if indices_boost is not None:
+                __body["indices_boost"] = indices_boost
+            if min_score is not None:
+                __body["min_score"] = min_score
+            if pit is not None:
+                __body["pit"] = pit
+            if post_filter is not None:
+                __body["post_filter"] = post_filter
+            if profile is not None:
+                __body["profile"] = profile
+            if query is not None:
+                __body["query"] = query
+            if rescore is not None:
+                __body["rescore"] = rescore
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if script_fields is not None:
+                __body["script_fields"] = script_fields
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if seq_no_primary_term is not None:
+                __body["seq_no_primary_term"] = seq_no_primary_term
+            if size is not None:
+                __body["size"] = size
+            if slice is not None:
+                __body["slice"] = slice
+            if sort is not None:
+                __body["sort"] = sort
+            if source is not None:
+                __body["_source"] = source
+            if stats is not None:
+                __body["stats"] = stats
+            if stored_fields is not None:
+                __body["stored_fields"] = stored_fields
+            if suggest is not None:
+                __body["suggest"] = suggest
+            if terminate_after is not None:
+                __body["terminate_after"] = terminate_after
+            if timeout is not None:
+                __body["timeout"] = timeout
+            if track_scores is not None:
+                __body["track_scores"] = track_scores
+            if track_total_hits is not None:
+                __body["track_total_hits"] = track_total_hits
+            if version is not None:
+                __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

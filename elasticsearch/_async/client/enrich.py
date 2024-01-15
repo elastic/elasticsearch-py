@@ -30,9 +30,7 @@ class EnrichClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -41,7 +39,7 @@ class EnrichClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
+        :param name: Enrich policy to delete.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -66,9 +64,7 @@ class EnrichClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
@@ -78,9 +74,9 @@ class EnrichClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
-        :param wait_for_completion: Should the request should block until the execution
-            is complete.
+        :param name: Enrich policy to execute.
+        :param wait_for_completion: If `true`, the request blocks other enrich policy
+            execution requests until complete.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -105,11 +101,9 @@ class EnrichClient(NamespacedClient):
     async def get_policy(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -118,7 +112,8 @@ class EnrichClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
 
-        :param name: A comma-separated list of enrich policy names
+        :param name: Comma-separated list of enrich policy names used to limit the request.
+            To return information for all enrich policies, omit this parameter.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_enrich/policy/{_quote(name)}"
@@ -139,51 +134,53 @@ class EnrichClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("geo_match", "match", "range"),
     )
     async def put_policy(
         self,
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         geo_match: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         match: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         range: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new enrich policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
-        :param geo_match:
-        :param match:
-        :param range:
+        :param name: Name of the enrich policy to create or update.
+        :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
+            query.
+        :param match: Matches enrich data to incoming documents based on a `term` query.
+        :param range: Matches a number, date, or IP address in incoming documents to
+            a range in the enrich index based on a `term` query.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if geo_match is not None:
-            __body["geo_match"] = geo_match
         if human is not None:
             __query["human"] = human
-        if match is not None:
-            __body["match"] = match
         if pretty is not None:
             __query["pretty"] = pretty
-        if range is not None:
-            __body["range"] = range
+        if not __body:
+            if geo_match is not None:
+                __body["geo_match"] = geo_match
+            if match is not None:
+                __body["match"] = match
+            if range is not None:
+                __body["range"] = range
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -194,9 +191,7 @@ class EnrichClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

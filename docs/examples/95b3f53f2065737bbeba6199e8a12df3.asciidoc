@@ -1,0 +1,11 @@
+// query-dsl/terms-query.asciidoc:152
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"color": ["blue", "green"]},
+)
+print(resp)
+----

@@ -5,6 +5,11 @@ Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
+`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
+or
+`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
+for a free trial of Elastic Cloud.
+
 
 Installation
 ------------
@@ -33,8 +38,8 @@ Language clients are forward compatible; meaning that clients support communicat
 with greater or equal minor versions of Elasticsearch. Elasticsearch language clients
 are only backwards compatible with default distributions and without guarantees made.
 
-If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elasticsearch6``.
+If you need multiple versions installed at the same time, versions are
+also released, such as ``elasticsearch7`` and ``elasticsearch8``.
 
 
 Example Usage
@@ -44,25 +49,29 @@ Example Usage
 
     from datetime import datetime
     from elasticsearch import Elasticsearch
-    es = Elasticsearch()
+
+    es = Elasticsearch("http://localhost:9200")
 
     doc = {
-        'author': 'kimchy',
-        'text': 'Elasticsearch: cool. bonsai cool.',
-        'timestamp': datetime.now(),
+        "author": "kimchy",
+        "text": "Elasticsearch: cool. bonsai cool.",
+        "timestamp": datetime.now(),
     }
     resp = es.index(index="test-index", id=1, document=doc)
-    print(resp['result'])
+    print(resp["result"])
 
     resp = es.get(index="test-index", id=1)
-    print(resp['_source'])
+    print(resp["_source"])
 
     es.indices.refresh(index="test-index")
 
     resp = es.search(index="test-index", query={"match_all": {}})
-    print("Got %d Hits:" % resp['hits']['total']['value'])
-    for hit in resp['hits']['hits']:
-        print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+    print("Got {} hits:".format(resp["hits"]["total"]["value"]))
+    for hit in resp["hits"]["hits"]:
+        print("{timestamp} {author} {text}".format(**hit["_source"]))
+
+See more examples in the :ref:`quickstart` page.
+
 
 
 Features
@@ -104,6 +113,8 @@ Contents
 .. toctree::
    :maxdepth: 3
 
+   quickstart
+   interactive
    api
    exceptions
    async

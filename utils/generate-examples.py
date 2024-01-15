@@ -19,6 +19,7 @@
 
 import collections
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -109,7 +110,7 @@ ParsedSource = collections.namedtuple("ParsedSource", ["api", "params", "body"])
 def blacken(filename):
     runner = CliRunner()
     result = runner.invoke(
-        black.main, [str(filename), "--line-length=75", "--target-version=py27"]
+        black.main, [str(filename), "--line-length=75", "--target-version=py37"]
     )
     assert result.exit_code == 0, result.output
 
@@ -154,16 +155,16 @@ def main():
                 )
             )
 
-        tmp_path = Path(tempfile.mktemp())
-        with tmp_path.open(mode="w") as f:
-            f.write(t.render(parsed_sources=parsed_sources))
+        with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_file:
+            tmp_file.write(t.render(parsed_sources=parsed_sources))
 
-        blacken(tmp_path)
+        blacken(tmp_file.name)
 
-        with tmp_path.open(mode="r") as f:
+        with open(tmp_file.name) as f:
             data = f.read()
-        data = data.rstrip().replace(",)", ")")
-        tmp_path.unlink()
+            data = data.rstrip().replace(",)", ")")
+
+        os.unlink(tmp_file.name)
 
         with (asciidocs_dir / f"{exm['digest']}.asciidoc").open(mode="w") as f:
             f.truncate()

@@ -30,9 +30,7 @@ class ShutdownClient(NamespacedClient):
         *,
         node_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
@@ -80,13 +78,9 @@ class ShutdownClient(NamespacedClient):
     async def get_node(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
@@ -132,19 +126,19 @@ class ShutdownClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("reason", "type", "allocation_delay", "target_node_name"),
     )
     async def put_node(
         self,
         *,
         node_id: str,
-        reason: str,
-        type: t.Union["t.Literal['remove', 'replace', 'restart']", str],
+        reason: t.Optional[str] = None,
+        type: t.Optional[
+            t.Union["t.Literal['remove', 'replace', 'restart']", str]
+        ] = None,
         allocation_delay: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
@@ -154,6 +148,7 @@ class ShutdownClient(NamespacedClient):
         timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct
@@ -196,19 +191,13 @@ class ShutdownClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        if reason is None:
+        if reason is None and body is None:
             raise ValueError("Empty value passed for parameter 'reason'")
-        if type is None:
+        if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
         __path = f"/_nodes/{_quote(node_id)}/shutdown"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if reason is not None:
-            __body["reason"] = reason
-        if type is not None:
-            __body["type"] = type
-        if allocation_delay is not None:
-            __body["allocation_delay"] = allocation_delay
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -219,10 +208,17 @@ class ShutdownClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if target_node_name is not None:
-            __body["target_node_name"] = target_node_name
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if reason is not None:
+                __body["reason"] = reason
+            if type is not None:
+                __body["type"] = type
+            if allocation_delay is not None:
+                __body["allocation_delay"] = allocation_delay
+            if target_node_name is not None:
+                __body["target_node_name"] = target_node_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body

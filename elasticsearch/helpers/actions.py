@@ -262,7 +262,7 @@ def _process_bulk_chunk_success(
         if not ok and raise_on_error and status_code not in ignore_status:
             # include original document source
             if len(data) > 1:
-                item["data"] = data[1]  # type: ignore[misc]
+                item["data"] = data[1]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -299,7 +299,7 @@ def _process_bulk_chunk_error(
         op_type, action = data[0].copy().popitem()
         info = {"error": err_message, "status": error.status_code, "exception": error}
         if op_type != "delete" and len(data) > 1:
-            info["data"] = data[1]  # type: ignore[misc]
+            info["data"] = data[1]
         info.update(action)
         exc_errors.append({op_type: info})
 
@@ -672,7 +672,14 @@ def scan(
         # Grab options that should be propagated to every
         # API call within this helper instead of just 'search()'
         transport_kwargs = {}
-        for key in ("headers", "api_key", "http_auth", "basic_auth", "bearer_auth"):
+        for key in (
+            "headers",
+            "api_key",
+            "http_auth",
+            "basic_auth",
+            "bearer_auth",
+            "opaque_id",
+        ):
             try:
                 value = kw.pop(key)
                 if key == "http_auth":
@@ -707,7 +714,7 @@ def scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
+        resp = client.search(body=query, **search_kwargs)
 
     scroll_id = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)

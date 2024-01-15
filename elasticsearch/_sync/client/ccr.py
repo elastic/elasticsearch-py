@@ -30,9 +30,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -61,16 +59,27 @@ class CcrClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "leader_index",
+            "max_outstanding_read_requests",
+            "max_outstanding_write_requests",
+            "max_read_request_operation_count",
+            "max_read_request_size",
+            "max_retry_delay",
+            "max_write_buffer_count",
+            "max_write_buffer_size",
+            "max_write_request_operation_count",
+            "max_write_request_size",
+            "read_poll_timeout",
+            "remote_cluster",
+        ),
     )
     def follow(
         self,
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         leader_index: t.Optional[str] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
@@ -92,6 +101,7 @@ class CcrClient(NamespacedClient):
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new follower index configured to follow the referenced leader index.
@@ -120,45 +130,48 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/follow"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if leader_index is not None:
-            __body["leader_index"] = leader_index
-        if max_outstanding_read_requests is not None:
-            __body["max_outstanding_read_requests"] = max_outstanding_read_requests
-        if max_outstanding_write_requests is not None:
-            __body["max_outstanding_write_requests"] = max_outstanding_write_requests
-        if max_read_request_operation_count is not None:
-            __body[
-                "max_read_request_operation_count"
-            ] = max_read_request_operation_count
-        if max_read_request_size is not None:
-            __body["max_read_request_size"] = max_read_request_size
-        if max_retry_delay is not None:
-            __body["max_retry_delay"] = max_retry_delay
-        if max_write_buffer_count is not None:
-            __body["max_write_buffer_count"] = max_write_buffer_count
-        if max_write_buffer_size is not None:
-            __body["max_write_buffer_size"] = max_write_buffer_size
-        if max_write_request_operation_count is not None:
-            __body[
-                "max_write_request_operation_count"
-            ] = max_write_request_operation_count
-        if max_write_request_size is not None:
-            __body["max_write_request_size"] = max_write_request_size
         if pretty is not None:
             __query["pretty"] = pretty
-        if read_poll_timeout is not None:
-            __body["read_poll_timeout"] = read_poll_timeout
-        if remote_cluster is not None:
-            __body["remote_cluster"] = remote_cluster
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            if leader_index is not None:
+                __body["leader_index"] = leader_index
+            if max_outstanding_read_requests is not None:
+                __body["max_outstanding_read_requests"] = max_outstanding_read_requests
+            if max_outstanding_write_requests is not None:
+                __body[
+                    "max_outstanding_write_requests"
+                ] = max_outstanding_write_requests
+            if max_read_request_operation_count is not None:
+                __body[
+                    "max_read_request_operation_count"
+                ] = max_read_request_operation_count
+            if max_read_request_size is not None:
+                __body["max_read_request_size"] = max_read_request_size
+            if max_retry_delay is not None:
+                __body["max_retry_delay"] = max_retry_delay
+            if max_write_buffer_count is not None:
+                __body["max_write_buffer_count"] = max_write_buffer_count
+            if max_write_buffer_size is not None:
+                __body["max_write_buffer_size"] = max_write_buffer_size
+            if max_write_request_operation_count is not None:
+                __body[
+                    "max_write_request_operation_count"
+                ] = max_write_request_operation_count
+            if max_write_request_size is not None:
+                __body["max_write_request_size"] = max_write_request_size
+            if read_poll_timeout is not None:
+                __body["read_poll_timeout"] = read_poll_timeout
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -168,11 +181,9 @@ class CcrClient(NamespacedClient):
     def follow_info(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -206,11 +217,9 @@ class CcrClient(NamespacedClient):
     def follow_stats(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -241,22 +250,26 @@ class CcrClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "follower_cluster",
+            "follower_index",
+            "follower_index_uuid",
+            "leader_remote_cluster",
+        ),
     )
     def forget_follower(
         self,
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         follower_cluster: t.Optional[str] = None,
         follower_index: t.Optional[str] = None,
         follower_index_uuid: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         leader_remote_cluster: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Removes the follower retention leases from the leader.
@@ -274,23 +287,24 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/forget_follower"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if follower_cluster is not None:
-            __body["follower_cluster"] = follower_cluster
-        if follower_index is not None:
-            __body["follower_index"] = follower_index
-        if follower_index_uuid is not None:
-            __body["follower_index_uuid"] = follower_index_uuid
         if human is not None:
             __query["human"] = human
-        if leader_remote_cluster is not None:
-            __body["leader_remote_cluster"] = leader_remote_cluster
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if follower_cluster is not None:
+                __body["follower_cluster"] = follower_cluster
+            if follower_index is not None:
+                __body["follower_index"] = follower_index
+            if follower_index_uuid is not None:
+                __body["follower_index_uuid"] = follower_index_uuid
+            if leader_remote_cluster is not None:
+                __body["leader_remote_cluster"] = leader_remote_cluster
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -302,9 +316,7 @@ class CcrClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -341,9 +353,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -378,9 +388,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -411,25 +419,35 @@ class CcrClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "remote_cluster",
+            "follow_index_pattern",
+            "leader_index_exclusion_patterns",
+            "leader_index_patterns",
+            "max_outstanding_read_requests",
+            "max_outstanding_write_requests",
+            "max_read_request_operation_count",
+            "max_read_request_size",
+            "max_retry_delay",
+            "max_write_buffer_count",
+            "max_write_buffer_size",
+            "max_write_request_operation_count",
+            "max_write_request_size",
+            "read_poll_timeout",
+            "settings",
+        ),
     )
     def put_auto_follow_pattern(
         self,
         *,
         name: str,
-        remote_cluster: str,
+        remote_cluster: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         follow_index_pattern: t.Optional[str] = None,
         human: t.Optional[bool] = None,
-        leader_index_exclusion_patterns: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
-        leader_index_patterns: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        leader_index_exclusion_patterns: t.Optional[t.Sequence[str]] = None,
+        leader_index_patterns: t.Optional[t.Sequence[str]] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
@@ -446,6 +464,7 @@ class CcrClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new named collection of auto-follow patterns against a specified remote
@@ -499,53 +518,58 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if remote_cluster is None:
+        if remote_cluster is None and body is None:
             raise ValueError("Empty value passed for parameter 'remote_cluster'")
         __path = f"/_ccr/auto_follow/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if remote_cluster is not None:
-            __body["remote_cluster"] = remote_cluster
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if follow_index_pattern is not None:
-            __body["follow_index_pattern"] = follow_index_pattern
         if human is not None:
             __query["human"] = human
-        if leader_index_exclusion_patterns is not None:
-            __body["leader_index_exclusion_patterns"] = leader_index_exclusion_patterns
-        if leader_index_patterns is not None:
-            __body["leader_index_patterns"] = leader_index_patterns
-        if max_outstanding_read_requests is not None:
-            __body["max_outstanding_read_requests"] = max_outstanding_read_requests
-        if max_outstanding_write_requests is not None:
-            __body["max_outstanding_write_requests"] = max_outstanding_write_requests
-        if max_read_request_operation_count is not None:
-            __body[
-                "max_read_request_operation_count"
-            ] = max_read_request_operation_count
-        if max_read_request_size is not None:
-            __body["max_read_request_size"] = max_read_request_size
-        if max_retry_delay is not None:
-            __body["max_retry_delay"] = max_retry_delay
-        if max_write_buffer_count is not None:
-            __body["max_write_buffer_count"] = max_write_buffer_count
-        if max_write_buffer_size is not None:
-            __body["max_write_buffer_size"] = max_write_buffer_size
-        if max_write_request_operation_count is not None:
-            __body[
-                "max_write_request_operation_count"
-            ] = max_write_request_operation_count
-        if max_write_request_size is not None:
-            __body["max_write_request_size"] = max_write_request_size
         if pretty is not None:
             __query["pretty"] = pretty
-        if read_poll_timeout is not None:
-            __body["read_poll_timeout"] = read_poll_timeout
-        if settings is not None:
-            __body["settings"] = settings
+        if not __body:
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
+            if follow_index_pattern is not None:
+                __body["follow_index_pattern"] = follow_index_pattern
+            if leader_index_exclusion_patterns is not None:
+                __body[
+                    "leader_index_exclusion_patterns"
+                ] = leader_index_exclusion_patterns
+            if leader_index_patterns is not None:
+                __body["leader_index_patterns"] = leader_index_patterns
+            if max_outstanding_read_requests is not None:
+                __body["max_outstanding_read_requests"] = max_outstanding_read_requests
+            if max_outstanding_write_requests is not None:
+                __body[
+                    "max_outstanding_write_requests"
+                ] = max_outstanding_write_requests
+            if max_read_request_operation_count is not None:
+                __body[
+                    "max_read_request_operation_count"
+                ] = max_read_request_operation_count
+            if max_read_request_size is not None:
+                __body["max_read_request_size"] = max_read_request_size
+            if max_retry_delay is not None:
+                __body["max_retry_delay"] = max_retry_delay
+            if max_write_buffer_count is not None:
+                __body["max_write_buffer_count"] = max_write_buffer_count
+            if max_write_buffer_size is not None:
+                __body["max_write_buffer_size"] = max_write_buffer_size
+            if max_write_request_operation_count is not None:
+                __body[
+                    "max_write_request_operation_count"
+                ] = max_write_request_operation_count
+            if max_write_request_size is not None:
+                __body["max_write_request_size"] = max_write_request_size
+            if read_poll_timeout is not None:
+                __body["read_poll_timeout"] = read_poll_timeout
+            if settings is not None:
+                __body["settings"] = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -557,9 +581,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -589,16 +611,25 @@ class CcrClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "max_outstanding_read_requests",
+            "max_outstanding_write_requests",
+            "max_read_request_operation_count",
+            "max_read_request_size",
+            "max_retry_delay",
+            "max_write_buffer_count",
+            "max_write_buffer_size",
+            "max_write_request_operation_count",
+            "max_write_request_size",
+            "read_poll_timeout",
+        ),
     )
     def resume_follow(
         self,
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
@@ -615,6 +646,7 @@ class CcrClient(NamespacedClient):
         read_poll_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Resumes a follower index that has been paused
@@ -637,39 +669,42 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/resume_follow"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_outstanding_read_requests is not None:
-            __body["max_outstanding_read_requests"] = max_outstanding_read_requests
-        if max_outstanding_write_requests is not None:
-            __body["max_outstanding_write_requests"] = max_outstanding_write_requests
-        if max_read_request_operation_count is not None:
-            __body[
-                "max_read_request_operation_count"
-            ] = max_read_request_operation_count
-        if max_read_request_size is not None:
-            __body["max_read_request_size"] = max_read_request_size
-        if max_retry_delay is not None:
-            __body["max_retry_delay"] = max_retry_delay
-        if max_write_buffer_count is not None:
-            __body["max_write_buffer_count"] = max_write_buffer_count
-        if max_write_buffer_size is not None:
-            __body["max_write_buffer_size"] = max_write_buffer_size
-        if max_write_request_operation_count is not None:
-            __body[
-                "max_write_request_operation_count"
-            ] = max_write_request_operation_count
-        if max_write_request_size is not None:
-            __body["max_write_request_size"] = max_write_request_size
         if pretty is not None:
             __query["pretty"] = pretty
-        if read_poll_timeout is not None:
-            __body["read_poll_timeout"] = read_poll_timeout
+        if not __body:
+            if max_outstanding_read_requests is not None:
+                __body["max_outstanding_read_requests"] = max_outstanding_read_requests
+            if max_outstanding_write_requests is not None:
+                __body[
+                    "max_outstanding_write_requests"
+                ] = max_outstanding_write_requests
+            if max_read_request_operation_count is not None:
+                __body[
+                    "max_read_request_operation_count"
+                ] = max_read_request_operation_count
+            if max_read_request_size is not None:
+                __body["max_read_request_size"] = max_read_request_size
+            if max_retry_delay is not None:
+                __body["max_retry_delay"] = max_retry_delay
+            if max_write_buffer_count is not None:
+                __body["max_write_buffer_count"] = max_write_buffer_count
+            if max_write_buffer_size is not None:
+                __body["max_write_buffer_size"] = max_write_buffer_size
+            if max_write_request_operation_count is not None:
+                __body[
+                    "max_write_request_operation_count"
+                ] = max_write_request_operation_count
+            if max_write_request_size is not None:
+                __body["max_write_request_size"] = max_write_request_size
+            if read_poll_timeout is not None:
+                __body["read_poll_timeout"] = read_poll_timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -684,9 +719,7 @@ class CcrClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -716,9 +749,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

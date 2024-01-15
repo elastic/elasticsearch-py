@@ -30,9 +30,7 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -71,7 +69,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("indices",),
     )
     def clone(
         self,
@@ -79,17 +77,16 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         target_snapshot: str,
-        indices: str,
+        indices: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Clones indices from one snapshot into another snapshot in the same repository.
@@ -109,13 +106,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         if target_snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target_snapshot'")
-        if indices is None:
+        if indices is None and body is None:
             raise ValueError("Empty value passed for parameter 'indices'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_clone/{_quote(target_snapshot)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if indices is not None:
-            __body["indices"] = indices
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -128,13 +123,23 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if indices is not None:
+                __body["indices"] = indices
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "feature_states",
+            "ignore_unavailable",
+            "include_global_state",
+            "indices",
+            "metadata",
+            "partial",
+        ),
     )
     def create(
         self,
@@ -142,16 +147,12 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -159,6 +160,7 @@ class SnapshotClient(NamespacedClient):
         partial: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a snapshot in a repository.
@@ -202,31 +204,32 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if feature_states is not None:
-            __body["feature_states"] = feature_states
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ignore_unavailable is not None:
-            __body["ignore_unavailable"] = ignore_unavailable
-        if include_global_state is not None:
-            __body["include_global_state"] = include_global_state
-        if indices is not None:
-            __body["indices"] = indices
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if metadata is not None:
-            __body["metadata"] = metadata
-        if partial is not None:
-            __body["partial"] = partial
         if pretty is not None:
             __query["pretty"] = pretty
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if feature_states is not None:
+                __body["feature_states"] = feature_states
+            if ignore_unavailable is not None:
+                __body["ignore_unavailable"] = ignore_unavailable
+            if include_global_state is not None:
+                __body["include_global_state"] = include_global_state
+            if indices is not None:
+                __body["indices"] = indices
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if partial is not None:
+                __body["partial"] = partial
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -237,18 +240,16 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("settings", "type", "repository"),
     )
     def create_repository(
         self,
         *,
         name: str,
-        settings: t.Mapping[str, t.Any],
-        type: str,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        type: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -257,6 +258,7 @@ class SnapshotClient(NamespacedClient):
         repository: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         verify: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a repository.
@@ -273,17 +275,13 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if settings is None:
+        if settings is None and body is None:
             raise ValueError("Empty value passed for parameter 'settings'")
-        if type is None:
+        if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
         __path = f"/_snapshot/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if settings is not None:
-            __body["settings"] = settings
-        if type is not None:
-            __body["type"] = type
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -294,12 +292,17 @@ class SnapshotClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if repository is not None:
-            __body["repository"] = repository
         if timeout is not None:
             __query["timeout"] = timeout
         if verify is not None:
             __query["verify"] = verify
+        if not __body:
+            if settings is not None:
+                __body["settings"] = settings
+            if type is not None:
+                __body["type"] = type
+            if repository is not None:
+                __body["repository"] = repository
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -312,9 +315,7 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -355,11 +356,9 @@ class SnapshotClient(NamespacedClient):
     def delete_repository(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -403,12 +402,10 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: str,
-        snapshot: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        snapshot: t.Union[str, t.Sequence[str]],
         after: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_sort_value: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -526,11 +523,9 @@ class SnapshotClient(NamespacedClient):
     def get_repository(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -571,7 +566,18 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "feature_states",
+            "ignore_index_settings",
+            "ignore_unavailable",
+            "include_aliases",
+            "include_global_state",
+            "index_settings",
+            "indices",
+            "partial",
+            "rename_pattern",
+            "rename_replacement",
+        ),
     )
     def restore(
         self,
@@ -579,21 +585,15 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        ignore_index_settings: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        ignore_index_settings: t.Optional[t.Sequence[str]] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_aliases: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
         index_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -602,6 +602,7 @@ class SnapshotClient(NamespacedClient):
         rename_pattern: t.Optional[str] = None,
         rename_replacement: t.Optional[str] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Restores a snapshot.
@@ -630,39 +631,40 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_restore"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if feature_states is not None:
-            __body["feature_states"] = feature_states
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ignore_index_settings is not None:
-            __body["ignore_index_settings"] = ignore_index_settings
-        if ignore_unavailable is not None:
-            __body["ignore_unavailable"] = ignore_unavailable
-        if include_aliases is not None:
-            __body["include_aliases"] = include_aliases
-        if include_global_state is not None:
-            __body["include_global_state"] = include_global_state
-        if index_settings is not None:
-            __body["index_settings"] = index_settings
-        if indices is not None:
-            __body["indices"] = indices
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if partial is not None:
-            __body["partial"] = partial
         if pretty is not None:
             __query["pretty"] = pretty
-        if rename_pattern is not None:
-            __body["rename_pattern"] = rename_pattern
-        if rename_replacement is not None:
-            __body["rename_replacement"] = rename_replacement
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if feature_states is not None:
+                __body["feature_states"] = feature_states
+            if ignore_index_settings is not None:
+                __body["ignore_index_settings"] = ignore_index_settings
+            if ignore_unavailable is not None:
+                __body["ignore_unavailable"] = ignore_unavailable
+            if include_aliases is not None:
+                __body["include_aliases"] = include_aliases
+            if include_global_state is not None:
+                __body["include_global_state"] = include_global_state
+            if index_settings is not None:
+                __body["index_settings"] = index_settings
+            if indices is not None:
+                __body["indices"] = indices
+            if partial is not None:
+                __body["partial"] = partial
+            if rename_pattern is not None:
+                __body["rename_pattern"] = rename_pattern
+            if rename_replacement is not None:
+                __body["rename_replacement"] = rename_replacement
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -677,13 +679,9 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: t.Optional[str] = None,
-        snapshot: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        snapshot: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -732,9 +730,7 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]

@@ -1,0 +1,18 @@
+// docs/update.asciidoc:333
+
+[source, python]
+----
+resp = client.update(
+    index="test",
+    id="1",
+    body={
+        "scripted_upsert": True,
+        "script": {
+            "source": "\n      if ( ctx.op == 'create' ) {\n        ctx._source.counter = params.count\n      } else {\n        ctx._source.counter += params.count\n      }\n    ",
+            "params": {"count": 4},
+        },
+        "upsert": {},
+    },
+)
+print(resp)
+----

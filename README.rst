@@ -2,7 +2,6 @@
 
    <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
 
-
 Elasticsearch Python Client
 ===========================
 
@@ -12,7 +11,7 @@ Elasticsearch Python Client
 .. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
    :target: https://anaconda.org/conda-forge/elasticsearch
 
-.. image:: https://pepy.tech/badge/elasticsearch
+.. image:: https://static.pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
 
 .. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main/badge/icon
@@ -41,6 +40,11 @@ Features
 
 Installation
 ------------
+
+`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
+or
+`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
+for a free trial of Elastic Cloud.
 
 Refer to the `Installation section <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_installation>`_ 
 of the getting started documentation.

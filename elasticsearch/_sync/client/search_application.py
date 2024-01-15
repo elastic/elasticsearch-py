@@ -30,16 +30,14 @@ class SearchApplicationClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-search-application.html>`_
 
         :param name: The name of the search application to delete
         """
@@ -66,9 +64,7 @@ class SearchApplicationClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -102,9 +98,7 @@ class SearchApplicationClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -136,11 +130,9 @@ class SearchApplicationClient(NamespacedClient):
     def get_behavioral_analytics(
         self,
         *,
-        name: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        name: t.Optional[t.Sequence[str]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -176,9 +168,7 @@ class SearchApplicationClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -190,9 +180,9 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-search-applications.html>`_
 
-        :param from_: Starting offset (default: 0)
-        :param q: Query in the Lucene query string syntax"
-        :param size: specifies a max number of results to get
+        :param from_: Starting offset.
+        :param q: Query in the Lucene query string syntax.
+        :param size: Specifies a max number of results to get.
         """
         __path = "/_application/search_application"
         __query: t.Dict[str, t.Any] = {}
@@ -222,12 +212,11 @@ class SearchApplicationClient(NamespacedClient):
         self,
         *,
         name: str,
-        search_application: t.Mapping[str, t.Any],
+        search_application: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -236,15 +225,19 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
 
-        :param name: The name of the search application to be created or updated
+        :param name: The name of the search application to be created or updated.
         :param search_application:
-        :param create: If true, requires that a search application with the specified
-            resource_id does not already exist. (default: false)
+        :param create: If `true`, this request cannot replace or update existing Search
+            Applications.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if search_application is None:
-            raise ValueError("Empty value passed for parameter 'search_application'")
+        if search_application is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'search_application' and 'body', one of them should be set."
+            )
+        elif search_application is not None and body is not None:
+            raise ValueError("Cannot set both 'search_application' and 'body'")
         __path = f"/_application/search_application/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if create is not None:
@@ -257,7 +250,7 @@ class SearchApplicationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = search_application
+        __body = search_application if search_application is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -269,9 +262,7 @@ class SearchApplicationClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -280,7 +271,7 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html>`_
 
-        :param name: The name of the analytics collection to be created or updated
+        :param name: The name of the analytics collection to be created or updated.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -300,7 +291,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
     def search(
@@ -308,36 +299,37 @@ class SearchApplicationClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Perform a search against a search application
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
 
-        :param name: The name of the search application to be searched
-        :param params:
+        :param name: The name of the search application to be searched.
+        :param params: Query parameters specific to this request, which will override
+            any defaults specified in the template.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_application/search_application/{_quote(name)}/_search"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if params is not None:
-            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if params is not None:
+                __body["params"] = params
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

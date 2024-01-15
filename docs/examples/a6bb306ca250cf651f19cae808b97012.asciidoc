@@ -1,0 +1,9 @@
+// indices/get-index.asciidoc:11
+
+[source, python]
+----
+resp = client.indices.get(
+    index="my-index-000001",
+)
+print(resp)
+----

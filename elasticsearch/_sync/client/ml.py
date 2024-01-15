@@ -30,9 +30,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -61,7 +59,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("allow_no_match", "force", "timeout"),
     )
     def close_job(
         self,
@@ -69,13 +67,12 @@ class MlClient(NamespacedClient):
         job_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed multiple
@@ -96,22 +93,23 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __body["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __body["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -127,9 +125,7 @@ class MlClient(NamespacedClient):
         *,
         calendar_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -164,9 +160,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         event_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -175,8 +169,9 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
 
-        :param calendar_id: The ID of the calendar to modify
-        :param event_id: The ID of the event to remove from the calendar
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param event_id: Identifier for the scheduled event. You can obtain this identifier
+            by using the get calendar events API.
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
@@ -202,11 +197,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        job_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        job_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -244,9 +237,7 @@ class MlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -289,9 +280,7 @@ class MlClient(NamespacedClient):
         *,
         datafeed_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -328,20 +317,19 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("requests_per_second", "timeout"),
     )
     def delete_expired_data(
         self,
         *,
         job_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes expired and unused machine learning data.
@@ -360,7 +348,7 @@ class MlClient(NamespacedClient):
         else:
             __path = "/_ml/_delete_expired_data"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -369,10 +357,11 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __body["requests_per_second"] = requests_per_second
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if requests_per_second is not None:
+                __body["requests_per_second"] = requests_per_second
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -388,9 +377,7 @@ class MlClient(NamespacedClient):
         *,
         filter_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -426,9 +413,7 @@ class MlClient(NamespacedClient):
         forecast_id: t.Optional[str] = None,
         allow_no_forecasts: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -483,9 +468,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -535,9 +518,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         snapshot_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -574,9 +555,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -617,9 +596,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         model_alias: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -651,20 +628,23 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "analysis_config",
+            "max_bucket_cardinality",
+            "overall_cardinality",
+        ),
     )
     def estimate_model_memory(
         self,
         *,
         analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_bucket_cardinality: t.Optional[t.Mapping[str, int]] = None,
         overall_cardinality: t.Optional[t.Mapping[str, int]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Estimates the model memory
@@ -687,42 +667,42 @@ class MlClient(NamespacedClient):
             or `partition_field_name`.
         """
         __path = "/_ml/anomaly_detectors/_estimate_model_memory"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if analysis_config is not None:
-            __body["analysis_config"] = analysis_config
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_bucket_cardinality is not None:
-            __body["max_bucket_cardinality"] = max_bucket_cardinality
-        if overall_cardinality is not None:
-            __body["overall_cardinality"] = overall_cardinality
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if analysis_config is not None:
+                __body["analysis_config"] = analysis_config
+            if max_bucket_cardinality is not None:
+                __body["max_bucket_cardinality"] = max_bucket_cardinality
+            if overall_cardinality is not None:
+                __body["overall_cardinality"] = overall_cardinality
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("evaluation", "index", "query"),
     )
     def evaluate_data_frame(
         self,
         *,
-        evaluation: t.Mapping[str, t.Any],
-        index: str,
+        evaluation: t.Optional[t.Mapping[str, t.Any]] = None,
+        index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Evaluates the data frame analytics for an annotated index.
@@ -734,17 +714,13 @@ class MlClient(NamespacedClient):
         :param query: A query clause that retrieves a subset of data from the source
             index.
         """
-        if evaluation is None:
+        if evaluation is None and body is None:
             raise ValueError("Empty value passed for parameter 'evaluation'")
-        if index is None:
+        if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = "/_ml/data_frame/_evaluate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if evaluation is not None:
-            __body["evaluation"] = evaluation
-        if index is not None:
-            __body["index"] = index
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -753,15 +729,29 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
+        if not __body:
+            if evaluation is not None:
+                __body["evaluation"] = evaluation
+            if index is not None:
+                __body["index"] = index
+            if query is not None:
+                __body["query"] = query
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "allow_lazy_start",
+            "analysis",
+            "analyzed_fields",
+            "description",
+            "dest",
+            "max_num_threads",
+            "model_memory_limit",
+            "source",
+        ),
     )
     def explain_data_frame_analytics(
         self,
@@ -773,14 +763,13 @@ class MlClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Explains a data frame analytics config.
@@ -819,32 +808,33 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
         else:
             __path = "/_ml/data_frame/analytics/_explain"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_lazy_start is not None:
-            __body["allow_lazy_start"] = allow_lazy_start
-        if analysis is not None:
-            __body["analysis"] = analysis
-        if analyzed_fields is not None:
-            __body["analyzed_fields"] = analyzed_fields
-        if description is not None:
-            __body["description"] = description
-        if dest is not None:
-            __body["dest"] = dest
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_num_threads is not None:
-            __body["max_num_threads"] = max_num_threads
-        if model_memory_limit is not None:
-            __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
-        if source is not None:
-            __body["source"] = source
+        if not __body:
+            if allow_lazy_start is not None:
+                __body["allow_lazy_start"] = allow_lazy_start
+            if analysis is not None:
+                __body["analysis"] = analysis
+            if analyzed_fields is not None:
+                __body["analyzed_fields"] = analyzed_fields
+            if description is not None:
+                __body["description"] = description
+            if dest is not None:
+                __body["dest"] = dest
+            if max_num_threads is not None:
+                __body["max_num_threads"] = max_num_threads
+            if model_memory_limit is not None:
+                __body["model_memory_limit"] = model_memory_limit
+            if source is not None:
+                __body["source"] = source
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -855,7 +845,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("advance_time", "calc_interim", "end", "skip_time", "start"),
     )
     def flush_job(
         self,
@@ -865,13 +855,12 @@ class MlClient(NamespacedClient):
         calc_interim: t.Optional[bool] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         skip_time: t.Optional[t.Union[str, t.Any]] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Forces any buffered data to be processed by the job.
@@ -888,14 +877,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_flush"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if advance_time is not None:
-            __body["advance_time"] = advance_time
-        if calc_interim is not None:
-            __body["calc_interim"] = calc_interim
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -904,10 +887,17 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if skip_time is not None:
-            __body["skip_time"] = skip_time
-        if start is not None:
-            __body["start"] = start
+        if not __body:
+            if advance_time is not None:
+                __body["advance_time"] = advance_time
+            if calc_interim is not None:
+                __body["calc_interim"] = calc_interim
+            if end is not None:
+                __body["end"] = end
+            if skip_time is not None:
+                __body["skip_time"] = skip_time
+            if start is not None:
+                __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -918,7 +908,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("duration", "expires_in", "max_model_memory"),
     )
     def forecast(
         self,
@@ -927,12 +917,11 @@ class MlClient(NamespacedClient):
         duration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         error_trace: t.Optional[bool] = None,
         expires_in: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_model_memory: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Predicts the future behavior of a time series by using its historical behavior.
@@ -949,22 +938,23 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if duration is not None:
-            __body["duration"] = duration
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if expires_in is not None:
-            __body["expires_in"] = expires_in
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_model_memory is not None:
-            __body["max_model_memory"] = max_model_memory
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if duration is not None:
+                __body["duration"] = duration
+            if expires_in is not None:
+                __body["expires_in"] = expires_in
+            if max_model_memory is not None:
+                __body["max_model_memory"] = max_model_memory
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -975,7 +965,16 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "anomaly_score",
+            "desc",
+            "end",
+            "exclude_interim",
+            "expand",
+            "page",
+            "sort",
+            "start",
+        ),
         parameter_aliases={"from": "from_"},
     )
     def get_buckets(
@@ -989,9 +988,7 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         expand: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -999,6 +996,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more buckets.
@@ -1029,36 +1027,37 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if anomaly_score is not None:
-            __body["anomaly_score"] = anomaly_score
-        if desc is not None:
-            __body["desc"] = desc
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if exclude_interim is not None:
-            __body["exclude_interim"] = exclude_interim
-        if expand is not None:
-            __body["expand"] = expand
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if from_ is not None:
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
-        if page is not None:
-            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
-        if sort is not None:
-            __body["sort"] = sort
-        if start is not None:
-            __body["start"] = start
+        if not __body:
+            if anomaly_score is not None:
+                __body["anomaly_score"] = anomaly_score
+            if desc is not None:
+                __body["desc"] = desc
+            if end is not None:
+                __body["end"] = end
+            if exclude_interim is not None:
+                __body["exclude_interim"] = exclude_interim
+            if expand is not None:
+                __body["expand"] = expand
+            if page is not None:
+                __body["page"] = page
+            if sort is not None:
+                __body["sort"] = sort
+            if start is not None:
+                __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -1077,9 +1076,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         job_id: t.Optional[str] = None,
@@ -1131,7 +1128,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("page",),
         parameter_aliases={"from": "from_"},
     )
     def get_calendars(
@@ -1139,14 +1136,13 @@ class MlClient(NamespacedClient):
         *,
         calendar_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for calendars.
@@ -1168,7 +1164,7 @@ class MlClient(NamespacedClient):
         else:
             __path = "/_ml/calendars"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1177,12 +1173,13 @@ class MlClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
-        if page is not None:
-            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
+        if not __body:
+            if page is not None:
+                __body["page"] = page
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -1193,7 +1190,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("page",),
         parameter_aliases={"from": "from_"},
     )
     def get_categories(
@@ -1202,15 +1199,14 @@ class MlClient(NamespacedClient):
         job_id: str,
         category_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
         partition_field_value: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more categories.
@@ -1223,7 +1219,8 @@ class MlClient(NamespacedClient):
             API returns information about all categories. If you specify only the partition_field_value,
             it returns information about all categories for the specified partition.
         :param from_: Skips the specified number of categories.
-        :param page:
+        :param page: Configures pagination. This parameter has the `from` and `size`
+            properties.
         :param partition_field_value: Only return categories for the specified partition.
         :param size: Specifies the maximum number of categories to obtain.
         """
@@ -1236,7 +1233,7 @@ class MlClient(NamespacedClient):
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1245,14 +1242,15 @@ class MlClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
-        if page is not None:
-            __body["page"] = page
         if partition_field_value is not None:
             __query["partition_field_value"] = partition_field_value
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
+        if not __body:
+            if page is not None:
+                __body["page"] = page
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -1272,9 +1270,7 @@ class MlClient(NamespacedClient):
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1337,9 +1333,7 @@ class MlClient(NamespacedClient):
         id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1396,14 +1390,10 @@ class MlClient(NamespacedClient):
     def get_datafeed_stats(
         self,
         *,
-        datafeed_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        datafeed_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1447,15 +1437,11 @@ class MlClient(NamespacedClient):
     def get_datafeeds(
         self,
         *,
-        datafeed_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        datafeed_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1506,13 +1492,9 @@ class MlClient(NamespacedClient):
     def get_filters(
         self,
         *,
-        filter_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1550,7 +1532,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("page",),
         parameter_aliases={"from": "from_"},
     )
     def get_influencers(
@@ -1561,9 +1543,7 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         influencer_score: t.Optional[float] = None,
@@ -1572,6 +1552,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more influencers.
@@ -1587,7 +1568,8 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of influencers.
         :param influencer_score: Returns influencers with anomaly scores greater than
             or equal to this value.
-        :param page:
+        :param page: Configures pagination. This parameter has the `from` and `size`
+            properties.
         :param size: Specifies the maximum number of influencers to obtain.
         :param sort: Specifies the sort field for the requested influencers. By default,
             the influencers are sorted by the `influencer_score` value.
@@ -1598,7 +1580,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/influencers"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if desc is not None:
             __query["desc"] = desc
         if end is not None:
@@ -1615,8 +1597,6 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if influencer_score is not None:
             __query["influencer_score"] = influencer_score
-        if page is not None:
-            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
@@ -1625,6 +1605,9 @@ class MlClient(NamespacedClient):
             __query["sort"] = sort
         if start is not None:
             __query["start"] = start
+        if not __body:
+            if page is not None:
+                __body["page"] = page
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -1641,9 +1624,7 @@ class MlClient(NamespacedClient):
         job_id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1688,15 +1669,11 @@ class MlClient(NamespacedClient):
     def get_jobs(
         self,
         *,
-        job_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        job_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1747,9 +1724,7 @@ class MlClient(NamespacedClient):
         *,
         node_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -1800,9 +1775,7 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1847,7 +1820,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("desc", "end", "page", "sort", "start"),
         parameter_aliases={"from": "from_"},
     )
     def get_model_snapshots(
@@ -1858,9 +1831,7 @@ class MlClient(NamespacedClient):
         desc: t.Optional[bool] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1868,6 +1839,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about model snapshots.
@@ -1896,12 +1868,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if desc is not None:
-            __body["desc"] = desc
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1910,16 +1878,21 @@ class MlClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
-        if page is not None:
-            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
-        if sort is not None:
-            __body["sort"] = sort
-        if start is not None:
-            __body["start"] = start
+        if not __body:
+            if desc is not None:
+                __body["desc"] = desc
+            if end is not None:
+                __body["end"] = end
+            if page is not None:
+                __body["page"] = page
+            if sort is not None:
+                __body["sort"] = sort
+            if start is not None:
+                __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -1930,7 +1903,15 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "allow_no_match",
+            "bucket_span",
+            "end",
+            "exclude_interim",
+            "overall_score",
+            "start",
+            "top_n",
+        ),
     )
     def get_overall_buckets(
         self,
@@ -1941,14 +1922,13 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         overall_score: t.Optional[t.Union[float, str]] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
         top_n: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
@@ -1974,30 +1954,31 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __body["allow_no_match"] = allow_no_match
-        if bucket_span is not None:
-            __body["bucket_span"] = bucket_span
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if exclude_interim is not None:
-            __body["exclude_interim"] = exclude_interim
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if overall_score is not None:
-            __body["overall_score"] = overall_score
         if pretty is not None:
             __query["pretty"] = pretty
-        if start is not None:
-            __body["start"] = start
-        if top_n is not None:
-            __body["top_n"] = top_n
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if bucket_span is not None:
+                __body["bucket_span"] = bucket_span
+            if end is not None:
+                __body["end"] = end
+            if exclude_interim is not None:
+                __body["exclude_interim"] = exclude_interim
+            if overall_score is not None:
+                __body["overall_score"] = overall_score
+            if start is not None:
+                __body["start"] = start
+            if top_n is not None:
+                __body["top_n"] = top_n
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2008,7 +1989,15 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "desc",
+            "end",
+            "exclude_interim",
+            "page",
+            "record_score",
+            "sort",
+            "start",
+        ),
         parameter_aliases={"from": "from_"},
     )
     def get_records(
@@ -2019,9 +2008,7 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2030,6 +2017,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly records for an anomaly detection job.
@@ -2051,34 +2039,35 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/records"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if desc is not None:
-            __body["desc"] = desc
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if exclude_interim is not None:
-            __body["exclude_interim"] = exclude_interim
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if from_ is not None:
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
-        if page is not None:
-            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
-        if record_score is not None:
-            __body["record_score"] = record_score
         if size is not None:
             __query["size"] = size
-        if sort is not None:
-            __body["sort"] = sort
-        if start is not None:
-            __body["start"] = start
+        if not __body:
+            if desc is not None:
+                __body["desc"] = desc
+            if end is not None:
+                __body["end"] = end
+            if exclude_interim is not None:
+                __body["exclude_interim"] = exclude_interim
+            if page is not None:
+                __body["page"] = page
+            if record_score is not None:
+                __body["record_score"] = record_score
+            if sort is not None:
+                __body["sort"] = sort
+            if start is not None:
+                __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2099,9 +2088,7 @@ class MlClient(NamespacedClient):
         decompress_definition: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         include: t.Optional[
@@ -2177,14 +2164,10 @@ class MlClient(NamespacedClient):
     def get_trained_models_stats(
         self,
         *,
-        model_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        model_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2230,23 +2213,20 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("docs", "inference_config"),
     )
     def infer_trained_model(
         self,
         *,
         model_id: str,
-        docs: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Evaluate a trained model.
@@ -2264,25 +2244,26 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        if docs is None:
+        if docs is None and body is None:
             raise ValueError("Empty value passed for parameter 'docs'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/_infer"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if docs is not None:
-            __body["docs"] = docs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if inference_config is not None:
-            __body["inference_config"] = inference_config
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if docs is not None:
+                __body["docs"] = docs
+            if inference_config is not None:
+                __body["inference_config"] = inference_config
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -2293,9 +2274,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2320,19 +2299,18 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("timeout",),
     )
     def open_job(
         self,
         *,
         job_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Opens one or more anomaly detection jobs.
@@ -2346,7 +2324,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_open"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2355,8 +2333,9 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2367,21 +2346,18 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("events",),
     )
     def post_calendar_events(
         self,
         *,
         calendar_id: str,
-        events: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        events: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Posts scheduled events in a calendar.
@@ -2395,13 +2371,11 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        if events is None:
+        if events is None and body is None:
             raise ValueError("Empty value passed for parameter 'events'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if events is not None:
-            __body["events"] = events
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2410,6 +2384,9 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if events is not None:
+                __body["events"] = events
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -2422,11 +2399,10 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        data: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        data: t.Optional[t.Sequence[t.Any]] = None,
+        body: t.Optional[t.Sequence[t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         reset_end: t.Optional[t.Union[str, t.Any]] = None,
@@ -2445,8 +2421,12 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        if data is None:
-            raise ValueError("Empty value passed for parameter 'data'")
+        if data is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'data' and 'body', one of them should be set."
+            )
+        elif data is not None and body is not None:
+            raise ValueError("Cannot set both 'data' and 'body'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_data"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2461,7 +2441,7 @@ class MlClient(NamespacedClient):
             __query["reset_end"] = reset_end
         if reset_start is not None:
             __query["reset_start"] = reset_start
-        __body = data
+        __body = data if data is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
@@ -2471,7 +2451,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("config",),
     )
     def preview_data_frame_analytics(
         self,
@@ -2479,11 +2459,10 @@ class MlClient(NamespacedClient):
         id: t.Optional[str] = None,
         config: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Previews that will be analyzed given a data frame analytics config.
@@ -2499,10 +2478,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
         else:
             __path = "/_ml/data_frame/analytics/_preview"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if config is not None:
-            __body["config"] = config
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2511,6 +2488,9 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if config is not None:
+                __body["config"] = config
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2521,7 +2501,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("datafeed_config", "job_config"),
     )
     def preview_datafeed(
         self,
@@ -2530,13 +2510,12 @@ class MlClient(NamespacedClient):
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         job_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Previews a datafeed.
@@ -2562,10 +2541,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
         else:
             __path = "/_ml/datafeeds/_preview"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if datafeed_config is not None:
-            __body["datafeed_config"] = datafeed_config
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if end is not None:
             __query["end"] = end
         if error_trace is not None:
@@ -2574,12 +2551,15 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if job_config is not None:
-            __body["job_config"] = job_config
         if pretty is not None:
             __query["pretty"] = pretty
         if start is not None:
             __query["start"] = start
+        if not __body:
+            if datafeed_config is not None:
+                __body["datafeed_config"] = datafeed_config
+            if job_config is not None:
+                __body["job_config"] = job_config
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2590,7 +2570,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("description", "job_ids"),
     )
     def put_calendar(
         self,
@@ -2598,12 +2578,11 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        job_ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        job_ids: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a calendar.
@@ -2617,20 +2596,21 @@ class MlClient(NamespacedClient):
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if job_ids is not None:
-            __body["job_ids"] = job_ids
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if job_ids is not None:
+                __body["job_ids"] = job_ids
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2647,9 +2627,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         job_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2682,31 +2660,39 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "analysis",
+            "dest",
+            "source",
+            "allow_lazy_start",
+            "analyzed_fields",
+            "description",
+            "headers",
+            "max_num_threads",
+            "model_memory_limit",
+            "version",
+        ),
         ignore_deprecated_options={"headers"},
     )
     def put_data_frame_analytics(
         self,
         *,
         id: str,
-        analysis: t.Mapping[str, t.Any],
-        dest: t.Mapping[str, t.Any],
-        source: t.Mapping[str, t.Any],
+        analysis: t.Optional[t.Mapping[str, t.Any]] = None,
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
         allow_lazy_start: t.Optional[bool] = None,
         analyzed_fields: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         version: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a data frame analytics job.
@@ -2770,50 +2756,67 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if analysis is None:
+        if analysis is None and body is None:
             raise ValueError("Empty value passed for parameter 'analysis'")
-        if dest is None:
+        if dest is None and body is None:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if source is None:
+        if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if analysis is not None:
-            __body["analysis"] = analysis
-        if dest is not None:
-            __body["dest"] = dest
-        if source is not None:
-            __body["source"] = source
-        if allow_lazy_start is not None:
-            __body["allow_lazy_start"] = allow_lazy_start
-        if analyzed_fields is not None:
-            __body["analyzed_fields"] = analyzed_fields
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if headers is not None:
-            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
-        if max_num_threads is not None:
-            __body["max_num_threads"] = max_num_threads
-        if model_memory_limit is not None:
-            __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if analysis is not None:
+                __body["analysis"] = analysis
+            if dest is not None:
+                __body["dest"] = dest
+            if source is not None:
+                __body["source"] = source
+            if allow_lazy_start is not None:
+                __body["allow_lazy_start"] = allow_lazy_start
+            if analyzed_fields is not None:
+                __body["analyzed_fields"] = analyzed_fields
+            if description is not None:
+                __body["description"] = description
+            if headers is not None:
+                __body["headers"] = headers
+            if max_num_threads is not None:
+                __body["max_num_threads"] = max_num_threads
+            if model_memory_limit is not None:
+                __body["model_memory_limit"] = model_memory_limit
+            if version is not None:
+                __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "chunking_config",
+            "delayed_data_check_config",
+            "frequency",
+            "headers",
+            "indexes",
+            "indices",
+            "indices_options",
+            "job_id",
+            "max_empty_searches",
+            "query",
+            "query_delay",
+            "runtime_mappings",
+            "script_fields",
+            "scroll_size",
+        ),
         ignore_deprecated_options={"headers"},
     )
     def put_datafeed(
@@ -2827,38 +2830,20 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indexes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indexes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
@@ -2868,6 +2853,7 @@ class MlClient(NamespacedClient):
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a datafeed.
@@ -2946,61 +2932,62 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
-        if chunking_config is not None:
-            __body["chunking_config"] = chunking_config
-        if delayed_data_check_config is not None:
-            __body["delayed_data_check_config"] = delayed_data_check_config
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
-        if headers is not None:
-            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if indexes is not None:
-            __body["indexes"] = indexes
-        if indices is not None:
-            __body["indices"] = indices
-        if indices_options is not None:
-            __body["indices_options"] = indices_options
-        if job_id is not None:
-            __body["job_id"] = job_id
-        if max_empty_searches is not None:
-            __body["max_empty_searches"] = max_empty_searches
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if query_delay is not None:
-            __body["query_delay"] = query_delay
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if script_fields is not None:
-            __body["script_fields"] = script_fields
-        if scroll_size is not None:
-            __body["scroll_size"] = scroll_size
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if chunking_config is not None:
+                __body["chunking_config"] = chunking_config
+            if delayed_data_check_config is not None:
+                __body["delayed_data_check_config"] = delayed_data_check_config
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if headers is not None:
+                __body["headers"] = headers
+            if indexes is not None:
+                __body["indexes"] = indexes
+            if indices is not None:
+                __body["indices"] = indices
+            if indices_options is not None:
+                __body["indices_options"] = indices_options
+            if job_id is not None:
+                __body["job_id"] = job_id
+            if max_empty_searches is not None:
+                __body["max_empty_searches"] = max_empty_searches
+            if query is not None:
+                __body["query"] = query
+            if query_delay is not None:
+                __body["query_delay"] = query_delay
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if script_fields is not None:
+                __body["script_fields"] = script_fields
+            if scroll_size is not None:
+                __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("description", "items"),
     )
     def put_filter(
         self,
@@ -3008,12 +2995,11 @@ class MlClient(NamespacedClient):
         filter_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        items: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a filter.
@@ -3028,34 +3014,51 @@ class MlClient(NamespacedClient):
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
         __path = f"/_ml/filters/{_quote(filter_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if items is not None:
-            __body["items"] = items
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if items is not None:
+                __body["items"] = items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "analysis_config",
+            "data_description",
+            "allow_lazy_open",
+            "analysis_limits",
+            "background_persist_interval",
+            "custom_settings",
+            "daily_model_snapshot_retention_after_days",
+            "datafeed_config",
+            "description",
+            "groups",
+            "model_plot_config",
+            "model_snapshot_retention_days",
+            "renormalization_window_days",
+            "results_index_name",
+            "results_retention_days",
+        ),
     )
     def put_job(
         self,
         *,
         job_id: str,
-        analysis_config: t.Mapping[str, t.Any],
-        data_description: t.Mapping[str, t.Any],
+        analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        data_description: t.Optional[t.Mapping[str, t.Any]] = None,
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
@@ -3066,10 +3069,8 @@ class MlClient(NamespacedClient):
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        groups: t.Optional[t.Sequence[str]] = None,
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
@@ -3077,6 +3078,7 @@ class MlClient(NamespacedClient):
         renormalization_window_days: t.Optional[int] = None,
         results_index_name: t.Optional[str] = None,
         results_retention_days: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates an anomaly detection job.
@@ -3158,83 +3160,95 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        if analysis_config is None:
+        if analysis_config is None and body is None:
             raise ValueError("Empty value passed for parameter 'analysis_config'")
-        if data_description is None:
+        if data_description is None and body is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if analysis_config is not None:
-            __body["analysis_config"] = analysis_config
-        if data_description is not None:
-            __body["data_description"] = data_description
-        if allow_lazy_open is not None:
-            __body["allow_lazy_open"] = allow_lazy_open
-        if analysis_limits is not None:
-            __body["analysis_limits"] = analysis_limits
-        if background_persist_interval is not None:
-            __body["background_persist_interval"] = background_persist_interval
-        if custom_settings is not None:
-            __body["custom_settings"] = custom_settings
-        if daily_model_snapshot_retention_after_days is not None:
-            __body[
-                "daily_model_snapshot_retention_after_days"
-            ] = daily_model_snapshot_retention_after_days
-        if datafeed_config is not None:
-            __body["datafeed_config"] = datafeed_config
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if groups is not None:
-            __body["groups"] = groups
         if human is not None:
             __query["human"] = human
-        if model_plot_config is not None:
-            __body["model_plot_config"] = model_plot_config
-        if model_snapshot_retention_days is not None:
-            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
         if pretty is not None:
             __query["pretty"] = pretty
-        if renormalization_window_days is not None:
-            __body["renormalization_window_days"] = renormalization_window_days
-        if results_index_name is not None:
-            __body["results_index_name"] = results_index_name
-        if results_retention_days is not None:
-            __body["results_retention_days"] = results_retention_days
+        if not __body:
+            if analysis_config is not None:
+                __body["analysis_config"] = analysis_config
+            if data_description is not None:
+                __body["data_description"] = data_description
+            if allow_lazy_open is not None:
+                __body["allow_lazy_open"] = allow_lazy_open
+            if analysis_limits is not None:
+                __body["analysis_limits"] = analysis_limits
+            if background_persist_interval is not None:
+                __body["background_persist_interval"] = background_persist_interval
+            if custom_settings is not None:
+                __body["custom_settings"] = custom_settings
+            if daily_model_snapshot_retention_after_days is not None:
+                __body[
+                    "daily_model_snapshot_retention_after_days"
+                ] = daily_model_snapshot_retention_after_days
+            if datafeed_config is not None:
+                __body["datafeed_config"] = datafeed_config
+            if description is not None:
+                __body["description"] = description
+            if groups is not None:
+                __body["groups"] = groups
+            if model_plot_config is not None:
+                __body["model_plot_config"] = model_plot_config
+            if model_snapshot_retention_days is not None:
+                __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+            if renormalization_window_days is not None:
+                __body["renormalization_window_days"] = renormalization_window_days
+            if results_index_name is not None:
+                __body["results_index_name"] = results_index_name
+            if results_retention_days is not None:
+                __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "compressed_definition",
+            "definition",
+            "description",
+            "inference_config",
+            "input",
+            "metadata",
+            "model_size_bytes",
+            "model_type",
+            "platform_architecture",
+            "tags",
+        ),
     )
     def put_trained_model(
         self,
         *,
         model_id: str,
-        inference_config: t.Mapping[str, t.Any],
         compressed_definition: t.Optional[str] = None,
         defer_definition_decompression: t.Optional[bool] = None,
         definition: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         input: t.Optional[t.Mapping[str, t.Any]] = None,
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
         model_type: t.Optional[
             t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
         ] = None,
+        platform_architecture: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        tags: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        tags: t.Optional[t.Sequence[str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates an inference trained model.
@@ -3242,9 +3256,6 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model.
-        :param inference_config: The default configuration for inference. This can be
-            either a regression or classification configuration. It must match the underlying
-            definition.trained_model's target_type.
         :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
             definition of the model. If compressed_definition is specified, then definition
             cannot be specified.
@@ -3254,49 +3265,62 @@ class MlClient(NamespacedClient):
         :param definition: The inference definition for the model. If definition is specified,
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
+        :param inference_config: The default configuration for inference. This can be
+            either a regression or classification configuration. It must match the underlying
+            definition.trained_model's target_type. For pre-packaged models such as ELSER
+            the config is not required.
         :param input: The input field names for the model definition.
         :param metadata: An object map that contains metadata about the model.
         :param model_size_bytes: The estimated memory usage in bytes to keep the trained
             model in memory. This property is supported only if defer_definition_decompression
             is true or the model definition is not supplied.
         :param model_type: The model type.
+        :param platform_architecture: The platform architecture (if applicable) of the
+            trained mode. If the model only works on one platform, because it is heavily
+            optimized for a particular processor architecture and OS combination, then
+            this field specifies which. The format of the string must match the platform
+            identifiers used by Elasticsearch, so one of, `linux-x86_64`, `linux-aarch64`,
+            `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
+            (those that work independent of processor architecture or OS features), leave
+            this field unset.
         :param tags: An array of tags to organize the model.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        if inference_config is None:
-            raise ValueError("Empty value passed for parameter 'inference_config'")
         __path = f"/_ml/trained_models/{_quote(model_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if inference_config is not None:
-            __body["inference_config"] = inference_config
-        if compressed_definition is not None:
-            __body["compressed_definition"] = compressed_definition
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_definition_decompression is not None:
             __query["defer_definition_decompression"] = defer_definition_decompression
-        if definition is not None:
-            __body["definition"] = definition
-        if description is not None:
-            __body["description"] = description
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if input is not None:
-            __body["input"] = input
-        if metadata is not None:
-            __body["metadata"] = metadata
-        if model_size_bytes is not None:
-            __body["model_size_bytes"] = model_size_bytes
-        if model_type is not None:
-            __body["model_type"] = model_type
         if pretty is not None:
             __query["pretty"] = pretty
-        if tags is not None:
-            __body["tags"] = tags
+        if not __body:
+            if compressed_definition is not None:
+                __body["compressed_definition"] = compressed_definition
+            if definition is not None:
+                __body["definition"] = definition
+            if description is not None:
+                __body["description"] = description
+            if inference_config is not None:
+                __body["inference_config"] = inference_config
+            if input is not None:
+                __body["input"] = input
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if model_size_bytes is not None:
+                __body["model_size_bytes"] = model_size_bytes
+            if model_type is not None:
+                __body["model_type"] = model_type
+            if platform_architecture is not None:
+                __body["platform_architecture"] = platform_architecture
+            if tags is not None:
+                __body["tags"] = tags
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -3309,9 +3333,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         model_alias: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         reassign: t.Optional[bool] = None,
@@ -3350,22 +3372,21 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("definition", "total_definition_length", "total_parts"),
     )
     def put_trained_model_definition_part(
         self,
         *,
         model_id: str,
         part: int,
-        definition: str,
-        total_definition_length: int,
-        total_parts: int,
+        definition: t.Optional[str] = None,
+        total_definition_length: t.Optional[int] = None,
+        total_parts: t.Optional[int] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates part of a trained model definition
@@ -3387,23 +3408,17 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if part in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'part'")
-        if definition is None:
+        if definition is None and body is None:
             raise ValueError("Empty value passed for parameter 'definition'")
-        if total_definition_length is None:
+        if total_definition_length is None and body is None:
             raise ValueError(
                 "Empty value passed for parameter 'total_definition_length'"
             )
-        if total_parts is None:
+        if total_parts is None and body is None:
             raise ValueError("Empty value passed for parameter 'total_parts'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/definition/{_quote(part)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if definition is not None:
-            __body["definition"] = definition
-        if total_definition_length is not None:
-            __body["total_definition_length"] = total_definition_length
-        if total_parts is not None:
-            __body["total_parts"] = total_parts
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3412,26 +3427,33 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if definition is not None:
+                __body["definition"] = definition
+            if total_definition_length is not None:
+                __body["total_definition_length"] = total_definition_length
+            if total_parts is not None:
+                __body["total_parts"] = total_parts
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("vocabulary", "merges", "scores"),
     )
     def put_trained_model_vocabulary(
         self,
         *,
         model_id: str,
-        vocabulary: t.Union[t.List[str], t.Tuple[str, ...]],
+        vocabulary: t.Optional[t.Sequence[str]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        merges: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        merges: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
+        scores: t.Optional[t.Sequence[float]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a trained model vocabulary
@@ -3441,26 +3463,30 @@ class MlClient(NamespacedClient):
         :param model_id: The unique identifier of the trained model.
         :param vocabulary: The model vocabulary, which must not be empty.
         :param merges: The optional model merges if required by the tokenizer.
+        :param scores: The optional vocabulary value scores if required by the tokenizer.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        if vocabulary is None:
+        if vocabulary is None and body is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if vocabulary is not None:
-            __body["vocabulary"] = vocabulary
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if merges is not None:
-            __body["merges"] = merges
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if vocabulary is not None:
+                __body["vocabulary"] = vocabulary
+            if merges is not None:
+                __body["merges"] = merges
+            if scores is not None:
+                __body["scores"] = scores
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -3473,9 +3499,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
@@ -3514,7 +3538,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("delete_intervening_results",),
     )
     def revert_model_snapshot(
         self,
@@ -3523,11 +3547,10 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         delete_intervening_results: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Reverts to a specific snapshot.
@@ -3546,10 +3569,8 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_revert"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if delete_intervening_results is not None:
-            __body["delete_intervening_results"] = delete_intervening_results
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3558,6 +3579,9 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if delete_intervening_results is not None:
+                __body["delete_intervening_results"] = delete_intervening_results
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3573,9 +3597,7 @@ class MlClient(NamespacedClient):
         *,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -3616,9 +3638,7 @@ class MlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -3654,7 +3674,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("end", "start", "timeout"),
     )
     def start_datafeed(
         self,
@@ -3662,13 +3682,12 @@ class MlClient(NamespacedClient):
         datafeed_id: str,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Starts one or more datafeeds.
@@ -3686,10 +3705,8 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_start"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if end is not None:
-            __body["end"] = end
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3698,10 +3715,13 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if start is not None:
-            __body["start"] = start
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if end is not None:
+                __body["end"] = end
+            if start is not None:
+                __body["start"] = start
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3717,10 +3737,9 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         cache_size: t.Optional[t.Union[int, str]] = None,
+        deployment_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
@@ -3742,6 +3761,7 @@ class MlClient(NamespacedClient):
         :param cache_size: The inference cache size (in memory outside the JVM heap)
             per node for the model. The default value is the same size as the `model_size_bytes`.
             To disable the cache, `0b` can be provided.
+        :param deployment_id: A unique identifier for the deployment of the model.
         :param number_of_allocations: The number of model allocations on each node where
             the model is deployed. All allocations on a node share the same copy of the
             model in memory but use a separate set of threads to evaluate the model.
@@ -3768,6 +3788,8 @@ class MlClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if cache_size is not None:
             __query["cache_size"] = cache_size
+        if deployment_id is not None:
+            __query["deployment_id"] = deployment_id
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3800,9 +3822,7 @@ class MlClient(NamespacedClient):
         id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3852,7 +3872,7 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("allow_no_match", "force", "timeout"),
     )
     def stop_datafeed(
         self,
@@ -3860,13 +3880,12 @@ class MlClient(NamespacedClient):
         datafeed_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more datafeeds.
@@ -3885,22 +3904,23 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stop"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __body["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __body["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3917,9 +3937,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3962,7 +3980,12 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "allow_lazy_start",
+            "description",
+            "max_num_threads",
+            "model_memory_limit",
+        ),
     )
     def update_data_frame_analytics(
         self,
@@ -3971,13 +3994,12 @@ class MlClient(NamespacedClient):
         allow_lazy_start: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a data frame analytics job.
@@ -4003,31 +4025,47 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}/_update"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_lazy_start is not None:
-            __body["allow_lazy_start"] = allow_lazy_start
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_num_threads is not None:
-            __body["max_num_threads"] = max_num_threads
-        if model_memory_limit is not None:
-            __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if allow_lazy_start is not None:
+                __body["allow_lazy_start"] = allow_lazy_start
+            if description is not None:
+                __body["description"] = description
+            if max_num_threads is not None:
+                __body["max_num_threads"] = max_num_threads
+            if model_memory_limit is not None:
+                __body["model_memory_limit"] = model_memory_limit
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "chunking_config",
+            "delayed_data_check_config",
+            "frequency",
+            "indexes",
+            "indices",
+            "indices_options",
+            "job_id",
+            "max_empty_searches",
+            "query",
+            "query_delay",
+            "runtime_mappings",
+            "script_fields",
+            "scroll_size",
+        ),
     )
     def update_datafeed(
         self,
@@ -4040,31 +4078,19 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indexes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        indices: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        indexes: t.Optional[t.Sequence[str]] = None,
+        indices: t.Optional[t.Sequence[str]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
@@ -4074,6 +4100,7 @@ class MlClient(NamespacedClient):
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a datafeed.
@@ -4163,73 +4190,73 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
-        if chunking_config is not None:
-            __body["chunking_config"] = chunking_config
-        if delayed_data_check_config is not None:
-            __body["delayed_data_check_config"] = delayed_data_check_config
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if indexes is not None:
-            __body["indexes"] = indexes
-        if indices is not None:
-            __body["indices"] = indices
-        if indices_options is not None:
-            __body["indices_options"] = indices_options
-        if job_id is not None:
-            __body["job_id"] = job_id
-        if max_empty_searches is not None:
-            __body["max_empty_searches"] = max_empty_searches
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if query_delay is not None:
-            __body["query_delay"] = query_delay
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if script_fields is not None:
-            __body["script_fields"] = script_fields
-        if scroll_size is not None:
-            __body["scroll_size"] = scroll_size
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if chunking_config is not None:
+                __body["chunking_config"] = chunking_config
+            if delayed_data_check_config is not None:
+                __body["delayed_data_check_config"] = delayed_data_check_config
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if indexes is not None:
+                __body["indexes"] = indexes
+            if indices is not None:
+                __body["indices"] = indices
+            if indices_options is not None:
+                __body["indices_options"] = indices_options
+            if job_id is not None:
+                __body["job_id"] = job_id
+            if max_empty_searches is not None:
+                __body["max_empty_searches"] = max_empty_searches
+            if query is not None:
+                __body["query"] = query
+            if query_delay is not None:
+                __body["query_delay"] = query_delay
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if script_fields is not None:
+                __body["script_fields"] = script_fields
+            if scroll_size is not None:
+                __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("add_items", "description", "remove_items"),
     )
     def update_filter(
         self,
         *,
         filter_id: str,
-        add_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        add_items: t.Optional[t.Sequence[str]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        remove_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        remove_items: t.Optional[t.Sequence[str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the description of a filter, adds items, or removes items.
@@ -4244,12 +4271,8 @@ class MlClient(NamespacedClient):
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
         __path = f"/_ml/filters/{_quote(filter_id)}/_update"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if add_items is not None:
-            __body["add_items"] = add_items
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4258,15 +4281,36 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if remove_items is not None:
-            __body["remove_items"] = remove_items
+        if not __body:
+            if add_items is not None:
+                __body["add_items"] = add_items
+            if description is not None:
+                __body["description"] = description
+            if remove_items is not None:
+                __body["remove_items"] = remove_items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "allow_lazy_open",
+            "analysis_limits",
+            "background_persist_interval",
+            "categorization_filters",
+            "custom_settings",
+            "daily_model_snapshot_retention_after_days",
+            "description",
+            "detectors",
+            "groups",
+            "model_plot_config",
+            "model_prune_window",
+            "model_snapshot_retention_days",
+            "per_partition_categorization",
+            "renormalization_window_days",
+            "results_retention_days",
+        ),
     )
     def update_job(
         self,
@@ -4277,20 +4321,14 @@ class MlClient(NamespacedClient):
         background_persist_interval: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        categorization_filters: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        categorization_filters: t.Optional[t.Sequence[str]] = None,
         custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
         description: t.Optional[str] = None,
-        detectors: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        detectors: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        groups: t.Optional[t.Sequence[str]] = None,
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_prune_window: t.Optional[
@@ -4301,6 +4339,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         renormalization_window_days: t.Optional[int] = None,
         results_retention_days: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of an anomaly detection job.
@@ -4359,55 +4398,56 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_update"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if allow_lazy_open is not None:
-            __body["allow_lazy_open"] = allow_lazy_open
-        if analysis_limits is not None:
-            __body["analysis_limits"] = analysis_limits
-        if background_persist_interval is not None:
-            __body["background_persist_interval"] = background_persist_interval
-        if categorization_filters is not None:
-            __body["categorization_filters"] = categorization_filters
-        if custom_settings is not None:
-            __body["custom_settings"] = custom_settings
-        if daily_model_snapshot_retention_after_days is not None:
-            __body[
-                "daily_model_snapshot_retention_after_days"
-            ] = daily_model_snapshot_retention_after_days
-        if description is not None:
-            __body["description"] = description
-        if detectors is not None:
-            __body["detectors"] = detectors
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if groups is not None:
-            __body["groups"] = groups
         if human is not None:
             __query["human"] = human
-        if model_plot_config is not None:
-            __body["model_plot_config"] = model_plot_config
-        if model_prune_window is not None:
-            __body["model_prune_window"] = model_prune_window
-        if model_snapshot_retention_days is not None:
-            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
-        if per_partition_categorization is not None:
-            __body["per_partition_categorization"] = per_partition_categorization
         if pretty is not None:
             __query["pretty"] = pretty
-        if renormalization_window_days is not None:
-            __body["renormalization_window_days"] = renormalization_window_days
-        if results_retention_days is not None:
-            __body["results_retention_days"] = results_retention_days
+        if not __body:
+            if allow_lazy_open is not None:
+                __body["allow_lazy_open"] = allow_lazy_open
+            if analysis_limits is not None:
+                __body["analysis_limits"] = analysis_limits
+            if background_persist_interval is not None:
+                __body["background_persist_interval"] = background_persist_interval
+            if categorization_filters is not None:
+                __body["categorization_filters"] = categorization_filters
+            if custom_settings is not None:
+                __body["custom_settings"] = custom_settings
+            if daily_model_snapshot_retention_after_days is not None:
+                __body[
+                    "daily_model_snapshot_retention_after_days"
+                ] = daily_model_snapshot_retention_after_days
+            if description is not None:
+                __body["description"] = description
+            if detectors is not None:
+                __body["detectors"] = detectors
+            if groups is not None:
+                __body["groups"] = groups
+            if model_plot_config is not None:
+                __body["model_plot_config"] = model_plot_config
+            if model_prune_window is not None:
+                __body["model_prune_window"] = model_prune_window
+            if model_snapshot_retention_days is not None:
+                __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+            if per_partition_categorization is not None:
+                __body["per_partition_categorization"] = per_partition_categorization
+            if renormalization_window_days is not None:
+                __body["renormalization_window_days"] = renormalization_window_days
+            if results_retention_days is not None:
+                __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("description", "retain"),
     )
     def update_model_snapshot(
         self,
@@ -4416,12 +4456,11 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         retain: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a snapshot.
@@ -4440,10 +4479,8 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_update"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4452,8 +4489,11 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if retain is not None:
-            __body["retain"] = retain
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if retain is not None:
+                __body["retain"] = retain
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -4466,9 +4506,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         snapshot_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -4511,7 +4549,17 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "analysis_config",
+            "analysis_limits",
+            "data_description",
+            "description",
+            "job_id",
+            "model_plot",
+            "model_snapshot_id",
+            "model_snapshot_retention_days",
+            "results_index_name",
+        ),
     )
     def validate(
         self,
@@ -4521,9 +4569,7 @@ class MlClient(NamespacedClient):
         data_description: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         job_id: t.Optional[str] = None,
         model_plot: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4531,6 +4577,7 @@ class MlClient(NamespacedClient):
         model_snapshot_retention_days: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         results_index_name: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Validates an anomaly detection job.
@@ -4548,34 +4595,35 @@ class MlClient(NamespacedClient):
         :param results_index_name:
         """
         __path = "/_ml/anomaly_detectors/_validate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if analysis_config is not None:
-            __body["analysis_config"] = analysis_config
-        if analysis_limits is not None:
-            __body["analysis_limits"] = analysis_limits
-        if data_description is not None:
-            __body["data_description"] = data_description
-        if description is not None:
-            __body["description"] = description
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if job_id is not None:
-            __body["job_id"] = job_id
-        if model_plot is not None:
-            __body["model_plot"] = model_plot
-        if model_snapshot_id is not None:
-            __body["model_snapshot_id"] = model_snapshot_id
-        if model_snapshot_retention_days is not None:
-            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
         if pretty is not None:
             __query["pretty"] = pretty
-        if results_index_name is not None:
-            __body["results_index_name"] = results_index_name
+        if not __body:
+            if analysis_config is not None:
+                __body["analysis_config"] = analysis_config
+            if analysis_limits is not None:
+                __body["analysis_limits"] = analysis_limits
+            if data_description is not None:
+                __body["data_description"] = data_description
+            if description is not None:
+                __body["description"] = description
+            if job_id is not None:
+                __body["job_id"] = job_id
+            if model_plot is not None:
+                __body["model_plot"] = model_plot
+            if model_snapshot_id is not None:
+                __body["model_snapshot_id"] = model_snapshot_id
+            if model_snapshot_retention_days is not None:
+                __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+            if results_index_name is not None:
+                __body["results_index_name"] = results_index_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -4587,11 +4635,10 @@ class MlClient(NamespacedClient):
     def validate_detector(
         self,
         *,
-        detector: t.Mapping[str, t.Any],
+        detector: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -4602,8 +4649,12 @@ class MlClient(NamespacedClient):
 
         :param detector:
         """
-        if detector is None:
-            raise ValueError("Empty value passed for parameter 'detector'")
+        if detector is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'detector' and 'body', one of them should be set."
+            )
+        elif detector is not None and body is not None:
+            raise ValueError("Cannot set both 'detector' and 'body'")
         __path = "/_ml/anomaly_detectors/_validate/detector"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -4614,7 +4665,7 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = detector
+        __body = detector if detector is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body

@@ -1,0 +1,10 @@
+// getting-started.asciidoc:245
+
+[source, python]
+----
+resp = client.search(
+    index="books",
+    body={"query": {"match": {"name": "brave"}}},
+)
+print(resp)
+----
