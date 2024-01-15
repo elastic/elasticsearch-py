@@ -145,3 +145,6 @@ test_elasticsearch/cover
 test_elasticsearch/local.py
 .buildkite/output
 junit/
+
+# sample code for GitHub issues
+issues/

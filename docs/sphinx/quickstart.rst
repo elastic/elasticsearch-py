@@ -1,4 +1,6 @@
-Quickstart 
+.. _quickstart:
+
+Quickstart
 ==========
 
 This guide shows you how to install the Elasticsearch Python client and perform basic

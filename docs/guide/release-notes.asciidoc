@@ -1,6 +1,12 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-11-1>>
+* <<rn-8-11-0>>
+* <<rn-8-10-1>>
+* <<rn-8-10-0>>
+* <<rn-8-9-0>>
+* <<rn-8-8-1>>
 * <<rn-8-8-0>>
 * <<rn-8-7-0>>
 * <<rn-8-6-2>>
@@ -28,6 +34,49 @@
 * <<rn-8-0-0>>
 
 [discrete]
+[[rn-8-11-1]]
+=== 8.11.1 (2023-12-08)
+
+- Added missing `role_templates` to `security.put_role_mapping` API
+- Added interactive examples page to documentation
+- Changed API reference to have one page per sub-client
+
+[discrete]
+[[rn-8-11-0]]
+=== 8.11.0 (2023-11-13)
+
+- Support Python 3.12
+- Added missing `scores` parameter to create trained model vocabulary API
+- Added missing `delete_dest_index` parameter to delete transform API
+
+[discrete]
+[[rn-8-10-1]]
+=== 8.10.1 (2023-10-13)
+
+- Removed deprecation warnings when using `body` parameter
+- Fixed some type hints to use covariant Sequence instead of invariant List
+
+[discrete]
+[[rn-8-10-0]]
+=== 8.10.0 (2023-09-22)
+
+- Added the Query rules APIs
+- Added the Synonyms APIs
+
+[discrete]
+[[rn-8-9-0]]
+=== 8.9.0 (2023-08-10)
+
+- Added the `cluster.info` API
+- Updated the `inference_config` argument in `ml.put_trained_model` API to reflect an improvement in the specification
+
+[discrete]
+[[rn-8-8-1]]
+=== 8.8.1 (2023-07-06)
+
+* Added the `rank` parameter to the `search` API
+
+[discrete]
 [[rn-8-8-0]]
 === 8.8.0 (2023-05-25)
 
@@ -39,21 +88,21 @@
 [[rn-8-7-0]]
 === 8.7.0 (2023-04-06)
 
-* Added the ``health_report`` API
-* Added the ``transform.schedule_now_transform`` API
-* Added the ``from_`` request parameter to the ``transform.start_transform`` API
-* Added the ``buffer``, ``grid_agg``, and ``with_labels`` parameters to the ``search_mvt`` API
-* Added the ``allow_auto_create`` parameter to the ``cluster.create_component_template`` API
-* Added the ``delete_user_annotations`` parameter to the ``ml.delete_job``, ``ml.reset_job`` API
-* Added the ``start`` and ``end`` parameters to the ``ml.preview_datafeed`` API
-* Added the ``priority`` parameter to the ``ml.start_datafeed`` API
-* Added the ``job_id`` parameter to the ``ml.update_datafeed`` API
-* Added the ``model_prune_window`` parameter to the ``ml.update_job`` API
-* Added the ``feature_states`` parameter to the ``snapshot.restore_snapshot`` API
-* Added the ``timeout`` parameter to the ``transform.get_transform_stats`` API
-* Added the ``from_`` parameter to the ``transform.start_transform`` API
-* Changed the ``input`` parameter of the ``ml.put_trained_models`` API from required to optional
-* Fixed the ``cluster.create_component_template`` API by removing the erroneously provided ``aliases``, ``mappings``, and ``settings`` parameters. Only the ``template`` parameter should be used for specifying component templates.
+* Added the `health_report` API
+* Added the `transform.schedule_now_transform` API
+* Added the `from_` request parameter to the `transform.start_transform` API
+* Added the `buffer`, `grid_agg`, and `with_labels` parameters to the `search_mvt` API
+* Added the `allow_auto_create` parameter to the `cluster.create_component_template` API
+* Added the `delete_user_annotations` parameter to the `ml.delete_job`, `ml.reset_job` API
+* Added the `start` and `end` parameters to the `ml.preview_datafeed` API
+* Added the `priority` parameter to the `ml.start_datafeed` API
+* Added the `job_id` parameter to the `ml.update_datafeed` API
+* Added the `model_prune_window` parameter to the `ml.update_job` API
+* Added the `feature_states` parameter to the `snapshot.restore_snapshot` API
+* Added the `timeout` parameter to the `transform.get_transform_stats` API
+* Added the `from_` parameter to the `transform.start_transform` API
+* Changed the `input` parameter of the `ml.put_trained_models` API from required to optional
+* Fixed the `cluster.create_component_template` API by removing the erroneously provided `aliases`, `mappings`, and `settings` parameters. Only the `template` parameter should be used for specifying component templates.
 
 [discrete]
 [[rn-8-6-2]]

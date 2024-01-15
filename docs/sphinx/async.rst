@@ -2,6 +2,7 @@ Using Asyncio with Elasticsearch
 ================================
 
  .. py:module:: elasticsearch
+    :no-index:
 
 Starting in ``elasticsearch-py`` v7.8.0 for Python 3.6+ the ``elasticsearch`` package supports async/await with
 `Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
@@ -94,16 +95,30 @@ For example if using FastAPI that might look like this:
 
  .. code-block:: python
 
+    import os
+    from contextlib import asynccontextmanager
+
     from fastapi import FastAPI
     from elasticsearch import AsyncElasticsearch
 
-    app = FastAPI()
-    es = AsyncElasticsearch()
+    ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
+    es = None
 
-    # This gets called once the app is shutting down.
-    @app.on_event("shutdown")
-    async def app_shutdown():
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        global es
+        es = AsyncElasticsearch(ELASTICSEARCH_URL)
+        yield
         await es.close()
+
+    app = FastAPI(lifespan=lifespan)
+
+    @app.get("/")
+    async def main():
+        return await es.info()
+
+You can run this example by saving it to ``main.py`` and executing
+``ELASTICSEARCH_URL=http://localhost:9200 uvicorn main:app``.
 
 
 Async Helpers
@@ -117,6 +132,7 @@ All async helpers that accept an iterator or generator also accept async iterato
 and async generators.
 
  .. py:module:: elasticsearch.helpers
+    :no-index:
 
 Bulk and Streaming Bulk
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -206,6 +222,7 @@ API Reference
 -------------
 
  .. py:module:: elasticsearch
+    :no-index:
 
 The API of :class:`~elasticsearch.AsyncElasticsearch` is nearly identical
 to the API of :class:`~elasticsearch.Elasticsearch` with the exception that

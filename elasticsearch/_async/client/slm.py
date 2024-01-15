@@ -218,7 +218,7 @@ class SlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("config", "name", "repository", "retention", "schedule"),
     )
     async def put_lifecycle(
         self,
@@ -237,6 +237,7 @@ class SlmClient(NamespacedClient):
         retention: t.Optional[t.Mapping[str, t.Any]] = None,
         schedule: t.Optional[str] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a snapshot lifecycle policy.
@@ -265,10 +266,8 @@ class SlmClient(NamespacedClient):
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
         __path = f"/_slm/policy/{_quote(policy_id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if config is not None:
-            __body["config"] = config
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -277,18 +276,21 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if name is not None:
-            __body["name"] = name
         if pretty is not None:
             __query["pretty"] = pretty
-        if repository is not None:
-            __body["repository"] = repository
-        if retention is not None:
-            __body["retention"] = retention
-        if schedule is not None:
-            __body["schedule"] = schedule
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if config is not None:
+                __body["config"] = config
+            if name is not None:
+                __body["name"] = name
+            if repository is not None:
+                __body["repository"] = repository
+            if retention is not None:
+                __body["retention"] = retention
+            if schedule is not None:
+                __body["schedule"] = schedule
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

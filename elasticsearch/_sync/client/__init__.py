@@ -49,11 +49,13 @@ from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .esql import EsqlClient
 from .features import FeaturesClient
 from .fleet import FleetClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
+from .inference import InferenceClient
 from .ingest import IngestClient
 from .license import LicenseClient
 from .logstash import LogstashClient
@@ -434,6 +436,7 @@ class Elasticsearch(BaseClient):
         self.fleet = FleetClient(self)
         self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
+        self.inference = InferenceClient(self)
         self.ingest = IngestClient(self)
         self.nodes = NodesClient(self)
         self.snapshot = SnapshotClient(self)
@@ -444,6 +447,7 @@ class Elasticsearch(BaseClient):
         self.dangling_indices = DanglingIndicesClient(self)
         self.enrich = EnrichClient(self)
         self.eql = EqlClient(self)
+        self.esql = EsqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.license = LicenseClient(self)
@@ -610,7 +614,8 @@ class Elasticsearch(BaseClient):
     def bulk(
         self,
         *,
-        operations: t.Sequence[t.Mapping[str, t.Any]],
+        operations: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -661,8 +666,12 @@ class Elasticsearch(BaseClient):
             before proceeding with the operation. Set to all or any positive integer
             up to the total number of shards in the index (`number_of_replicas+1`).
         """
-        if operations is None:
-            raise ValueError("Empty value passed for parameter 'operations'")
+        if operations is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'operations' and 'body', one of them should be set."
+            )
+        elif operations is not None and body is not None:
+            raise ValueError("Cannot set both 'operations' and 'body'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_bulk"
         else:
@@ -694,7 +703,7 @@ class Elasticsearch(BaseClient):
             __query["timeout"] = timeout
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
-        __body = operations
+        __body = operations if operations is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
@@ -704,7 +713,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("scroll_id",),
     )
     def clear_scroll(
         self,
@@ -714,6 +723,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         scroll_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Explicitly clears the search context for a scroll.
@@ -724,7 +734,7 @@ class Elasticsearch(BaseClient):
         """
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -733,8 +743,9 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if scroll_id is not None:
-            __body["scroll_id"] = scroll_id
+        if not __body:
+            if scroll_id is not None:
+                __body["scroll_id"] = scroll_id
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -745,16 +756,17 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("id",),
     )
     def close_point_in_time(
         self,
         *,
-        id: str,
+        id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Close a point in time
@@ -763,13 +775,11 @@ class Elasticsearch(BaseClient):
 
         :param id: The ID of the point-in-time.
         """
-        if id is None:
+        if id is None and body is None:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = "/_pit"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if id is not None:
-            __body["id"] = id
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -778,6 +788,9 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if id is not None:
+                __body["id"] = id
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -788,7 +801,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("query",),
     )
     def count(
         self,
@@ -820,6 +833,7 @@ class Elasticsearch(BaseClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
         terminate_after: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns number of documents matching a query.
@@ -868,7 +882,7 @@ class Elasticsearch(BaseClient):
         else:
             __path = "/_count"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if analyze_wildcard is not None:
@@ -901,12 +915,13 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
         if routing is not None:
             __query["routing"] = routing
         if terminate_after is not None:
             __query["terminate_after"] = terminate_after
+        if not __body:
+            if query is not None:
+                __body["query"] = query
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -924,7 +939,8 @@ class Elasticsearch(BaseClient):
         *,
         index: str,
         id: str,
-        document: t.Mapping[str, t.Any],
+        document: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -980,8 +996,12 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if document is None:
-            raise ValueError("Empty value passed for parameter 'document'")
+        if document is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'document' and 'body', one of them should be set."
+            )
+        elif document is not None and body is not None:
+            raise ValueError("Cannot set both 'document' and 'body'")
         __path = f"/{_quote(index)}/_create/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1006,7 +1026,7 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
-        __body = document
+        __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -1098,7 +1118,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("max_docs", "query", "slice"),
         parameter_aliases={"from": "from_"},
     )
     def delete_by_query(
@@ -1153,6 +1173,7 @@ class Elasticsearch(BaseClient):
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes documents matching the provided query.
@@ -1226,7 +1247,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_delete_by_query"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -1264,16 +1285,12 @@ class Elasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if lenient is not None:
             __query["lenient"] = lenient
-        if max_docs is not None:
-            __body["max_docs"] = max_docs
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:
@@ -1290,8 +1307,6 @@ class Elasticsearch(BaseClient):
             __query["search_timeout"] = search_timeout
         if search_type is not None:
             __query["search_type"] = search_type
-        if slice is not None:
-            __body["slice"] = slice
         if slices is not None:
             __query["slices"] = slices
         if sort is not None:
@@ -1308,6 +1323,13 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if max_docs is not None:
+                __body["max_docs"] = max_docs
+            if query is not None:
+                __body["query"] = query
+            if slice is not None:
+                __body["slice"] = slice
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -1586,7 +1608,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("query",),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -1615,6 +1637,7 @@ class Elasticsearch(BaseClient):
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about why a specific matches (or doesn't match) a query.
@@ -1653,7 +1676,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/{_quote(index)}/_explain/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if analyze_wildcard is not None:
             __query["analyze_wildcard"] = analyze_wildcard
         if analyzer is not None:
@@ -1676,8 +1699,6 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
@@ -1689,6 +1710,9 @@ class Elasticsearch(BaseClient):
         if stored_fields is not None:
             __query["stored_fields"] = stored_fields
         if not __body:
+            if query is not None:
+                __body["query"] = query
+        if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
@@ -1698,7 +1722,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("fields", "index_filter", "runtime_mappings"),
     )
     def field_caps(
         self,
@@ -1724,6 +1748,7 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         types: t.Optional[t.Sequence[str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns the information about the capabilities of fields among multiple indices.
@@ -1762,15 +1787,13 @@ class Elasticsearch(BaseClient):
         else:
             __path = "/_field_caps"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if fields is not None:
-            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if filters is not None:
@@ -1781,14 +1804,17 @@ class Elasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if include_unmapped is not None:
             __query["include_unmapped"] = include_unmapped
-        if index_filter is not None:
-            __body["index_filter"] = index_filter
         if pretty is not None:
             __query["pretty"] = pretty
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
         if types is not None:
             __query["types"] = types
+        if not __body:
+            if fields is not None:
+                __body["fields"] = fields
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2139,7 +2165,8 @@ class Elasticsearch(BaseClient):
         self,
         *,
         index: str,
-        document: t.Mapping[str, t.Any],
+        document: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2203,8 +2230,12 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if document is None:
-            raise ValueError("Empty value passed for parameter 'document'")
+        if document is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'document' and 'body', one of them should be set."
+            )
+        elif document is not None and body is not None:
+            raise ValueError("Cannot set both 'document' and 'body'")
         if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_doc/{_quote(id)}"
             __method = "PUT"
@@ -2244,7 +2275,7 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
-        __body = document
+        __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             __method, __path, params=__query, headers=__headers, body=__body
@@ -2280,14 +2311,21 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "knn",
+            "docvalue_fields",
+            "fields",
+            "filter",
+            "source",
+            "stored_fields",
+        ),
         parameter_aliases={"_source": "source"},
     )
     def knn_search(
         self,
         *,
         index: t.Union[str, t.Sequence[str]],
-        knn: t.Mapping[str, t.Any],
+        knn: t.Optional[t.Mapping[str, t.Any]] = None,
         docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2300,6 +2338,7 @@ class Elasticsearch(BaseClient):
         routing: t.Optional[str] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Performs a kNN search.
@@ -2329,21 +2368,13 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if knn is None:
+        if knn is None and body is None:
             raise ValueError("Empty value passed for parameter 'knn'")
         __path = f"/{_quote(index)}/_knn_search"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if knn is not None:
-            __body["knn"] = knn
-        if docvalue_fields is not None:
-            __body["docvalue_fields"] = docvalue_fields
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if fields is not None:
-            __body["fields"] = fields
-        if filter is not None:
-            __body["filter"] = filter
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
@@ -2352,10 +2383,19 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
-        if source is not None:
-            __body["_source"] = source
-        if stored_fields is not None:
-            __body["stored_fields"] = stored_fields
+        if not __body:
+            if knn is not None:
+                __body["knn"] = knn
+            if docvalue_fields is not None:
+                __body["docvalue_fields"] = docvalue_fields
+            if fields is not None:
+                __body["fields"] = fields
+            if filter is not None:
+                __body["filter"] = filter
+            if source is not None:
+                __body["_source"] = source
+            if stored_fields is not None:
+                __body["stored_fields"] = stored_fields
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2366,7 +2406,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("docs", "ids"),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -2391,6 +2431,7 @@ class Elasticsearch(BaseClient):
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to get multiple documents in one request.
@@ -2426,18 +2467,14 @@ class Elasticsearch(BaseClient):
             __path = f"/{_quote(index)}/_mget"
         else:
             __path = "/_mget"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if docs is not None:
-            __body["docs"] = docs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ids is not None:
-            __body["ids"] = ids
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -2456,6 +2493,11 @@ class Elasticsearch(BaseClient):
             __query["_source_includes"] = source_includes
         if stored_fields is not None:
             __query["stored_fields"] = stored_fields
+        if not __body:
+            if docs is not None:
+                __body["docs"] = docs
+            if ids is not None:
+                __body["ids"] = ids
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -2467,7 +2509,8 @@ class Elasticsearch(BaseClient):
     def msearch(
         self,
         *,
-        searches: t.Sequence[t.Mapping[str, t.Any]],
+        searches: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
@@ -2536,8 +2579,12 @@ class Elasticsearch(BaseClient):
         :param typed_keys: Specifies whether aggregation and suggester names should be
             prefixed by their respective types in the response.
         """
-        if searches is None:
-            raise ValueError("Empty value passed for parameter 'searches'")
+        if searches is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'searches' and 'body', one of them should be set."
+            )
+        elif searches is not None and body is not None:
+            raise ValueError("Cannot set both 'searches' and 'body'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_msearch"
         else:
@@ -2575,7 +2622,7 @@ class Elasticsearch(BaseClient):
             __query["search_type"] = search_type
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        __body = searches
+        __body = searches if searches is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
@@ -2590,7 +2637,8 @@ class Elasticsearch(BaseClient):
     def msearch_template(
         self,
         *,
-        search_templates: t.Sequence[t.Mapping[str, t.Any]],
+        search_templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -2624,8 +2672,12 @@ class Elasticsearch(BaseClient):
         :param typed_keys: If `true`, the response prefixes aggregation and suggester
             names with their respective types.
         """
-        if search_templates is None:
-            raise ValueError("Empty value passed for parameter 'search_templates'")
+        if search_templates is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'search_templates' and 'body', one of them should be set."
+            )
+        elif search_templates is not None and body is not None:
+            raise ValueError("Cannot set both 'search_templates' and 'body'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_msearch/template"
         else:
@@ -2649,7 +2701,7 @@ class Elasticsearch(BaseClient):
             __query["search_type"] = search_type
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        __body = search_templates
+        __body = search_templates if search_templates is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
@@ -2659,7 +2711,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("docs", "ids"),
     )
     def mtermvectors(
         self,
@@ -2684,6 +2736,7 @@ class Elasticsearch(BaseClient):
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns multiple termvectors in one request.
@@ -2715,10 +2768,8 @@ class Elasticsearch(BaseClient):
             __path = f"/{_quote(index)}/_mtermvectors"
         else:
             __path = "/_mtermvectors"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if docs is not None:
-            __body["docs"] = docs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if field_statistics is not None:
@@ -2729,8 +2780,6 @@ class Elasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ids is not None:
-            __body["ids"] = ids
         if offsets is not None:
             __query["offsets"] = offsets
         if payloads is not None:
@@ -2751,6 +2800,11 @@ class Elasticsearch(BaseClient):
             __query["version"] = version
         if version_type is not None:
             __query["version_type"] = version_type
+        if not __body:
+            if docs is not None:
+                __body["docs"] = docs
+            if ids is not None:
+                __body["ids"] = ids
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2830,13 +2884,13 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("script",),
     )
     def put_script(
         self,
         *,
         id: str,
-        script: t.Mapping[str, t.Any],
+        script: t.Optional[t.Mapping[str, t.Any]] = None,
         context: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2846,6 +2900,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a script.
@@ -2867,7 +2922,7 @@ class Elasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if script is None:
+        if script is None and body is None:
             raise ValueError("Empty value passed for parameter 'script'")
         if id not in SKIP_IN_PATH and context not in SKIP_IN_PATH:
             __path = f"/_scripts/{_quote(id)}/{_quote(context)}"
@@ -2875,10 +2930,8 @@ class Elasticsearch(BaseClient):
             __path = f"/_scripts/{_quote(id)}"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if script is not None:
-            __body["script"] = script
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2891,18 +2944,21 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if script is not None:
+                __body["script"] = script
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("requests", "metric"),
     )
     def rank_eval(
         self,
         *,
-        requests: t.Sequence[t.Mapping[str, t.Any]],
+        requests: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -2920,6 +2976,7 @@ class Elasticsearch(BaseClient):
         metric: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         search_type: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to evaluate the quality of ranked search results over a set of typical
@@ -2945,16 +3002,14 @@ class Elasticsearch(BaseClient):
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
         """
-        if requests is None:
+        if requests is None and body is None:
             raise ValueError("Empty value passed for parameter 'requests'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_rank_eval"
         else:
             __path = "/_rank_eval"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if requests is not None:
-            __body["requests"] = requests
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2967,25 +3022,28 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if metric is not None:
-            __body["metric"] = metric
         if pretty is not None:
             __query["pretty"] = pretty
         if search_type is not None:
             __query["search_type"] = search_type
+        if not __body:
+            if requests is not None:
+                __body["requests"] = requests
+            if metric is not None:
+                __body["metric"] = metric
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("dest", "source", "conflicts", "max_docs", "script", "size"),
     )
     def reindex(
         self,
         *,
-        dest: t.Mapping[str, t.Any],
-        source: t.Mapping[str, t.Any],
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
         conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3004,6 +3062,7 @@ class Elasticsearch(BaseClient):
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to copy documents from one index to another, optionally filtering the
@@ -3036,27 +3095,19 @@ class Elasticsearch(BaseClient):
         :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
-        if dest is None:
+        if dest is None and body is None:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if source is None:
+        if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
         __path = "/_reindex"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if dest is not None:
-            __body["dest"] = dest
-        if source is not None:
-            __body["source"] = source
-        if conflicts is not None:
-            __body["conflicts"] = conflicts
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if max_docs is not None:
-            __body["max_docs"] = max_docs
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
@@ -3065,12 +3116,8 @@ class Elasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         if require_alias is not None:
             __query["require_alias"] = require_alias
-        if script is not None:
-            __body["script"] = script
         if scroll is not None:
             __query["scroll"] = scroll
-        if size is not None:
-            __body["size"] = size
         if slices is not None:
             __query["slices"] = slices
         if timeout is not None:
@@ -3079,6 +3126,19 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if dest is not None:
+                __body["dest"] = dest
+            if source is not None:
+                __body["source"] = source
+            if conflicts is not None:
+                __body["conflicts"] = conflicts
+            if max_docs is not None:
+                __body["max_docs"] = max_docs
+            if script is not None:
+                __body["script"] = script
+            if size is not None:
+                __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
@@ -3124,7 +3184,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("file", "params", "source"),
         ignore_deprecated_options={"params"},
     )
     def render_search_template(
@@ -3138,6 +3198,7 @@ class Elasticsearch(BaseClient):
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         source: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to use the Mustache language to pre-render a search definition.
@@ -3158,21 +3219,22 @@ class Elasticsearch(BaseClient):
         else:
             __path = "/_render/template"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if file is not None:
-            __body["file"] = file
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if params is not None:
-            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
-        if source is not None:
-            __body["source"] = source
+        if not __body:
+            if file is not None:
+                __body["file"] = file
+            if params is not None:
+                __body["params"] = params
+            if source is not None:
+                __body["source"] = source
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3183,7 +3245,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("context", "context_setup", "script"),
     )
     def scripts_painless_execute(
         self,
@@ -3195,6 +3257,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows an arbitrary script to be executed and a result to be returned
@@ -3206,12 +3269,8 @@ class Elasticsearch(BaseClient):
         :param script: The Painless script to execute.
         """
         __path = "/_scripts/painless/_execute"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if context is not None:
-            __body["context"] = context
-        if context_setup is not None:
-            __body["context_setup"] = context_setup
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3220,8 +3279,13 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if script is not None:
-            __body["script"] = script
+        if not __body:
+            if context is not None:
+                __body["context"] = context
+            if context_setup is not None:
+                __body["context_setup"] = context_setup
+            if script is not None:
+                __body["script"] = script
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3232,18 +3296,19 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("scroll_id", "scroll"),
     )
     def scroll(
         self,
         *,
-        scroll_id: str,
+        scroll_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to retrieve a large numbers of results from a single search request.
@@ -3256,13 +3321,11 @@ class Elasticsearch(BaseClient):
             is returned as an object.
         :param scroll: Period to retain the search context for scrolling.
         """
-        if scroll_id is None:
+        if scroll_id is None and body is None:
             raise ValueError("Empty value passed for parameter 'scroll_id'")
         __path = "/_search/scroll"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if scroll_id is not None:
-            __body["scroll_id"] = scroll_id
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3273,8 +3336,11 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
-        if scroll is not None:
-            __body["scroll"] = scroll
+        if not __body:
+            if scroll_id is not None:
+                __body["scroll_id"] = scroll_id
+            if scroll is not None:
+                __body["scroll"] = scroll
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3285,7 +3351,42 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "aggs",
+            "collapse",
+            "docvalue_fields",
+            "explain",
+            "ext",
+            "fields",
+            "from_",
+            "highlight",
+            "indices_boost",
+            "knn",
+            "min_score",
+            "pit",
+            "post_filter",
+            "profile",
+            "query",
+            "rank",
+            "rescore",
+            "runtime_mappings",
+            "script_fields",
+            "search_after",
+            "seq_no_primary_term",
+            "size",
+            "slice",
+            "sort",
+            "source",
+            "stats",
+            "stored_fields",
+            "suggest",
+            "terminate_after",
+            "timeout",
+            "track_scores",
+            "track_total_hits",
+            "version",
+        ),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -3386,6 +3487,7 @@ class Elasticsearch(BaseClient):
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns results matching a query.
@@ -3578,8 +3680,8 @@ class Elasticsearch(BaseClient):
             __path = f"/{_quote(index)}/_search"
         else:
             __path = "/_search"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -3591,10 +3693,6 @@ class Elasticsearch(BaseClient):
         ):
             __query["sort"] = sort
             sort = None
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
-        if aggs is not None:
-            __body["aggs"] = aggs
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if allow_partial_search_results is not None:
@@ -3607,104 +3705,50 @@ class Elasticsearch(BaseClient):
             __query["batched_reduce_size"] = batched_reduce_size
         if ccs_minimize_roundtrips is not None:
             __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
-        if collapse is not None:
-            __body["collapse"] = collapse
         if default_operator is not None:
             __query["default_operator"] = default_operator
         if df is not None:
             __query["df"] = df
-        if docvalue_fields is not None:
-            __body["docvalue_fields"] = docvalue_fields
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if explain is not None:
-            __body["explain"] = explain
-        if ext is not None:
-            __body["ext"] = ext
-        if fields is not None:
-            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if from_ is not None:
-            __body["from"] = from_
-        if highlight is not None:
-            __body["highlight"] = highlight
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if indices_boost is not None:
-            __body["indices_boost"] = indices_boost
-        if knn is not None:
-            __body["knn"] = knn
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if min_compatible_shard_node is not None:
             __query["min_compatible_shard_node"] = min_compatible_shard_node
-        if min_score is not None:
-            __body["min_score"] = min_score
-        if pit is not None:
-            __body["pit"] = pit
-        if post_filter is not None:
-            __body["post_filter"] = post_filter
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if profile is not None:
-            __body["profile"] = profile
         if q is not None:
             __query["q"] = q
-        if query is not None:
-            __body["query"] = query
-        if rank is not None:
-            __body["rank"] = rank
         if request_cache is not None:
             __query["request_cache"] = request_cache
-        if rescore is not None:
-            __body["rescore"] = rescore
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if script_fields is not None:
-            __body["script_fields"] = script_fields
         if scroll is not None:
             __query["scroll"] = scroll
-        if search_after is not None:
-            __body["search_after"] = search_after
         if search_type is not None:
             __query["search_type"] = search_type
-        if seq_no_primary_term is not None:
-            __body["seq_no_primary_term"] = seq_no_primary_term
-        if size is not None:
-            __body["size"] = size
-        if slice is not None:
-            __body["slice"] = slice
-        if sort is not None:
-            __body["sort"] = sort
-        if source is not None:
-            __body["_source"] = source
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
-        if stats is not None:
-            __body["stats"] = stats
-        if stored_fields is not None:
-            __body["stored_fields"] = stored_fields
-        if suggest is not None:
-            __body["suggest"] = suggest
         if suggest_field is not None:
             __query["suggest_field"] = suggest_field
         if suggest_mode is not None:
@@ -3713,18 +3757,77 @@ class Elasticsearch(BaseClient):
             __query["suggest_size"] = suggest_size
         if suggest_text is not None:
             __query["suggest_text"] = suggest_text
-        if terminate_after is not None:
-            __body["terminate_after"] = terminate_after
-        if timeout is not None:
-            __body["timeout"] = timeout
-        if track_scores is not None:
-            __body["track_scores"] = track_scores
-        if track_total_hits is not None:
-            __body["track_total_hits"] = track_total_hits
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        if version is not None:
-            __body["version"] = version
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if collapse is not None:
+                __body["collapse"] = collapse
+            if docvalue_fields is not None:
+                __body["docvalue_fields"] = docvalue_fields
+            if explain is not None:
+                __body["explain"] = explain
+            if ext is not None:
+                __body["ext"] = ext
+            if fields is not None:
+                __body["fields"] = fields
+            if from_ is not None:
+                __body["from"] = from_
+            if highlight is not None:
+                __body["highlight"] = highlight
+            if indices_boost is not None:
+                __body["indices_boost"] = indices_boost
+            if knn is not None:
+                __body["knn"] = knn
+            if min_score is not None:
+                __body["min_score"] = min_score
+            if pit is not None:
+                __body["pit"] = pit
+            if post_filter is not None:
+                __body["post_filter"] = post_filter
+            if profile is not None:
+                __body["profile"] = profile
+            if query is not None:
+                __body["query"] = query
+            if rank is not None:
+                __body["rank"] = rank
+            if rescore is not None:
+                __body["rescore"] = rescore
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if script_fields is not None:
+                __body["script_fields"] = script_fields
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if seq_no_primary_term is not None:
+                __body["seq_no_primary_term"] = seq_no_primary_term
+            if size is not None:
+                __body["size"] = size
+            if slice is not None:
+                __body["slice"] = slice
+            if sort is not None:
+                __body["sort"] = sort
+            if source is not None:
+                __body["_source"] = source
+            if stats is not None:
+                __body["stats"] = stats
+            if stored_fields is not None:
+                __body["stored_fields"] = stored_fields
+            if suggest is not None:
+                __body["suggest"] = suggest
+            if terminate_after is not None:
+                __body["terminate_after"] = terminate_after
+            if timeout is not None:
+                __body["timeout"] = timeout
+            if track_scores is not None:
+                __body["track_scores"] = track_scores
+            if track_total_hits is not None:
+                __body["track_total_hits"] = track_total_hits
+            if version is not None:
+                __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3735,7 +3838,22 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggs",
+            "buffer",
+            "exact_bounds",
+            "extent",
+            "fields",
+            "grid_agg",
+            "grid_precision",
+            "grid_type",
+            "query",
+            "runtime_mappings",
+            "size",
+            "sort",
+            "track_total_hits",
+            "with_labels",
+        ),
     )
     def search_mvt(
         self,
@@ -3770,6 +3888,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
         with_labels: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> BinaryApiResponse:
         """
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
@@ -3831,8 +3950,8 @@ class Elasticsearch(BaseClient):
         if y in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'y'")
         __path = f"/{_quote(index)}/_mvt/{_quote(field)}/{_quote(zoom)}/{_quote(x)}/{_quote(y)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -3844,42 +3963,43 @@ class Elasticsearch(BaseClient):
         ):
             __query["sort"] = sort
             sort = None
-        if aggs is not None:
-            __body["aggs"] = aggs
-        if buffer is not None:
-            __body["buffer"] = buffer
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if exact_bounds is not None:
-            __body["exact_bounds"] = exact_bounds
-        if extent is not None:
-            __body["extent"] = extent
-        if fields is not None:
-            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if grid_agg is not None:
-            __body["grid_agg"] = grid_agg
-        if grid_precision is not None:
-            __body["grid_precision"] = grid_precision
-        if grid_type is not None:
-            __body["grid_type"] = grid_type
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if runtime_mappings is not None:
-            __body["runtime_mappings"] = runtime_mappings
-        if size is not None:
-            __body["size"] = size
-        if sort is not None:
-            __body["sort"] = sort
-        if track_total_hits is not None:
-            __body["track_total_hits"] = track_total_hits
-        if with_labels is not None:
-            __body["with_labels"] = with_labels
+        if not __body:
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if buffer is not None:
+                __body["buffer"] = buffer
+            if exact_bounds is not None:
+                __body["exact_bounds"] = exact_bounds
+            if extent is not None:
+                __body["extent"] = extent
+            if fields is not None:
+                __body["fields"] = fields
+            if grid_agg is not None:
+                __body["grid_agg"] = grid_agg
+            if grid_precision is not None:
+                __body["grid_precision"] = grid_precision
+            if grid_type is not None:
+                __body["grid_type"] = grid_type
+            if query is not None:
+                __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
+            if track_total_hits is not None:
+                __body["track_total_hits"] = track_total_hits
+            if with_labels is not None:
+                __body["with_labels"] = with_labels
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/vnd.mapbox-vector-tile"}
@@ -3968,7 +4088,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("explain", "id", "params", "profile", "source"),
         ignore_deprecated_options={"params"},
     )
     def search_template(
@@ -4004,6 +4124,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         source: t.Optional[str] = None,
         typed_keys: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to use the Mustache language to pre-render a search definition.
@@ -4053,7 +4174,7 @@ class Elasticsearch(BaseClient):
         else:
             __path = "/_search/template"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if ccs_minimize_roundtrips is not None:
@@ -4062,26 +4183,18 @@ class Elasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if explain is not None:
-            __body["explain"] = explain
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if id is not None:
-            __body["id"] = id
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if params is not None:
-            __body["params"] = params
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if profile is not None:
-            __body["profile"] = profile
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
@@ -4090,23 +4203,40 @@ class Elasticsearch(BaseClient):
             __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
-        if source is not None:
-            __body["source"] = source
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
+        if not __body:
+            if explain is not None:
+                __body["explain"] = explain
+            if id is not None:
+                __body["id"] = id
+            if params is not None:
+                __body["params"] = params
+            if profile is not None:
+                __body["profile"] = profile
+            if source is not None:
+                __body["source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "field",
+            "case_insensitive",
+            "index_filter",
+            "search_after",
+            "size",
+            "string",
+            "timeout",
+        ),
     )
     def terms_enum(
         self,
         *,
         index: str,
-        field: str,
+        field: t.Optional[str] = None,
         case_insensitive: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -4117,6 +4247,7 @@ class Elasticsearch(BaseClient):
         size: t.Optional[int] = None,
         string: t.Optional[str] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         The terms enum API can be used to discover terms in the index that begin with
@@ -4144,33 +4275,34 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if field is None:
+        if field is None and body is None:
             raise ValueError("Empty value passed for parameter 'field'")
         __path = f"/{_quote(index)}/_terms_enum"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if field is not None:
-            __body["field"] = field
-        if case_insensitive is not None:
-            __body["case_insensitive"] = case_insensitive
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if index_filter is not None:
-            __body["index_filter"] = index_filter
         if pretty is not None:
             __query["pretty"] = pretty
-        if search_after is not None:
-            __body["search_after"] = search_after
-        if size is not None:
-            __body["size"] = size
-        if string is not None:
-            __body["string"] = string
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if field is not None:
+                __body["field"] = field
+            if case_insensitive is not None:
+                __body["case_insensitive"] = case_insensitive
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if string is not None:
+                __body["string"] = string
+            if timeout is not None:
+                __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -4181,7 +4313,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("doc", "filter", "per_field_analyzer"),
     )
     def termvectors(
         self,
@@ -4208,6 +4340,7 @@ class Elasticsearch(BaseClient):
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns information and statistics about terms in the fields of a particular
@@ -4246,18 +4379,14 @@ class Elasticsearch(BaseClient):
             __path = f"/{_quote(index)}/_termvectors"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if doc is not None:
-            __body["doc"] = doc
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if field_statistics is not None:
             __query["field_statistics"] = field_statistics
         if fields is not None:
             __query["fields"] = fields
-        if filter is not None:
-            __body["filter"] = filter
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
@@ -4266,8 +4395,6 @@ class Elasticsearch(BaseClient):
             __query["offsets"] = offsets
         if payloads is not None:
             __query["payloads"] = payloads
-        if per_field_analyzer is not None:
-            __body["per_field_analyzer"] = per_field_analyzer
         if positions is not None:
             __query["positions"] = positions
         if preference is not None:
@@ -4285,6 +4412,13 @@ class Elasticsearch(BaseClient):
         if version_type is not None:
             __query["version_type"] = version_type
         if not __body:
+            if doc is not None:
+                __body["doc"] = doc
+            if filter is not None:
+                __body["filter"] = filter
+            if per_field_analyzer is not None:
+                __body["per_field_analyzer"] = per_field_analyzer
+        if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
@@ -4294,7 +4428,15 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "detect_noop",
+            "doc",
+            "doc_as_upsert",
+            "script",
+            "scripted_upsert",
+            "source",
+            "upsert",
+        ),
         parameter_aliases={
             "_source": "source",
             "_source_excludes": "source_excludes",
@@ -4332,6 +4474,7 @@ class Elasticsearch(BaseClient):
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates a document with a script or partial document.
@@ -4379,14 +4522,8 @@ class Elasticsearch(BaseClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/{_quote(index)}/_update/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if detect_noop is not None:
-            __body["detect_noop"] = detect_noop
-        if doc is not None:
-            __body["doc"] = doc
-        if doc_as_upsert is not None:
-            __body["doc_as_upsert"] = doc_as_upsert
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4409,29 +4546,36 @@ class Elasticsearch(BaseClient):
             __query["retry_on_conflict"] = retry_on_conflict
         if routing is not None:
             __query["routing"] = routing
-        if script is not None:
-            __body["script"] = script
-        if scripted_upsert is not None:
-            __body["scripted_upsert"] = scripted_upsert
-        if source is not None:
-            __body["_source"] = source
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
         if timeout is not None:
             __query["timeout"] = timeout
-        if upsert is not None:
-            __body["upsert"] = upsert
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            if detect_noop is not None:
+                __body["detect_noop"] = detect_noop
+            if doc is not None:
+                __body["doc"] = doc
+            if doc_as_upsert is not None:
+                __body["doc_as_upsert"] = doc_as_upsert
+            if script is not None:
+                __body["script"] = script
+            if scripted_upsert is not None:
+                __body["scripted_upsert"] = scripted_upsert
+            if source is not None:
+                __body["_source"] = source
+            if upsert is not None:
+                __body["upsert"] = upsert
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("conflicts", "max_docs", "query", "script", "slice"),
         parameter_aliases={"from": "from_"},
     )
     def update_by_query(
@@ -4488,6 +4632,7 @@ class Elasticsearch(BaseClient):
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Performs an update on every document in the index without changing the source,
@@ -4569,7 +4714,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_update_by_query"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -4587,8 +4732,6 @@ class Elasticsearch(BaseClient):
             __query["analyze_wildcard"] = analyze_wildcard
         if analyzer is not None:
             __query["analyzer"] = analyzer
-        if conflicts is not None:
-            __body["conflicts"] = conflicts
         if default_operator is not None:
             __query["default_operator"] = default_operator
         if df is not None:
@@ -4607,16 +4750,12 @@ class Elasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if lenient is not None:
             __query["lenient"] = lenient
-        if max_docs is not None:
-            __body["max_docs"] = max_docs
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:
@@ -4625,8 +4764,6 @@ class Elasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         if routing is not None:
             __query["routing"] = routing
-        if script is not None:
-            __body["script"] = script
         if scroll is not None:
             __query["scroll"] = scroll
         if scroll_size is not None:
@@ -4635,8 +4772,6 @@ class Elasticsearch(BaseClient):
             __query["search_timeout"] = search_timeout
         if search_type is not None:
             __query["search_type"] = search_type
-        if slice is not None:
-            __body["slice"] = slice
         if slices is not None:
             __query["slices"] = slices
         if sort is not None:
@@ -4655,6 +4790,17 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if conflicts is not None:
+                __body["conflicts"] = conflicts
+            if max_docs is not None:
+                __body["max_docs"] = max_docs
+            if query is not None:
+                __body["query"] = query
+            if script is not None:
+                __body["script"] = script
+            if slice is not None:
+                __body["slice"] = slice
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

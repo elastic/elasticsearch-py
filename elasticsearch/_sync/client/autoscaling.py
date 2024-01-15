@@ -131,7 +131,8 @@ class AutoscalingClient(NamespacedClient):
         self,
         *,
         name: str,
-        policy: t.Mapping[str, t.Any],
+        policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -148,8 +149,12 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if policy is None:
-            raise ValueError("Empty value passed for parameter 'policy'")
+        if policy is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'policy' and 'body', one of them should be set."
+            )
+        elif policy is not None and body is not None:
+            raise ValueError("Cannot set both 'policy' and 'body'")
         __path = f"/_autoscaling/policy/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -160,7 +165,7 @@ class AutoscalingClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = policy
+        __body = policy if policy is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
