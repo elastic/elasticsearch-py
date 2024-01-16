@@ -36,7 +36,7 @@ from elasticsearch.exceptions import SerializationError
 from elasticsearch.serializer import JSONSerializer, TextSerializer
 
 requires_numpy_and_pandas = pytest.mark.skipif(
-    np is None or pd is None, reason="Test requires numpy or pandas to be available"
+    np is None or pd is None, reason="Test requires numpy and pandas to be available"
 )
 
 
@@ -46,11 +46,8 @@ def test_datetime_serialization():
     )
 
 
+@requires_numpy_and_pandas
 def test_decimal_serialization():
-    requires_numpy_and_pandas()
-
-    if sys.version_info[:2] == (2, 6):
-        pytest.skip("Float rounding is broken in 2.6.")
     assert b'{"d":3.8}' == JSONSerializer().dumps({"d": Decimal("3.8")})
 
 
