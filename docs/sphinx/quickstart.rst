@@ -41,6 +41,11 @@ You can generate an API key on the **Management** page under Security.
 
 .. image:: ../guide/images/create-api-key.png
 
+Confirm that the connection was successful.
+
+.. code-block:: python
+
+    print(client.info())
 
 Using the client
 ----------------
@@ -49,6 +54,29 @@ Time to use Elasticsearch! This section walks you through the most important
 operations of Elasticsearch. The following examples assume that the Python 
 client was instantiated as above.
 
+Create a mapping for your index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Set the expected types of your features.
+
+.. code-block:: python
+
+    mappings = {
+        "properties": {
+            "foo": {
+                "type" : "text"
+            },
+            "bar" : {
+                "type" : "text",
+                "fields" : {
+                  "keyword" : {
+                  "type" : "keyword",
+                  "ignore_above" : 256
+                  }
+                 }
+            }
+        }
+    }
 
 Creating an index
 ^^^^^^^^^^^^^^^^^
@@ -57,7 +85,7 @@ This is how you create the `my_index` index:
 
 .. code-block:: python
 
-    client.indices.create(index="my_index")
+    client.indices.create(index="my_index", mappings = mappings)
 
 
 Indexing documents
@@ -76,6 +104,30 @@ This indexes a document with the index API:
         },
     )
 
+You can also index multiple documents at once with the bulk API:
+
+.. code-block:: python
+
+    def generate_operations(documents, index_name):
+      operations = []
+      for i, document in enumerate(documents):
+          operations.append({"index": {"_index": index_name, "_id": i}})
+          operations.append(document)
+      return operations
+
+    client.bulk(index=index_name, operations=generate_operations(books, index_name), refresh=True)
+
+Alternatively, you can use one of the helper functions:
+
+.. code-block:: python
+
+    from elasticsearch import helpers
+
+    def generate_docs(documents, index_name):
+        for i, document in enumerate(documents):
+            yield dict(_index=index_name, _id=f"{i}", _source=document)
+    
+    helpers.bulk(client, generate_docs(books, index_name))
 
 Getting documents
 ^^^^^^^^^^^^^^^^^
