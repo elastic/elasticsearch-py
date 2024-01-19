@@ -36,7 +36,7 @@
 
 [discrete]
 [[rn-8-12-0]]
-=== 8.11.0 (2023-11-13)
+=== 8.12.0 (2024-01-19)
 
 - Dropped support for Python 3.6
 - Added the Inference APIs
@@ -51,7 +51,6 @@
 - Added missing `role_templates` to `security.put_role_mapping` API
 - Added interactive examples page, to documentation
 - Changed API reference to have one page per sub-client
-
 
 [discrete]
 [[rn-8-11-0]]
