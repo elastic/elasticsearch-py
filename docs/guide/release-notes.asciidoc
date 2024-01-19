@@ -39,6 +39,7 @@
 === 8.12.0 (2024-01-19)
 
 - Dropped support for Python 3.6
+- Allowed unrestricted `body` parameter again
 - Added the Inference APIs
 - Added the ES|QL API
 - Added `active_only` parameter to `security.get_api_key` API
