@@ -84,7 +84,6 @@ Documentation for the client is `available on elastic.co`_ and `Read the Docs`_.
 .. _available on elastic.co: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html
 .. _Read the Docs: https://elasticsearch-py.readthedocs.io
 
-
 License
 -------
 
