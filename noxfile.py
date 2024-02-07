@@ -53,7 +53,7 @@ def test(session):
 
 @nox.session()
 def format(session):
-    session.install("black", "isort", "flynt", "unasync")
+    session.install("black", "isort", "flynt", "unasync", "setuptools")
 
     session.run("python", "utils/run-unasync.py")
     session.run("isort", "--profile=black", *SOURCE_FILES)
