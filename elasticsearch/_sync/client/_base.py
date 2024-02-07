@@ -126,9 +126,9 @@ def resolve_auth_headers(
         if resolved_api_key:
             headers["authorization"] = f"ApiKey {_base64_auth_header(resolved_api_key)}"
         if resolved_basic_auth:
-            headers[
-                "authorization"
-            ] = f"Basic {_base64_auth_header(resolved_basic_auth)}"
+            headers["authorization"] = (
+                f"Basic {_base64_auth_header(resolved_basic_auth)}"
+            )
         if resolved_bearer_auth:
             headers["authorization"] = f"Bearer {resolved_bearer_auth}"
 

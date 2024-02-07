@@ -3189,9 +3189,9 @@ class MlClient(NamespacedClient):
             if custom_settings is not None:
                 __body["custom_settings"] = custom_settings
             if daily_model_snapshot_retention_after_days is not None:
-                __body[
-                    "daily_model_snapshot_retention_after_days"
-                ] = daily_model_snapshot_retention_after_days
+                __body["daily_model_snapshot_retention_after_days"] = (
+                    daily_model_snapshot_retention_after_days
+                )
             if datafeed_config is not None:
                 __body["datafeed_config"] = datafeed_config
             if description is not None:
@@ -4420,9 +4420,9 @@ class MlClient(NamespacedClient):
             if custom_settings is not None:
                 __body["custom_settings"] = custom_settings
             if daily_model_snapshot_retention_after_days is not None:
-                __body[
-                    "daily_model_snapshot_retention_after_days"
-                ] = daily_model_snapshot_retention_after_days
+                __body["daily_model_snapshot_retention_after_days"] = (
+                    daily_model_snapshot_retention_after_days
+                )
             if description is not None:
                 __body["description"] = description
             if detectors is not None:
