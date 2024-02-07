@@ -17,6 +17,7 @@
 
 import base64
 import inspect
+import urllib.parse
 import warnings
 from datetime import date, datetime
 from functools import wraps
@@ -51,7 +52,6 @@ from elastic_transport.client_utils import (
     client_meta_version,
     create_user_agent,
     parse_cloud_id,
-    percent_encode,
     url_to_node_config,
 )
 
@@ -279,7 +279,7 @@ def _escape(value: Any) -> str:
 
 
 def _quote(value: Any) -> str:
-    return percent_encode(_escape(value), ",*")
+    return urllib.parse.quote(_escape(value), ",*")
 
 
 def _quote_query(query: Mapping[str, Any]) -> str:
