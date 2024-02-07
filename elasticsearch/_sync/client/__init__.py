@@ -392,9 +392,9 @@ class Elasticsearch(BaseClient):
             if sniff_timeout is not DEFAULT:
                 transport_kwargs["sniff_timeout"] = sniff_timeout
             if min_delay_between_sniffing is not DEFAULT:
-                transport_kwargs[
-                    "min_delay_between_sniffing"
-                ] = min_delay_between_sniffing
+                transport_kwargs["min_delay_between_sniffing"] = (
+                    min_delay_between_sniffing
+                )
 
             _transport = transport_class(
                 node_configs,
