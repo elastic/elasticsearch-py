@@ -104,20 +104,7 @@ This indexes a document with the index API:
         },
     )
 
-You can also index multiple documents at once with the bulk API:
-
-.. code-block:: python
-
-    def generate_operations(documents, index_name):
-      operations = []
-      for i, document in enumerate(documents):
-          operations.append({"index": {"_index": index_name, "_id": i}})
-          operations.append(document)
-      return operations
-
-    client.bulk(index=index_name, operations=generate_operations(books, index_name), refresh=True)
-
-Alternatively, you can use one of the helper functions:
+You can also index multiple documents at once with the bulk helper function:
 
 .. code-block:: python
 
@@ -128,6 +115,8 @@ Alternatively, you can use one of the helper functions:
             yield dict(_index=index_name, _id=f"{i}", _source=document)
     
     helpers.bulk(client, generate_docs(books, index_name))
+
+These helpers are the recommended simple and streamlined way to abstract otherwise complicated and verbose functions such as `client.bulk`.
 
 Getting documents
 ^^^^^^^^^^^^^^^^^
