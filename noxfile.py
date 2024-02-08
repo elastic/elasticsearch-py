@@ -53,7 +53,7 @@ def test(session):
 
 @nox.session()
 def format(session):
-    session.install("black", "isort", "flynt", "unasync")
+    session.install("black~=24.0", "isort", "flynt", "unasync", "setuptools")
 
     session.run("python", "utils/run-unasync.py")
     session.run("isort", "--profile=black", *SOURCE_FILES)
@@ -66,7 +66,7 @@ def format(session):
 
 @nox.session()
 def lint(session):
-    session.install("flake8", "black", "mypy", "isort", "types-requests")
+    session.install("flake8", "black~=24.0", "mypy", "isort", "types-requests")
 
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
     session.run("black", "--check", *SOURCE_FILES)
