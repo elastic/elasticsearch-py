@@ -54,18 +54,10 @@ Time to use Elasticsearch! This section walks you through the most important
 operations of Elasticsearch. The following examples assume that the Python 
 client was instantiated as above.
 
-Creating an index
-^^^^^^^^^^^^^^^^^
+Create an index with mappings
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This is how you create the `my_index` index:
-
-.. code-block:: python
-
-    client.indices.create(index="my_index")
-
-Create a mapping for your index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+This is how you create the `my_index` index.
 Optionally, you can first define the expected types of your features with a custom mapping.
 
 .. code-block:: python
@@ -85,7 +77,7 @@ Optionally, you can first define the expected types of your features with a cust
         }
     }
 
-    client.indices.create(index="my_index", mappings = mappings)
+    client.indices.create(index="my_index", mappings=mappings)
 
 Indexing documents
 ^^^^^^^^^^^^^^^^^^
