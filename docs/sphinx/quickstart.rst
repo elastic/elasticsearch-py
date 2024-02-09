@@ -54,30 +54,6 @@ Time to use Elasticsearch! This section walks you through the most important
 operations of Elasticsearch. The following examples assume that the Python 
 client was instantiated as above.
 
-Create a mapping for your index
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Set the expected types of your features.
-
-.. code-block:: python
-
-    mappings = {
-        "properties": {
-            "foo": {
-                "type" : "text"
-            },
-            "bar" : {
-                "type" : "text",
-                "fields" : {
-                  "keyword" : {
-                  "type" : "keyword",
-                  "ignore_above" : 256
-                  }
-                 }
-            }
-        }
-    }
-
 Creating an index
 ^^^^^^^^^^^^^^^^^
 
@@ -85,8 +61,31 @@ This is how you create the `my_index` index:
 
 .. code-block:: python
 
-    client.indices.create(index="my_index", mappings = mappings)
+    client.indices.create(index="my_index")
 
+Create a mapping for your index
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Optionally, you can first define the expected types of your features with a custom mapping.
+
+.. code-block:: python
+
+    mappings = {
+        "properties": {
+            "foo": {"type": "text"},
+            "bar": {
+                "type": "text",
+                "fields": {
+                    "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256,
+                    }
+                },
+            },
+        }
+    }
+
+    client.indices.create(index="my_index", mappings = mappings)
 
 Indexing documents
 ^^^^^^^^^^^^^^^^^^
@@ -110,13 +109,17 @@ You can also index multiple documents at once with the bulk helper function:
 
     from elasticsearch import helpers
 
-    def generate_docs(documents, index_name):
-        for i, document in enumerate(documents):
-            yield dict(_index=index_name, _id=f"{i}", _source=document)
-    
-    helpers.bulk(client, generate_docs(books, index_name))
+    def generate_docs():
+        for i in range(10):
+            yield {
+                "_index": "my_index",
+                "foo": f"foo {i}",
+                "bar": "bar",
+            }
+            
+    helpers.bulk(client, generate_docs())
 
-These helpers are the recommended simple and streamlined way to abstract otherwise complicated and verbose functions such as `client.bulk`.
+These helpers are the recommended way to perform bulk ingestion. While it is also possible to perform bulk ingestion using ``client.bulk`` directly, the helpers handle retries, ingesting chunk by chunk and more. See the :ref:`helpers` page for more details.
 
 Getting documents
 ^^^^^^^^^^^^^^^^^
