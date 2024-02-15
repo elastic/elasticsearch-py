@@ -131,7 +131,7 @@ if [[ "$CMD" == "assemble" ]]; then
      -u "$(id -u)" \
     --rm -v $repo/.github/output:/code/elasticsearch-py/dist \
     $product \
-    /bin/bash -c "python /code/elasticsearch-py/utils/build-dists.py $VERSION"
+    /bin/bash -c "pip install build; python /code/elasticsearch-py/utils/build-dists.py $VERSION"
 
   # Verify that there are dists in .github/output
 	if compgen -G ".github/output/*" > /dev/null; then
