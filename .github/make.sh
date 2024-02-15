@@ -5,7 +5,7 @@
 # Skeleton for common build entry script for all elastic
 # clients. Needs to be adapted to individual client usage.
 #
-# Must be called: ./.ci/make.sh <target> <params>
+# Must be called: ./.github/make.sh <target> <params>
 #
 # Version: 1.1.0
 #
@@ -36,8 +36,8 @@ STACK_VERSION=$VERSION
 set -euo pipefail
 
 product="elastic/elasticsearch-py"
-output_folder=".ci/output"
-codegen_folder=".ci/output"
+output_folder=".github/output"
+codegen_folder=".github/output"
 OUTPUT_DIR="$repo/${output_folder}"
 REPO_BINDING="${OUTPUT_DIR}:/sln/${output_folder}"
 WORKFLOW="${WORKFLOW-staging}"
@@ -114,7 +114,7 @@ echo -e "\033[34;1mINFO: building $product container\033[0m"
 
 docker build \
   --build-arg BUILDER_UID="$(id -u)" \
-  --file $repo/.ci/Dockerfile \
+  --file $repo/.buildkite/Dockerfile \
   --tag ${product} \
   .
 
@@ -126,21 +126,21 @@ echo -e "\033[34;1mINFO: running $product container\033[0m"
 
 if [[ "$CMD" == "assemble" ]]; then
 
-  # Build dists into .ci/output
+  # Build dists into .github/output
   docker run \
      -u "$(id -u)" \
-    --rm -v $repo/.ci/output:/code/elasticsearch-py/dist \
+    --rm -v $repo/.github/output:/code/elasticsearch-py/dist \
     $product \
     /bin/bash -c "python /code/elasticsearch-py/utils/build-dists.py $VERSION"
 
-  # Verify that there are dists in .ci/output
-	if compgen -G ".ci/output/*" > /dev/null; then
+  # Verify that there are dists in .github/output
+	if compgen -G ".github/output/*" > /dev/null; then
 
-	  # Tarball everything up in .ci/output
+	  # Tarball everything up in .github/output
 	  if [[ "$WORKFLOW" == 'snapshot' ]]; then
-	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION-SNAPSHOT.tar.gz * && cd -
+	    cd $repo/.github/output && tar -czvf elasticsearch-py-$VERSION-SNAPSHOT.tar.gz * && cd -
 	  else
-	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
+	    cd $repo/.github/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
     fi
 
 		echo -e "\033[32;1mTARGET: successfully assembled client v$VERSION\033[0m"
@@ -180,5 +180,5 @@ if [[ "$CMD" == "examplesgen" ]]; then
     echo "TODO"
 fi
 
-echo "Must be called with '.ci/make.sh [command]"
+echo "Must be called with '.github/make.sh [command]"
 exit 1
