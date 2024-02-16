@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SynonymsClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_synonym(
         self,
@@ -271,7 +272,7 @@ class SynonymsClient(NamespacedClient):
         *,
         set_id: str,
         rule_id: str,
-        synonyms: t.Optional[t.Sequence[str]] = None,
+        synonyms: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
