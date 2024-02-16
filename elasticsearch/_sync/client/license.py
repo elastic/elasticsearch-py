@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class LicenseClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete(
         self,

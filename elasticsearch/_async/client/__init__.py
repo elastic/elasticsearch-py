@@ -1745,6 +1745,7 @@ class AsyncElasticsearch(BaseClient):
         filters: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_empty_fields: t.Optional[bool] = None,
         include_unmapped: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -1774,6 +1775,7 @@ class AsyncElasticsearch(BaseClient):
         :param filters: An optional set of filters: can include +metadata,-metadata,-nested,-multifield,-parent
         :param ignore_unavailable: If `true`, missing or closed indices are not included
             in the response.
+        :param include_empty_fields: If false, empty fields are not included in the response.
         :param include_unmapped: If true, unmapped fields are included in the response.
         :param index_filter: Allows to filter indices if the provided query rewrites
             to match_none on every shard.
@@ -1804,6 +1806,8 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_empty_fields is not None:
+            __query["include_empty_fields"] = include_empty_fields
         if include_unmapped is not None:
             __query["include_unmapped"] = include_unmapped
         if pretty is not None:

@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SecurityClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("grant_type", "access_token", "password", "username"),
     )

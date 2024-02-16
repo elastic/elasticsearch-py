@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class TasksClient(NamespacedClient):
+
     @_rewrite_parameters()
     def cancel(
         self,

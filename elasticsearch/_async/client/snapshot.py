@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SnapshotClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def cleanup_repository(
         self,

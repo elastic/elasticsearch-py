@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def clear_trained_model_deployment_cache(
         self,

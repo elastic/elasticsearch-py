@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class FeaturesClient(NamespacedClient):
+
     @_rewrite_parameters()
     def get_features(
         self,

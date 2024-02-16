@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class NodesClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def clear_repositories_metering_archive(
         self,

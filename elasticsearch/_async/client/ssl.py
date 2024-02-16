@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class SslClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def certificates(
         self,
