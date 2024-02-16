@@ -1,0 +1,19 @@
+// query-dsl/wildcard-query.asciidoc:21
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "wildcard": {
+                "user.id": {
+                    "value": "ki*y",
+                    "boost": 1,
+                    "rewrite": "constant_score_blended",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----
