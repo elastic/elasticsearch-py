@@ -9,7 +9,7 @@ resp = client.search(
                 "user.id": {
                     "value": "ki*y",
                     "boost": 1,
-                    "rewrite": "constant_score",
+                    "rewrite": "constant_score_blended",
                 }
             }
         }
