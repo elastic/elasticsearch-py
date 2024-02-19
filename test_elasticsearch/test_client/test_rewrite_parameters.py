@@ -191,7 +191,7 @@ class TestRewriteParameters:
         assert str(w[0].message) == (
             "Received 'source' via a specific parameter in the presence of a "
             "'body' parameter, which is deprecated and will be removed in a future "
-            "version. Instead, use only 'body' or only specific paremeters."
+            "version. Instead, use only 'body' or only specific parameters."
         )
 
     def test_body_fields_conflict(self):
@@ -237,6 +237,41 @@ class TestRewriteParameters:
 
         self.wrapped_func_aliases(source=["key3"])
         assert self.calls[-1] == ((), {"source": ["key3"]})
+
+    def test_parameter_aliases_body(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "Using 'source' alias in 'body' is deprecated and will be removed in a future version of elasticsearch-py. "
+                "Use '_source' directly instead."
+            ),
+        ):
+            self.wrapped_func_aliases(body={"source": ["key4"]})
+
+        # using the correct name does not warn
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            self.wrapped_func_aliases(body={"_source": ["key4"]})
+
+    def test_parameter_aliases_body_param(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "Received 'source' via a specific parameter in the presence of a "
+                "'body' parameter, which is deprecated and will be removed in a future "
+                "version. Instead, use only 'body' or only specific parameters."
+            ),
+        ):
+            self.wrapped_func_aliases(
+                source=["key4"], body={"query": {"match_all": {}}}
+            )
+
+        # using the correct name does not warn
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            self.wrapped_func_aliases(
+                body={"query": {"match_all": {}}, "_source": ["key4"]}
+            )
 
     @pytest.mark.parametrize("client_cls", [Elasticsearch, AsyncElasticsearch])
     def test_positional_argument_error(self, client_cls):
