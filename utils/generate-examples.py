@@ -52,7 +52,7 @@ files_to_generate = [
     "docs/index_.asciidoc",
     "aggregations/bucket/terms-aggregation.asciidoc",
     "query-dsl/range-query.asciidoc",
-    "/search/search.asciidoc",
+    "search/search.asciidoc",
     "query-dsl/multi-match-query.asciidoc",
     "docs/bulk.asciidoc",
     "indices/delete-index.asciidoc",
@@ -158,7 +158,12 @@ def main():
         with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_file:
             tmp_file.write(t.render(parsed_sources=parsed_sources))
 
-        blacken(tmp_file.name)
+        try:
+            blacken(tmp_file.name)
+        except AssertionError:
+            loc = exm["source_location"]
+            print(f"Failed to format {loc['file']}:{loc['line']}, skipping.")
+            continue
 
         with open(tmp_file.name) as f:
             data = f.read()
