@@ -1,0 +1,12 @@
+// search/search.asciidoc:945
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    from_="40",
+    size="20",
+    body={"query": {"term": {"user.id": "kimchy"}}},
+)
+print(resp)
+----
