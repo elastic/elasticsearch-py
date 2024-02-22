@@ -51,7 +51,10 @@ packages = [
     if package == package_name or package.startswith(package_name + ".")
 ]
 
-install_requires = ["elastic-transport>=8,<9"]
+# TODO switch back to elastic-transport>=8,<9 between elastic-transport release and elasticsearch-py release
+install_requires = [
+    "elastic-transport @ git+https://github.com/elastic/elastic-transport-python"
+]
 async_requires = ["aiohttp>=3,<4"]
 
 setup(
