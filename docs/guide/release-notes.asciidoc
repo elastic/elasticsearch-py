@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-12-1>>
 * <<rn-8-12-0>>
 * <<rn-8-11-1>>
 * <<rn-8-11-0>>
@@ -33,6 +34,13 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-12-1]]
+=== 8.12.1 (2024-02-22)
+
+- Fixed but deprecated parameter aliases in body parameter
+- Added mappings and bulk to quickstart page
 
 [discrete]
 [[rn-8-12-0]]
