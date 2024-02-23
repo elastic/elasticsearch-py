@@ -44,10 +44,12 @@ is required for that. Elasticsearch language clients are only backwards
 compatible with default distributions and without guarantees made.
 
 +-----------------------+-------------------------+-----------+
-| Elasticsearch Version | Elasticsearch-py Branch | Supported |
+| Elasticsearch version | elasticsearch-py branch | Supported |
 +=======================+=========================+===========+
 | main                  | main                    |           |
++-----------------------+-------------------------+-----------+
 | 8.x                   | 8.x                     | 8.x       |
++-----------------------+-------------------------+-----------+
 | 7.x                   | 7.x                     | 7.17      |
 +-----------------------+-------------------------+-----------+
 
