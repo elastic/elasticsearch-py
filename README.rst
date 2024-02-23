@@ -93,7 +93,7 @@ compatible with default distributions and without guarantees made.
 +-----------------------+-------------------------+-----------+
 
 If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
+versions are also released as ``elasticsearch7`` and ``elasticsearch8``.
 
 
 Documentation
