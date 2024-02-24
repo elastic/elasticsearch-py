@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class EsqlClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("query", "columnar", "filter", "locale", "params"),
         ignore_deprecated_options={"params"},

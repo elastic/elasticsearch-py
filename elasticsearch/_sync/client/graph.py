@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class GraphClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("connections", "controls", "query", "vertices"),
     )

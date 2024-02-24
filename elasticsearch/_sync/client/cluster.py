@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class ClusterClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("current_node", "index", "primary", "shard"),
     )

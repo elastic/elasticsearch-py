@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class TextStructureClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_name="text_files",
     )
