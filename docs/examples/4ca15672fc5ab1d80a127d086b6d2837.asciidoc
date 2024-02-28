@@ -1,0 +1,7 @@
+// cluster/allocation-explain.asciidoc:342
+
+[source, python]
+----
+resp = client.cluster.allocation_explain()
+print(resp)
+----
