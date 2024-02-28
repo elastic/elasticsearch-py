@@ -101,6 +101,11 @@ files_to_generate = [
     "mapping/fields/id-field.asciidoc",
     "search.asciidoc",
     "mapping/params/multi-fields.asciidoc",
+    "cluster/allocation-explain.asciidoc",
+    "cluster/get-settings.asciidoc",
+    "cluster/update-settings.asciidoc",
+    "health/health.asciidoc",
+    "cluster/reroute.asciidoc",
 ]
 
 

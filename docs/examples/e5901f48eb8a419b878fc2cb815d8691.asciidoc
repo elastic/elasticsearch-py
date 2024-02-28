@@ -1,0 +1,9 @@
+// cluster/update-settings.asciidoc:45
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"persistent": {"indices.recovery.max_bytes_per_sec": "50mb"}},
+)
+print(resp)
+----
