@@ -1,0 +1,9 @@
+// cluster/update-settings.asciidoc:96
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"transient": {"indices.recovery.max_bytes_per_sec": None}},
+)
+print(resp)
+----

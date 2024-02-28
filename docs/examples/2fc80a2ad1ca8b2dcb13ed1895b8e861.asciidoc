@@ -1,0 +1,9 @@
+// cluster/update-settings.asciidoc:123
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"transient": {"indices.recovery.*": None}},
+)
+print(resp)
+----
