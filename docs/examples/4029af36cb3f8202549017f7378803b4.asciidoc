@@ -1,0 +1,7 @@
+// cluster/get-settings.asciidoc:10
+
+[source, python]
+----
+resp = client.cluster.get_settings()
+print(resp)
+----
