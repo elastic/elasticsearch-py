@@ -3195,6 +3195,75 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def resolve_cluster(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Resolves the specified index expressions to return information about each cluster,
+        including the local cluster, if included.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-cluster-api.html>`_
+
+        :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
+            and data streams to resolve. Resources on remote clusters can be specified
+            using the `<cluster>`:`<name>` syntax.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
+            when frozen. Defaults to false.
+        :param ignore_unavailable: If false, the request returns an error if it targets
+            a missing or closed index. Defaults to false.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_resolve/cluster/{_quote(name)}"
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def resolve_index(
         self,
         *,
