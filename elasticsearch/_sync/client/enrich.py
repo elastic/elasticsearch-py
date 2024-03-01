@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class EnrichClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete_policy(
         self,
