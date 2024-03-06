@@ -56,7 +56,9 @@ class ShutdownClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -72,7 +74,12 @@ class ShutdownClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.delete_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -104,9 +111,12 @@ class ShutdownClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/shutdown"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         else:
+            __path_parts = {}
             __path = "/_nodes/shutdown"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -123,7 +133,12 @@ class ShutdownClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.get_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -196,7 +211,9 @@ class ShutdownClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'reason'")
         if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -222,5 +239,11 @@ class ShutdownClient(NamespacedClient):
                 __body["target_node_name"] = target_node_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="shutdown.put_node",
+            path_parts=__path_parts,
         )
