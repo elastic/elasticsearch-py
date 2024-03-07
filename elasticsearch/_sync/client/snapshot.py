@@ -241,14 +241,14 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("settings", "type", "repository"),
+        body_name="repository",
     )
     def create_repository(
         self,
         *,
         name: str,
-        settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        type: t.Optional[str] = None,
+        repository: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -256,10 +256,8 @@ class SnapshotClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        repository: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         verify: t.Optional[bool] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a repository.
@@ -267,22 +265,21 @@ class SnapshotClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :param name: A repository name
-        :param settings:
-        :param type:
-        :param master_timeout: Explicit operation timeout for connection to master node
         :param repository:
+        :param master_timeout: Explicit operation timeout for connection to master node
         :param timeout: Explicit operation timeout
         :param verify: Whether to verify the repository after creation
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if settings is None and body is None:
-            raise ValueError("Empty value passed for parameter 'settings'")
-        if type is None and body is None:
-            raise ValueError("Empty value passed for parameter 'type'")
+        if repository is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'repository' and 'body', one of them should be set."
+            )
+        elif repository is not None and body is not None:
+            raise ValueError("Cannot set both 'repository' and 'body'")
         __path = f"/_snapshot/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -297,13 +294,7 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         if verify is not None:
             __query["verify"] = verify
-        if not __body:
-            if settings is not None:
-                __body["settings"] = settings
-            if type is not None:
-                __body["type"] = type
-            if repository is not None:
-                __body["repository"] = repository
+        __body = repository if repository is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body

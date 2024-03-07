@@ -186,7 +186,7 @@ class TextStructureClient(NamespacedClient):
         """
         Tests a Grok pattern on some text.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/test-grok-pattern-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/test-grok-pattern.html>`_
 
         :param grok_pattern: Grok pattern to run on the text.
         :param text: Lines of text to run the Grok pattern on.
