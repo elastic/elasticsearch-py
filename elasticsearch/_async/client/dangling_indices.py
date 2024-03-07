@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class DanglingIndicesClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_dangling_index(
         self,
@@ -42,7 +43,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Deletes the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-gateway-dangling-indices.html>`_
 
         :param index_uuid: The UUID of the dangling index
         :param accept_data_loss: Must be set to true in order to delete the dangling
@@ -93,7 +94,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Imports the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-gateway-dangling-indices.html>`_
 
         :param index_uuid: The UUID of the dangling index
         :param accept_data_loss: Must be set to true in order to import the dangling
@@ -138,7 +139,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Returns all dangling indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-gateway-dangling-indices.html>`_
         """
         __path = "/_dangling"
         __query: t.Dict[str, t.Any] = {}

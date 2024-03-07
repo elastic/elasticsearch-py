@@ -24,12 +24,15 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class InferenceClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete_model(
         self,
         *,
-        task_type: t.Union["t.Literal['sparse_embedding', 'text_embedding']", str],
-        model_id: str,
+        inference_id: str,
+        task_type: t.Optional[
+            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -38,16 +41,19 @@ class InferenceClient(NamespacedClient):
         """
         Delete model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/delete-inference-api.html>`_
 
-        :param task_type: The model task type
-        :param model_id: The unique identifier of the inference model.
+        :param inference_id: The inference Id
+        :param task_type: The task type
         """
-        if task_type in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'task_type'")
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_inference/{_quote(task_type)}/{_quote(model_id)}"
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+        elif inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(inference_id)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -66,8 +72,10 @@ class InferenceClient(NamespacedClient):
     def get_model(
         self,
         *,
-        task_type: t.Union["t.Literal['sparse_embedding', 'text_embedding']", str],
-        model_id: str,
+        inference_id: str,
+        task_type: t.Optional[
+            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -76,16 +84,19 @@ class InferenceClient(NamespacedClient):
         """
         Get a model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-inference-api.html>`_
 
-        :param task_type: The model task type
-        :param model_id: The unique identifier of the inference model.
+        :param inference_id: The inference Id
+        :param task_type: The task type
         """
-        if task_type in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'task_type'")
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_inference/{_quote(task_type)}/{_quote(model_id)}"
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+        elif inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(inference_id)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -106,9 +117,11 @@ class InferenceClient(NamespacedClient):
     def inference(
         self,
         *,
-        task_type: t.Union["t.Literal['sparse_embedding', 'text_embedding']", str],
-        model_id: str,
+        inference_id: str,
         input: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        task_type: t.Optional[
+            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -119,20 +132,23 @@ class InferenceClient(NamespacedClient):
         """
         Perform inference on a model
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/post-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/post-inference-api.html>`_
 
-        :param task_type: The model task type
-        :param model_id: The unique identifier of the inference model.
+        :param inference_id: The inference Id
         :param input: Text input to the model. Either a string or an array of strings.
+        :param task_type: The task type
         :param task_settings: Optional task settings
         """
-        if task_type in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'task_type'")
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'model_id'")
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
         if input is None and body is None:
             raise ValueError("Empty value passed for parameter 'input'")
-        __path = f"/_inference/{_quote(task_type)}/{_quote(model_id)}"
+        if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+        elif inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(inference_id)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -163,8 +179,10 @@ class InferenceClient(NamespacedClient):
     def put_model(
         self,
         *,
-        task_type: t.Union["t.Literal['sparse_embedding', 'text_embedding']", str],
-        model_id: str,
+        inference_id: str,
+        task_type: t.Optional[
+            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -175,23 +193,26 @@ class InferenceClient(NamespacedClient):
         """
         Configure a model for use in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/put-inference-api.html>`_
 
-        :param task_type: The model task type
-        :param model_id: The unique identifier of the inference model.
+        :param inference_id: The inference Id
+        :param task_type: The task type
         :param model_config:
         """
-        if task_type in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'task_type'")
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'model_id'")
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
         if model_config is None and body is None:
             raise ValueError(
                 "Empty value passed for parameters 'model_config' and 'body', one of them should be set."
             )
         elif model_config is not None and body is not None:
             raise ValueError("Cannot set both 'model_config' and 'body'")
-        __path = f"/_inference/{_quote(task_type)}/{_quote(model_id)}"
+        if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+        elif inference_id not in SKIP_IN_PATH:
+            __path = f"/_inference/{_quote(inference_id)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace

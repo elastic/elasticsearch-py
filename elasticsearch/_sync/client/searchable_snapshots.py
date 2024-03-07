@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SearchableSnapshotsClient(NamespacedClient):
+
     @_rewrite_parameters()
     def cache_stats(
         self,
@@ -40,7 +41,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Retrieve node-level cache statistics about searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/searchable-snapshots-apis.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
@@ -90,7 +91,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Clear the cache of searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/searchable-snapshots-apis.html>`_
 
         :param index: A comma-separated list of index names
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -156,7 +157,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Mount a snapshot as a searchable index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/searchable-snapshots-api-mount-snapshot.html>`_
 
         :param repository: The name of the repository containing the snapshot of the
             index to mount
@@ -224,7 +225,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Retrieve shard-level statistics about searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/searchable-snapshots-apis.html>`_
 
         :param index: A comma-separated list of index names
         :param level: Return stats aggregated at cluster, index or shard level

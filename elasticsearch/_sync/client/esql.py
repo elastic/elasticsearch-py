@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class EsqlClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("query", "columnar", "filter", "locale", "params"),
         ignore_deprecated_options={"params"},
@@ -47,7 +48,7 @@ class EsqlClient(NamespacedClient):
         """
         Executes an ESQL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

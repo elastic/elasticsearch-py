@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class AutoscalingClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_autoscaling_policy(
         self,
@@ -38,7 +39,7 @@ class AutoscalingClient(NamespacedClient):
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/autoscaling-delete-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
         """
@@ -72,7 +73,7 @@ class AutoscalingClient(NamespacedClient):
         Gets the current autoscaling capacity based on the configured autoscaling policy.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/autoscaling-get-autoscaling-capacity.html>`_
         """
         __path = "/_autoscaling/capacity"
         __query: t.Dict[str, t.Any] = {}
@@ -103,7 +104,7 @@ class AutoscalingClient(NamespacedClient):
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/autoscaling-get-autoscaling-capacity.html>`_
 
         :param name: the name of the autoscaling policy
         """
@@ -142,7 +143,7 @@ class AutoscalingClient(NamespacedClient):
         Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/autoscaling-put-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
         :param policy:

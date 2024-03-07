@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class AsyncSearchClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete(
         self,
@@ -38,7 +39,7 @@ class AsyncSearchClient(NamespacedClient):
         Deletes an async search by ID. If the search is still running, the search request
         will be cancelled. Otherwise, the saved search results are deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -78,7 +79,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the results of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: Specifies how long the async search should be available in
@@ -133,7 +134,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the status of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -299,7 +300,7 @@ class AsyncSearchClient(NamespacedClient):
         """
         Executes a search request asynchronously.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices

@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MigrationClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def deprecations(
         self,
@@ -39,7 +40,7 @@ class MigrationClient(NamespacedClient):
         that use deprecated features that will be removed or changed in the next major
         version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/migration-api-deprecation.html>`_
 
         :param index: Comma-separate list of data streams or indices to check. Wildcard
             (*) expressions are supported.
@@ -74,7 +75,7 @@ class MigrationClient(NamespacedClient):
         """
         Find out whether system features need to be upgraded or not
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/migration-api-feature-upgrade.html>`_
         """
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}
@@ -103,7 +104,7 @@ class MigrationClient(NamespacedClient):
         """
         Begin upgrades for system features
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/migration-api-feature-upgrade.html>`_
         """
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}

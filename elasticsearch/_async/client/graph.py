@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class GraphClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("connections", "controls", "query", "vertices"),
     )
@@ -47,7 +48,7 @@ class GraphClient(NamespacedClient):
         Explore extracted and summarized information about the documents and terms in
         an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/graph-explore-api.html>`_
 
         :param index: Name of the index.
         :param connections: Specifies or more fields from which you want to extract terms
