@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class MonitoringClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_name="operations",
     )
