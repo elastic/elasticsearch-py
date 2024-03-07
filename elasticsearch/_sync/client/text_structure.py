@@ -127,6 +127,8 @@ class TextStructureClient(NamespacedClient):
             )
         elif text_files is not None and body is not None:
             raise ValueError("Cannot set both 'text_files' and 'body'")
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_text_structure/find_structure"
         __query: t.Dict[str, t.Any] = {}
         if charset is not None:
@@ -165,7 +167,13 @@ class TextStructureClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="text_structure.find_structure",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -197,6 +205,8 @@ class TextStructureClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'grok_pattern'")
         if text is None and body is None:
             raise ValueError("Empty value passed for parameter 'text'")
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_text_structure/test_grok_pattern"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -217,5 +227,11 @@ class TextStructureClient(NamespacedClient):
                 __body["text"] = text
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="text_structure.test_grok_pattern",
+            path_parts=__path_parts,
         )

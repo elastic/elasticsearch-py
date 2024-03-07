@@ -44,7 +44,9 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,7 +58,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.delete_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -129,7 +136,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/follow"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -175,7 +184,13 @@ class CcrClient(NamespacedClient):
                 __body["remote_cluster"] = remote_cluster
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -199,7 +214,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/info"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/info'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -211,7 +228,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.follow_info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -235,7 +257,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/stats"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/stats'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -247,7 +271,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.follow_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -286,7 +315,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/forget_follower"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/forget_follower'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -308,7 +339,13 @@ class CcrClient(NamespacedClient):
                 __body["leader_remote_cluster"] = leader_remote_cluster
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.forget_follower",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -330,9 +367,12 @@ class CcrClient(NamespacedClient):
         :param name: Specifies the auto-follow pattern collection that you want to retrieve.
             If you do not specify a name, the API returns information for all collections.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_ccr/auto_follow/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_ccr/auto_follow"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -345,7 +385,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.get_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -368,7 +413,9 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}/pause"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}/pause'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -380,7 +427,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.pause_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -404,7 +456,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/pause_follow"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/pause_follow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -416,7 +470,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.pause_follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -521,7 +580,9 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'name'")
         if remote_cluster is None and body is None:
             raise ValueError("Empty value passed for parameter 'remote_cluster'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -573,7 +634,13 @@ class CcrClient(NamespacedClient):
                 __body["settings"] = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.put_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -596,7 +663,9 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}/resume"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}/resume'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -608,7 +677,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.resume_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -668,7 +742,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/resume_follow"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/resume_follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -712,7 +788,13 @@ class CcrClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.resume_follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -729,6 +811,8 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ccr-get-stats.html>`_
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_ccr/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -741,7 +825,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -765,7 +854,9 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/unfollow"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/unfollow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -777,5 +868,10 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.unfollow",
+            path_parts=__path_parts,
         )

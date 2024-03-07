@@ -55,7 +55,9 @@ class DanglingIndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index_uuid'")
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
-        __path = f"/_dangling/{_quote(index_uuid)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index_uuid": _quote(index_uuid)}
+        __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
             __query["accept_data_loss"] = accept_data_loss
@@ -73,7 +75,12 @@ class DanglingIndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="dangling_indices.delete_dangling_index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -106,7 +113,9 @@ class DanglingIndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index_uuid'")
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
-        __path = f"/_dangling/{_quote(index_uuid)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index_uuid": _quote(index_uuid)}
+        __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
             __query["accept_data_loss"] = accept_data_loss
@@ -124,7 +133,12 @@ class DanglingIndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="dangling_indices.import_dangling_index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -141,6 +155,8 @@ class DanglingIndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-gateway-dangling-indices.html>`_
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_dangling"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -153,5 +169,10 @@ class DanglingIndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="dangling_indices.list_dangling_indices",
+            path_parts=__path_parts,
         )
