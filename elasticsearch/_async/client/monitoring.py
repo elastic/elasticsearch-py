@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class MonitoringClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_name="operations",
     )
@@ -43,7 +44,7 @@ class MonitoringClient(NamespacedClient):
         """
         Used by the monitoring features to send monitoring data.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/monitor-elasticsearch-cluster.html>`_
 
         :param interval: Collection interval (e.g., '10s' or '10000ms') of the payload
         :param operations:

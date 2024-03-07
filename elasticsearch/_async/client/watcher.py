@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class WatcherClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def ack_watch(
         self,
@@ -38,7 +39,7 @@ class WatcherClient(NamespacedClient):
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-ack-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-ack-watch.html>`_
 
         :param watch_id: Watch ID
         :param action_id: A comma-separated list of the action ids to be acked
@@ -78,7 +79,7 @@ class WatcherClient(NamespacedClient):
         """
         Activates a currently inactive watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-activate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-activate-watch.html>`_
 
         :param watch_id: Watch ID
         """
@@ -112,7 +113,7 @@ class WatcherClient(NamespacedClient):
         """
         Deactivates a currently active watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-deactivate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-deactivate-watch.html>`_
 
         :param watch_id: Watch ID
         """
@@ -146,7 +147,7 @@ class WatcherClient(NamespacedClient):
         """
         Removes a watch from Watcher.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-delete-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-delete-watch.html>`_
 
         :param id: Watch ID
         """
@@ -207,7 +208,7 @@ class WatcherClient(NamespacedClient):
         """
         Forces the execution of a stored watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-execute-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-execute-watch.html>`_
 
         :param id: Identifier for the watch.
         :param action_modes: Determines how to handle the watch actions as part of the
@@ -281,7 +282,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves a watch by its ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-get-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-get-watch.html>`_
 
         :param id: Watch ID
         """
@@ -337,7 +338,7 @@ class WatcherClient(NamespacedClient):
         """
         Creates a new watch, or updates an existing one.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-put-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-put-watch.html>`_
 
         :param id: Watch ID
         :param actions:
@@ -427,7 +428,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves stored watches.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-query-watches.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-query-watches.html>`_
 
         :param from_: The offset from the first result to fetch. Needs to be non-negative.
         :param query: Optional, query filter watches to be returned.
@@ -490,7 +491,7 @@ class WatcherClient(NamespacedClient):
         """
         Starts Watcher if it is not already running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-start.html>`_
         """
         __path = "/_watcher/_start"
         __query: t.Dict[str, t.Any] = {}
@@ -534,7 +535,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves the current Watcher metrics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-stats.html>`_
 
         :param metric: Defines which additional metrics are included in the response.
         :param emit_stacktraces: Defines whether stack traces are generated for each
@@ -572,7 +573,7 @@ class WatcherClient(NamespacedClient):
         """
         Stops Watcher if it is running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-stop.html>`_
         """
         __path = "/_watcher/_stop"
         __query: t.Dict[str, t.Any] = {}

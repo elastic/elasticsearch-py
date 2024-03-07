@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SynonymsClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_synonym(
         self,
@@ -37,7 +38,7 @@ class SynonymsClient(NamespacedClient):
         """
         Deletes a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/delete-synonyms-set.html>`_
 
         :param id: The id of the synonyms set to be deleted
         """
@@ -72,7 +73,7 @@ class SynonymsClient(NamespacedClient):
         """
         Deletes a synonym rule in a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/delete-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to be updated
         :param rule_id: The id of the synonym rule to be deleted
@@ -113,7 +114,7 @@ class SynonymsClient(NamespacedClient):
         """
         Retrieves a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-synonyms-set.html>`_
 
         :param id: "The id of the synonyms set to be retrieved
         :param from_: Starting offset for query rules to be retrieved
@@ -154,7 +155,7 @@ class SynonymsClient(NamespacedClient):
         """
         Retrieves a synonym rule from a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to retrieve the synonym rule from
         :param rule_id: The id of the synonym rule to retrieve
@@ -194,7 +195,7 @@ class SynonymsClient(NamespacedClient):
         """
         Retrieves a summary of all defined synonym sets
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-synonyms-sets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/list-synonyms-sets.html>`_
 
         :param from_: Starting offset
         :param size: specifies a max number of results to get
@@ -235,7 +236,7 @@ class SynonymsClient(NamespacedClient):
         """
         Creates or updates a synonyms set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/put-synonyms-set.html>`_
 
         :param id: The id of the synonyms set to be created or updated
         :param synonyms_set: The synonym set information to update
@@ -271,7 +272,7 @@ class SynonymsClient(NamespacedClient):
         *,
         set_id: str,
         rule_id: str,
-        synonyms: t.Optional[t.Sequence[str]] = None,
+        synonyms: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -281,7 +282,7 @@ class SynonymsClient(NamespacedClient):
         """
         Creates or updates a synonym rule in a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/put-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to be updated with the synonym rule
         :param rule_id: The id of the synonym rule to be updated or created

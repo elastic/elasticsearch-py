@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SnapshotClient(NamespacedClient):
+
     @_rewrite_parameters()
     def cleanup_repository(
         self,
@@ -41,7 +42,7 @@ class SnapshotClient(NamespacedClient):
         """
         Removes stale data from repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/clean-up-snapshot-repo-api.html>`_
 
         :param name: Snapshot repository to clean up.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -91,7 +92,7 @@ class SnapshotClient(NamespacedClient):
         """
         Clones indices from one snapshot into another snapshot in the same repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: The name of the snapshot to clone from
@@ -165,7 +166,7 @@ class SnapshotClient(NamespacedClient):
         """
         Creates a snapshot in a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: Repository for the snapshot.
         :param snapshot: Name of the snapshot. Must be unique in the repository.
@@ -240,14 +241,14 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("settings", "type", "repository"),
+        body_name="repository",
     )
     def create_repository(
         self,
         *,
         name: str,
-        settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        type: t.Optional[str] = None,
+        repository: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -255,33 +256,30 @@ class SnapshotClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         pretty: t.Optional[bool] = None,
-        repository: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         verify: t.Optional[bool] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param name: A repository name
-        :param settings:
-        :param type:
-        :param master_timeout: Explicit operation timeout for connection to master node
         :param repository:
+        :param master_timeout: Explicit operation timeout for connection to master node
         :param timeout: Explicit operation timeout
         :param verify: Whether to verify the repository after creation
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if settings is None and body is None:
-            raise ValueError("Empty value passed for parameter 'settings'")
-        if type is None and body is None:
-            raise ValueError("Empty value passed for parameter 'type'")
+        if repository is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'repository' and 'body', one of them should be set."
+            )
+        elif repository is not None and body is not None:
+            raise ValueError("Cannot set both 'repository' and 'body'")
         __path = f"/_snapshot/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -296,13 +294,7 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         if verify is not None:
             __query["verify"] = verify
-        if not __body:
-            if settings is not None:
-                __body["settings"] = settings
-            if type is not None:
-                __body["type"] = type
-            if repository is not None:
-                __body["repository"] = repository
+        __body = repository if repository is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -325,7 +317,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes one or more snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -369,7 +361,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
             are supported.
@@ -431,7 +423,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: Comma-separated list of snapshot repository names used to
             limit the request. Wildcard (*) expressions are supported.
@@ -536,7 +528,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param name: A comma-separated list of repository names
         :param local: Return local information, do not retrieve the state from master
@@ -607,7 +599,7 @@ class SnapshotClient(NamespacedClient):
         """
         Restores a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A snapshot name
@@ -692,7 +684,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about the status of a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -741,7 +733,7 @@ class SnapshotClient(NamespacedClient):
         """
         Verifies a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-snapshots.html>`_
 
         :param name: A repository name
         :param master_timeout: Explicit operation timeout for connection to master node

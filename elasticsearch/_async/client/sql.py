@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SqlClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("cursor",),
     )
@@ -40,7 +41,7 @@ class SqlClient(NamespacedClient):
         """
         Clears the SQL cursor
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/clear-sql-cursor-api.html>`_
 
         :param cursor: Cursor to clear.
         """
@@ -79,7 +80,7 @@ class SqlClient(NamespacedClient):
         Deletes an async SQL search or a stored synchronous SQL search. If the search
         is still running, the API cancels it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/delete-async-sql-search-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -120,7 +121,7 @@ class SqlClient(NamespacedClient):
         Returns the current status and available results for an async SQL search or stored
         synchronous SQL search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-async-sql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param delimiter: Separator for CSV results. The API only supports this parameter
@@ -172,7 +173,7 @@ class SqlClient(NamespacedClient):
         Returns the current status of an async SQL search or a stored synchronous SQL
         search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-async-sql-search-status-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -247,7 +248,7 @@ class SqlClient(NamespacedClient):
         """
         Executes a SQL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/sql-search-api.html>`_
 
         :param catalog: Default catalog (cluster) for queries. If unspecified, the queries
             execute on the data in the local cluster only.
@@ -350,7 +351,7 @@ class SqlClient(NamespacedClient):
         """
         Translates SQL into Elasticsearch queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/sql-translate-api.html>`_
 
         :param query: SQL query to run.
         :param fetch_size: The maximum number of rows (or entries) to return in one response.

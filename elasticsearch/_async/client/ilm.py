@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class IlmClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_lifecycle(
         self,
@@ -42,7 +43,7 @@ class IlmClient(NamespacedClient):
         Deletes the specified lifecycle policy definition. A currently used policy cannot
         be deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-delete-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -92,7 +93,7 @@ class IlmClient(NamespacedClient):
         Retrieves information about the index's current lifecycle state, such as the
         currently executing phase, action, and step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-explain-lifecycle.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to target.
             Supports wildcards (`*`). To target all data streams and indices, use `*`
@@ -151,7 +152,7 @@ class IlmClient(NamespacedClient):
         Returns the specified policy definition. Includes the policy version and last
         modified date.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-get-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -194,7 +195,7 @@ class IlmClient(NamespacedClient):
         """
         Retrieves the current index lifecycle management (ILM) status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-get-status.html>`_
         """
         __path = "/_ilm/status"
         __query: t.Dict[str, t.Any] = {}
@@ -230,7 +231,7 @@ class IlmClient(NamespacedClient):
         Migrates the indices and ILM policies away from custom node attribute allocation
         routing to data tiers routing
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-migrate-to-data-tiers.html>`_
 
         :param dry_run: If true, simulates the migration from node attributes based allocation
             filters to data tiers, but does not perform the migration. This provides
@@ -283,7 +284,7 @@ class IlmClient(NamespacedClient):
         """
         Manually moves an index into the specified step and executes that step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-move-to-step.html>`_
 
         :param index: The name of the index whose lifecycle step is to change
         :param current_step:
@@ -337,7 +338,7 @@ class IlmClient(NamespacedClient):
         """
         Creates a lifecycle policy
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-put-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -389,7 +390,7 @@ class IlmClient(NamespacedClient):
         """
         Removes the assigned lifecycle policy and stops managing the specified index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-remove-policy.html>`_
 
         :param index: The name of the index to remove policy on
         """
@@ -423,7 +424,7 @@ class IlmClient(NamespacedClient):
         """
         Retries executing the policy for an index that is in the ERROR step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-retry-policy.html>`_
 
         :param index: The name of the indices (comma-separated) whose failed lifecycle
             step is to be retry
@@ -461,7 +462,7 @@ class IlmClient(NamespacedClient):
         """
         Start the index lifecycle management (ILM) plugin.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-start.html>`_
 
         :param master_timeout:
         :param timeout:
@@ -502,7 +503,7 @@ class IlmClient(NamespacedClient):
         Halts all lifecycle management operations and stops the index lifecycle management
         (ILM) plugin
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/ilm-stop.html>`_
 
         :param master_timeout:
         :param timeout:

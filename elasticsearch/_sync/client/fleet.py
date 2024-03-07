@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class FleetClient(NamespacedClient):
+
     @_rewrite_parameters()
     def global_checkpoints(
         self,
@@ -42,7 +43,7 @@ class FleetClient(NamespacedClient):
         Returns the current global checkpoints for an index. This API is design for internal
         use by the fleet server project.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-global-checkpoints.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-global-checkpoints.html>`_
 
         :param index: A single index or index alias that resolves to a single index.
         :param checkpoints: A comma separated list of previous global checkpoints. When
