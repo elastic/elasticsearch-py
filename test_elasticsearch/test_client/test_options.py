@@ -142,6 +142,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
         }
 
         # Can be overwritten with .options()
@@ -160,6 +162,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -185,6 +189,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -212,6 +218,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
         }
 
         # Can be overwritten with .options()
@@ -230,6 +238,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -255,6 +265,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -390,6 +402,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -419,6 +433,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 2,
             "max_retries": 3,
             "retry_on_status": (400,),
@@ -443,6 +459,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
         }
 
         client = Elasticsearch(
@@ -464,6 +482,8 @@ class TestOptions(DummyTransportTestCase):
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
+            "endpoint_id": "indices.get",
+            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),

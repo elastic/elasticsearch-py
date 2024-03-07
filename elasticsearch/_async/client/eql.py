@@ -47,7 +47,9 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_eql/search/{_quote(id)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"id": _quote(id)}
+        __path = f'/_eql/search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -59,7 +61,12 @@ class EqlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="eql.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -91,7 +98,9 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_eql/search/{_quote(id)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"id": _quote(id)}
+        __path = f'/_eql/search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -107,7 +116,12 @@ class EqlClient(NamespacedClient):
             __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="eql.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -130,7 +144,9 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_eql/search/status/{_quote(id)}"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"id": _quote(id)}
+        __path = f'/_eql/search/status/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -142,7 +158,12 @@ class EqlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="eql.get_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -238,7 +259,9 @@ class EqlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
-        __path = f"/{_quote(index)}/_eql/search"
+        __path_parts: t.Dict[str, str]
+        __path_parts = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_eql/search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -286,5 +309,11 @@ class EqlClient(NamespacedClient):
                 __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="eql.search",
+            path_parts=__path_parts,
         )

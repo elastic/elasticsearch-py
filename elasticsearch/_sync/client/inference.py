@@ -48,10 +48,16 @@ class InferenceClient(NamespacedClient):
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
+        __path_parts: t.Dict[str, str]
         if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+            __path_parts = {
+                "task_type": _quote(task_type),
+                "inference_id": _quote(inference_id),
+            }
+            __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
         elif inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(inference_id)}"
+            __path_parts = {"inference_id": _quote(inference_id)}
+            __path = f'/_inference/{__path_parts["inference_id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -65,7 +71,12 @@ class InferenceClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="inference.delete_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -91,10 +102,16 @@ class InferenceClient(NamespacedClient):
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
+        __path_parts: t.Dict[str, str]
         if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+            __path_parts = {
+                "task_type": _quote(task_type),
+                "inference_id": _quote(inference_id),
+            }
+            __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
         elif inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(inference_id)}"
+            __path_parts = {"inference_id": _quote(inference_id)}
+            __path = f'/_inference/{__path_parts["inference_id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -108,7 +125,12 @@ class InferenceClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="inference.get_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -143,10 +165,16 @@ class InferenceClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'inference_id'")
         if input is None and body is None:
             raise ValueError("Empty value passed for parameter 'input'")
+        __path_parts: t.Dict[str, str]
         if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+            __path_parts = {
+                "task_type": _quote(task_type),
+                "inference_id": _quote(inference_id),
+            }
+            __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
         elif inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(inference_id)}"
+            __path_parts = {"inference_id": _quote(inference_id)}
+            __path = f'/_inference/{__path_parts["inference_id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -170,7 +198,13 @@ class InferenceClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.inference",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -207,10 +241,16 @@ class InferenceClient(NamespacedClient):
             )
         elif model_config is not None and body is not None:
             raise ValueError("Cannot set both 'model_config' and 'body'")
+        __path_parts: t.Dict[str, str]
         if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(task_type)}/{_quote(inference_id)}"
+            __path_parts = {
+                "task_type": _quote(task_type),
+                "inference_id": _quote(inference_id),
+            }
+            __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
         elif inference_id not in SKIP_IN_PATH:
-            __path = f"/_inference/{_quote(inference_id)}"
+            __path_parts = {"inference_id": _quote(inference_id)}
+            __path = f'/_inference/{__path_parts["inference_id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -229,5 +269,11 @@ class InferenceClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_model",
+            path_parts=__path_parts,
         )

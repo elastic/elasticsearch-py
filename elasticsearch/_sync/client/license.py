@@ -39,6 +39,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -51,7 +53,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -77,6 +84,8 @@ class LicenseClient(NamespacedClient):
         :param local: Specifies whether to retrieve local information. The default value
             is `false`, which means the information is retrieved from the master node.
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -93,7 +102,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -110,6 +124,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -122,7 +138,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_basic_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -139,6 +160,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -151,7 +174,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_trial_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -179,6 +207,8 @@ class LicenseClient(NamespacedClient):
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -203,7 +233,13 @@ class LicenseClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="license.post",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -224,6 +260,8 @@ class LicenseClient(NamespacedClient):
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license/start_basic"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -238,7 +276,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_basic",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -261,6 +304,8 @@ class LicenseClient(NamespacedClient):
             false)
         :param type_query_string:
         """
+        __path_parts: t.Dict[str, str]
+        __path_parts = {}
         __path = "/_license/start_trial"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -277,5 +322,10 @@ class LicenseClient(NamespacedClient):
             __query["type_query_string"] = type_query_string
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_trial",
+            path_parts=__path_parts,
         )
