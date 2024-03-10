@@ -127,8 +127,7 @@ class TextStructureClient(NamespacedClient):
             )
         elif text_files is not None and body is not None:
             raise ValueError("Cannot set both 'text_files' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_text_structure/find_structure"
         __query: t.Dict[str, t.Any] = {}
         if charset is not None:
@@ -205,8 +204,7 @@ class TextStructureClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'grok_pattern'")
         if text is None and body is None:
             raise ValueError("Empty value passed for parameter 'text'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_text_structure/test_grok_pattern"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

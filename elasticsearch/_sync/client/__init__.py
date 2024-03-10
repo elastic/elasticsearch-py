@@ -741,8 +741,7 @@ class Elasticsearch(BaseClient):
 
         :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -794,8 +793,7 @@ class Elasticsearch(BaseClient):
         """
         if id is None and body is None:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_pit"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1036,8 +1034,7 @@ class Elasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_create/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1128,8 +1125,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1294,8 +1290,7 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_delete_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1414,8 +1409,7 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"task_id": _quote(task_id)}
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1466,8 +1460,7 @@ class Elasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1553,8 +1546,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1652,8 +1644,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1759,8 +1750,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_explain/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1990,8 +1980,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2055,8 +2044,7 @@ class Elasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2093,8 +2081,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_context"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2129,8 +2116,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_language"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2209,8 +2195,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2453,8 +2438,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2535,8 +2519,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if knn is None and body is None:
             raise ValueError("Empty value passed for parameter 'knn'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_knn_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3067,8 +3050,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if keep_alive is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
         if keep_alive is not None:
@@ -3333,8 +3315,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_reindex"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3408,8 +3389,7 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"task_id": _quote(task_id)}
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -3526,8 +3506,7 @@ class Elasticsearch(BaseClient):
         :param context_setup: Additional parameters for the `context`.
         :param script: The Painless script to execute.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_scripts/painless/_execute"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3589,8 +3568,7 @@ class Elasticsearch(BaseClient):
         """
         if scroll_id is None and body is None:
             raise ValueError("Empty value passed for parameter 'scroll_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4232,8 +4210,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'x'")
         if y in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'y'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "index": _quote(index),
             "field": _quote(field),
             "zoom": _quote(zoom),
@@ -4591,8 +4568,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if field is None and body is None:
             raise ValueError("Empty value passed for parameter 'field'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_terms_enum'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4852,8 +4828,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
         __path = f'/{__path_parts["index"]}/_update/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -5052,8 +5027,7 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_update_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -5180,8 +5154,7 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"task_id": _quote(task_id)}
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

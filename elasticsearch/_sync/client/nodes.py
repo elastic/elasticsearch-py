@@ -50,8 +50,7 @@ class NodesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'node_id'")
         if max_archive_version in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'max_archive_version'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "node_id": _quote(node_id),
             "max_archive_version": _quote(max_archive_version),
         }
@@ -95,8 +94,7 @@ class NodesClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"node_id": _quote(node_id)}
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
         __path = f'/_nodes/{__path_parts["node_id"]}/_repositories_metering'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

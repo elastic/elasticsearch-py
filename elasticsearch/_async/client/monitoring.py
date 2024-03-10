@@ -63,8 +63,7 @@ class MonitoringClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'system_api_version'")
         if system_id is None:
             raise ValueError("Empty value passed for parameter 'system_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_monitoring/bulk"
         __query: t.Dict[str, t.Any] = {}
         if interval is not None:

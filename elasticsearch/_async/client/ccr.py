@@ -44,8 +44,7 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -136,8 +135,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -214,8 +212,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/info'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -257,8 +254,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/stats'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -315,8 +311,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/forget_follower'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -413,8 +408,7 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_ccr/auto_follow/{__path_parts["name"]}/pause'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -456,8 +450,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/pause_follow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -580,8 +573,7 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'name'")
         if remote_cluster is None and body is None:
             raise ValueError("Empty value passed for parameter 'remote_cluster'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -663,8 +655,7 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_ccr/auto_follow/{__path_parts["name"]}/resume'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -742,8 +733,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/resume_follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -811,8 +801,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-stats.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ccr/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -854,8 +843,7 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/unfollow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
