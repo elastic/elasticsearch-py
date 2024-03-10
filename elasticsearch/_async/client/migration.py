@@ -85,8 +85,7 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -121,8 +120,7 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

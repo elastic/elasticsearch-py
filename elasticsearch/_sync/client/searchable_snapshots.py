@@ -194,8 +194,10 @@ class SearchableSnapshotsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(repository), "snapshot": _quote(snapshot)}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
         __path = (
             f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_mount'
         )

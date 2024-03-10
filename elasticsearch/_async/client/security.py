@@ -55,8 +55,7 @@ class SecurityClient(NamespacedClient):
         """
         if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_activate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -103,8 +102,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_authenticate"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -215,8 +213,7 @@ class SecurityClient(NamespacedClient):
         """
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ids'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"ids": _quote(ids)}
+        __path_parts: t.Dict[str, str] = {"ids": _quote(ids)}
         __path = f'/_security/api_key/{__path_parts["ids"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -256,8 +253,7 @@ class SecurityClient(NamespacedClient):
         """
         if application in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'application'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"application": _quote(application)}
+        __path_parts: t.Dict[str, str] = {"application": _quote(application)}
         __path = f'/_security/privilege/{__path_parts["application"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -300,8 +296,7 @@ class SecurityClient(NamespacedClient):
         """
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realms'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"realms": _quote(realms)}
+        __path_parts: t.Dict[str, str] = {"realms": _quote(realms)}
         __path = f'/_security/realm/{__path_parts["realms"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -343,8 +338,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_security/role/{__path_parts["name"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -392,8 +386,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "namespace": _quote(namespace),
             "service": _quote(service),
             "name": _quote(name),
@@ -460,8 +453,7 @@ class SecurityClient(NamespacedClient):
             is the same as the request for create role API. For more details, see create
             or update roles API.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -595,8 +587,10 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'application'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"application": _quote(application), "name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {
+            "application": _quote(application),
+            "name": _quote(name),
+        }
         __path = (
             f'/_security/privilege/{__path_parts["application"]}/{__path_parts["name"]}'
         )
@@ -646,8 +640,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -695,8 +688,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -752,8 +744,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "namespace": _quote(namespace),
             "service": _quote(service),
             "name": _quote(name),
@@ -805,8 +796,7 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"username": _quote(username)}
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
         __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -854,8 +844,7 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"username": _quote(username)}
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
         __path = f'/_security/user/{__path_parts["username"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -903,8 +892,7 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"uid": _quote(uid)}
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
         __path = f'/_security/profile/{__path_parts["uid"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -952,8 +940,7 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"username": _quote(username)}
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
         __path = f'/_security/user/{__path_parts["username"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1001,8 +988,7 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"uid": _quote(uid)}
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
         __path = f'/_security/profile/{__path_parts["uid"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1040,8 +1026,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/kibana"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1076,8 +1061,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/node"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1140,8 +1124,7 @@ class SecurityClient(NamespacedClient):
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
@@ -1191,8 +1174,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege/_builtin"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1427,8 +1409,10 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"namespace": _quote(namespace), "service": _quote(service)}
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+        }
         __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1491,8 +1475,7 @@ class SecurityClient(NamespacedClient):
         :param scope:
         :param username:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1602,8 +1585,7 @@ class SecurityClient(NamespacedClient):
             the API returns information about all privileges for the requested application.
         :param username:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/user/_privileges"
         __query: t.Dict[str, t.Any] = {}
         if application is not None:
@@ -1654,8 +1636,7 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"uid": _quote(uid)}
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
         __path = f'/_security/profile/{__path_parts["uid"]}'
         __query: t.Dict[str, t.Any] = {}
         if data is not None:
@@ -1728,8 +1709,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'api_key'")
         if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key/grant"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1861,8 +1841,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'privileges'")
         if uids is None and body is None:
             raise ValueError("Empty value passed for parameter 'uids'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_has_privileges"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1927,8 +1906,7 @@ class SecurityClient(NamespacedClient):
         :param username: The username of a user. This parameter cannot be used with either
             `ids` or `name`, or when `owner` flag is set to `true`.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1990,8 +1968,7 @@ class SecurityClient(NamespacedClient):
         :param token:
         :param username:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2057,8 +2034,7 @@ class SecurityClient(NamespacedClient):
             )
         elif privileges is not None and body is not None:
             raise ValueError("Cannot set both 'privileges' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2150,8 +2126,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2238,8 +2213,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2328,8 +2302,7 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"username": _quote(username)}
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
         __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2418,8 +2391,7 @@ class SecurityClient(NamespacedClient):
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_query/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2502,8 +2474,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'content'")
         if ids is None and body is None:
             raise ValueError("Empty value passed for parameter 'ids'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/authenticate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2568,8 +2539,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'ids'")
         if realm is None and body is None:
             raise ValueError("Empty value passed for parameter 'realm'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/complete_logout"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2639,8 +2609,7 @@ class SecurityClient(NamespacedClient):
         """
         if query_string is None and body is None:
             raise ValueError("Empty value passed for parameter 'query_string'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/invalidate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2699,8 +2668,7 @@ class SecurityClient(NamespacedClient):
         """
         if token is None and body is None:
             raise ValueError("Empty value passed for parameter 'token'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/logout"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2758,8 +2726,7 @@ class SecurityClient(NamespacedClient):
             API returns as the RelayState query parameter. If the Authentication Request
             is signed, this value is used as part of the signature computation.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/prepare"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2808,8 +2775,7 @@ class SecurityClient(NamespacedClient):
         """
         if realm_name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realm_name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"realm_name": _quote(realm_name)}
+        __path_parts: t.Dict[str, str] = {"realm_name": _quote(realm_name)}
         __path = f'/_security/saml/metadata/{__path_parts["realm_name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2863,8 +2829,7 @@ class SecurityClient(NamespacedClient):
             Name-related fields are the user's `username`, `full_name`, and `email`.
         :param size: Number of profiles to return.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_suggest"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2937,8 +2902,7 @@ class SecurityClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_security/api_key/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3012,8 +2976,7 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"uid": _quote(uid)}
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
         __path = f'/_security/profile/{__path_parts["uid"]}/_data'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

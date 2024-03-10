@@ -40,8 +40,7 @@ class SslClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ssl/certificates"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

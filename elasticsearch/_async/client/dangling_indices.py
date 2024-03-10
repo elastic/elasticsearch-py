@@ -55,8 +55,7 @@ class DanglingIndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index_uuid'")
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index_uuid": _quote(index_uuid)}
+        __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
@@ -113,8 +112,7 @@ class DanglingIndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index_uuid'")
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index_uuid": _quote(index_uuid)}
+        __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
@@ -155,8 +153,7 @@ class DanglingIndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_dangling"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

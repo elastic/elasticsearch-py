@@ -65,8 +65,7 @@ class GraphClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_graph/explore'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

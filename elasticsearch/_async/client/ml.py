@@ -44,8 +44,7 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = (
             f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/cache/_clear'
         )
@@ -102,8 +101,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -156,8 +154,7 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id)}
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -202,8 +199,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if event_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'event_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "calendar_id": _quote(calendar_id),
             "event_id": _quote(event_id),
         }
@@ -251,8 +247,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id), "job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -297,8 +295,7 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -348,8 +345,7 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"datafeed_id": _quote(datafeed_id)}
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
         __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -455,8 +451,7 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"filter_id": _quote(filter_id)}
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
         __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -573,8 +568,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
@@ -624,8 +618,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id), "snapshot_id": _quote(snapshot_id)}
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -669,8 +665,7 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -716,8 +711,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "model_id": _quote(model_id),
             "model_alias": _quote(model_alias),
         }
@@ -780,8 +774,7 @@ class MlClient(NamespacedClient):
             from the request if no detectors have a `by_field_name`, `over_field_name`
             or `partition_field_name`.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_estimate_model_memory"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -840,8 +833,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'evaluation'")
         if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/data_frame/_evaluate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1015,8 +1007,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_flush'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1084,8 +1075,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1266,8 +1256,7 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id)}
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         if end is not None:
@@ -1812,8 +1801,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/influencers'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2068,8 +2056,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id), "snapshot_id": _quote(snapshot_id)}
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade/_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -2238,8 +2228,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = (
             f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/overall_buckets'
         )
@@ -2333,8 +2322,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/records'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2565,8 +2553,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if docs is None and body is None:
             raise ValueError("Empty value passed for parameter 'docs'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/_infer'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2610,8 +2597,7 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/info"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2656,8 +2642,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2715,8 +2700,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if events is None and body is None:
             raise ValueError("Empty value passed for parameter 'events'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id)}
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2777,8 +2761,7 @@ class MlClient(NamespacedClient):
             )
         elif data is not None and body is not None:
             raise ValueError("Cannot set both 'data' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_data'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2971,8 +2954,7 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id)}
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3028,8 +3010,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"calendar_id": _quote(calendar_id), "job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
         __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -3153,8 +3137,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3330,8 +3313,7 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"datafeed_id": _quote(datafeed_id)}
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
         __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3420,8 +3402,7 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"filter_id": _quote(filter_id)}
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
         __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3579,8 +3560,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'analysis_config'")
         if data_description is None and body is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3710,8 +3690,7 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3785,8 +3764,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "model_id": _quote(model_id),
             "model_alias": _quote(model_alias),
         }
@@ -3857,8 +3835,10 @@ class MlClient(NamespacedClient):
             )
         if total_parts is None and body is None:
             raise ValueError("Empty value passed for parameter 'total_parts'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id), "part": _quote(part)}
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "part": _quote(part),
+        }
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/definition/{__path_parts["part"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3918,8 +3898,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if vocabulary is None and body is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/vocabulary'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3975,8 +3954,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_reset'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
@@ -4032,8 +4010,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id), "snapshot_id": _quote(snapshot_id)}
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_revert'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4085,8 +4065,7 @@ class MlClient(NamespacedClient):
             starting.
         :param timeout: The time to wait for the request to be completed.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/set_upgrade_mode"
         __query: t.Dict[str, t.Any] = {}
         if enabled is not None:
@@ -4135,8 +4114,7 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -4190,8 +4168,7 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"datafeed_id": _quote(datafeed_id)}
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
         __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4278,8 +4255,7 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_start'
         __query: t.Dict[str, t.Any] = {}
         if cache_size is not None:
@@ -4351,8 +4327,7 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -4411,8 +4386,7 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"datafeed_id": _quote(datafeed_id)}
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
         __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4476,8 +4450,7 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"model_id": _quote(model_id)}
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -4547,8 +4520,7 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4720,8 +4692,7 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"datafeed_id": _quote(datafeed_id)}
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
         __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4809,8 +4780,7 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"filter_id": _quote(filter_id)}
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
         __path = f'/_ml/filters/{__path_parts["filter_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4944,8 +4914,7 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id)}
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -5033,8 +5002,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id), "snapshot_id": _quote(snapshot_id)}
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -5092,8 +5063,10 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"job_id": _quote(job_id), "snapshot_id": _quote(snapshot_id)}
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -5164,8 +5137,7 @@ class MlClient(NamespacedClient):
         :param model_snapshot_retention_days:
         :param results_index_name:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -5233,8 +5205,7 @@ class MlClient(NamespacedClient):
             )
         elif detector is not None and body is not None:
             raise ValueError("Cannot set both 'detector' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate/detector"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

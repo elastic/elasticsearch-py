@@ -54,8 +54,7 @@ class IlmClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"policy": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"policy": _quote(name)}
         __path = f'/_ilm/policy/{__path_parts["policy"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -118,8 +117,7 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ilm/explain'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -219,8 +217,7 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -268,8 +265,7 @@ class IlmClient(NamespacedClient):
         :param legacy_template_to_delete:
         :param node_attribute:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/migrate_to_data_tiers"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -329,8 +325,7 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/_ilm/move/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -395,8 +390,7 @@ class IlmClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"policy": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"policy": _quote(name)}
         __path = f'/_ilm/policy/{__path_parts["policy"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -449,8 +443,7 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ilm/remove'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -491,8 +484,7 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ilm/retry'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -534,8 +526,7 @@ class IlmClient(NamespacedClient):
         :param master_timeout:
         :param timeout:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/start"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -582,8 +573,7 @@ class IlmClient(NamespacedClient):
         :param master_timeout:
         :param timeout:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/stop"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

@@ -40,8 +40,7 @@ class FeaturesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-features-api.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -76,8 +75,7 @@ class FeaturesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_features/_reset"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
