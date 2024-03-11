@@ -40,6 +40,7 @@ class SslClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/security-api-ssl.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ssl/certificates"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -52,5 +53,10 @@ class SslClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ssl.certificates",
+            path_parts=__path_parts,
         )

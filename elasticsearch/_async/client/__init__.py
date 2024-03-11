@@ -674,9 +674,12 @@ class AsyncElasticsearch(BaseClient):
             )
         elif operations is not None and body is not None:
             raise ValueError("Cannot set both 'operations' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_bulk"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_bulk'
         else:
+            __path_parts = {}
             __path = "/_bulk"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -711,7 +714,13 @@ class AsyncElasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="bulk",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -734,6 +743,7 @@ class AsyncElasticsearch(BaseClient):
 
         :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -754,7 +764,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="clear_scroll",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -779,6 +795,7 @@ class AsyncElasticsearch(BaseClient):
         """
         if id is None and body is None:
             raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_pit"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -799,7 +816,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="close_point_in_time",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -879,9 +902,12 @@ class AsyncElasticsearch(BaseClient):
             If a query reaches this limit, Elasticsearch terminates the query early.
             Elasticsearch collects documents before sorting.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_count"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_count'
         else:
+            __path_parts = {}
             __path = "/_count"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -930,7 +956,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="count",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1004,7 +1036,8 @@ class AsyncElasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
-        __path = f"/{_quote(index)}/_create/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_create/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1031,7 +1064,13 @@ class AsyncElasticsearch(BaseClient):
         __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1088,7 +1127,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1116,7 +1156,12 @@ class AsyncElasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1247,7 +1292,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_delete_by_query"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_delete_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -1334,7 +1380,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["slice"] = slice
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="delete_by_query",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1359,7 +1411,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_delete_by_query/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1373,7 +1426,12 @@ class AsyncElasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete_by_query_rethrottle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1404,7 +1462,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_scripts/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1420,7 +1479,12 @@ class AsyncElasticsearch(BaseClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1484,7 +1548,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1516,7 +1581,12 @@ class AsyncElasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="exists",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1576,7 +1646,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_source/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1606,7 +1677,12 @@ class AsyncElasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="exists_source",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1676,7 +1752,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_explain/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_explain/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if analyze_wildcard is not None:
@@ -1720,7 +1797,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="explain",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1786,9 +1869,12 @@ class AsyncElasticsearch(BaseClient):
         :param types: Only return results for fields that have one of the types in the
             list
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_field_caps"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_field_caps'
         else:
+            __path_parts = {}
             __path = "/_field_caps"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1827,7 +1913,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="field_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1890,7 +1982,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1922,7 +2015,12 @@ class AsyncElasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1948,7 +2046,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_scripts/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1962,7 +2061,12 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1979,6 +2083,7 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/8.13/painless-contexts.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_context"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1991,7 +2096,12 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script_context",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2008,6 +2118,7 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/modules-scripting.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_language"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2020,7 +2131,12 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script_languages",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2081,7 +2197,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_source/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2113,7 +2230,12 @@ class AsyncElasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_source",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2140,9 +2262,12 @@ class AsyncElasticsearch(BaseClient):
         :param timeout: Explicit operation timeout.
         :param verbose: Opt-in for more information about the health of the system.
         """
+        __path_parts: t.Dict[str, str]
         if feature not in SKIP_IN_PATH:
-            __path = f"/_health_report/{_quote(feature)}"
+            __path_parts = {"feature": _quote(feature)}
+            __path = f'/_health_report/{__path_parts["feature"]}'
         else:
+            __path_parts = {}
             __path = "/_health_report"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2161,7 +2286,12 @@ class AsyncElasticsearch(BaseClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="health_report",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2242,11 +2372,14 @@ class AsyncElasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
             __method = "PUT"
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_doc"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_doc'
             __method = "POST"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
@@ -2284,7 +2417,13 @@ class AsyncElasticsearch(BaseClient):
         __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            __method, __path, params=__query, headers=__headers, body=__body
+            __method,
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2301,6 +2440,7 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/index.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2313,7 +2453,12 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2376,7 +2521,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if knn is None and body is None:
             raise ValueError("Empty value passed for parameter 'knn'")
-        __path = f"/{_quote(index)}/_knn_search"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_knn_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2408,7 +2554,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="knn_search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2469,9 +2621,12 @@ class AsyncElasticsearch(BaseClient):
         :param stored_fields: If `true`, retrieves the document fields stored in the
             index rather than the document `_source`.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mget"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mget'
         else:
+            __path_parts = {}
             __path = "/_mget"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2506,7 +2661,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["ids"] = ids
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="mget",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2591,9 +2752,12 @@ class AsyncElasticsearch(BaseClient):
             )
         elif searches is not None and body is not None:
             raise ValueError("Cannot set both 'searches' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_msearch"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_msearch'
         else:
+            __path_parts = {}
             __path = "/_msearch"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2634,7 +2798,13 @@ class AsyncElasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="msearch",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2684,9 +2854,12 @@ class AsyncElasticsearch(BaseClient):
             )
         elif search_templates is not None and body is not None:
             raise ValueError("Cannot set both 'search_templates' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_msearch/template"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_msearch/template'
         else:
+            __path_parts = {}
             __path = "/_msearch/template"
         __query: t.Dict[str, t.Any] = {}
         if ccs_minimize_roundtrips is not None:
@@ -2713,7 +2886,13 @@ class AsyncElasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="msearch_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2770,9 +2949,12 @@ class AsyncElasticsearch(BaseClient):
         :param version: If `true`, returns the document version as part of a hit.
         :param version_type: Specific version type.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mtermvectors"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mtermvectors'
         else:
+            __path_parts = {}
             __path = "/_mtermvectors"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2817,7 +2999,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="mtermvectors",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2864,7 +3052,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if keep_alive is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
-        __path = f"/{_quote(index)}/_pit"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
@@ -2886,7 +3075,12 @@ class AsyncElasticsearch(BaseClient):
             __query["routing"] = routing
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="open_point_in_time",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2930,10 +3124,13 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'id'")
         if script is None and body is None:
             raise ValueError("Empty value passed for parameter 'script'")
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH and context not in SKIP_IN_PATH:
-            __path = f"/_scripts/{_quote(id)}/{_quote(context)}"
+            __path_parts = {"id": _quote(id), "context": _quote(context)}
+            __path = f'/_scripts/{__path_parts["id"]}/{__path_parts["context"]}'
         elif id not in SKIP_IN_PATH:
-            __path = f"/_scripts/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_scripts/{__path_parts["id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -2955,7 +3152,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["script"] = script
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="put_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3010,9 +3213,12 @@ class AsyncElasticsearch(BaseClient):
         """
         if requests is None and body is None:
             raise ValueError("Empty value passed for parameter 'requests'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_rank_eval"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_rank_eval'
         else:
+            __path_parts = {}
             __path = "/_rank_eval"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3039,7 +3245,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["metric"] = metric
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rank_eval",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3105,6 +3317,7 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_reindex"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3147,7 +3360,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="reindex",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3172,7 +3391,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_reindex/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3186,7 +3406,12 @@ class AsyncElasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="reindex_rethrottle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3220,9 +3445,12 @@ class AsyncElasticsearch(BaseClient):
             search API's request body. These parameters also support Mustache variables.
             If no `id` or `<templated-id>` is specified, this parameter is required.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_render/template/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_render/template/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_render/template"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3247,7 +3475,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="render_search_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3274,6 +3508,7 @@ class AsyncElasticsearch(BaseClient):
         :param context_setup: Additional parameters for the `context`.
         :param script: The Painless script to execute.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_scripts/painless/_execute"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3298,7 +3533,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="scripts_painless_execute",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3329,6 +3570,7 @@ class AsyncElasticsearch(BaseClient):
         """
         if scroll_id is None and body is None:
             raise ValueError("Empty value passed for parameter 'scroll_id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3353,7 +3595,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="scroll",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3682,9 +3930,12 @@ class AsyncElasticsearch(BaseClient):
             by their respective types in the response.
         :param version: If true, returns document version as part of a hit.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search'
         else:
+            __path_parts = {}
             __path = "/_search"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3840,7 +4091,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3955,7 +4212,14 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'x'")
         if y in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'y'")
-        __path = f"/{_quote(index)}/_mvt/{_quote(field)}/{_quote(zoom)}/{_quote(x)}/{_quote(y)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "field": _quote(field),
+            "zoom": _quote(zoom),
+            "x": _quote(x),
+            "y": _quote(y),
+        }
+        __path = f'/{__path_parts["index"]}/_mvt/{__path_parts["field"]}/{__path_parts["zoom"]}/{__path_parts["x"]}/{__path_parts["y"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -4012,7 +4276,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_mvt",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4063,9 +4333,12 @@ class AsyncElasticsearch(BaseClient):
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search_shards"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search_shards'
         else:
+            __path_parts = {}
             __path = "/_search_shards"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -4090,7 +4363,12 @@ class AsyncElasticsearch(BaseClient):
             __query["routing"] = routing
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_shards",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4175,9 +4453,12 @@ class AsyncElasticsearch(BaseClient):
         :param typed_keys: If `true`, the response prefixes aggregation and suggester
             names with their respective types.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search/template"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search/template'
         else:
+            __path_parts = {}
             __path = "/_search/template"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4224,7 +4505,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4283,7 +4570,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if field is None and body is None:
             raise ValueError("Empty value passed for parameter 'field'")
-        __path = f"/{_quote(index)}/_terms_enum"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_terms_enum'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4315,7 +4603,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="terms_enum",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4379,10 +4673,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_termvectors/{_quote(id)}"
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_termvectors/{__path_parts["id"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_termvectors"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_termvectors'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -4430,7 +4727,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="termvectors",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4527,7 +4830,8 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_update/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_update/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4577,7 +4881,13 @@ class AsyncElasticsearch(BaseClient):
                 __body["upsert"] = upsert
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="update",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4719,7 +5029,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_update_by_query"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_update_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -4814,7 +5125,13 @@ class AsyncElasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="update_by_query",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4839,7 +5156,8 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_update_by_query/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -4853,5 +5171,10 @@ class AsyncElasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="update_by_query_rethrottle",
+            path_parts=__path_parts,
         )

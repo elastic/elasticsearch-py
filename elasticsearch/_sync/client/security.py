@@ -55,6 +55,7 @@ class SecurityClient(NamespacedClient):
         """
         if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_activate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -77,7 +78,13 @@ class SecurityClient(NamespacedClient):
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.activate_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -95,6 +102,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/security-api-authenticate.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_authenticate"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -107,7 +115,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.authenticate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -145,9 +158,12 @@ class SecurityClient(NamespacedClient):
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
+        __path_parts: t.Dict[str, str]
         if username not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(username)}/_password"
+            __path_parts = {"username": _quote(username)}
+            __path = f'/_security/user/{__path_parts["username"]}/_password'
         else:
+            __path_parts = {}
             __path = "/_security/user/_password"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -168,7 +184,13 @@ class SecurityClient(NamespacedClient):
                 __body["password_hash"] = password_hash
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.change_password",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -191,7 +213,8 @@ class SecurityClient(NamespacedClient):
         """
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ids'")
-        __path = f"/_security/api_key/{_quote(ids)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"ids": _quote(ids)}
+        __path = f'/_security/api_key/{__path_parts["ids"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -203,7 +226,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_api_key_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -225,7 +253,8 @@ class SecurityClient(NamespacedClient):
         """
         if application in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'application'")
-        __path = f"/_security/privilege/{_quote(application)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"application": _quote(application)}
+        __path = f'/_security/privilege/{__path_parts["application"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -237,7 +266,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -262,7 +296,8 @@ class SecurityClient(NamespacedClient):
         """
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realms'")
-        __path = f"/_security/realm/{_quote(realms)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"realms": _quote(realms)}
+        __path = f'/_security/realm/{__path_parts["realms"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -276,7 +311,12 @@ class SecurityClient(NamespacedClient):
             __query["usernames"] = usernames
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_realms",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -298,7 +338,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -310,7 +351,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_roles",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -340,7 +386,12 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+            "name": _quote(name),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -352,7 +403,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_service_tokens",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -397,6 +453,7 @@ class SecurityClient(NamespacedClient):
             is the same as the request for create role API. For more details, see create
             or update roles API.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -421,7 +478,13 @@ class SecurityClient(NamespacedClient):
                 __body["role_descriptors"] = role_descriptors
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.create_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -455,15 +518,22 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
+        __path_parts: t.Dict[str, str]
         if (
             namespace not in SKIP_IN_PATH
             and service not in SKIP_IN_PATH
             and name not in SKIP_IN_PATH
         ):
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+            __path_parts = {
+                "namespace": _quote(namespace),
+                "service": _quote(service),
+                "name": _quote(name),
+            }
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}'
             __method = "PUT"
         elif namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token"
+            __path_parts = {"namespace": _quote(namespace), "service": _quote(service)}
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token'
             __method = "POST"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
@@ -480,7 +550,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            __method, __path, params=__query, headers=__headers
+            __method,
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.create_service_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -512,7 +587,13 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'application'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {
+            "application": _quote(application),
+            "name": _quote(name),
+        }
+        __path = (
+            f'/_security/privilege/{__path_parts["application"]}/{__path_parts["name"]}'
+        )
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -526,7 +607,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -554,7 +640,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -568,7 +655,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -596,7 +688,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role_mapping/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -610,7 +703,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -646,7 +744,12 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+            "name": _quote(name),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -660,7 +763,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_service_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -688,7 +796,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -702,7 +811,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -730,7 +844,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}/_disable"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -744,7 +859,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.disable_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -772,7 +892,8 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_disable"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -786,7 +907,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.disable_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -814,7 +940,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}/_enable"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -828,7 +955,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enable_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -856,7 +988,8 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_enable"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -870,7 +1003,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enable_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -888,6 +1026,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/security-api-kibana-enrollment.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/kibana"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -900,7 +1039,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enroll_kibana",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -917,6 +1061,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/security-api-node-enrollment.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/node"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -929,7 +1074,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enroll_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -974,6 +1124,7 @@ class SecurityClient(NamespacedClient):
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
@@ -1000,7 +1151,12 @@ class SecurityClient(NamespacedClient):
             __query["with_limited_by"] = with_limited_by
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1018,6 +1174,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/security-api-get-builtin-privileges.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege/_builtin"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1030,7 +1187,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_builtin_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1052,11 +1214,15 @@ class SecurityClient(NamespacedClient):
         :param application: Application name
         :param name: Privilege name
         """
+        __path_parts: t.Dict[str, str]
         if application not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+            __path_parts = {"application": _quote(application), "name": _quote(name)}
+            __path = f'/_security/privilege/{__path_parts["application"]}/{__path_parts["name"]}'
         elif application not in SKIP_IN_PATH:
-            __path = f"/_security/privilege/{_quote(application)}"
+            __path_parts = {"application": _quote(application)}
+            __path = f'/_security/privilege/{__path_parts["application"]}'
         else:
+            __path_parts = {}
             __path = "/_security/privilege"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1069,7 +1235,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1091,9 +1262,12 @@ class SecurityClient(NamespacedClient):
             list. If you do not specify this parameter, the API returns information about
             all roles.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_security/role/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_security/role/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_security/role"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1106,7 +1280,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1130,9 +1309,12 @@ class SecurityClient(NamespacedClient):
             mapping names as a comma-separated list. If you do not specify this parameter,
             the API returns information about all role mappings.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_security/role_mapping/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_security/role_mapping/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_security/role_mapping"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1145,7 +1327,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1170,11 +1357,15 @@ class SecurityClient(NamespacedClient):
         :param service: Name of the service name. Omit this parameter to retrieve information
             about all service accounts that belong to the specified `namespace`.
         """
+        __path_parts: t.Dict[str, str]
         if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}"
+            __path_parts = {"namespace": _quote(namespace), "service": _quote(service)}
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}'
         elif namespace not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}"
+            __path_parts = {"namespace": _quote(namespace)}
+            __path = f'/_security/service/{__path_parts["namespace"]}'
         else:
+            __path_parts = {}
             __path = "/_security/service"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1187,7 +1378,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_service_accounts",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1213,7 +1409,11 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1225,7 +1425,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_service_credentials",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1270,6 +1475,7 @@ class SecurityClient(NamespacedClient):
         :param scope:
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1296,7 +1502,13 @@ class SecurityClient(NamespacedClient):
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.get_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1321,9 +1533,12 @@ class SecurityClient(NamespacedClient):
         :param with_profile_uid: If true will return the User Profile ID for a user,
             if any.
         """
+        __path_parts: t.Dict[str, str]
         if username not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(username)}"
+            __path_parts = {"username": _quote(username)}
+            __path = f'/_security/user/{__path_parts["username"]}'
         else:
+            __path_parts = {}
             __path = "/_security/user"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1338,7 +1553,12 @@ class SecurityClient(NamespacedClient):
             __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1365,6 +1585,7 @@ class SecurityClient(NamespacedClient):
             the API returns information about all privileges for the requested application.
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/user/_privileges"
         __query: t.Dict[str, t.Any] = {}
         if application is not None:
@@ -1383,7 +1604,12 @@ class SecurityClient(NamespacedClient):
             __query["username"] = username
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1410,7 +1636,8 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}'
         __query: t.Dict[str, t.Any] = {}
         if data is not None:
             __query["data"] = data
@@ -1424,7 +1651,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1477,6 +1709,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'api_key'")
         if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key/grant"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1503,7 +1736,13 @@ class SecurityClient(NamespacedClient):
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.grant_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1539,9 +1778,12 @@ class SecurityClient(NamespacedClient):
         :param cluster: A list of the cluster privileges that you want to check.
         :param index:
         """
+        __path_parts: t.Dict[str, str]
         if user not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(user)}/_has_privileges"
+            __path_parts = {"user": _quote(user)}
+            __path = f'/_security/user/{__path_parts["user"]}/_has_privileges'
         else:
+            __path_parts = {}
             __path = "/_security/user/_has_privileges"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1562,7 +1804,13 @@ class SecurityClient(NamespacedClient):
                 __body["index"] = index
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.has_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1593,6 +1841,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'privileges'")
         if uids is None and body is None:
             raise ValueError("Empty value passed for parameter 'uids'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_has_privileges"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1611,7 +1860,13 @@ class SecurityClient(NamespacedClient):
                 __body["uids"] = uids
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.has_privileges_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1651,6 +1906,7 @@ class SecurityClient(NamespacedClient):
         :param username: The username of a user. This parameter cannot be used with either
             `ids` or `name`, or when `owner` flag is set to `true`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1677,7 +1933,13 @@ class SecurityClient(NamespacedClient):
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.invalidate_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1706,6 +1968,7 @@ class SecurityClient(NamespacedClient):
         :param token:
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1728,7 +1991,13 @@ class SecurityClient(NamespacedClient):
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.invalidate_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1765,6 +2034,7 @@ class SecurityClient(NamespacedClient):
             )
         elif privileges is not None and body is not None:
             raise ValueError("Cannot set both 'privileges' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1780,7 +2050,13 @@ class SecurityClient(NamespacedClient):
         __body = privileges if privileges is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1850,7 +2126,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -1880,7 +2157,13 @@ class SecurityClient(NamespacedClient):
                 __body["transient_metadata"] = transient_metadata
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1930,7 +2213,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role_mapping/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -1958,7 +2242,13 @@ class SecurityClient(NamespacedClient):
                 __body["run_as"] = run_as
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2012,7 +2302,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2042,7 +2333,13 @@ class SecurityClient(NamespacedClient):
                 __body["roles"] = roles
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2094,6 +2391,7 @@ class SecurityClient(NamespacedClient):
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_query/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2135,7 +2433,13 @@ class SecurityClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_api_keys",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2170,6 +2474,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'content'")
         if ids is None and body is None:
             raise ValueError("Empty value passed for parameter 'ids'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/authenticate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2190,7 +2495,13 @@ class SecurityClient(NamespacedClient):
                 __body["realm"] = realm
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_authenticate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2228,6 +2539,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'ids'")
         if realm is None and body is None:
             raise ValueError("Empty value passed for parameter 'realm'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/complete_logout"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2250,7 +2562,13 @@ class SecurityClient(NamespacedClient):
                 __body["query_string"] = query_string
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_complete_logout",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2291,6 +2609,7 @@ class SecurityClient(NamespacedClient):
         """
         if query_string is None and body is None:
             raise ValueError("Empty value passed for parameter 'query_string'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/invalidate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2311,7 +2630,13 @@ class SecurityClient(NamespacedClient):
                 __body["realm"] = realm
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_invalidate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2343,6 +2668,7 @@ class SecurityClient(NamespacedClient):
         """
         if token is None and body is None:
             raise ValueError("Empty value passed for parameter 'token'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/logout"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2361,7 +2687,13 @@ class SecurityClient(NamespacedClient):
                 __body["refresh_token"] = refresh_token
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_logout",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2394,6 +2726,7 @@ class SecurityClient(NamespacedClient):
             API returns as the RelayState query parameter. If the Authentication Request
             is signed, this value is used as part of the signature computation.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/prepare"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2414,7 +2747,13 @@ class SecurityClient(NamespacedClient):
                 __body["relay_state"] = relay_state
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_prepare_authentication",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2436,7 +2775,8 @@ class SecurityClient(NamespacedClient):
         """
         if realm_name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realm_name'")
-        __path = f"/_security/saml/metadata/{_quote(realm_name)}"
+        __path_parts: t.Dict[str, str] = {"realm_name": _quote(realm_name)}
+        __path = f'/_security/saml/metadata/{__path_parts["realm_name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2448,7 +2788,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.saml_service_provider_metadata",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2484,6 +2829,7 @@ class SecurityClient(NamespacedClient):
             Name-related fields are the user's `username`, `full_name`, and `email`.
         :param size: Number of profiles to return.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_suggest"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2510,7 +2856,13 @@ class SecurityClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.suggest_user_profiles",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2550,7 +2902,8 @@ class SecurityClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_security/api_key/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_security/api_key/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2574,7 +2927,13 @@ class SecurityClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2617,7 +2976,8 @@ class SecurityClient(NamespacedClient):
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_data"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_data'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2641,5 +3001,11 @@ class SecurityClient(NamespacedClient):
                 __body["labels"] = labels
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_user_profile_data",
+            path_parts=__path_parts,
         )

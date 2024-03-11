@@ -48,9 +48,12 @@ class SearchableSnapshotsClient(NamespacedClient):
             to, leave empty to get information from all nodes
         :param master_timeout:
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_searchable_snapshots/{_quote(node_id)}/cache/stats"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_searchable_snapshots/{__path_parts["node_id"]}/cache/stats'
         else:
+            __path_parts = {}
             __path = "/_searchable_snapshots/cache/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -65,7 +68,12 @@ class SearchableSnapshotsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="searchable_snapshots.cache_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -102,9 +110,12 @@ class SearchableSnapshotsClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_searchable_snapshots/cache/clear"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_searchable_snapshots/cache/clear'
         else:
+            __path_parts = {}
             __path = "/_searchable_snapshots/cache/clear"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -123,7 +134,12 @@ class SearchableSnapshotsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="searchable_snapshots.clear_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -178,7 +194,13 @@ class SearchableSnapshotsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_mount"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = (
+            f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_mount'
+        )
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -206,7 +228,13 @@ class SearchableSnapshotsClient(NamespacedClient):
                 __body["renamed_index"] = renamed_index
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="searchable_snapshots.mount",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -230,9 +258,12 @@ class SearchableSnapshotsClient(NamespacedClient):
         :param index: A comma-separated list of index names
         :param level: Return stats aggregated at cluster, index or shard level
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_searchable_snapshots/stats"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_searchable_snapshots/stats'
         else:
+            __path_parts = {}
             __path = "/_searchable_snapshots/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -247,5 +278,10 @@ class SearchableSnapshotsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="searchable_snapshots.stats",
+            path_parts=__path_parts,
         )

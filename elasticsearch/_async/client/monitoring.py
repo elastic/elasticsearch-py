@@ -63,6 +63,7 @@ class MonitoringClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'system_api_version'")
         if system_id is None:
             raise ValueError("Empty value passed for parameter 'system_id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_monitoring/bulk"
         __query: t.Dict[str, t.Any] = {}
         if interval is not None:
@@ -85,5 +86,11 @@ class MonitoringClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="monitoring.bulk",
+            path_parts=__path_parts,
         )

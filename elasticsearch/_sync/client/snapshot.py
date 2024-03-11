@@ -50,7 +50,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}/_cleanup"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_cleanup'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -66,7 +67,12 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.cleanup_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -109,7 +115,12 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'target_snapshot'")
         if indices is None and body is None:
             raise ValueError("Empty value passed for parameter 'indices'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_clone/{_quote(target_snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+            "target_snapshot": _quote(target_snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_clone/{__path_parts["target_snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -129,7 +140,13 @@ class SnapshotClient(NamespacedClient):
                 __body["indices"] = indices
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.clone",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -203,7 +220,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -237,7 +258,13 @@ class SnapshotClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -278,7 +305,8 @@ class SnapshotClient(NamespacedClient):
             )
         elif repository is not None and body is not None:
             raise ValueError("Cannot set both 'repository' and 'body'")
-        __path = f"/_snapshot/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -297,7 +325,13 @@ class SnapshotClient(NamespacedClient):
         __body = repository if repository is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.create_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -327,7 +361,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -341,7 +379,12 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -370,7 +413,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -386,7 +430,12 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.delete_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -470,7 +519,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if after is not None:
             __query["after"] = after
@@ -508,7 +561,12 @@ class SnapshotClient(NamespacedClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -535,9 +593,12 @@ class SnapshotClient(NamespacedClient):
             node (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(name)}"
+            __path_parts = {"repository": _quote(name)}
+            __path = f'/_snapshot/{__path_parts["repository"]}'
         else:
+            __path_parts = {}
             __path = "/_snapshot"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -554,7 +615,12 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.get_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -621,7 +687,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_restore"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_restore'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -663,7 +733,13 @@ class SnapshotClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.restore",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -692,11 +768,18 @@ class SnapshotClient(NamespacedClient):
             to false which means a SnapshotMissingException is thrown
         :param master_timeout: Explicit operation timeout for connection to master node
         """
+        __path_parts: t.Dict[str, str]
         if repository not in SKIP_IN_PATH and snapshot not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_status"
+            __path_parts = {
+                "repository": _quote(repository),
+                "snapshot": _quote(snapshot),
+            }
+            __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_status'
         elif repository not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(repository)}/_status"
+            __path_parts = {"repository": _quote(repository)}
+            __path = f'/_snapshot/{__path_parts["repository"]}/_status'
         else:
+            __path_parts = {}
             __path = "/_snapshot/_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -713,7 +796,12 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -741,7 +829,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}/_verify"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_verify'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -757,5 +846,10 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.verify_repository",
+            path_parts=__path_parts,
         )

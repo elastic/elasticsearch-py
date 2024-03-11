@@ -59,7 +59,8 @@ class FleetClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_fleet/global_checkpoints"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_fleet/global_checkpoints'
         __query: t.Dict[str, t.Any] = {}
         if checkpoints is not None:
             __query["checkpoints"] = checkpoints
@@ -79,7 +80,12 @@ class FleetClient(NamespacedClient):
             __query["wait_for_index"] = wait_for_index
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="fleet.global_checkpoints",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -171,9 +177,12 @@ class FleetClient(NamespacedClient):
             )
         elif searches is not None and body is not None:
             raise ValueError("Cannot set both 'searches' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_fleet/_fleet_msearch"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_fleet/_fleet_msearch'
         else:
+            __path_parts = {}
             __path = "/_fleet/_fleet_msearch"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -216,7 +225,13 @@ class FleetClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="fleet.msearch",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -460,7 +475,8 @@ class FleetClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_fleet/_fleet_search"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_fleet/_fleet_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -613,5 +629,11 @@ class FleetClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="fleet.search",
+            path_parts=__path_parts,
         )

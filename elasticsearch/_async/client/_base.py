@@ -257,6 +257,8 @@ class BaseClient:
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
+        endpoint_id: Union[DefaultType, str] = DEFAULT,
+        path_parts: Union[DefaultType, Mapping[str, Any]] = DEFAULT,
     ) -> ApiResponse[Any]:
         if headers:
             request_headers = self._headers.copy()
@@ -292,6 +294,8 @@ class BaseClient:
             retry_on_status=self._retry_on_status,
             retry_on_timeout=self._retry_on_timeout,
             client_meta=self._client_meta,
+            endpoint_id=endpoint_id,
+            path_parts=path_parts,
         )
 
         # HEAD with a 404 is returned as a normal response
@@ -383,9 +387,17 @@ class NamespacedClient(BaseClient):
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
+        endpoint_id: Union[DefaultType, str] = DEFAULT,
+        path_parts: Union[DefaultType, Mapping[str, Any]] = DEFAULT,
     ) -> ApiResponse[Any]:
         # Use the internal clients .perform_request() implementation
         # so we take advantage of their transport options.
         return await self._client.perform_request(
-            method, path, params=params, headers=headers, body=body
+            method,
+            path,
+            params=params,
+            headers=headers,
+            body=body,
+            endpoint_id=endpoint_id,
+            path_parts=path_parts,
         )
