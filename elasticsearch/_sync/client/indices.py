@@ -71,8 +71,10 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if block in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'block'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "block": _quote(block)}
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "block": _quote(block),
+        }
         __path = f'/{__path_parts["index"]}/_block/{__path_parts["block"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -346,8 +348,10 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "target": _quote(target)}
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
         __path = f'/{__path_parts["index"]}/_clone/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -439,8 +443,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -517,8 +520,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -581,8 +583,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -710,8 +711,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -776,8 +776,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
         __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -838,8 +837,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -896,8 +894,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -949,8 +946,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1004,8 +1000,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1079,8 +1074,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_disk_usage'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1145,8 +1139,10 @@ class IndicesClient(NamespacedClient):
             )
         elif config is not None and body is not None:
             raise ValueError("Cannot set both 'config' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "target_index": _quote(target_index)}
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target_index": _quote(target_index),
+        }
         __path = f'/{__path_parts["index"]}/_downsample/{__path_parts["target_index"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1215,8 +1211,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1356,8 +1351,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1408,8 +1402,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1463,8 +1456,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_lifecycle/explain'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1548,8 +1540,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_field_usage_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1816,8 +1807,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1972,8 +1962,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2478,8 +2467,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/_migrate/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2522,8 +2510,7 @@ class IndicesClient(NamespacedClient):
         """
         if actions is None and body is None:
             raise ValueError("Empty value passed for parameter 'actions'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_data_stream/_modify"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2607,8 +2594,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2661,8 +2647,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/_promote/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2747,8 +2732,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
         __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2844,8 +2828,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2942,8 +2925,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3090,8 +3072,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_mapping'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3314,8 +3295,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3519,8 +3499,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_reload_search_analyzers'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3593,8 +3572,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_resolve/cluster/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3656,8 +3634,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_resolve/index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -3986,8 +3963,10 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "target": _quote(target)}
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
         __path = f'/{__path_parts["index"]}/_shrink/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4104,8 +4083,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4282,8 +4260,10 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index), "target": _quote(target)}
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
         __path = f'/{__path_parts["index"]}/_split/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4482,8 +4462,7 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_unfreeze'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -4545,8 +4524,7 @@ class IndicesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_aliases"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

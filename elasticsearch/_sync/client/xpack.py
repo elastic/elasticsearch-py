@@ -49,8 +49,7 @@ class XPackClient(NamespacedClient):
         :param categories: A comma-separated list of the information categories to include
             in the response. For example, `build,license,features`.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_xpack"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -96,8 +95,7 @@ class XPackClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_xpack/usage"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

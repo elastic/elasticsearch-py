@@ -44,8 +44,7 @@ class LogstashClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_logstash/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -139,8 +138,7 @@ class LogstashClient(NamespacedClient):
             )
         elif pipeline is not None and body is not None:
             raise ValueError("Cannot set both 'pipeline' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_logstash/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

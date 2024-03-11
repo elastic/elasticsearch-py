@@ -503,8 +503,7 @@ class CatClient(NamespacedClient):
         :param ts: If true, returns `HH:MM:SS` and Unix epoch timestamps.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/health"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -581,8 +580,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -775,8 +773,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/master"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1349,8 +1346,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/nodeattrs"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1433,8 +1429,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/nodes"
         __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
@@ -1513,8 +1508,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/pending_tasks"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1587,8 +1581,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/plugins"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1758,8 +1751,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/repositories"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2106,8 +2098,7 @@ class CatClient(NamespacedClient):
             a suffix to the column name.
         :param v: When set to `true` will enable verbose output.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_cat/tasks"
         __query: t.Dict[str, t.Any] = {}
         if actions is not None:

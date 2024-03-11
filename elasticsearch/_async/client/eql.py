@@ -47,8 +47,7 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_eql/search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -98,8 +97,7 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_eql/search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -144,8 +142,7 @@ class EqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_eql/search/status/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -259,8 +256,7 @@ class EqlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"index": _quote(index)}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_eql/search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

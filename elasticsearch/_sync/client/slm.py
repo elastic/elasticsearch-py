@@ -44,8 +44,7 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"policy_id": _quote(policy_id)}
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
         __path = f'/_slm/policy/{__path_parts["policy_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -86,8 +85,7 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"policy_id": _quote(policy_id)}
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
         __path = f'/_slm/policy/{__path_parts["policy_id"]}/_execute'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -122,8 +120,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/slm-api-execute-retention.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/_execute_retention"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -203,8 +200,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/slm-api-get-stats.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -239,8 +235,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/slm-api-get-status.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -309,8 +304,7 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"policy_id": _quote(policy_id)}
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
         __path = f'/_slm/policy/{__path_parts["policy_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -366,8 +360,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/slm-api-start.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/start"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -402,8 +395,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/slm-api-stop.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stop"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

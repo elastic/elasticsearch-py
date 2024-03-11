@@ -50,8 +50,7 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
         __path = f'/_snapshot/{__path_parts["repository"]}/_cleanup'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -116,8 +115,7 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'target_snapshot'")
         if indices is None and body is None:
             raise ValueError("Empty value passed for parameter 'indices'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {
+        __path_parts: t.Dict[str, str] = {
             "repository": _quote(repository),
             "snapshot": _quote(snapshot),
             "target_snapshot": _quote(target_snapshot),
@@ -222,8 +220,10 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(repository), "snapshot": _quote(snapshot)}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
         __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -305,7 +305,8 @@ class SnapshotClient(NamespacedClient):
             )
         elif repository is not None and body is not None:
             raise ValueError("Cannot set both 'repository' and 'body'")
-        __path = f"/_snapshot/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -360,8 +361,10 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(repository), "snapshot": _quote(snapshot)}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
         __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -410,8 +413,7 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
         __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -517,8 +519,10 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(repository), "snapshot": _quote(snapshot)}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
         __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if after is not None:
@@ -683,8 +687,10 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(repository), "snapshot": _quote(snapshot)}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
         __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_restore'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -823,8 +829,7 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"repository": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
         __path = f'/_snapshot/{__path_parts["repository"]}/_verify'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

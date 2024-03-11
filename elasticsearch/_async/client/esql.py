@@ -68,8 +68,7 @@ class EsqlClient(NamespacedClient):
         """
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

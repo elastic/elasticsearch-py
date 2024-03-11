@@ -96,8 +96,7 @@ class WatcherClient(NamespacedClient):
         """
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'watch_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"watch_id": _quote(watch_id)}
+        __path_parts: t.Dict[str, str] = {"watch_id": _quote(watch_id)}
         __path = f'/_watcher/watch/{__path_parts["watch_id"]}/_activate'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -137,8 +136,7 @@ class WatcherClient(NamespacedClient):
         """
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'watch_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"watch_id": _quote(watch_id)}
+        __path_parts: t.Dict[str, str] = {"watch_id": _quote(watch_id)}
         __path = f'/_watcher/watch/{__path_parts["watch_id"]}/_deactivate'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -178,8 +176,7 @@ class WatcherClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_watcher/watch/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -329,8 +326,7 @@ class WatcherClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_watcher/watch/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -405,8 +401,7 @@ class WatcherClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"id": _quote(id)}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_watcher/watch/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -493,8 +488,7 @@ class WatcherClient(NamespacedClient):
         :param size: The number of hits to return. Needs to be non-negative.
         :param sort: Optional sort definition.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_watcher/_query/watches"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -557,8 +551,7 @@ class WatcherClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-start.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_watcher/_start"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -654,8 +647,7 @@ class WatcherClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/watcher-api-stop.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_watcher/_stop"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

@@ -56,8 +56,7 @@ class ShutdownClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"node_id": _quote(node_id)}
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
         __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -211,8 +210,7 @@ class ShutdownClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'reason'")
         if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"node_id": _quote(node_id)}
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
         __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

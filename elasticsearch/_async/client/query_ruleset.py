@@ -44,8 +44,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"ruleset_id": _quote(ruleset_id)}
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
         __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -85,8 +84,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"ruleset_id": _quote(ruleset_id)}
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
         __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -128,8 +126,7 @@ class QueryRulesetClient(NamespacedClient):
         :param from_: Starting offset (default: 0)
         :param size: specifies a max number of results to get
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_query_rules"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -181,8 +178,7 @@ class QueryRulesetClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
         if rules is None and body is None:
             raise ValueError("Empty value passed for parameter 'rules'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"ruleset_id": _quote(ruleset_id)}
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
         __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

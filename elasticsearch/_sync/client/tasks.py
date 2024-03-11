@@ -111,8 +111,7 @@ class TasksClient(NamespacedClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"task_id": _quote(task_id)}
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_tasks/{__path_parts["task_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -180,8 +179,7 @@ class TasksClient(NamespacedClient):
         :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_tasks"
         __query: t.Dict[str, t.Any] = {}
         if actions is not None:

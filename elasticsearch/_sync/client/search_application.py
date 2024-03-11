@@ -44,8 +44,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -85,8 +84,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/analytics/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -126,8 +124,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -214,8 +211,7 @@ class SearchApplicationClient(NamespacedClient):
         :param q: Query in the Lucene query string syntax.
         :param size: Specifies a max number of results to get.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_application/search_application"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -275,8 +271,7 @@ class SearchApplicationClient(NamespacedClient):
             )
         elif search_application is not None and body is not None:
             raise ValueError("Cannot set both 'search_application' and 'body'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if create is not None:
@@ -320,8 +315,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/analytics/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -368,8 +362,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str]
-        __path_parts = {"name": _quote(name)}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_application/search_application/{__path_parts["name"]}/_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}

@@ -39,8 +39,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/delete-license.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -84,8 +83,7 @@ class LicenseClient(NamespacedClient):
         :param local: Specifies whether to retrieve local information. The default value
             is `false`, which means the information is retrieved from the master node.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -124,8 +122,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-basic-status.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -160,8 +157,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/get-trial-status.html>`_
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -207,8 +203,7 @@ class LicenseClient(NamespacedClient):
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -260,8 +255,7 @@ class LicenseClient(NamespacedClient):
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_basic"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -304,8 +298,7 @@ class LicenseClient(NamespacedClient):
             false)
         :param type_query_string:
         """
-        __path_parts: t.Dict[str, str]
-        __path_parts = {}
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_trial"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
