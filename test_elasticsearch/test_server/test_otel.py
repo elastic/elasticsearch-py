@@ -44,8 +44,12 @@ def test_otel_end_to_end(monkeypatch, elasticsearch_url: str):
     spans = memory_exporter.get_finished_spans()
     assert len(spans) == 1
     assert spans[0].name == "search"
-    assert spans[0].attributes == {
+    expected_attributes = {
         "http.request.method": "POST",
         "db.system": "elasticsearch",
+        "db.operation": "search",
         "db.elasticsearch.path_parts.index": "logs-*",
     }
+    # Assert expected atttributes are here, but allow other attributes too
+    # to make this test robust to elastic-transport changes
+    assert expected_attributes.items() <= spans[0].attributes.items()
