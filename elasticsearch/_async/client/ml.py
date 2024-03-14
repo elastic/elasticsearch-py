@@ -3627,6 +3627,7 @@ class MlClient(NamespacedClient):
             "model_size_bytes",
             "model_type",
             "platform_architecture",
+            "prefix_strings",
             "tags",
         ),
     )
@@ -3649,6 +3650,7 @@ class MlClient(NamespacedClient):
             t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
         ] = None,
         platform_architecture: t.Optional[str] = None,
+        prefix_strings: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Sequence[str]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -3686,6 +3688,7 @@ class MlClient(NamespacedClient):
             `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
             (those that work independent of processor architecture or OS features), leave
             this field unset.
+        :param prefix_strings: Optional prefix strings applied at inference
         :param tags: An array of tags to organize the model.
         """
         if model_id in SKIP_IN_PATH:
@@ -3723,6 +3726,8 @@ class MlClient(NamespacedClient):
                 __body["model_type"] = model_type
             if platform_architecture is not None:
                 __body["platform_architecture"] = platform_architecture
+            if prefix_strings is not None:
+                __body["prefix_strings"] = prefix_strings
             if tags is not None:
                 __body["tags"] = tags
         __headers = {"accept": "application/json", "content-type": "application/json"}
