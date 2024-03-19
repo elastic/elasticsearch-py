@@ -352,9 +352,6 @@ class AsyncSearchClient(NamespacedClient):
         :param ext: Configuration of search extensions defined by Elasticsearch plugins.
         :param fields: Array of wildcard (*) patterns. The request returns values for
             field names matching these patterns in the hits.fields property of the response.
-        :param from_: Starting document offset. By default, you cannot page through more
-            than 10,000 hits using the from and size parameters. To page through more
-            hits, use the search_after parameter.
         :param highlight:
         :param ignore_throttled: Whether specified concrete, expanded or aliased indices
             should be ignored when throttled
