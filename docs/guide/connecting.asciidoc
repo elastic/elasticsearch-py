@@ -265,7 +265,7 @@ es.options(
 # You can persist the authenticated client to use
 # later or use for multiple API calls:
 auth_client = es.options(
-    api_key=("api-key-id", "api-key-secret")
+    api_key="api_key"
 )
 for i in range(10):
     auth_client.index(
@@ -321,8 +321,8 @@ es = Elasticsearch(
 ==== API Key authentication
 
 You can configure the client to use {es}'s API Key for connecting to your 
-cluster. Note that you need the values of `id` and `api_key` to
-https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[authenticate via an API Key].
+cluster. Note that you need the API Key credential representing the Base64-encoding of the id and api_key value 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[generated from the API Key].
 
 [source,python]
 ----
@@ -332,7 +332,7 @@ from elasticsearch import Elasticsearch
 es = Elasticsearch(
     "https://localhost:9200",
     ca_certs="/path/to/http_ca.crt",
-    api_key=("api_key.id", "api_key.api_key")
+    api_key="api_key"
 )
 ----
 
