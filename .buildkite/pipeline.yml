@@ -20,12 +20,15 @@ steps:
         connection:
           - "urllib3"
           - "requests"
-        nox_session: "test"
+        nox_session:
+          - "test"
       adjustments:
         - with:
             python: "3.7"
+            connection: "urllib3"
             nox_session: "test_otel"
         - with:
             python: "3.12"
+            connection: "urllib3"
             nox_session: "test_otel"
     command: ./.buildkite/run-tests
