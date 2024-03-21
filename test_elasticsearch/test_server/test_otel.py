@@ -15,12 +15,28 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider, export
-from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+import os
+
+import pytest
 
 import elasticsearch
 from test_elasticsearch.utils import CA_CERTS
+
+try:
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider, export
+    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
+        InMemorySpanExporter,
+    )
+except ModuleNotFoundError:
+    pass
+
+pytestmark = [
+    pytest.mark.skipif(
+        "TEST_WITH_OTEL" not in os.environ, reason="TEST_WITH_OTEL is not set"
+    ),
+    pytest.mark.otel,
+]
 
 
 def test_otel_end_to_end(monkeypatch, elasticsearch_url: str):
