@@ -1,5 +1,5 @@
 steps:
-  - label: ":elasticsearch: :python: ES Python ({{ matrix.python }})"
+  - label: ":elasticsearch: :python: ES Python ({{ matrix.python }}) {{ matrix.nox_session }} "
     agents:
       provider: "gcp"
     env:
