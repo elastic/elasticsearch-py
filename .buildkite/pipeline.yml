@@ -7,6 +7,7 @@ steps:
       TEST_SUITE: "platinum"
       STACK_VERSION: "8.11.0-SNAPSHOT"
       PYTHON_CONNECTION_CLASS: "{{ matrix.connection }}"
+      NOX_SESSION: "{{ matrix.nox_session }}"
     matrix:
       setup:
         python:
@@ -19,11 +20,12 @@ steps:
         connection:
           - "urllib3"
           - "requests"
+        nox_session: "test"
       adjustments:
         - with:
             python: "3.7"
-            nox-session: "test_otel"
+            nox_session: "test_otel"
         - with:
             python: "3.12"
-            nox-session: "test_otel"
+            nox_session: "test_otel"
     command: ./.buildkite/run-tests
