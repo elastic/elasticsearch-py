@@ -257,8 +257,8 @@ class BaseClient:
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
-        endpoint_id: Union[DefaultType, str] = DEFAULT,
-        path_parts: Union[DefaultType, Mapping[str, Any]] = DEFAULT,
+        endpoint_id: Optional[str] = None,
+        path_parts: Optional[Mapping[str, Any]] = None,
     ) -> ApiResponse[Any]:
         if headers:
             request_headers = self._headers.copy()
@@ -387,8 +387,8 @@ class NamespacedClient(BaseClient):
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
-        endpoint_id: Union[DefaultType, str] = DEFAULT,
-        path_parts: Union[DefaultType, Mapping[str, Any]] = DEFAULT,
+        endpoint_id: Optional[str] = None,
+        path_parts: Optional[Mapping[str, Any]] = None,
     ) -> ApiResponse[Any]:
         # Use the internal clients .perform_request() implementation
         # so we take advantage of their transport options.
