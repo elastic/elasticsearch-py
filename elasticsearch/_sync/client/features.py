@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class FeaturesClient(NamespacedClient):
+
     @_rewrite_parameters()
     def get_features(
         self,
@@ -39,6 +40,7 @@ class FeaturesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-features-api.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -51,7 +53,12 @@ class FeaturesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="features.get_features",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -68,6 +75,7 @@ class FeaturesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_features/_reset"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -80,5 +88,10 @@ class FeaturesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="features.reset_features",
+            path_parts=__path_parts,
         )

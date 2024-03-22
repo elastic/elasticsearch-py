@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class IndicesClient(NamespacedClient):
+
     @_rewrite_parameters()
     def add_block(
         self,
@@ -70,7 +71,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if block in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'block'")
-        __path = f"/{_quote(index)}/_block/{_quote(block)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "block": _quote(block),
+        }
+        __path = f'/{__path_parts["index"]}/_block/{__path_parts["block"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -92,7 +97,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.add_block",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -154,9 +164,12 @@ class IndicesClient(NamespacedClient):
             as a multi-value field.
         :param tokenizer: Tokenizer to use to convert text into tokens.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_analyze"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_analyze'
         else:
+            __path_parts = {}
             __path = "/_analyze"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -193,7 +206,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.analyze",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -244,9 +263,12 @@ class IndicesClient(NamespacedClient):
         :param query: If `true`, clears the query cache.
         :param request: If `true`, clears the request cache.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_cache/clear"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_cache/clear'
         else:
+            __path_parts = {}
             __path = "/_cache/clear"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -273,7 +295,12 @@ class IndicesClient(NamespacedClient):
             __query["request"] = request
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.clear_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -321,7 +348,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_clone/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_clone/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -349,7 +380,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.clone",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -406,7 +443,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_close"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -430,7 +468,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.close",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -477,7 +520,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -507,7 +551,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -533,7 +583,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -545,7 +596,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.create_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -577,9 +633,12 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values, such as `open,hidden`.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_data_stream/{_quote(name)}/_stats"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_data_stream/{__path_parts["name"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_data_stream/_stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -594,7 +653,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.data_streams_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -647,7 +711,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -669,7 +734,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -706,7 +776,8 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
+        __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -722,7 +793,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -761,7 +837,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -779,7 +856,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -812,7 +894,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -826,7 +909,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -858,7 +946,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -874,7 +963,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -906,7 +1000,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -922,7 +1017,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -974,7 +1074,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_disk_usage"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_disk_usage'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -996,7 +1097,12 @@ class IndicesClient(NamespacedClient):
             __query["run_expensive_tasks"] = run_expensive_tasks
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.disk_usage",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1033,7 +1139,11 @@ class IndicesClient(NamespacedClient):
             )
         elif config is not None and body is not None:
             raise ValueError("Cannot set both 'config' and 'body'")
-        __path = f"/{_quote(index)}/_downsample/{_quote(target_index)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target_index": _quote(target_index),
+        }
+        __path = f'/{__path_parts["index"]}/_downsample/{__path_parts["target_index"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1046,7 +1156,13 @@ class IndicesClient(NamespacedClient):
         __body = config if config is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.downsample",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1095,7 +1211,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1119,7 +1236,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1167,10 +1289,13 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_alias/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_alias/{__path_parts["name"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1192,7 +1317,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1221,7 +1351,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1235,7 +1366,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1266,7 +1402,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1284,7 +1421,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1314,7 +1456,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_lifecycle/explain"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_lifecycle/explain'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1330,7 +1473,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.explain_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1392,7 +1540,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_field_usage_stats"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_field_usage_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1418,7 +1567,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.field_usage_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1466,9 +1620,12 @@ class IndicesClient(NamespacedClient):
             when another flush operation is running. If `false`, Elasticsearch returns
             an error if you request a flush when another flush operation is running.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_flush"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_flush'
         else:
+            __path_parts = {}
             __path = "/_flush"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1491,7 +1648,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_if_ongoing"] = wait_if_ongoing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.flush",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1541,9 +1703,12 @@ class IndicesClient(NamespacedClient):
         :param wait_for_completion: Should the request wait until the force merge is
             completed.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_forcemerge"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_forcemerge'
         else:
+            __path_parts = {}
             __path = "/_forcemerge"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1570,7 +1735,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.forcemerge",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1637,7 +1807,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1665,7 +1836,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1712,13 +1888,18 @@ class IndicesClient(NamespacedClient):
         :param local: If `true`, the request retrieves information from the local node
             only.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_alias'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_alias/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_alias/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_alias"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1739,7 +1920,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1776,7 +1962,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1792,7 +1979,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1827,9 +2019,12 @@ class IndicesClient(NamespacedClient):
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_data_stream/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_data_stream/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_data_stream"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1846,7 +2041,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1897,10 +2097,13 @@ class IndicesClient(NamespacedClient):
         """
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'fields'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and fields not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mapping/field/{_quote(fields)}"
+            __path_parts = {"index": _quote(index), "fields": _quote(fields)}
+            __path = f'/{__path_parts["index"]}/_mapping/field/{__path_parts["fields"]}'
         elif fields not in SKIP_IN_PATH:
-            __path = f"/_mapping/field/{_quote(fields)}"
+            __path_parts = {"fields": _quote(fields)}
+            __path = f'/_mapping/field/{__path_parts["fields"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1924,7 +2127,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_field_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1960,9 +2168,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_index_template/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_index_template/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_index_template"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1983,7 +2194,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2033,9 +2249,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mapping"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mapping'
         else:
+            __path_parts = {}
             __path = "/_mapping"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2058,7 +2277,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2116,13 +2340,18 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_settings/{__path_parts["name"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_settings'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_settings/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_settings/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_settings"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2149,7 +2378,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2182,9 +2416,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_template/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_template/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_template"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2203,7 +2440,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2225,7 +2467,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/_migrate/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/_migrate/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2237,7 +2480,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.migrate_to_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2262,6 +2510,7 @@ class IndicesClient(NamespacedClient):
         """
         if actions is None and body is None:
             raise ValueError("Empty value passed for parameter 'actions'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_data_stream/_modify"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2278,7 +2527,13 @@ class IndicesClient(NamespacedClient):
                 __body["actions"] = actions
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.modify_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2339,7 +2594,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_open"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -2363,7 +2619,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.open",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2386,7 +2647,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/_promote/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/_promote/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2398,7 +2660,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.promote_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2465,7 +2732,8 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
+        __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2497,7 +2765,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2554,7 +2828,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2582,7 +2857,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2644,7 +2925,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
@@ -2674,7 +2956,13 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2784,7 +3072,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_mapping"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_mapping'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -2832,7 +3121,13 @@ class IndicesClient(NamespacedClient):
                 __body["_source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2898,9 +3193,12 @@ class IndicesClient(NamespacedClient):
             )
         elif settings is not None and body is not None:
             raise ValueError("Cannot set both 'settings' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_settings'
         else:
+            __path_parts = {}
             __path = "/_settings"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2928,7 +3226,13 @@ class IndicesClient(NamespacedClient):
         __body = settings if settings is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2991,7 +3295,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
@@ -3025,7 +3330,13 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3052,9 +3363,12 @@ class IndicesClient(NamespacedClient):
         :param detailed: If `true`, the response includes detailed information about
             shard recoveries.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_recovery"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_recovery'
         else:
+            __path_parts = {}
             __path = "/_recovery"
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
@@ -3071,7 +3385,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.recovery",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3112,9 +3431,12 @@ class IndicesClient(NamespacedClient):
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_refresh"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_refresh'
         else:
+            __path_parts = {}
             __path = "/_refresh"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3133,7 +3455,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.refresh",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3172,7 +3499,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_reload_search_analyzers"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_reload_search_analyzers'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -3190,7 +3518,87 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.reload_search_analyzers",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def resolve_cluster(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Resolves the specified index expressions to return information about each cluster,
+        including the local cluster, if included.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-cluster-api.html>`_
+
+        :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
+            and data streams to resolve. Resources on remote clusters can be specified
+            using the `<cluster>`:`<name>` syntax.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
+            when frozen. Defaults to false.
+        :param ignore_unavailable: If false, the request returns an error if it targets
+            a missing or closed index. Defaults to false.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_resolve/cluster/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.resolve_cluster",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3226,7 +3634,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_resolve/index/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_resolve/index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3240,7 +3649,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.resolve_index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3303,10 +3717,13 @@ class IndicesClient(NamespacedClient):
         """
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'alias'")
+        __path_parts: t.Dict[str, str]
         if alias not in SKIP_IN_PATH and new_index not in SKIP_IN_PATH:
-            __path = f"/{_quote(alias)}/_rollover/{_quote(new_index)}"
+            __path_parts = {"alias": _quote(alias), "new_index": _quote(new_index)}
+            __path = f'/{__path_parts["alias"]}/_rollover/{__path_parts["new_index"]}'
         elif alias not in SKIP_IN_PATH:
-            __path = f"/{_quote(alias)}/_rollover"
+            __path_parts = {"alias": _quote(alias)}
+            __path = f'/{__path_parts["alias"]}/_rollover'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -3342,7 +3759,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.rollover",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3385,9 +3808,12 @@ class IndicesClient(NamespacedClient):
             a missing or closed index.
         :param verbose: If `true`, the request returns a verbose response.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_segments"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_segments'
         else:
+            __path_parts = {}
             __path = "/_segments"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3408,7 +3834,12 @@ class IndicesClient(NamespacedClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.segments",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3453,9 +3884,12 @@ class IndicesClient(NamespacedClient):
             in the response.
         :param status: List of shard health statuses used to limit the request.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_shard_stores"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_shard_stores'
         else:
+            __path_parts = {}
             __path = "/_shard_stores"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3476,7 +3910,12 @@ class IndicesClient(NamespacedClient):
             __query["status"] = status
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.shard_stores",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3524,7 +3963,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_shrink/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_shrink/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3552,7 +3995,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.shrink",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3634,7 +4083,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/_simulate_index/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
@@ -3674,7 +4124,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.simulate_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3721,9 +4177,12 @@ class IndicesClient(NamespacedClient):
             )
         elif template is not None and body is not None:
             raise ValueError("Cannot set both 'template' and 'body'")
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_index_template/_simulate/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_index_template/_simulate/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_index_template/_simulate"
         __query: t.Dict[str, t.Any] = {}
         if create is not None:
@@ -3747,7 +4206,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.simulate_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3795,7 +4260,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_split/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_split/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3823,7 +4292,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.split",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3885,13 +4360,18 @@ class IndicesClient(NamespacedClient):
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_stats/{_quote(metric)}"
+            __path_parts = {"index": _quote(index), "metric": _quote(metric)}
+            __path = f'/{__path_parts["index"]}/_stats/{__path_parts["metric"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_stats"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_stats'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_stats/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_stats/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_stats"
         __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
@@ -3922,7 +4402,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3977,7 +4462,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_unfreeze"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_unfreeze'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -4001,7 +4487,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.unfreeze",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4033,6 +4524,7 @@ class IndicesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_aliases"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4053,7 +4545,13 @@ class IndicesClient(NamespacedClient):
                 __body["actions"] = actions
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.update_aliases",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4125,9 +4623,12 @@ class IndicesClient(NamespacedClient):
         :param rewrite: If `true`, returns a more detailed explanation showing the actual
             Lucene query that will be executed.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_validate/query"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_validate/query'
         else:
+            __path_parts = {}
             __path = "/_validate/query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4172,5 +4673,11 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.validate_query",
+            path_parts=__path_parts,
         )

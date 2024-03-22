@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class IngestClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_pipeline(
         self,
@@ -53,7 +54,8 @@ class IngestClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ingest/pipeline/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ingest/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -69,7 +71,12 @@ class IngestClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.delete_pipeline",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -86,6 +93,7 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/geoip/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -98,7 +106,12 @@ class IngestClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.geo_ip_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -127,9 +140,12 @@ class IngestClient(NamespacedClient):
             returns an error.
         :param summary: Return pipelines without their definitions (default: false)
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ingest/pipeline/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ingest/pipeline/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_ingest/pipeline"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -146,7 +162,12 @@ class IngestClient(NamespacedClient):
             __query["summary"] = summary
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.get_pipeline",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -163,6 +184,7 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/processor/grok"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -175,7 +197,12 @@ class IngestClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.processor_grok",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -232,7 +259,8 @@ class IngestClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ingest/pipeline/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ingest/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -262,7 +290,13 @@ class IngestClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ingest.put_pipeline",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -295,9 +329,12 @@ class IngestClient(NamespacedClient):
         :param verbose: If `true`, the response includes output data for each processor
             in the executed pipeline.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ingest/pipeline/{__path_parts["id"]}/_simulate'
         else:
+            __path_parts = {}
             __path = "/_ingest/pipeline/_simulate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -318,5 +355,11 @@ class IngestClient(NamespacedClient):
                 __body["pipeline"] = pipeline
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ingest.simulate",
+            path_parts=__path_parts,
         )

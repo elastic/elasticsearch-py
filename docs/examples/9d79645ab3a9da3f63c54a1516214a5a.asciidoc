@@ -1,0 +1,7 @@
+// health/health.asciidoc:455
+
+[source, python]
+----
+resp = client.health_report()
+print(resp)
+----

@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class TasksClient(NamespacedClient):
+
     @_rewrite_parameters()
     def cancel(
         self,
@@ -51,9 +52,12 @@ class TasksClient(NamespacedClient):
         :param wait_for_completion: Should the request block until the cancellation of
             the task and its descendant tasks is completed. Defaults to false
         """
+        __path_parts: t.Dict[str, str]
         if task_id not in SKIP_IN_PATH:
-            __path = f"/_tasks/{_quote(task_id)}/_cancel"
+            __path_parts = {"task_id": _quote(task_id)}
+            __path = f'/_tasks/{__path_parts["task_id"]}/_cancel'
         else:
+            __path_parts = {}
             __path = "/_tasks/_cancel"
         __query: t.Dict[str, t.Any] = {}
         if actions is not None:
@@ -74,7 +78,12 @@ class TasksClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="tasks.cancel",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -102,7 +111,8 @@ class TasksClient(NamespacedClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_tasks/{_quote(task_id)}"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_tasks/{__path_parts["task_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -118,7 +128,12 @@ class TasksClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="tasks.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -164,6 +179,7 @@ class TasksClient(NamespacedClient):
         :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_tasks"
         __query: t.Dict[str, t.Any] = {}
         if actions is not None:
@@ -192,5 +208,10 @@ class TasksClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="tasks.list",
+            path_parts=__path_parts,
         )
