@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SearchApplicationClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete(
         self,
@@ -43,7 +44,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -55,7 +57,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -77,7 +84,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/analytics/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/analytics/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -89,7 +97,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.delete_behavioral_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -111,7 +124,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -123,7 +137,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -143,9 +162,12 @@ class SearchApplicationClient(NamespacedClient):
 
         :param name: A list of analytics collections to limit the returned information
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_application/analytics/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_application/analytics/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_application/analytics"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -158,7 +180,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.get_behavioral_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -184,6 +211,7 @@ class SearchApplicationClient(NamespacedClient):
         :param q: Query in the Lucene query string syntax.
         :param size: Specifies a max number of results to get.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_application/search_application"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -202,7 +230,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.list",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -238,7 +271,8 @@ class SearchApplicationClient(NamespacedClient):
             )
         elif search_application is not None and body is not None:
             raise ValueError("Cannot set both 'search_application' and 'body'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/search_application/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if create is not None:
             __query["create"] = create
@@ -253,7 +287,13 @@ class SearchApplicationClient(NamespacedClient):
         __body = search_application if search_application is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_application.put",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -275,7 +315,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/analytics/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/analytics/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -287,7 +328,12 @@ class SearchApplicationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_application.put_behavioral_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -316,7 +362,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}/_search"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_application/search_application/{__path_parts["name"]}/_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -336,5 +383,11 @@ class SearchApplicationClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_application.search",
+            path_parts=__path_parts,
         )

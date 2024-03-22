@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class NodesClient(NamespacedClient):
+
     @_rewrite_parameters()
     def clear_repositories_metering_archive(
         self,
@@ -49,7 +50,11 @@ class NodesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'node_id'")
         if max_archive_version in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'max_archive_version'")
-        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering/{_quote(max_archive_version)}"
+        __path_parts: t.Dict[str, str] = {
+            "node_id": _quote(node_id),
+            "max_archive_version": _quote(max_archive_version),
+        }
+        __path = f'/_nodes/{__path_parts["node_id"]}/_repositories_metering/{__path_parts["max_archive_version"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -61,7 +66,12 @@ class NodesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.clear_repositories_metering_archive",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -84,7 +94,8 @@ class NodesClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering"
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/_repositories_metering'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -96,7 +107,12 @@ class NodesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.get_repositories_metering_info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -142,9 +158,12 @@ class NodesClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         :param type: The type to sample.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/hot_threads"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/hot_threads'
         else:
+            __path_parts = {}
             __path = "/_nodes/hot_threads"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -173,7 +192,12 @@ class NodesClient(NamespacedClient):
             __query["type"] = type
         __headers = {"accept": "text/plain"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.hot_threads",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -208,13 +232,18 @@ class NodesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/{__path_parts["metric"]}'
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -233,7 +262,12 @@ class NodesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -261,9 +295,12 @@ class NodesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/reload_secure_settings'
         else:
+            __path_parts = {}
             __path = "/_nodes/reload_secure_settings"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -286,7 +323,13 @@ class NodesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="nodes.reload_secure_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -349,21 +392,37 @@ class NodesClient(NamespacedClient):
         :param types: A comma-separated list of document types for the indexing index
             metric.
         """
+        __path_parts: t.Dict[str, str]
         if (
             node_id not in SKIP_IN_PATH
             and metric not in SKIP_IN_PATH
             and index_metric not in SKIP_IN_PATH
         ):
-            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}/{_quote(index_metric)}"
+            __path_parts = {
+                "node_id": _quote(node_id),
+                "metric": _quote(metric),
+                "index_metric": _quote(index_metric),
+            }
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats/{__path_parts["metric"]}/{__path_parts["index_metric"]}'
         elif node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats/{__path_parts["metric"]}'
         elif metric not in SKIP_IN_PATH and index_metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/stats/{_quote(metric)}/{_quote(index_metric)}"
+            __path_parts = {
+                "metric": _quote(metric),
+                "index_metric": _quote(index_metric),
+            }
+            __path = (
+                f'/_nodes/stats/{__path_parts["metric"]}/{__path_parts["index_metric"]}'
+            )
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/stats"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/stats/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/stats/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes/stats"
         __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
@@ -396,7 +455,12 @@ class NodesClient(NamespacedClient):
             __query["types"] = types
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -424,13 +488,18 @@ class NodesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/usage/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/usage/{__path_parts["metric"]}'
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/usage"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/usage'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/usage/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/usage/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes/usage"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -445,5 +514,10 @@ class NodesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.usage",
+            path_parts=__path_parts,
         )

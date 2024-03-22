@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class QueryRulesetClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete(
         self,
@@ -43,7 +44,8 @@ class QueryRulesetClient(NamespacedClient):
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
-        __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -55,7 +57,12 @@ class QueryRulesetClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="query_ruleset.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -77,7 +84,8 @@ class QueryRulesetClient(NamespacedClient):
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
-        __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -89,7 +97,12 @@ class QueryRulesetClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="query_ruleset.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -113,6 +126,7 @@ class QueryRulesetClient(NamespacedClient):
         :param from_: Starting offset (default: 0)
         :param size: specifies a max number of results to get
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_query_rules"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -129,7 +143,12 @@ class QueryRulesetClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="query_ruleset.list",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -159,7 +178,8 @@ class QueryRulesetClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
         if rules is None and body is None:
             raise ValueError("Empty value passed for parameter 'rules'")
-        __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -175,5 +195,11 @@ class QueryRulesetClient(NamespacedClient):
                 __body["rules"] = rules
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="query_ruleset.put",
+            path_parts=__path_parts,
         )

@@ -264,9 +264,7 @@ client.options(
 
 # You can persist the authenticated client to use
 # later or use for multiple API calls:
-auth_client = client.options(
-    api_key=("api-key")
-)
+auth_client = es.options(api_key="api_key")
 for i in range(10):
     auth_client.index(
         index="example-index",
@@ -320,9 +318,10 @@ client = Elasticsearch(
 [[auth-apikey]]
 ==== API Key authentication
 
-You can configure the client to use {es}'s API Key for connecting to your 
-cluster. Note that you need the values of `id` and `api_key` to
-https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[authenticate via an API Key].
+You can configure the client to use {es}'s API Key for connecting to your
+cluster. These can be generated through the
+https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[Elasticsearch Create API key API]
+or https://www.elastic.co/guide/en/kibana/current/api-keys.html#create-api-key[Kibana Stack Management].
 
 [source,python]
 ----
@@ -332,7 +331,7 @@ from elasticsearch import Elasticsearch
 client = Elasticsearch(
     "https://localhost:9200",
     ca_certs="/path/to/http_ca.crt",
-    api_key=("api_key")
+    api_key="api_key",
 )
 ----
 

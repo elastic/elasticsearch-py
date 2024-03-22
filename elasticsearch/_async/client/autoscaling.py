@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class AutoscalingClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_autoscaling_policy(
         self,
@@ -44,7 +45,8 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,7 +58,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.delete_autoscaling_policy",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -74,6 +81,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_autoscaling/capacity"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -86,7 +94,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.get_autoscaling_capacity",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -109,7 +122,8 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -121,7 +135,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.get_autoscaling_policy",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -155,7 +174,8 @@ class AutoscalingClient(NamespacedClient):
             )
         elif policy is not None and body is not None:
             raise ValueError("Cannot set both 'policy' and 'body'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -168,5 +188,11 @@ class AutoscalingClient(NamespacedClient):
         __body = policy if policy is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="autoscaling.put_autoscaling_policy",
+            path_parts=__path_parts,
         )
