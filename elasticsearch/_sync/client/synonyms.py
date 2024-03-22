@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SynonymsClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete_synonym(
         self,
@@ -43,7 +44,8 @@ class SynonymsClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -55,7 +57,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.delete_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -81,7 +88,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'set_id'")
         if rule_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'rule_id'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -93,7 +104,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.delete_synonym_rule",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -121,7 +137,8 @@ class SynonymsClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -137,7 +154,12 @@ class SynonymsClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -163,7 +185,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'set_id'")
         if rule_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'rule_id'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -175,7 +201,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonym_rule",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -199,6 +230,7 @@ class SynonymsClient(NamespacedClient):
         :param from_: Starting offset
         :param size: specifies a max number of results to get
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_synonyms"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -215,7 +247,12 @@ class SynonymsClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonyms_sets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -244,7 +281,8 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'id'")
         if synonyms_set is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms_set'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -260,7 +298,13 @@ class SynonymsClient(NamespacedClient):
                 __body["synonyms_set"] = synonyms_set
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="synonyms.put_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -271,7 +315,7 @@ class SynonymsClient(NamespacedClient):
         *,
         set_id: str,
         rule_id: str,
-        synonyms: t.Optional[t.Sequence[str]] = None,
+        synonyms: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -293,7 +337,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'rule_id'")
         if synonyms is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -309,5 +357,11 @@ class SynonymsClient(NamespacedClient):
                 __body["synonyms"] = synonyms
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="synonyms.put_synonym_rule",
+            path_parts=__path_parts,
         )

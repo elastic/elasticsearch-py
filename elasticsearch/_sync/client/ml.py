@@ -24,6 +24,7 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
+
     @_rewrite_parameters()
     def clear_trained_model_deployment_cache(
         self,
@@ -43,7 +44,10 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/cache/_clear"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = (
+            f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/cache/_clear'
+        )
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -55,7 +59,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.clear_trained_model_deployment_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -92,7 +101,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -116,7 +126,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.close_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -138,7 +154,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -150,7 +167,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -177,7 +199,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if event_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'event_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events/{_quote(event_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "event_id": _quote(event_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events/{__path_parts["event_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -189,7 +215,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar_event",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -216,7 +247,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -228,7 +263,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -255,7 +295,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -271,7 +312,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -299,7 +345,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -313,7 +360,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -343,9 +395,12 @@ class MlClient(NamespacedClient):
         :param timeout: How long can the underlying delete processes run until they are
             canceled.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/_delete_expired_data/{_quote(job_id)}"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/_delete_expired_data/{__path_parts["job_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/_delete_expired_data"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -368,7 +423,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.delete_expired_data",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -390,7 +451,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -402,7 +464,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -437,10 +504,16 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and forecast_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast/{_quote(forecast_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "forecast_id": _quote(forecast_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast/{__path_parts["forecast_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -458,7 +531,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_forecast",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -490,7 +568,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
             __query["delete_user_annotations"] = delete_user_annotations
@@ -508,7 +587,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -534,7 +618,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -546,7 +634,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_model_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -572,7 +665,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -586,7 +680,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -612,7 +711,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "model_alias": _quote(model_alias),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/model_aliases/{__path_parts["model_alias"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -624,7 +727,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_trained_model_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -666,6 +774,7 @@ class MlClient(NamespacedClient):
             from the request if no detectors have a `by_field_name`, `over_field_name`
             or `partition_field_name`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_estimate_model_memory"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -686,7 +795,13 @@ class MlClient(NamespacedClient):
                 __body["overall_cardinality"] = overall_cardinality
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.estimate_model_memory",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -718,6 +833,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'evaluation'")
         if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/data_frame/_evaluate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -738,7 +854,13 @@ class MlClient(NamespacedClient):
                 __body["query"] = query
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.evaluate_data_frame",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -804,9 +926,12 @@ class MlClient(NamespacedClient):
         :param source: The configuration of how to source the analysis data. It requires
             an index. Optionally, query and _source may be specified.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_explain'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_explain"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -841,7 +966,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.explain_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -876,7 +1007,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_flush"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_flush'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -904,7 +1036,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.flush_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -937,7 +1075,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -961,7 +1100,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.forecast",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1021,10 +1166,13 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and timestamp not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets/{_quote(timestamp)}"
+            __path_parts = {"job_id": _quote(job_id), "timestamp": _quote(timestamp)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/buckets/{__path_parts["timestamp"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/buckets'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1064,7 +1212,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_buckets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1102,7 +1256,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         if end is not None:
             __query["end"] = end
@@ -1124,7 +1279,12 @@ class MlClient(NamespacedClient):
             __query["start"] = start
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_calendar_events",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1159,9 +1319,12 @@ class MlClient(NamespacedClient):
         :param size: Specifies the maximum number of calendars to obtain. This parameter
             is supported only when you omit the calendar identifier.
         """
+        __path_parts: t.Dict[str, str]
         if calendar_id not in SKIP_IN_PATH:
-            __path = f"/_ml/calendars/{_quote(calendar_id)}"
+            __path_parts = {"calendar_id": _quote(calendar_id)}
+            __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/calendars"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1186,7 +1349,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_calendars",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1226,10 +1395,18 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and category_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories/{_quote(category_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "category_id": _quote(category_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/categories/{__path_parts["category_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = (
+                f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/categories'
+            )
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1257,7 +1434,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_categories",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1298,9 +1481,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of data frame analytics jobs.
         :param size: Specifies the maximum number of data frame analytics jobs to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1321,7 +1507,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1360,9 +1551,12 @@ class MlClient(NamespacedClient):
         :param size: Specifies the maximum number of data frame analytics jobs to obtain.
         :param verbose: Defines whether the stats response should be verbose.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stats"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1383,7 +1577,12 @@ class MlClient(NamespacedClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_data_frame_analytics_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1413,9 +1612,12 @@ class MlClient(NamespacedClient):
             when there are partial matches. If this parameter is `false`, the request
             returns a `404` status code when there are no matches or only partial matches.
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stats"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1430,7 +1632,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_datafeed_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1464,9 +1671,12 @@ class MlClient(NamespacedClient):
             the configuration on retrieval. This allows the configuration to be in an
             acceptable format to be retrieved and then added to another cluster.
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1483,7 +1693,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_datafeeds",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1509,9 +1724,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of filters.
         :param size: Specifies the maximum number of filters to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if filter_id not in SKIP_IN_PATH:
-            __path = f"/_ml/filters/{_quote(filter_id)}"
+            __path_parts = {"filter_id": _quote(filter_id)}
+            __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/filters"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1528,7 +1746,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_filters",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1578,7 +1801,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/influencers"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/influencers'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if desc is not None:
@@ -1614,7 +1838,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_influencers",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1645,9 +1875,12 @@ class MlClient(NamespacedClient):
             partial matches. If `false`, the API returns a `404` status code when there
             are no matches or only partial matches.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_stats"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/anomaly_detectors/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1662,7 +1895,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_job_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1696,9 +1934,12 @@ class MlClient(NamespacedClient):
             the configuration on retrieval. This allows the configuration to be in an
             acceptable format to be retrieved and then added to another cluster.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/anomaly_detectors"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1715,7 +1956,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_jobs",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1745,9 +1991,12 @@ class MlClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_ml/memory/{_quote(node_id)}/_stats"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_ml/memory/{__path_parts["node_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/memory/_stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1764,7 +2013,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_memory_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1802,7 +2056,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade/_stats"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade/_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -1816,7 +2074,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_model_snapshot_upgrade_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1862,10 +2125,16 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and snapshot_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "snapshot_id": _quote(snapshot_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1899,7 +2168,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_model_snapshots",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1953,7 +2228,10 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = (
+            f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/overall_buckets'
+        )
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -1985,7 +2263,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_overall_buckets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2038,7 +2322,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/records"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/records'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2074,7 +2359,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_records",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2126,9 +2417,12 @@ class MlClient(NamespacedClient):
             tags, or none. When supplied, only trained models that contain all the supplied
             tags are returned.
         """
+        __path_parts: t.Dict[str, str]
         if model_id not in SKIP_IN_PATH:
-            __path = f"/_ml/trained_models/{_quote(model_id)}"
+            __path_parts = {"model_id": _quote(model_id)}
+            __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/trained_models"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -2155,7 +2449,12 @@ class MlClient(NamespacedClient):
             __query["tags"] = tags
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_trained_models",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2188,9 +2487,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of models.
         :param size: Specifies the maximum number of models to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if model_id not in SKIP_IN_PATH:
-            __path = f"/_ml/trained_models/{_quote(model_id)}/_stats"
+            __path_parts = {"model_id": _quote(model_id)}
+            __path = f'/_ml/trained_models/{__path_parts["model_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/trained_models/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -2209,7 +2511,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_trained_models_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2246,7 +2553,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if docs is None and body is None:
             raise ValueError("Empty value passed for parameter 'docs'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/_infer"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/_infer'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2266,7 +2574,13 @@ class MlClient(NamespacedClient):
                 __body["inference_config"] = inference_config
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.infer_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2283,6 +2597,7 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/info"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2295,7 +2610,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2322,7 +2642,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_open"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2342,7 +2663,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.open_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2373,7 +2700,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if events is None and body is None:
             raise ValueError("Empty value passed for parameter 'events'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2389,7 +2717,13 @@ class MlClient(NamespacedClient):
                 __body["events"] = events
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.post_calendar_events",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2427,7 +2761,8 @@ class MlClient(NamespacedClient):
             )
         elif data is not None and body is not None:
             raise ValueError("Cannot set both 'data' and 'body'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_data"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_data'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2447,7 +2782,13 @@ class MlClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.post_data",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2474,9 +2815,12 @@ class MlClient(NamespacedClient):
             analytics jobs. Note that `id` and `dest` don’t need to be provided in the
             context of this API.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_preview'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_preview"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2497,7 +2841,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.preview_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2537,9 +2887,12 @@ class MlClient(NamespacedClient):
             object unless you also supply a `datafeed_config` object.
         :param start: The start time from where the datafeed preview should begin
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_preview'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds/_preview"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2566,7 +2919,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.preview_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2595,7 +2954,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2617,7 +2977,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_calendar",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2644,7 +3010,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2656,7 +3026,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.put_calendar_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2762,7 +3137,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2796,7 +3172,13 @@ class MlClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2931,7 +3313,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -2983,7 +3366,13 @@ class MlClient(NamespacedClient):
                 __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3013,7 +3402,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3031,7 +3421,13 @@ class MlClient(NamespacedClient):
                 __body["items"] = items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3164,7 +3560,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'analysis_config'")
         if data_description is None and body is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3189,9 +3586,9 @@ class MlClient(NamespacedClient):
             if custom_settings is not None:
                 __body["custom_settings"] = custom_settings
             if daily_model_snapshot_retention_after_days is not None:
-                __body[
-                    "daily_model_snapshot_retention_after_days"
-                ] = daily_model_snapshot_retention_after_days
+                __body["daily_model_snapshot_retention_after_days"] = (
+                    daily_model_snapshot_retention_after_days
+                )
             if datafeed_config is not None:
                 __body["datafeed_config"] = datafeed_config
             if description is not None:
@@ -3210,7 +3607,13 @@ class MlClient(NamespacedClient):
                 __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3224,6 +3627,7 @@ class MlClient(NamespacedClient):
             "model_size_bytes",
             "model_type",
             "platform_architecture",
+            "prefix_strings",
             "tags",
         ),
     )
@@ -3246,6 +3650,7 @@ class MlClient(NamespacedClient):
             t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
         ] = None,
         platform_architecture: t.Optional[str] = None,
+        prefix_strings: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Sequence[str]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -3283,11 +3688,13 @@ class MlClient(NamespacedClient):
             `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
             (those that work independent of processor architecture or OS features), leave
             this field unset.
+        :param prefix_strings: Optional prefix strings applied at inference
         :param tags: An array of tags to organize the model.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_definition_decompression is not None:
@@ -3319,11 +3726,19 @@ class MlClient(NamespacedClient):
                 __body["model_type"] = model_type
             if platform_architecture is not None:
                 __body["platform_architecture"] = platform_architecture
+            if prefix_strings is not None:
+                __body["prefix_strings"] = prefix_strings
             if tags is not None:
                 __body["tags"] = tags
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3354,7 +3769,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "model_alias": _quote(model_alias),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/model_aliases/{__path_parts["model_alias"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3368,7 +3787,12 @@ class MlClient(NamespacedClient):
             __query["reassign"] = reassign
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.put_trained_model_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3416,7 +3840,11 @@ class MlClient(NamespacedClient):
             )
         if total_parts is None and body is None:
             raise ValueError("Empty value passed for parameter 'total_parts'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/definition/{_quote(part)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "part": _quote(part),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/definition/{__path_parts["part"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3436,7 +3864,13 @@ class MlClient(NamespacedClient):
                 __body["total_parts"] = total_parts
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model_definition_part",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3469,7 +3903,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if vocabulary is None and body is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/vocabulary'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3489,7 +3924,13 @@ class MlClient(NamespacedClient):
                 __body["scores"] = scores
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model_vocabulary",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3518,7 +3959,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_reset"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_reset'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
             __query["delete_user_annotations"] = delete_user_annotations
@@ -3534,7 +3976,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.reset_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3568,7 +4015,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_revert"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_revert'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3588,7 +4039,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.revert_model_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3613,6 +4070,7 @@ class MlClient(NamespacedClient):
             starting.
         :param timeout: The time to wait for the request to be completed.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/set_upgrade_mode"
         __query: t.Dict[str, t.Any] = {}
         if enabled is not None:
@@ -3629,7 +4087,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.set_upgrade_mode",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3656,7 +4119,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_start"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3670,7 +4134,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.start_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3704,7 +4173,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_start"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3728,7 +4198,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.start_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3784,7 +4260,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_start"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_start'
         __query: t.Dict[str, t.Any] = {}
         if cache_size is not None:
             __query["cache_size"] = cache_size
@@ -3812,7 +4289,12 @@ class MlClient(NamespacedClient):
             __query["wait_for"] = wait_for
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.start_trained_model_deployment",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3850,7 +4332,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -3868,7 +4351,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.stop_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3903,7 +4391,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3927,7 +4416,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.stop_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3960,7 +4455,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_stop"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -3976,7 +4472,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.stop_trained_model_deployment",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4024,7 +4525,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_update"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4046,7 +4548,13 @@ class MlClient(NamespacedClient):
                 __body["model_memory_limit"] = model_memory_limit
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4189,7 +4697,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -4239,7 +4748,13 @@ class MlClient(NamespacedClient):
                 __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4270,7 +4785,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4290,7 +4806,13 @@ class MlClient(NamespacedClient):
                 __body["remove_items"] = remove_items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4397,7 +4919,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4420,9 +4943,9 @@ class MlClient(NamespacedClient):
             if custom_settings is not None:
                 __body["custom_settings"] = custom_settings
             if daily_model_snapshot_retention_after_days is not None:
-                __body[
-                    "daily_model_snapshot_retention_after_days"
-                ] = daily_model_snapshot_retention_after_days
+                __body["daily_model_snapshot_retention_after_days"] = (
+                    daily_model_snapshot_retention_after_days
+                )
             if description is not None:
                 __body["description"] = description
             if detectors is not None:
@@ -4443,7 +4966,13 @@ class MlClient(NamespacedClient):
                 __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4478,7 +5007,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_update"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4496,7 +5029,13 @@ class MlClient(NamespacedClient):
                 __body["retain"] = retain
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_model_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4529,7 +5068,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -4545,7 +5088,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.upgrade_job_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4594,6 +5142,7 @@ class MlClient(NamespacedClient):
         :param model_snapshot_retention_days:
         :param results_index_name:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4626,7 +5175,13 @@ class MlClient(NamespacedClient):
                 __body["results_index_name"] = results_index_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.validate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4655,6 +5210,7 @@ class MlClient(NamespacedClient):
             )
         elif detector is not None and body is not None:
             raise ValueError("Cannot set both 'detector' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate/detector"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -4668,5 +5224,11 @@ class MlClient(NamespacedClient):
         __body = detector if detector is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.validate_detector",
+            path_parts=__path_parts,
         )

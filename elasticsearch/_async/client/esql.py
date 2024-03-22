@@ -24,6 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class EsqlClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_fields=("query", "columnar", "filter", "locale", "params"),
         ignore_deprecated_options={"params"},
@@ -67,6 +68,7 @@ class EsqlClient(NamespacedClient):
         """
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -95,5 +97,11 @@ class EsqlClient(NamespacedClient):
                 __body["params"] = params
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="esql.query",
+            path_parts=__path_parts,
         )

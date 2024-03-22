@@ -1,0 +1,9 @@
+// health/health.asciidoc:463
+
+[source, python]
+----
+resp = client.health_report(
+    feature="shards_availability",
+)
+print(resp)
+----
