@@ -264,7 +264,7 @@ client.options(
 
 # You can persist the authenticated client to use
 # later or use for multiple API calls:
-auth_client = es.options(api_key="api_key")
+auth_client = client.options(api_key="api_key")
 for i in range(10):
     auth_client.index(
         index="example-index",
