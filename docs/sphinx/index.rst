@@ -65,7 +65,7 @@ Example Usage
     from datetime import datetime
     from elasticsearch import Elasticsearch
 
-    client = Elasticsearch(cloud_id="YOUR_CLOUD_ID", api_key="YOUR_API_KEY")
+    client = Elasticsearch("http://localhost:9200/", api_key="YOUR_API_KEY")
 
     doc = {
         "author": "kimchy",
