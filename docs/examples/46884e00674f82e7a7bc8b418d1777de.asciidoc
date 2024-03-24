@@ -1,0 +1,20 @@
+// inference/put-inference.asciidoc:252
+
+[source, python]
+----
+
+resp = client.inference.put_model(
+    task_type="text_embedding",
+    model_id="cohere_embeddings",
+    body={
+        "service": "cohere",
+        "service_settings": {
+            "api_key": "api_key",
+            "model_id": "embed-english-v3.0",
+            "embedding_type": "int8",
+        },
+        "task_settings": {},
+    },
+)
+print(resp)
+----

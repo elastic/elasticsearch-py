@@ -1,0 +1,15 @@
+// inference/put-inference.asciidoc:301
+
+[source, python]
+----
+resp = client.inference.put_model(
+    task_type="sparse_embedding",
+    model_id="my-elser-model",
+    body={
+        "service": "elser",
+        "service_settings": {"num_allocations": 1, "num_threads": 1},
+        "task_settings": {},
+    },
+)
+print(resp)
+----

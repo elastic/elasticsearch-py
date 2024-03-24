@@ -1,0 +1,13 @@
+// inference/post-inference.asciidoc:72
+
+[source, python]
+----
+resp = client.inference.inference(
+    task_type="sparse_embedding",
+    model_id="my-elser-model",
+    body={
+        "input": "The sky above the port was the color of television tuned to a dead channel."
+    },
+)
+print(resp)
+----
