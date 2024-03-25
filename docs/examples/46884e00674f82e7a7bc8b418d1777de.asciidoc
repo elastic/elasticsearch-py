@@ -5,7 +5,7 @@
 
 resp = client.inference.put_model(
     task_type="text_embedding",
-    model_id="cohere_embeddings",
+    inference_id="cohere_embeddings",
     body={
         "service": "cohere",
         "service_settings": {

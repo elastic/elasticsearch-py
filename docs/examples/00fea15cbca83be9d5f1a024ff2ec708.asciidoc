@@ -4,7 +4,7 @@
 ----
 resp = client.inference.put_model(
     task_type="text_embedding",
-    model_id="my-e5-model",
+    inference_id="my-e5-model",
     body={
         "service": "elasticsearch",
         "service_settings": {

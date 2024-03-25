@@ -4,7 +4,7 @@
 ----
 resp = client.inference.get_model(
     task_type="sparse_embedding",
-    model_id="my-elser-model",
+    inference_id="my-elser-model",
 )
 print(resp)
 ----

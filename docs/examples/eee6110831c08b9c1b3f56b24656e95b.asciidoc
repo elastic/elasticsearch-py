@@ -4,7 +4,7 @@
 ----
 resp = client.inference.put_model(
     task_type="text_embedding",
-    model_id="hugging-face-embeddings",
+    inference_id="hugging-face-embeddings",
     body={
         "service": "hugging_face",
         "service_settings": {
