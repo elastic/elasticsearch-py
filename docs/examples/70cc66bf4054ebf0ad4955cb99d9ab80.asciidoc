@@ -2,6 +2,7 @@
 
 [source, python]
 ----
+# @iulia This functionis currently missing in the spec so it doesn't run
 resp = client.ml.update_trained_model_deployment(
     model_id="elastic__distilbert-base-uncased-finetuned-conll03-english",
     body={"number_of_allocations": 4},
