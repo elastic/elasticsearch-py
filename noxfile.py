@@ -48,7 +48,7 @@ def pytest_argv():
 
 @nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
-    session.install(".[async,requests]", env=INSTALL_ENV, silent=False)
+    session.install(".[async,requests,orjson]", env=INSTALL_ENV, silent=False)
     session.install("-r", "dev-requirements.txt", silent=False)
 
     session.run(*pytest_argv())
