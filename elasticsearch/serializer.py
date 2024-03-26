@@ -43,9 +43,10 @@ __all__ = [
 
 try:
     from elastic_transport import OrjsonSerializer as _OrjsonSerializer
+
     __all__.append("OrjsonSerializer")
 except ModuleNotFoundError:
-    _OrjsonSerializer = None
+    _OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 
 class JsonSerializer(_JsonSerializer):
@@ -80,9 +81,11 @@ class JsonSerializer(_JsonSerializer):
 
 
 if _OrjsonSerializer is not None:
+
     class OrjsonSerializer(JsonSerializer, _OrjsonSerializer):
         def default(self, data: Any) -> Any:
             return JsonSerializer.default(self, data)
+
 
 class NdjsonSerializer(JsonSerializer, _NdjsonSerializer):
     mimetype: ClassVar[str] = "application/x-ndjson"

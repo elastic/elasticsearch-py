@@ -62,10 +62,11 @@ from .exceptions import (
     UnsupportedProductError,
 )
 from .serializer import JSONSerializer, JsonSerializer
+
 try:
     from .serializer import OrjsonSerializer
 except ModuleNotFoundError:
-    OrjsonSerializer = None
+    OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 # Only raise one warning per deprecation message so as not
 # to spam up the user if the same action is done multiple times.

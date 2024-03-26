@@ -16,7 +16,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import sys
 import uuid
 from datetime import datetime
 from decimal import Decimal
@@ -38,6 +37,7 @@ from elasticsearch.serializer import JSONSerializer, OrjsonSerializer, TextSeria
 requires_numpy_and_pandas = pytest.mark.skipif(
     np is None or pd is None, reason="Test requires numpy and pandas to be available"
 )
+
 
 @pytest.fixture(params=[JSONSerializer, OrjsonSerializer])
 def json_serializer(request: pytest.FixtureRequest):
@@ -93,7 +93,9 @@ def test_serializes_numpy_floats(json_serializer):
         np.float32,
         np.float64,
     ):
-        assert re.search(rb'^{"d":1\.2[\d]*}$', json_serializer.dumps({"d": np_type(1.2)}))
+        assert re.search(
+            rb'^{"d":1\.2[\d]*}$', json_serializer.dumps({"d": np_type(1.2)})
+        )
 
 
 @requires_numpy_and_pandas
