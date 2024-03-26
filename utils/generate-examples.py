@@ -106,6 +106,10 @@ files_to_generate = [
     "cluster/update-settings.asciidoc",
     "health/health.asciidoc",
     "cluster/reroute.asciidoc",
+    "inference/get-inference.asciidoc",
+    "inference/delete-inference.asciidoc",
+    "inference/post-inference.asciidoc",
+    "inference/put-inference.asciidoc",
 ]
 
 
