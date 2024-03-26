@@ -110,6 +110,20 @@ files_to_generate = [
     "inference/delete-inference.asciidoc",
     "inference/post-inference.asciidoc",
     "inference/put-inference.asciidoc",
+    "ml/trained-models/apis/clear-trained-model-deployment-cache.asciidoc",
+    "ml/trained-models/apis/delete-trained-models-aliases.asciidoc",
+    "ml/trained-models/apis/delete-trained-models.asciidoc",
+    "ml/trained-models/apis/get-trained-models-stats.asciidoc",
+    "ml/trained-models/apis/get-trained-models.asciidoc",
+    "ml/trained-models/apis/infer-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/infer-trained-model.asciidoc",
+    "ml/trained-models/apis/put-trained-model-definition-part.asciidoc",
+    "ml/trained-models/apis/put-trained-model-vocabulary.asciidoc",
+    "ml/trained-models/apis/put-trained-models-aliases.asciidoc",
+    "ml/trained-models/apis/put-trained-models.asciidoc",
+    "ml/trained-models/apis/start-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/stop-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/update-trained-model-deployment.asciidoc",
 ]
 
 

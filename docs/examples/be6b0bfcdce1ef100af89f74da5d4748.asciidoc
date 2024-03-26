@@ -1,0 +1,15 @@
+// ml/trained-models/apis/put-trained-model-definition-part.asciidoc:64
+
+[source, python]
+----
+resp = client.ml.put_trained_model_definition_part(
+    model_id="elastic__distilbert-base-uncased-finetuned-conll03-english",
+    part="0",
+    body={
+        "definition": "...",
+        "total_definition_length": 265632637,
+        "total_parts": 64,
+    },
+)
+print(resp)
+----
