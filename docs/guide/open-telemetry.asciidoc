@@ -3,7 +3,7 @@
 
 You can use https://opentelemetry.io/[OpenTelemetry] to monitor the performance and behavior of your {es} requests through the Elasticsearch Python client.
 The Python client comes with built-in OpenTelemetry instrumentation that emits https://www.elastic.co/guide/en/apm/guide/current/apm-distributed-tracing.html[distributed tracing spans] by default.
-With that, applications https://opentelemetry.io/docs/languages/python/instrumentation/[manually instrumented with OpenTelemetry] or using the https://opentelemetry.io/docs/languages/python/automatic/[OpenTelemetry Python agent] are enriched with additional spans that contain insightful information about the execution of the {es} requests.
+With that, applications https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry[manually instrumented with OpenTelemetry] or using the https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry[OpenTelemetry Python agent] are enriched with additional spans that contain insightful information about the execution of the {es} requests.
 
 The native instrumentation in the Python client follows the https://opentelemetry.io/docs/specs/semconv/database/elasticsearch/[OpenTelemetry Semantic Conventions for {es}]. In particular, the instrumentation in the client covers the logical layer of {es} requests. A single span per request is created that is processed by the service through the Python client. The following image shows a trace that records the handling of two different {es} requests: an `info` request and a `search` request.
 
