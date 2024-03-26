@@ -28,7 +28,6 @@ except ModuleNotFoundError:
     pass
 
 
-from elasticsearch import JsonSerializer
 from elasticsearch._otel import ENABLED_ENV_VAR, OpenTelemetry
 
 pytestmark = [
