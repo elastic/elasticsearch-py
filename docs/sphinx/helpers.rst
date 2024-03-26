@@ -5,6 +5,15 @@ Helpers
 
 Collection of simple helper functions that abstract some specifics of the raw API.
 
+Connecting
+----------
+
+.. code-block:: python
+
+    from elasticsearch import Elasticsearch
+    
+    client = Elasticsearch("https://.../", api_key="YOUR_API_KEY")
+
 
 Bulk helpers
 ------------
