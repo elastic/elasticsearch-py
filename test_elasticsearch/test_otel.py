@@ -50,7 +50,7 @@ def setup_tracing():
 
 def test_enabled():
     otel = OpenTelemetry()
-    assert otel.enabled == (os.environ.get(ENABLED_ENV_VAR, "false") != "false")
+    assert otel.enabled == (os.environ.get(ENABLED_ENV_VAR, "true") == "true")
 
 
 def test_minimal_span():
