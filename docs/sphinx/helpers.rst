@@ -12,7 +12,7 @@ Connecting
 
     from elasticsearch import Elasticsearch
     
-    client = Elasticsearch(cloud_id="YOUR_CLOUD_ID", api_key="YOUR_API_KEY")
+    client = Elasticsearch("https://.../", api_key="YOUR_API_KEY")
 
 
 Bulk helpers
