@@ -23,8 +23,8 @@ The opaque ID can be set via the `opaque_id` parameter via the client `.options(
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(...)
-es.options(opaque_id="request-id-...").search(...)
+client = Elasticsearch(...)
+client.options(opaque_id="request-id-...").search(...)
 ------------------------------------
 
 
@@ -41,8 +41,8 @@ If we write a script that has a type error like using `request_timeout` with a `
 # script.py
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch(...)
-es.options(
+client = Elasticsearch(...)
+client.options(
     request_timeout="5"  # type error!
 ).search(...)
 

@@ -74,6 +74,8 @@ document is like ``{"word": "<myword>"}``.
 
 .. code:: python
 
+    from elasticsearch.helpers import bulk
+
     def gendata():
         mywords = ['foo', 'bar', 'baz']
         for word in mywords:
@@ -82,7 +84,7 @@ document is like ``{"word": "<myword>"}``.
                 "word": word,
             }
 
-    bulk(es, gendata())
+    bulk(client, gendata())
 
 
 For a more complete and complex example please take a look at
