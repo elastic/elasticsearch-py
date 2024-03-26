@@ -10,7 +10,7 @@ The native instrumentation in the Python client follows the https://opentelemetr
 [role="screenshot"]
 image::images/otel-waterfall-without-http.png[alt="Distributed trace with Elasticsearch spans",align="center"]
 
-Usually, OpenTelemetry auto-instrumentation modules come with instrumentation support for HTTP-level communication. In this case, in addition to the logical {es} client requests, spans will be captured for the physical HTTP requests emitted by the client. The following image shows a trace with both, {es} spans (in blue) and the corresponding HTTP-level spans (in red):
+Usually, OpenTelemetry auto-instrumentation modules come with instrumentation support for HTTP-level communication. In this case, in addition to the logical {es} client requests, spans will be captured for the physical HTTP requests emitted by the client. The following image shows a trace with both, {es} spans (in blue) and the corresponding HTTP-level spans (in red) after having installed the ``opentelemetry-instrumentation-urllib3`` package:
 
 [role="screenshot"]
 image::images/otel-waterfall-with-http.png[alt="Distributed trace with Elasticsearch spans",align="center"]
