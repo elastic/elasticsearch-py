@@ -381,6 +381,20 @@ es = Elasticsearch(
 )
 ------------------------------------
 
+If the `orjson` package is installed, you can use the faster ``OrjsonSerializer`` for the default mimetype (``application/json``):
+
+[source,python]
+------------------------------------
+from elasticsearch import Elasticsearch, OrjsonSerializer
+
+es = Elasticsearch(
+    ...,
+    serializer=OrjsonSerializer()
+)
+------------------------------------
+
+It is particularly beneficial to serialize vectors. This will be the default in a future release.
+
 
 [discrete]
 [[nodes]]

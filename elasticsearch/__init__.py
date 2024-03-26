@@ -62,6 +62,10 @@ from .exceptions import (
     UnsupportedProductError,
 )
 from .serializer import JSONSerializer, JsonSerializer
+try:
+    from .serializer import OrjsonSerializer
+except ModuleNotFoundError:
+    OrjsonSerializer = None
 
 # Only raise one warning per deprecation message so as not
 # to spam up the user if the same action is done multiple times.
@@ -86,6 +90,8 @@ __all__ = [
     "UnsupportedProductError",
     "ElasticsearchWarning",
 ]
+if OrjsonSerializer is not None:
+    __all__.append("OrjsonSerializer")
 
 fixup_module_metadata(__name__, globals())
 del fixup_module_metadata

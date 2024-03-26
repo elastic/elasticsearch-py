@@ -18,6 +18,7 @@ nox
 
 numpy
 pandas
+orjson
 
 # Testing the 'search_mvt' API response
 mapbox-vector-tile
