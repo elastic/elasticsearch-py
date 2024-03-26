@@ -2,6 +2,6 @@
 
 [source, python]
 ----
-resp = es.info()
+resp = client.info()
 print(resp)
 ----
