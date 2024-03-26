@@ -17,6 +17,7 @@
 #  under the License.
 
 import pytest
+from elastic_transport import OpenTelemetrySpan
 from elastic_transport.client_utils import DEFAULT
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch
@@ -137,13 +138,12 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
         }
 
         # Can be overwritten with .options()
@@ -157,13 +157,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -184,13 +183,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -213,13 +211,12 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
         }
 
         # Can be overwritten with .options()
@@ -233,13 +230,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -260,13 +256,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -397,13 +392,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
@@ -428,13 +422,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 2,
             "max_retries": 3,
             "retry_on_status": (400,),
@@ -454,13 +447,12 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
         }
 
         client = Elasticsearch(
@@ -477,13 +469,12 @@ class TestOptions(DummyTransportTestCase):
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
+        assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
                 "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
-            "endpoint_id": "indices.get",
-            "path_parts": {"index": "test"},
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
