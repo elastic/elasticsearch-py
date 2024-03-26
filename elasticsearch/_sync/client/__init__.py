@@ -122,12 +122,12 @@ class Elasticsearch(BaseClient):
         # Set 'api_key' on the constructor
         client = Elasticsearch(
             "http://localhost:9200",
-            api_key="api_key",
+            api_key=("id", "api_key")
         )
         client.search(...)
 
         # Set 'api_key' per request
-        client.options(api_key="api_key").search(...)
+        client.options(api_key=("id", "api_key")).search(...)
     """
 
     def __init__(
