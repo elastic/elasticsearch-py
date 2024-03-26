@@ -120,7 +120,6 @@ files_to_generate = [
     "ml/trained-models/apis/start-trained-model-deployment.asciidoc",
     "ml/trained-models/apis/stop-trained-model-deployment.asciidoc",
     "ml/trained-models/apis/update-trained-model-deployment.asciidoc",
-
 ]
 
 
