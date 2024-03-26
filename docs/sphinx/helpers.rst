@@ -10,7 +10,7 @@ Connecting
 
 .. code-block:: python
 
-    from elasticsearch import Elasticsearch, helpers
+    from elasticsearch import Elasticsearch
     
     client = Elasticsearch(cloud_id="YOUR_CLOUD_ID", api_key="YOUR_API_KEY")
 
