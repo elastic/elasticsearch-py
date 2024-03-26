@@ -395,7 +395,7 @@ async def async_scan(
     .. code-block:: python
 
         async_scan(
-            es,
+            client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*"
         )

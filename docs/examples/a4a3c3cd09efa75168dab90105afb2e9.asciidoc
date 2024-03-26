@@ -1,0 +1,10 @@
+// inference/get-inference.asciidoc:68
+
+[source, python]
+----
+resp = client.inference.get_model(
+    task_type="sparse_embedding",
+    inference_id="my-elser-model",
+)
+print(resp)
+----

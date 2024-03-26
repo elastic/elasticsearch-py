@@ -22,14 +22,14 @@ To index a document, you need to specify three pieces of information: `index`,
 ----------------------------
 from datetime import datetime
 from elasticsearch import Elasticsearch
-es = Elasticsearch('https://localhost:9200')
+client = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
     'text': 'Interesting content...',
     'timestamp': datetime.now(),
 }
-resp = es.index(index="test-index", id=1, document=doc)
+resp = client.index(index="test-index", id=1, document=doc)
 print(resp['result'])
 ----------------------------
 
@@ -42,7 +42,7 @@ To get a document, you need to specify its `index` and `id`:
 
 [source,py]
 ----------------------------
-resp = es.get(index="test-index", id=1)
+resp = client.get(index="test-index", id=1)
 print(resp['_source'])
 ----------------------------
 
@@ -55,7 +55,7 @@ You can perform the refresh operation on an index:
 
 [source,py]
 ----------------------------
-es.indices.refresh(index="test-index")
+client.indices.refresh(index="test-index")
 ----------------------------
 
 
@@ -67,7 +67,7 @@ The `search()` method returns results that are matching a query:
 
 [source,py]
 ----------------------------
-resp = es.search(index="test-index", query={"match_all": {}})
+resp = client.search(index="test-index", query={"match_all": {}})
 print("Got %d Hits:" % resp['hits']['total']['value'])
 for hit in resp['hits']['hits']:
     print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])

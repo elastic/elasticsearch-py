@@ -656,7 +656,7 @@ def scan(
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
 
-        scan(es,
+        scan(client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*",
             doc_type="books"
