@@ -97,5 +97,6 @@ setup(
     extras_require={
         "requests": ["requests>=2.4.0, <3.0.0"],
         "async": async_requires,
+        "orjson": ["orjson>=3"],
     },
 )
