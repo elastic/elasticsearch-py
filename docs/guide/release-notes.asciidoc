@@ -42,6 +42,10 @@
 
 - Added native OpenTelemetry support
 - Added optional ``orjson`` (a fast, correct JSON library) serialization support
+- Added the `text_strcuture.test_grok_pattern` API
+- Added the `indices.resolve_cluster` API
+- Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
+- Changed all `synonyms` APIs from **experimental** to **stable**.
 - Fixed API key documentation
 
 [discrete]
