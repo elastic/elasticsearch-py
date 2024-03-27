@@ -14,8 +14,8 @@ Elasticsearch Python Client
 .. image:: https://static.pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
 
-.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main/badge/icon
-   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main
+.. image:: https://badge.buildkite.com/68e22afcb2ea8f6dcc20834e3a5b5ab4431beee33d3bd751f3.svg
+   :target: https://buildkite.com/elastic/elasticsearch-py-integration-tests
 
 .. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
    :target: https://elasticsearch-py.readthedocs.io
