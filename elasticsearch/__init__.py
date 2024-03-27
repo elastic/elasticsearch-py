@@ -65,7 +65,7 @@ from .serializer import JSONSerializer, JsonSerializer
 
 try:
     from .serializer import OrjsonSerializer
-except ModuleNotFoundError:
+except ImportError:
     OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 # Only raise one warning per deprecation message so as not
