@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-13-0>>
 * <<rn-8-12-1>>
 * <<rn-8-12-0>>
 * <<rn-8-11-1>>
@@ -34,6 +35,18 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-13-0]]
+=== 8.13.0 (2024-03-22)
+
+- Added native OpenTelemetry support
+- Added optional ``orjson`` (a fast, correct JSON library) serialization support
+- Added the `text_strcuture.test_grok_pattern` API
+- Added the `indices.resolve_cluster` API
+- Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
+- Changed all `synonyms` APIs from **experimental** to **stable**.
+- Fixed API key documentation
 
 [discrete]
 [[rn-8-12-1]]
