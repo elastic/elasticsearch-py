@@ -25,7 +25,11 @@ The first node is unavailable and results in an HTTP error, while the retry to t
 [discrete]
 ==== Setup the OpenTelemetry instrumentation
 
-When using the https://opentelemetry.io/docs/languages/python/instrumentation/[manual Python OpenTelemetry instrumentation] or using the https://opentelemetry.io/docs/languages/python/automatic/[OpenTelemetry Python agent], the Python client's OpenTelemetry instrumentation is enabled by default and uses the global OpenTelemetry SDK with the global tracer provider.
+When using the https://opentelemetry.io/docs/languages/python/instrumentation/[manual Python OpenTelemetry instrumentation] or the https://opentelemetry.io/docs/languages/python/automatic/[OpenTelemetry Python agent], the Python client's OpenTelemetry instrumentation is enabled by default and uses the global OpenTelemetry SDK with the global tracer provider.
+If you're getting started with OpenTelemetry instrumentation, the following blog posts have step-by-step instructions to ingest and explore tracing data with the Elastic stack:
+
+* https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry[Manual instrumentation with OpenTelemetry for Python applications]
+* https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry[Automatic instrumentation with OpenTelemetry for Python applications]
 
 [discrete]
 === Comparison with community instrumentation
@@ -34,13 +38,6 @@ The https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentatio
 
 [discrete]
 ==== Configuring the OpenTelemetry instrumentation
-
-This section discusses configuration of the OpenTelemetry instrumentation itself.
-To get started with OpenTelemetry instrumentation in general, you can instead refer to the https://opentelemetry.io/docs/languages/python/[Python OpenTelemetry documentation] or to the following step-by-step blog posts:
-
-* https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry[Manual instrumentation with OpenTelemetry for Python applications]
-* https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry[Automatic instrumentation with OpenTelemetry for Python applications]
-
 
 You can configure this OpenTelemetry instrumentation through environment variables.
 The following configuration options are available.
