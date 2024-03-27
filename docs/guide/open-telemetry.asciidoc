@@ -35,7 +35,14 @@ The https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentatio
 [discrete]
 ==== Configuring the OpenTelemetry instrumentation
 
-You can configure the OpenTelemetry instrumentation through environment variables.
+This section discusses configuration of the OpenTelemetry instrumentation itself.
+To get started with OpenTelemetry instrumentation in general, you can instead refer to the https://opentelemetry.io/docs/languages/python/[Python OpenTelemetry documentation] or to the following step-by-step blog posts:
+
+* https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry[Manual instrumentation with OpenTelemetry for Python applications]
+* https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry[Automatic instrumentation with OpenTelemetry for Python applications]
+
+
+You can configure this OpenTelemetry instrumentation through environment variables.
 The following configuration options are available.
 
 [discrete]
