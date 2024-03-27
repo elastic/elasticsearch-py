@@ -5,8 +5,6 @@
 resp = client.ml.start_trained_model_deployment(
     model_id="my_model",
     deployment_id="my_model_for_ingest",
-    wait_for="started",
-    timeout="1m",
 )
 print(resp)
 ----

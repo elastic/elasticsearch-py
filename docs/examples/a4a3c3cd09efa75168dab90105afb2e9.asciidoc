@@ -1,4 +1,4 @@
-// inference/get-inference.asciidoc:68
+// inference/get-inference.asciidoc:69
 
 [source, python]
 ----

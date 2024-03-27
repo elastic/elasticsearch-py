@@ -1,4 +1,4 @@
-// inference/put-inference.asciidoc:301
+// inference/put-inference.asciidoc:300
 
 [source, python]
 ----
@@ -8,7 +8,6 @@ resp = client.inference.put_model(
     body={
         "service": "elser",
         "service_settings": {"num_allocations": 1, "num_threads": 1},
-        "task_settings": {},
     },
 )
 print(resp)
