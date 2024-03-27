@@ -1,5 +1,4 @@
-# TODO switch back to elastic-transport>=8,<9 between elastic-transport release and elasticsearch-py release
-elastic-transport @ git+https://github.com/elastic/elastic-transport-python
+elastic-transport>=8.13, <9
 requests>=2, <3
 aiohttp
 pytest
