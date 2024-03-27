@@ -51,12 +51,6 @@ packages = [
     if package == package_name or package.startswith(package_name + ".")
 ]
 
-# TODO switch back to elastic-transport>=8,<9 between elastic-transport release and elasticsearch-py release
-install_requires = [
-    "elastic-transport @ git+https://github.com/elastic/elastic-transport-python"
-]
-async_requires = ["aiohttp>=3,<4"]
-
 setup(
     name=package_name,
     description="Python client for Elasticsearch",
@@ -93,10 +87,10 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
     python_requires=">=3.7",
-    install_requires=install_requires,
+    install_requires=["elastic-transport>=8.13,<9"],
     extras_require={
         "requests": ["requests>=2.4.0, <3.0.0"],
-        "async": async_requires,
+        "async": ["aiohttp>=3,<4"],
         "orjson": ["orjson>=3"],
     },
 )
