@@ -381,6 +381,24 @@ client = Elasticsearch(
 )
 ------------------------------------
 
+If the `orjson` package is installed, you can use the faster ``OrjsonSerializer`` for the default mimetype (``application/json``):
+
+[source,python]
+------------------------------------
+from elasticsearch import Elasticsearch, OrjsonSerializer
+
+es = Elasticsearch(
+    ...,
+    serializer=OrjsonSerializer()
+)
+------------------------------------
+
+orjson is particularly fast when serializing vectors as it has native numpy support. This will be the default in a future release. Note that you can install orjson with the `orjson` extra:
+
+[source,sh]
+--------------------------------------------
+$ python -m pip install elasticsearch[orjson]
+--------------------------------------------
 
 [discrete]
 [[nodes]]

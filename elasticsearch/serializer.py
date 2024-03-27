@@ -41,6 +41,13 @@ __all__ = [
     "MapboxVectorTileSerializer",
 ]
 
+try:
+    from elastic_transport import OrjsonSerializer as _OrjsonSerializer
+
+    __all__.append("OrjsonSerializer")
+except ModuleNotFoundError:
+    _OrjsonSerializer = None  # type: ignore[assignment,misc]
+
 
 class JsonSerializer(_JsonSerializer):
     mimetype: ClassVar[str] = "application/json"
@@ -71,6 +78,13 @@ class JsonSerializer(_JsonSerializer):
             return value
 
         raise TypeError(f"Unable to serialize {data!r} (type: {type(data)})")
+
+
+if _OrjsonSerializer is not None:
+
+    class OrjsonSerializer(JsonSerializer, _OrjsonSerializer):
+        def default(self, data: Any) -> Any:
+            return JsonSerializer.default(self, data)
 
 
 class NdjsonSerializer(JsonSerializer, _NdjsonSerializer):
