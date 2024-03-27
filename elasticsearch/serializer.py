@@ -45,7 +45,7 @@ try:
     from elastic_transport import OrjsonSerializer as _OrjsonSerializer
 
     __all__.append("OrjsonSerializer")
-except ModuleNotFoundError:
+except ImportError:
     _OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 
