@@ -52,7 +52,7 @@ class OpenTelemetry:
         body_strategy: 'Literal["omit", "raw"]' | None = None,
     ):
         if enabled is None:
-            enabled = os.environ.get(ENABLED_ENV_VAR, "false") != "false"
+            enabled = os.environ.get(ENABLED_ENV_VAR, "true") == "true"
         self.tracer = tracer or _tracer
         self.enabled = enabled and self.tracer is not None
 
