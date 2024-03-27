@@ -1,0 +1,9 @@
+// api-conventions.asciidoc:344
+
+[source, python]
+----
+resp = client.search(
+    body={"size": "1000"},
+)
+print(resp)
+----
