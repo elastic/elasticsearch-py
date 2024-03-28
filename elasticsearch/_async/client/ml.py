@@ -3653,6 +3653,7 @@ class MlClient(NamespacedClient):
         prefix_strings: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Sequence[str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3690,6 +3691,8 @@ class MlClient(NamespacedClient):
             this field unset.
         :param prefix_strings: Optional prefix strings applied at inference
         :param tags: An array of tags to organize the model.
+        :param wait_for_completion: Whether to wait for all child operations (e.g. model
+            download) to complete.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
@@ -3707,6 +3710,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
         if not __body:
             if compressed_definition is not None:
                 __body["compressed_definition"] = compressed_definition
