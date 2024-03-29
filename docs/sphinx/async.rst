@@ -1,11 +1,11 @@
-Using Asyncio with Elasticsearch
+Using asyncio with Elasticsearch
 ================================
 
  .. py:module:: elasticsearch
     :no-index:
 
 The ``elasticsearch`` package supports async/await with
-`Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
+`asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `aiohttp <https://docs.aiohttp.org>`_.
 You can either install ``aiohttp`` directly or use the ``[async]`` extra:
 
  .. code-block:: bash
