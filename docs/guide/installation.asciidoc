@@ -22,4 +22,4 @@ $ python -m pip install elasticsearch[async]
 --------------------------------------------
 
 Read more about 
-https://elasticsearch-py.readthedocs.io/en/master/async.html[how to use Asyncio with this project].
+https://elasticsearch-py.readthedocs.io/en/master/async.html[how to use asyncio with this project].
