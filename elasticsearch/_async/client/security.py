@@ -1097,6 +1097,7 @@ class SecurityClient(NamespacedClient):
         realm_name: t.Optional[str] = None,
         username: t.Optional[str] = None,
         with_limited_by: t.Optional[bool] = None,
+        with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information for one or more API keys.
@@ -1123,6 +1124,8 @@ class SecurityClient(NamespacedClient):
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
+        :param with_profile_uid: Determines whether to also retrieve the profile uid,
+            for the API key owner principal, if it exists.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
@@ -1149,6 +1152,8 @@ class SecurityClient(NamespacedClient):
             __query["username"] = username
         if with_limited_by is not None:
             __query["with_limited_by"] = with_limited_by
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -2375,7 +2380,9 @@ class SecurityClient(NamespacedClient):
                 t.Union[str, t.Mapping[str, t.Any]],
             ]
         ] = None,
+        typed_keys: t.Optional[bool] = None,
         with_limited_by: t.Optional[bool] = None,
+        with_profile_uid: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2412,9 +2419,13 @@ class SecurityClient(NamespacedClient):
         :param sort: Other than `id`, all public fields of an API key are eligible for
             sorting. In addition, sort can also be applied to the `_doc` field to sort
             by index order.
+        :param typed_keys: Determines whether aggregation names are prefixed by their
+            respective types in the response.
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
+        :param with_profile_uid: Determines whether to also retrieve the profile uid,
+            for the API key owner principal, if it exists.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_query/api_key"
@@ -2439,8 +2450,12 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if typed_keys is not None:
+            __query["typed_keys"] = typed_keys
         if with_limited_by is not None:
             __query["with_limited_by"] = with_limited_by
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         if not __body:
             if aggregations is not None:
                 __body["aggregations"] = aggregations
