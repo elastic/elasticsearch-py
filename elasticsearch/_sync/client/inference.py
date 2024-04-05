@@ -31,7 +31,10 @@ class InferenceClient(NamespacedClient):
         *,
         inference_id: str,
         task_type: t.Optional[
-            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+            t.Union[
+                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
+                str,
+            ]
         ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -85,7 +88,10 @@ class InferenceClient(NamespacedClient):
         *,
         inference_id: str,
         task_type: t.Optional[
-            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+            t.Union[
+                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
+                str,
+            ]
         ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -134,7 +140,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("input", "task_settings"),
+        body_fields=("input", "query", "task_settings"),
     )
     def inference(
         self,
@@ -142,12 +148,16 @@ class InferenceClient(NamespacedClient):
         inference_id: str,
         input: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         task_type: t.Optional[
-            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+            t.Union[
+                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
+                str,
+            ]
         ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        query: t.Optional[str] = None,
         task_settings: t.Optional[t.Any] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -159,6 +169,7 @@ class InferenceClient(NamespacedClient):
         :param inference_id: The inference Id
         :param input: Text input to the model. Either a string or an array of strings.
         :param task_type: The task type
+        :param query: Query input, required for rerank task. Not required for other tasks.
         :param task_settings: Optional task settings
         """
         if inference_id in SKIP_IN_PATH:
@@ -190,6 +201,8 @@ class InferenceClient(NamespacedClient):
         if not __body:
             if input is not None:
                 __body["input"] = input
+            if query is not None:
+                __body["query"] = query
             if task_settings is not None:
                 __body["task_settings"] = task_settings
         if not __body:
@@ -217,7 +230,10 @@ class InferenceClient(NamespacedClient):
         model_config: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Mapping[str, t.Any]] = None,
         task_type: t.Optional[
-            t.Union["t.Literal['sparse_embedding', 'text_embedding']", str]
+            t.Union[
+                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
+                str,
+            ]
         ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,

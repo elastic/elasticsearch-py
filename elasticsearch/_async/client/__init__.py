@@ -1936,6 +1936,7 @@ class AsyncElasticsearch(BaseClient):
         id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -1958,6 +1959,10 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param realtime: If `true`, the request is real-time as opposed to near-real-time.
@@ -1989,6 +1994,8 @@ class AsyncElasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if preference is not None:
@@ -2578,6 +2585,7 @@ class AsyncElasticsearch(BaseClient):
         docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         preference: t.Optional[str] = None,
@@ -2600,6 +2608,10 @@ class AsyncElasticsearch(BaseClient):
             or when a document in the `docs` array does not specify an index.
         :param docs: The documents you want to retrieve. Required if no index is specified
             in the request URI.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param ids: The IDs of the documents you want to retrieve. Allowed when the index
             is specified in the request URI.
         :param preference: Specifies the node or shard the operation should be performed
@@ -2634,6 +2646,8 @@ class AsyncElasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if preference is not None:
@@ -3677,6 +3691,7 @@ class AsyncElasticsearch(BaseClient):
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
         fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
@@ -3793,6 +3808,10 @@ class AsyncElasticsearch(BaseClient):
         :param fields: Array of wildcard (`*`) patterns. The request returns values for
             field names matching these patterns in the `hits.fields` property of the
             response.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param from_: Starting document offset. Needs to be non-negative. By default,
             you cannot page through more than 10,000 hits using the `from` and `size`
             parameters. To page through more hits, use the `search_after` parameter.
@@ -3972,6 +3991,8 @@ class AsyncElasticsearch(BaseClient):
             __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
