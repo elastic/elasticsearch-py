@@ -20,6 +20,7 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import inspect
 import io
 import json
 import os
@@ -37,7 +38,7 @@ from elasticsearch import ApiError, Elasticsearch, ElasticsearchWarning, Request
 from elasticsearch._sync.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
 
-from ..utils import CA_CERTS, es_url, parse_version
+from ...utils import CA_CERTS, es_url, parse_version
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -139,7 +140,13 @@ RUN_ASYNC_REST_API_TESTS = (
 FALSEY_VALUES = ("", None, False, 0, 0.0)
 
 
-class YamlRunner:
+def await_if_coro(x):
+    if inspect.iscoroutine(x):
+        return x
+    return x
+
+
+class SyncYamlRunner:
     def __init__(self, client):
         self.client = client
         self.last_response = None
@@ -209,7 +216,7 @@ class YamlRunner:
             print(action_type, action)
 
             if hasattr(self, "run_" + action_type):
-                getattr(self, "run_" + action_type)(action)
+                await_if_coro(getattr(self, "run_" + action_type)(action))
             else:
                 raise RuntimeError(f"Invalid action type {action_type!r}")
 
@@ -279,7 +286,7 @@ class YamlRunner:
         warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
-                self.last_response = api(**args).body
+                self.last_response = (api(**args)).body
             except Exception as e:
                 self._skip_intentional_type_errors(e)
                 if not catch:
@@ -520,8 +527,8 @@ class YamlRunner:
 
 
 @pytest.fixture(scope="function")
-def sync_runner(sync_client):
-    return YamlRunner(sync_client)
+def runner(es_client):
+    return SyncYamlRunner(es_client)
 
 
 # Source: https://stackoverflow.com/a/37958106/5763213
@@ -653,8 +660,8 @@ YAML_TEST_SPECS = sorted(YAML_TEST_SPECS, key=_pytest_param_sort_key)
 if not RUN_ASYNC_REST_API_TESTS:
 
     @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
-    def test_rest_api_spec(test_spec, sync_runner):
+    def test_rest_api_spec(test_spec, runner):
         if test_spec.get("skip", False):
             pytest.skip("Manually skipped in 'SKIP_TESTS'")
-        sync_runner.use_spec(test_spec)
-        sync_runner.run()
+        runner.use_spec(test_spec)
+        runner.run()

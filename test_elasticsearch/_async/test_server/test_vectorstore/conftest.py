@@ -15,34 +15,47 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import uuid
+
 import pytest
 import pytest_asyncio
 
-import elasticsearch
+from ...cluster import wipe_cluster
+from ..conftest import _create
+from . import AsyncRequestSavingTransport
 
-from ...utils import CA_CERTS, wipe_cluster
 
-pytestmark = pytest.mark.asyncio
+@pytest.fixture(scope="function")
+def index() -> str:
+    return f"test_{uuid.uuid4().hex}"
 
 
 @pytest_asyncio.fixture(scope="function")
-@pytest.mark.usefixtures("sync_client")
-async def async_client(elasticsearch_url):
-    # 'sync_client' fixture is used for the guaranteed wipe_cluster() call.
-
-    if not hasattr(elasticsearch, "AsyncElasticsearch"):
-        pytest.skip("test requires 'AsyncElasticsearch' and aiohttp to be installed")
-
-    # Unfortunately the asyncio client needs to be rebuilt every
-    # test execution due to how pytest-asyncio manages
-    # event loops (one per test!)
+async def es_client_request_saving_factory(elasticsearch_url):
     client = None
+
     try:
-        client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, request_timeout=3, ca_certs=CA_CERTS
-        )
+        client = _create(elasticsearch_url)
+        # Wipe the cluster before we start testing just in case it wasn't wiped
+        # cleanly from the previous run of pytest?
+        wipe_cluster(client)
+    finally:
+        await client.close()
+
+    try:
+        # Recreate client with a transport that saves requests.
+        client = _create(elasticsearch_url, AsyncRequestSavingTransport)
+
         yield client
     finally:
         if client:
-            wipe_cluster(client)
             await client.close()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def es_client_request_saving(es_client_request_saving_factory):
+    try:
+        yield es_client_request_saving_factory
+    finally:
+        # Wipe the cluster clean after every test execution.
+        await wipe_cluster(es_client_request_saving_factory)

@@ -24,8 +24,8 @@ pytestmark = pytest.mark.asyncio
 
 
 @pytest.mark.parametrize("kwargs", [{"body": {"text": "привет"}}, {"text": "привет"}])
-async def test_indices_analyze_unicode(async_client, kwargs):
-    resp = await async_client.indices.analyze(**kwargs)
+async def test_indices_analyze_unicode(es_client, kwargs):
+    resp = await es_client.indices.analyze(**kwargs)
     assert resp == {
         "tokens": [
             {
@@ -39,19 +39,19 @@ async def test_indices_analyze_unicode(async_client, kwargs):
     }
 
 
-async def test_bulk_works_with_string_body(async_client):
+async def test_bulk_works_with_string_body(es_client):
     docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
-    response = await async_client.bulk(body=docs)
+    response = await es_client.bulk(body=docs)
 
     assert response["errors"] is False
     assert len(response["items"]) == 1
 
 
-async def test_bulk_works_with_bytestring_body(async_client):
+async def test_bulk_works_with_bytestring_body(es_client):
     docs = (
         b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
     )
-    response = await async_client.bulk(body=docs)
+    response = await es_client.bulk(body=docs)
 
     assert response["errors"] is False
     assert len(response["items"]) == 1

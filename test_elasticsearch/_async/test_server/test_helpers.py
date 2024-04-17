@@ -28,7 +28,7 @@ from elasticsearch import helpers
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import ScanError
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = pytest.mark.asyncio
 
 
 class AsyncMock(MagicMock):
@@ -69,27 +69,27 @@ class FailingBulkClient(object):
 
 
 class TestStreamingBulk(object):
-    async def test_actions_remain_unchanged(self, async_client):
+    async def test_actions_remain_unchanged(self, es_client):
         actions = [{"_id": 1}, {"_id": 2}]
         async for ok, item in helpers.async_streaming_bulk(
-            async_client, actions, index="test-index"
+            es_client, actions, index="test-index"
         ):
             assert ok
         assert [{"_id": 1}, {"_id": 2}] == actions
 
-    async def test_all_documents_get_inserted(self, async_client):
+    async def test_all_documents_get_inserted(self, es_client):
         docs = [{"answer": x, "_id": x} for x in range(100)]
         async for ok, item in helpers.async_streaming_bulk(
-            async_client, docs, index="test-index", refresh=True
+            es_client, docs, index="test-index", refresh=True
         ):
             assert ok
 
-        assert 100 == (await async_client.count(index="test-index"))["count"]
-        assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
+        assert 100 == (await es_client.count(index="test-index"))["count"]
+        assert {"answer": 42} == (await es_client.get(index="test-index", id=42))[
             "_source"
         ]
 
-    async def test_documents_data_types(self, async_client):
+    async def test_documents_data_types(self, es_client):
         async def async_gen():
             for x in range(100):
                 await asyncio.sleep(0)
@@ -100,40 +100,40 @@ class TestStreamingBulk(object):
                 yield {"answer": x, "_id": x}
 
         async for ok, item in helpers.async_streaming_bulk(
-            async_client, async_gen(), index="test-index", refresh=True
+            es_client, async_gen(), index="test-index", refresh=True
         ):
             assert ok
 
-        assert 100 == (await async_client.count(index="test-index"))["count"]
-        assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
+        assert 100 == (await es_client.count(index="test-index"))["count"]
+        assert {"answer": 42} == (await es_client.get(index="test-index", id=42))[
             "_source"
         ]
 
-        await async_client.delete_by_query(
+        await es_client.delete_by_query(
             index="test-index", body={"query": {"match_all": {}}}
         )
 
         async for ok, item in helpers.async_streaming_bulk(
-            async_client, sync_gen(), index="test-index", refresh=True
+            es_client, sync_gen(), index="test-index", refresh=True
         ):
             assert ok
 
-        assert 100 == (await async_client.count(index="test-index"))["count"]
-        assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
+        assert 100 == (await es_client.count(index="test-index"))["count"]
+        assert {"answer": 42} == (await es_client.get(index="test-index", id=42))[
             "_source"
         ]
 
-    async def test_all_errors_from_chunk_are_raised_on_failure(self, async_client):
-        await async_client.indices.create(
+    async def test_all_errors_from_chunk_are_raised_on_failure(self, es_client):
+        await es_client.indices.create(
             index="i",
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
+        await es_client.cluster.health(wait_for_status="yellow")
 
         try:
             async for ok, item in helpers.async_streaming_bulk(
-                async_client, [{"a": "b"}, {"a": "c"}], index="i", raise_on_error=True
+                es_client, [{"a": "b"}, {"a": "c"}], index="i", raise_on_error=True
             ):
                 assert ok
         except helpers.BulkIndexError as e:
@@ -141,23 +141,23 @@ class TestStreamingBulk(object):
         else:
             assert False, "exception should have been raised"
 
-    async def test_different_op_types(self, async_client):
-        await async_client.index(index="i", id=45, body={})
-        await async_client.index(index="i", id=42, body={})
+    async def test_different_op_types(self, es_client):
+        await es_client.index(index="i", id=45, body={})
+        await es_client.index(index="i", id=42, body={})
         docs = [
             {"_index": "i", "_id": 47, "f": "v"},
             {"_op_type": "delete", "_index": "i", "_id": 45},
             {"_op_type": "update", "_index": "i", "_id": 42, "doc": {"answer": 42}},
         ]
-        async for ok, item in helpers.async_streaming_bulk(async_client, docs):
+        async for ok, item in helpers.async_streaming_bulk(es_client, docs):
             assert ok
 
-        assert not await async_client.exists(index="i", id=45)
-        assert {"answer": 42} == (await async_client.get(index="i", id=42))["_source"]
-        assert {"f": "v"} == (await async_client.get(index="i", id=47))["_source"]
+        assert not await es_client.exists(index="i", id=45)
+        assert {"answer": 42} == (await es_client.get(index="i", id=42))["_source"]
+        assert {"f": "v"} == (await es_client.get(index="i", id=47))["_source"]
 
-    async def test_transport_error_can_becaught(self, async_client):
-        failing_client = FailingBulkClient(async_client)
+    async def test_transport_error_can_becaught(self, es_client):
+        failing_client = FailingBulkClient(es_client)
         docs = [
             {"_index": "i", "_id": 47, "f": "v"},
             {"_index": "i", "_id": 45, "f": "v"},
@@ -190,9 +190,9 @@ class TestStreamingBulk(object):
             }
         } == results[1][1]
 
-    async def test_rejected_documents_are_retried(self, async_client):
+    async def test_rejected_documents_are_retried(self, es_client):
         failing_client = FailingBulkClient(
-            async_client,
+            es_client,
             fail_with=ApiError(
                 message="Rejected!",
                 body={},
@@ -220,16 +220,16 @@ class TestStreamingBulk(object):
         ]
         assert 3 == len(results)
         assert [True, True, True] == [r[0] for r in results]
-        await async_client.indices.refresh(index="i")
-        res = await async_client.search(index="i")
+        await es_client.indices.refresh(index="i")
+        res = await es_client.search(index="i")
         assert {"value": 3, "relation": "eq"} == res["hits"]["total"]
         assert 4 == failing_client._called
 
     async def test_rejected_documents_are_retried_at_most_max_retries_times(
-        self, async_client
+        self, es_client
     ):
         failing_client = FailingBulkClient(
-            async_client,
+            es_client,
             fail_at=(1, 2),
             fail_with=ApiError(
                 message="Rejected!",
@@ -259,14 +259,14 @@ class TestStreamingBulk(object):
         ]
         assert 3 == len(results)
         assert [False, True, True] == [r[0] for r in results]
-        await async_client.indices.refresh(index="i")
-        res = await async_client.search(index="i")
+        await es_client.indices.refresh(index="i")
+        res = await es_client.search(index="i")
         assert {"value": 2, "relation": "eq"} == res["hits"]["total"]
         assert 4 == failing_client._called
 
-    async def test_transport_error_is_raised_with_max_retries(self, async_client):
+    async def test_transport_error_is_raised_with_max_retries(self, es_client):
         failing_client = FailingBulkClient(
-            async_client,
+            es_client,
             fail_at=(1, 2, 3, 4),
             fail_with=ApiError(
                 message="Rejected!",
@@ -296,52 +296,52 @@ class TestStreamingBulk(object):
 
 
 class TestBulk(object):
-    async def test_bulk_works_with_single_item(self, async_client):
+    async def test_bulk_works_with_single_item(self, es_client):
         docs = [{"answer": 42, "_id": 1}]
         success, failed = await helpers.async_bulk(
-            async_client, docs, index="test-index", refresh=True
+            es_client, docs, index="test-index", refresh=True
         )
 
         assert 1 == success
         assert not failed
-        assert 1 == (await async_client.count(index="test-index"))["count"]
-        assert {"answer": 42} == (await async_client.get(index="test-index", id=1))[
+        assert 1 == (await es_client.count(index="test-index"))["count"]
+        assert {"answer": 42} == (await es_client.get(index="test-index", id=1))[
             "_source"
         ]
 
-    async def test_all_documents_get_inserted(self, async_client):
+    async def test_all_documents_get_inserted(self, es_client):
         docs = [{"answer": x, "_id": x} for x in range(100)]
         success, failed = await helpers.async_bulk(
-            async_client, docs, index="test-index", refresh=True
+            es_client, docs, index="test-index", refresh=True
         )
 
         assert 100 == success
         assert not failed
-        assert 100 == (await async_client.count(index="test-index"))["count"]
-        assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
+        assert 100 == (await es_client.count(index="test-index"))["count"]
+        assert {"answer": 42} == (await es_client.get(index="test-index", id=42))[
             "_source"
         ]
 
-    async def test_stats_only_reports_numbers(self, async_client):
+    async def test_stats_only_reports_numbers(self, es_client):
         docs = [{"answer": x} for x in range(100)]
         success, failed = await helpers.async_bulk(
-            async_client, docs, index="test-index", refresh=True, stats_only=True
+            es_client, docs, index="test-index", refresh=True, stats_only=True
         )
 
         assert 100 == success
         assert 0 == failed
-        assert 100 == (await async_client.count(index="test-index"))["count"]
+        assert 100 == (await es_client.count(index="test-index"))["count"]
 
-    async def test_errors_are_reported_correctly(self, async_client):
-        await async_client.indices.create(
+    async def test_errors_are_reported_correctly(self, es_client):
+        await es_client.indices.create(
             index="i",
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
+        await es_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
-            async_client,
+            es_client,
             [{"a": 42}, {"a": "c", "_id": 42}],
             index="i",
             raise_on_error=False,
@@ -358,26 +358,26 @@ class TestBulk(object):
             "document_parsing_exception",
         ]
 
-    async def test_error_is_raised(self, async_client):
-        await async_client.indices.create(
+    async def test_error_is_raised(self, es_client):
+        await es_client.indices.create(
             index="i",
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
+        await es_client.cluster.health(wait_for_status="yellow")
 
         with pytest.raises(helpers.BulkIndexError):
-            await helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i")
+            await helpers.async_bulk(es_client, [{"a": 42}, {"a": "c"}], index="i")
 
-    async def test_ignore_error_if_raised(self, async_client):
+    async def test_ignore_error_if_raised(self, es_client):
         # ignore the status code 400 in tuple
         await helpers.async_bulk(
-            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
+            es_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
         )
 
         # ignore the status code 400 in list
         await helpers.async_bulk(
-            async_client,
+            es_client,
             [{"a": 42}, {"a": "c"}],
             index="i",
             ignore_status=[
@@ -387,31 +387,31 @@ class TestBulk(object):
 
         # ignore the status code 400
         await helpers.async_bulk(
-            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400
+            es_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400
         )
 
         # ignore only the status code in the `ignore_status` argument
         with pytest.raises(helpers.BulkIndexError):
             await helpers.async_bulk(
-                async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(444,)
+                es_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(444,)
             )
 
         # ignore transport error exception
-        failing_client = FailingBulkClient(async_client)
+        failing_client = FailingBulkClient(es_client)
         await helpers.async_bulk(
             failing_client, [{"a": 42}], index="i", ignore_status=(599,)
         )
 
-    async def test_errors_are_collected_properly(self, async_client):
-        await async_client.indices.create(
+    async def test_errors_are_collected_properly(self, es_client):
+        await es_client.indices.create(
             index="i",
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
+        await es_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
-            async_client,
+            es_client,
             [{"a": 42}, {"a": "c"}],
             index="i",
             stats_only=True,
@@ -459,25 +459,32 @@ class MockResponse:
     def __await__(self):
         return self().__await__()
 
+    def __getitem__(self, key):
+        # in the sync case, the response is never __call__ed but get still needs to work
+        return self.resp.get(key)
+
+    def get(self, key):
+        return self.__getitem__(key)
+
 
 @pytest_asyncio.fixture(scope="function")
-async def scan_teardown(async_client):
+async def scan_teardown(es_client):
     yield
-    await async_client.clear_scroll(scroll_id="_all")
+    await es_client.clear_scroll(scroll_id="_all")
 
 
 class TestScan(object):
-    async def test_order_can_be_preserved(self, async_client, scan_teardown):
+    async def test_order_can_be_preserved(self, es_client, scan_teardown):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
-        await async_client.bulk(operations=bulk, refresh=True)
+        await es_client.bulk(operations=bulk, refresh=True)
 
         docs = [
             doc
             async for doc in helpers.async_scan(
-                async_client,
+                es_client,
                 index="test_index",
                 query={"sort": "answer"},
                 preserve_order=True,
@@ -488,36 +495,35 @@ class TestScan(object):
         assert list(map(str, range(100))) == list(d["_id"] for d in docs)
         assert list(range(100)) == list(d["_source"]["answer"] for d in docs)
 
-    async def test_all_documents_are_read(self, async_client, scan_teardown):
+    async def test_all_documents_are_read(self, es_client, scan_teardown):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
-        await async_client.bulk(operations=bulk, refresh=True)
+        await es_client.bulk(operations=bulk, refresh=True)
 
         docs = [
-            x
-            async for x in helpers.async_scan(async_client, index="test_index", size=2)
+            x async for x in helpers.async_scan(es_client, index="test_index", size=2)
         ]
 
         assert 100 == len(docs)
         assert set(map(str, range(100))) == set(d["_id"] for d in docs)
         assert set(range(100)) == set(d["_source"]["answer"] for d in docs)
 
-    async def test_scroll_error(self, async_client, scan_teardown):
+    async def test_scroll_error(self, es_client, scan_teardown):
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(operations=bulk, refresh=True)
+        await es_client.bulk(operations=bulk, refresh=True)
 
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "scroll", MockScroll()
+        ):
             data = [
                 x
                 async for x in helpers.async_scan(
-                    async_client,
+                    es_client,
                     index="test_index",
                     size=2,
                     raise_on_error=False,
@@ -527,14 +533,14 @@ class TestScan(object):
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "scroll", MockScroll()
+        ):
             with pytest.raises(ScanError):
                 data = [
                     x
                     async for x in helpers.async_scan(
-                        async_client,
+                        es_client,
                         index="test_index",
                         size=2,
                         raise_on_error=True,
@@ -544,12 +550,12 @@ class TestScan(object):
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-    async def test_initial_search_error(self, async_client, scan_teardown):
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "clear_scroll", new_callable=AsyncMock):
+    async def test_initial_search_error(self, es_client, scan_teardown):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "clear_scroll", new_callable=AsyncMock
+        ):
             with patch.object(
-                async_client,
+                es_client,
                 "search",
                 MockResponse(
                     ObjectApiResponse(
@@ -562,11 +568,11 @@ class TestScan(object):
                     )
                 ),
             ):
-                with patch.object(async_client, "scroll", MockScroll()):
+                with patch.object(es_client, "scroll", MockScroll()):
                     data = [
                         x
                         async for x in helpers.async_scan(
-                            async_client,
+                            es_client,
                             index="test_index",
                             size=2,
                             raise_on_error=False,
@@ -575,7 +581,7 @@ class TestScan(object):
                     assert data == [{"search_data": 1}, {"scroll_data": 42}]
 
             with patch.object(
-                async_client,
+                es_client,
                 "search",
                 MockResponse(
                     ObjectApiResponse(
@@ -588,12 +594,12 @@ class TestScan(object):
                     )
                 ),
             ):
-                with patch.object(async_client, "scroll", MockScroll()) as mock_scroll:
+                with patch.object(es_client, "scroll", MockScroll()) as mock_scroll:
                     with pytest.raises(ScanError):
                         data = [
                             x
                             async for x in helpers.async_scan(
-                                async_client,
+                                es_client,
                                 index="test_index",
                                 size=2,
                                 raise_on_error=True,
@@ -602,41 +608,39 @@ class TestScan(object):
                         assert data == [{"search_data": 1}]
                         assert mock_scroll.calls == []
 
-    async def test_no_scroll_id_fast_route(self, async_client, scan_teardown):
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "scroll") as scroll_mock, patch.object(
-            async_client,
+    async def test_no_scroll_id_fast_route(self, es_client, scan_teardown):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "scroll"
+        ) as scroll_mock, patch.object(
+            es_client,
             "search",
             MockResponse(ObjectApiResponse(body={"no": "_scroll_id"}, meta=None)),
         ), patch.object(
-            async_client, "clear_scroll"
+            es_client, "clear_scroll"
         ) as clear_mock:
-            data = [
-                x async for x in helpers.async_scan(async_client, index="test_index")
-            ]
+            data = [x async for x in helpers.async_scan(es_client, index="test_index")]
 
             assert data == []
             scroll_mock.assert_not_called()
             clear_mock.assert_not_called()
 
     async def test_logger(
-        self, caplog: pytest.LogCaptureFixture, async_client, scan_teardown
+        self, caplog: pytest.LogCaptureFixture, es_client, scan_teardown
     ):
         caplog.set_level(logging.WARNING, logger="elasticsearch.helpers")
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(operations=bulk, refresh=True)
+        await es_client.bulk(operations=bulk, refresh=True)
 
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "scroll", MockScroll()
+        ):
             _ = [
                 x
                 async for x in helpers.async_scan(
-                    async_client,
+                    es_client,
                     index="test_index",
                     size=2,
                     raise_on_error=False,
@@ -649,14 +653,14 @@ class TestScan(object):
         ]
 
         caplog.clear()
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "scroll", MockScroll()
+        ):
             with pytest.raises(ScanError):
                 _ = [
                     x
                     async for x in helpers.async_scan(
-                        async_client,
+                        es_client,
                         index="test_index",
                         size=2,
                         raise_on_error=True,
@@ -668,22 +672,27 @@ class TestScan(object):
             "Scroll request has only succeeded on 4 (+0 skipped) shards out of 5."
         ]
 
-    async def test_clear_scroll(self, async_client, scan_teardown):
+    async def test_clear_scroll(self, es_client, scan_teardown):
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(operations=bulk, refresh=True)
+        await es_client.bulk(operations=bulk, refresh=True)
 
-        with patch.object(
-            async_client, "options", return_value=async_client
-        ), patch.object(
-            async_client, "clear_scroll", wraps=async_client.clear_scroll
+        with patch.object(es_client, "options", return_value=es_client), patch.object(
+            es_client, "clear_scroll", wraps=es_client.clear_scroll
         ) as spy:
             _ = [
                 x
+                async for x in helpers.async_scan(es_client, index="test_index", size=2)
+            ]
+            spy.assert_called_once()
+
+            spy.reset_mock()
+            _ = [
+                x
                 async for x in helpers.async_scan(
-                    async_client, index="test_index", size=2
+                    es_client, index="test_index", size=2, clear_scroll=True
                 )
             ]
             spy.assert_called_once()
@@ -692,16 +701,7 @@ class TestScan(object):
             _ = [
                 x
                 async for x in helpers.async_scan(
-                    async_client, index="test_index", size=2, clear_scroll=True
-                )
-            ]
-            spy.assert_called_once()
-
-            spy.reset_mock()
-            _ = [
-                x
-                async for x in helpers.async_scan(
-                    async_client, index="test_index", size=2, clear_scroll=False
+                    es_client, index="test_index", size=2, clear_scroll=False
                 )
             ]
             spy.assert_not_called()
@@ -714,13 +714,11 @@ class TestScan(object):
             {"headers": {"custom", "header"}},
         ],
     )
-    async def test_scan_auth_kwargs_forwarded(
-        self, async_client, scan_teardown, kwargs
-    ):
+    async def test_scan_auth_kwargs_forwarded(self, es_client, scan_teardown, kwargs):
         with patch.object(
-            async_client, "options", return_value=async_client
+            es_client, "options", return_value=es_client
         ) as options, patch.object(
-            async_client,
+            es_client,
             "search",
             return_value=MockResponse(
                 ObjectApiResponse(
@@ -734,7 +732,7 @@ class TestScan(object):
             ),
         ):
             with patch.object(
-                async_client,
+                es_client,
                 "scroll",
                 return_value=MockResponse(
                     ObjectApiResponse(
@@ -748,12 +746,12 @@ class TestScan(object):
                 ),
             ):
                 with patch.object(
-                    async_client, "clear_scroll", return_value=MockResponse({})
+                    es_client, "clear_scroll", return_value=MockResponse({})
                 ):
                     data = [
                         x
                         async for x in helpers.async_scan(
-                            async_client, index="test_index", **kwargs
+                            es_client, index="test_index", **kwargs
                         )
                     ]
 
@@ -768,12 +766,12 @@ class TestScan(object):
         ]
 
     async def test_scan_auth_kwargs_favor_scroll_kwargs_option(
-        self, async_client, scan_teardown
+        self, es_client, scan_teardown
     ):
         with patch.object(
-            async_client, "options", return_value=async_client
+            es_client, "options", return_value=es_client
         ) as options, patch.object(
-            async_client,
+            es_client,
             "search",
             return_value=MockResponse(
                 ObjectApiResponse(
@@ -787,7 +785,7 @@ class TestScan(object):
             ),
         ):
             with patch.object(
-                async_client,
+                es_client,
                 "scroll",
                 return_value=MockResponse(
                     ObjectApiResponse(
@@ -801,12 +799,12 @@ class TestScan(object):
                 ),
             ):
                 with patch.object(
-                    async_client, "clear_scroll", return_value=MockResponse({})
+                    es_client, "clear_scroll", return_value=MockResponse({})
                 ):
                     data = [
                         x
                         async for x in helpers.async_scan(
-                            async_client,
+                            es_client,
                             index="test_index",
                             headers={"not scroll": "kwargs"},
                             scroll_kwargs={
@@ -824,13 +822,13 @@ class TestScan(object):
                         call(headers={"scroll": "kwargs"}),
                         call(ignore_status=404),
                     ]
-                    assert async_client.search.call_args_list == [
+                    assert es_client.search.call_args_list == [
                         call(sort="_doc", index="test_index", scroll="5m", size=1000)
                     ]
-                    assert async_client.scroll.call_args_list == [
+                    assert es_client.scroll.call_args_list == [
                         call(scroll_id="scroll_id", scroll="5m", sort="asc")
                     ]
-                    assert async_client.clear_scroll.call_args_list == [
+                    assert es_client.clear_scroll.call_args_list == [
                         call(scroll_id="scroll_id")
                     ]
 
@@ -846,9 +844,9 @@ class TestScan(object):
         {"query": {"query": {"match_all": {}}}, "from_": 1},
     ],
 )
-async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
-    with patch.object(async_client, "options", return_value=async_client), patch.object(
-        async_client,
+async def test_scan_from_keyword_is_aliased(es_client, scan_kwargs):
+    with patch.object(es_client, "options", return_value=es_client), patch.object(
+        es_client,
         "search",
         return_value=MockResponse(
             ObjectApiResponse(
@@ -861,12 +859,12 @@ async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
             )
         ),
     ) as search_mock, patch.object(
-        async_client, "clear_scroll", return_value=MockResponse(None)
+        es_client, "clear_scroll", return_value=MockResponse(None)
     ):
         [
             x
             async for x in helpers.async_scan(
-                async_client, index="test_index", **scan_kwargs
+                es_client, index="test_index", **scan_kwargs
             )
         ]
         assert search_mock.call_args[1]["from_"] == 1
@@ -874,7 +872,7 @@ async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
 
 
 @pytest_asyncio.fixture(scope="function")
-async def reindex_setup(async_client):
+async def reindex_setup(es_client):
     bulk = []
     for x in range(100):
         bulk.append({"index": {"_index": "test_index", "_id": x}})
@@ -885,74 +883,69 @@ async def reindex_setup(async_client):
                 "type": "answers" if x % 2 == 0 else "questions",
             }
         )
-    await async_client.bulk(operations=bulk, refresh=True)
+    await es_client.bulk(operations=bulk, refresh=True)
     yield
 
 
 class TestReindex(object):
     async def test_reindex_passes_kwargs_to_scan_and_bulk(
-        self, async_client, reindex_setup
+        self, es_client, reindex_setup
     ):
         await helpers.async_reindex(
-            async_client,
+            es_client,
             "test_index",
             "prod_index",
             scan_kwargs={"q": "type:answers"},
             bulk_kwargs={"refresh": True},
         )
 
-        assert await async_client.indices.exists(index="prod_index")
+        assert await es_client.indices.exists(index="prod_index")
         assert (
-            50
-            == (await async_client.count(index="prod_index", q="type:answers"))["count"]
+            50 == (await es_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
         assert {"answer": 42, "correct": True, "type": "answers"} == (
-            await async_client.get(index="prod_index", id=42)
+            await es_client.get(index="prod_index", id=42)
         )["_source"]
 
-    async def test_reindex_accepts_a_query(self, async_client, reindex_setup):
+    async def test_reindex_accepts_a_query(self, es_client, reindex_setup):
         await helpers.async_reindex(
-            async_client,
+            es_client,
             "test_index",
             "prod_index",
             query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
         )
-        await async_client.indices.refresh()
+        await es_client.indices.refresh()
 
-        assert await async_client.indices.exists(index="prod_index")
+        assert await es_client.indices.exists(index="prod_index")
         assert (
-            50
-            == (await async_client.count(index="prod_index", q="type:answers"))["count"]
+            50 == (await es_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
         assert {"answer": 42, "correct": True, "type": "answers"} == (
-            await async_client.get(index="prod_index", id=42)
+            await es_client.get(index="prod_index", id=42)
         )["_source"]
 
-    async def test_all_documents_get_moved(self, async_client, reindex_setup):
-        await helpers.async_reindex(async_client, "test_index", "prod_index")
-        await async_client.indices.refresh()
+    async def test_all_documents_get_moved(self, es_client, reindex_setup):
+        await helpers.async_reindex(es_client, "test_index", "prod_index")
+        await es_client.indices.refresh()
 
-        assert await async_client.indices.exists(index="prod_index")
+        assert await es_client.indices.exists(index="prod_index")
         assert (
             50
-            == (await async_client.count(index="prod_index", q="type:questions"))[
-                "count"
-            ]
+            == (await es_client.count(index="prod_index", q="type:questions"))["count"]
         )
         assert (
-            50
-            == (await async_client.count(index="prod_index", q="type:answers"))["count"]
+            50 == (await es_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
         assert {"answer": 42, "correct": True, "type": "answers"} == (
-            await async_client.get(index="prod_index", id=42)
+            await es_client.get(index="prod_index", id=42)
         )["_source"]
 
 
 @pytest_asyncio.fixture(scope="function")
-async def parent_reindex_setup(async_client):
+async def parent_reindex_setup(es_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
         "mappings": {
@@ -964,28 +957,28 @@ async def parent_reindex_setup(async_client):
             }
         },
     }
-    await async_client.indices.create(index="test-index", body=body)
-    await async_client.indices.create(index="real-index", body=body)
+    await es_client.indices.create(index="test-index", body=body)
+    await es_client.indices.create(index="real-index", body=body)
 
-    await async_client.index(
+    await es_client.index(
         index="test-index", id=42, body={"question_answer": "question"}
     )
-    await async_client.index(
+    await es_client.index(
         index="test-index",
         id=47,
         routing=42,
         body={"some": "data", "question_answer": {"name": "answer", "parent": 42}},
     )
-    await async_client.indices.refresh(index="test-index")
+    await es_client.indices.refresh(index="test-index")
 
 
 class TestParentChildReindex:
     async def test_children_are_reindexed_correctly(
-        self, async_client, parent_reindex_setup
+        self, es_client, parent_reindex_setup
     ):
-        await helpers.async_reindex(async_client, "test-index", "real-index")
+        await helpers.async_reindex(es_client, "test-index", "real-index")
 
-        q = await async_client.get(index="real-index", id=42)
+        q = await es_client.get(index="real-index", id=42)
         assert {
             "_id": "42",
             "_index": "real-index",
@@ -996,7 +989,7 @@ class TestParentChildReindex:
             "found": True,
         } == q
 
-        q = await async_client.get(index="test-index", id=47, routing=42)
+        q = await es_client.get(index="test-index", id=47, routing=42)
         assert {
             "_routing": "42",
             "_id": "47",
@@ -1013,7 +1006,7 @@ class TestParentChildReindex:
 
 
 @pytest_asyncio.fixture(scope="function")
-async def reindex_data_stream_setup(async_client):
+async def reindex_data_stream_setup(es_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []
     for x in range(100):
@@ -1026,49 +1019,49 @@ async def reindex_data_stream_setup(async_client):
                 "@timestamp": (dt - timedelta(days=x)).isoformat(),
             }
         )
-    await async_client.bulk(operations=bulk, refresh=True)
-    await async_client.indices.put_index_template(
+    await es_client.bulk(operations=bulk, refresh=True)
+    await es_client.indices.put_index_template(
         name="my-index-template",
         body={
             "index_patterns": ["py-*-*"],
             "data_stream": {},
         },
     )
-    await async_client.indices.create_data_stream(name="py-test-stream")
-    await async_client.indices.refresh()
+    await es_client.indices.create_data_stream(name="py-test-stream")
+    await es_client.indices.refresh()
     yield
 
 
 class TestAsyncDataStreamReindex(object):
     @pytest.mark.parametrize("op_type", [None, "create"])
     async def test_reindex_index_datastream(
-        self, op_type, async_client, reindex_data_stream_setup
+        self, op_type, es_client, reindex_data_stream_setup
     ):
         await helpers.async_reindex(
-            async_client,
+            es_client,
             source_index="test_index_stream",
             target_index="py-test-stream",
             scan_kwargs={"q": "type:answers"},
             bulk_kwargs={"refresh": True},
             op_type=op_type,
         )
-        # await async_client.indices.refresh()
-        assert await async_client.indices.exists(index="py-test-stream")
+        # await es_client.indices.refresh()
+        assert await es_client.indices.exists(index="py-test-stream")
         assert (
             50
-            == (await async_client.count(index="py-test-stream", q="type:answers"))[
+            == (await es_client.count(index="py-test-stream", q="type:answers"))[
                 "count"
             ]
         )
 
     async def test_reindex_index_datastream_op_type_index(
-        self, async_client, reindex_data_stream_setup
+        self, es_client, reindex_data_stream_setup
     ):
         with pytest.raises(
             ValueError, match="Data streams must have 'op_type' set to 'create'"
         ):
             await helpers.async_reindex(
-                async_client,
+                es_client,
                 source_index="test_index_stream",
                 target_index="py-test-stream",
                 query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},

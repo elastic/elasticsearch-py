@@ -16,16 +16,19 @@
 #  under the License.
 
 import pytest
+import pytest_asyncio
 
 from elasticsearch import RequestError
 
 from .conftest import _create
 
+pytestmark = pytest.mark.asyncio
 
-@pytest.fixture(scope="function")
-def mvt_setup(sync_client):
-    sync_client.indices.create(
-        index="museums",
+
+@pytest_asyncio.fixture(scope="function")
+async def mvt_setup(es_client):
+    await es_client.indices.create(
+        index="i",
         body={
             "mappings": {
                 "properties": {
@@ -37,8 +40,8 @@ def mvt_setup(sync_client):
             }
         },
     )
-    sync_client.bulk(
-        index="museums",
+    await es_client.bulk(
+        index="i",
         body=[
             {"index": {"_id": "1"}},
             {
@@ -73,12 +76,11 @@ def mvt_setup(sync_client):
     )
 
 
-@pytest.mark.parametrize("node_class", ["urllib3", "requests"])
-def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, node_class, ca_certs):
+@pytest.mark.parametrize("node_class", ["aiohttp"])
+async def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, node_class):
     client = _create(elasticsearch_url, node_class=node_class)
-
-    client.search_mvt(
-        index="museums",
+    await client.search_mvt(
+        index="i",
         zoom=13,
         x=4207,
         y=2692,
@@ -86,8 +88,8 @@ def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, node_class, ca_c
     )
 
     with pytest.raises(RequestError) as e:
-        client.search_mvt(
-            index="museums",
+        await client.search_mvt(
+            index="i",
             zoom=-100,
             x=4207,
             y=2692,
@@ -115,19 +117,14 @@ def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, node_class, ca_c
     }
 
 
-@pytest.mark.parametrize("node_class", ["urllib3", "requests"])
-def test_mapbox_vector_tile_response(
-    elasticsearch_url, mvt_setup, node_class, ca_certs
-):
+async def test_mapbox_vector_tile_response(es_client, mvt_setup):
     try:
         import mapbox_vector_tile
     except ImportError:
         return pytest.skip("Requires the 'mapbox-vector-tile' package")
 
-    client = _create(elasticsearch_url, node_class=node_class)
-
-    resp = client.search_mvt(
-        index="museums",
+    resp = await es_client.search_mvt(
+        index="i",
         zoom=13,
         x=4207,
         y=2692,

@@ -17,18 +17,26 @@
 
 import os
 import subprocess
-from glob import glob
 from pathlib import Path
 
 import unasync
 
 
-def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
-    for file in glob("*.py", root_dir=source_dir):
-        path = output_dir / file
+def cleanup(target_files: list[str], patterns: list[str]):
+    for path in target_files:
         for pattern in patterns:
             subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
-        subprocess.check_call(["rm", f"{path}.bak"])
+            subprocess.check_call(["rm", f"{path}.bak"])
+
+
+def get_paths(dir: Path):
+    filepaths = []
+    for root, _, filenames in os.walk(dir):
+        for filename in filenames:
+            is_source_file = filename.rpartition(".")[-1] in {"py", "pyi"}
+            if is_source_file and filename != "utils.py":
+                filepaths.append(os.path.join(root, filename))
+    return filepaths
 
 
 def run(
@@ -36,22 +44,13 @@ def run(
     cleanup_patterns: list[str] = [],
 ):
     root_dir = Path(__file__).absolute().parent.parent
-    source_dir = root_dir / rule.fromdir.lstrip("/")
-    output_dir = root_dir / rule.todir.lstrip("/")
+    source_paths = get_paths(root_dir / rule.fromdir)
+    target_paths = get_paths(root_dir / rule.todir)
 
-    filepaths = []
-    for root, _, filenames in os.walk(source_dir):
-        for filename in filenames:
-            if filename.rpartition(".")[-1] in {
-                "py",
-                "pyi",
-            } and not filename.startswith("utils.py"):
-                filepaths.append(os.path.join(root, filename))
-
-    unasync.unasync_files(filepaths, [rule])
+    unasync.unasync_files(source_paths, [rule])
 
     if cleanup_patterns:
-        cleanup(source_dir, output_dir, cleanup_patterns)
+        cleanup(target_paths, cleanup_patterns)
 
 
 def main():
@@ -92,6 +91,46 @@ def main():
         ),
         cleanup_patterns=[
             "/^import asyncio$/d",
+        ],
+    )
+
+    run(
+        rule=unasync.Rule(
+            fromdir="test_elasticsearch/_async/",
+            todir="test_elasticsearch/_sync/",
+            additional_replacements={
+                "AsyncBM25Strategy": "BM25Strategy",
+                "AsyncDenseVectorScriptScoreStrategy": "DenseVectorScriptScoreStrategy",
+                "AsyncDenseVectorStrategy": "DenseVectorStrategy",
+                "AsyncElasticsearch": "Elasticsearch",
+                "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
+                "AsyncEmbeddingService": "EmbeddingService",
+                "AsyncRetrievalStrategy": "RetrievalStrategy",
+                "AsyncSparseVectorStrategy": "SparseVectorStrategy",
+                "AsyncTransport": "Transport",
+                "AsyncVectorStore": "VectorStore",
+                "_async": "_sync",
+                "async_bulk": "bulk",
+                "async_reindex": "reindex",
+                "async_scan": "scan",
+                "async_streaming_bulk": "streaming_bulk",
+                # test-specific replacements
+                "AsyncConsistentFakeEmbeddings": "ConsistentFakeEmbeddings",
+                "AsyncFakeEmbeddings": "FakeEmbeddings",
+                "AsyncGenerator": "Generator",
+                "AsyncRequestSavingTransport": "RequestSavingTransport",
+                "pytest_asyncio": "pytest",
+            },
+        ),
+        cleanup_patterns=[
+            "s/^import asyncio$/import time/",
+            "s/asyncio.sleep/time.sleep/",
+            "/^import pytest_asyncio$/d",
+            "/^ *@pytest.mark.asyncio$/d",
+            "/^pytestmark = pytest.mark.asyncio$/d",
+            # strings goes over 2 lines
+            """s/@pytest.mark.parametrize("node_class", \\["aiohttp"\\])/"""
+            """@pytest.mark.parametrize("node_class", ["urllib3", "requests"])/""",
         ],
     )
 
