@@ -50,7 +50,7 @@ def create_elasticsearch_client(
         raise TypeError("Elasticsearch client must be AsyncElasticsearch client")
 
     # Add integration-specific usage header for tracking usage in Elastic Cloud.
-    # client.options preserces existing (non-user-agent) headers.
+    # client.options preserves existing (non-user-agent) headers.
     client = client.options(headers={"User-Agent": agent_header})
 
     return client
