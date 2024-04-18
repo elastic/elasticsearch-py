@@ -6,12 +6,13 @@
 """Script that downloads a public dataset and streams it to an Elasticsearch cluster"""
 
 import csv
-from os.path import abspath, join, dirname, exists
+from os.path import abspath, dirname, exists, join
+
 import tqdm
 import urllib3
+
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import streaming_bulk
-
 
 NYC_RESTAURANTS = (
     "https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.csv?accessType=DOWNLOAD"
@@ -99,7 +100,9 @@ def main():
     progress = tqdm.tqdm(unit="docs", total=number_of_docs)
     successes = 0
     for ok, action in streaming_bulk(
-        client=client, index="nyc-restaurants", actions=generate_actions(),
+        client=client,
+        index="nyc-restaurants",
+        actions=generate_actions(),
     ):
         progress.update(1)
         successes += ok

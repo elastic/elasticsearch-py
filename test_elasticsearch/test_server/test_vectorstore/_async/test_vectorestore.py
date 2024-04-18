@@ -1,16 +1,13 @@
 import logging
 import uuid
-from typing import AsyncIterator
-from typing import Any, List, Optional, Union, cast
 from functools import partial
+from typing import Any, AsyncIterator, List, Optional, Union, cast
 
 import pytest
 import pytest_asyncio
-from elasticsearch import AsyncElasticsearch
 
-from elasticsearch import NotFoundError
+from elasticsearch import AsyncElasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-
 from elasticsearch.vectorstore._async import AsyncVectorStore
 from elasticsearch.vectorstore._async._utils import model_is_deployed
 from elasticsearch.vectorstore._async.strategies import (
@@ -22,11 +19,11 @@ from elasticsearch.vectorstore._async.strategies import (
 )
 
 from ._test_utils import (
-    create_requests_saving_client,
-    es_client_fixture,
     AsyncConsistentFakeEmbeddings,
     AsyncFakeEmbeddings,
     AsyncRequestSavingTransport,
+    create_requests_saving_client,
+    es_client_fixture,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -44,7 +41,7 @@ Some of the tests require the following models to be deployed in the ML Node:
 - sentence-transformers__all-minilm-l6-v2 (can be deployed through the API,
   loaded via eland)
 
-These tests that require the models to be deployed are skipped by default. 
+These tests that require the models to be deployed are skipped by default.
 Enable them by adding the model name to the modelsDeployed list below.
 """
 

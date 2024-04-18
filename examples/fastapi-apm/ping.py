@@ -3,9 +3,9 @@
 # See the LICENSE file in the project root for more information
 
 import random
-import urllib3
 import time
 
+import urllib3
 
 endpoints = [
     "http://app:9292/",

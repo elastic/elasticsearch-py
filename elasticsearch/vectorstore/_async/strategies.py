@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 from elasticsearch import AsyncElasticsearch
-
 from elasticsearch.vectorstore._async._utils import model_must_be_deployed
 from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 

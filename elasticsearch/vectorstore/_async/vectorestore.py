@@ -4,12 +4,9 @@ from typing import Any, Callable, Dict, List, Optional
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import BulkIndexError, async_bulk
-
-from elasticsearch.vectorstore._utils import (
-    maximal_marginal_relevance,
-)
 from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 from elasticsearch.vectorstore._async.strategies import RetrievalStrategy
+from elasticsearch.vectorstore._utils import maximal_marginal_relevance
 
 logger = logging.getLogger(__name__)
 

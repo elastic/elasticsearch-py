@@ -17,8 +17,8 @@
 
 import os
 import subprocess
-from pathlib import Path
 from glob import glob
+from pathlib import Path
 
 import unasync
 
@@ -55,7 +55,6 @@ def run(rule: unasync.Rule, cleanup_patterns: list[str] = []):
 
 
 def main():
-
     run(
         rule=unasync.Rule(
             fromdir="/elasticsearch/_async/client/",
@@ -98,7 +97,6 @@ def main():
             fromdir="test_elasticsearch/test_server/test_vectorstore/_async/",
             todir="test_elasticsearch/test_server/test_vectorstore/_sync/",
             additional_replacements={
-                # Main
                 "_async": "_sync",
                 "async_bulk": "bulk",
                 "AsyncElasticsearch": "Elasticsearch",

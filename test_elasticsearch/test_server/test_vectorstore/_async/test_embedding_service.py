@@ -1,21 +1,16 @@
 import os
-
-import pytest
-
-import pytest_asyncio
-from elasticsearch import AsyncElasticsearch
-
 from typing import AsyncIterator
 
+import pytest
+import pytest_asyncio
+
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async._utils import model_is_deployed
-
-from ._test_utils import (
-    es_client_fixture,
-)
-
 from elasticsearch.vectorstore._async.embedding_service import (
     AsyncElasticsearchEmbeddings,
 )
+
+from ._test_utils import es_client_fixture
 
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html

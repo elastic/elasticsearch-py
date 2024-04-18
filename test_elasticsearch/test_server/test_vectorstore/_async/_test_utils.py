@@ -1,9 +1,9 @@
 import os
-from typing import Any, Dict, List, Optional, AsyncIterator
+from typing import Any, AsyncIterator, Dict, List, Optional
 
 from elastic_transport import AsyncTransport
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 
 
