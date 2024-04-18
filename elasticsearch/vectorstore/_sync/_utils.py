@@ -1,15 +1,15 @@
 from elasticsearch import (
-    AsyncElasticsearch,
+    Elasticsearch,
     BadRequestError,
     ConflictError,
     NotFoundError,
 )
 
 
-async def model_must_be_deployed(client: AsyncElasticsearch, model_id: str) -> None:
+def model_must_be_deployed(client: Elasticsearch, model_id: str) -> None:
     try:
         dummy = {"x": "y"}
-        await client.ml.infer_trained_model(model_id=model_id, docs=[dummy])
+        client.ml.infer_trained_model(model_id=model_id, docs=[dummy])
     except NotFoundError as err:
         raise err
     except ConflictError as err:
@@ -26,9 +26,9 @@ async def model_must_be_deployed(client: AsyncElasticsearch, model_id: str) -> N
     return None
 
 
-async def model_is_deployed(es_client: AsyncElasticsearch, model_id: str) -> bool:
+def model_is_deployed(es_client: Elasticsearch, model_id: str) -> bool:
     try:
-        await model_must_be_deployed(es_client, model_id)
+        model_must_be_deployed(es_client, model_id)
         return True
     except NotFoundError:
         return False

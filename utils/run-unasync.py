@@ -21,29 +21,11 @@ from pathlib import Path
 import unasync
 
 
-def main():
-    # Unasync all the generated async code
-    additional_replacements = {
-        # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
-        "AsyncTransport": "Transport",
-        "AsyncElasticsearch": "Elasticsearch",
-        # We don't want to rewrite this class
-        "AsyncSearchClient": "AsyncSearchClient",
-        # Handling typing.Awaitable[...] isn't done yet by unasync.
-        "_TYPE_ASYNC_SNIFF_CALLBACK": "_TYPE_SYNC_SNIFF_CALLBACK",
-    }
-    rules = [
-        unasync.Rule(
-            fromdir="/elasticsearch/_async/client/",
-            todir="/elasticsearch/_sync/client/",
-            additional_replacements=additional_replacements,
-        ),
-    ]
+def run(rule: unasync.Rule):
+    root = Path(__file__).absolute().parent.parent
 
     filepaths = []
-    for root, _, filenames in os.walk(
-        Path(__file__).absolute().parent.parent / "elasticsearch/_async"
-    ):
+    for root, _, filenames in os.walk(root / rule.fromdir):
         for filename in filenames:
             if filename.rpartition(".")[-1] in (
                 "py",
@@ -51,7 +33,64 @@ def main():
             ) and not filename.startswith("utils.py"):
                 filepaths.append(os.path.join(root, filename))
 
-    unasync.unasync_files(filepaths, rules)
+    unasync.unasync_files(filepaths, [rule])
+
+
+def main():
+
+    run(
+        rule=unasync.Rule(
+            fromdir="/elasticsearch/_async/client/",
+            todir="/elasticsearch/_sync/client/",
+            additional_replacements={
+                # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
+                "AsyncTransport": "Transport",
+                "AsyncElasticsearch": "Elasticsearch",
+                # We don't want to rewrite this class
+                "AsyncSearchClient": "AsyncSearchClient",
+                # Handling typing.Awaitable[...] isn't done yet by unasync.
+                "_TYPE_ASYNC_SNIFF_CALLBACK": "_TYPE_SYNC_SNIFF_CALLBACK",
+            },
+        ),
+    )
+
+    run(
+        rule=unasync.Rule(
+            fromdir="/elasticsearch/vectorstore/_async/",
+            todir="/elasticsearch/vectorstore/_sync/",
+            additional_replacements={
+                "_async": "_sync",
+                "async_bulk": "bulk",
+                "AsyncElasticsearch": "Elasticsearch",
+                "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
+                "AsyncEmbeddingService": "EmbeddingService",
+                "AsyncTransport": "Transport",
+                "AsyncVectorStore": "VectorStore",
+            },
+        ),
+    )
+
+    run(
+        rule=unasync.Rule(
+            fromdir="test_elasticsearch/test_server/test_vectorstore/_async/",
+            todir="test_elasticsearch/test_server/test_vectorstore/_sync/",
+            additional_replacements={
+                # Main
+                "_async": "_sync",
+                "async_bulk": "bulk",
+                "AsyncElasticsearch": "Elasticsearch",
+                "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
+                "AsyncEmbeddingService": "EmbeddingService",
+                "AsyncTransport": "Transport",
+                "AsyncVectorStore": "VectorStore",
+                # Tests-specific
+                "AsyncConsistentFakeEmbeddings": "ConsistentFakeEmbeddings",
+                "AsyncFakeEmbeddings": "FakeEmbeddings",
+                "AsyncGenerator": "Generator",
+                "AsyncRequestSavingTransport": "RequestSavingTransport",
+            },
+        ),
+    )
 
 
 if __name__ == "__main__":

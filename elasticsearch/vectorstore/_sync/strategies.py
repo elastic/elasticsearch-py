@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union, cast
 
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import Elasticsearch
 
-from elasticsearch.vectorstore._async._utils import model_must_be_deployed
-from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
+from elasticsearch.vectorstore._sync._utils import model_must_be_deployed
+from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 
 
 class DistanceMetric(str, Enum):
@@ -19,7 +19,7 @@ class DistanceMetric(str, Enum):
 
 class RetrievalStrategy(ABC):
     @abstractmethod
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -43,9 +43,9 @@ class RetrievalStrategy(ABC):
         """
 
     @abstractmethod
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
@@ -60,7 +60,7 @@ class RetrievalStrategy(ABC):
                 describe the schema of the metadata.
         """
 
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
+    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
         """
         If this strategy creates vector embeddings in Python (not in Elasticsearch),
         this method is used to apply the inference.
@@ -91,7 +91,7 @@ class Semantic(RetrievalStrategy):
         self.text_field = text_field
         self.inference_field = inference_field
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -114,14 +114,14 @@ class Semantic(RetrievalStrategy):
             "filter": filter,
         }
 
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
         if self.model_id:
-            await model_must_be_deployed(client, self.model_id)
+            model_must_be_deployed(client, self.model_id)
 
         mappings: dict[str, Any] = {
             "properties": {
@@ -134,7 +134,7 @@ class Semantic(RetrievalStrategy):
         if metadata_mapping:
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        await client.indices.create(index=index_name, mappings=mappings)
+        client.indices.create(index=index_name, mappings=mappings)
 
 
 class SparseVector(RetrievalStrategy):
@@ -151,7 +151,7 @@ class SparseVector(RetrievalStrategy):
         self.vector_field = vector_field
         self._tokens_field = "tokens"
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -186,19 +186,19 @@ class SparseVector(RetrievalStrategy):
             "size": k,
         }
 
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
         pipeline_name = f"{self.model_id}_sparse_embedding"
 
         if self.model_id:
-            await model_must_be_deployed(client, self.model_id)
+            model_must_be_deployed(client, self.model_id)
 
             # Create a pipeline for the model
-            await client.ingest.put_pipeline(
+            client.ingest.put_pipeline(
                 id=pipeline_name,
                 description="Embedding pipeline for Python VectorStore",
                 processors=[
@@ -226,7 +226,7 @@ class SparseVector(RetrievalStrategy):
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
         settings = {"default_pipeline": pipeline_name}
 
-        await client.indices.create(
+        client.indices.create(
             index=index_name, mappings=mappings, settings=settings
         )
 
@@ -241,7 +241,7 @@ class DenseVector(RetrievalStrategy):
         knn_type: Literal["hnsw", "int8_hnsw", "flat", "int8_flat"] = "hnsw",
         vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
-        embedding_service: Optional[AsyncEmbeddingService] = None,
+        embedding_service: Optional[EmbeddingService] = None,
         model_id: Optional[str] = None,
         num_dimensions: Optional[int] = None,
         hybrid: bool = False,
@@ -269,7 +269,7 @@ class DenseVector(RetrievalStrategy):
         self.rrf = rrf
         self.text_field = text_field
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -287,7 +287,7 @@ class DenseVector(RetrievalStrategy):
         if query_vector:
             knn["query_vector"] = query_vector
         elif self.embedding_service:
-            knn["query_vector"] = await self.embedding_service.embed_query(
+            knn["query_vector"] = self.embedding_service.embed_query(
                 cast(str, query)
             )
         else:
@@ -305,19 +305,19 @@ class DenseVector(RetrievalStrategy):
 
         return {"knn": knn}
 
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
         if self.embedding_service and not self.num_dimensions:
             self.num_dimensions = len(
-                await self.embedding_service.embed_query("get number of dimensions")
+                self.embedding_service.embed_query("get number of dimensions")
             )
 
         if self.model_id:
-            await model_must_be_deployed(client, self.model_id)
+            model_must_be_deployed(client, self.model_id)
 
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = "cosine"
@@ -343,12 +343,12 @@ class DenseVector(RetrievalStrategy):
         if metadata_mapping:
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        r = await client.indices.create(index=index_name, mappings=mappings)
+        r = client.indices.create(index=index_name, mappings=mappings)
         print(r)
 
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
+    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
         if self.embedding_service:
-            vector = await self.embedding_service.embed_query(text)
+            vector = self.embedding_service.embed_query(text)
             return {self.vector_field: vector}
         return {}
 
@@ -388,7 +388,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
 
     def __init__(
         self,
-        embedding_service: AsyncEmbeddingService,
+        embedding_service: EmbeddingService,
         vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
         num_dimensions: Optional[int] = None,
@@ -398,7 +398,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
         self.embedding_service = embedding_service
         self.num_dimensions = num_dimensions
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -442,7 +442,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
                 )
             if not query:
                 raise ValueError("either specify a query string or a query_vector")
-            query_vector = await self.embedding_service.embed_query(query)
+            query_vector = self.embedding_service.embed_query(query)
 
         return {
             "query": {
@@ -456,15 +456,15 @@ class DenseVectorScriptScore(RetrievalStrategy):
             }
         }
 
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
         if not self.num_dimensions:
             self.num_dimensions = len(
-                await self.embedding_service.embed_query("get number of dimensions")
+                self.embedding_service.embed_query("get number of dimensions")
             )
 
         mappings = {
@@ -479,12 +479,12 @@ class DenseVectorScriptScore(RetrievalStrategy):
         if metadata_mapping:
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        await client.indices.create(index=index_name, mappings=mappings)
+        client.indices.create(index=index_name, mappings=mappings)
 
         return None
 
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
-        return {self.vector_field: await self.embedding_service.embed_query(text)}
+    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
+        return {self.vector_field: self.embedding_service.embed_query(text)}
 
 
 class BM25(RetrievalStrategy):
@@ -498,7 +498,7 @@ class BM25(RetrievalStrategy):
         self.k1 = k1
         self.b = b
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         k: int,
@@ -523,9 +523,9 @@ class BM25(RetrievalStrategy):
             },
         }
 
-    async def create_index(
+    def create_index(
         self,
-        client: AsyncElasticsearch,
+        client: Elasticsearch,
         index_name: str,
         metadata_mapping: Optional[dict[str, str]],
     ) -> None:
@@ -555,6 +555,6 @@ class BM25(RetrievalStrategy):
             }
         }
 
-        await client.indices.create(
+        client.indices.create(
             index=index_name, mappings=mappings, settings=settings
         )
