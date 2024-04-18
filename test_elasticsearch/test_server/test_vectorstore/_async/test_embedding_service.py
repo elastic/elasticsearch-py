@@ -23,7 +23,7 @@ MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3"
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENTIONS", "384"))
 
 
-@pytest_asyncio.fixture(autouse=True)
+@pytest_asyncio.fixture
 async def es_client() -> AsyncIterator[AsyncElasticsearch]:
     async for x in es_client_fixture():
         yield x

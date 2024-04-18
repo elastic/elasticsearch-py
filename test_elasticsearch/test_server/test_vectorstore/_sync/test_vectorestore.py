@@ -1,16 +1,12 @@
 import logging
 import uuid
-from typing import Iterator
-from typing import Any, List, Optional, Union, cast
 from functools import partial
+from typing import Any, Iterator, List, Optional, Union, cast
 
 import pytest
-import pytest_asyncio
-from elasticsearch import Elasticsearch
 
-from elasticsearch import NotFoundError
+from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-
 from elasticsearch.vectorstore._sync import VectorStore
 from elasticsearch.vectorstore._sync._utils import model_is_deployed
 from elasticsearch.vectorstore._sync.strategies import (
@@ -22,11 +18,11 @@ from elasticsearch.vectorstore._sync.strategies import (
 )
 
 from ._test_utils import (
-    create_requests_saving_client,
-    es_client_fixture,
     ConsistentFakeEmbeddings,
     FakeEmbeddings,
     RequestSavingTransport,
+    create_requests_saving_client,
+    es_client_fixture,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -53,12 +49,12 @@ TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 
 class TestElasticsearch:
-    @pytest_asyncio.fixture(autouse=True)
+    @pytest.fixture
     def es_client(self) -> Iterator[Elasticsearch]:
         for x in es_client_fixture():
             yield x
 
-    @pytest_asyncio.fixture(autouse=True)
+    @pytest.fixture
     def requests_saving_client(self) -> Iterator[Elasticsearch]:
         client = create_requests_saving_client()
         try:
@@ -71,7 +67,6 @@ class TestElasticsearch:
         """Return the index name."""
         return f"test_{uuid.uuid4().hex}"
 
-    @pytest.mark.asyncio
     def test_search_without_metadata(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -102,7 +97,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_search_without_metadata_async(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -120,10 +114,7 @@ class TestElasticsearch:
         output = store.search("foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    def test_add_vectors(
-        self, es_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_add_vectors(self, es_client: Elasticsearch, index_name: str) -> None:
         """
         Test adding pre-built embeddings instead of using inference for the texts.
         This allows you to separate the embeddings text and the page_content
@@ -145,14 +136,11 @@ class TestElasticsearch:
             es_client=es_client,
         )
 
-        store.add_texts(
-            texts=texts, vectors=embedding_vectors, metadatas=metadatas
-        )
+        store.add_texts(texts=texts, vectors=embedding_vectors, metadatas=metadatas)
         output = store.search("foo1", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo1"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-    @pytest.mark.asyncio
     def test_search_with_metadata(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -178,7 +166,6 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
     def test_search_with_filter(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -215,7 +202,6 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
     def test_search_script_score(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -264,7 +250,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_search_script_score_with_filter(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -319,7 +304,6 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-    @pytest.mark.asyncio
     def test_search_script_score_distance_dot_product(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -370,7 +354,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_search_knn_with_hybrid_search(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -410,7 +393,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_search_knn_with_hybrid_search_rrf(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -528,7 +510,6 @@ class TestElasticsearch:
             custom_query=partial(assert_query, expected_rrf={}),
         )
 
-    @pytest.mark.asyncio
     def test_search_knn_with_custom_query_fn(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -561,7 +542,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=my_custom_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
-    @pytest.mark.asyncio
     def test_search_with_knn_infer_instack(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -655,7 +635,6 @@ class TestElasticsearch:
         output = store.search("bar", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
-    @pytest.mark.asyncio
     def test_search_with_sparse_infer_instack(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -679,7 +658,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_deployed_model_check_fails_semantic(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -693,10 +671,7 @@ class TestElasticsearch:
             )
             store.add_texts(["foo", "bar", "baz"])
 
-    @pytest.mark.asyncio
-    def test_search_bm25(
-        self, es_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_search_bm25(self, es_client: Elasticsearch, index_name: str) -> None:
         """Test end to end using the BM25 retrieval strategy."""
         store = VectorStore(
             user_agent="test",
@@ -722,7 +697,6 @@ class TestElasticsearch:
         output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
     def test_search_bm25_with_filter(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:
@@ -758,7 +732,6 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
     def test_delete(self, es_client: Elasticsearch, index_name: str) -> None:
         """Test delete methods from vector store."""
         store = VectorStore(
@@ -791,7 +764,6 @@ class TestElasticsearch:
         output = store.search("gni", k=10)
         assert len(output) == 0
 
-    @pytest.mark.asyncio
     def test_indexing_exception_error(
         self,
         es_client: Elasticsearch,
@@ -822,7 +794,6 @@ class TestElasticsearch:
 
         assert log_message in caplog.text
 
-    @pytest.mark.asyncio
     def test_user_agent(
         self, requests_saving_client: Elasticsearch, index_name: str
     ) -> None:
@@ -845,10 +816,7 @@ class TestElasticsearch:
         for request in transport.requests:
             assert request["headers"]["User-Agent"] == user_agent
 
-    @pytest.mark.asyncio
-    def test_bulk_args(
-        self, requests_saving_client: Any, index_name: str
-    ) -> None:
+    def test_bulk_args(self, requests_saving_client: Any, index_name: str) -> None:
         """Test to make sure the bulk arguments work as expected."""
         store = VectorStore(
             user_agent="test",
@@ -863,7 +831,6 @@ class TestElasticsearch:
         # 1 for index exist, 1 for index create, 3 to index docs
         assert len(store.es_client.transport.requests) == 5  # type: ignore
 
-    @pytest.mark.asyncio
     def test_max_marginal_relevance_search(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:

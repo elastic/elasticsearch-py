@@ -53,12 +53,12 @@ TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 
 class TestElasticsearch:
-    @pytest_asyncio.fixture(autouse=True)
+    @pytest_asyncio.fixture
     async def es_client(self) -> AsyncIterator[AsyncElasticsearch]:
         async for x in es_client_fixture():
             yield x
 
-    @pytest_asyncio.fixture(autouse=True)
+    @pytest_asyncio.fixture
     async def requests_saving_client(self) -> AsyncIterator[AsyncElasticsearch]:
         client = create_requests_saving_client()
         try:

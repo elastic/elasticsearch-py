@@ -16,16 +16,31 @@
 #  under the License.
 
 import os
+import subprocess
 from pathlib import Path
+from glob import glob
 
 import unasync
 
 
-def run(rule: unasync.Rule):
+def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
+    subprocess.check_call(["black", "--target-version=py38", output_dir])
+    subprocess.check_call(["isort", output_dir])
+
+    for file in glob("*.py", root_dir=source_dir):
+        path = Path(output_dir) / file
+        for pattern in patterns:
+            subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
+        subprocess.check_call(["rm", f"{path}.bak"])
+
+
+def run(rule: unasync.Rule, cleanup_patterns: list[str] = []):
     root = Path(__file__).absolute().parent.parent
+    source_dir = root / rule.fromdir.lstrip("/")
+    output_dir = root / rule.todir.lstrip("/")
 
     filepaths = []
-    for root, _, filenames in os.walk(root / rule.fromdir):
+    for root, _, filenames in os.walk(source_dir):
         for filename in filenames:
             if filename.rpartition(".")[-1] in (
                 "py",
@@ -34,6 +49,9 @@ def run(rule: unasync.Rule):
                 filepaths.append(os.path.join(root, filename))
 
     unasync.unasync_files(filepaths, [rule])
+
+    if cleanup_patterns:
+        cleanup(source_dir, output_dir, cleanup_patterns)
 
 
 def main():
@@ -56,8 +74,8 @@ def main():
 
     run(
         rule=unasync.Rule(
-            fromdir="/elasticsearch/vectorstore/_async/",
-            todir="/elasticsearch/vectorstore/_sync/",
+            fromdir="elasticsearch/vectorstore/_async/",
+            todir="elasticsearch/vectorstore/_sync/",
             additional_replacements={
                 "_async": "_sync",
                 "async_bulk": "bulk",
@@ -68,6 +86,11 @@ def main():
                 "AsyncVectorStore": "VectorStore",
             },
         ),
+        cleanup_patterns=[
+            "/^import asyncio$/d",
+            "/^import pytest_asyncio*/d",
+            "/ *@pytest.mark.asyncio$/d",
+        ],
     )
 
     run(
@@ -88,8 +111,14 @@ def main():
                 "AsyncFakeEmbeddings": "FakeEmbeddings",
                 "AsyncGenerator": "Generator",
                 "AsyncRequestSavingTransport": "RequestSavingTransport",
+                "pytest_asyncio": "pytest",
             },
         ),
+        cleanup_patterns=[
+            "/^import asyncio$/d",
+            "/^import pytest_asyncio*/d",
+            "/ *@pytest.mark.asyncio$/d",
+        ],
     )
 
 

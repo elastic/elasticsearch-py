@@ -1,9 +1,4 @@
-from elasticsearch import (
-    Elasticsearch,
-    BadRequestError,
-    ConflictError,
-    NotFoundError,
-)
+from elasticsearch import BadRequestError, ConflictError, Elasticsearch, NotFoundError
 
 
 def model_must_be_deployed(client: Elasticsearch, model_id: str) -> None:

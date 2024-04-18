@@ -3,7 +3,6 @@ from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 from elasticsearch import Elasticsearch
-
 from elasticsearch.vectorstore._sync._utils import model_must_be_deployed
 from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 
@@ -226,9 +225,7 @@ class SparseVector(RetrievalStrategy):
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
         settings = {"default_pipeline": pipeline_name}
 
-        client.indices.create(
-            index=index_name, mappings=mappings, settings=settings
-        )
+        client.indices.create(index=index_name, mappings=mappings, settings=settings)
 
         return None
 
@@ -287,9 +284,7 @@ class DenseVector(RetrievalStrategy):
         if query_vector:
             knn["query_vector"] = query_vector
         elif self.embedding_service:
-            knn["query_vector"] = self.embedding_service.embed_query(
-                cast(str, query)
-            )
+            knn["query_vector"] = self.embedding_service.embed_query(cast(str, query))
         else:
             # Inference in Elasticsearch. When initializing we make sure to always have
             # a model_id if don't have an embedding_service.
@@ -555,6 +550,4 @@ class BM25(RetrievalStrategy):
             }
         }
 
-        client.indices.create(
-            index=index_name, mappings=mappings, settings=settings
-        )
+        client.indices.create(index=index_name, mappings=mappings, settings=settings)
