@@ -21,7 +21,6 @@ from typing import Any, Dict, List, Literal, Optional, Union, cast
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async._utils import model_must_be_deployed
-from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 
 
 class DistanceMetric(str, Enum):
@@ -63,7 +62,8 @@ class RetrievalStrategy(ABC):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
+        num_dimensions: Optional[int] = None,
+        metadata_mapping: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Create the required index and do necessary preliminary work, like
@@ -76,21 +76,11 @@ class RetrievalStrategy(ABC):
                 describe the schema of the metadata.
         """
 
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
+    def needs_inference(self) -> bool:
         """
-        If this strategy creates vector embeddings in Python (not in Elasticsearch),
-        this method is used to apply the inference.
-        The output is a dictionary with the vector field and the vector embedding.
-        It is merged in the ElasticserachStore with the rest of the document (text data,
-        metadata) before indexing.
-
-        Args:
-            text: Text input that can be used as input for inference.
-
-        Returns:
-            Dict: field and value pairs that extend the document to be indexed.
+        TODO
         """
-        return {}
+        return False
 
 
 # TODO test when repsective image is released
@@ -134,6 +124,7 @@ class Semantic(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
+        num_dimensions: int,
         metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         if self.model_id:
@@ -206,6 +197,7 @@ class SparseVector(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
+        num_dimensions: int,
         metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         pipeline_name = f"{self.model_id}_sparse_embedding"
@@ -257,19 +249,11 @@ class DenseVector(RetrievalStrategy):
         knn_type: Literal["hnsw", "int8_hnsw", "flat", "int8_flat"] = "hnsw",
         vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
-        embedding_service: Optional[AsyncEmbeddingService] = None,
         model_id: Optional[str] = None,
-        num_dimensions: Optional[int] = None,
         hybrid: bool = False,
         rrf: Union[bool, Dict[str, Any]] = True,
         text_field: Optional[str] = "text_field",
     ):
-        if embedding_service and model_id:
-            raise ValueError("either specify embedding_service or model_id, not both")
-        if model_id and not num_dimensions:
-            raise ValueError(
-                "if model_id is specified, num_dimensions must also be specified"
-            )
         if hybrid and not text_field:
             raise ValueError(
                 "to enable hybrid you have to specify a text_field (for BM25 matching)"
@@ -278,9 +262,7 @@ class DenseVector(RetrievalStrategy):
         self.knn_type = knn_type
         self.vector_field = vector_field
         self.distance = distance
-        self.embedding_service = embedding_service
         self.model_id = model_id
-        self.num_dimensions = num_dimensions
         self.hybrid = hybrid
         self.rrf = rrf
         self.text_field = text_field
@@ -302,10 +284,6 @@ class DenseVector(RetrievalStrategy):
 
         if query_vector:
             knn["query_vector"] = query_vector
-        elif self.embedding_service:
-            knn["query_vector"] = await self.embedding_service.embed_query(
-                cast(str, query)
-            )
         else:
             # Inference in Elasticsearch. When initializing we make sure to always have
             # a model_id if don't have an embedding_service.
@@ -325,13 +303,9 @@ class DenseVector(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
+        num_dimensions: int,
         metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
-        if self.embedding_service and not self.num_dimensions:
-            self.num_dimensions = len(
-                await self.embedding_service.embed_query("get number of dimensions")
-            )
-
         if self.model_id:
             await model_must_be_deployed(client, self.model_id)
 
@@ -350,7 +324,7 @@ class DenseVector(RetrievalStrategy):
             "properties": {
                 self.vector_field: {
                     "type": "dense_vector",
-                    "dims": self.num_dimensions,
+                    "dims": num_dimensions,
                     "index": True,
                     "similarity": similarityAlgo,
                 },
@@ -361,12 +335,6 @@ class DenseVector(RetrievalStrategy):
 
         r = await client.indices.create(index=index_name, mappings=mappings)
         print(r)
-
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
-        if self.embedding_service:
-            vector = await self.embedding_service.embed_query(text)
-            return {self.vector_field: vector}
-        return {}
 
     def _hybrid(
         self, query: str, knn: Dict[str, Any], filter: List[Dict[str, Any]]
@@ -393,12 +361,15 @@ class DenseVector(RetrievalStrategy):
             },
         }
 
-        if isinstance(self.rrf, Dict[str, Any]):
+        if isinstance(self.rrf, Dict):
             query_body["rank"] = {"rrf": self.rrf}
         elif isinstance(self.rrf, bool) and self.rrf is True:
             query_body["rank"] = {"rrf": {}}
 
         return query_body
+
+    def needs_inference(self) -> bool:
+        return not self.model_id
 
 
 class DenseVectorScriptScore(RetrievalStrategy):
@@ -406,15 +377,11 @@ class DenseVectorScriptScore(RetrievalStrategy):
 
     def __init__(
         self,
-        embedding_service: AsyncEmbeddingService,
         vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
-        num_dimensions: Optional[int] = None,
     ) -> None:
         self.vector_field = vector_field
         self.distance = distance
-        self.embedding_service = embedding_service
-        self.num_dimensions = num_dimensions
 
     async def es_query(
         self,
@@ -424,6 +391,9 @@ class DenseVectorScriptScore(RetrievalStrategy):
         filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
+        if not query_vector:
+            raise ValueError("specify a query_vector")
+
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = (
                 f"cosineSimilarity(params.query_vector, '{self.vector_field}') + 1.0"
@@ -452,16 +422,6 @@ class DenseVectorScriptScore(RetrievalStrategy):
         if filter:
             queryBool = {"bool": {"filter": filter}}
 
-        if not query_vector:
-            if not self.embedding_service:
-                raise ValueError(
-                    "if not embedding_service is given, you need to "
-                    "procive a query_vector"
-                )
-            if not query:
-                raise ValueError("either specify a query string or a query_vector")
-            query_vector = await self.embedding_service.embed_query(query)
-
         return {
             "query": {
                 "script_score": {
@@ -478,18 +438,14 @@ class DenseVectorScriptScore(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
+        num_dimensions: int,
         metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
-        if not self.num_dimensions:
-            self.num_dimensions = len(
-                await self.embedding_service.embed_query("get number of dimensions")
-            )
-
         mappings = {
             "properties": {
                 self.vector_field: {
                     "type": "dense_vector",
-                    "dims": self.num_dimensions,
+                    "dims": num_dimensions,
                     "index": False,
                 }
             }
@@ -499,10 +455,8 @@ class DenseVectorScriptScore(RetrievalStrategy):
 
         await client.indices.create(index=index_name, mappings=mappings)
 
-        return None
-
-    async def embed_for_indexing(self, text: str) -> Dict[str, Any]:
-        return {self.vector_field: await self.embedding_service.embed_query(text)}
+    def needs_inference(self) -> bool:
+        return True
 
 
 class BM25(RetrievalStrategy):
@@ -545,6 +499,7 @@ class BM25(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
+        num_dimensions: int,
         metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         similarity_name = "custom_bm25"

@@ -106,7 +106,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=AsyncFakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -124,7 +125,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=AsyncFakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -155,7 +157,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=embeddings),
+            retrieval_strategy=DenseVector(),
+            embedding_service=embeddings,
             es_client=es_client,
         )
 
@@ -174,9 +177,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(
-                embedding_service=AsyncConsistentFakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncConsistentFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -200,7 +202,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=AsyncFakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -237,9 +240,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=AsyncFakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -286,9 +288,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=AsyncFakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -342,9 +343,9 @@ class TestElasticsearch:
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=AsyncFakeEmbeddings(),
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -392,10 +393,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(
-                embedding_service=AsyncFakeEmbeddings(),
-                hybrid=True,
-            ),
+            retrieval_strategy=DenseVector(hybrid=True),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -482,11 +481,8 @@ class TestElasticsearch:
             store = AsyncVectorStore(
                 user_agent="test",
                 index_name=index_name,
-                retrieval_strategy=DenseVector(
-                    embedding_service=AsyncFakeEmbeddings(),
-                    hybrid=True,
-                    rrf=rrf_test_case,
-                ),
+                retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
+                embedding_service=AsyncFakeEmbeddings(),
                 es_client=es_client,
             )
             await store.add_texts(texts)
@@ -526,10 +522,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=f"{index_name}_default",
-            retrieval_strategy=DenseVector(
-                embedding_service=AsyncFakeEmbeddings(),
-                hybrid=True,
-            ),
+            retrieval_strategy=DenseVector(hybrid=True),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
         await store.add_texts(texts)
@@ -551,7 +545,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=AsyncFakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -778,7 +773,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=AsyncFakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -889,9 +885,8 @@ class TestElasticsearch:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=embedding_service
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=embedding_service,
             vector_field=vector_field,
             text_field=text_field,
             es_client=es_client,
