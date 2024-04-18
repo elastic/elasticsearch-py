@@ -24,17 +24,24 @@ import unasync
 
 
 def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
-    subprocess.check_call(["black", "--target-version=py38", output_dir])
-    subprocess.check_call(["isort", output_dir])
-
-    for file in glob("*.py", root_dir=source_dir):
-        path = Path(output_dir) / file
-        for pattern in patterns:
-            subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
-        subprocess.check_call(["rm", f"{path}.bak"])
+    if patterns:
+        for file in glob("*.py", root_dir=source_dir):
+            path = Path(output_dir) / file
+            for pattern in patterns:
+                subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
+            subprocess.check_call(["rm", f"{path}.bak"])
 
 
-def run(rule: unasync.Rule, cleanup_patterns: list[str] = []):
+def format_dir(dir: Path):
+    subprocess.check_call(["isort", "--profile=black", dir])
+    subprocess.check_call(["black", dir])
+
+
+def run(
+    rule: unasync.Rule,
+    cleanup_patterns: list[str] = [],
+    format: bool = False,
+):
     root = Path(__file__).absolute().parent.parent
     source_dir = root / rule.fromdir.lstrip("/")
     output_dir = root / rule.todir.lstrip("/")
@@ -50,8 +57,11 @@ def run(rule: unasync.Rule, cleanup_patterns: list[str] = []):
 
     unasync.unasync_files(filepaths, [rule])
 
-    if cleanup_patterns:
-        cleanup(source_dir, output_dir, cleanup_patterns)
+    cleanup(source_dir, output_dir, cleanup_patterns)
+
+    if format:
+        format_dir(source_dir)
+        format_dir(output_dir)
 
 
 def main():
@@ -90,6 +100,7 @@ def main():
             "/^import pytest_asyncio*/d",
             "/ *@pytest.mark.asyncio$/d",
         ],
+        format=True,
     )
 
     run(
@@ -117,6 +128,7 @@ def main():
             "/^import pytest_asyncio*/d",
             "/ *@pytest.mark.asyncio$/d",
         ],
+        format=True,
     )
 
 

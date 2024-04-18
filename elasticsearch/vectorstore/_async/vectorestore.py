@@ -1,3 +1,20 @@
+#  Licensed to Elasticsearch B.V. under one or more contributor
+#  license agreements. See the NOTICE file distributed with
+#  this work for additional information regarding copyright
+#  ownership. Elasticsearch B.V. licenses this file to you under
+#  the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+# 	http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
 import logging
 import uuid
 from typing import Any, Callable, Dict, List, Optional
@@ -29,7 +46,7 @@ class AsyncVectorStore:
         retrieval_strategy: RetrievalStrategy,
         text_field: str = "text_field",
         vector_field: str = "vector_field",
-        metadata_mapping: Optional[dict[str, str]] = None,
+        metadata_mapping: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Args:
@@ -61,7 +78,7 @@ class AsyncVectorStore:
         self.vector_field = vector_field
         self.metadata_mapping = metadata_mapping
 
-    async def close(self):
+    async def close(self) -> None:
         return await self.es_client.close()
 
     async def add_texts(
@@ -196,8 +213,10 @@ class AsyncVectorStore:
         k: int = 4,
         num_candidates: int = 50,
         fields: Optional[List[str]] = None,
-        filter: Optional[List[dict]] = None,
-        custom_query: Optional[Callable[[Dict, Optional[str]], Dict]] = None,
+        filter: Optional[List[Dict[str, Any]]] = None,
+        custom_query: Optional[
+            Callable[[Dict[str, Any], Optional[str]], Dict[str, Any]]
+        ] = None,
     ) -> List[Dict[str, Any]]:
         """
         Args:
@@ -263,8 +282,10 @@ class AsyncVectorStore:
         num_candidates: int = 20,
         lambda_mult: float = 0.5,
         fields: Optional[List[str]] = None,
-        custom_query: Optional[Callable[[Dict, Optional[str]], Dict]] = None,
-    ) -> List[Dict]:
+        custom_query: Optional[
+            Callable[[Dict[str, Any], Optional[str]], Dict[str, Any]]
+        ] = None,
+    ) -> List[Dict[str, Any]]:
         """Return docs selected using the maximal marginal relevance.
 
         Maximal marginal relevance optimizes for similarity to query AND diversity

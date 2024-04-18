@@ -1,3 +1,20 @@
+#  Licensed to Elasticsearch B.V. under one or more contributor
+#  license agreements. See the NOTICE file distributed with
+#  this work for additional information regarding copyright
+#  ownership. Elasticsearch B.V. licenses this file to you under
+#  the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+# 	http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, Dict, List, Literal, Optional, Union, cast
@@ -23,9 +40,9 @@ class RetrievalStrategy(ABC):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         """
         Returns the Elasticsearch query body for the given parameters.
         The store will execute the query.
@@ -46,7 +63,7 @@ class RetrievalStrategy(ABC):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         """
         Create the required index and do necessary preliminary work, like
@@ -95,9 +112,9 @@ class Semantic(RetrievalStrategy):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
                 "Cannot do sparse retrieval with a query_vector. "
@@ -117,12 +134,12 @@ class Semantic(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         if self.model_id:
             await model_must_be_deployed(client, self.model_id)
 
-        mappings: dict[str, Any] = {
+        mappings: Dict[str, Any] = {
             "properties": {
                 self.inference_field: {
                     "type": "semantic_text",
@@ -155,9 +172,9 @@ class SparseVector(RetrievalStrategy):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
                 "Cannot do sparse retrieval with a query_vector. "
@@ -189,7 +206,7 @@ class SparseVector(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         pipeline_name = f"{self.model_id}_sparse_embedding"
 
@@ -214,7 +231,7 @@ class SparseVector(RetrievalStrategy):
                 ],
             )
 
-        mappings = {
+        mappings: Dict[str, Any] = {
             "properties": {
                 self.vector_field: {
                     "properties": {self._tokens_field: {"type": "rank_features"}}
@@ -244,7 +261,7 @@ class DenseVector(RetrievalStrategy):
         model_id: Optional[str] = None,
         num_dimensions: Optional[int] = None,
         hybrid: bool = False,
-        rrf: Union[bool, dict] = True,
+        rrf: Union[bool, Dict[str, Any]] = True,
         text_field: Optional[str] = "text_field",
     ):
         if embedding_service and model_id:
@@ -273,9 +290,9 @@ class DenseVector(RetrievalStrategy):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         knn = {
             "filter": filter,
             "field": self.vector_field,
@@ -308,7 +325,7 @@ class DenseVector(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         if self.embedding_service and not self.num_dimensions:
             self.num_dimensions = len(
@@ -351,7 +368,9 @@ class DenseVector(RetrievalStrategy):
             return {self.vector_field: vector}
         return {}
 
-    def _hybrid(self, query: str, knn: dict, filter: list):
+    def _hybrid(
+        self, query: str, knn: Dict[str, Any], filter: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         # Add a query to the knn query.
         # RRF is used to even the score from the knn query and text query
         # RRF has two optional parameters: {'rank_constant':int, 'window_size':int}
@@ -374,7 +393,7 @@ class DenseVector(RetrievalStrategy):
             },
         }
 
-        if isinstance(self.rrf, dict):
+        if isinstance(self.rrf, Dict[str, Any]):
             query_body["rank"] = {"rrf": self.rrf}
         elif isinstance(self.rrf, bool) and self.rrf is True:
             query_body["rank"] = {"rrf": {}}
@@ -402,9 +421,9 @@ class DenseVectorScriptScore(RetrievalStrategy):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = (
                 f"cosineSimilarity(params.query_vector, '{self.vector_field}') + 1.0"
@@ -429,7 +448,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
         else:
             raise ValueError(f"Similarity {self.distance} not supported.")
 
-        queryBool: Dict = {"match_all": {}}
+        queryBool: Dict[str, Any] = {"match_all": {}}
         if filter:
             queryBool = {"bool": {"filter": filter}}
 
@@ -459,7 +478,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         if not self.num_dimensions:
             self.num_dimensions = len(
@@ -502,9 +521,9 @@ class BM25(RetrievalStrategy):
         query: Optional[str],
         k: int,
         num_candidates: int,
-        filter: List[dict] = [],
+        filter: List[Dict[str, Any]] = [],
         query_vector: Optional[List[float]] = None,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         return {
             "query": {
                 "bool": {
@@ -526,11 +545,11 @@ class BM25(RetrievalStrategy):
         self,
         client: AsyncElasticsearch,
         index_name: str,
-        metadata_mapping: Optional[dict[str, str]],
+        metadata_mapping: Optional[Dict[str, str]],
     ) -> None:
         similarity_name = "custom_bm25"
 
-        mappings: Dict = {
+        mappings: Dict[str, Any] = {
             "properties": {
                 self.text_field: {
                     "type": "text",
@@ -541,7 +560,7 @@ class BM25(RetrievalStrategy):
         if metadata_mapping:
             mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        bm25: Dict = {
+        bm25: Dict[str, Any] = {
             "type": "BM25",
         }
         if self.k1 is not None:
