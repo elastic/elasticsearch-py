@@ -1,24 +1,21 @@
-import asyncio
 import logging
 import uuid
 from typing import Any, Callable, Dict, List, Optional
 
-import nest_asyncio  # type: ignore
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import BulkIndexError, async_bulk
 
-from elasticsearch.store._utilities import (
-    create_elasticsearch_client,
+from elasticsearch.vectorstore._utils import (
     maximal_marginal_relevance,
 )
-from elasticsearch.store.embedding_service import EmbeddingService
-from elasticsearch.store.strategies import RetrievalStrategy
+from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
+from elasticsearch.vectorstore._async.strategies import RetrievalStrategy
 
 logger = logging.getLogger(__name__)
 
 
-class ElasticsearchStore:
-    """ElasticsearchStore is a higher-level abstraction of indexing and search.
+class AsyncVectorStore:
+    """VectorStore is a higher-level abstraction of indexing and search.
     Users can pick from available retrieval strategies.
 
     Documents are flat text documents. Depending on the strategy, vector embeddings are
@@ -29,24 +26,17 @@ class ElasticsearchStore:
 
     def __init__(
         self,
-        agent_header: str,
+        es_client: AsyncElasticsearch,
+        user_agent: str,
         index_name: str,
         retrieval_strategy: RetrievalStrategy,
         text_field: str = "text_field",
         vector_field: str = "vector_field",
         metadata_mapping: Optional[dict[str, str]] = None,
-        # Connection params
-        es_client: Optional[AsyncElasticsearch] = None,
-        es_url: Optional[str] = None,
-        es_cloud_id: Optional[str] = None,
-        es_api_key: Optional[str] = None,
-        es_user: Optional[str] = None,
-        es_password: Optional[str] = None,
-        es_params: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Args:
-            agent_header: user agent header specific to the 3rd party integration.
+            user_header: user agent header specific to the 3rd party integration.
                 Used for usage tracking in Elastic Cloud.
             index_name: The name of the index to query.
             retrieval_strategy: how to index and search the data. See the strategies
@@ -57,34 +47,27 @@ class ElasticsearchStore:
             es_client: Elasticsearch client connection. Alternatively specify the
                 Elasticsearch connection with the other es_* parameters.
         """
-        nest_asyncio.apply()
 
-        self.es_client = create_elasticsearch_client(
-            agent_header=agent_header,
-            client=es_client,
-            url=es_url,
-            cloud_id=es_cloud_id,
-            api_key=es_api_key,
-            username=es_user,
-            password=es_password,
-            client_params=es_params,
-        )
+        # Add integration-specific usage header for tracking usage in Elastic Cloud.
+        # client.options preserces existing (non-user-agent) headers.
+        es_client = es_client.options(headers={"User-Agent": user_agent})
 
         if hasattr(retrieval_strategy, "text_field"):
             retrieval_strategy.text_field = text_field
         if hasattr(retrieval_strategy, "vector_field"):
             retrieval_strategy.vector_field = vector_field
 
+        self.es_client = es_client
         self.index_name = index_name
         self.retrieval_strategy = retrieval_strategy
         self.text_field = text_field
         self.vector_field = vector_field
         self.metadata_mapping = metadata_mapping
 
-    def close(self):
-        return asyncio.get_event_loop().run_until_complete(self.es_client.close())
+    async def close(self):
+        return await self.es_client.close()
 
-    async def add_texts_async(
+    async def add_texts(
         self,
         texts: List[str],
         metadatas: Optional[List[Dict[str, Any]]] = None,
@@ -135,7 +118,7 @@ class ElasticsearchStore:
             if vectors:
                 request[self.vector_field] = vectors[i]
 
-            request.update(self.retrieval_strategy.embed_for_indexing(text))
+            request.update(await self.retrieval_strategy.embed_for_indexing(text))
             requests.append(request)
 
         if len(requests) > 0:
@@ -147,10 +130,6 @@ class ElasticsearchStore:
                     refresh=refresh_indices,
                     **bulk_kwargs,
                 )
-                logger.debug(
-                    f"Added {success} and failed to add {failed} texts to index"
-                )
-
                 logger.debug(f"added texts {ids} to index")
                 return ids
             except BulkIndexError as e:
@@ -163,29 +142,7 @@ class ElasticsearchStore:
             logger.debug("No texts to add to index")
             return []
 
-    def add_texts(
-        self,
-        texts: List[str],
-        metadatas: Optional[List[Dict[str, Any]]] = None,
-        vectors: Optional[List[List[float]]] = None,
-        ids: Optional[List[str]] = None,
-        refresh_indices: bool = True,
-        create_index_if_not_exists: bool = True,
-        bulk_kwargs: Optional[Dict[str, Any]] = None,
-    ) -> List[str]:
-        return asyncio.get_event_loop().run_until_complete(
-            self.add_texts_async(
-                texts=texts,
-                metadatas=metadatas,
-                vectors=vectors,
-                ids=ids,
-                refresh_indices=refresh_indices,
-                create_index_if_not_exists=create_index_if_not_exists,
-                bulk_kwargs=bulk_kwargs,
-            )
-        )
-
-    async def delete_async(
+    async def delete(
         self,
         ids: Optional[List[str]] = None,
         query: Optional[Dict[str, Any]] = None,
@@ -235,17 +192,7 @@ class ElasticsearchStore:
 
         return True
 
-    def delete(
-        self,
-        ids: Optional[List[str]] = None,
-        query: Optional[Dict[str, Any]] = None,
-        refresh_indices: bool = True,
-    ) -> bool:
-        return asyncio.get_event_loop().run_until_complete(
-            self.delete_async(ids=ids, query=query, refresh_indices=refresh_indices)
-        )
-
-    async def search_async(
+    async def search(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]] = None,
@@ -277,14 +224,13 @@ class ElasticsearchStore:
         if self.text_field not in fields:
             fields.append(self.text_field)
 
-        query_body = self.retrieval_strategy.es_query(
+        query_body = await self.retrieval_strategy.es_query(
             query=query,
             k=k,
             num_candidates=num_candidates,
             filter=filter or [],
             query_vector=query_vector,
         )
-        logger.debug(f"Query body: {query_body}")
 
         if custom_query is not None:
             query_body = custom_query(query_body, query)
@@ -300,28 +246,6 @@ class ElasticsearchStore:
 
         return response["hits"]["hits"]
 
-    def search(
-        self,
-        query: Optional[str],
-        query_vector: Optional[List[float]] = None,
-        k: int = 4,
-        num_candidates: int = 50,
-        fields: Optional[List[str]] = None,
-        filter: Optional[List[dict]] = None,
-        custom_query: Optional[Callable[[Dict, Optional[str]], Dict]] = None,
-    ) -> List[Dict[str, Any]]:
-        return asyncio.get_event_loop().run_until_complete(
-            self.search_async(
-                query=query,
-                query_vector=query_vector,
-                k=k,
-                num_candidates=num_candidates,
-                fields=fields,
-                filter=filter,
-                custom_query=custom_query,
-            )
-        )
-
     async def _create_index_if_not_exists(self) -> None:
         exists = await self.es_client.indices.exists(index=self.index_name)
         if exists.meta.status == 200:
@@ -333,9 +257,9 @@ class ElasticsearchStore:
                 metadata_mapping=self.metadata_mapping,
             )
 
-    def max_marginal_relevance_search(
+    async def max_marginal_relevance_search(
         self,
-        embedding_service: EmbeddingService,
+        embedding_service: AsyncEmbeddingService,
         query: str,
         vector_field: str,
         k: int = 4,
@@ -372,10 +296,10 @@ class ElasticsearchStore:
             remove_vector_query_field_from_metadata = False
 
         # Embed the query
-        query_embedding = embedding_service.embed_query(query)
+        query_embedding = await embedding_service.embed_query(query)
 
         # Fetch the initial documents
-        got_hits = self.search(
+        got_hits = await self.search(
             query=None,
             query_vector=query_embedding,
             k=num_candidates,

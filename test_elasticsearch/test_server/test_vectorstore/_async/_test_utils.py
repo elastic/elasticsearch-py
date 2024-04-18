@@ -1,34 +1,30 @@
-import asyncio
 import os
-from typing import Any, Dict, List, Optional
+import pytest_asyncio
+from typing import Any, Dict, List, Optional, AsyncGenerator
 
-import nest_asyncio  # type: ignore
 from elastic_transport import AsyncTransport
 from elasticsearch import AsyncElasticsearch
 
-from elasticsearch.store._utilities import model_is_deployed_async
-from elasticsearch.store.embedding_service import EmbeddingService
+from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 
 
-class FakeEmbeddings(EmbeddingService):
+class AsyncFakeEmbeddings(AsyncEmbeddingService):
     """Fake embeddings functionality for testing."""
 
     def __init__(self, dimensionality: int = 10) -> None:
-        nest_asyncio.apply()
-
         self.dimensionality = dimensionality
 
     def num_dimensions(self) -> int:
         return self.dimensionality
 
-    async def embed_documents_async(self, texts: List[str]) -> List[List[float]]:
+    async def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Return simple embeddings. Embeddings encode each text as its index."""
         return [
             [float(1.0)] * (self.dimensionality - 1) + [float(i)]
             for i in range(len(texts))
         ]
 
-    async def embed_query_async(self, text: str) -> List[float]:
+    async def embed_query(self, text: str) -> List[float]:
         """Return constant query embeddings.
         Embeddings are identical to embed_documents(texts)[0].
         Distance to each text will be that text's index,
@@ -36,16 +32,8 @@ class FakeEmbeddings(EmbeddingService):
         """
         return [float(1.0)] * (self.dimensionality - 1) + [float(0.0)]
 
-    def embed_query(self, text: str) -> List[float]:
-        return asyncio.get_event_loop().run_until_complete(self.embed_query_async(text))
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        return asyncio.get_event_loop().run_until_complete(
-            self.embed_documents_async(texts)
-        )
-
-
-class ConsistentFakeEmbeddings(FakeEmbeddings):
+class AsyncConsistentFakeEmbeddings(AsyncFakeEmbeddings):
     """Fake embeddings which remember all the texts seen so far to return consistent
     vectors for the same texts."""
 
@@ -56,7 +44,7 @@ class ConsistentFakeEmbeddings(FakeEmbeddings):
     def num_dimensions(self) -> int:
         return self.dimensionality
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    async def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Return consistent embeddings for each text seen so far."""
         out_vectors = []
         for text in texts:
@@ -68,13 +56,14 @@ class ConsistentFakeEmbeddings(FakeEmbeddings):
             out_vectors.append(vector)
         return out_vectors
 
-    def embed_query(self, text: str) -> List[float]:
+    async def embed_query(self, text: str) -> List[float]:
         """Return consistent embeddings for the text, if seen before, or a constant
         one if the text is unknown."""
-        return self.embed_documents([text])[0]
+        result = await self.embed_documents([text])
+        return result[0]
 
 
-class RequestSavingTransport(AsyncTransport):
+class AsyncRequestSavingTransport(AsyncTransport):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.requests: List[Dict] = []
@@ -102,7 +91,33 @@ def create_es_client(
 
 
 def create_requests_saving_client() -> AsyncElasticsearch:
-    return create_es_client(es_kwargs={"transport_class": RequestSavingTransport})
+    return create_es_client(es_kwargs={"transport_class": AsyncRequestSavingTransport})
+
+
+async def es_client_fixture() -> AsyncGenerator[AsyncElasticsearch, None]:
+    params = read_env()
+    client = create_es_client(params)
+
+    yield client
+
+    # clear indices
+    await clear_test_indices(client)
+
+    # clear all test pipelines
+    try:
+        response = await client.ingest.get_pipeline(id="test_*,*_sparse_embedding")
+
+        for pipeline_id, _ in response.items():
+            try:
+                await client.ingest.delete_pipeline(id=pipeline_id)
+                print(f"Deleted pipeline: {pipeline_id}")  # noqa: T201
+            except Exception as e:
+                print(f"Pipeline error: {e}")  # noqa: T201
+
+    except Exception:
+        pass
+    finally:
+        await client.close()
 
 
 async def clear_test_indices(client: AsyncElasticsearch) -> None:
@@ -112,12 +127,6 @@ async def clear_test_indices(client: AsyncElasticsearch) -> None:
         if index_name.startswith("test_"):
             await client.indices.delete(index=index_name)
     await client.indices.refresh(index="_all")
-
-
-def model_is_deployed(es_client: AsyncElasticsearch, model_id: str) -> bool:
-    return asyncio.get_event_loop().run_until_complete(
-        model_is_deployed_async(es_client, model_id)
-    )
 
 
 def read_env() -> Dict:
