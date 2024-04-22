@@ -104,7 +104,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=FakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -121,7 +122,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=FakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -149,7 +151,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=embeddings),
+            retrieval_strategy=DenseVector(),
+            embedding_service=embeddings,
             es_client=es_client,
         )
 
@@ -165,9 +168,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(
-                embedding_service=ConsistentFakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVector(),
+            embedding_service=ConsistentFakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -190,7 +192,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=FakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -226,9 +229,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=FakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -274,9 +276,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=FakeEmbeddings()
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -329,9 +330,9 @@ class TestElasticsearch:
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=FakeEmbeddings(),
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -378,10 +379,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(
-                embedding_service=FakeEmbeddings(),
-                hybrid=True,
-            ),
+            retrieval_strategy=DenseVector(hybrid=True),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -467,11 +466,8 @@ class TestElasticsearch:
             store = VectorStore(
                 user_agent="test",
                 index_name=index_name,
-                retrieval_strategy=DenseVector(
-                    embedding_service=FakeEmbeddings(),
-                    hybrid=True,
-                    rrf=rrf_test_case,
-                ),
+                retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
+                embedding_service=FakeEmbeddings(),
                 es_client=es_client,
             )
             store.add_texts(texts)
@@ -511,10 +507,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=f"{index_name}_default",
-            retrieval_strategy=DenseVector(
-                embedding_service=FakeEmbeddings(),
-                hybrid=True,
-            ),
+            retrieval_strategy=DenseVector(hybrid=True),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
         store.add_texts(texts)
@@ -535,7 +529,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=FakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -754,7 +749,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(embedding_service=FakeEmbeddings()),
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -859,9 +855,8 @@ class TestElasticsearch:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
-                embedding_service=embedding_service
-            ),
+            retrieval_strategy=DenseVectorScriptScore(),
+            embedding_service=embedding_service,
             vector_field=vector_field,
             text_field=text_field,
             es_client=es_client,
@@ -910,3 +905,29 @@ class TestElasticsearch:
             num_candidates=2,
         )
         assert len(mmr_output) == 2
+
+    def test_metadata_mapping(self, es_client: Elasticsearch, index_name: str) -> None:
+        """Test that the metadata mapping is applied."""
+        test_mappings = {
+            "my_field": {"type": "keyword"},
+            "another_field": {"type": "text"},
+        }
+        store = VectorStore(
+            user_agent="test",
+            index_name=index_name,
+            retrieval_strategy=DenseVector(),
+            embedding_service=FakeEmbeddings(),
+            es_client=es_client,
+            metadata_mappings=test_mappings,
+        )
+
+        texts = ["foo", "foo", "foo"]
+        metadatas = [{"page": i} for i in range(len(texts))]
+        store.add_texts(texts=texts, metadatas=metadatas)
+
+        mapping_response = es_client.indices.get_mapping(index=index_name)
+        mapping_properties = mapping_response[index_name]["mappings"]["properties"]
+        print(mapping_response)
+        assert "metadata" in mapping_properties
+        for key, val in test_mappings.items():
+            assert mapping_properties["metadata"]["properties"][key] == val

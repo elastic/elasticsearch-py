@@ -17,11 +17,10 @@
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
 
 from elasticsearch import Elasticsearch
 from elasticsearch.vectorstore._sync._utils import model_must_be_deployed
-from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 
 
 class DistanceMetric(str, Enum):
@@ -38,10 +37,12 @@ class RetrievalStrategy(ABC):
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
         Returns the Elasticsearch query body for the given parameters.
@@ -59,12 +60,12 @@ class RetrievalStrategy(ABC):
         """
 
     @abstractmethod
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create the required index and do necessary preliminary work, like
         creating inference pipelines or checking if a required model was deployed.
@@ -76,21 +77,25 @@ class RetrievalStrategy(ABC):
                 describe the schema of the metadata.
         """
 
-    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
+    def before_index_creation(
+        self, client: Elasticsearch, text_field: str, vector_field: str
+    ) -> None:
         """
-        If this strategy creates vector embeddings in Python (not in Elasticsearch),
-        this method is used to apply the inference.
-        The output is a dictionary with the vector field and the vector embedding.
-        It is merged in the ElasticserachStore with the rest of the document (text data,
-        metadata) before indexing.
+        Executes before the index is created. Used for setting up
+        any required Elasticsearch resources like a pipeline.
 
         Args:
-            text: Text input that can be used as input for inference.
-
-        Returns:
-            Dict: field and value pairs that extend the document to be indexed.
+            client: The Elasticsearch client.
+            text_field: The field containing the text data in the index.
+            vector_field: The field containing the vector representations in the index.
         """
-        return {}
+        pass
+
+    def needs_inference(self) -> bool:
+        """
+        TODO
+        """
+        return False
 
 
 # TODO test when repsective image is released
@@ -101,19 +106,19 @@ class Semantic(RetrievalStrategy):
         self,
         model_id: str,
         text_field: str = "text_field",
-        inference_field: str = "text_semantic",
     ):
         self.model_id = model_id
         self.text_field = text_field
-        self.inference_field = inference_field
 
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
@@ -124,56 +129,53 @@ class Semantic(RetrievalStrategy):
         return {
             "query": {
                 "semantic": {
-                    self.text_field: query,
+                    text_field: query,
                 },
             },
             "filter": filter,
         }
 
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        if self.model_id:
-            model_must_be_deployed(client, self.model_id)
-
-        mappings: Dict[str, Any] = {
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        mappings = {
             "properties": {
-                self.inference_field: {
+                vector_field: {
                     "type": "semantic_text",
                     "model_id": self.model_id,
                 }
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        client.indices.create(index=index_name, mappings=mappings)
+        return mappings, {}
+
+    def before_index_creation(
+        self, client: Elasticsearch, text_field: str, vector_field: str
+    ) -> None:
+        if self.model_id:
+            model_must_be_deployed(client, self.model_id)
 
 
 class SparseVector(RetrievalStrategy):
     """Sparse retrieval strategy using the `text_expansion` processor."""
 
-    def __init__(
-        self,
-        model_id: str = ".elser_model_2",
-        text_field: str = "text_field",
-        vector_field: str = "vector_field",
-    ):
+    def __init__(self, model_id: str = ".elser_model_2"):
         self.model_id = model_id
-        self.text_field = text_field
-        self.vector_field = vector_field
         self._tokens_field = "tokens"
+        self._pipeline_name = f"{self.model_id}_sparse_embedding"
 
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
@@ -189,7 +191,7 @@ class SparseVector(RetrievalStrategy):
                     "must": [
                         {
                             "text_expansion": {
-                                f"{self.vector_field}.{self._tokens_field}": {
+                                f"{vector_field}.{self._tokens_field}": {
                                     "model_id": self.model_id,
                                     "model_text": query,
                                 }
@@ -202,27 +204,39 @@ class SparseVector(RetrievalStrategy):
             "size": k,
         }
 
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        pipeline_name = f"{self.model_id}_sparse_embedding"
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        mappings: Dict[str, Any] = {
+            "properties": {
+                vector_field: {
+                    "properties": {self._tokens_field: {"type": "rank_features"}}
+                }
+            }
+        }
+        settings = {"default_pipeline": self._pipeline_name}
 
+        return mappings, settings
+
+    def before_index_creation(
+        self, client: Elasticsearch, text_field: str, vector_field: str
+    ) -> None:
         if self.model_id:
             model_must_be_deployed(client, self.model_id)
 
             # Create a pipeline for the model
             client.ingest.put_pipeline(
-                id=pipeline_name,
+                id=self._pipeline_name,
                 description="Embedding pipeline for Python VectorStore",
                 processors=[
                     {
                         "inference": {
                             "model_id": self.model_id,
-                            "target_field": self.vector_field,
-                            "field_map": {self.text_field: "text_field"},
+                            "target_field": vector_field,
+                            "field_map": {text_field: "text_field"},
                             "inference_config": {
                                 "text_expansion": {"results_field": self._tokens_field}
                             },
@@ -231,21 +245,6 @@ class SparseVector(RetrievalStrategy):
                 ],
             )
 
-        mappings: Dict[str, Any] = {
-            "properties": {
-                self.vector_field: {
-                    "properties": {self._tokens_field: {"type": "rank_features"}}
-                }
-            }
-        }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
-        settings = {"default_pipeline": pipeline_name}
-
-        client.indices.create(index=index_name, mappings=mappings, settings=settings)
-
-        return None
-
 
 class DenseVector(RetrievalStrategy):
     """K-nearest-neighbors retrieval."""
@@ -253,32 +252,20 @@ class DenseVector(RetrievalStrategy):
     def __init__(
         self,
         knn_type: Literal["hnsw", "int8_hnsw", "flat", "int8_flat"] = "hnsw",
-        vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
-        embedding_service: Optional[EmbeddingService] = None,
         model_id: Optional[str] = None,
-        num_dimensions: Optional[int] = None,
         hybrid: bool = False,
         rrf: Union[bool, Dict[str, Any]] = True,
         text_field: Optional[str] = "text_field",
     ):
-        if embedding_service and model_id:
-            raise ValueError("either specify embedding_service or model_id, not both")
-        if model_id and not num_dimensions:
-            raise ValueError(
-                "if model_id is specified, num_dimensions must also be specified"
-            )
         if hybrid and not text_field:
             raise ValueError(
                 "to enable hybrid you have to specify a text_field (for BM25 matching)"
             )
 
         self.knn_type = knn_type
-        self.vector_field = vector_field
         self.distance = distance
-        self.embedding_service = embedding_service
         self.model_id = model_id
-        self.num_dimensions = num_dimensions
         self.hybrid = hybrid
         self.rrf = rrf
         self.text_field = text_field
@@ -286,22 +273,22 @@ class DenseVector(RetrievalStrategy):
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         knn = {
             "filter": filter,
-            "field": self.vector_field,
+            "field": vector_field,
             "k": k,
             "num_candidates": num_candidates,
         }
 
         if query_vector:
             knn["query_vector"] = query_vector
-        elif self.embedding_service:
-            knn["query_vector"] = self.embedding_service.embed_query(cast(str, query))
         else:
             # Inference in Elasticsearch. When initializing we make sure to always have
             # a model_id if don't have an embedding_service.
@@ -317,20 +304,12 @@ class DenseVector(RetrievalStrategy):
 
         return {"knn": knn}
 
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        if self.embedding_service and not self.num_dimensions:
-            self.num_dimensions = len(
-                self.embedding_service.embed_query("get number of dimensions")
-            )
-
-        if self.model_id:
-            model_must_be_deployed(client, self.model_id)
-
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = "cosine"
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
@@ -344,25 +323,22 @@ class DenseVector(RetrievalStrategy):
 
         mappings: Dict[str, Any] = {
             "properties": {
-                self.vector_field: {
+                vector_field: {
                     "type": "dense_vector",
-                    "dims": self.num_dimensions,
+                    "dims": num_dimensions,
                     "index": True,
                     "similarity": similarityAlgo,
                 },
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        r = client.indices.create(index=index_name, mappings=mappings)
-        print(r)
+        return mappings, {}
 
-    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
-        if self.embedding_service:
-            vector = self.embedding_service.embed_query(text)
-            return {self.vector_field: vector}
-        return {}
+    def before_index_creation(
+        self, client: Elasticsearch, text_field: str, vector_field: str
+    ) -> None:
+        if self.model_id:
+            model_must_be_deployed(client, self.model_id)
 
     def _hybrid(
         self, query: str, knn: Dict[str, Any], filter: List[Dict[str, Any]]
@@ -389,53 +365,50 @@ class DenseVector(RetrievalStrategy):
             },
         }
 
-        if isinstance(self.rrf, Dict[str, Any]):
+        if isinstance(self.rrf, Dict):
             query_body["rank"] = {"rrf": self.rrf}
         elif isinstance(self.rrf, bool) and self.rrf is True:
             query_body["rank"] = {"rrf": {}}
 
         return query_body
 
+    def needs_inference(self) -> bool:
+        return not self.model_id
+
 
 class DenseVectorScriptScore(RetrievalStrategy):
     """Exact nearest neighbors retrieval using the `script_score` query."""
 
-    def __init__(
-        self,
-        embedding_service: EmbeddingService,
-        vector_field: str = "vector_field",
-        distance: DistanceMetric = DistanceMetric.COSINE,
-        num_dimensions: Optional[int] = None,
-    ) -> None:
-        self.vector_field = vector_field
+    def __init__(self, distance: DistanceMetric = DistanceMetric.COSINE) -> None:
         self.distance = distance
-        self.embedding_service = embedding_service
-        self.num_dimensions = num_dimensions
 
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
+        if not query_vector:
+            raise ValueError("specify a query_vector")
+
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = (
-                f"cosineSimilarity(params.query_vector, '{self.vector_field}') + 1.0"
+                f"cosineSimilarity(params.query_vector, '{vector_field}') + 1.0"
             )
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
-            similarityAlgo = (
-                f"1 / (1 + l2norm(params.query_vector, '{self.vector_field}'))"
-            )
+            similarityAlgo = f"1 / (1 + l2norm(params.query_vector, '{vector_field}'))"
         elif self.distance is DistanceMetric.DOT_PRODUCT:
             similarityAlgo = f"""
-            double value = dotProduct(params.query_vector, '{self.vector_field}');
+            double value = dotProduct(params.query_vector, '{vector_field}');
             return sigmoid(1, Math.E, -value);
             """
         elif self.distance is DistanceMetric.MAX_INNER_PRODUCT:
             similarityAlgo = f"""
-            double value = dotProduct(params.query_vector, '{self.vector_field}');
+            double value = dotProduct(params.query_vector, '{vector_field}');
             if (dotProduct < 0) {{
                 return 1 / (1 + -1 * dotProduct);
             }}
@@ -447,16 +420,6 @@ class DenseVectorScriptScore(RetrievalStrategy):
         queryBool: Dict[str, Any] = {"match_all": {}}
         if filter:
             queryBool = {"bool": {"filter": filter}}
-
-        if not query_vector:
-            if not self.embedding_service:
-                raise ValueError(
-                    "if not embedding_service is given, you need to "
-                    "procive a query_vector"
-                )
-            if not query:
-                raise ValueError("either specify a query string or a query_vector")
-            query_vector = self.embedding_service.embed_query(query)
 
         return {
             "query": {
@@ -470,55 +433,46 @@ class DenseVectorScriptScore(RetrievalStrategy):
             }
         }
 
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        if not self.num_dimensions:
-            self.num_dimensions = len(
-                self.embedding_service.embed_query("get number of dimensions")
-            )
-
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         mappings = {
             "properties": {
-                self.vector_field: {
+                vector_field: {
                     "type": "dense_vector",
-                    "dims": self.num_dimensions,
+                    "dims": num_dimensions,
                     "index": False,
                 }
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        client.indices.create(index=index_name, mappings=mappings)
+        return mappings, {}
 
-        return None
-
-    def embed_for_indexing(self, text: str) -> Dict[str, Any]:
-        return {self.vector_field: self.embedding_service.embed_query(text)}
+    def needs_inference(self) -> bool:
+        return True
 
 
 class BM25(RetrievalStrategy):
     def __init__(
         self,
-        text_field: str = "text_field",
         k1: Optional[float] = None,
         b: Optional[float] = None,
     ):
-        self.text_field = text_field
         self.k1 = k1
         self.b = b
 
     def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         return {
             "query": {
@@ -526,7 +480,7 @@ class BM25(RetrievalStrategy):
                     "must": [
                         {
                             "match": {
-                                self.text_field: {
+                                text_field: {
                                     "query": query,
                                 }
                             },
@@ -537,24 +491,22 @@ class BM25(RetrievalStrategy):
             },
         }
 
-    def create_index(
+    def es_mappings_settings(
         self,
-        client: Elasticsearch,
-        index_name: str,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         similarity_name = "custom_bm25"
 
         mappings: Dict[str, Any] = {
             "properties": {
-                self.text_field: {
+                text_field: {
                     "type": "text",
                     "similarity": similarity_name,
                 },
             },
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
         bm25: Dict[str, Any] = {
             "type": "BM25",
@@ -569,4 +521,4 @@ class BM25(RetrievalStrategy):
             }
         }
 
-        client.indices.create(index=index_name, mappings=mappings, settings=settings)
+        return mappings, settings

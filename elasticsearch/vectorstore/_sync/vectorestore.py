@@ -44,9 +44,11 @@ class VectorStore:
         user_agent: str,
         index_name: str,
         retrieval_strategy: RetrievalStrategy,
+        embedding_service: Optional[EmbeddingService] = None,
+        num_dimensions: Optional[int] = None,
         text_field: str = "text_field",
         vector_field: str = "vector_field",
-        metadata_mapping: Optional[Dict[str, str]] = None,
+        metadata_mappings: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Args:
@@ -61,7 +63,6 @@ class VectorStore:
             es_client: Elasticsearch client connection. Alternatively specify the
                 Elasticsearch connection with the other es_* parameters.
         """
-
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
         # client.options preserces existing (non-user-agent) headers.
         es_client = es_client.options(headers={"User-Agent": user_agent})
@@ -74,9 +75,11 @@ class VectorStore:
         self.es_client = es_client
         self.index_name = index_name
         self.retrieval_strategy = retrieval_strategy
+        self.embedding_service = embedding_service
+        self.num_dimensions = num_dimensions
         self.text_field = text_field
         self.vector_field = vector_field
-        self.metadata_mapping = metadata_mapping
+        self.metadata_mappings = metadata_mappings
 
     def close(self) -> None:
         return self.es_client.close()
@@ -118,6 +121,9 @@ class VectorStore:
         if create_index_if_not_exists:
             self._create_index_if_not_exists()
 
+        if self.embedding_service and not vectors:
+            vectors = self.embedding_service.embed_documents(texts)
+
         for i, text in enumerate(texts):
             metadata = metadatas[i] if metadatas else {}
 
@@ -132,7 +138,6 @@ class VectorStore:
             if vectors:
                 request[self.vector_field] = vectors[i]
 
-            request.update(self.retrieval_strategy.embed_for_indexing(text))
             requests.append(request)
 
         if len(requests) > 0:
@@ -156,7 +161,7 @@ class VectorStore:
             logger.debug("No texts to add to index")
             return []
 
-    def delete(
+    def delete(  # type: ignore[no-untyped-def]
         self,
         ids: Optional[List[str]] = None,
         query: Optional[Dict[str, Any]] = None,
@@ -240,12 +245,19 @@ class VectorStore:
         if self.text_field not in fields:
             fields.append(self.text_field)
 
+        if self.embedding_service and not query_vector:
+            if not query:
+                raise ValueError("specify a query or a query_vector to search")
+            query_vector = self.embedding_service.embed_query(query)
+
         query_body = self.retrieval_strategy.es_query(
             query=query,
+            query_vector=query_vector,
+            text_field=self.text_field,
+            vector_field=self.vector_field,
             k=k,
             num_candidates=num_candidates,
             filter=filter or [],
-            query_vector=query_vector,
         )
 
         if custom_query is not None:
@@ -259,19 +271,47 @@ class VectorStore:
             source=True,
             source_includes=fields,
         )
+        hits: List[Dict[str, Any]] = response["hits"]["hits"]
 
-        return response["hits"]["hits"]
+        return hits
 
     def _create_index_if_not_exists(self) -> None:
         exists = self.es_client.indices.exists(index=self.index_name)
         if exists.meta.status == 200:
             logger.debug(f"Index {self.index_name} already exists. Skipping creation.")
-        else:
-            self.retrieval_strategy.create_index(
-                client=self.es_client,
-                index_name=self.index_name,
-                metadata_mapping=self.metadata_mapping,
-            )
+            return
+
+        if self.retrieval_strategy.needs_inference():
+            if not self.num_dimensions and not self.embedding_service:
+                raise ValueError(
+                    "retrieval strategy requires embeddings; either embedding_service "
+                    "or num_dimensions need to be specified"
+                )
+            if not self.num_dimensions and self.embedding_service:
+                vector = self.embedding_service.embed_query("get num dimensions")
+                self.num_dimensions = len(vector)
+
+        mappings, settings = self.retrieval_strategy.es_mappings_settings(
+            text_field=self.text_field,
+            vector_field=self.vector_field,
+            num_dimensions=self.num_dimensions,
+        )
+
+        if self.metadata_mappings:
+            metadata = mappings["properties"].get("metadata", {"properties": {}})
+            for key in self.metadata_mappings.keys():
+                if key in metadata:
+                    raise ValueError(f"metadata key {key} already exists in mappings")
+
+            metadata = dict(**metadata["properties"], **self.metadata_mappings)
+            mappings["properties"] = {"metadata": {"properties": metadata}}
+
+        self.retrieval_strategy.before_index_creation(
+            self.es_client, self.text_field, self.vector_field
+        )
+        self.es_client.indices.create(
+            index=self.index_name, mappings=mappings, settings=settings
+        )
 
     def max_marginal_relevance_search(
         self,

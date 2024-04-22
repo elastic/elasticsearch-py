@@ -48,7 +48,7 @@ class AsyncVectorStore:
         num_dimensions: Optional[int] = None,
         text_field: str = "text_field",
         vector_field: str = "vector_field",
-        metadata_mapping: Optional[Dict[str, str]] = None,
+        metadata_mappings: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Args:
@@ -79,7 +79,7 @@ class AsyncVectorStore:
         self.num_dimensions = num_dimensions
         self.text_field = text_field
         self.vector_field = vector_field
-        self.metadata_mapping = metadata_mapping
+        self.metadata_mappings = metadata_mappings
 
     async def close(self) -> None:
         return await self.es_client.close()
@@ -161,7 +161,7 @@ class AsyncVectorStore:
             logger.debug("No texts to add to index")
             return []
 
-    async def delete(
+    async def delete(  # type: ignore[no-untyped-def]
         self,
         ids: Optional[List[str]] = None,
         query: Optional[Dict[str, Any]] = None,
@@ -252,10 +252,12 @@ class AsyncVectorStore:
 
         query_body = await self.retrieval_strategy.es_query(
             query=query,
+            query_vector=query_vector,
+            text_field=self.text_field,
+            vector_field=self.vector_field,
             k=k,
             num_candidates=num_candidates,
             filter=filter or [],
-            query_vector=query_vector,
         )
 
         if custom_query is not None:
@@ -269,32 +271,47 @@ class AsyncVectorStore:
             source=True,
             source_includes=fields,
         )
+        hits: List[Dict[str, Any]] = response["hits"]["hits"]
 
-        return response["hits"]["hits"]
+        return hits
 
     async def _create_index_if_not_exists(self) -> None:
         exists = await self.es_client.indices.exists(index=self.index_name)
         if exists.meta.status == 200:
             logger.debug(f"Index {self.index_name} already exists. Skipping creation.")
-        else:
-            if self.retrieval_strategy.needs_inference():
-                if not self.num_dimensions and not self.embedding_service:
-                    raise ValueError(
-                        "retrieval strategy requires embeddings; either embedding_service "
-                        "or num_dimensions need to be specified"
-                    )
-                if not self.num_dimensions and self.embedding_service:
-                    vector = await self.embedding_service.embed_query(
-                        "get num dimensions"
-                    )
-                    self.num_dimensions = len(vector)
+            return
 
-            await self.retrieval_strategy.create_index(
-                client=self.es_client,
-                index_name=self.index_name,
-                num_dimensions=self.num_dimensions,
-                metadata_mapping=self.metadata_mapping,
-            )
+        if self.retrieval_strategy.needs_inference():
+            if not self.num_dimensions and not self.embedding_service:
+                raise ValueError(
+                    "retrieval strategy requires embeddings; either embedding_service "
+                    "or num_dimensions need to be specified"
+                )
+            if not self.num_dimensions and self.embedding_service:
+                vector = await self.embedding_service.embed_query("get num dimensions")
+                self.num_dimensions = len(vector)
+
+        mappings, settings = self.retrieval_strategy.es_mappings_settings(
+            text_field=self.text_field,
+            vector_field=self.vector_field,
+            num_dimensions=self.num_dimensions,
+        )
+
+        if self.metadata_mappings:
+            metadata = mappings["properties"].get("metadata", {"properties": {}})
+            for key in self.metadata_mappings.keys():
+                if key in metadata:
+                    raise ValueError(f"metadata key {key} already exists in mappings")
+
+            metadata = dict(**metadata["properties"], **self.metadata_mappings)
+            mappings["properties"] = {"metadata": {"properties": metadata}}
+
+        await self.retrieval_strategy.before_index_creation(
+            self.es_client, self.text_field, self.vector_field
+        )
+        await self.es_client.indices.create(
+            index=self.index_name, mappings=mappings, settings=settings
+        )
 
     async def max_marginal_relevance_search(
         self,

@@ -935,3 +935,32 @@ class TestElasticsearch:
             num_candidates=2,
         )
         assert len(mmr_output) == 2
+
+    @pytest.mark.asyncio
+    async def test_metadata_mapping(
+        self, es_client: AsyncElasticsearch, index_name: str
+    ) -> None:
+        """Test that the metadata mapping is applied."""
+        test_mappings = {
+            "my_field": {"type": "keyword"},
+            "another_field": {"type": "text"},
+        }
+        store = AsyncVectorStore(
+            user_agent="test",
+            index_name=index_name,
+            retrieval_strategy=DenseVector(),
+            embedding_service=AsyncFakeEmbeddings(),
+            es_client=es_client,
+            metadata_mappings=test_mappings,
+        )
+
+        texts = ["foo", "foo", "foo"]
+        metadatas = [{"page": i} for i in range(len(texts))]
+        await store.add_texts(texts=texts, metadatas=metadatas)
+
+        mapping_response = await es_client.indices.get_mapping(index=index_name)
+        mapping_properties = mapping_response[index_name]["mappings"]["properties"]
+        print(mapping_response)
+        assert "metadata" in mapping_properties
+        for key, val in test_mappings.items():
+            assert mapping_properties["metadata"]["properties"][key] == val

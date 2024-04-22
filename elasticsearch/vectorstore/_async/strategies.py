@@ -17,7 +17,7 @@
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Dict, List, Literal, Optional, Union, cast
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async._utils import model_must_be_deployed
@@ -37,10 +37,12 @@ class RetrievalStrategy(ABC):
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         """
         Returns the Elasticsearch query body for the given parameters.
@@ -58,13 +60,12 @@ class RetrievalStrategy(ABC):
         """
 
     @abstractmethod
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: Optional[int] = None,
-        metadata_mapping: Optional[Dict[str, str]] = None,
-    ) -> None:
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
         Create the required index and do necessary preliminary work, like
         creating inference pipelines or checking if a required model was deployed.
@@ -75,6 +76,20 @@ class RetrievalStrategy(ABC):
             metadata_mapping: Flat dictionary with field and field type pairs that
                 describe the schema of the metadata.
         """
+
+    async def before_index_creation(
+        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+    ) -> None:
+        """
+        Executes before the index is created. Used for setting up
+        any required Elasticsearch resources like a pipeline.
+
+        Args:
+            client: The Elasticsearch client.
+            text_field: The field containing the text data in the index.
+            vector_field: The field containing the vector representations in the index.
+        """
+        pass
 
     def needs_inference(self) -> bool:
         """
@@ -91,19 +106,19 @@ class Semantic(RetrievalStrategy):
         self,
         model_id: str,
         text_field: str = "text_field",
-        inference_field: str = "text_semantic",
     ):
         self.model_id = model_id
         self.text_field = text_field
-        self.inference_field = inference_field
 
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
@@ -114,57 +129,53 @@ class Semantic(RetrievalStrategy):
         return {
             "query": {
                 "semantic": {
-                    self.text_field: query,
+                    text_field: query,
                 },
             },
             "filter": filter,
         }
 
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: int,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        if self.model_id:
-            await model_must_be_deployed(client, self.model_id)
-
-        mappings: Dict[str, Any] = {
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int] = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        mappings = {
             "properties": {
-                self.inference_field: {
+                vector_field: {
                     "type": "semantic_text",
                     "model_id": self.model_id,
                 }
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        await client.indices.create(index=index_name, mappings=mappings)
+        return mappings, {}
+
+    async def before_index_creation(
+        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+    ) -> None:
+        if self.model_id:
+            await model_must_be_deployed(client, self.model_id)
 
 
 class SparseVector(RetrievalStrategy):
     """Sparse retrieval strategy using the `text_expansion` processor."""
 
-    def __init__(
-        self,
-        model_id: str = ".elser_model_2",
-        text_field: str = "text_field",
-        vector_field: str = "vector_field",
-    ):
+    def __init__(self, model_id: str = ".elser_model_2"):
         self.model_id = model_id
-        self.text_field = text_field
-        self.vector_field = vector_field
         self._tokens_field = "tokens"
+        self._pipeline_name = f"{self.model_id}_sparse_embedding"
 
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         if query_vector:
             raise ValueError(
@@ -180,7 +191,7 @@ class SparseVector(RetrievalStrategy):
                     "must": [
                         {
                             "text_expansion": {
-                                f"{self.vector_field}.{self._tokens_field}": {
+                                f"{vector_field}.{self._tokens_field}": {
                                     "model_id": self.model_id,
                                     "model_text": query,
                                 }
@@ -193,28 +204,39 @@ class SparseVector(RetrievalStrategy):
             "size": k,
         }
 
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: int,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        pipeline_name = f"{self.model_id}_sparse_embedding"
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        mappings: Dict[str, Any] = {
+            "properties": {
+                vector_field: {
+                    "properties": {self._tokens_field: {"type": "rank_features"}}
+                }
+            }
+        }
+        settings = {"default_pipeline": self._pipeline_name}
 
+        return mappings, settings
+
+    async def before_index_creation(
+        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+    ) -> None:
         if self.model_id:
             await model_must_be_deployed(client, self.model_id)
 
             # Create a pipeline for the model
             await client.ingest.put_pipeline(
-                id=pipeline_name,
+                id=self._pipeline_name,
                 description="Embedding pipeline for Python VectorStore",
                 processors=[
                     {
                         "inference": {
                             "model_id": self.model_id,
-                            "target_field": self.vector_field,
-                            "field_map": {self.text_field: "text_field"},
+                            "target_field": vector_field,
+                            "field_map": {text_field: "text_field"},
                             "inference_config": {
                                 "text_expansion": {"results_field": self._tokens_field}
                             },
@@ -223,23 +245,6 @@ class SparseVector(RetrievalStrategy):
                 ],
             )
 
-        mappings: Dict[str, Any] = {
-            "properties": {
-                self.vector_field: {
-                    "properties": {self._tokens_field: {"type": "rank_features"}}
-                }
-            }
-        }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
-        settings = {"default_pipeline": pipeline_name}
-
-        await client.indices.create(
-            index=index_name, mappings=mappings, settings=settings
-        )
-
-        return None
-
 
 class DenseVector(RetrievalStrategy):
     """K-nearest-neighbors retrieval."""
@@ -247,7 +252,6 @@ class DenseVector(RetrievalStrategy):
     def __init__(
         self,
         knn_type: Literal["hnsw", "int8_hnsw", "flat", "int8_flat"] = "hnsw",
-        vector_field: str = "vector_field",
         distance: DistanceMetric = DistanceMetric.COSINE,
         model_id: Optional[str] = None,
         hybrid: bool = False,
@@ -260,7 +264,6 @@ class DenseVector(RetrievalStrategy):
             )
 
         self.knn_type = knn_type
-        self.vector_field = vector_field
         self.distance = distance
         self.model_id = model_id
         self.hybrid = hybrid
@@ -270,14 +273,16 @@ class DenseVector(RetrievalStrategy):
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         knn = {
             "filter": filter,
-            "field": self.vector_field,
+            "field": vector_field,
             "k": k,
             "num_candidates": num_candidates,
         }
@@ -299,16 +304,12 @@ class DenseVector(RetrievalStrategy):
 
         return {"knn": knn}
 
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: int,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
-        if self.model_id:
-            await model_must_be_deployed(client, self.model_id)
-
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = "cosine"
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
@@ -322,7 +323,7 @@ class DenseVector(RetrievalStrategy):
 
         mappings: Dict[str, Any] = {
             "properties": {
-                self.vector_field: {
+                vector_field: {
                     "type": "dense_vector",
                     "dims": num_dimensions,
                     "index": True,
@@ -330,11 +331,14 @@ class DenseVector(RetrievalStrategy):
                 },
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        r = await client.indices.create(index=index_name, mappings=mappings)
-        print(r)
+        return mappings, {}
+
+    async def before_index_creation(
+        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+    ) -> None:
+        if self.model_id:
+            await model_must_be_deployed(client, self.model_id)
 
     def _hybrid(
         self, query: str, knn: Dict[str, Any], filter: List[Dict[str, Any]]
@@ -375,41 +379,36 @@ class DenseVector(RetrievalStrategy):
 class DenseVectorScriptScore(RetrievalStrategy):
     """Exact nearest neighbors retrieval using the `script_score` query."""
 
-    def __init__(
-        self,
-        vector_field: str = "vector_field",
-        distance: DistanceMetric = DistanceMetric.COSINE,
-    ) -> None:
-        self.vector_field = vector_field
+    def __init__(self, distance: DistanceMetric = DistanceMetric.COSINE) -> None:
         self.distance = distance
 
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         if not query_vector:
             raise ValueError("specify a query_vector")
 
         if self.distance is DistanceMetric.COSINE:
             similarityAlgo = (
-                f"cosineSimilarity(params.query_vector, '{self.vector_field}') + 1.0"
+                f"cosineSimilarity(params.query_vector, '{vector_field}') + 1.0"
             )
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
-            similarityAlgo = (
-                f"1 / (1 + l2norm(params.query_vector, '{self.vector_field}'))"
-            )
+            similarityAlgo = f"1 / (1 + l2norm(params.query_vector, '{vector_field}'))"
         elif self.distance is DistanceMetric.DOT_PRODUCT:
             similarityAlgo = f"""
-            double value = dotProduct(params.query_vector, '{self.vector_field}');
+            double value = dotProduct(params.query_vector, '{vector_field}');
             return sigmoid(1, Math.E, -value);
             """
         elif self.distance is DistanceMetric.MAX_INNER_PRODUCT:
             similarityAlgo = f"""
-            double value = dotProduct(params.query_vector, '{self.vector_field}');
+            double value = dotProduct(params.query_vector, '{vector_field}');
             if (dotProduct < 0) {{
                 return 1 / (1 + -1 * dotProduct);
             }}
@@ -434,26 +433,23 @@ class DenseVectorScriptScore(RetrievalStrategy):
             }
         }
 
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: int,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         mappings = {
             "properties": {
-                self.vector_field: {
+                vector_field: {
                     "type": "dense_vector",
                     "dims": num_dimensions,
                     "index": False,
                 }
             }
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
-        await client.indices.create(index=index_name, mappings=mappings)
+        return mappings, {}
 
     def needs_inference(self) -> bool:
         return True
@@ -462,21 +458,21 @@ class DenseVectorScriptScore(RetrievalStrategy):
 class BM25(RetrievalStrategy):
     def __init__(
         self,
-        text_field: str = "text_field",
         k1: Optional[float] = None,
         b: Optional[float] = None,
     ):
-        self.text_field = text_field
         self.k1 = k1
         self.b = b
 
     async def es_query(
         self,
         query: Optional[str],
+        query_vector: Optional[List[float]],
+        text_field: str,
+        vector_field: str,
         k: int,
         num_candidates: int,
         filter: List[Dict[str, Any]] = [],
-        query_vector: Optional[List[float]] = None,
     ) -> Dict[str, Any]:
         return {
             "query": {
@@ -484,7 +480,7 @@ class BM25(RetrievalStrategy):
                     "must": [
                         {
                             "match": {
-                                self.text_field: {
+                                text_field: {
                                     "query": query,
                                 }
                             },
@@ -495,25 +491,22 @@ class BM25(RetrievalStrategy):
             },
         }
 
-    async def create_index(
+    def es_mappings_settings(
         self,
-        client: AsyncElasticsearch,
-        index_name: str,
-        num_dimensions: int,
-        metadata_mapping: Optional[Dict[str, str]],
-    ) -> None:
+        text_field: str,
+        vector_field: str,
+        num_dimensions: Optional[int],
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         similarity_name = "custom_bm25"
 
         mappings: Dict[str, Any] = {
             "properties": {
-                self.text_field: {
+                text_field: {
                     "type": "text",
                     "similarity": similarity_name,
                 },
             },
         }
-        if metadata_mapping:
-            mappings["properties"]["metadata"] = {"properties": metadata_mapping}
 
         bm25: Dict[str, Any] = {
             "type": "BM25",
@@ -528,6 +521,4 @@ class BM25(RetrievalStrategy):
             }
         }
 
-        await client.indices.create(
-            index=index_name, mappings=mappings, settings=settings
-        )
+        return mappings, settings
