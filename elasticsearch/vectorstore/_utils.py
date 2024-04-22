@@ -23,8 +23,8 @@ Matrix = Union[List[List[float]], List[np.ndarray], np.ndarray]
 
 
 def maximal_marginal_relevance(
-    query_embedding: list[float],
-    embedding_list: list[list[float]],
+    query_embedding: List[float],
+    embedding_list: List[List[float]],
     lambda_mult: float = 0.5,
     k: int = 4,
 ) -> List[int]:

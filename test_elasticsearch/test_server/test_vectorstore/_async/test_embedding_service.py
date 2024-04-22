@@ -16,10 +16,8 @@
 #  under the License.
 
 import os
-from typing import AsyncIterator
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async._utils import model_is_deployed
@@ -27,18 +25,10 @@ from elasticsearch.vectorstore._async.embedding_service import (
     AsyncElasticsearchEmbeddings,
 )
 
-from ._test_utils import es_client_fixture
-
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html
 MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3")
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENTIONS", "384"))
-
-
-@pytest_asyncio.fixture
-async def es_client() -> AsyncIterator[AsyncElasticsearch]:
-    async for x in es_client_fixture():
-        yield x
 
 
 @pytest.mark.asyncio

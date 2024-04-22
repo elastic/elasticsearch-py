@@ -16,12 +16,10 @@
 #  under the License.
 
 import logging
-import uuid
 from functools import partial
-from typing import Any, AsyncIterator, List, Optional, Union, cast
+from typing import Any, List, Optional, Union, cast
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
@@ -39,8 +37,6 @@ from ._test_utils import (
     AsyncConsistentFakeEmbeddings,
     AsyncFakeEmbeddings,
     AsyncRequestSavingTransport,
-    create_requests_saving_client,
-    es_client_fixture,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -67,24 +63,6 @@ TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 
 class TestVectorStore:
-    @pytest_asyncio.fixture
-    async def es_client(self) -> AsyncIterator[AsyncElasticsearch]:
-        async for x in es_client_fixture():
-            yield x
-
-    @pytest_asyncio.fixture
-    async def requests_saving_client(self) -> AsyncIterator[AsyncElasticsearch]:
-        client = create_requests_saving_client()
-        try:
-            yield client
-        finally:
-            await client.close()
-
-    @pytest.fixture(scope="function")
-    def index_name(self) -> str:
-        """Return the index name."""
-        return f"test_{uuid.uuid4().hex}"
-
     @pytest.mark.asyncio
     async def test_search_without_metadata(
         self, es_client: AsyncElasticsearch, index_name: str

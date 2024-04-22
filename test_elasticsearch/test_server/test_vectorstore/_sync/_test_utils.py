@@ -15,12 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, List
 
 from elastic_transport import Transport
 
-from elasticsearch import Elasticsearch
 from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 
 
@@ -87,69 +85,3 @@ class RequestSavingTransport(Transport):
     def perform_request(self, *args, **kwargs):  # type: ignore
         self.requests.append(kwargs)
         return super().perform_request(*args, **kwargs)
-
-
-def create_es_client(
-    es_params: Optional[Dict[str, str]] = None, es_kwargs: Dict = {}
-) -> Elasticsearch:
-    if es_params is None:
-        es_params = read_env()
-    if not es_kwargs:
-        es_kwargs = {}
-
-    if "es_cloud_id" in es_params:
-        return Elasticsearch(
-            cloud_id=es_params["es_cloud_id"],
-            api_key=es_params["es_api_key"],
-            **es_kwargs,
-        )
-    return Elasticsearch(hosts=[es_params["es_url"]], **es_kwargs)
-
-
-def create_requests_saving_client() -> Elasticsearch:
-    return create_es_client(es_kwargs={"transport_class": RequestSavingTransport})
-
-
-def es_client_fixture() -> Iterator[Elasticsearch]:
-    params = read_env()
-    client = create_es_client(params)
-
-    yield client
-
-    # clear indices
-    clear_test_indices(client)
-
-    # clear all test pipelines
-    try:
-        response = client.ingest.get_pipeline(id="test_*,*_sparse_embedding")
-
-        for pipeline_id, _ in response.items():
-            try:
-                client.ingest.delete_pipeline(id=pipeline_id)
-                print(f"Deleted pipeline: {pipeline_id}")  # noqa: T201
-            except Exception as e:
-                print(f"Pipeline error: {e}")  # noqa: T201
-
-    except Exception:
-        pass
-    finally:
-        client.close()
-
-
-def clear_test_indices(client: Elasticsearch) -> None:
-    response = client.indices.get(index="_all")
-    index_names = response.keys()
-    for index_name in index_names:
-        if index_name.startswith("test_"):
-            client.indices.delete(index=index_name)
-    client.indices.refresh(index="_all")
-
-
-def read_env() -> Dict:
-    url = os.environ.get("ES_URL", "http://localhost:9200")
-    cloud_id = os.environ.get("ES_CLOUD_ID")
-    api_key = os.environ.get("ES_API_KEY")
-
-    if cloud_id:
-        return {"es_cloud_id": cloud_id, "es_api_key": api_key}
-    return {"es_url": url}

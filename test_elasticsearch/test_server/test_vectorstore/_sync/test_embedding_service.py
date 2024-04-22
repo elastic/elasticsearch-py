@@ -16,7 +16,6 @@
 #  under the License.
 
 import os
-from typing import Iterator
 
 import pytest
 
@@ -24,18 +23,10 @@ from elasticsearch import Elasticsearch
 from elasticsearch.vectorstore._sync._utils import model_is_deployed
 from elasticsearch.vectorstore._sync.embedding_service import ElasticsearchEmbeddings
 
-from ._test_utils import es_client_fixture
-
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html
 MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3")
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENTIONS", "384"))
-
-
-@pytest.fixture
-def es_client() -> Iterator[Elasticsearch]:
-    for x in es_client_fixture():
-        yield x
 
 
 def test_elasticsearch_embedding_documents(es_client: Elasticsearch) -> None:

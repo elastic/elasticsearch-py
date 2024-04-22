@@ -16,9 +16,8 @@
 #  under the License.
 
 import logging
-import uuid
 from functools import partial
-from typing import Any, Iterator, List, Optional, Union, cast
+from typing import Any, List, Optional, Union, cast
 
 import pytest
 
@@ -38,8 +37,6 @@ from ._test_utils import (
     ConsistentFakeEmbeddings,
     FakeEmbeddings,
     RequestSavingTransport,
-    create_requests_saving_client,
-    es_client_fixture,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -66,24 +63,6 @@ TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 
 class TestVectorStore:
-    @pytest.fixture
-    def es_client(self) -> Iterator[Elasticsearch]:
-        for x in es_client_fixture():
-            yield x
-
-    @pytest.fixture
-    def requests_saving_client(self) -> Iterator[Elasticsearch]:
-        client = create_requests_saving_client()
-        try:
-            yield client
-        finally:
-            client.close()
-
-    @pytest.fixture(scope="function")
-    def index_name(self) -> str:
-        """Return the index name."""
-        return f"test_{uuid.uuid4().hex}"
-
     def test_search_without_metadata(
         self, es_client: Elasticsearch, index_name: str
     ) -> None:

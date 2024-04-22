@@ -17,7 +17,7 @@
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any, Dict, List, Literal, Optional, Tuple, Union, cast
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from elasticsearch import Elasticsearch
 from elasticsearch.vectorstore._sync._utils import model_must_be_deployed
@@ -250,7 +250,6 @@ class DenseVector(RetrievalStrategy):
 
     def __init__(
         self,
-        knn_type: Literal["hnsw", "int8_hnsw", "flat", "int8_flat"] = "hnsw",
         distance: DistanceMetric = DistanceMetric.COSINE,
         model_id: Optional[str] = None,
         hybrid: bool = False,
@@ -262,7 +261,6 @@ class DenseVector(RetrievalStrategy):
                 "to enable hybrid you have to specify a text_field (for BM25 matching)"
             )
 
-        self.knn_type = knn_type
         self.distance = distance
         self.model_id = model_id
         self.hybrid = hybrid
