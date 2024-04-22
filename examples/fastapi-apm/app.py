@@ -2,16 +2,15 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
+import aiohttp
 import datetime
 import os
-
-import aiohttp
-from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
 from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from elasticsearch.helpers import async_streaming_bulk
+from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
+
 
 apm = make_apm_client(
     {"SERVICE_NAME": "fastapi-app", "SERVER_URL": "http://apm-server:8200"}
@@ -61,9 +60,7 @@ async def search(query):
 
 @app.get("/delete")
 async def delete():
-    return await client.delete_by_query(
-        index="games", body={"query": {"match_all": {}}}
-    )
+    return await client.delete_by_query(index="games", body={"query": {"match_all": {}}})
 
 
 @app.get("/delete/{id}")
