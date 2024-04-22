@@ -18,16 +18,15 @@
 import logging
 import uuid
 from functools import partial
-from typing import Any, AsyncIterator, List, Optional, Union, cast
+from typing import Any, Iterator, List, Optional, Union, cast
 
 import pytest
-import pytest_asyncio
 
-from elasticsearch import AsyncElasticsearch, NotFoundError
+from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-from elasticsearch.vectorstore._async import AsyncVectorStore
-from elasticsearch.vectorstore._async._utils import model_is_deployed
-from elasticsearch.vectorstore._async.strategies import (
+from elasticsearch.vectorstore._sync import VectorStore
+from elasticsearch.vectorstore._sync._utils import model_is_deployed
+from elasticsearch.vectorstore._sync.strategies import (
     BM25,
     DenseVector,
     DenseVectorScriptScore,
@@ -36,9 +35,9 @@ from elasticsearch.vectorstore._async.strategies import (
 )
 
 from ._test_utils import (
-    AsyncConsistentFakeEmbeddings,
-    AsyncFakeEmbeddings,
-    AsyncRequestSavingTransport,
+    ConsistentFakeEmbeddings,
+    FakeEmbeddings,
+    RequestSavingTransport,
     create_requests_saving_client,
     es_client_fixture,
 )
@@ -66,28 +65,27 @@ ELSER_MODEL_ID = ".elser_model_2"
 TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 
-class TestElasticsearch:
-    @pytest_asyncio.fixture
-    async def es_client(self) -> AsyncIterator[AsyncElasticsearch]:
-        async for x in es_client_fixture():
+class TestVectorStore:
+    @pytest.fixture
+    def es_client(self) -> Iterator[Elasticsearch]:
+        for x in es_client_fixture():
             yield x
 
-    @pytest_asyncio.fixture
-    async def requests_saving_client(self) -> AsyncIterator[AsyncElasticsearch]:
+    @pytest.fixture
+    def requests_saving_client(self) -> Iterator[Elasticsearch]:
         client = create_requests_saving_client()
         try:
             yield client
         finally:
-            await client.close()
+            client.close()
 
     @pytest.fixture(scope="function")
     def index_name(self) -> str:
         """Return the index name."""
         return f"test_{uuid.uuid4().hex}"
 
-    @pytest.mark.asyncio
-    async def test_search_without_metadata(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_without_metadata(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search without metadata."""
 
@@ -103,43 +101,39 @@ class TestElasticsearch:
             }
             return query_body
 
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_search_without_metadata_async(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_without_metadata_async(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search without metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        output = await store.search("foo", k=1)
+        output = store.search("foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_add_vectors(
-        self, es_client: AsyncElasticsearch, index_name: str
-    ) -> None:
+    def test_add_vectors(self, es_client: Elasticsearch, index_name: str) -> None:
         """
         Test adding pre-built embeddings instead of using inference for the texts.
         This allows you to separate the embeddings text and the page_content
@@ -147,14 +141,14 @@ class TestElasticsearch:
         For example, your embedding text can be a question, whereas page_content
         is the answer.
         """
-        embeddings = AsyncConsistentFakeEmbeddings()
+        embeddings = ConsistentFakeEmbeddings()
         texts = ["foo1", "foo2", "foo3"]
         metadatas = [{"page": i} for i in range(len(texts))]
 
         """In real use case, embedding_input can be questions for each text"""
-        embedding_vectors = await embeddings.embed_documents(texts)
+        embedding_vectors = embeddings.embed_documents(texts)
 
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
@@ -162,54 +156,50 @@ class TestElasticsearch:
             es_client=es_client,
         )
 
-        await store.add_texts(
-            texts=texts, vectors=embedding_vectors, metadatas=metadatas
-        )
-        output = await store.search("foo1", k=1)
+        store.add_texts(texts=texts, vectors=embedding_vectors, metadatas=metadatas)
+        output = store.search("foo1", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo1"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-    @pytest.mark.asyncio
-    async def test_search_with_metadata(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_with_metadata(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncConsistentFakeEmbeddings(),
+            embedding_service=ConsistentFakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        await store.add_texts(texts=texts, metadatas=metadatas)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
-        output = await store.search("foo", k=1)
+        output = store.search("foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-        output = await store.search("bar", k=1)
+        output = store.search("bar", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
-    async def test_search_with_filter(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_with_filter(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "foo", "foo"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        await store.add_texts(texts=texts, metadatas=metadatas)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -223,7 +213,7 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search(
+        output = store.search(
             query="foo",
             k=3,
             filter=[{"term": {"metadata.page": "1"}}],
@@ -232,21 +222,20 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
-    async def test_search_script_score(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_script_score(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
         expected_query = {
             "query": {
@@ -277,25 +266,24 @@ class TestElasticsearch:
             assert query_body == expected_query
             return query_body
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_search_script_score_with_filter(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_script_score_with_filter(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        await store.add_texts(texts=texts, metadatas=metadatas)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             expected_query = {
@@ -325,7 +313,7 @@ class TestElasticsearch:
             assert query_body == expected_query
             return query_body
 
-        output = await store.search(
+        output = store.search(
             "foo",
             k=1,
             custom_query=assert_query,
@@ -334,23 +322,22 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-    @pytest.mark.asyncio
-    async def test_search_script_score_distance_dot_product(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_script_score_distance_dot_product(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -382,24 +369,23 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_search_knn_with_hybrid_search(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_knn_with_hybrid_search(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and search with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(hybrid=True),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -420,12 +406,11 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_search_knn_with_hybrid_search_rrf(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_knn_with_hybrid_search_rrf(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to end construction and rrf hybrid search with metadata."""
         texts = ["foo", "bar", "baz"]
@@ -478,24 +463,24 @@ class TestElasticsearch:
             {"rank_constant": 1, "window_size": 5},
         ]
         for rrf_test_case in rrf_test_cases:
-            store = AsyncVectorStore(
+            store = VectorStore(
                 user_agent="test",
                 index_name=index_name,
                 retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
-                embedding_service=AsyncFakeEmbeddings(),
+                embedding_service=FakeEmbeddings(),
                 es_client=es_client,
             )
-            await store.add_texts(texts)
+            store.add_texts(texts)
 
             ## without fetch_k parameter
-            output = await store.search(
+            output = store.search(
                 "foo",
                 k=3,
                 custom_query=partial(assert_query, expected_rrf=rrf_test_case),
             )
 
         # 2. check query result is okay
-        es_output = await store.es_client.search(
+        es_output = store.es_client.search(
             index=index_name,
             query={
                 "bool": {
@@ -519,34 +504,33 @@ class TestElasticsearch:
         ]
 
         # 3. check rrf default option is okay
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=f"{index_name}_default",
             retrieval_strategy=DenseVector(hybrid=True),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
         ## with fetch_k parameter
-        output = await store.search(
+        output = store.search(
             "foo",
             k=3,
             num_candidates=50,
             custom_query=partial(assert_query, expected_rrf={}),
         )
 
-    @pytest.mark.asyncio
-    async def test_search_knn_with_custom_query_fn(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_knn_with_custom_query_fn(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """test that custom query function is called
         with the query string and query body"""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
@@ -565,25 +549,24 @@ class TestElasticsearch:
 
         """Test end to end construction and search with metadata."""
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        output = await store.search("foo", k=1, custom_query=my_custom_query)
+        output = store.search("foo", k=1, custom_query=my_custom_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
-    @pytest.mark.asyncio
-    async def test_search_with_knn_infer_instack(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_with_knn_infer_instack(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """test end to end with knn retrieval strategy and inference in-stack"""
 
-        if not await model_is_deployed(es_client, TRANSFORMER_MODEL_ID):
+        if not model_is_deployed(es_client, TRANSFORMER_MODEL_ID):
             pytest.skip(
                 f"{TRANSFORMER_MODEL_ID} model not deployed in ML Node skipping test"
             )
 
         text_field = "text_field"
 
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=Semantic(
@@ -594,7 +577,7 @@ class TestElasticsearch:
         )
 
         # setting up the pipeline for inference
-        await store.es_client.ingest.put_pipeline(
+        store.es_client.ingest.put_pipeline(
             id="test_pipeline",
             processors=[
                 {
@@ -609,7 +592,7 @@ class TestElasticsearch:
 
         # creating a new index with the pipeline,
         # not relying on langchain to create the index
-        await store.es_client.indices.create(
+        store.es_client.indices.create(
             index=index_name,
             mappings={
                 "properties": {
@@ -633,13 +616,13 @@ class TestElasticsearch:
         texts = ["foo", "bar", "baz"]
 
         for i, text in enumerate(texts):
-            await store.es_client.create(
+            store.es_client.create(
                 index=index_name,
                 id=str(i),
                 document={text_field: text, "metadata": {}},
             )
 
-        await store.es_client.indices.refresh(index=index_name)
+        store.es_client.indices.refresh(index=index_name)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -658,24 +641,23 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-        output = await store.search("bar", k=1)
+        output = store.search("bar", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
-    @pytest.mark.asyncio
-    async def test_search_with_sparse_infer_instack(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_with_sparse_infer_instack(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """test end to end with sparse retrieval strategy and inference in-stack"""
 
-        if not await model_is_deployed(es_client, ELSER_MODEL_ID):
+        if not model_is_deployed(es_client, ELSER_MODEL_ID):
             reason = f"{ELSER_MODEL_ID} model not deployed in ML Node, skipping test"
 
             pytest.skip(reason)
 
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=Semantic(model_id=ELSER_MODEL_ID),
@@ -683,31 +665,27 @@ class TestElasticsearch:
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        output = await store.search("foo", k=1)
+        output = store.search("foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_deployed_model_check_fails_semantic(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_deployed_model_check_fails_semantic(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """test that exceptions are raised if a specified model is not deployed"""
         with pytest.raises(NotFoundError):
-            store = AsyncVectorStore(
+            store = VectorStore(
                 user_agent="test",
                 index_name=index_name,
                 retrieval_strategy=Semantic(model_id="non-existing model ID"),
                 es_client=es_client,
             )
-            await store.add_texts(["foo", "bar", "baz"])
+            store.add_texts(["foo", "bar", "baz"])
 
-    @pytest.mark.asyncio
-    async def test_search_bm25(
-        self, es_client: AsyncElasticsearch, index_name: str
-    ) -> None:
+    def test_search_bm25(self, es_client: Elasticsearch, index_name: str) -> None:
         """Test end to end using the BM25 retrieval strategy."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
@@ -715,7 +693,7 @@ class TestElasticsearch:
         )
 
         texts = ["foo", "bar", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -728,15 +706,14 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search("foo", k=1, custom_query=assert_query)
+        output = store.search("foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    @pytest.mark.asyncio
-    async def test_search_bm25_with_filter(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_search_bm25_with_filter(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test end to using the BM25 retrieval strategy with metadata."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
@@ -745,7 +722,7 @@ class TestElasticsearch:
 
         texts = ["foo", "foo", "foo"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        await store.add_texts(texts=texts, metadatas=metadatas)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -758,7 +735,7 @@ class TestElasticsearch:
             }
             return query_body
 
-        output = await store.search(
+        output = store.search(
             "foo",
             k=3,
             custom_query=assert_query,
@@ -767,56 +744,54 @@ class TestElasticsearch:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    @pytest.mark.asyncio
-    async def test_delete(self, es_client: AsyncElasticsearch, index_name: str) -> None:
+    def test_delete(self, es_client: Elasticsearch, index_name: str) -> None:
         """Test delete methods from vector store."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
         )
 
         texts = ["foo", "bar", "baz", "gni"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        ids = await store.add_texts(texts=texts, metadatas=metadatas)
+        ids = store.add_texts(texts=texts, metadatas=metadatas)
 
-        output = await store.search("foo", k=10)
+        output = store.search("foo", k=10)
         assert len(output) == 4
 
-        await store.delete(ids[1:3])
-        output = await store.search("foo", k=10)
+        store.delete(ids[1:3])
+        output = store.search("foo", k=10)
         assert len(output) == 2
 
-        await store.delete(["not-existing"])
-        output = await store.search("foo", k=10)
+        store.delete(["not-existing"])
+        output = store.search("foo", k=10)
         assert len(output) == 2
 
-        await store.delete([ids[0]])
-        output = await store.search("foo", k=10)
+        store.delete([ids[0]])
+        output = store.search("foo", k=10)
         assert len(output) == 1
 
-        await store.delete([ids[3]])
-        output = await store.search("gni", k=10)
+        store.delete([ids[3]])
+        output = store.search("gni", k=10)
         assert len(output) == 0
 
-    @pytest.mark.asyncio
-    async def test_indexing_exception_error(
+    def test_indexing_exception_error(
         self,
-        es_client: AsyncElasticsearch,
+        es_client: Elasticsearch,
         index_name: str,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test bulk exception logging is giving better hints."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
             es_client=es_client,
         )
 
-        await store.es_client.indices.create(
+        store.es_client.indices.create(
             index=index_name,
             mappings={"properties": {}},
             settings={"index": {"default_pipeline": "not-existing-pipeline"}},
@@ -825,20 +800,19 @@ class TestElasticsearch:
         texts = ["foo"]
 
         with pytest.raises(BulkIndexError):
-            await store.add_texts(texts)
+            store.add_texts(texts)
 
         error_reason = "pipeline with id [not-existing-pipeline] does not exist"
         log_message = f"First error reason: {error_reason}"
 
         assert log_message in caplog.text
 
-    @pytest.mark.asyncio
-    async def test_user_agent(
-        self, requests_saving_client: AsyncElasticsearch, index_name: str
+    def test_user_agent(
+        self, requests_saving_client: Elasticsearch, index_name: str
     ) -> None:
         """Test to make sure the user-agent is set correctly."""
         user_agent = "this is THE user_agent!"
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent=user_agent,
             index_name=index_name,
             retrieval_strategy=BM25(),
@@ -848,19 +822,16 @@ class TestElasticsearch:
         assert store.es_client._headers["User-Agent"] == user_agent
 
         texts = ["foo", "bob", "baz"]
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        transport = cast(AsyncRequestSavingTransport, store.es_client.transport)
+        transport = cast(RequestSavingTransport, store.es_client.transport)
 
         for request in transport.requests:
             assert request["headers"]["User-Agent"] == user_agent
 
-    @pytest.mark.asyncio
-    async def test_bulk_args(
-        self, requests_saving_client: Any, index_name: str
-    ) -> None:
+    def test_bulk_args(self, requests_saving_client: Any, index_name: str) -> None:
         """Test to make sure the bulk arguments work as expected."""
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
@@ -868,21 +839,20 @@ class TestElasticsearch:
         )
 
         texts = ["foo", "bob", "baz"]
-        await store.add_texts(texts, bulk_kwargs={"chunk_size": 1})
+        store.add_texts(texts, bulk_kwargs={"chunk_size": 1})
 
         # 1 for index exist, 1 for index create, 3 to index docs
         assert len(store.es_client.transport.requests) == 5  # type: ignore
 
-    @pytest.mark.asyncio
-    async def test_max_marginal_relevance_search(
-        self, es_client: AsyncElasticsearch, index_name: str
+    def test_max_marginal_relevance_search(
+        self, es_client: Elasticsearch, index_name: str
     ) -> None:
         """Test max marginal relevance search."""
         texts = ["foo", "bar", "baz"]
         vector_field = "vector_field"
         text_field = "text_field"
-        embedding_service = AsyncConsistentFakeEmbeddings()
-        store = AsyncVectorStore(
+        embedding_service = ConsistentFakeEmbeddings()
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
@@ -891,19 +861,19 @@ class TestElasticsearch:
             text_field=text_field,
             es_client=es_client,
         )
-        await store.add_texts(texts)
+        store.add_texts(texts)
 
-        mmr_output = await store.max_marginal_relevance_search(
+        mmr_output = store.max_marginal_relevance_search(
             embedding_service,
             texts[0],
             vector_field=vector_field,
             k=3,
             num_candidates=3,
         )
-        sim_output = await store.search(texts[0], k=3)
+        sim_output = store.search(texts[0], k=3)
         assert mmr_output == sim_output
 
-        mmr_output = await store.max_marginal_relevance_search(
+        mmr_output = store.max_marginal_relevance_search(
             embedding_service,
             texts[0],
             vector_field=vector_field,
@@ -914,7 +884,7 @@ class TestElasticsearch:
         assert mmr_output[0]["_source"][text_field] == texts[0]
         assert mmr_output[1]["_source"][text_field] == texts[1]
 
-        mmr_output = await store.max_marginal_relevance_search(
+        mmr_output = store.max_marginal_relevance_search(
             embedding_service,
             texts[0],
             vector_field=vector_field,
@@ -927,7 +897,7 @@ class TestElasticsearch:
         assert mmr_output[1]["_source"][text_field] == texts[2]
 
         # if fetch_k < k, then the output will be less than k
-        mmr_output = await store.max_marginal_relevance_search(
+        mmr_output = store.max_marginal_relevance_search(
             embedding_service,
             texts[0],
             vector_field=vector_field,
@@ -936,29 +906,26 @@ class TestElasticsearch:
         )
         assert len(mmr_output) == 2
 
-    @pytest.mark.asyncio
-    async def test_metadata_mapping(
-        self, es_client: AsyncElasticsearch, index_name: str
-    ) -> None:
+    def test_metadata_mapping(self, es_client: Elasticsearch, index_name: str) -> None:
         """Test that the metadata mapping is applied."""
         test_mappings = {
             "my_field": {"type": "keyword"},
             "another_field": {"type": "text"},
         }
-        store = AsyncVectorStore(
+        store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
-            embedding_service=AsyncFakeEmbeddings(),
+            embedding_service=FakeEmbeddings(),
             es_client=es_client,
             metadata_mappings=test_mappings,
         )
 
         texts = ["foo", "foo", "foo"]
         metadatas = [{"page": i} for i in range(len(texts))]
-        await store.add_texts(texts=texts, metadatas=metadatas)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
-        mapping_response = await es_client.indices.get_mapping(index=index_name)
+        mapping_response = es_client.indices.get_mapping(index=index_name)
         mapping_properties = mapping_response[index_name]["mappings"]["properties"]
         print(mapping_response)
         assert "metadata" in mapping_properties

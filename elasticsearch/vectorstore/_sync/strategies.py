@@ -98,7 +98,6 @@ class RetrievalStrategy(ABC):
         return False
 
 
-# TODO test when repsective image is released
 class Semantic(RetrievalStrategy):
     """Dense or sparse retrieval with in-stack inference using semantic_text fields."""
 

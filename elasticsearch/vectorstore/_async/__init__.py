@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch.vectorstore._async.vectorestore import AsyncVectorStore
+from elasticsearch.vectorstore._async.vectorstore import AsyncVectorStore
 
 __all__ = [
     "AsyncVectorStore",

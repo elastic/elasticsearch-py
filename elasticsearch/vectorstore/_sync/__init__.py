@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch.vectorstore._sync.vectorestore import VectorStore
+from elasticsearch.vectorstore._sync.vectorstore import VectorStore
 
 __all__ = [
     "VectorStore",
