@@ -15,8 +15,28 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from elasticsearch.vectorstore._async.embedding_service import (
+    AsyncElasticsearchEmbeddings,
+    AsyncEmbeddingService,
+)
+from elasticsearch.vectorstore._async.strategies import (
+    BM25,
+    DenseVector,
+    DenseVectorScriptScore,
+    DistanceMetric,
+    RetrievalStrategy,
+    SparseVector,
+)
 from elasticsearch.vectorstore._async.vectorstore import AsyncVectorStore
 
 __all__ = [
+    "AsyncEmbeddingService",
+    "AsyncElasticsearchEmbeddings",
     "AsyncVectorStore",
+    "BM25",
+    "DenseVector",
+    "DenseVectorScriptScore",
+    "DistanceMetric",
+    "RetrievalStrategy",
+    "SparseVector",
 ]
