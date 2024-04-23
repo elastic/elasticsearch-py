@@ -48,7 +48,7 @@ class GraphClient(NamespacedClient):
         Explore extracted and summarized information about the documents and terms in
         an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/graph-explore-api.html>`_
 
         :param index: Name of the index.
         :param connections: Specifies or more fields from which you want to extract terms

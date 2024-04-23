@@ -44,7 +44,7 @@ class InferenceClient(NamespacedClient):
         """
         Delete model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/delete-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param task_type: The task type
@@ -101,7 +101,7 @@ class InferenceClient(NamespacedClient):
         """
         Get a model in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/get-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param task_type: The task type
@@ -159,18 +159,21 @@ class InferenceClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
         task_settings: t.Optional[t.Any] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Perform inference on a model
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/post-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/post-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param input: Text input to the model. Either a string or an array of strings.
         :param task_type: The task type
         :param query: Query input, required for rerank task. Not required for other tasks.
         :param task_settings: Optional task settings
+        :param timeout: Specifies the amount of time to wait for the inference request
+            to complete.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -198,6 +201,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if input is not None:
                 __body["input"] = input
@@ -243,7 +248,7 @@ class InferenceClient(NamespacedClient):
         """
         Configure a model for use in the Inference API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/put-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param model_config:

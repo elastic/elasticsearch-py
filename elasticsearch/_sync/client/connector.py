@@ -38,7 +38,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the last_seen timestamp in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/check-in-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/check-in-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be checked in
         """
@@ -78,7 +78,7 @@ class ConnectorClient(NamespacedClient):
         """
         Deletes a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/delete-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be deleted
         """
@@ -118,7 +118,7 @@ class ConnectorClient(NamespacedClient):
         """
         Returns the details about a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/get-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector
         """
@@ -168,7 +168,7 @@ class ConnectorClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         last_access_control_sync_error: t.Optional[t.Union[None, t.Any]] = None,
-        last_access_control_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
+        last_access_control_sync_scheduled_at: t.Optional[str] = None,
         last_access_control_sync_status: t.Optional[
             t.Union[
                 "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
@@ -176,25 +176,25 @@ class ConnectorClient(NamespacedClient):
             ]
         ] = None,
         last_deleted_document_count: t.Optional[int] = None,
-        last_incremental_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
+        last_incremental_sync_scheduled_at: t.Optional[str] = None,
         last_indexed_document_count: t.Optional[int] = None,
         last_seen: t.Optional[t.Union[None, t.Any]] = None,
         last_sync_error: t.Optional[t.Union[None, t.Any]] = None,
-        last_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
+        last_sync_scheduled_at: t.Optional[str] = None,
         last_sync_status: t.Optional[
             t.Union[
                 "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
                 str,
             ]
         ] = None,
-        last_synced: t.Optional[t.Union[str, t.Any]] = None,
+        last_synced: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the stats of last sync in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-last-sync-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-last-sync-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param last_access_control_sync_error:
@@ -285,7 +285,7 @@ class ConnectorClient(NamespacedClient):
         """
         Lists all connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/list-connector-api.html>`_
 
         :param connector_name: A comma-separated list of connector names to fetch connector
             documents for
@@ -359,7 +359,7 @@ class ConnectorClient(NamespacedClient):
         """
         Creates a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/create-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/create-connector-api.html>`_
 
         :param index_name:
         :param description:
@@ -435,7 +435,7 @@ class ConnectorClient(NamespacedClient):
         """
         Creates or updates a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/create-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/create-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be created or
             updated
@@ -486,6 +486,262 @@ class ConnectorClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def sync_job_cancel(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Cancels a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/cancel-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = (
+            f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_cancel'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_cancel",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def sync_job_delete(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Deletes a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/delete-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+            to be deleted
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_delete",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def sync_job_get(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the details about a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/get-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_get",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    def sync_job_list(
+        self,
+        *,
+        connector_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        job_type: t.Optional[
+            t.Sequence[
+                t.Union["t.Literal['access_control', 'full', 'incremental']", str]
+            ]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        status: t.Optional[
+            t.Union[
+                "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
+                str,
+            ]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Lists all connector sync jobs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/{list}/list-connector-sync-jobs-api.html>`_
+
+        :param connector_id: A connector id to fetch connector sync jobs for
+        :param from_: Starting offset (default: 0)
+        :param job_type: A comma-separated list of job types to fetch the sync jobs for
+        :param size: Specifies a max number of results to get
+        :param status: A sync job status to fetch connector sync jobs for
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_connector/_sync_job"
+        __query: t.Dict[str, t.Any] = {}
+        if connector_id is not None:
+            __query["connector_id"] = connector_id
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if job_type is not None:
+            __query["job_type"] = job_type
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if status is not None:
+            __query["status"] = status
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_list",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("id", "job_type", "trigger_method"),
+    )
+    def sync_job_post(
+        self,
+        *,
+        id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        job_type: t.Optional[
+            t.Union["t.Literal['access_control', 'full', 'incremental']", str]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        trigger_method: t.Optional[
+            t.Union["t.Literal['on_demand', 'scheduled']", str]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/create-connector-sync-job-api.html>`_
+
+        :param id: The id of the associated connector
+        :param job_type:
+        :param trigger_method:
+        """
+        if id is None and body is None:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_connector/_sync_job"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if id is not None:
+                __body["id"] = id
+            if job_type is not None:
+                __body["job_type"] = job_type
+            if trigger_method is not None:
+                __body["trigger_method"] = trigger_method
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.sync_job_post",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=("api_key_id", "api_key_secret_id"),
     )
@@ -504,7 +760,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the API key id and/or API key secret id fields in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-api-key-id-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-api-key-id-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param api_key_id:
@@ -558,7 +814,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the connector configuration.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-configuration-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-configuration-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param configuration:
@@ -611,7 +867,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the error field in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-error-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-error-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param error:
@@ -663,7 +919,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the filtering field in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-filtering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-filtering-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param filtering:
@@ -715,7 +971,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the index name of the connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-index-name-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-index-name-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param index_name:
@@ -768,7 +1024,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the name and/or description fields in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-name-description-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-name-description-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param name:
@@ -823,7 +1079,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the is_native flag of the connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-native-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-native-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param is_native:
@@ -875,7 +1131,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the pipeline field in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-pipeline-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param pipeline:
@@ -927,7 +1183,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the scheduling field in the connector document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-scheduling-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-scheduling-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param scheduling:
@@ -979,7 +1235,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the service type of the connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-service-type-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-service-type-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param service_type:
@@ -1036,7 +1292,7 @@ class ConnectorClient(NamespacedClient):
         """
         Updates the status of the connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-status-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param status:

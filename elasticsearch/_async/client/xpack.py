@@ -43,7 +43,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
         :param categories: A comma-separated list of the information categories to include
@@ -89,7 +89,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves usage information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/usage-api.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
