@@ -16,20 +16,11 @@
 #  under the License.
 
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from elasticsearch import Elasticsearch
 from elasticsearch.vectorstore._sync._utils import model_must_be_deployed
-
-
-class DistanceMetric(str, Enum):
-    """Enumerator of all Elasticsearch dense vector distance metrics."""
-
-    COSINE = "COSINE"
-    DOT_PRODUCT = "DOT_PRODUCT"
-    EUCLIDEAN_DISTANCE = "EUCLIDEAN_DISTANCE"
-    MAX_INNER_PRODUCT = "MAX_INNER_PRODUCT"
+from elasticsearch.vectorstore._utils import DistanceMetric
 
 
 class RetrievalStrategy(ABC):

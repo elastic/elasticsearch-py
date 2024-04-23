@@ -15,11 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from enum import Enum
 from typing import List, Union
 
 import numpy as np
 
 Matrix = Union[List[List[float]], List[np.ndarray], np.ndarray]
+
+
+class DistanceMetric(str, Enum):
+    """Enumerator of all Elasticsearch dense vector distance metrics."""
+
+    COSINE = "COSINE"
+    DOT_PRODUCT = "DOT_PRODUCT"
+    EUCLIDEAN_DISTANCE = "EUCLIDEAN_DISTANCE"
+    MAX_INNER_PRODUCT = "MAX_INNER_PRODUCT"
 
 
 def maximal_marginal_relevance(

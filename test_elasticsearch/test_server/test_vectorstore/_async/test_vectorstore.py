@@ -23,15 +23,15 @@ import pytest
 
 from elasticsearch import AsyncElasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-from elasticsearch.vectorstore._async import AsyncVectorStore
-from elasticsearch.vectorstore._async._utils import model_is_deployed
-from elasticsearch.vectorstore._async.strategies import (
-    BM25,
-    DenseVector,
-    DenseVectorScriptScore,
+from elasticsearch.vectorstore import (
+    AsyncBM25,
+    AsyncDenseVector,
+    AsyncDenseVectorScriptScore,
+    AsyncSparseVector,
+    AsyncVectorStore,
     DistanceMetric,
-    SparseVector,
 )
+from elasticsearch.vectorstore._async._utils import model_is_deployed
 
 from ._test_utils import (
     AsyncConsistentFakeEmbeddings,
@@ -84,7 +84,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -103,7 +103,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -135,7 +135,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=embeddings,
             es_client=es_client,
         )
@@ -155,7 +155,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncConsistentFakeEmbeddings(),
             es_client=es_client,
         )
@@ -180,7 +180,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -218,7 +218,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=AsyncDenseVectorScriptScore(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -266,7 +266,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=AsyncDenseVectorScriptScore(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -320,7 +320,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
+            retrieval_strategy=AsyncDenseVectorScriptScore(
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
             embedding_service=AsyncFakeEmbeddings(),
@@ -371,7 +371,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(hybrid=True),
+            retrieval_strategy=AsyncDenseVector(hybrid=True),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -459,7 +459,7 @@ class TestVectorStore:
             store = AsyncVectorStore(
                 user_agent="test",
                 index_name=index_name,
-                retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
+                retrieval_strategy=AsyncDenseVector(hybrid=True, rrf=rrf_test_case),
                 embedding_service=AsyncFakeEmbeddings(),
                 es_client=es_client,
             )
@@ -500,7 +500,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=f"{index_name}_default",
-            retrieval_strategy=DenseVector(hybrid=True),
+            retrieval_strategy=AsyncDenseVector(hybrid=True),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -523,7 +523,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -564,7 +564,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(
+            retrieval_strategy=AsyncDenseVector(
                 model_id="sentence-transformers__all-minilm-l6-v2"
             ),
             es_client=es_client,
@@ -655,7 +655,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=SparseVector(model_id=ELSER_MODEL_ID),
+            retrieval_strategy=AsyncSparseVector(model_id=ELSER_MODEL_ID),
             es_client=es_client,
         )
 
@@ -674,7 +674,7 @@ class TestVectorStore:
             store = AsyncVectorStore(
                 user_agent="test",
                 index_name=index_name,
-                retrieval_strategy=DenseVector(model_id="non-existing model ID"),
+                retrieval_strategy=AsyncDenseVector(model_id="non-existing model ID"),
                 es_client=es_client,
             )
             await store.add_texts(["foo", "bar", "baz"])
@@ -687,7 +687,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=AsyncBM25(),
             es_client=es_client,
         )
 
@@ -716,7 +716,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=AsyncBM25(),
             es_client=es_client,
         )
 
@@ -750,7 +750,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
         )
@@ -789,7 +789,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=AsyncBM25(),
             es_client=es_client,
         )
 
@@ -818,7 +818,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent=user_agent,
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=AsyncBM25(),
             es_client=requests_saving_client,
         )
 
@@ -840,7 +840,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=AsyncBM25(),
             es_client=requests_saving_client,
         )
 
@@ -862,7 +862,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=AsyncDenseVectorScriptScore(),
             embedding_service=embedding_service,
             vector_field=vector_field,
             text_field=text_field,
@@ -925,7 +925,7 @@ class TestVectorStore:
         store = AsyncVectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=AsyncDenseVector(),
             embedding_service=AsyncFakeEmbeddings(),
             es_client=es_client,
             metadata_mappings=test_mappings,

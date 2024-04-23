@@ -23,15 +23,15 @@ import pytest
 
 from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-from elasticsearch.vectorstore._sync import VectorStore
-from elasticsearch.vectorstore._sync._utils import model_is_deployed
-from elasticsearch.vectorstore._sync.strategies import (
+from elasticsearch.vectorstore import (
     BM25,
     DenseVector,
     DenseVectorScriptScore,
     DistanceMetric,
     SparseVector,
+    VectorStore,
 )
+from elasticsearch.vectorstore._sync._utils import model_is_deployed
 
 from ._test_utils import (
     ConsistentFakeEmbeddings,

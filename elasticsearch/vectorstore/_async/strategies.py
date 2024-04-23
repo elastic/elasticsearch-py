@@ -16,23 +16,14 @@
 #  under the License.
 
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.vectorstore._async._utils import model_must_be_deployed
+from elasticsearch.vectorstore._utils import DistanceMetric
 
 
-class DistanceMetric(str, Enum):
-    """Enumerator of all Elasticsearch dense vector distance metrics."""
-
-    COSINE = "COSINE"
-    DOT_PRODUCT = "DOT_PRODUCT"
-    EUCLIDEAN_DISTANCE = "EUCLIDEAN_DISTANCE"
-    MAX_INNER_PRODUCT = "MAX_INNER_PRODUCT"
-
-
-class RetrievalStrategy(ABC):
+class AsyncRetrievalStrategy(ABC):
     @abstractmethod
     def es_query(
         self,
@@ -98,7 +89,7 @@ class RetrievalStrategy(ABC):
         return False
 
 
-class SparseVector(RetrievalStrategy):
+class AsyncSparseVector(AsyncRetrievalStrategy):
     """Sparse retrieval strategy using the `text_expansion` processor."""
 
     def __init__(self, model_id: str = ".elser_model_2"):
@@ -185,7 +176,7 @@ class SparseVector(RetrievalStrategy):
             )
 
 
-class DenseVector(RetrievalStrategy):
+class AsyncDenseVector(AsyncRetrievalStrategy):
     """K-nearest-neighbors retrieval."""
 
     def __init__(
@@ -313,7 +304,7 @@ class DenseVector(RetrievalStrategy):
         return not self.model_id
 
 
-class DenseVectorScriptScore(RetrievalStrategy):
+class AsyncDenseVectorScriptScore(AsyncRetrievalStrategy):
     """Exact nearest neighbors retrieval using the `script_score` query."""
 
     def __init__(self, distance: DistanceMetric = DistanceMetric.COSINE) -> None:
@@ -392,7 +383,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
         return True
 
 
-class BM25(RetrievalStrategy):
+class AsyncBM25(AsyncRetrievalStrategy):
     def __init__(
         self,
         k1: Optional[float] = None,
