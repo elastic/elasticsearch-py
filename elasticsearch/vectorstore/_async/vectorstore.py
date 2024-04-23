@@ -250,7 +250,7 @@ class AsyncVectorStore:
                 raise ValueError("specify a query or a query_vector to search")
             query_vector = await self.embedding_service.embed_query(query)
 
-        query_body = await self.retrieval_strategy.es_query(
+        query_body = self.retrieval_strategy.es_query(
             query=query,
             query_vector=query_vector,
             text_field=self.text_field,

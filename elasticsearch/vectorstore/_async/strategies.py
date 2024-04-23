@@ -34,7 +34,7 @@ class DistanceMetric(str, Enum):
 
 class RetrievalStrategy(ABC):
     @abstractmethod
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]],
@@ -106,7 +106,7 @@ class SparseVector(RetrievalStrategy):
         self._tokens_field = "tokens"
         self._pipeline_name = f"{self.model_id}_sparse_embedding"
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]],
@@ -207,7 +207,7 @@ class DenseVector(RetrievalStrategy):
         self.rrf = rrf
         self.text_field = text_field
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]],
@@ -319,7 +319,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
     def __init__(self, distance: DistanceMetric = DistanceMetric.COSINE) -> None:
         self.distance = distance
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]],
@@ -401,7 +401,7 @@ class BM25(RetrievalStrategy):
         self.k1 = k1
         self.b = b
 
-    async def es_query(
+    def es_query(
         self,
         query: Optional[str],
         query_vector: Optional[List[float]],
