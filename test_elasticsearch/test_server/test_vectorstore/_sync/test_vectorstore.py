@@ -30,7 +30,7 @@ from elasticsearch.vectorstore._sync.strategies import (
     DenseVector,
     DenseVectorScriptScore,
     DistanceMetric,
-    Semantic,
+    SparseVector,
 )
 
 from ._test_utils import (
@@ -548,9 +548,8 @@ class TestVectorStore:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=Semantic(
-                model_id="sentence-transformers__all-minilm-l6-v2",
-                text_field=text_field,
+            retrieval_strategy=DenseVector(
+                model_id="sentence-transformers__all-minilm-l6-v2"
             ),
             es_client=es_client,
         )
@@ -639,7 +638,7 @@ class TestVectorStore:
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
-            retrieval_strategy=Semantic(model_id=ELSER_MODEL_ID),
+            retrieval_strategy=SparseVector(model_id=ELSER_MODEL_ID),
             es_client=es_client,
         )
 
@@ -657,7 +656,7 @@ class TestVectorStore:
             store = VectorStore(
                 user_agent="test",
                 index_name=index_name,
-                retrieval_strategy=Semantic(model_id="non-existing model ID"),
+                retrieval_strategy=DenseVector(model_id="non-existing model ID"),
                 es_client=es_client,
             )
             store.add_texts(["foo", "bar", "baz"])

@@ -98,66 +98,6 @@ class RetrievalStrategy(ABC):
         return False
 
 
-class Semantic(RetrievalStrategy):
-    """Dense or sparse retrieval with in-stack inference using semantic_text fields."""
-
-    def __init__(
-        self,
-        model_id: str,
-        text_field: str = "text_field",
-    ):
-        self.model_id = model_id
-        self.text_field = text_field
-
-    def es_query(
-        self,
-        query: Optional[str],
-        query_vector: Optional[List[float]],
-        text_field: str,
-        vector_field: str,
-        k: int,
-        num_candidates: int,
-        filter: List[Dict[str, Any]] = [],
-    ) -> Dict[str, Any]:
-        if query_vector:
-            raise ValueError(
-                "Cannot do sparse retrieval with a query_vector. "
-                "Inference is currently always applied in-stack."
-            )
-
-        return {
-            "query": {
-                "semantic": {
-                    text_field: query,
-                },
-            },
-            "filter": filter,
-        }
-
-    def es_mappings_settings(
-        self,
-        text_field: str,
-        vector_field: str,
-        num_dimensions: Optional[int] = None,
-    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-        mappings = {
-            "properties": {
-                vector_field: {
-                    "type": "semantic_text",
-                    "model_id": self.model_id,
-                }
-            }
-        }
-
-        return mappings, {}
-
-    def before_index_creation(
-        self, client: Elasticsearch, text_field: str, vector_field: str
-    ) -> None:
-        if self.model_id:
-            model_must_be_deployed(client, self.model_id)
-
-
 class SparseVector(RetrievalStrategy):
     """Sparse retrieval strategy using the `text_expansion` processor."""
 
