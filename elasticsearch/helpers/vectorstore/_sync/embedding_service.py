@@ -15,12 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import List, Optional, Protocol
+from abc import ABC, abstractmethod
+from typing import List, Optional
 
 from elasticsearch import Elasticsearch
 
 
-class EmbeddingService(Protocol):
+class EmbeddingService(ABC):
+    @abstractmethod
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Generate embeddings for a list of documents.
 
@@ -31,6 +33,7 @@ class EmbeddingService(Protocol):
             A list of embeddings, one for each document in the input.
         """
 
+    @abstractmethod
     def embed_query(self, query: str) -> List[float]:
         """Generate an embedding for a single query text.
 

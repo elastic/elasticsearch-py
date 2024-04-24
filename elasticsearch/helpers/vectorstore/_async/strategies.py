@@ -15,14 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Protocol, Tuple, Union, cast
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers.vectorstore._async._utils import model_must_be_deployed
 from elasticsearch.helpers.vectorstore._utils import DistanceMetric
 
 
-class AsyncRetrievalStrategy(Protocol):
+class AsyncRetrievalStrategy(ABC):
+    @abstractmethod
     def es_query(
         self,
         query: Optional[str],
@@ -48,6 +50,7 @@ class AsyncRetrievalStrategy(Protocol):
             Dict: The Elasticsearch query body.
         """
 
+    @abstractmethod
     def es_mappings_settings(
         self,
         text_field: str,
