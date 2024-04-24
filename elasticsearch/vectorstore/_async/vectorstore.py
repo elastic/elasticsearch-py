@@ -20,6 +20,7 @@ import uuid
 from typing import Any, Callable, Dict, List, Optional
 
 from elasticsearch import AsyncElasticsearch
+from elasticsearch._version import __versionstr__ as lib_version
 from elasticsearch.helpers import BulkIndexError, async_bulk
 from elasticsearch.vectorstore._async.embedding_service import AsyncEmbeddingService
 from elasticsearch.vectorstore._async.strategies import AsyncRetrievalStrategy
@@ -41,7 +42,6 @@ class AsyncVectorStore:
     def __init__(
         self,
         es_client: AsyncElasticsearch,
-        user_agent: str,
         index_name: str,
         retrieval_strategy: AsyncRetrievalStrategy,
         embedding_service: Optional[AsyncEmbeddingService] = None,
@@ -49,6 +49,7 @@ class AsyncVectorStore:
         text_field: str = "text_field",
         vector_field: str = "vector_field",
         metadata_mappings: Optional[Dict[str, Any]] = None,
+        user_agent: str = f"es-py-vs/{lib_version}",
     ) -> None:
         """
         Args:

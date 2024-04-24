@@ -20,6 +20,7 @@ import uuid
 from typing import Any, Callable, Dict, List, Optional
 
 from elasticsearch import Elasticsearch
+from elasticsearch._version import __versionstr__ as lib_version
 from elasticsearch.helpers import BulkIndexError, bulk
 from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 from elasticsearch.vectorstore._sync.strategies import RetrievalStrategy
@@ -41,7 +42,6 @@ class VectorStore:
     def __init__(
         self,
         es_client: Elasticsearch,
-        user_agent: str,
         index_name: str,
         retrieval_strategy: RetrievalStrategy,
         embedding_service: Optional[EmbeddingService] = None,
@@ -49,6 +49,7 @@ class VectorStore:
         text_field: str = "text_field",
         vector_field: str = "vector_field",
         metadata_mappings: Optional[Dict[str, Any]] = None,
+        user_agent: str = f"es-py-vs/{lib_version}",
     ) -> None:
         """
         Args:

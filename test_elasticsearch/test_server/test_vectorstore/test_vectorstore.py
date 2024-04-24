@@ -77,7 +77,6 @@ class TestVectorStore:
             return query_body
 
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
@@ -95,7 +94,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search without metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
@@ -124,7 +122,6 @@ class TestVectorStore:
         embedding_vectors = embeddings.embed_documents(texts)
 
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=embeddings,
@@ -141,7 +138,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=ConsistentFakeEmbeddings(),
@@ -165,7 +161,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
@@ -202,7 +197,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
             embedding_service=FakeEmbeddings(),
@@ -249,7 +243,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
             embedding_service=FakeEmbeddings(),
@@ -302,7 +295,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(
                 distance=DistanceMetric.DOT_PRODUCT,
@@ -352,7 +344,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(hybrid=True),
             embedding_service=FakeEmbeddings(),
@@ -439,7 +430,6 @@ class TestVectorStore:
         ]
         for rrf_test_case in rrf_test_cases:
             store = VectorStore(
-                user_agent="test",
                 index_name=index_name,
                 retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
                 embedding_service=FakeEmbeddings(),
@@ -480,7 +470,6 @@ class TestVectorStore:
 
         # 3. check rrf default option is okay
         store = VectorStore(
-            user_agent="test",
             index_name=f"{index_name}_default",
             retrieval_strategy=DenseVector(hybrid=True),
             embedding_service=FakeEmbeddings(),
@@ -502,7 +491,6 @@ class TestVectorStore:
         """test that custom query function is called
         with the query string and query body"""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
@@ -542,7 +530,6 @@ class TestVectorStore:
         text_field = "text_field"
 
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(
                 model_id="sentence-transformers__all-minilm-l6-v2"
@@ -632,7 +619,6 @@ class TestVectorStore:
             pytest.skip(reason)
 
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=SparseVector(model_id=ELSER_MODEL_ID),
             es_client=sync_client,
@@ -650,7 +636,6 @@ class TestVectorStore:
         """test that exceptions are raised if a specified model is not deployed"""
         with pytest.raises(NotFoundError):
             store = VectorStore(
-                user_agent="test",
                 index_name=index_name,
                 retrieval_strategy=DenseVector(model_id="non-existing model ID"),
                 es_client=sync_client,
@@ -660,7 +645,6 @@ class TestVectorStore:
     def test_search_bm25(self, sync_client: Elasticsearch, index_name: str) -> None:
         """Test end to end using the BM25 retrieval strategy."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
             es_client=sync_client,
@@ -688,7 +672,6 @@ class TestVectorStore:
     ) -> None:
         """Test end to using the BM25 retrieval strategy with metadata."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
             es_client=sync_client,
@@ -721,7 +704,6 @@ class TestVectorStore:
     def test_delete(self, sync_client: Elasticsearch, index_name: str) -> None:
         """Test delete methods from vector store."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
@@ -759,7 +741,6 @@ class TestVectorStore:
     ) -> None:
         """Test bulk exception logging is giving better hints."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
             es_client=sync_client,
@@ -781,7 +762,25 @@ class TestVectorStore:
 
         assert log_message in caplog.text
 
-    def test_user_agent(
+    def test_user_agent_default(
+        self, sync_client_request_saving: Elasticsearch, index_name: str
+    ) -> None:
+        """Test to make sure the user-agent is set correctly."""
+        store = VectorStore(
+            index_name=index_name,
+            retrieval_strategy=BM25(),
+            es_client=sync_client_request_saving,
+        )
+
+        assert store.es_client._headers["User-Agent"].startswith("es-py-vs/")
+
+        texts = ["foo", "bob", "baz"]
+        store.add_texts(texts)
+
+        for request in store.es_client.transport.requests:  # type: ignore
+            assert request["headers"]["User-Agent"].startswith("es-py-vs/")
+
+    def test_user_agent_custom(
         self, sync_client_request_saving: Elasticsearch, index_name: str
     ) -> None:
         """Test to make sure the user-agent is set correctly."""
@@ -805,7 +804,6 @@ class TestVectorStore:
     def test_bulk_args(self, sync_client_request_saving: Any, index_name: str) -> None:
         """Test to make sure the bulk arguments work as expected."""
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
             es_client=sync_client_request_saving,
@@ -826,7 +824,6 @@ class TestVectorStore:
         text_field = "text_field"
         embedding_service = ConsistentFakeEmbeddings()
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVectorScriptScore(),
             embedding_service=embedding_service,
@@ -888,7 +885,6 @@ class TestVectorStore:
             "another_field": {"type": "text"},
         }
         store = VectorStore(
-            user_agent="test",
             index_name=index_name,
             retrieval_strategy=DenseVector(),
             embedding_service=FakeEmbeddings(),
