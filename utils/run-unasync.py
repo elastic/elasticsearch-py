@@ -24,12 +24,11 @@ import unasync
 
 
 def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
-    if patterns:
-        for file in glob("*.py", root_dir=source_dir):
-            path = Path(output_dir) / file
-            for pattern in patterns:
-                subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
-            subprocess.check_call(["rm", f"{path}.bak"])
+    for file in glob("*.py", root_dir=source_dir):
+        path = Path(output_dir) / file
+        for pattern in patterns:
+            subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
+        subprocess.check_call(["rm", f"{path}.bak"])
 
 
 def format_dir(dir: Path):
@@ -57,7 +56,8 @@ def run(
 
     unasync.unasync_files(filepaths, [rule])
 
-    cleanup(source_dir, output_dir, cleanup_patterns)
+    if cleanup_patterns:
+        cleanup(source_dir, output_dir, cleanup_patterns)
 
     if format:
         format_dir(source_dir)
