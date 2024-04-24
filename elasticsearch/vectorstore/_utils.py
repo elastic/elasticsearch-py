@@ -16,11 +16,12 @@
 #  under the License.
 
 from enum import Enum
-from typing import List, Union
+from typing import TYPE_CHECKING, List, Union
 
-import numpy as np
+if TYPE_CHECKING:
+    import numpy as np
 
-Matrix = Union[List[List[float]], List[np.ndarray], np.ndarray]
+Matrix = Union[List[List[float]], List["np.ndarray"], "np.ndarray"]
 
 
 class DistanceMetric(str, Enum):
@@ -39,6 +40,12 @@ def maximal_marginal_relevance(
     k: int = 4,
 ) -> List[int]:
     """Calculate maximal marginal relevance."""
+
+    try:
+        import numpy as np
+    except ModuleNotFoundError as e:
+        _raise_missing_mmr_deps_error(e)
+
     query_embedding_arr = np.array(query_embedding)
 
     if min(k, len(embedding_list)) <= 0:
@@ -68,8 +75,15 @@ def maximal_marginal_relevance(
     return idxs
 
 
-def _cosine_similarity(X: Matrix, Y: Matrix) -> np.ndarray:
+def _cosine_similarity(X: Matrix, Y: Matrix) -> "np.ndarray":
     """Row-wise cosine similarity between two equal-width matrices."""
+
+    try:
+        import numpy as np
+        import simsimd as simd
+    except ModuleNotFoundError as e:
+        _raise_missing_mmr_deps_error(e)
+
     if len(X) == 0 or len(Y) == 0:
         return np.array([])
 
@@ -80,20 +94,20 @@ def _cosine_similarity(X: Matrix, Y: Matrix) -> np.ndarray:
             f"Number of columns in X and Y must be the same. X has shape {X.shape} "
             f"and Y has shape {Y.shape}."
         )
-    try:
-        import simsimd as simd
 
-        X = np.array(X, dtype=np.float32)
-        Y = np.array(Y, dtype=np.float32)
-        Z = 1 - simd.cdist(X, Y, metric="cosine")
-        if isinstance(Z, float):
-            return np.array([Z])
-        return np.array(Z)
-    except ImportError:
-        X_norm = np.linalg.norm(X, axis=1)
-        Y_norm = np.linalg.norm(Y, axis=1)
-        # Ignore divide by zero errors run time warnings as those are handled below.
-        with np.errstate(divide="ignore", invalid="ignore"):
-            similarity = np.dot(X, Y.T) / np.outer(X_norm, Y_norm)
-        similarity[np.isnan(similarity) | np.isinf(similarity)] = 0.0
-        return similarity
+    X = np.array(X, dtype=np.float32)
+    Y = np.array(Y, dtype=np.float32)
+    Z = 1 - np.array(simd.cdist(X, Y, metric="cosine"))
+    if isinstance(Z, float):
+        return np.array([Z])
+    return np.array(Z)
+
+
+def _raise_missing_mmr_deps_error(parent_error: ModuleNotFoundError) -> None:
+    import sys
+
+    raise ModuleNotFoundError(
+        f"Failed to compute maximal marginal relevance because the required "
+        f"module '{parent_error.name}' is missing. You can install it by running: "
+        f"'{sys.executable} -m pip install elasticsearch[mmr]'"
+    ) from parent_error
