@@ -29,15 +29,15 @@ MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3"
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENTIONS", "384"))
 
 
-def test_elasticsearch_embedding_documents(es_client: Elasticsearch) -> None:
+def test_elasticsearch_embedding_documents(sync_client: Elasticsearch) -> None:
     """Test Elasticsearch embedding documents."""
 
-    if not model_is_deployed(es_client, MODEL_ID):
+    if not model_is_deployed(sync_client, MODEL_ID):
         pytest.skip(f"{MODEL_ID} model is not deployed in ML Node, skipping test")
 
     documents = ["foo bar", "bar foo", "foo"]
     embedding = ElasticsearchEmbeddings(
-        es_client=es_client, user_agent="test", model_id=MODEL_ID
+        es_client=sync_client, user_agent="test", model_id=MODEL_ID
     )
     output = embedding.embed_documents(documents)
     assert len(output) == 3
@@ -46,15 +46,15 @@ def test_elasticsearch_embedding_documents(es_client: Elasticsearch) -> None:
     assert len(output[2]) == NUM_DIMENSIONS
 
 
-def test_elasticsearch_embedding_query(es_client: Elasticsearch) -> None:
+def test_elasticsearch_embedding_query(sync_client: Elasticsearch) -> None:
     """Test Elasticsearch embedding query."""
 
-    if not model_is_deployed(es_client, MODEL_ID):
+    if not model_is_deployed(sync_client, MODEL_ID):
         pytest.skip(f"{MODEL_ID} model is not deployed in ML Node, skipping test")
 
     document = "foo bar"
     embedding = ElasticsearchEmbeddings(
-        es_client=es_client, user_agent="test", model_id=MODEL_ID
+        es_client=sync_client, user_agent="test", model_id=MODEL_ID
     )
     output = embedding.embed_query(document)
     assert len(output) == NUM_DIMENSIONS

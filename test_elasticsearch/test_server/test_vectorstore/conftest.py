@@ -15,55 +15,23 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
 import uuid
-from typing import Dict, Iterator
 
 import pytest
+from elastic_transport import Transport
 
-from elasticsearch import Elasticsearch
-
-from ._test_utils import RequestSavingTransport
-
-
-@pytest.fixture
-def es_client(elasticsearch_url: str) -> Iterator[Elasticsearch]:
-    client = _create_es_client(elasticsearch_url)
-
-    yield client
-
-    # clear indices
-    _clear_test_indices(client)
-
-    # clear all test pipelines
-    try:
-        response = client.ingest.get_pipeline(id="test_*,*_sparse_embedding")
-
-        for pipeline_id, _ in response.items():
-            try:
-                client.ingest.delete_pipeline(id=pipeline_id)
-                print(f"Deleted pipeline: {pipeline_id}")  # noqa: T201
-            except Exception as e:
-                print(f"Pipeline error: {e}")  # noqa: T201
-
-    except Exception:
-        pass
-    finally:
-        client.close()
+from ...utils import wipe_cluster
+from ..conftest import _create
 
 
-@pytest.fixture
-def requests_saving_client(
-    elasticsearch_url: str,
-) -> Iterator[Elasticsearch]:
-    client = _create_es_client(
-        elasticsearch_url, es_kwargs={"transport_class": RequestSavingTransport}
-    )
+class RequestSavingTransport(Transport):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.requests: list = []
 
-    try:
-        yield client
-    finally:
-        client.close()
+    def perform_request(self, *args, **kwargs):
+        self.requests.append(kwargs)
+        return super().perform_request(*args, **kwargs)
 
 
 @pytest.fixture(scope="function")
@@ -71,30 +39,21 @@ def index_name() -> str:
     return f"test_{uuid.uuid4().hex}"
 
 
-def _clear_test_indices(client: Elasticsearch) -> None:
-    response = client.indices.get(index="_all")
-    index_names = response.keys()
-    for index_name in index_names:
-        if index_name.startswith("test_"):
-            client.indices.delete(index=index_name)
-    client.indices.refresh(index="_all")
+@pytest.fixture(scope="function")
+def sync_client_request_saving_factory(elasticsearch_url):
+    client = None
+    try:
+        client = _create(elasticsearch_url, RequestSavingTransport)
+        yield client
+    finally:
+        if client:
+            client.close()
 
 
-def _create_es_client(elasticsearch_url: str, es_kwargs: Dict = {}) -> Elasticsearch:
-    if not elasticsearch_url:
-        elasticsearch_url = os.environ.get("ES_URL", "http://localhost:9200")
-    cloud_id = os.environ.get("ES_CLOUD_ID")
-    api_key = os.environ.get("ES_API_KEY")
-
-    if cloud_id:
-        es_params = {"es_cloud_id": cloud_id, "es_api_key": api_key}
-    else:
-        es_params = {"es_url": elasticsearch_url}
-
-    if "es_cloud_id" in es_params:
-        return Elasticsearch(
-            cloud_id=es_params["es_cloud_id"],
-            api_key=es_params["es_api_key"],
-            **es_kwargs,
-        )
-    return Elasticsearch(hosts=[es_params["es_url"]], **es_kwargs)
+@pytest.fixture(scope="function")
+def sync_client_request_saving(sync_client_request_saving_factory):
+    try:
+        yield sync_client_request_saving_factory
+    finally:
+        # Wipe the cluster clean after every test execution.
+        wipe_cluster(sync_client_request_saving_factory)

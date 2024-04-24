@@ -17,7 +17,7 @@
 
 import logging
 from functools import partial
-from typing import Any, List, Optional, Union, cast
+from typing import Any, List, Optional, Union
 
 import pytest
 
@@ -36,7 +36,6 @@ from elasticsearch.vectorstore._sync._utils import model_is_deployed
 from ._test_utils import (
     ConsistentFakeEmbeddings,
     FakeEmbeddings,
-    RequestSavingTransport,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -786,15 +785,16 @@ class TestVectorStore:
         assert log_message in caplog.text
 
     def test_user_agent(
-        self, requests_saving_client: Elasticsearch, index_name: str
+        self, sync_client_request_saving: Elasticsearch, index_name: str
     ) -> None:
         """Test to make sure the user-agent is set correctly."""
         user_agent = "this is THE user_agent!"
+
         store = VectorStore(
             user_agent=user_agent,
             index_name=index_name,
             retrieval_strategy=BM25(),
-            es_client=requests_saving_client,
+            es_client=sync_client_request_saving,
         )
 
         assert store.es_client._headers["User-Agent"] == user_agent
@@ -802,18 +802,16 @@ class TestVectorStore:
         texts = ["foo", "bob", "baz"]
         store.add_texts(texts)
 
-        transport = cast(RequestSavingTransport, store.es_client.transport)
-
-        for request in transport.requests:
+        for request in store.es_client.transport.requests:  # type: ignore
             assert request["headers"]["User-Agent"] == user_agent
 
-    def test_bulk_args(self, requests_saving_client: Any, index_name: str) -> None:
+    def test_bulk_args(self, sync_client_request_saving: Any, index_name: str) -> None:
         """Test to make sure the bulk arguments work as expected."""
         store = VectorStore(
             user_agent="test",
             index_name=index_name,
             retrieval_strategy=BM25(),
-            es_client=requests_saving_client,
+            es_client=sync_client_request_saving,
         )
 
         texts = ["foo", "bob", "baz"]

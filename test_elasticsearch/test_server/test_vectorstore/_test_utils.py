@@ -15,9 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List
+from typing import List
 
-from elastic_transport import Transport
 
 from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
 
@@ -27,9 +26,6 @@ class FakeEmbeddings(EmbeddingService):
 
     def __init__(self, dimensionality: int = 10) -> None:
         self.dimensionality = dimensionality
-
-    def num_dimensions(self) -> int:
-        return self.dimensionality
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Return simple embeddings. Embeddings encode each text as its index."""
@@ -55,9 +51,6 @@ class ConsistentFakeEmbeddings(FakeEmbeddings):
         self.known_texts: List[str] = []
         self.dimensionality = dimensionality
 
-    def num_dimensions(self) -> int:
-        return self.dimensionality
-
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
         """Return consistent embeddings for each text seen so far."""
         out_vectors = []
@@ -75,13 +68,3 @@ class ConsistentFakeEmbeddings(FakeEmbeddings):
         one if the text is unknown."""
         result = self.embed_documents([text])
         return result[0]
-
-
-class RequestSavingTransport(Transport):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.requests: List[Dict] = []
-
-    def perform_request(self, *args, **kwargs):  # type: ignore
-        self.requests.append(kwargs)
-        return super().perform_request(*args, **kwargs)
