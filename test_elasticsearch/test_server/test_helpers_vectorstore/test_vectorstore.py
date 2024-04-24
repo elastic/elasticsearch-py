@@ -23,7 +23,7 @@ import pytest
 
 from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
-from elasticsearch.vectorstore import (
+from elasticsearch.helpers.vectorstore import (
     BM25,
     DenseVector,
     DenseVectorScriptScore,
@@ -31,7 +31,7 @@ from elasticsearch.vectorstore import (
     SparseVector,
     VectorStore,
 )
-from elasticsearch.vectorstore._sync._utils import model_is_deployed
+from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
 
 from ._test_utils import ConsistentFakeEmbeddings, FakeEmbeddings
 

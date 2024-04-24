@@ -19,7 +19,7 @@ from typing import List
 
 from elastic_transport import Transport
 
-from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
+from elasticsearch.helpers.vectorstore._sync.embedding_service import EmbeddingService
 
 
 class RequestSavingTransport(Transport):

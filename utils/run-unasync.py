@@ -83,8 +83,8 @@ def main():
 
     run(
         rule=unasync.Rule(
-            fromdir="elasticsearch/vectorstore/_async/",
-            todir="elasticsearch/vectorstore/_sync/",
+            fromdir="elasticsearch/helpers/vectorstore/_async/",
+            todir="elasticsearch/helpers/vectorstore/_sync/",
             additional_replacements={
                 "AsyncBM25": "BM25",
                 "AsyncDenseVector": "DenseVector",
