@@ -486,6 +486,262 @@ class ConnectorClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def sync_job_cancel(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Cancels a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cancel-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = (
+            f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_cancel'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_cancel",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def sync_job_delete(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Deletes a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+            to be deleted
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_delete",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def sync_job_get(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the details about a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_get",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    def sync_job_list(
+        self,
+        *,
+        connector_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        job_type: t.Optional[
+            t.Sequence[
+                t.Union["t.Literal['access_control', 'full', 'incremental']", str]
+            ]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        status: t.Optional[
+            t.Union[
+                "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
+                str,
+            ]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Lists all connector sync jobs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/{list}/list-connector-sync-jobs-api.html>`_
+
+        :param connector_id: A connector id to fetch connector sync jobs for
+        :param from_: Starting offset (default: 0)
+        :param job_type: A comma-separated list of job types to fetch the sync jobs for
+        :param size: Specifies a max number of results to get
+        :param status: A sync job status to fetch connector sync jobs for
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_connector/_sync_job"
+        __query: t.Dict[str, t.Any] = {}
+        if connector_id is not None:
+            __query["connector_id"] = connector_id
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if job_type is not None:
+            __query["job_type"] = job_type
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if status is not None:
+            __query["status"] = status
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_list",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("id", "job_type", "trigger_method"),
+    )
+    def sync_job_post(
+        self,
+        *,
+        id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        job_type: t.Optional[
+            t.Union["t.Literal['access_control', 'full', 'incremental']", str]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        trigger_method: t.Optional[
+            t.Union["t.Literal['on_demand', 'scheduled']", str]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates a connector sync job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/create-connector-sync-job-api.html>`_
+
+        :param id: The id of the associated connector
+        :param job_type:
+        :param trigger_method:
+        """
+        if id is None and body is None:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_connector/_sync_job"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if id is not None:
+                __body["id"] = id
+            if job_type is not None:
+                __body["job_type"] = job_type
+            if trigger_method is not None:
+                __body["trigger_method"] = trigger_method
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.sync_job_post",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=("api_key_id", "api_key_secret_id"),
     )
