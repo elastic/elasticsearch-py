@@ -108,39 +108,6 @@ def main():
         format=True,
     )
 
-    run(
-        rule=unasync.Rule(
-            fromdir="test_elasticsearch/test_server/test_vectorstore/_async/",
-            todir="test_elasticsearch/test_server/test_vectorstore/_sync/",
-            additional_replacements={
-                "AsyncBM25": "BM25",
-                "AsyncDenseVector": "DenseVector",
-                "AsyncDenseVectorScriptScore": "DenseVectorScriptScore",
-                "AsyncElasticsearch": "Elasticsearch",
-                "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
-                "AsyncEmbeddingService": "EmbeddingService",
-                "AsyncRetrievalStrategy": "RetrievalStrategy",
-                "AsyncSparseVector": "SparseVector",
-                "AsyncTransport": "Transport",
-                "AsyncVectorStore": "VectorStore",
-                "async_bulk": "bulk",
-                "_async": "_sync",
-                # Tests-specific
-                "AsyncConsistentFakeEmbeddings": "ConsistentFakeEmbeddings",
-                "AsyncFakeEmbeddings": "FakeEmbeddings",
-                "AsyncGenerator": "Generator",
-                "AsyncRequestSavingTransport": "RequestSavingTransport",
-                "pytest_asyncio": "pytest",
-            },
-        ),
-        cleanup_patterns=[
-            "/^import asyncio$/d",
-            "/^import pytest_asyncio*/d",
-            "/ *@pytest.mark.asyncio$/d",
-        ],
-        format=True,
-    )
-
 
 if __name__ == "__main__":
     main()
