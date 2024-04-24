@@ -33,10 +33,7 @@ from elasticsearch.vectorstore import (
 )
 from elasticsearch.vectorstore._sync._utils import model_is_deployed
 
-from ._test_utils import (
-    ConsistentFakeEmbeddings,
-    FakeEmbeddings,
-)
+from ._test_utils import ConsistentFakeEmbeddings, FakeEmbeddings
 
 logging.basicConfig(level=logging.DEBUG)
 

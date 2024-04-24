@@ -20,8 +20,11 @@ from typing import TYPE_CHECKING, List, Union
 
 if TYPE_CHECKING:
     import numpy as np
+    import numpy.typing as npt
 
-Matrix = Union[List[List[float]], List["np.ndarray"], "np.ndarray"]
+Matrix = Union[
+    List[List[float]], List["npt.NDArray[np.float64]"], "npt.NDArray[np.float64]"
+]
 
 
 class DistanceMetric(str, Enum):
@@ -75,7 +78,7 @@ def maximal_marginal_relevance(
     return idxs
 
 
-def _cosine_similarity(X: Matrix, Y: Matrix) -> "np.ndarray":
+def _cosine_similarity(X: Matrix, Y: Matrix) -> "npt.NDArray[np.float64]":
     """Row-wise cosine similarity between two equal-width matrices."""
 
     try:

@@ -17,8 +17,19 @@
 
 from typing import List
 
+from elastic_transport import Transport
 
 from elasticsearch.vectorstore._sync.embedding_service import EmbeddingService
+
+
+class RequestSavingTransport(Transport):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.requests: list = []
+
+    def perform_request(self, *args, **kwargs):
+        self.requests.append(kwargs)
+        return super().perform_request(*args, **kwargs)
 
 
 class FakeEmbeddings(EmbeddingService):
