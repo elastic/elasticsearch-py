@@ -32,13 +32,20 @@ logger = logging.getLogger(__name__)
 
 
 class AsyncVectorStore:
-    """VectorStore is a higher-level abstraction of indexing and search.
+    """
+    VectorStore is a higher-level abstraction of indexing and search.
     Users can pick from available retrieval strategies.
 
-    Documents are flat text documents. Depending on the strategy, vector embeddings are
-    - created by the user beforehand
-    - created by this AsyncVectorStore class in Python
-    - created in-stack by inference pipelines.
+    Documents have up to 3 fields:
+      - text_field: the text to be indexed and searched.
+      - metadata: additional information about the document, either schema-free
+        or defined by the supplied metadata_mappings.
+      - vector_field (usually not filled by the user): the embedding vector of the text.
+
+    Depending on the strategy, vector embeddings are
+      - created by the user beforehand
+      - created by this AsyncVectorStore class in Python
+      - created in-stack by inference pipelines.
     """
 
     def __init__(

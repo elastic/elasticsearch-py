@@ -217,7 +217,7 @@ class DenseVectorStrategy(RetrievalStrategy):
             "num_candidates": num_candidates,
         }
 
-        if query_vector:
+        if query_vector is not None:
             knn["query_vector"] = query_vector
         else:
             # Inference in Elasticsearch. When initializing we make sure to always have
