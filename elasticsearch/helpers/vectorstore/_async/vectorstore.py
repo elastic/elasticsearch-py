@@ -37,7 +37,7 @@ class AsyncVectorStore:
 
     Documents are flat text documents. Depending on the strategy, vector embeddings are
     - created by the user beforehand
-    - created by this class in Python
+    - created by this AsyncVectorStore class in Python
     - created in-stack by inference pipelines.
     """
 
@@ -51,23 +51,22 @@ class AsyncVectorStore:
         text_field: str = "text_field",
         vector_field: str = "vector_field",
         metadata_mappings: Optional[Dict[str, Any]] = None,
-        user_agent: str = f"es-py-vs/{lib_version}",
+        user_agent: str = f"elasticsearch-py-vs/{lib_version}",
     ) -> None:
         """
-        Args:
-            user_header: user agent header specific to the 3rd party integration.
-                Used for usage tracking in Elastic Cloud.
-            index_name: The name of the index to query.
-            retrieval_strategy: how to index and search the data. See the strategies
-                module for availble strategies.
-            text_field: Name of the field with the textual data.
-            vector_field: For strategies that perform embedding inference in Python,
-                the embedding vector goes in this field.
-            es_client: Elasticsearch client connection. Alternatively specify the
-                Elasticsearch connection with the other es_* parameters.
+        :param user_header: user agent header specific to the 3rd party integration.
+            Used for usage tracking in Elastic Cloud.
+        :param index_name: The name of the index to query.
+        :param retrieval_strategy: how to index and search the data. See the strategies
+            module for availble strategies.
+        :param text_field: Name of the field with the textual data.
+        :param vector_field: For strategies that perform embedding inference in Python,
+            the embedding vector goes in this field.
+        :param es_client: Elasticsearch client connection. Alternatively specify the
+            Elasticsearch connection with the other es_* parameters.
         """
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
-        # client.options preserces existing (non-user-agent) headers.
+        # client.options preserves existing (non-user-agent) headers.
         es_client = es_client.options(headers={"User-Agent": user_agent})
 
         if hasattr(retrieval_strategy, "text_field"):
@@ -99,23 +98,21 @@ class AsyncVectorStore:
     ) -> List[str]:
         """Add documents to the Elasticsearch index.
 
-        Args:
-            texts: List of text documents.
-            metadata: Optional list of document metadata. Must be of same length as
-                texts.
-            vectors: Optional list of embedding vectors. Must be of same length as
-                texts.
-            ids: Optional list of ID strings. Must be of same length as texts.
-            refresh_indices: Whether to refresh the index after deleting documents.
-                Defaults to True.
-            create_index_if_not_exists: Whether to create the index if it does not
-                exist. Defaults to True.
-            bulk_kwargs: Arguments to pass to the bulk function when indexing
-                (for example chunk_size).
+        :param texts: List of text documents.
+        :param metadata: Optional list of document metadata. Must be of same length as
+            texts.
+        :param vectors: Optional list of embedding vectors. Must be of same length as
+            texts.
+        :param ids: Optional list of ID strings. Must be of same length as texts.
+        :param refresh_indices: Whether to refresh the index after deleting documents.
+            Defaults to True.
+        :param create_index_if_not_exists: Whether to create the index if it does not
+            exist. Defaults to True.
+        :param bulk_kwargs: Arguments to pass to the bulk function when indexing
+            (for example chunk_size).
 
-        Returns:
-            List of IDs of the created documents, either echoing the provided one
-                or returning newly created ones.
+        :return: List of IDs of the created documents, either echoing the provided one
+            or returning newly created ones.
         """
         bulk_kwargs = bulk_kwargs or {}
         ids = ids or [str(uuid.uuid4()) for _ in texts]
@@ -173,10 +170,11 @@ class AsyncVectorStore:
     ) -> bool:
         """Delete documents from the Elasticsearch index.
 
-        Args:
-            ids: List of IDs of documents to delete.
-            refresh_indices: Whether to refresh the index after deleting documents.
-                Defaults to True.
+        :param ids: List of IDs of documents to delete.
+        :param refresh_indices: Whether to refresh the index after deleting documents.
+            Defaults to True.
+
+        :return: True if deletion was successful.
         """
         if ids is not None and query is not None:
             raise ValueError("one of ids or query must be specified")
@@ -227,19 +225,17 @@ class AsyncVectorStore:
         ] = None,
     ) -> List[Dict[str, Any]]:
         """
-        Args:
-            query: Input query string.
-            query_vector: Input embedding vector. If given, input query string is
-                ignored.
-            k: Number of returned results.
-            num_candidates: Number of candidates to fetch from data nodes in knn.
-            fields: List of field names to return.
-            filter: Elasticsearch filters to apply.
-            custom_query: Function to modify the Elasticsearch query body before it is
-                sent to Elasticsearch.
+        :param query: Input query string.
+        :param query_vector: Input embedding vector. If given, input query string is
+            ignored.
+        :param k: Number of returned results.
+        :param num_candidates: Number of candidates to fetch from data nodes in knn.
+        :param fields: List of field names to return.
+        :param filter: Elasticsearch filters to apply.
+        :param custom_query: Function to modify the Elasticsearch query body before it is
+            sent to Elasticsearch.
 
-        Returns:
-            List of document hits. Includes _index, _id, _score and _source.
+        :return: List of document hits. Includes _index, _id, _score and _source.
         """
         if fields is None:
             fields = []
@@ -334,19 +330,17 @@ class AsyncVectorStore:
         Maximal marginal relevance optimizes for similarity to query AND diversity
             among selected documents.
 
-        Args:
-            query (str): Text to look up documents similar to.
-            k (int): Number of Documents to return. Defaults to 4.
-            fetch_k (int): Number of Documents to fetch to pass to MMR algorithm.
-            lambda_mult (float): Number between 0 and 1 that determines the degree
-                of diversity among the results with 0 corresponding
-                to maximum diversity and 1 to minimum diversity.
-                Defaults to 0.5.
-            fields: Other fields to get from elasticsearch source. These fields
-                will be added to the document metadata.
+        :param query (str): Text to look up documents similar to.
+        :param k (int): Number of Documents to return. Defaults to 4.
+        :param fetch_k (int): Number of Documents to fetch to pass to MMR algorithm.
+        :param lambda_mult (float): Number between 0 and 1 that determines the degree
+            of diversity among the results with 0 corresponding
+            to maximum diversity and 1 to minimum diversity.
+            Defaults to 0.5.
+        :param fields: Other fields to get from elasticsearch source. These fields
+            will be added to the document metadata.
 
-        Returns:
-            List[Document]: A list of Documents selected by maximal marginal relevance.
+        :return: A list of Documents selected by maximal marginal relevance.
         """
         remove_vector_query_field_from_metadata = True
         if fields is None:

@@ -39,15 +39,13 @@ class RetrievalStrategy(ABC):
         Returns the Elasticsearch query body for the given parameters.
         The store will execute the query.
 
-        Args:
-            query: The text query. Can be None if query_vector is given.
-            k: The total number of results to retrieve.
-            num_candidates: The number of results to fetch initially in knn search.
-            filter: List of filter clauses to apply to the query.
-            query_vector: The query vector. Can be None if a query string is given.
+        :param query: The text query. Can be None if query_vector is given.
+        :param k: The total number of results to retrieve.
+        :param num_candidates: The number of results to fetch initially in knn search.
+        :param filter: List of filter clauses to apply to the query.
+        :param query_vector: The query vector. Can be None if a query string is given.
 
-        Returns:
-            Dict: The Elasticsearch query body.
+        :return: The Elasticsearch query body.
         """
 
     @abstractmethod
@@ -61,11 +59,10 @@ class RetrievalStrategy(ABC):
         Create the required index and do necessary preliminary work, like
         creating inference pipelines or checking if a required model was deployed.
 
-        Args:
-            client: Elasticsearch client connection.
-            index_name: The name of the Elasticsearch index to create.
-            metadata_mapping: Flat dictionary with field and field type pairs that
-                describe the schema of the metadata.
+        :param client: Elasticsearch client connection.
+        :param index_name: The name of the Elasticsearch index to create.
+        :param metadata_mapping: Flat dictionary with field and field type pairs that
+            describe the schema of the metadata.
         """
 
     def before_index_creation(
@@ -74,22 +71,27 @@ class RetrievalStrategy(ABC):
         """
         Executes before the index is created. Used for setting up
         any required Elasticsearch resources like a pipeline.
+        Defaults to a no-op.
 
-        Args:
-            client: The Elasticsearch client.
-            text_field: The field containing the text data in the index.
-            vector_field: The field containing the vector representations in the index.
+        :param client: The Elasticsearch client.
+        :param text_field: The field containing the text data in the index.
+        :param vector_field: The field containing the vector representations in the index.
         """
         pass
 
     def needs_inference(self) -> bool:
         """
-        TODO
+        Some retrieval strategies index embedding vectors and allow search by embedding
+        vector, for example the `DenseVectorStrategy` strategy. Mapping a user input query
+        string to an embedding vector is called inference. Inference can be applied
+        in Elasticsearch (using a `model_id`) or outside of Elasticsearch (using an
+        `EmbeddingService` defined on the `VectorStore`). In the latter case,
+        this method has to return True.
         """
         return False
 
 
-class SparseVector(RetrievalStrategy):
+class SparseVectorStrategy(RetrievalStrategy):
     """Sparse retrieval strategy using the `text_expansion` processor."""
 
     def __init__(self, model_id: str = ".elser_model_2"):
@@ -176,7 +178,7 @@ class SparseVector(RetrievalStrategy):
             )
 
 
-class DenseVector(RetrievalStrategy):
+class DenseVectorStrategy(RetrievalStrategy):
     """K-nearest-neighbors retrieval."""
 
     def __init__(
@@ -189,7 +191,7 @@ class DenseVector(RetrievalStrategy):
     ):
         if hybrid and not text_field:
             raise ValueError(
-                "to enable hybrid you have to specify a text_field (for BM25 matching)"
+                "to enable hybrid you have to specify a text_field (for BM25Strategy matching)"
             )
 
         self.distance = distance
@@ -304,7 +306,7 @@ class DenseVector(RetrievalStrategy):
         return not self.model_id
 
 
-class DenseVectorScriptScore(RetrievalStrategy):
+class DenseVectorScriptScoreStrategy(RetrievalStrategy):
     """Exact nearest neighbors retrieval using the `script_score` query."""
 
     def __init__(self, distance: DistanceMetric = DistanceMetric.COSINE) -> None:
@@ -383,7 +385,7 @@ class DenseVectorScriptScore(RetrievalStrategy):
         return True
 
 
-class BM25(RetrievalStrategy):
+class BM25Strategy(RetrievalStrategy):
     def __init__(
         self,
         k1: Optional[float] = None,

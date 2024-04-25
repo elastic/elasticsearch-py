@@ -16,6 +16,7 @@
 #  under the License.
 
 import os
+import re
 
 import pytest
 
@@ -28,7 +29,7 @@ from elasticsearch.helpers.vectorstore._sync.embedding_service import (
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html
 MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3")
-NUM_DIMENSIONS = int(os.getenv("NUM_DIMENTIONS", "384"))
+NUM_DIMENSIONS = int(os.getenv("NUM_DIMENSIONS", "384"))
 
 
 def test_elasticsearch_embedding_documents(sync_client: Elasticsearch) -> None:
@@ -60,3 +61,33 @@ def test_elasticsearch_embedding_query(sync_client: Elasticsearch) -> None:
     )
     output = embedding.embed_query(document)
     assert len(output) == NUM_DIMENSIONS
+
+
+def test_user_agent_default(
+    sync_client: Elasticsearch, sync_client_request_saving: Elasticsearch
+) -> None:
+    """Test to make sure the user-agent is set correctly."""
+
+    if not model_is_deployed(sync_client, MODEL_ID):
+        pytest.skip(f"{MODEL_ID} model is not deployed in ML Node, skipping test")
+
+    embeddings = ElasticsearchEmbeddings(
+        es_client=sync_client_request_saving, model_id=MODEL_ID
+    )
+
+    expected_pattern = r"^elasticsearch-py-es/\d+\.\d+\.\d+$"
+
+    got_agent = embeddings.es_client._headers["User-Agent"]
+    assert (
+        re.match(expected_pattern, got_agent) is not None
+    ), f"The user agent '{got_agent}' does not match the expected pattern."
+
+    embeddings.embed_query("foo bar")
+
+    requests = embeddings.es_client.transport.requests  # type: ignore
+    assert len(requests) == 1
+
+    got_request_agent = requests[0]["headers"]["User-Agent"]
+    assert (
+        re.match(expected_pattern, got_request_agent) is not None
+    ), f"The user agent '{got_request_agent}' does not match the expected pattern."

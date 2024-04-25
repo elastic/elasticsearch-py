@@ -54,6 +54,11 @@ def sync_client_factory(elasticsearch_url):
     client = None
     try:
         client = _create(elasticsearch_url)
+
+        # Wipe the cluster before we start testing just in case it wasn't wiped
+        # cleanly from the previous run of pytest?
+        wipe_cluster(client)
+
         yield client
     finally:
         if client:

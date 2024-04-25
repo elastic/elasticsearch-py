@@ -20,11 +20,11 @@ from elasticsearch.helpers.vectorstore._async.embedding_service import (
     AsyncEmbeddingService,
 )
 from elasticsearch.helpers.vectorstore._async.strategies import (
-    AsyncBM25,
-    AsyncDenseVector,
-    AsyncDenseVectorScriptScore,
+    AsyncBM25Strategy,
+    AsyncDenseVectorScriptScoreStrategy,
+    AsyncDenseVectorStrategy,
     AsyncRetrievalStrategy,
-    AsyncSparseVector,
+    AsyncSparseVectorStrategy,
 )
 from elasticsearch.helpers.vectorstore._async.vectorstore import AsyncVectorStore
 from elasticsearch.helpers.vectorstore._sync.embedding_service import (
@@ -32,31 +32,31 @@ from elasticsearch.helpers.vectorstore._sync.embedding_service import (
     EmbeddingService,
 )
 from elasticsearch.helpers.vectorstore._sync.strategies import (
-    BM25,
-    DenseVector,
-    DenseVectorScriptScore,
+    BM25Strategy,
+    DenseVectorScriptScoreStrategy,
+    DenseVectorStrategy,
     RetrievalStrategy,
-    SparseVector,
+    SparseVectorStrategy,
 )
 from elasticsearch.helpers.vectorstore._sync.vectorstore import VectorStore
 from elasticsearch.helpers.vectorstore._utils import DistanceMetric
 
 __all__ = [
-    "BM25",
-    "DenseVector",
-    "DenseVectorScriptScore",
+    "BM25Strategy",
+    "DenseVectorStrategy",
+    "DenseVectorScriptScoreStrategy",
     "ElasticsearchEmbeddings",
     "EmbeddingService",
     "RetrievalStrategy",
-    "SparseVector",
+    "SparseVectorStrategy",
     "VectorStore",
-    "AsyncBM25",
-    "AsyncDenseVector",
-    "AsyncDenseVectorScriptScore",
+    "AsyncBM25Strategy",
+    "AsyncDenseVectorStrategy",
+    "AsyncDenseVectorScriptScoreStrategy",
     "AsyncElasticsearchEmbeddings",
     "AsyncEmbeddingService",
     "AsyncRetrievalStrategy",
-    "AsyncSparseVector",
+    "AsyncSparseVectorStrategy",
     "AsyncVectorStore",
     "DistanceMetric",
 ]

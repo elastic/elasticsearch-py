@@ -25,18 +25,3 @@ services:
       - elasticsearch
     restart: no
     command: sh -c "sleep 10 && eland_import_hub_model --url http://elasticsearch:9200 --hub-model-id sentence-transformers/msmarco-minilm-l-12-v3 --start"
-
-  kibana:
-    image: kibana:8.13.0
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    ports:
-      - "5601:5601"
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl --silent --fail http://localhost:5601/login || exit 1"
-        ]
-      interval: 10s
-      retries: 60

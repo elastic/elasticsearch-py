@@ -15,32 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch import (
-    AsyncElasticsearch,
-    BadRequestError,
-    ConflictError,
-    NotFoundError,
-)
+from elasticsearch import AsyncElasticsearch, BadRequestError, NotFoundError
 
 
 async def model_must_be_deployed(client: AsyncElasticsearch, model_id: str) -> None:
+    """
+    :raises [NotFoundError]: if the model is neither downloaded nor deployed.
+    :raises [ConflictError]: if the model is downloaded but not yet deployed.
+    """
+    doc = {"text_field": f"test if the model '{model_id}' is deployed"}
     try:
-        dummy = {"x": "y"}
-        await client.ml.infer_trained_model(model_id=model_id, docs=[dummy])
-    except NotFoundError as err:
-        raise err
-    except ConflictError as err:
-        raise NotFoundError(
-            f"model '{model_id}' not found, please deploy it first",
-            meta=err.meta,
-            body=err.body,
-        ) from err
+        await client.ml.infer_trained_model(model_id=model_id, docs=[doc])
     except BadRequestError:
-        # This error is expected because we do not know the expected document
-        # shape and just use a dummy doc above.
+        # The model is deployed but expects a different input field name.
         pass
-
-    return None
 
 
 async def model_is_deployed(es_client: AsyncElasticsearch, model_id: str) -> bool:

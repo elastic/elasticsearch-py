@@ -32,8 +32,19 @@ def index_name() -> str:
 @pytest.fixture(scope="function")
 def sync_client_request_saving_factory(elasticsearch_url):
     client = None
+
     try:
+        client = _create(elasticsearch_url)
+        # Wipe the cluster before we start testing just in case it wasn't wiped
+        # cleanly from the previous run of pytest?
+        wipe_cluster(client)
+    finally:
+        client.close()
+
+    try:
+        # Recreate client with a transport that saves requests.
         client = _create(elasticsearch_url, RequestSavingTransport)
+
         yield client
     finally:
         if client:

@@ -16,6 +16,7 @@
 #  under the License.
 
 import logging
+import re
 from functools import partial
 from typing import Any, List, Optional, Union
 
@@ -24,11 +25,11 @@ import pytest
 from elasticsearch import Elasticsearch, NotFoundError
 from elasticsearch.helpers import BulkIndexError
 from elasticsearch.helpers.vectorstore import (
-    BM25,
-    DenseVector,
-    DenseVectorScriptScore,
+    BM25Strategy,
+    DenseVectorScriptScoreStrategy,
+    DenseVectorStrategy,
     DistanceMetric,
-    SparseVector,
+    SparseVectorStrategy,
     VectorStore,
 )
 from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
@@ -78,7 +79,7 @@ class TestVectorStore:
 
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -95,7 +96,7 @@ class TestVectorStore:
         """Test end to end construction and search without metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -123,7 +124,7 @@ class TestVectorStore:
 
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=embeddings,
             es_client=sync_client,
         )
@@ -139,7 +140,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=ConsistentFakeEmbeddings(),
             es_client=sync_client,
         )
@@ -162,7 +163,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -198,7 +199,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -244,7 +245,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -296,7 +297,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(
+            retrieval_strategy=DenseVectorScriptScoreStrategy(
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
             embedding_service=FakeEmbeddings(),
@@ -345,7 +346,7 @@ class TestVectorStore:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(hybrid=True),
+            retrieval_strategy=DenseVectorStrategy(hybrid=True),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -431,7 +432,7 @@ class TestVectorStore:
         for rrf_test_case in rrf_test_cases:
             store = VectorStore(
                 index_name=index_name,
-                retrieval_strategy=DenseVector(hybrid=True, rrf=rrf_test_case),
+                retrieval_strategy=DenseVectorStrategy(hybrid=True, rrf=rrf_test_case),
                 embedding_service=FakeEmbeddings(),
                 es_client=sync_client,
             )
@@ -471,7 +472,7 @@ class TestVectorStore:
         # 3. check rrf default option is okay
         store = VectorStore(
             index_name=f"{index_name}_default",
-            retrieval_strategy=DenseVector(hybrid=True),
+            retrieval_strategy=DenseVectorStrategy(hybrid=True),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -492,7 +493,7 @@ class TestVectorStore:
         with the query string and query body"""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -531,7 +532,7 @@ class TestVectorStore:
 
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(
+            retrieval_strategy=DenseVectorStrategy(
                 model_id="sentence-transformers__all-minilm-l6-v2"
             ),
             es_client=sync_client,
@@ -620,7 +621,7 @@ class TestVectorStore:
 
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=SparseVector(model_id=ELSER_MODEL_ID),
+            retrieval_strategy=SparseVectorStrategy(model_id=ELSER_MODEL_ID),
             es_client=sync_client,
         )
 
@@ -637,16 +638,18 @@ class TestVectorStore:
         with pytest.raises(NotFoundError):
             store = VectorStore(
                 index_name=index_name,
-                retrieval_strategy=DenseVector(model_id="non-existing model ID"),
+                retrieval_strategy=DenseVectorStrategy(
+                    model_id="non-existing model ID"
+                ),
                 es_client=sync_client,
             )
             store.add_texts(["foo", "bar", "baz"])
 
     def test_search_bm25(self, sync_client: Elasticsearch, index_name: str) -> None:
-        """Test end to end using the BM25 retrieval strategy."""
+        """Test end to end using the BM25Strategy retrieval strategy."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client,
         )
 
@@ -670,10 +673,10 @@ class TestVectorStore:
     def test_search_bm25_with_filter(
         self, sync_client: Elasticsearch, index_name: str
     ) -> None:
-        """Test end to using the BM25 retrieval strategy with metadata."""
+        """Test end to using the BM25Strategy retrieval strategy with metadata."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client,
         )
 
@@ -705,7 +708,7 @@ class TestVectorStore:
         """Test delete methods from vector store."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
         )
@@ -742,7 +745,7 @@ class TestVectorStore:
         """Test bulk exception logging is giving better hints."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client,
         )
 
@@ -768,17 +771,24 @@ class TestVectorStore:
         """Test to make sure the user-agent is set correctly."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client_request_saving,
         )
+        expected_pattern = r"^elasticsearch-py-vs/\d+\.\d+\.\d+$"
 
-        assert store.es_client._headers["User-Agent"].startswith("es-py-vs/")
+        got_agent = store.es_client._headers["User-Agent"]
+        assert (
+            re.match(expected_pattern, got_agent) is not None
+        ), f"The user agent '{got_agent}' does not match the expected pattern."
 
         texts = ["foo", "bob", "baz"]
         store.add_texts(texts)
 
         for request in store.es_client.transport.requests:  # type: ignore
-            assert request["headers"]["User-Agent"].startswith("es-py-vs/")
+            agent = request["headers"]["User-Agent"]
+            assert (
+                re.match(expected_pattern, agent) is not None
+            ), f"The user agent '{agent}' does not match the expected pattern."
 
     def test_user_agent_custom(
         self, sync_client_request_saving: Elasticsearch, index_name: str
@@ -789,7 +799,7 @@ class TestVectorStore:
         store = VectorStore(
             user_agent=user_agent,
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client_request_saving,
         )
 
@@ -805,7 +815,7 @@ class TestVectorStore:
         """Test to make sure the bulk arguments work as expected."""
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=BM25(),
+            retrieval_strategy=BM25Strategy(),
             es_client=sync_client_request_saving,
         )
 
@@ -825,7 +835,7 @@ class TestVectorStore:
         embedding_service = ConsistentFakeEmbeddings()
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVectorScriptScore(),
+            retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=embedding_service,
             vector_field=vector_field,
             text_field=text_field,
@@ -886,7 +896,7 @@ class TestVectorStore:
         }
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVector(),
+            retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
             es_client=sync_client,
             metadata_mappings=test_mappings,

@@ -86,14 +86,14 @@ def main():
             fromdir="elasticsearch/helpers/vectorstore/_async/",
             todir="elasticsearch/helpers/vectorstore/_sync/",
             additional_replacements={
-                "AsyncBM25": "BM25",
-                "AsyncDenseVector": "DenseVector",
-                "AsyncDenseVectorScriptScore": "DenseVectorScriptScore",
+                "AsyncBM25Strategy": "BM25Strategy",
+                "AsyncDenseVectorStrategy": "DenseVectorStrategy",
+                "AsyncDenseVectorScriptScoreStrategy": "DenseVectorScriptScoreStrategy",
                 "AsyncElasticsearch": "Elasticsearch",
                 "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
                 "AsyncEmbeddingService": "EmbeddingService",
                 "AsyncRetrievalStrategy": "RetrievalStrategy",
-                "AsyncSparseVector": "SparseVector",
+                "AsyncSparseVectorStrategy": "SparseVectorStrategy",
                 "AsyncTransport": "Transport",
                 "AsyncVectorStore": "VectorStore",
                 "async_bulk": "bulk",
@@ -102,8 +102,6 @@ def main():
         ),
         cleanup_patterns=[
             "/^import asyncio$/d",
-            "/^import pytest_asyncio*/d",
-            "/ *@pytest.mark.asyncio$/d",
         ],
         format=True,
     )
