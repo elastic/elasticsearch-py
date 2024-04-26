@@ -302,7 +302,6 @@ class AsyncVectorStore:
             vector_field=self.vector_field,
             num_dimensions=self.num_dimensions,
         )
-
         if self.metadata_mappings:
             metadata = mappings["properties"].get("metadata", {"properties": {}})
             for key in self.metadata_mappings.keys():
@@ -310,7 +309,7 @@ class AsyncVectorStore:
                     raise ValueError(f"metadata key {key} already exists in mappings")
 
             metadata = dict(**metadata["properties"], **self.metadata_mappings)
-            mappings["properties"] = {"metadata": {"properties": metadata}}
+            mappings["properties"]["metadata"] = {"properties": metadata}
 
         await self.retrieval_strategy.before_index_creation(
             self.es_client, self.text_field, self.vector_field

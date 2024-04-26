@@ -896,18 +896,26 @@ class TestVectorStore:
         }
         store = VectorStore(
             index_name=index_name,
-            retrieval_strategy=DenseVectorStrategy(),
+            retrieval_strategy=DenseVectorStrategy(distance=DistanceMetric.COSINE),
             embedding_service=FakeEmbeddings(),
+            num_dimensions=10,
             es_client=sync_client,
             metadata_mappings=test_mappings,
         )
 
         texts = ["foo", "foo", "foo"]
-        metadatas = [{"page": i} for i in range(len(texts))]
+        metadatas = [{"my_field": str(i)} for i in range(len(texts))]
         store.add_texts(texts=texts, metadatas=metadatas)
 
         mapping_response = sync_client.indices.get_mapping(index=index_name)
         mapping_properties = mapping_response[index_name]["mappings"]["properties"]
+        assert mapping_properties["vector_field"] == {
+            "type": "dense_vector",
+            "dims": 10,
+            "index": True,
+            "similarity": "cosine",
+        }
+
         assert "metadata" in mapping_properties
         for key, val in test_mappings.items():
             assert mapping_properties["metadata"]["properties"][key] == val
