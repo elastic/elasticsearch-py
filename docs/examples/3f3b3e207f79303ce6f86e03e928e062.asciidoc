@@ -1,0 +1,10 @@
+// setup/run-elasticsearch-locally.asciidoc:125
+
+[source, python]
+----
+resp = client.get(
+    index="customer",
+    id="1",
+)
+print(resp)
+----

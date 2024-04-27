@@ -1,0 +1,7 @@
+// setup/restart-cluster.asciidoc:219
+
+[source, python]
+----
+resp = client.cat.nodes()
+print(resp)
+----

@@ -1,0 +1,9 @@
+// setup/restart-cluster.asciidoc:54
+
+[source, python]
+----
+resp = client.ml.set_upgrade_mode(
+    enabled="true",
+)
+print(resp)
+----

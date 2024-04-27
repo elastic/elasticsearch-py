@@ -1,0 +1,10 @@
+// setup/run-elasticsearch-locally.asciidoc:156
+
+[source, python]
+----
+resp = client.search(
+    index="customer",
+    body={"query": {"match": {"firstname": "Jennifer"}}},
+)
+print(resp)
+----

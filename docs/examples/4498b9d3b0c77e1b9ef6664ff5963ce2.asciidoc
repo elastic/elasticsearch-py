@@ -1,0 +1,10 @@
+// modules/indices/request_cache.asciidoc:59
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"settings": {"index.requests.cache.enable": False}},
+)
+print(resp)
+----

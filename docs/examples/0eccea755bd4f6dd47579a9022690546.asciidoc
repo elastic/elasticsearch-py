@@ -1,0 +1,20 @@
+// modules/cluster/remote-clusters-migration.asciidoc:132
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={
+        "persistent": {
+            "cluster": {
+                "remote": {
+                    "my_remote": {
+                        "mode": "proxy",
+                        "proxy_address": "my.remote.cluster.com:9443",
+                    }
+                }
+            }
+        }
+    },
+)
+print(resp)
+----
