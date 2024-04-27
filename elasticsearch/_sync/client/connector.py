@@ -643,7 +643,7 @@ class ConnectorClient(NamespacedClient):
         """
         Lists all connector sync jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/{list}/list-connector-sync-jobs-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-connector-sync-jobs-api.html>`_
 
         :param connector_id: A connector id to fetch connector sync jobs for
         :param from_: Starting offset (default: 0)
