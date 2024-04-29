@@ -21,10 +21,8 @@ import re
 import pytest
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers.vectorstore import ElasticsearchEmbeddings
 from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
-from elasticsearch.helpers.vectorstore._sync.embedding_service import (
-    ElasticsearchEmbeddings,
-)
 
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html

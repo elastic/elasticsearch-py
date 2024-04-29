@@ -112,5 +112,5 @@ def _raise_missing_mmr_deps_error(parent_error: ModuleNotFoundError) -> None:
     raise ModuleNotFoundError(
         f"Failed to compute maximal marginal relevance because the required "
         f"module '{parent_error.name}' is missing. You can install it by running: "
-        f"'{sys.executable} -m pip install elasticsearch[mmr]'"
+        f"'{sys.executable} -m pip install elasticsearch[vectorstore_mmr]'"
     ) from parent_error

@@ -22,10 +22,10 @@ from typing import Any, Callable, Dict, List, Optional
 from elasticsearch import AsyncElasticsearch
 from elasticsearch._version import __versionstr__ as lib_version
 from elasticsearch.helpers import BulkIndexError, async_bulk
-from elasticsearch.helpers.vectorstore._async.embedding_service import (
+from elasticsearch.helpers.vectorstore import (
     AsyncEmbeddingService,
+    AsyncRetrievalStrategy,
 )
-from elasticsearch.helpers.vectorstore._async.strategies import AsyncRetrievalStrategy
 from elasticsearch.helpers.vectorstore._utils import maximal_marginal_relevance
 
 logger = logging.getLogger(__name__)

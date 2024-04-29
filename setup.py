@@ -92,6 +92,7 @@ setup(
         "requests": ["requests>=2.4.0, <3.0.0"],
         "async": ["aiohttp>=3,<4"],
         "orjson": ["orjson>=3"],
-        "mmr": ["numpy>=1", "simsimd>=3"],
+        # Maximal Marginal Relevance (MMR) for search results
+        "vectorstore_mmr": ["numpy>=1", "simsimd>=3"],
     },
 )

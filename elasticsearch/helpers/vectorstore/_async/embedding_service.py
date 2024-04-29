@@ -75,8 +75,7 @@ class AsyncElasticsearchEmbeddings(AsyncEmbeddingService):
         self.input_field = input_field
 
     async def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        result = await self._embedding_func(texts)
-        return result
+        return await self._embedding_func(texts)
 
     async def embed_query(self, text: str) -> List[float]:
         result = await self._embedding_func([text])

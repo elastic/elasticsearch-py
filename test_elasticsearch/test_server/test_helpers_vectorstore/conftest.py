@@ -21,7 +21,7 @@ import pytest
 
 from ...utils import wipe_cluster
 from ..conftest import _create
-from ._test_utils import RequestSavingTransport
+from . import RequestSavingTransport
 
 
 @pytest.fixture(scope="function")

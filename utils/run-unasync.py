@@ -25,43 +25,33 @@ import unasync
 
 def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
     for file in glob("*.py", root_dir=source_dir):
-        path = Path(output_dir) / file
+        path = output_dir / file
         for pattern in patterns:
             subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
         subprocess.check_call(["rm", f"{path}.bak"])
 
 
-def format_dir(dir: Path):
-    subprocess.check_call(["isort", "--profile=black", dir])
-    subprocess.check_call(["black", dir])
-
-
 def run(
     rule: unasync.Rule,
     cleanup_patterns: list[str] = [],
-    format: bool = False,
 ):
-    root = Path(__file__).absolute().parent.parent
-    source_dir = root / rule.fromdir.lstrip("/")
-    output_dir = root / rule.todir.lstrip("/")
+    root_dir = Path(__file__).absolute().parent.parent
+    source_dir = root_dir / rule.fromdir.lstrip("/")
+    output_dir = root_dir / rule.todir.lstrip("/")
 
     filepaths = []
     for root, _, filenames in os.walk(source_dir):
         for filename in filenames:
-            if filename.rpartition(".")[-1] in (
+            if filename.rpartition(".")[-1] in {
                 "py",
                 "pyi",
-            ) and not filename.startswith("utils.py"):
+            } and not filename.startswith("utils.py"):
                 filepaths.append(os.path.join(root, filename))
 
     unasync.unasync_files(filepaths, [rule])
 
     if cleanup_patterns:
         cleanup(source_dir, output_dir, cleanup_patterns)
-
-    if format:
-        format_dir(source_dir)
-        format_dir(output_dir)
 
 
 def main():
@@ -103,7 +93,6 @@ def main():
         cleanup_patterns=[
             "/^import asyncio$/d",
         ],
-        format=True,
     )
 
 

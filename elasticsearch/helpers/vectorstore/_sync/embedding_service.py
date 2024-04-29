@@ -75,8 +75,7 @@ class ElasticsearchEmbeddings(EmbeddingService):
         self.input_field = input_field
 
     def embed_documents(self, texts: List[str]) -> List[List[float]]:
-        result = self._embedding_func(texts)
-        return result
+        return self._embedding_func(texts)
 
     def embed_query(self, text: str) -> List[float]:
         result = self._embedding_func([text])

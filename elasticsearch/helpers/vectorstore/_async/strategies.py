@@ -241,13 +241,13 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
         num_dimensions: Optional[int],
     ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if self.distance is DistanceMetric.COSINE:
-            similarityAlgo = "cosine"
+            similarity = "cosine"
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
-            similarityAlgo = "l2_norm"
+            similarity = "l2_norm"
         elif self.distance is DistanceMetric.DOT_PRODUCT:
-            similarityAlgo = "dot_product"
+            similarity = "dot_product"
         elif self.distance is DistanceMetric.MAX_INNER_PRODUCT:
-            similarityAlgo = "max_inner_product"
+            similarity = "max_inner_product"
         else:
             raise ValueError(f"Similarity {self.distance} not supported.")
 
@@ -257,7 +257,7 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
                     "type": "dense_vector",
                     "dims": num_dimensions,
                     "index": True,
-                    "similarity": similarityAlgo,
+                    "similarity": similarity,
                 },
             }
         }
@@ -326,18 +326,18 @@ class AsyncDenseVectorScriptScoreStrategy(AsyncRetrievalStrategy):
             raise ValueError("specify a query_vector")
 
         if self.distance is DistanceMetric.COSINE:
-            similarityAlgo = (
+            similarity_algo = (
                 f"cosineSimilarity(params.query_vector, '{vector_field}') + 1.0"
             )
         elif self.distance is DistanceMetric.EUCLIDEAN_DISTANCE:
-            similarityAlgo = f"1 / (1 + l2norm(params.query_vector, '{vector_field}'))"
+            similarity_algo = f"1 / (1 + l2norm(params.query_vector, '{vector_field}'))"
         elif self.distance is DistanceMetric.DOT_PRODUCT:
-            similarityAlgo = f"""
+            similarity_algo = f"""
             double value = dotProduct(params.query_vector, '{vector_field}');
             return sigmoid(1, Math.E, -value);
             """
         elif self.distance is DistanceMetric.MAX_INNER_PRODUCT:
-            similarityAlgo = f"""
+            similarity_algo = f"""
             double value = dotProduct(params.query_vector, '{vector_field}');
             if (dotProduct < 0) {{
                 return 1 / (1 + -1 * dotProduct);
@@ -347,16 +347,16 @@ class AsyncDenseVectorScriptScoreStrategy(AsyncRetrievalStrategy):
         else:
             raise ValueError(f"Similarity {self.distance} not supported.")
 
-        queryBool: Dict[str, Any] = {"match_all": {}}
+        query_bool: Dict[str, Any] = {"match_all": {}}
         if filter:
-            queryBool = {"bool": {"filter": filter}}
+            query_bool = {"bool": {"filter": filter}}
 
         return {
             "query": {
                 "script_score": {
-                    "query": queryBool,
+                    "query": query_bool,
                     "script": {
-                        "source": similarityAlgo,
+                        "source": similarity_algo,
                         "params": {"query_vector": query_vector},
                     },
                 },

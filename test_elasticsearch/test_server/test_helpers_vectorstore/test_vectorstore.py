@@ -34,7 +34,7 @@ from elasticsearch.helpers.vectorstore import (
 )
 from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
 
-from ._test_utils import ConsistentFakeEmbeddings, FakeEmbeddings
+from . import ConsistentFakeEmbeddings, FakeEmbeddings
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -119,7 +119,6 @@ class TestVectorStore:
         texts = ["foo1", "foo2", "foo3"]
         metadatas = [{"page": i} for i in range(len(texts))]
 
-        """In real use case, embedding_input can be questions for each text"""
         embedding_vectors = embeddings.embed_documents(texts)
 
         store = VectorStore(
