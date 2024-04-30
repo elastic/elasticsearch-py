@@ -4,6 +4,7 @@ services:
   elasticsearch:
     image: elasticsearch:8.13.0
     environment:
+      - action.destructive_requires_name=false  # allow wildcard index deletions
       - discovery.type=single-node
       - xpack.license.self_generated.type=trial
       - xpack.security.enabled=false  # disable password and TLS; never do this in production!
