@@ -137,8 +137,7 @@ class AsyncSparseVectorStrategy(AsyncRetrievalStrategy):
                     ],
                     "filter": filter,
                 }
-            },
-            "size": k,
+            }
         }
 
     def es_mappings_settings(

@@ -137,8 +137,7 @@ class SparseVectorStrategy(RetrievalStrategy):
                     ],
                     "filter": filter,
                 }
-            },
-            "size": k,
+            }
         }
 
     def es_mappings_settings(
