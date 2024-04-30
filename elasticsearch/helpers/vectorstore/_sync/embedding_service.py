@@ -52,7 +52,8 @@ class ElasticsearchEmbeddings(EmbeddingService):
 
     def __init__(
         self,
-        es_client: Elasticsearch,
+        *,
+        client: Elasticsearch,
         model_id: str,
         input_field: str = "text_field",
         user_agent: str = f"elasticsearch-py-es/{lib_version}",
@@ -63,14 +64,14 @@ class ElasticsearchEmbeddings(EmbeddingService):
         :param model_id: The model_id of the model deployed in the Elasticsearch cluster.
         :param input_field: The name of the key for the input text field in the
             document. Defaults to 'text_field'.
-        :param es_client: Elasticsearch client connection. Alternatively specify the
+        :param client: Elasticsearch client connection. Alternatively specify the
             Elasticsearch connection with the other es_* parameters.
         """
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
         # client.options preserves existing (non-user-agent) headers.
-        es_client = es_client.options(headers={"User-Agent": user_agent})
+        client = client.options(headers={"User-Agent": user_agent})
 
-        self.es_client = es_client
+        self.client = client
         self.model_id = model_id
         self.input_field = input_field
 
@@ -82,7 +83,7 @@ class ElasticsearchEmbeddings(EmbeddingService):
         return result[0]
 
     def _embedding_func(self, texts: List[str]) -> List[List[float]]:
-        response = self.es_client.ml.infer_trained_model(
+        response = self.client.ml.infer_trained_model(
             model_id=self.model_id, docs=[{self.input_field: text} for text in texts]
         )
         return [doc["predicted_value"] for doc in response["inference_results"]]

@@ -31,9 +31,9 @@ def model_must_be_deployed(client: Elasticsearch, model_id: str) -> None:
         pass
 
 
-def model_is_deployed(es_client: Elasticsearch, model_id: str) -> bool:
+def model_is_deployed(client: Elasticsearch, model_id: str) -> bool:
     try:
-        model_must_be_deployed(es_client, model_id)
+        model_must_be_deployed(client, model_id)
         return True
     except NotFoundError:
         return False

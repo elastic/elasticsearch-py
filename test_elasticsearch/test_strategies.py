@@ -29,11 +29,27 @@ def test_sparse_vector_strategy_raises_errors():
 
     with pytest.raises(ValueError):
         # missing query
-        strategy.es_query(None, None, "text_field", "vector_field", 10, 20, [])
+        strategy.es_query(
+            query=None,
+            query_vector=None,
+            text_field="text_field",
+            vector_field="vector_field",
+            k=10,
+            num_candidates=20,
+            filter=[],
+        )
 
     with pytest.raises(ValueError):
         # query vector not allowed
-        strategy.es_query("hi", [1, 2, 3], "text_field", "vector_field", 10, 20, [])
+        strategy.es_query(
+            query="hi",
+            query_vector=[1, 2, 3],
+            text_field="text_field",
+            vector_field="vector_field",
+            k=10,
+            num_candidates=20,
+            filter=[],
+        )
 
 
 def test_dense_vector_strategy_raises_error():
@@ -44,7 +60,7 @@ def test_dense_vector_strategy_raises_error():
     with pytest.raises(ValueError):
         # unknown distance
         DenseVectorStrategy(distance="unknown distance").es_mappings_settings(
-            "text_field", "vector_field", 10
+            text_field="text_field", vector_field="vector_field", num_dimensions=10
         )
 
 
@@ -52,11 +68,23 @@ def test_dense_vector_script_score_strategy_raises_error():
     with pytest.raises(ValueError):
         # missing query vector
         DenseVectorScriptScoreStrategy().es_query(
-            None, None, "text_field", "vector_field", 10, 20, []
+            query=None,
+            query_vector=None,
+            text_field="text_field",
+            vector_field="vector_field",
+            k=10,
+            num_candidates=20,
+            filter=[],
         )
 
     with pytest.raises(ValueError):
         # unknown distance
         DenseVectorScriptScoreStrategy(distance="unknown distance").es_query(
-            None, [1, 2, 3], "text_field", "vector_field", 10, 20, []
+            query=None,
+            query_vector=[1, 2, 3],
+            text_field="text_field",
+            vector_field="vector_field",
+            k=10,
+            num_candidates=20,
+            filter=[],
         )

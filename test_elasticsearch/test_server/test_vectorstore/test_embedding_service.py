@@ -38,7 +38,7 @@ def test_elasticsearch_embedding_documents(sync_client: Elasticsearch) -> None:
 
     documents = ["foo bar", "bar foo", "foo"]
     embedding = ElasticsearchEmbeddings(
-        es_client=sync_client, user_agent="test", model_id=MODEL_ID
+        client=sync_client, user_agent="test", model_id=MODEL_ID
     )
     output = embedding.embed_documents(documents)
     assert len(output) == 3
@@ -55,7 +55,7 @@ def test_elasticsearch_embedding_query(sync_client: Elasticsearch) -> None:
 
     document = "foo bar"
     embedding = ElasticsearchEmbeddings(
-        es_client=sync_client, user_agent="test", model_id=MODEL_ID
+        client=sync_client, user_agent="test", model_id=MODEL_ID
     )
     output = embedding.embed_query(document)
     assert len(output) == NUM_DIMENSIONS
@@ -70,19 +70,19 @@ def test_user_agent_default(
         pytest.skip(f"{MODEL_ID} model is not deployed in ML Node, skipping test")
 
     embeddings = ElasticsearchEmbeddings(
-        es_client=sync_client_request_saving, model_id=MODEL_ID
+        client=sync_client_request_saving, model_id=MODEL_ID
     )
 
     expected_pattern = r"^elasticsearch-py-es/\d+\.\d+\.\d+$"
 
-    got_agent = embeddings.es_client._headers["User-Agent"]
+    got_agent = embeddings.client._headers["User-Agent"]
     assert (
         re.match(expected_pattern, got_agent) is not None
     ), f"The user agent '{got_agent}' does not match the expected pattern."
 
     embeddings.embed_query("foo bar")
 
-    requests = embeddings.es_client.transport.requests  # type: ignore
+    requests = embeddings.client.transport.requests  # type: ignore
     assert len(requests) == 1
 
     got_request_agent = requests[0]["headers"]["User-Agent"]

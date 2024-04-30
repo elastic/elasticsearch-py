@@ -61,7 +61,7 @@ TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
 class TestVectorStore:
     def test_search_without_metadata(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search without metadata."""
 
@@ -78,36 +78,36 @@ class TestVectorStore:
             return query_body
 
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
         store.add_texts(texts)
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_search_without_metadata_async(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search without metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
         store.add_texts(texts)
 
-        output = store.search("foo", k=1)
+        output = store.search(query="foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-    def test_add_vectors(self, sync_client: Elasticsearch, index_name: str) -> None:
+    def test_add_vectors(self, sync_client: Elasticsearch, index: str) -> None:
         """
         Test adding pre-built embeddings instead of using inference for the texts.
         This allows you to separate the embeddings text and the page_content
@@ -122,49 +122,45 @@ class TestVectorStore:
         embedding_vectors = embeddings.embed_documents(texts)
 
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=embeddings,
-            es_client=sync_client,
+            client=sync_client,
         )
 
         store.add_texts(texts=texts, vectors=embedding_vectors, metadatas=metadatas)
-        output = store.search("foo1", k=1)
+        output = store.search(query="foo1", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo1"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-    def test_search_with_metadata(
-        self, sync_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_search_with_metadata(self, sync_client: Elasticsearch, index: str) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=ConsistentFakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
         metadatas = [{"page": i} for i in range(len(texts))]
         store.add_texts(texts=texts, metadatas=metadatas)
 
-        output = store.search("foo", k=1)
+        output = store.search(query="foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
-        output = store.search("bar", k=1)
+        output = store.search(query="bar", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    def test_search_with_filter(
-        self, sync_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_search_with_filter(self, sync_client: Elasticsearch, index: str) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "foo", "foo"]
@@ -192,15 +188,13 @@ class TestVectorStore:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    def test_search_script_score(
-        self, sync_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_search_script_score(self, sync_client: Elasticsearch, index: str) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
@@ -235,18 +229,18 @@ class TestVectorStore:
             assert query_body == expected_query
             return query_body
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_search_script_score_with_filter(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
@@ -282,7 +276,7 @@ class TestVectorStore:
             return query_body
 
         output = store.search(
-            "foo",
+            query="foo",
             k=1,
             custom_query=assert_query,
             filter=[{"term": {"metadata.page": 0}}],
@@ -291,16 +285,16 @@ class TestVectorStore:
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [0]
 
     def test_search_script_score_distance_dot_product(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorScriptScoreStrategy(
                 distance=DistanceMetric.DOT_PRODUCT,
             ),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
@@ -336,18 +330,18 @@ class TestVectorStore:
             }
             return query_body
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_search_knn_with_hybrid_search(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(hybrid=True),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
@@ -372,11 +366,11 @@ class TestVectorStore:
             }
             return query_body
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_search_knn_with_hybrid_search_rrf(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and rrf hybrid search with metadata."""
         texts = ["foo", "bar", "baz"]
@@ -430,23 +424,23 @@ class TestVectorStore:
         ]
         for rrf_test_case in rrf_test_cases:
             store = VectorStore(
-                index_name=index_name,
+                index=index,
                 retrieval_strategy=DenseVectorStrategy(hybrid=True, rrf=rrf_test_case),
                 embedding_service=FakeEmbeddings(),
-                es_client=sync_client,
+                client=sync_client,
             )
             store.add_texts(texts)
 
             ## without fetch_k parameter
             output = store.search(
-                "foo",
+                query="foo",
                 k=3,
                 custom_query=partial(assert_query, expected_rrf=rrf_test_case),
             )
 
         # 2. check query result is okay
-        es_output = store.es_client.search(
-            index=index_name,
+        es_output = store.client.search(
+            index=index,
             query={
                 "bool": {
                     "filter": [],
@@ -470,31 +464,31 @@ class TestVectorStore:
 
         # 3. check rrf default option is okay
         store = VectorStore(
-            index_name=f"{index_name}_default",
+            index=f"{index}_default",
             retrieval_strategy=DenseVectorStrategy(hybrid=True),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
         store.add_texts(texts)
 
         ## with fetch_k parameter
         output = store.search(
-            "foo",
+            query="foo",
             k=3,
             num_candidates=50,
             custom_query=partial(assert_query, expected_rrf={}),
         )
 
     def test_search_knn_with_custom_query_fn(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """test that custom query function is called
         with the query string and query body"""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         def my_custom_query(query_body: dict, query: Optional[str]) -> dict:
@@ -514,11 +508,11 @@ class TestVectorStore:
         texts = ["foo", "bar", "baz"]
         store.add_texts(texts)
 
-        output = store.search("foo", k=1, custom_query=my_custom_query)
+        output = store.search(query="foo", k=1, custom_query=my_custom_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
     def test_search_with_knn_infer_instack(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """test end to end with knn retrieval strategy and inference in-stack"""
 
@@ -530,15 +524,15 @@ class TestVectorStore:
         text_field = "text_field"
 
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(
                 model_id="sentence-transformers__all-minilm-l6-v2"
             ),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         # setting up the pipeline for inference
-        store.es_client.ingest.put_pipeline(
+        store.client.ingest.put_pipeline(
             id="test_pipeline",
             processors=[
                 {
@@ -553,8 +547,8 @@ class TestVectorStore:
 
         # creating a new index with the pipeline,
         # not relying on langchain to create the index
-        store.es_client.indices.create(
-            index=index_name,
+        store.client.indices.create(
+            index=index,
             mappings={
                 "properties": {
                     text_field: {"type": "text_field"},
@@ -577,13 +571,13 @@ class TestVectorStore:
         texts = ["foo", "bar", "baz"]
 
         for i, text in enumerate(texts):
-            store.es_client.create(
-                index=index_name,
+            store.client.create(
+                index=index,
                 id=str(i),
                 document={text_field: text, "metadata": {}},
             )
 
-        store.es_client.indices.refresh(index=index_name)
+        store.client.indices.refresh(index=index)
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
@@ -602,54 +596,53 @@ class TestVectorStore:
             }
             return query_body
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
-        output = store.search("bar", k=1)
+        output = store.search(query="bar", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
     def test_search_with_sparse_infer_instack(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """test end to end with sparse retrieval strategy and inference in-stack"""
 
         if not model_is_deployed(sync_client, ELSER_MODEL_ID):
             reason = f"{ELSER_MODEL_ID} model not deployed in ML Node, skipping test"
-
             pytest.skip(reason)
 
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=SparseVectorStrategy(model_id=ELSER_MODEL_ID),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
         store.add_texts(texts)
 
-        output = store.search("foo", k=1)
+        output = store.search(query="foo", k=1)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_deployed_model_check_fails_semantic(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """test that exceptions are raised if a specified model is not deployed"""
         with pytest.raises(NotFoundError):
             store = VectorStore(
-                index_name=index_name,
+                index=index,
                 retrieval_strategy=DenseVectorStrategy(
                     model_id="non-existing model ID"
                 ),
-                es_client=sync_client,
+                client=sync_client,
             )
             store.add_texts(["foo", "bar", "baz"])
 
-    def test_search_bm25(self, sync_client: Elasticsearch, index_name: str) -> None:
+    def test_search_bm25(self, sync_client: Elasticsearch, index: str) -> None:
         """Test end to end using the BM25Strategy retrieval strategy."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz"]
@@ -666,17 +659,17 @@ class TestVectorStore:
             }
             return query_body
 
-        output = store.search("foo", k=1, custom_query=assert_query)
+        output = store.search(query="foo", k=1, custom_query=assert_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
 
     def test_search_bm25_with_filter(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to using the BM25Strategy retrieval strategy with metadata."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "foo", "foo"]
@@ -695,7 +688,7 @@ class TestVectorStore:
             return query_body
 
         output = store.search(
-            "foo",
+            query="foo",
             k=3,
             custom_query=assert_query,
             filter=[{"term": {"metadata.page": 1}}],
@@ -703,53 +696,53 @@ class TestVectorStore:
         assert [doc["_source"]["text_field"] for doc in output] == ["foo"]
         assert [doc["_source"]["metadata"]["page"] for doc in output] == [1]
 
-    def test_delete(self, sync_client: Elasticsearch, index_name: str) -> None:
+    def test_delete(self, sync_client: Elasticsearch, index: str) -> None:
         """Test delete methods from vector store."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(),
             embedding_service=FakeEmbeddings(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
         texts = ["foo", "bar", "baz", "gni"]
         metadatas = [{"page": i} for i in range(len(texts))]
         ids = store.add_texts(texts=texts, metadatas=metadatas)
 
-        output = store.search("foo", k=10)
+        output = store.search(query="foo", k=10)
         assert len(output) == 4
 
-        store.delete(ids[1:3])
-        output = store.search("foo", k=10)
+        store.delete(ids=ids[1:3])
+        output = store.search(query="foo", k=10)
         assert len(output) == 2
 
-        store.delete(["not-existing"])
-        output = store.search("foo", k=10)
+        store.delete(ids=["not-existing"])
+        output = store.search(query="foo", k=10)
         assert len(output) == 2
 
-        store.delete([ids[0]])
-        output = store.search("foo", k=10)
+        store.delete(ids=[ids[0]])
+        output = store.search(query="foo", k=10)
         assert len(output) == 1
 
-        store.delete([ids[3]])
-        output = store.search("gni", k=10)
+        store.delete(ids=[ids[3]])
+        output = store.search(query="gni", k=10)
         assert len(output) == 0
 
     def test_indexing_exception_error(
         self,
         sync_client: Elasticsearch,
-        index_name: str,
+        index: str,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test bulk exception logging is giving better hints."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client,
+            client=sync_client,
         )
 
-        store.es_client.indices.create(
-            index=index_name,
+        store.client.indices.create(
+            index=index,
             mappings={"properties": {}},
             settings={"index": {"default_pipeline": "not-existing-pipeline"}},
         )
@@ -765,17 +758,17 @@ class TestVectorStore:
         assert log_message in caplog.text
 
     def test_user_agent_default(
-        self, sync_client_request_saving: Elasticsearch, index_name: str
+        self, sync_client_request_saving: Elasticsearch, index: str
     ) -> None:
         """Test to make sure the user-agent is set correctly."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client_request_saving,
+            client=sync_client_request_saving,
         )
         expected_pattern = r"^elasticsearch-py-vs/\d+\.\d+\.\d+$"
 
-        got_agent = store.es_client._headers["User-Agent"]
+        got_agent = store.client._headers["User-Agent"]
         assert (
             re.match(expected_pattern, got_agent) is not None
         ), f"The user agent '{got_agent}' does not match the expected pattern."
@@ -783,49 +776,49 @@ class TestVectorStore:
         texts = ["foo", "bob", "baz"]
         store.add_texts(texts)
 
-        for request in store.es_client.transport.requests:  # type: ignore
+        for request in store.client.transport.requests:  # type: ignore
             agent = request["headers"]["User-Agent"]
             assert (
                 re.match(expected_pattern, agent) is not None
             ), f"The user agent '{agent}' does not match the expected pattern."
 
     def test_user_agent_custom(
-        self, sync_client_request_saving: Elasticsearch, index_name: str
+        self, sync_client_request_saving: Elasticsearch, index: str
     ) -> None:
         """Test to make sure the user-agent is set correctly."""
         user_agent = "this is THE user_agent!"
 
         store = VectorStore(
             user_agent=user_agent,
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client_request_saving,
+            client=sync_client_request_saving,
         )
 
-        assert store.es_client._headers["User-Agent"] == user_agent
+        assert store.client._headers["User-Agent"] == user_agent
 
         texts = ["foo", "bob", "baz"]
         store.add_texts(texts)
 
-        for request in store.es_client.transport.requests:  # type: ignore
+        for request in store.client.transport.requests:  # type: ignore
             assert request["headers"]["User-Agent"] == user_agent
 
-    def test_bulk_args(self, sync_client_request_saving: Any, index_name: str) -> None:
+    def test_bulk_args(self, sync_client_request_saving: Any, index: str) -> None:
         """Test to make sure the bulk arguments work as expected."""
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=BM25Strategy(),
-            es_client=sync_client_request_saving,
+            client=sync_client_request_saving,
         )
 
         texts = ["foo", "bob", "baz"]
         store.add_texts(texts, bulk_kwargs={"chunk_size": 1})
 
         # 1 for index exist, 1 for index create, 3 to index docs
-        assert len(store.es_client.transport.requests) == 5  # type: ignore
+        assert len(store.client.transport.requests) == 5  # type: ignore
 
     def test_max_marginal_relevance_search(
-        self, sync_client: Elasticsearch, index_name: str
+        self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test max marginal relevance search."""
         texts = ["foo", "bar", "baz"]
@@ -833,28 +826,28 @@ class TestVectorStore:
         text_field = "text_field"
         embedding_service = ConsistentFakeEmbeddings()
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorScriptScoreStrategy(),
             embedding_service=embedding_service,
             vector_field=vector_field,
             text_field=text_field,
-            es_client=sync_client,
+            client=sync_client,
         )
         store.add_texts(texts)
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service,
-            texts[0],
+            embedding_service=embedding_service,
+            query=texts[0],
             vector_field=vector_field,
             k=3,
             num_candidates=3,
         )
-        sim_output = store.search(texts[0], k=3)
+        sim_output = store.search(query=texts[0], k=3)
         assert mmr_output == sim_output
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service,
-            texts[0],
+            embedding_service=embedding_service,
+            query=texts[0],
             vector_field=vector_field,
             k=2,
             num_candidates=3,
@@ -864,8 +857,8 @@ class TestVectorStore:
         assert mmr_output[1]["_source"][text_field] == texts[1]
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service,
-            texts[0],
+            embedding_service=embedding_service,
+            query=texts[0],
             vector_field=vector_field,
             k=2,
             num_candidates=3,
@@ -877,28 +870,26 @@ class TestVectorStore:
 
         # if fetch_k < k, then the output will be less than k
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service,
-            texts[0],
+            embedding_service=embedding_service,
+            query=texts[0],
             vector_field=vector_field,
             k=3,
             num_candidates=2,
         )
         assert len(mmr_output) == 2
 
-    def test_metadata_mapping(
-        self, sync_client: Elasticsearch, index_name: str
-    ) -> None:
+    def test_metadata_mapping(self, sync_client: Elasticsearch, index: str) -> None:
         """Test that the metadata mapping is applied."""
         test_mappings = {
             "my_field": {"type": "keyword"},
             "another_field": {"type": "text"},
         }
         store = VectorStore(
-            index_name=index_name,
+            index=index,
             retrieval_strategy=DenseVectorStrategy(distance=DistanceMetric.COSINE),
             embedding_service=FakeEmbeddings(),
             num_dimensions=10,
-            es_client=sync_client,
+            client=sync_client,
             metadata_mappings=test_mappings,
         )
 
@@ -906,8 +897,8 @@ class TestVectorStore:
         metadatas = [{"my_field": str(i)} for i in range(len(texts))]
         store.add_texts(texts=texts, metadatas=metadatas)
 
-        mapping_response = sync_client.indices.get_mapping(index=index_name)
-        mapping_properties = mapping_response[index_name]["mappings"]["properties"]
+        mapping_response = sync_client.indices.get_mapping(index=index)
+        mapping_properties = mapping_response[index]["mappings"]["properties"]
         assert mapping_properties["vector_field"] == {
             "type": "dense_vector",
             "dims": 10,

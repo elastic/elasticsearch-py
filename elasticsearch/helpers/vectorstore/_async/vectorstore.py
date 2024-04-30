@@ -50,8 +50,9 @@ class AsyncVectorStore:
 
     def __init__(
         self,
-        es_client: AsyncElasticsearch,
-        index_name: str,
+        client: AsyncElasticsearch,
+        *,
+        index: str,
         retrieval_strategy: AsyncRetrievalStrategy,
         embedding_service: Optional[AsyncEmbeddingService] = None,
         num_dimensions: Optional[int] = None,
@@ -63,26 +64,26 @@ class AsyncVectorStore:
         """
         :param user_header: user agent header specific to the 3rd party integration.
             Used for usage tracking in Elastic Cloud.
-        :param index_name: The name of the index to query.
+        :param index: The name of the index to query.
         :param retrieval_strategy: how to index and search the data. See the strategies
             module for availble strategies.
         :param text_field: Name of the field with the textual data.
         :param vector_field: For strategies that perform embedding inference in Python,
             the embedding vector goes in this field.
-        :param es_client: Elasticsearch client connection. Alternatively specify the
+        :param client: Elasticsearch client connection. Alternatively specify the
             Elasticsearch connection with the other es_* parameters.
         """
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
         # client.options preserves existing (non-user-agent) headers.
-        es_client = es_client.options(headers={"User-Agent": user_agent})
+        client = client.options(headers={"User-Agent": user_agent})
 
         if hasattr(retrieval_strategy, "text_field"):
             retrieval_strategy.text_field = text_field
         if hasattr(retrieval_strategy, "vector_field"):
             retrieval_strategy.vector_field = vector_field
 
-        self.es_client = es_client
-        self.index_name = index_name
+        self.client = client
+        self.index = index
         self.retrieval_strategy = retrieval_strategy
         self.embedding_service = embedding_service
         self.num_dimensions = num_dimensions
@@ -91,11 +92,12 @@ class AsyncVectorStore:
         self.metadata_mappings = metadata_mappings
 
     async def close(self) -> None:
-        return await self.es_client.close()
+        return await self.client.close()
 
     async def add_texts(
         self,
         texts: List[str],
+        *,
         metadatas: Optional[List[Dict[str, Any]]] = None,
         vectors: Optional[List[List[float]]] = None,
         ids: Optional[List[str]] = None,
@@ -136,7 +138,7 @@ class AsyncVectorStore:
 
             request: Dict[str, Any] = {
                 "_op_type": "index",
-                "_index": self.index_name,
+                "_index": self.index,
                 self.text_field: text,
                 "metadata": metadata,
                 "_id": ids[i],
@@ -150,7 +152,7 @@ class AsyncVectorStore:
         if len(requests) > 0:
             try:
                 success, failed = await async_bulk(
-                    self.es_client,
+                    self.client,
                     requests,
                     stats_only=True,
                     refresh=refresh_indices,
@@ -170,6 +172,7 @@ class AsyncVectorStore:
 
     async def delete(  # type: ignore[no-untyped-def]
         self,
+        *,
         ids: Optional[List[str]] = None,
         query: Optional[Dict[str, Any]] = None,
         refresh_indices: bool = True,
@@ -191,11 +194,11 @@ class AsyncVectorStore:
         try:
             if ids:
                 body = [
-                    {"_op_type": "delete", "_index": self.index_name, "_id": _id}
+                    {"_op_type": "delete", "_index": self.index, "_id": _id}
                     for _id in ids
                 ]
                 await async_bulk(
-                    self.es_client,
+                    self.client,
                     body,
                     refresh=refresh_indices,
                     ignore_status=404,
@@ -204,8 +207,8 @@ class AsyncVectorStore:
                 logger.debug(f"Deleted {len(body)} texts from index")
 
             else:
-                await self.es_client.delete_by_query(
-                    index=self.index_name,
+                await self.client.delete_by_query(
+                    index=self.index,
                     query=query,
                     refresh=refresh_indices,
                     **delete_kwargs,
@@ -221,6 +224,7 @@ class AsyncVectorStore:
 
     async def search(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]] = None,
         k: int = 4,
@@ -270,8 +274,8 @@ class AsyncVectorStore:
             query_body = custom_query(query_body, query)
             logger.debug(f"Calling custom_query, Query body now: {query_body}")
 
-        response = await self.es_client.search(
-            index=self.index_name,
+        response = await self.client.search(
+            index=self.index,
             **query_body,
             size=k,
             source=True,
@@ -282,9 +286,9 @@ class AsyncVectorStore:
         return hits
 
     async def _create_index_if_not_exists(self) -> None:
-        exists = await self.es_client.indices.exists(index=self.index_name)
+        exists = await self.client.indices.exists(index=self.index)
         if exists.meta.status == 200:
-            logger.debug(f"Index {self.index_name} already exists. Skipping creation.")
+            logger.debug(f"Index {self.index} already exists. Skipping creation.")
             return
 
         if self.retrieval_strategy.needs_inference():
@@ -312,14 +316,17 @@ class AsyncVectorStore:
             mappings["properties"]["metadata"] = {"properties": metadata}
 
         await self.retrieval_strategy.before_index_creation(
-            self.es_client, self.text_field, self.vector_field
+            client=self.client,
+            text_field=self.text_field,
+            vector_field=self.vector_field,
         )
-        await self.es_client.indices.create(
-            index=self.index_name, mappings=mappings, settings=settings
+        await self.client.indices.create(
+            index=self.index, mappings=mappings, settings=settings
         )
 
     async def max_marginal_relevance_search(
         self,
+        *,
         embedding_service: AsyncEmbeddingService,
         query: str,
         vector_field: str,

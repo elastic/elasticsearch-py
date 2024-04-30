@@ -27,6 +27,7 @@ class AsyncRetrievalStrategy(ABC):
     @abstractmethod
     def es_query(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]],
         text_field: str,
@@ -51,6 +52,7 @@ class AsyncRetrievalStrategy(ABC):
     @abstractmethod
     def es_mappings_settings(
         self,
+        *,
         text_field: str,
         vector_field: str,
         num_dimensions: Optional[int],
@@ -60,13 +62,15 @@ class AsyncRetrievalStrategy(ABC):
         creating inference pipelines or checking if a required model was deployed.
 
         :param client: Elasticsearch client connection.
-        :param index_name: The name of the Elasticsearch index to create.
-        :param metadata_mapping: Flat dictionary with field and field type pairs that
-            describe the schema of the metadata.
+        :param text_field: The field containing the text data in the index.
+        :param vector_field: The field containing the vector representations in the index.
+        :param num_dimensions: If vectors are indexed, how many dimensions do they have.
+
+        :return: Dictionary with field and field type pairs that describe the schema.
         """
 
     async def before_index_creation(
-        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+        self, *, client: AsyncElasticsearch, text_field: str, vector_field: str
     ) -> None:
         """
         Executes before the index is created. Used for setting up
@@ -101,6 +105,7 @@ class AsyncSparseVectorStrategy(AsyncRetrievalStrategy):
 
     def es_query(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]],
         text_field: str,
@@ -138,6 +143,7 @@ class AsyncSparseVectorStrategy(AsyncRetrievalStrategy):
 
     def es_mappings_settings(
         self,
+        *,
         text_field: str,
         vector_field: str,
         num_dimensions: Optional[int],
@@ -154,7 +160,7 @@ class AsyncSparseVectorStrategy(AsyncRetrievalStrategy):
         return mappings, settings
 
     async def before_index_creation(
-        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+        self, *, client: AsyncElasticsearch, text_field: str, vector_field: str
     ) -> None:
         if self.model_id:
             await model_must_be_deployed(client, self.model_id)
@@ -183,6 +189,7 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
 
     def __init__(
         self,
+        *,
         distance: DistanceMetric = DistanceMetric.COSINE,
         model_id: Optional[str] = None,
         hybrid: bool = False,
@@ -202,6 +209,7 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
 
     def es_query(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]],
         text_field: str,
@@ -236,6 +244,7 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
 
     def es_mappings_settings(
         self,
+        *,
         text_field: str,
         vector_field: str,
         num_dimensions: Optional[int],
@@ -265,7 +274,7 @@ class AsyncDenseVectorStrategy(AsyncRetrievalStrategy):
         return mappings, {}
 
     async def before_index_creation(
-        self, client: AsyncElasticsearch, text_field: str, vector_field: str
+        self, *, client: AsyncElasticsearch, text_field: str, vector_field: str
     ) -> None:
         if self.model_id:
             await model_must_be_deployed(client, self.model_id)
@@ -314,6 +323,7 @@ class AsyncDenseVectorScriptScoreStrategy(AsyncRetrievalStrategy):
 
     def es_query(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]],
         text_field: str,
@@ -365,6 +375,7 @@ class AsyncDenseVectorScriptScoreStrategy(AsyncRetrievalStrategy):
 
     def es_mappings_settings(
         self,
+        *,
         text_field: str,
         vector_field: str,
         num_dimensions: Optional[int],
@@ -396,6 +407,7 @@ class AsyncBM25Strategy(AsyncRetrievalStrategy):
 
     def es_query(
         self,
+        *,
         query: Optional[str],
         query_vector: Optional[List[float]],
         text_field: str,
@@ -423,6 +435,7 @@ class AsyncBM25Strategy(AsyncRetrievalStrategy):
 
     def es_mappings_settings(
         self,
+        *,
         text_field: str,
         vector_field: str,
         num_dimensions: Optional[int],

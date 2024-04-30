@@ -31,9 +31,9 @@ async def model_must_be_deployed(client: AsyncElasticsearch, model_id: str) -> N
         pass
 
 
-async def model_is_deployed(es_client: AsyncElasticsearch, model_id: str) -> bool:
+async def model_is_deployed(client: AsyncElasticsearch, model_id: str) -> bool:
     try:
-        await model_must_be_deployed(es_client, model_id)
+        await model_must_be_deployed(client, model_id)
         return True
     except NotFoundError:
         return False

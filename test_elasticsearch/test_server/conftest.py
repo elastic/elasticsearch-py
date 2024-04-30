@@ -30,7 +30,7 @@ ELASTICSEARCH_BUILD_HASH = ""
 ELASTICSEARCH_REST_API_TESTS = []
 
 
-def _create(elasticsearch_url, transport=None):
+def _create(elasticsearch_url, transport=None, node_class=None):
     # Configure the client with certificates
     kw = {}
     if elasticsearch_url.startswith("https://"):
@@ -40,6 +40,9 @@ def _create(elasticsearch_url, transport=None):
     # 'PYTHON_CONNECTION_CLASS' env var
     if "PYTHON_CONNECTION_CLASS" in os.environ:
         kw["node_class"] = os.environ["PYTHON_CONNECTION_CLASS"]
+
+    if node_class is not None and "node_class" not in kw:
+        kw["node_class"] = node_class
 
     if transport:
         kw["transport_class"] = transport

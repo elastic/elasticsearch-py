@@ -25,7 +25,7 @@ from . import RequestSavingTransport
 
 
 @pytest.fixture(scope="function")
-def index_name() -> str:
+def index() -> str:
     return f"test_{uuid.uuid4().hex}"
 
 
