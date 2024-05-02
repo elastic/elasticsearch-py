@@ -20,9 +20,15 @@ services:
       retries: 60
 
   # Currently fails on Mac: https://github.com/elastic/elasticsearch/issues/106206
-  elasticsearch-with-models:
+  elasticsearch-with-model:
     image: docker.elastic.co/eland/eland
     depends_on:
       - elasticsearch
     restart: no
-    command: sh -c "sleep 10 && eland_import_hub_model --url http://elasticsearch:9200 --hub-model-id sentence-transformers/msmarco-minilm-l-12-v3 --start"
+    command: sh -c "
+      sleep 10 &&
+      eland_import_hub_model \
+        --hub-model-id sentence-transformers/all-minilm-l6-v2 \
+        --url http://elasticsearch:9200 \
+        --start
+      "
