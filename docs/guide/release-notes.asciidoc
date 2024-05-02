@@ -39,7 +39,7 @@
 
 [discrete]
 [[rn-8-13-1]]
-=== 8.13.1 (2024-05-02)
+=== 8.13.1 (2024-05-03)
 
 - Added ``force_synthetic_source`` to the Get API
 - Added ``wait_for_completion`` to the Create trained model API
