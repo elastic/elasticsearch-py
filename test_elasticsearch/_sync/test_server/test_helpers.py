@@ -16,8 +16,8 @@
 #  under the License.
 
 import logging
-import time
 from datetime import datetime, timedelta, timezone
+from time import sleep
 from unittest.mock import MagicMock, call, patch
 
 import pytest
@@ -85,7 +85,7 @@ class TestStreamingBulk(object):
     def test_documents_data_types(self, es_client):
         def async_gen():
             for x in range(100):
-                time.sleep(0)
+                sleep(0)
                 yield {"answer": x, "_id": x}
 
         def sync_gen():

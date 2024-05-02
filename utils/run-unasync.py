@@ -123,8 +123,7 @@ def main():
             },
         ),
         cleanup_patterns=[
-            "s/^import asyncio$/import time/",
-            "s/asyncio.sleep/time.sleep/",
+            "s/^from asyncio import sleep$/from time import sleep/",
             "/^import pytest_asyncio$/d",
             "/^ *@pytest.mark.asyncio$/d",
             "/^pytestmark = pytest.mark.asyncio$/d",

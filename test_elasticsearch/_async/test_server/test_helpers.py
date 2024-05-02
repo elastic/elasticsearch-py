@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
 import logging
+from asyncio import sleep
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
@@ -92,7 +92,7 @@ class TestStreamingBulk(object):
     async def test_documents_data_types(self, es_client):
         async def async_gen():
             for x in range(100):
-                await asyncio.sleep(0)
+                await sleep(0)
                 yield {"answer": x, "_id": x}
 
         def sync_gen():

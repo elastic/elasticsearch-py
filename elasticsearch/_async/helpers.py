@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
 import logging
+from asyncio import sleep
 from typing import (
     Any,
     AsyncIterable,
@@ -238,9 +238,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await asyncio.sleep(
-                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
-                )
+                await sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 data: Union[
