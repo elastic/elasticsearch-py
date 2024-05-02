@@ -26,7 +26,7 @@ from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
 
 # deployed with
 # https://www.elastic.co/guide/en/machine-learning/current/ml-nlp-text-emb-vector-search-example.html
-MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__msmarco-minilm-l-12-v3")
+MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__all-minilm-l6-v2")
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENSIONS", "384"))
 
 

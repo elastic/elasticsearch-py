@@ -525,9 +525,7 @@ class TestVectorStore:
 
         store = VectorStore(
             index=index,
-            retrieval_strategy=DenseVectorStrategy(
-                model_id="sentence-transformers__all-minilm-l6-v2"
-            ),
+            retrieval_strategy=DenseVectorStrategy(model_id=TRANSFORMER_MODEL_ID),
             client=sync_client,
         )
 
