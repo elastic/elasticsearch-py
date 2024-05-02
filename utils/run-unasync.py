@@ -16,42 +16,84 @@
 #  under the License.
 
 import os
+import subprocess
+from glob import glob
 from pathlib import Path
 
 import unasync
 
 
-def main():
-    # Unasync all the generated async code
-    additional_replacements = {
-        # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
-        "AsyncTransport": "Transport",
-        "AsyncElasticsearch": "Elasticsearch",
-        # We don't want to rewrite this class
-        "AsyncSearchClient": "AsyncSearchClient",
-        # Handling typing.Awaitable[...] isn't done yet by unasync.
-        "_TYPE_ASYNC_SNIFF_CALLBACK": "_TYPE_SYNC_SNIFF_CALLBACK",
-    }
-    rules = [
-        unasync.Rule(
-            fromdir="/elasticsearch/_async/client/",
-            todir="/elasticsearch/_sync/client/",
-            additional_replacements=additional_replacements,
-        ),
-    ]
+def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
+    for file in glob("*.py", root_dir=source_dir):
+        path = output_dir / file
+        for pattern in patterns:
+            subprocess.check_call(["sed", "-i.bak", pattern, str(path)])
+        subprocess.check_call(["rm", f"{path}.bak"])
+
+
+def run(
+    rule: unasync.Rule,
+    cleanup_patterns: list[str] = [],
+):
+    root_dir = Path(__file__).absolute().parent.parent
+    source_dir = root_dir / rule.fromdir.lstrip("/")
+    output_dir = root_dir / rule.todir.lstrip("/")
 
     filepaths = []
-    for root, _, filenames in os.walk(
-        Path(__file__).absolute().parent.parent / "elasticsearch/_async"
-    ):
+    for root, _, filenames in os.walk(source_dir):
         for filename in filenames:
-            if filename.rpartition(".")[-1] in (
+            if filename.rpartition(".")[-1] in {
                 "py",
                 "pyi",
-            ) and not filename.startswith("utils.py"):
+            } and not filename.startswith("utils.py"):
                 filepaths.append(os.path.join(root, filename))
 
-    unasync.unasync_files(filepaths, rules)
+    unasync.unasync_files(filepaths, [rule])
+
+    if cleanup_patterns:
+        cleanup(source_dir, output_dir, cleanup_patterns)
+
+
+def main():
+    run(
+        rule=unasync.Rule(
+            fromdir="/elasticsearch/_async/client/",
+            todir="/elasticsearch/_sync/client/",
+            additional_replacements={
+                # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
+                "AsyncTransport": "Transport",
+                "AsyncElasticsearch": "Elasticsearch",
+                # We don't want to rewrite this class
+                "AsyncSearchClient": "AsyncSearchClient",
+                # Handling typing.Awaitable[...] isn't done yet by unasync.
+                "_TYPE_ASYNC_SNIFF_CALLBACK": "_TYPE_SYNC_SNIFF_CALLBACK",
+            },
+        ),
+    )
+
+    run(
+        rule=unasync.Rule(
+            fromdir="elasticsearch/helpers/vectorstore/_async/",
+            todir="elasticsearch/helpers/vectorstore/_sync/",
+            additional_replacements={
+                "AsyncBM25Strategy": "BM25Strategy",
+                "AsyncDenseVectorStrategy": "DenseVectorStrategy",
+                "AsyncDenseVectorScriptScoreStrategy": "DenseVectorScriptScoreStrategy",
+                "AsyncElasticsearch": "Elasticsearch",
+                "AsyncElasticsearchEmbeddings": "ElasticsearchEmbeddings",
+                "AsyncEmbeddingService": "EmbeddingService",
+                "AsyncRetrievalStrategy": "RetrievalStrategy",
+                "AsyncSparseVectorStrategy": "SparseVectorStrategy",
+                "AsyncTransport": "Transport",
+                "AsyncVectorStore": "VectorStore",
+                "async_bulk": "bulk",
+                "_async": "_sync",
+            },
+        ),
+        cleanup_patterns=[
+            "/^import asyncio$/d",
+        ],
+    )
 
 
 if __name__ == "__main__":

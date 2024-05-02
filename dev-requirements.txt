@@ -15,9 +15,12 @@ twine
 build
 nox
 
-numpy
 pandas
 orjson
+
+# mmr for vectorstore
+numpy
+simsimd
 
 # Testing the 'search_mvt' API response
 mapbox-vector-tile

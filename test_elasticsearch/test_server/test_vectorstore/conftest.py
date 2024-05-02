@@ -15,52 +15,35 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
+import uuid
 
 import pytest
 
-import elasticsearch
-
-from ..utils import CA_CERTS, wipe_cluster
-
-# Information about the Elasticsearch instance running, if any
-# Used for
-ELASTICSEARCH_VERSION = ""
-ELASTICSEARCH_BUILD_HASH = ""
-ELASTICSEARCH_REST_API_TESTS = []
+from ...utils import wipe_cluster
+from ..conftest import _create
+from . import RequestSavingTransport
 
 
-def _create(elasticsearch_url, transport=None, node_class=None):
-    # Configure the client with certificates
-    kw = {}
-    if elasticsearch_url.startswith("https://"):
-        kw["ca_certs"] = CA_CERTS
-
-    # Optionally configure an HTTP conn class depending on
-    # 'PYTHON_CONNECTION_CLASS' env var
-    if "PYTHON_CONNECTION_CLASS" in os.environ:
-        kw["node_class"] = os.environ["PYTHON_CONNECTION_CLASS"]
-
-    if node_class is not None and "node_class" not in kw:
-        kw["node_class"] = node_class
-
-    if transport:
-        kw["transport_class"] = transport
-
-    # We do this little dance with the URL to force
-    # Requests to respect 'headers: None' within rest API spec tests.
-    return elasticsearch.Elasticsearch(elasticsearch_url, **kw)
+@pytest.fixture(scope="function")
+def index() -> str:
+    return f"test_{uuid.uuid4().hex}"
 
 
-@pytest.fixture(scope="session")
-def sync_client_factory(elasticsearch_url):
+@pytest.fixture(scope="function")
+def sync_client_request_saving_factory(elasticsearch_url):
     client = None
+
     try:
         client = _create(elasticsearch_url)
-
         # Wipe the cluster before we start testing just in case it wasn't wiped
         # cleanly from the previous run of pytest?
         wipe_cluster(client)
+    finally:
+        client.close()
+
+    try:
+        # Recreate client with a transport that saves requests.
+        client = _create(elasticsearch_url, RequestSavingTransport)
 
         yield client
     finally:
@@ -69,9 +52,9 @@ def sync_client_factory(elasticsearch_url):
 
 
 @pytest.fixture(scope="function")
-def sync_client(sync_client_factory):
+def sync_client_request_saving(sync_client_request_saving_factory):
     try:
-        yield sync_client_factory
+        yield sync_client_request_saving_factory
     finally:
         # Wipe the cluster clean after every test execution.
-        wipe_cluster(sync_client_factory)
+        wipe_cluster(sync_client_request_saving_factory)
