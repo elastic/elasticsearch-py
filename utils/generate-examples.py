@@ -23,7 +23,7 @@ import os
 import tempfile
 from pathlib import Path
 
-import black 
+import black
 from click.testing import CliRunner
 from jinja2 import Environment, FileSystemLoader
 
