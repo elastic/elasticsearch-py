@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-13-1>>
 * <<rn-8-13-0>>
 * <<rn-8-12-1>>
 * <<rn-8-12-0>>
@@ -35,6 +36,14 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-13-1]]
+=== 8.13.1 (2024-05-02)
+
+- Added ``force_synthetic_source`` to the Get API
+- Added ``wait_for_completion`` to the Create trained model API
+- Added ``typed_keys`` to the Query API key information API
 
 [discrete]
 [[rn-8-13-0]]

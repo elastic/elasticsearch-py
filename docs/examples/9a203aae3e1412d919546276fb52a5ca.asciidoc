@@ -1,4 +1,4 @@
-// inference/put-inference.asciidoc:252
+// inference/put-inference.asciidoc:335
 
 [source, python]
 ----
@@ -9,10 +9,9 @@ resp = client.inference.put_model(
         "service": "cohere",
         "service_settings": {
             "api_key": "<api_key>",
-            "model": "embed-english-light-v3.0",
-            "embedding_type": "int8",
+            "model_id": "embed-english-light-v3.0",
+            "embedding_type": "byte",
         },
-        "task_settings": {},
     },
 )
 print(resp)
