@@ -70,6 +70,7 @@ class ConnectorClient(NamespacedClient):
         self,
         *,
         connector_id: str,
+        delete_sync_jobs: bool,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -81,12 +82,17 @@ class ConnectorClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/delete-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be deleted
+        :param delete_sync_jobs: Determines whether associated sync jobs are also deleted.
         """
         if connector_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'connector_id'")
+        if delete_sync_jobs is None:
+            raise ValueError("Empty value passed for parameter 'delete_sync_jobs'")
         __path_parts: t.Dict[str, str] = {"connector_id": _quote(connector_id)}
         __path = f'/_connector/{__path_parts["connector_id"]}'
         __query: t.Dict[str, t.Any] = {}
+        if delete_sync_jobs is not None:
+            __query["delete_sync_jobs"] = delete_sync_jobs
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -168,7 +174,7 @@ class ConnectorClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         last_access_control_sync_error: t.Optional[t.Union[None, t.Any]] = None,
-        last_access_control_sync_scheduled_at: t.Optional[str] = None,
+        last_access_control_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
         last_access_control_sync_status: t.Optional[
             t.Union[
                 "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
@@ -176,18 +182,18 @@ class ConnectorClient(NamespacedClient):
             ]
         ] = None,
         last_deleted_document_count: t.Optional[int] = None,
-        last_incremental_sync_scheduled_at: t.Optional[str] = None,
+        last_incremental_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
         last_indexed_document_count: t.Optional[int] = None,
         last_seen: t.Optional[t.Union[None, t.Any]] = None,
         last_sync_error: t.Optional[t.Union[None, t.Any]] = None,
-        last_sync_scheduled_at: t.Optional[str] = None,
+        last_sync_scheduled_at: t.Optional[t.Union[str, t.Any]] = None,
         last_sync_status: t.Optional[
             t.Union[
                 "t.Literal['canceled', 'canceling', 'completed', 'error', 'in_progress', 'pending', 'suspended']",
                 str,
             ]
         ] = None,
-        last_synced: t.Optional[str] = None,
+        last_synced: t.Optional[t.Union[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -643,7 +649,7 @@ class ConnectorClient(NamespacedClient):
         """
         Lists all connector sync jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/{list}/list-connector-sync-jobs-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/list-connector-sync-jobs-api.html>`_
 
         :param connector_id: A connector id to fetch connector sync jobs for
         :param from_: Starting offset (default: 0)
@@ -739,6 +745,46 @@ class ConnectorClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="connector.sync_job_post",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def update_active_filtering(
+        self,
+        *,
+        connector_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Activates the draft filtering rules if they are in a validated state.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-filtering-api.html>`_
+
+        :param connector_id: The unique identifier of the connector to be updated
+        """
+        if connector_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_id'")
+        __path_parts: t.Dict[str, str] = {"connector_id": _quote(connector_id)}
+        __path = f'/_connector/{__path_parts["connector_id"]}/_filtering/_activate'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.update_active_filtering",
             path_parts=__path_parts,
         )
 
@@ -903,17 +949,19 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("filtering",),
+        body_fields=("advanced_snippet", "filtering", "rules"),
     )
     async def update_filtering(
         self,
         *,
         connector_id: str,
-        filtering: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        advanced_snippet: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filtering: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        rules: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -922,12 +970,12 @@ class ConnectorClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-filtering-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
+        :param advanced_snippet:
         :param filtering:
+        :param rules:
         """
         if connector_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'connector_id'")
-        if filtering is None and body is None:
-            raise ValueError("Empty value passed for parameter 'filtering'")
         __path_parts: t.Dict[str, str] = {"connector_id": _quote(connector_id)}
         __path = f'/_connector/{__path_parts["connector_id"]}/_filtering'
         __query: t.Dict[str, t.Any] = {}
@@ -941,8 +989,12 @@ class ConnectorClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
+            if advanced_snippet is not None:
+                __body["advanced_snippet"] = advanced_snippet
             if filtering is not None:
                 __body["filtering"] = filtering
+            if rules is not None:
+                __body["rules"] = rules
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -951,6 +1003,58 @@ class ConnectorClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="connector.update_filtering",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("validation",),
+    )
+    async def update_filtering_validation(
+        self,
+        *,
+        connector_id: str,
+        validation: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Updates the validation info of the draft filtering rules.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.14/update-connector-filtering-validation-api.html>`_
+
+        :param connector_id: The unique identifier of the connector to be updated
+        :param validation:
+        """
+        if connector_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_id'")
+        if validation is None and body is None:
+            raise ValueError("Empty value passed for parameter 'validation'")
+        __path_parts: t.Dict[str, str] = {"connector_id": _quote(connector_id)}
+        __path = f'/_connector/{__path_parts["connector_id"]}/_filtering/_validation'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if validation is not None:
+                __body["validation"] = validation
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.update_filtering_validation",
             path_parts=__path_parts,
         )
 
