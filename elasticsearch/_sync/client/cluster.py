@@ -661,7 +661,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("template", "allow_auto_create", "meta", "version"),
+        body_fields=("template", "deprecated", "meta", "version"),
         parameter_aliases={"_meta": "meta"},
     )
     def put_component_template(
@@ -669,8 +669,9 @@ class ClusterClient(NamespacedClient):
         *,
         name: str,
         template: t.Optional[t.Mapping[str, t.Any]] = None,
-        allow_auto_create: t.Optional[bool] = None,
+        cause: t.Optional[str] = None,
         create: t.Optional[bool] = None,
+        deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -698,13 +699,12 @@ class ClusterClient(NamespacedClient):
             update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
-        :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
-            cluster setting. If set to `true` in a template, then indices can be automatically
-            created using that template even if auto-creation of indices is disabled
-            via `actions.auto_create_index`. If set to `false` then data streams matching
-            the template must always be explicitly created.
+        :param cause:
         :param create: If `true`, this request cannot replace or update existing component
             templates.
+        :param deprecated: Marks this index template as deprecated. When creating or
+            updating a non-deprecated index template that uses deprecated components,
+            Elasticsearch will emit a deprecation warning.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -724,6 +724,8 @@ class ClusterClient(NamespacedClient):
         __path = f'/_component_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -739,8 +741,8 @@ class ClusterClient(NamespacedClient):
         if not __body:
             if template is not None:
                 __body["template"] = template
-            if allow_auto_create is not None:
-                __body["allow_auto_create"] = allow_auto_create
+            if deprecated is not None:
+                __body["deprecated"] = deprecated
             if meta is not None:
                 __body["_meta"] = meta
             if version is not None:

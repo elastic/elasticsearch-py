@@ -48,7 +48,9 @@ def pytest_argv():
 
 @nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
-    session.install(".[async,requests,orjson]", env=INSTALL_ENV, silent=False)
+    session.install(
+        ".[async,requests,orjson,vectorstore_mmr]", env=INSTALL_ENV, silent=False
+    )
     session.install("-r", "dev-requirements.txt", silent=False)
 
     session.run(*pytest_argv())
@@ -71,7 +73,7 @@ def test_otel(session):
 
 @nox.session()
 def format(session):
-    session.install("black~=24.0", "isort", "flynt", "unasync", "setuptools")
+    session.install("black~=24.0", "isort", "flynt", "unasync>=0.6.0")
 
     session.run("python", "utils/run-unasync.py")
     session.run("isort", "--profile=black", *SOURCE_FILES)
@@ -95,7 +97,7 @@ def lint(session):
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
-    session.install(".[async,requests,orjson]", env=INSTALL_ENV)
+    session.install(".[async,requests,orjson,vectorstore_mmr]", env=INSTALL_ENV)
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.
