@@ -142,7 +142,7 @@ files_to_generate = [
     "modules/discovery/voting.asciidoc",
     "modules/cluster/remote-clusters-migration.asciidoc",
     "modules/cluster/remote-clusters-troubleshooting.asciidoc",
-    "upgrade/archived-settings.asciidoc"
+    "upgrade/archived-settings.asciidoc",
 ]
 
 
