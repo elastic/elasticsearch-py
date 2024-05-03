@@ -1,4 +1,4 @@
-// inference/delete-inference.asciidoc:53
+// inference/delete-inference.asciidoc:55
 
 [source, python]
 ----
