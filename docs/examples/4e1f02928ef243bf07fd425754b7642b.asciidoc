@@ -1,0 +1,6 @@
+// setup/add-nodes.asciidoc:109
+
+[source, python]
+----
+
+----

@@ -1,0 +1,9 @@
+// setup/secure-settings.asciidoc:35
+
+[source, python]
+----
+resp = client.nodes.reload_secure_settings(
+    body={"secure_settings_password": "keystore-password"},
+)
+print(resp)
+----

@@ -1,0 +1,11 @@
+// upgrade/archived-settings.asciidoc:64
+
+[source, python]
+----
+resp = client.indices.get_settings(
+    index="*",
+    flat_settings="true",
+    filter_path="**.settings.archived*",
+)
+print(resp)
+----
