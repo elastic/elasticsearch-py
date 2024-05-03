@@ -1,0 +1,7 @@
+// setup/restart-cluster.asciidoc:189
+
+[source, python]
+----
+resp = client.indices.flush()
+print(resp)
+----

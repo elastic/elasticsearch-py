@@ -1,0 +1,10 @@
+// setup/restart-cluster.asciidoc:93
+
+[source, python]
+----
+resp = client.cat.health()
+print(resp)
+
+resp = client.cat.nodes()
+print(resp)
+----

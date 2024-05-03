@@ -1,0 +1,10 @@
+// modules/indices/request_cache.asciidoc:139
+
+[source, python]
+----
+resp = client.indices.stats(
+    metric="request_cache",
+    human=True,
+)
+print(resp)
+----

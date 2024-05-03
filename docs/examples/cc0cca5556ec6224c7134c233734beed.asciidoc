@@ -1,0 +1,7 @@
+// modules/cluster/remote-clusters-migration.asciidoc:165
+
+[source, python]
+----
+resp = client.cluster.remote_info()
+print(resp)
+----

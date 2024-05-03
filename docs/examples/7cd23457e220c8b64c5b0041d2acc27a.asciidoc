@@ -1,0 +1,10 @@
+// setup/advanced-configuration.asciidoc:124
+
+[source, python]
+----
+resp = client.nodes.info(
+    node_id="_all",
+    metric="jvm",
+)
+print(resp)
+----

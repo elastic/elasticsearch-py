@@ -1,0 +1,13 @@
+// modules/cluster/misc.asciidoc:133
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={
+        "persistent": {
+            "cluster.metadata.administrator": "sysadmin@example.com"
+        }
+    },
+)
+print(resp)
+----
