@@ -1,0 +1,11 @@
+// inference/post-inference.asciidoc:102
+
+[source, python]
+----
+resp = client.inference.inference(
+    task_type="completion",
+    inference_id="openai_chat_completions",
+    body={"input": "What is Elastic?"},
+)
+print(resp)
+----

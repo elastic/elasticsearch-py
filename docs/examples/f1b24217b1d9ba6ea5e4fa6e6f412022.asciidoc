@@ -1,0 +1,14 @@
+// inference/post-inference.asciidoc:133
+
+[source, python]
+----
+resp = client.inference.inference(
+    task_type="rerank",
+    inference_id="cohere_rerank",
+    body={
+        "input": ["luke", "like", "leia", "chewy", "r2d2", "star", "wars"],
+        "query": "star wars main character",
+    },
+)
+print(resp)
+----
