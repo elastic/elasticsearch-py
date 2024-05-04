@@ -89,7 +89,6 @@ def test_serializes_numpy_integers(json_serializer):
 @requires_numpy_and_pandas
 def test_serializes_numpy_floats(json_serializer):
     for np_type in (
-        np.float_,
         np.float32,
         np.float64,
     ):

@@ -171,7 +171,6 @@ def _attempt_serialize_numpy(data: Any) -> Tuple[bool, Any]:
         elif isinstance(
             data,
             (
-                np.float_,
                 np.float16,
                 np.float32,
                 np.float64,
