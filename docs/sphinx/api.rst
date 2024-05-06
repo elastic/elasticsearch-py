@@ -21,7 +21,6 @@ arguments are required for all calls.
    api/cat
    api/ccr
    api/cluster
-   api/connector
    api/dangling-indices
    api/enrich-policies
    api/eql
