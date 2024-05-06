@@ -46,7 +46,6 @@ from .autoscaling import AutoscalingClient
 from .cat import CatClient
 from .ccr import CcrClient
 from .cluster import ClusterClient
-from .connector import ConnectorClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
@@ -434,7 +433,6 @@ class Elasticsearch(BaseClient):
         self.autoscaling = AutoscalingClient(self)
         self.cat = CatClient(self)
         self.cluster = ClusterClient(self)
-        self.connector = ConnectorClient(self)
         self.fleet = FleetClient(self)
         self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
