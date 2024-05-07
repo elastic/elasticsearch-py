@@ -143,6 +143,17 @@ files_to_generate = [
     "modules/cluster/remote-clusters-migration.asciidoc",
     "modules/cluster/remote-clusters-troubleshooting.asciidoc",
     "upgrade/archived-settings.asciidoc",
+    "index-modules/allocation/filtering.asciidoc",
+    "index-modules/allocation/delayed.asciidoc",
+    "index-modules/allocation/prioritization.asciidoc",
+    "index-modules/allocation/total_shards.asciidoc",
+    "index-modules/allocation/data_tier_allocation.asciidoc",
+    "index-modules/blocks.asciidoc",
+    "index-modules/similarity.asciidoc",
+    "index-modules/slowlog.asciidoc",
+    "index-modules/store.asciidoc",
+    "index-modules/index-sorting.asciidoc",
+    "index-modules/indexing-pressure.asciidoc"
 ]
 
 

@@ -1,0 +1,7 @@
+// index-modules/allocation/delayed.asciidoc:82
+
+[source, python]
+----
+resp = client.cluster.health()
+print(resp)
+----
