@@ -32,24 +32,7 @@ def index() -> str:
 
 @pytest_asyncio.fixture(scope="function")
 async def es_client_request_saving_factory(elasticsearch_url):
-    client = None
-
-    try:
-        client = _create(elasticsearch_url)
-        # Wipe the cluster before we start testing just in case it wasn't wiped
-        # cleanly from the previous run of pytest?
-        wipe_cluster(client)
-    finally:
-        await client.close()
-
-    try:
-        # Recreate client with a transport that saves requests.
-        client = _create(elasticsearch_url, AsyncRequestSavingTransport)
-
-        yield client
-    finally:
-        if client:
-            await client.close()
+    return _create(elasticsearch_url, AsyncRequestSavingTransport)
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -59,3 +42,4 @@ async def es_client_request_saving(es_client_request_saving_factory):
     finally:
         # Wipe the cluster clean after every test execution.
         await wipe_cluster(es_client_request_saving_factory)
+        await es_client_request_saving_factory.close()
