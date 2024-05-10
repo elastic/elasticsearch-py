@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import asyncio
 from typing import Tuple
 
 import pytest
@@ -23,6 +24,13 @@ import pytest_asyncio
 from elasticsearch import AsyncElasticsearch
 
 from .cluster import CA_CERTS, es_url, es_version
+
+
+@pytest.fixture(scope="session")
+def event_loop():
+    loop = asyncio.get_event_loop()
+    yield loop
+    loop.close()
 
 
 @pytest_asyncio.fixture(scope="session")
