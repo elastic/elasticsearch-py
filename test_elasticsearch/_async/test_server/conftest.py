@@ -52,19 +52,20 @@ def _create(elasticsearch_url, transport=None, node_class=None):
     return AsyncElasticsearch(elasticsearch_url, **kw)
 
 
-@pytest_asyncio.fixture(scope="function")
-async def client_factory(elasticsearch_url):
-    client = None
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def wipe_cluser_at_session_start(elasticsearch_url):
+    client = _create(elasticsearch_url)
     try:
-        client = _create(elasticsearch_url)
-
-        # Wipe the cluster before we start testing just in case it wasn't wiped
-        # cleanly from the previous run of pytest?
+        # Errored previous runs can leave the cluster non-clean.
+        # Here ensure that the first test starts with a clean cluster.
         await wipe_cluster(client)
-
-        yield client
     finally:
         await client.close()
+
+
+@pytest_asyncio.fixture(scope="function")
+async def client_factory(elasticsearch_url):
+    return _create(elasticsearch_url)
 
 
 @pytest_asyncio.fixture(scope="function")

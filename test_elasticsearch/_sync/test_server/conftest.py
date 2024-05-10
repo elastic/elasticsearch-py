@@ -52,19 +52,20 @@ def _create(elasticsearch_url, transport=None, node_class=None):
     return Elasticsearch(elasticsearch_url, **kw)
 
 
-@pytest.fixture(scope="function")
-def client_factory(elasticsearch_url):
-    client = None
+@pytest.fixture(scope="session", autouse=True)
+def wipe_cluser_at_session_start(elasticsearch_url):
+    client = _create(elasticsearch_url)
     try:
-        client = _create(elasticsearch_url)
-
-        # Wipe the cluster before we start testing just in case it wasn't wiped
-        # cleanly from the previous run of pytest?
+        # Errored previous runs can leave the cluster non-clean.
+        # Here ensure that the first test starts with a clean cluster.
         wipe_cluster(client)
-
-        yield client
     finally:
         client.close()
+
+
+@pytest.fixture(scope="function")
+def client_factory(elasticsearch_url):
+    return _create(elasticsearch_url)
 
 
 @pytest.fixture(scope="function")
