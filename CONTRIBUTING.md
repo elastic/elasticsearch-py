@@ -18,7 +18,7 @@ found at `.buildkite/run-elasticsearch.sh`.
 There are several environment variables that control integration tests:
 
 - `PYTHON_VERSION`: Version of Python to use, defaults to `3.9`
-- `PYTHON_CONNECTION_CLASS`: Connection class to use, defaults to `Urllib3HttpConnection`
+- `SYNC_CONNECTION_CLASS`: Connection class to use, defaults to `Urllib3HttpConnection`
 - `STACK_VERSION`: Version of Elasticsearch to use. These should be
   the same as tags of `docker.elastic.co/elasticsearch/elasticsearch`
   such as `8.0.0-SNAPSHOT`, `7.x-SNAPSHOT`, etc. Defaults to the

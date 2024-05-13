@@ -120,6 +120,7 @@ def main():
                 "AsyncGenerator": "Generator",
                 "AsyncRequestSavingTransport": "RequestSavingTransport",
                 "pytest_asyncio": "pytest",
+                "ASYNC_CONNECTION_CLASS": "SYNC_CONNECTION_CLASS",
             },
         ),
         cleanup_patterns=[
@@ -127,7 +128,7 @@ def main():
             "/^import pytest_asyncio$/d",
             "/^ *@pytest.mark.asyncio$/d",
             "/^pytestmark = pytest.mark.asyncio$/d",
-            # strings goes over 2 lines
+            # string goes over 2 lines
             """s/@pytest.mark.parametrize("node_class", \\["aiohttp"\\])/"""
             """@pytest.mark.parametrize("node_class", ["urllib3", "requests"])/""",
         ],

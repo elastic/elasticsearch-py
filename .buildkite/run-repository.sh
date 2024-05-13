@@ -20,7 +20,8 @@ echo -e "\033[34;1mINFO:\033[0m CONTAINER ${ELASTICSEARCH_CONTAINER}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m TEST_SUITE ${TEST_SUITE}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m NOX_SESSION ${NOX_SESSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m PYTHON_VERSION ${PYTHON_VERSION}\033[0m"
-echo -e "\033[34;1mINFO:\033[0m PYTHON_CONNECTION_CLASS ${PYTHON_CONNECTION_CLASS}\033[0m"
+echo -e "\033[34;1mINFO:\033[0m SYNC_CONNECTION_CLASS ${SYNC_CONNECTION_CLASS}\033[0m"
+echo -e "\033[34;1mINFO:\033[0m ASYNC_CONNECTION_CLASS ${ASYNC_CONNECTION_CLASS}\033[0m"
 
 echo -e "\033[1m>>>>> Build [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
@@ -41,7 +42,8 @@ docker run \
   --env "STACK_VERSION=${STACK_VERSION}" \
   --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
   --env "TEST_SUITE=${TEST_SUITE}" \
-  --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
+  --env "SYNC_CONNECTION_CLASS=${SYNC_CONNECTION_CLASS}" \
+  --env "ASYNC_CONNECTION_CLASS=${ASYNC_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
   --name elasticsearch-py \
   --rm \
