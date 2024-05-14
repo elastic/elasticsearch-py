@@ -27,7 +27,6 @@ from ._sync.client.autoscaling import (  # noqa: F401
 from ._sync.client.cat import CatClient as CatClient  # noqa: F401
 from ._sync.client.ccr import CcrClient as CcrClient  # noqa: F401
 from ._sync.client.cluster import ClusterClient as ClusterClient  # noqa: F401
-from ._sync.client.connector import ConnectorClient as ConnectorClient  # noqa: F401
 from ._sync.client.dangling_indices import (  # noqa: F401
     DanglingIndicesClient as DanglingIndicesClient,
 )
