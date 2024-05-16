@@ -153,7 +153,7 @@ files_to_generate = [
     "index-modules/slowlog.asciidoc",
     "index-modules/store.asciidoc",
     "index-modules/index-sorting.asciidoc",
-    "index-modules/indexing-pressure.asciidoc"
+    "index-modules/indexing-pressure.asciidoc",
 ]
 
 
