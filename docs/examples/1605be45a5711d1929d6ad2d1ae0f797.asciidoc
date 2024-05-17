@@ -1,0 +1,9 @@
+// modules/discovery/voting.asciidoc:26
+
+[source, python]
+----
+resp = client.cluster.state(
+    filter_path="metadata.cluster_coordination.last_committed_config",
+)
+print(resp)
+----

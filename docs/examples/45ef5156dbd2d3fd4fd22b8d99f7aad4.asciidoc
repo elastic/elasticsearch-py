@@ -1,0 +1,9 @@
+// setup/restart-cluster.asciidoc:233
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"persistent": {"cluster.routing.allocation.enable": None}},
+)
+print(resp)
+----

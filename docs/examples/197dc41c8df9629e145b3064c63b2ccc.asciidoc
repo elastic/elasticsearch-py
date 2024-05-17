@@ -1,0 +1,19 @@
+// setup/run-elasticsearch-locally.asciidoc:135
+
+[source, python]
+----
+resp = client.bulk(
+    index="customer",
+    body=[
+        {"create": {}},
+        {"firstname": "Monica", "lastname": "Rambeau"},
+        {"create": {}},
+        {"firstname": "Carol", "lastname": "Danvers"},
+        {"create": {}},
+        {"firstname": "Wanda", "lastname": "Maximoff"},
+        {"create": {}},
+        {"firstname": "Jennifer", "lastname": "Takeda"},
+    ],
+)
+print(resp)
+----

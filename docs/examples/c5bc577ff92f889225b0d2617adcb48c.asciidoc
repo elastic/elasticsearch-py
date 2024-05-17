@@ -1,0 +1,10 @@
+// setup/sysconfig/file-descriptors.asciidoc:29
+
+[source, python]
+----
+resp = client.nodes.stats(
+    metric="process",
+    filter_path="**.max_file_descriptors",
+)
+print(resp)
+----

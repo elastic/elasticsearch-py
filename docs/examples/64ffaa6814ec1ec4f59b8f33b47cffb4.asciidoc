@@ -1,0 +1,10 @@
+// upgrade/archived-settings.asciidoc:73
+
+[source, python]
+----
+resp = client.indices.put_settings(
+    index="my-index",
+    body={"archived.*": None},
+)
+print(resp)
+----

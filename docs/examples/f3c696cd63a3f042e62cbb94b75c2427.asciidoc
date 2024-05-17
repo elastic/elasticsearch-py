@@ -1,0 +1,10 @@
+// upgrade/archived-settings.asciidoc:24
+
+[source, python]
+----
+resp = client.cluster.get_settings(
+    flat_settings="true",
+    filter_path="persistent.archived*",
+)
+print(resp)
+----

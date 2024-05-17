@@ -1,0 +1,9 @@
+// upgrade/archived-settings.asciidoc:32
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"persistent": {"archived.*": None}},
+)
+print(resp)
+----

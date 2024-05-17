@@ -1,0 +1,11 @@
+// setup/restart-cluster.asciidoc:35
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={
+        "persistent": {"cluster.routing.allocation.enable": "primaries"}
+    },
+)
+print(resp)
+----
