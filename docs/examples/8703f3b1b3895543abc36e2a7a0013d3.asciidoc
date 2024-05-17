@@ -1,0 +1,26 @@
+// index-modules/allocation/prioritization.asciidoc:17
+
+[source, python]
+----
+resp = client.indices.create(
+    index="index_1",
+)
+print(resp)
+
+resp = client.indices.create(
+    index="index_2",
+)
+print(resp)
+
+resp = client.indices.create(
+    index="index_3",
+    body={"settings": {"index.priority": 10}},
+)
+print(resp)
+
+resp = client.indices.create(
+    index="index_4",
+    body={"settings": {"index.priority": 5}},
+)
+print(resp)
+----

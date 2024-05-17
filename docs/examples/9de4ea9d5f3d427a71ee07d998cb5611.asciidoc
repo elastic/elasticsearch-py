@@ -1,0 +1,6 @@
+// index-modules/blocks.asciidoc:137
+
+[source, python]
+----
+
+----

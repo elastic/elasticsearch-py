@@ -1,0 +1,10 @@
+// index-modules/store.asciidoc:30
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"settings": {"index.store.type": "hybridfs"}},
+)
+print(resp)
+----

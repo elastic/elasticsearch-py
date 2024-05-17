@@ -1,0 +1,10 @@
+// index-modules/allocation/prioritization.asciidoc:48
+
+[source, python]
+----
+resp = client.indices.put_settings(
+    index="index_4",
+    body={"index.priority": 1},
+)
+print(resp)
+----
