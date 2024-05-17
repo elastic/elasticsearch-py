@@ -1,0 +1,15 @@
+// index-modules/index-sorting.asciidoc:114
+
+[source, python]
+----
+resp = client.indices.create(
+    index="events",
+    body={
+        "settings": {
+            "index": {"sort.field": "timestamp", "sort.order": "desc"}
+        },
+        "mappings": {"properties": {"timestamp": {"type": "date"}}},
+    },
+)
+print(resp)
+----
