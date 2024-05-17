@@ -33,13 +33,13 @@ pytestmark = [pytest.mark.asyncio]
 
 class AsyncMock(MagicMock):
     async def __call__(self, *args, **kwargs):
-        return super(AsyncMock, self).__call__(*args, **kwargs)
+        return super().__call__(*args, **kwargs)
 
     def __await__(self):
         return self().__await__()
 
 
-class FailingBulkClient(object):
+class FailingBulkClient:
     def __init__(
         self,
         client,
@@ -68,7 +68,7 @@ class FailingBulkClient(object):
         return self
 
 
-class TestStreamingBulk(object):
+class TestStreamingBulk:
     async def test_actions_remain_unchanged(self, async_client):
         actions = [{"_id": 1}, {"_id": 2}]
         async for ok, item in helpers.async_streaming_bulk(
@@ -295,7 +295,7 @@ class TestStreamingBulk(object):
         assert 4 == failing_client._called
 
 
-class TestBulk(object):
+class TestBulk:
     async def test_bulk_works_with_single_item(self, async_client):
         docs = [{"answer": 42, "_id": 1}]
         success, failed = await helpers.async_bulk(
@@ -466,7 +466,7 @@ async def scan_teardown(async_client):
     await async_client.clear_scroll(scroll_id="_all")
 
 
-class TestScan(object):
+class TestScan:
     async def test_order_can_be_preserved(self, async_client, scan_teardown):
         bulk = []
         for x in range(100):
@@ -501,8 +501,8 @@ class TestScan(object):
         ]
 
         assert 100 == len(docs)
-        assert set(map(str, range(100))) == set(d["_id"] for d in docs)
-        assert set(range(100)) == set(d["_source"]["answer"] for d in docs)
+        assert set(map(str, range(100))) == {d["_id"] for d in docs}
+        assert set(range(100)) == {d["_source"]["answer"] for d in docs}
 
     async def test_scroll_error(self, async_client, scan_teardown):
         bulk = []
@@ -889,7 +889,7 @@ async def reindex_setup(async_client):
     yield
 
 
-class TestReindex(object):
+class TestReindex:
     async def test_reindex_passes_kwargs_to_scan_and_bulk(
         self, async_client, reindex_setup
     ):
@@ -1039,7 +1039,7 @@ async def reindex_data_stream_setup(async_client):
     yield
 
 
-class TestAsyncDataStreamReindex(object):
+class TestAsyncDataStreamReindex:
     @pytest.mark.parametrize("op_type", [None, "create"])
     async def test_reindex_index_datastream(
         self, op_type, async_client, reindex_data_stream_setup

@@ -456,7 +456,7 @@ class YamlRunner:
         if isinstance(value, string_types):
             value = value.strip()
         elif isinstance(value, dict):
-            value = dict((k, self._resolve(v)) for (k, v) in value.items())
+            value = {k: self._resolve(v) for (k, v) in value.items()}
         elif isinstance(value, list):
             value = list(map(self._resolve, value))
         return value
@@ -495,9 +495,9 @@ class YamlRunner:
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
-                XPACK_FEATURES = set(
+                XPACK_FEATURES = {
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-                )
+                }
                 IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()
