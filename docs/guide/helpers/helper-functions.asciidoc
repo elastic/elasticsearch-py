@@ -1,14 +1,14 @@
-[[client-helpers]]
-== Client helpers
+[[helper-functions]]
+=== Helper functions
 
-You can find here a collection of simple helper functions that abstract some 
+These simple helper functions abstract some 
 specifics of the raw API. For detailed examples, refer to 
 https://elasticsearch-py.readthedocs.io/en/stable/helpers.html[this page].
 
 
 [discrete]
 [[bulk-helpers]]
-=== Bulk helpers 
+==== Bulk helpers 
 
 There are several helpers for the bulk API since its requirement for specific 
 formatting and other considerations can make it cumbersome if used directly.
@@ -70,7 +70,7 @@ the `_op_type` field to specify an action (`_op_type` defaults to `index`):
 
 [discrete]
 [[scan]]
-=== Scan
+==== Scan
 
 Simple abstraction on top of the `scroll()` API - a simple iterator that yields 
 all hits as returned by underlining scroll requests.

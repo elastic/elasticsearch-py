@@ -1,0 +1,10 @@
+[[client-helpers]]
+== Client helpers
+
+The Python client includes the following helpers:
+
+* <<helper-functions>>
+* <<esql>>
+
+include::helper-functions.asciidoc[]
+include::esql.asciidoc[]
