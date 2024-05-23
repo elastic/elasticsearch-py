@@ -1,0 +1,15 @@
+// index-modules/index-sorting.asciidoc:16
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "settings": {
+            "index": {"sort.field": "date", "sort.order": "desc"}
+        },
+        "mappings": {"properties": {"date": {"type": "date"}}},
+    },
+)
+print(resp)
+----

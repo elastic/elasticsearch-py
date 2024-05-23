@@ -1,0 +1,20 @@
+// index-modules/similarity.asciidoc:540
+
+[source, python]
+----
+resp = client.indices.close(
+    index="index",
+)
+print(resp)
+
+resp = client.indices.put_settings(
+    index="index",
+    body={"index": {"similarity": {"default": {"type": "boolean"}}}},
+)
+print(resp)
+
+resp = client.indices.open(
+    index="index",
+)
+print(resp)
+----

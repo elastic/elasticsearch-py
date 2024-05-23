@@ -1,0 +1,10 @@
+// index-modules/allocation/filtering.asciidoc:54
+
+[source, python]
+----
+resp = client.indices.put_settings(
+    index="test",
+    body={"index.routing.allocation.include.size": "big,medium"},
+)
+print(resp)
+----

@@ -1,0 +1,10 @@
+// index-modules/store.asciidoc:122
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"settings": {"index.store.preload": ["nvd", "dvd"]}},
+)
+print(resp)
+----
