@@ -669,7 +669,6 @@ class ClusterClient(NamespacedClient):
         *,
         name: str,
         template: t.Optional[t.Mapping[str, t.Any]] = None,
-        cause: t.Optional[str] = None,
         create: t.Optional[bool] = None,
         deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -699,7 +698,6 @@ class ClusterClient(NamespacedClient):
             update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
-        :param cause:
         :param create: If `true`, this request cannot replace or update existing component
             templates.
         :param deprecated: Marks this index template as deprecated. When creating or
@@ -724,8 +722,6 @@ class ClusterClient(NamespacedClient):
         __path = f'/_component_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
-        if cause is not None:
-            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
