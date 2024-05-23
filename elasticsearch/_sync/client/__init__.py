@@ -3636,6 +3636,7 @@ class Elasticsearch(BaseClient):
             "query",
             "rank",
             "rescore",
+            "retriever",
             "runtime_mappings",
             "script_fields",
             "search_after",
@@ -3717,6 +3718,7 @@ class Elasticsearch(BaseClient):
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        retriever: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -3876,6 +3878,9 @@ class Elasticsearch(BaseClient):
             example 100 - 500) documents returned by the `query` and `post_filter` phases.
         :param rest_total_hits_as_int: Indicates whether `hits.total` should be rendered
             as an integer or an object in the rest search response.
+        :param retriever: A retriever is a specification to describe top documents returned
+            from a search. A retriever replaces other elements of the search API that
+            also return top documents such as query and knn.
         :param routing: Custom value used to route operations to a specific shard.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
@@ -4072,6 +4077,8 @@ class Elasticsearch(BaseClient):
                 __body["rank"] = rank
             if rescore is not None:
                 __body["rescore"] = rescore
+            if retriever is not None:
+                __body["retriever"] = retriever
             if runtime_mappings is not None:
                 __body["runtime_mappings"] = runtime_mappings
             if script_fields is not None:
