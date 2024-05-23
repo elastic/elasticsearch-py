@@ -89,7 +89,7 @@ setup(
     python_requires=">=3.7",
     install_requires=["elastic-transport>=8.13,<9"],
     extras_require={
-        "requests": ["requests>=2.4.0, <3.0.0"],
+        "requests": ["requests>=2.4.0, !=2.32.2, <3.0.0"],
         "async": ["aiohttp>=3,<4"],
         "orjson": ["orjson>=3"],
         # Maximal Marginal Relevance (MMR) for search results
