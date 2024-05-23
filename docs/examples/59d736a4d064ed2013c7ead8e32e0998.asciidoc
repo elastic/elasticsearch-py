@@ -1,0 +1,17 @@
+// inference/put-inference.asciidoc:600
+
+[source, python]
+----
+resp = client.inference.put_model(
+    task_type="completion",
+    inference_id="openai-completion",
+    body={
+        "service": "openai",
+        "service_settings": {
+            "api_key": "<api_key>",
+            "model_id": "gpt-3.5-turbo",
+        },
+    },
+)
+print(resp)
+----

@@ -1,7 +1,0 @@
-// tab-widgets/api-call.asciidoc:13
-
-[source, python]
-----
-resp = client.info()
-print(resp)
-----

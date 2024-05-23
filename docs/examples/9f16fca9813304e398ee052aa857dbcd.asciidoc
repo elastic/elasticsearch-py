@@ -1,10 +1,10 @@
-// inference/put-inference.asciidoc:394
+// inference/put-inference.asciidoc:584
 
 [source, python]
 ----
 resp = client.inference.put_model(
     task_type="text_embedding",
-    inference_id="openai_embeddings",
+    inference_id="openai-embeddings",
     body={
         "service": "openai",
         "service_settings": {
