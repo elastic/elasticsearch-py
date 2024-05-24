@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-13-2>>
 * <<rn-8-13-1>>
 * <<rn-8-13-0>>
 * <<rn-8-12-1>>
@@ -38,20 +39,27 @@
 * <<rn-8-0-0>>
 
 [discrete]
+[[rn-8-13-2]]
+=== 8.13.2 (2024-05-24)
+
+- Added the `ml.update_trained_model_deployment` API
+- Marked Requests 2.32.2 as incompatible with the Elasticsearch client
+
+[discrete]
 [[rn-8-13-1]]
 === 8.13.1 (2024-05-03)
 
-- Added ``force_synthetic_source`` to the Get API
-- Added ``wait_for_completion`` to the Create trained model API
-- Added ``typed_keys`` to the Query API key information API
+- Added `force_synthetic_source` to the Get API
+- Added `wait_for_completion` to the Create trained model API
+- Added `typed_keys` to the Query API key information API
 
 [discrete]
 [[rn-8-13-0]]
 === 8.13.0 (2024-03-22)
 
 - Added native OpenTelemetry support
-- Added optional ``orjson`` (a fast, correct JSON library) serialization support
-- Added the `text_strcuture.test_grok_pattern` API
+- Added optional `orjson` (a fast, correct JSON library) serialization support
+- Added the `text_structure.test_grok_pattern` API
 - Added the `indices.resolve_cluster` API
 - Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
 - Changed all `synonyms` APIs from **experimental** to **stable**.
