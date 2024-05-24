@@ -5043,6 +5043,62 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=("number_of_allocations",),
+    )
+    async def update_trained_model_deployment(
+        self,
+        *,
+        model_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        number_of_allocations: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Updates certain properties of trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/update-trained-model-deployment.html>`_
+
+        :param model_id: The unique identifier of the trained model. Currently, only
+            PyTorch models are supported.
+        :param number_of_allocations: The number of model allocations on each node where
+            the model is deployed. All allocations on a node share the same copy of the
+            model in memory but use a separate set of threads to evaluate the model.
+            Increasing this value generally increases the throughput. If this setting
+            is greater than the number of hardware threads it will automatically be changed
+            to a value less than the number of hardware threads.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_update'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if number_of_allocations is not None:
+                __body["number_of_allocations"] = number_of_allocations
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_trained_model_deployment",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def upgrade_job_snapshot(
         self,

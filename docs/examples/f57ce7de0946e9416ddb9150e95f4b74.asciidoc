@@ -1,10 +1,10 @@
-// inference/put-inference.asciidoc:623
+// inference/put-inference.asciidoc:641
 
 [source, python]
 ----
 resp = client.inference.put_model(
-    task_type="text_embedding",
-    inference_id="azure_openai_embeddings",
+    task_type="completion",
+    inference_id="azure_openai_completion",
     body={
         "service": "azureopenai",
         "service_settings": {
