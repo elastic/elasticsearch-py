@@ -1,15 +1,15 @@
-// inference/put-inference.asciidoc:847
+// inference/put-inference.asciidoc:825
 
 [source, python]
 ----
 resp = client.inference.put_model(
     task_type="text_embedding",
-    inference_id="openai-embeddings",
+    inference_id="mistral-embeddings-test",
     body={
-        "service": "openai",
+        "service": "mistral",
         "service_settings": {
             "api_key": "<api_key>",
-            "model_id": "text-embedding-ada-002",
+            "model": "mistral-embed",
         },
     },
 )

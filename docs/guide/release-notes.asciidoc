@@ -1,6 +1,9 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-14-0>>
+* <<rn-8-13-2>>
+* <<rn-8-13-1>>
 * <<rn-8-13-0>>
 * <<rn-8-12-1>>
 * <<rn-8-12-0>>
@@ -37,12 +40,44 @@
 * <<rn-8-0-0>>
 
 [discrete]
+[[rn-8-14-0]]
+=== 8.14.0 (2024-06-06)
+
+- Fixed `node_pool_class` override (#2581, contributed by Tallak Hellebust)
+- Added `retriever` to the Search API
+- Added `deprecated` and removed `allow_auto_create` from the Create or update component template API
+- Added `allow_auto_create`, `cause`, `deprecated`, `ignore_missing_component_templates` and `master_timeout` to the Create or update index template API
+- Added `cause`, removed `flat_settings` and `timeout` from the Create or update index template legacy API
+- Removed various unsupported parameters from the Simulate index API
+- Added various supported paramters to the Simulate index template API
+- Added the `completion` and `rerank` task types to the Inference APIs
+- Added the `query` and `timeout` parameters to the Perform inference API
+- Added `typed_keys` to the Search Application Search API
+- Added `with_profile_uid` to the Get API key information and Query API key information APIs
+
+
+[discrete]
+[[rn-8-13-2]]
+=== 8.13.2 (2024-05-24)
+
+- Added the `ml.update_trained_model_deployment` API
+- Marked Requests 2.32.2 as incompatible with the Elasticsearch client
+
+[discrete]
+[[rn-8-13-1]]
+=== 8.13.1 (2024-05-03)
+
+- Added `force_synthetic_source` to the Get API
+- Added `wait_for_completion` to the Create trained model API
+- Added `typed_keys` to the Query API key information API
+
+[discrete]
 [[rn-8-13-0]]
 === 8.13.0 (2024-03-22)
 
 - Added native OpenTelemetry support
-- Added optional ``orjson`` (a fast, correct JSON library) serialization support
-- Added the `text_strcuture.test_grok_pattern` API
+- Added optional `orjson` (a fast, correct JSON library) serialization support
+- Added the `text_structure.test_grok_pattern` API
 - Added the `indices.resolve_cluster` API
 - Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
 - Changed all `synonyms` APIs from **experimental** to **stable**.

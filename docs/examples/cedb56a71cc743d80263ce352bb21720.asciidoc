@@ -1,4 +1,4 @@
-// inference/put-inference.asciidoc:477
+// inference/put-inference.asciidoc:699
 
 [source, python]
 ----
