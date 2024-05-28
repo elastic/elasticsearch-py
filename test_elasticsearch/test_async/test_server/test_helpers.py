@@ -129,7 +129,6 @@ class TestStreamingBulk(object):
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         try:
             async for ok, item in helpers.async_streaming_bulk(
@@ -338,7 +337,6 @@ class TestBulk(object):
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
             async_client,
@@ -364,7 +362,6 @@ class TestBulk(object):
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         with pytest.raises(helpers.BulkIndexError):
             await helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i")
@@ -408,7 +405,6 @@ class TestBulk(object):
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
             async_client,
