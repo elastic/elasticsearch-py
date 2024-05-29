@@ -19,8 +19,6 @@ import pytest
 
 from elasticsearch import RequestError
 
-from .conftest import _create
-
 
 @pytest.fixture(scope="function")
 def mvt_setup(sync_client):

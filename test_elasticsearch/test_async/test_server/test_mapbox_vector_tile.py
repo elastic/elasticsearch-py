@@ -18,7 +18,7 @@
 import pytest
 import pytest_asyncio
 
-from elasticsearch import AsyncElasticsearch, RequestError
+from elasticsearch import RequestError
 
 pytestmark = pytest.mark.asyncio
 
