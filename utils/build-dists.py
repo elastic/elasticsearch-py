@@ -80,6 +80,7 @@ def test_dist(dist):
             "mypy",
             "numpy",
             "pandas-stubs",
+            "opentelemetry-api",
         )
         run(venv_python, "-m", "pip", "install", dist)
 
