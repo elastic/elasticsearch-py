@@ -22,7 +22,13 @@ import warnings
 from typing import Any, Dict, Optional, Union
 
 import pytest
-from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
+from elastic_transport import (
+    ApiResponseMeta,
+    BaseNode,
+    HttpHeaders,
+    NodeConfig,
+    NodePool,
+)
 from elastic_transport._node import NodeApiResponse
 from elastic_transport.client_utils import DEFAULT
 
@@ -62,6 +68,14 @@ class DummyNode(BaseNode):
             ),
             self.resp_data,
         )
+
+
+class NoTimeoutConnectionPool(NodePool):
+    def mark_dead(self, connection):
+        pass
+
+    def mark_live(self, connection):
+        pass
 
 
 CLUSTER_NODES = """{
@@ -375,6 +389,27 @@ class TestTransport:
 
         assert len(client.transport.node_pool._alive_nodes) == 1
         assert len(client.transport.node_pool._dead_consecutive_failures) == 1
+
+    def test_override_mark_dead_mark_live(self):
+        client = Elasticsearch(
+            [
+                NodeConfig("http", "localhost", 9200),
+                NodeConfig("http", "localhost", 9201),
+            ],
+            node_class=DummyNode,
+            node_pool_class=NoTimeoutConnectionPool,
+        )
+        node1 = client.transport.node_pool.get()
+        node2 = client.transport.node_pool.get()
+        assert node1 is not node2
+        client.transport.node_pool.mark_dead(node1)
+        client.transport.node_pool.mark_dead(node2)
+        assert len(client.transport.node_pool._alive_nodes) == 2
+
+        client.info()
+
+        assert len(client.transport.node_pool._alive_nodes) == 2
+        assert len(client.transport.node_pool._dead_consecutive_failures) == 0
 
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],
