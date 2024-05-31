@@ -468,7 +468,7 @@ The code above outputs the following:
 ------------------------------------
 
 If you want to learn more about ES|QL, refer to the
-{ref}esql.html[ES|QL documentation]. You can also check out this other 
+{ref}/esql.html[ES|QL documentation]. You can also check out this other 
 https://github.com/elastic/elasticsearch-labs/blob/main/supporting-blog-content/Boston-Celtics-Demo/celtics-esql-demo.ipynb[Python example using Boston Celtics data].
 
 
