@@ -352,7 +352,7 @@ class AsyncElasticsearch(BaseClient):
             if node_class is not DEFAULT:
                 transport_kwargs["node_class"] = node_class
             if node_pool_class is not DEFAULT:
-                transport_kwargs["node_pool_class"] = node_class
+                transport_kwargs["node_pool_class"] = node_pool_class
             if randomize_nodes_in_pool is not DEFAULT:
                 transport_kwargs["randomize_nodes_in_pool"] = randomize_nodes_in_pool
             if node_selector_class is not DEFAULT:
