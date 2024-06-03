@@ -362,8 +362,8 @@ df = pd.read_csv(StringIO(response.body))
 print(df)
 ------------------------------------
 
-However, the dataset only contains 100 records a LIMIT command is usesd to avoid
-getting ES|QL warnings about potentially missing records. This prints the
+Even though the dataset contains only 100 records, a LIMIT of 500 is specified to suppress
+ES|QL warnings about potentially missing records. This prints the
 following dataframe:
 
 [source,python]
