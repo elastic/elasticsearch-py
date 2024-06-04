@@ -4,7 +4,7 @@
 The {ref}/esql.html[Elasticsearch Query Language (ES|QL)] provides a powerful
 way to filter, transform, and analyze data stored in {es}. Designed to be easy
 to learn and use, it is a perfect fit for data scientists familiar with Pandas
-and other dataframe-based libraries as ES|QL queries produce tables with named
+and other dataframe-based libraries. ES|QL queries produce tables with named
 columns, which is the definition of dataframes.
 
 This section shows you how to use ES|QL and Pandas together to work with
