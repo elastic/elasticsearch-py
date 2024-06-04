@@ -7,7 +7,7 @@ to learn and use, it is a perfect fit for data scientists familiar with Pandas
 and other dataframe-based libraries. ES|QL queries produce tables with named
 columns, which is the definition of dataframes.
 
-This section shows you how to use ES|QL and Pandas together to work with
+This page shows you an example of using ES|QL and Pandas together to work with
 dataframes.
 
 [discrete]
