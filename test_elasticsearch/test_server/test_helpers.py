@@ -337,11 +337,7 @@ def test_errors_are_reported_correctly(sync_client):
     assert "42" == error["index"]["_id"]
     assert "i" == error["index"]["_index"]
     print(error["index"]["error"])
-    assert error["index"]["error"]["type"] in [
-        "mapper_parsing_exception",
-        # Elasticsearch 8.8+: https://github.com/elastic/elasticsearch/pull/92646
-        "document_parsing_exception",
-    ]
+    assert error["index"]["error"]["type"] == "document_parsing_exception"
 
 
 def test_error_is_raised(sync_client):
