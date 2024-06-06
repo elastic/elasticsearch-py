@@ -1,0 +1,19 @@
+// inference/put-inference.asciidoc:671
+
+[source, python]
+----
+resp = client.inference.put_model(
+    task_type="text_embedding",
+    inference_id="azure_ai_studio_embeddings",
+    body={
+        "service": "azureaistudio",
+        "service_settings": {
+            "api_key": "<api_key>",
+            "target": "<target_uri>",
+            "provider": "<model_provider>",
+            "endpoint_type": "<endpoint_type>",
+        },
+    },
+)
+print(resp)
+----

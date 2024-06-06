@@ -1,0 +1,14 @@
+// index-modules/similarity.asciidoc:45
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="index",
+    body={
+        "properties": {
+            "title": {"type": "text", "similarity": "my_similarity"}
+        }
+    },
+)
+print(resp)
+----

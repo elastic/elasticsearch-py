@@ -1,0 +1,10 @@
+// index-modules/index-sorting.asciidoc:138
+
+[source, python]
+----
+resp = client.search(
+    index="events",
+    body={"size": 10, "sort": [{"timestamp": "desc"}]},
+)
+print(resp)
+----
