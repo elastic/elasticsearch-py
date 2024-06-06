@@ -13,6 +13,14 @@ Refer to the <<opentelemetry>> page for details.
 
 
 [discrete]
+[[esql-intro]]
+=== ES|QL
+
+{ref}/esql.html[ES|QL] is available through the Python Elasticsearch client.
+Refer to the <<esql-pandas>> page to learn more about using ES|QL and Pandas together with dataframes.
+
+
+[discrete]
 [[transport]]
 === Transport
 
