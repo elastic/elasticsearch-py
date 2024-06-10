@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-14-0>>
 * <<rn-8-13-2>>
 * <<rn-8-13-1>>
 * <<rn-8-13-0>>
@@ -37,6 +38,23 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-14-0]]
+=== 8.14.0 (2024-06-06)
+
+- Fixed `node_pool_class` override (#2581, contributed by Tallak Hellebust)
+- Added `retriever` to the Search API
+- Added `deprecated` and removed `allow_auto_create` from the Create or update component template API
+- Added `allow_auto_create`, `cause`, `deprecated`, `ignore_missing_component_templates` and `master_timeout` to the Create or update index template API
+- Added `cause`, removed `flat_settings` and `timeout` from the Create or update index template legacy API
+- Removed various unsupported parameters from the Simulate index API
+- Added various supported paramters to the Simulate index template API
+- Added the `completion` and `rerank` task types to the Inference APIs
+- Added the `query` and `timeout` parameters to the Perform inference API
+- Added `typed_keys` to the Search Application Search API
+- Added `with_profile_uid` to the Get API key information and Query API key information APIs
+
 
 [discrete]
 [[rn-8-13-2]]
