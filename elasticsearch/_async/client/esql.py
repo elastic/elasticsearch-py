@@ -46,7 +46,7 @@ class EsqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes an ESQL request
+        Executes an ES|QL request
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
 

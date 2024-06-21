@@ -76,7 +76,7 @@ class QueryRulesetClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a query ruleset.
+        Returns the details about a query ruleset
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-ruleset.html>`_
 
@@ -119,7 +119,7 @@ class QueryRulesetClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Lists query rulesets.
+        Returns summarized information about existing query rulesets.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-query-rulesets.html>`_
 

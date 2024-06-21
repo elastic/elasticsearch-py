@@ -40,8 +40,9 @@ class IlmClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes the specified lifecycle policy definition. A currently used policy cannot
-        be deleted.
+        Deletes the specified lifecycle policy definition. You cannot delete policies
+        that are currently in use. If the policy is being used to manage any indices,
+        the request fails and returns an error.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
 
@@ -96,8 +97,9 @@ class IlmClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the index's current lifecycle state, such as the
-        currently executing phase, action, and step.
+        Retrieves information about the index’s current lifecycle state, such as the
+        currently executing phase, action, and step. Shows when the index entered each
+        one, the definition of the running phase, and information about any failures.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
 
@@ -161,8 +163,7 @@ class IlmClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the specified policy definition. Includes the policy version and last
-        modified date.
+        Retrieves a lifecycle policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
 
@@ -254,8 +255,10 @@ class IlmClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Migrates the indices and ILM policies away from custom node attribute allocation
-        routing to data tiers routing
+        Switches the indices, ILM policies, and legacy, composable and component templates
+        from using custom node attributes and attribute-based allocation filters to using
+        data tiers, and optionally deletes one legacy index template.+ Using node roles
+        enables ILM to automatically move the indices between data tiers.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
 
@@ -376,7 +379,8 @@ class IlmClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a lifecycle policy
+        Creates a lifecycle policy. If the specified policy exists, the policy is replaced
+        and the policy version is incremented.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
 

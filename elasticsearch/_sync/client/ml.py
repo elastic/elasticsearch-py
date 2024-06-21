@@ -36,7 +36,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear the cached results from a trained model deployment
+        Clears a trained model deployment cache on all nodes where the trained model
+        is assigned. A trained model deployment may have an inference cache enabled.
+        As requests are handled by each allocated node, their responses may be cached
+        on that individual node. Calling this API clears the caches without restarting
+        the deployment.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-trained-model-deployment-cache.html>`_
 
@@ -84,8 +88,19 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Closes one or more anomaly detection jobs. A job can be opened and closed multiple
-        times throughout its lifecycle.
+        Close anomaly detection jobs A job can be opened and closed multiple times throughout
+        its lifecycle. A closed job cannot receive data or perform analysis operations,
+        but you can still explore and navigate results. When you close a job, it runs
+        housekeeping tasks such as pruning the model history, flushing buffers, calculating
+        final results and persisting the model snapshots. Depending upon the size of
+        the job, it could take several minutes to close and the equivalent time to re-open.
+        After it is closed, the job has a minimal overhead on the cluster except for
+        maintaining its meta data. Therefore it is a best practice to close jobs that
+        are no longer required to process data. If you close an anomaly detection job
+        whose datafeed is running, the request first tries to stop the datafeed. This
+        behavior is equivalent to calling stop datafeed API with the same timeout and
+        force parameters as the close job request. When a datafeed that has a specified
+        end date stops, it automatically closes its associated job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-close-job.html>`_
 
@@ -146,7 +161,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a calendar.
+        Removes all scheduled events from a calendar, then deletes it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar.html>`_
 
@@ -284,7 +299,7 @@ class MlClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing data frame analytics job.
+        Deletes a data frame analytics job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-dfanalytics.html>`_
 
@@ -384,7 +399,13 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes expired and unused machine learning data.
+        Deletes expired and unused machine learning data. Deletes all job results, model
+        snapshots and forecast data that have exceeded their retention days period. Machine
+        learning state documents that are not associated with any job are also deleted.
+        You can limit the request to a single or set of anomaly detection jobs by using
+        a job identifier, a group name, a comma-separated list of jobs, or a wildcard
+        expression. You can delete expired data for all anomaly detection jobs by using
+        _all, by specifying * as the <job_id>, or by omitting the <job_id>.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
 
@@ -443,7 +464,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a filter.
+        Deletes a filter. If an anomaly detection job references the filter, you cannot
+        delete the filter. You must update or delete the job before you can delete the
+        filter.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-filter.html>`_
 
@@ -486,7 +509,10 @@ class MlClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes forecasts from a machine learning job.
+        Deletes forecasts from a machine learning job. By default, forecasts are retained
+        for 14 days. You can specify a different retention period with the `expires_in`
+        parameter in the forecast jobs API. The delete forecast API enables you to delete
+        one or more forecasts before they expire.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-forecast.html>`_
 
@@ -553,7 +579,12 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing anomaly detection job.
+        Deletes an anomaly detection job. All job configuration, model state and results
+        are deleted. It is not currently possible to delete multiple jobs using wildcards
+        or a comma separated list. If you delete a job that has a datafeed, the request
+        first tries to delete the datafeed. This behavior is equivalent to calling the
+        delete datafeed API with the same timeout and force parameters as the delete
+        job request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-job.html>`_
 
@@ -607,7 +638,10 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing model snapshot.
+        Deletes an existing model snapshot. You cannot delete the active model snapshot.
+        To delete that snapshot, first revert to a different one. To identify the active
+        model snapshot, refer to the `model_snapshot_id` in the results from the get
+        jobs API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-snapshot.html>`_
 
@@ -700,7 +734,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a model alias that refers to the trained model
+        Deletes a trained model alias. This API deletes an existing model alias that
+        refers to a trained model. If the model alias is missing or refers to a model
+        other than the one identified by the `model_id`, this API returns an error.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models-aliases.html>`_
 
@@ -755,7 +791,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Estimates the model memory
+        Makes an estimation of the memory usage for an anomaly detection job model. It
+        is based on analysis configuration details for the job and cardinality estimates
+        for the fields it references.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
 
@@ -820,7 +858,10 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evaluates the data frame analytics for an annotated index.
+        Evaluates the data frame analytics for an annotated index. The API packages together
+        commonly used evaluation metrics for various types of machine learning features.
+        This has been designed for use on indexes created by data frame analytics. Evaluation
+        requires both a ground truth field and an analytics result field to be present.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/evaluate-dfanalytics.html>`_
 
@@ -894,7 +935,13 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explains a data frame analytics config.
+        Explains a data frame analytics config. This API provides explanations for a
+        data frame analytics config that either exists already or one that has not been
+        created yet. The following explanations are provided: * which fields are included
+        or not in the analysis and why, * how much memory is estimated to be required.
+        The estimate can be used when deciding the appropriate value for model_memory_limit
+        setting later on. If you have object fields or fields that are excluded via source
+        filtering, they are not included in the explanation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/explain-dfanalytics.html>`_
 
@@ -994,7 +1041,14 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Forces any buffered data to be processed by the job.
+        Forces any buffered data to be processed by the job. The flush jobs API is only
+        applicable when sending data for analysis using the post data API. Depending
+        on the content of the buffer, then it might additionally calculate new results.
+        Both flush and close operations are similar, however the flush is more efficient
+        if you are expecting to send more data for analysis. When flushing, the job remains
+        open and is available to continue analyzing data. A close operation additionally
+        prunes and persists the model state to disk and the job must be opened again
+        before analyzing further data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-flush-job.html>`_
 
@@ -1063,6 +1117,9 @@ class MlClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Predicts the future behavior of a time series by using its historical behavior.
+        Forecasts are not supported for jobs that perform population analysis; an error
+        occurs if you try to create a forecast for a job that has an `over_field_name`
+        in its configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-forecast.html>`_
 
@@ -1144,7 +1201,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly detection job results for one or more buckets.
+        Retrieves anomaly detection job results for one or more buckets. The API presents
+        a chronological view of the records, grouped by bucket.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-bucket.html>`_
 
@@ -1460,7 +1518,9 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for data frame analytics jobs.
+        Retrieves configuration information for data frame analytics jobs. You can get
+        information for multiple data frame analytics jobs in a single API request by
+        using a comma-separated list of data frame analytics jobs or a wildcard expression.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics.html>`_
 
@@ -1597,7 +1657,12 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for datafeeds.
+        Retrieves usage information for datafeeds. You can get statistics for multiple
+        datafeeds in a single API request by using a comma-separated list of datafeeds
+        or a wildcard expression. You can get statistics for all datafeeds by using `_all`,
+        by specifying `*` as the `<feed_id>`, or by omitting the `<feed_id>`. If the
+        datafeed is stopped, the only information you receive is the `datafeed_id` and
+        the `state`. This API returns a maximum of 10,000 datafeeds.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed-stats.html>`_
 
@@ -1653,7 +1718,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for datafeeds.
+        Retrieves configuration information for datafeeds. You can get information for
+        multiple datafeeds in a single API request by using a comma-separated list of
+        datafeeds or a wildcard expression. You can get information for all datafeeds
+        by using `_all`, by specifying `*` as the `<feed_id>`, or by omitting the `<feed_id>`.
+        This API returns a maximum of 10,000 datafeeds.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed.html>`_
 
@@ -1716,7 +1785,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves filters.
+        Retrieves filters. You can get a single filter or all filters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-filter.html>`_
 
@@ -1778,7 +1847,10 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly detection job results for one or more influencers.
+        Retrieves anomaly detection job results for one or more influencers. Influencers
+        are the entities that have contributed to, or are to blame for, the anomalies.
+        Influencer results are available only if an `influencer_field_name` is specified
+        in the job configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-influencer.html>`_
 
@@ -1916,7 +1988,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for anomaly detection jobs.
+        Retrieves configuration information for anomaly detection jobs. You can get information
+        for multiple anomaly detection jobs in a single API request by using a group
+        name, a comma-separated list of jobs, or a wildcard expression. You can get information
+        for all anomaly detection jobs by using `_all`, by specifying `*` as the `<job_id>`,
+        or by omitting the `<job_id>`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job.html>`_
 
@@ -1979,7 +2055,9 @@ class MlClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information on how ML is using memory.
+        Get information about how machine learning jobs and trained models are using
+        memory, on each node, both within the JVM heap, and natively, outside of the
+        JVM.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-memory.html>`_
 
@@ -2034,7 +2112,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets stats for anomaly detection job model snapshot upgrades that are in progress.
+        Retrieves usage information for anomaly detection job model snapshot upgrades.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-model-snapshot-upgrade-stats.html>`_
 
@@ -2207,7 +2285,18 @@ class MlClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
-        anomaly detection jobs.
+        anomaly detection jobs. The `overall_score` is calculated by combining the scores
+        of all the buckets within the overall bucket span. First, the maximum `anomaly_score`
+        per anomaly detection job in the overall bucket is calculated. Then the `top_n`
+        of those scores are averaged to result in the `overall_score`. This means that
+        you can fine-tune the `overall_score` so that it is more or less sensitive to
+        the number of jobs that detect an anomaly at the same time. For example, if you
+        set `top_n` to `1`, the `overall_score` is the maximum bucket score in the overall
+        bucket. Alternatively, if you set `top_n` to the number of jobs, the `overall_score`
+        is high only when all jobs detect anomalies in that overall bucket. If you set
+        the `bucket_span` parameter (to a value greater than its default), the `overall_score`
+        is the maximum `overall_score` of the overall buckets that have a span equal
+        to the jobs' largest bucket span.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-overall-buckets.html>`_
 
@@ -2304,7 +2393,15 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly records for an anomaly detection job.
+        Retrieves anomaly records for an anomaly detection job. Records contain the detailed
+        analytical results. They describe the anomalous activity that has been identified
+        in the input data based on the detector configuration. There can be many anomaly
+        records depending on the characteristics and size of the input data. In practice,
+        there are often too many to be able to manually process them. The machine learning
+        features therefore perform a sophisticated aggregation of the anomaly records
+        into buckets. The number of record results depends on the number of anomalies
+        found in each bucket, which relates to the number of time series being modeled
+        and the number of detectors.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-record.html>`_
 
@@ -2374,7 +2471,7 @@ class MlClient(NamespacedClient):
     def get_trained_models(
         self,
         *,
-        model_id: t.Optional[str] = None,
+        model_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         decompress_definition: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -2390,14 +2487,16 @@ class MlClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
-        tags: t.Optional[str] = None,
+        tags: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for a trained inference model.
+        Retrieves configuration information for a trained model.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models.html>`_
 
-        :param model_id: The unique identifier of the trained model.
+        :param model_id: The unique identifier of the trained model or a model alias.
+            You can get information for multiple trained models in a single API request
+            by using a comma-separated list of model IDs or a wildcard expression.
         :param allow_no_match: Specifies what to do when the request: - Contains wildcard
             expressions and there are no models that match. - Contains the _all string
             or no identifiers and there are no matches. - Contains wildcard expressions
@@ -2473,7 +2572,9 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for trained inference models.
+        Retrieves usage information for trained models. You can get usage information
+        for multiple trained models in a single API request by using a comma-separated
+        list of model IDs or a wildcard expression.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models-stats.html>`_
 
@@ -2536,7 +2637,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evaluate a trained model.
+        Evaluates a trained model.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model.html>`_
 
@@ -2593,7 +2694,12 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns defaults and limits used by machine learning.
+        Returns defaults and limits used by machine learning. This endpoint is designed
+        to be used by a user interface that needs to fully understand machine learning
+        configurations where some options are not specified, meaning that the defaults
+        should be used. This endpoint may be used to find out what those defaults are.
+        It also provides information about the maximum size of machine learning jobs
+        that could run in the current cluster configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
         """
@@ -2633,7 +2739,12 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Opens one or more anomaly detection jobs.
+        Opens one or more anomaly detection jobs. An anomaly detection job must be opened
+        in order for it to be ready to receive and analyze data. It can be opened and
+        closed multiple times throughout its lifecycle. When you open a new job, it starts
+        with an empty model. When you open an existing job, the most recent model state
+        is automatically loaded. The job is ready to resume its analysis from where it
+        left off, once new data is received.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-open-job.html>`_
 
@@ -2687,7 +2798,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Posts scheduled events in a calendar.
+        Adds scheduled events to a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-calendar-event.html>`_
 
@@ -2743,7 +2854,9 @@ class MlClient(NamespacedClient):
         reset_start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Sends data to an anomaly detection job for analysis.
+        Sends data to an anomaly detection job for analysis. IMPORTANT: For each job,
+        data can be accepted from only a single connection at a time. It is not currently
+        possible to post data to multiple jobs using wildcards or a comma-separated list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-data.html>`_
 
@@ -2806,7 +2919,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Previews that will be analyzed given a data frame analytics config.
+        Previews the extracted features used by a data frame analytics config.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-dfanalytics.html>`_
 
@@ -2868,7 +2981,15 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Previews a datafeed.
+        Previews a datafeed. This API returns the first "page" of search results from
+        a datafeed. You can preview an existing datafeed or provide configuration details
+        for a datafeed and anomaly detection job in the API. The preview shows the structure
+        of the data that will be passed to the anomaly detection engine. IMPORTANT: When
+        Elasticsearch security features are enabled, the preview uses the credentials
+        of the user that called the API. However, when the datafeed starts it uses the
+        roles of the last user that created or updated the datafeed. To get a preview
+        that accurately reflects the behavior of the datafeed, use the appropriate credentials.
+        You can also use secondary authorization headers to supply the credentials.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-preview-datafeed.html>`_
 
@@ -2944,7 +3065,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a calendar.
+        Creates a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar.html>`_
 
@@ -2991,7 +3112,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        job_id: str,
+        job_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -3070,7 +3191,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a data frame analytics job.
+        Instantiates a data frame analytics job. This API creates a data frame analytics
+        job that performs an analysis on the source indices and stores the outcome in
+        a destination index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-dfanalytics.html>`_
 
@@ -3238,7 +3361,17 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a datafeed.
+        Instantiates a datafeed. Datafeeds retrieve data from Elasticsearch for analysis
+        by an anomaly detection job. You can associate only one datafeed with each anomaly
+        detection job. The datafeed contains a query that runs at a defined interval
+        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay')
+        at each interval. When Elasticsearch security features are enabled, your datafeed
+        remembers which roles the user who created it had at the time of creation and
+        runs the query using those same roles. If you provide secondary authorization
+        headers, those credentials are used instead. You must use Kibana, this API, or
+        the create anomaly detection jobs API to create a datafeed. Do not add a datafeed
+        directly to the `.ml-config` index. Do not give users `write` privileges on the
+        `.ml-config` index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-datafeed.html>`_
 
@@ -3391,7 +3524,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a filter.
+        Instantiates a filter. A filter contains a list of strings. It can be used by
+        one or more anomaly detection jobs. Specifically, filters are referenced in the
+        `custom_rules` property of detector configuration objects.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-filter.html>`_
 
@@ -3477,7 +3612,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates an anomaly detection job.
+        Instantiates an anomaly detection job. If you include a `datafeed_config`, you
+        must have read index privileges on the source index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
 
@@ -3657,7 +3793,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an inference trained model.
+        Enables you to supply a trained model that is not created by data frame analytics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models.html>`_
 
@@ -3759,8 +3895,19 @@ class MlClient(NamespacedClient):
         reassign: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new model alias (or reassigns an existing one) to refer to the trained
-        model
+        Creates or updates a trained model alias. A trained model alias is a logical
+        name used to reference a single trained model. You can use aliases instead of
+        trained model identifiers to make it easier to reference your models. For example,
+        you can use aliases in inference aggregations and processors. An alias must be
+        unique and refer to only a single trained model. However, you can have multiple
+        aliases for each trained model. If you use this API to update an alias such that
+        it references a different trained model ID and the model uses a different type
+        of data frame analytics, an error occurs. For example, this situation occurs
+        if you have a trained model for regression analysis and a trained model for classification
+        analysis; you cannot reassign an alias from one type of trained model to another.
+        If you use this API to update an alias and there are very few input fields in
+        common between the old and new trained models for the model alias, the API returns
+        a warning.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models-aliases.html>`_
 
@@ -3818,7 +3965,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates part of a trained model definition
+        Creates part of a trained model definition.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-definition-part.html>`_
 
@@ -3895,7 +4042,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a trained model vocabulary
+        Creates a trained model vocabulary. This API is supported only for natural language
+        processing (NLP) models. The vocabulary is stored in the index as described in
+        `inference_config.*.vocabulary` of the trained model definition.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-vocabulary.html>`_
 
@@ -3951,7 +4100,9 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resets an existing anomaly detection job.
+        Resets an anomaly detection job. All model state and results are deleted. The
+        job is ready to start over as if it had just been created. It is not currently
+        possible to reset multiple jobs using wildcards or a comma separated list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-reset-job.html>`_
 
@@ -4005,7 +4156,13 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reverts to a specific snapshot.
+        Reverts to a specific snapshot. The machine learning features react quickly to
+        anomalous input, learning new behaviors in data. Highly anomalous input increases
+        the variance in the models whilst the system learns whether this is a new step-change
+        in behavior or a one-off event. In the case where this anomalous input is known
+        to be a one-off, then it might be appropriate to reset the model state to a time
+        before this event. For example, you might consider reverting to a saved snapshot
+        after Black Friday or a critical system failure.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-revert-snapshot.html>`_
 
@@ -4066,7 +4223,15 @@ class MlClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
-        for an upgrade.
+        for an upgrade. When upgrading your cluster, in some circumstances you must restart
+        your nodes and reindex your machine learning indices. In those circumstances,
+        there must be no machine learning jobs running. You can close the machine learning
+        jobs, do the upgrade, then open all the jobs again. Alternatively, you can use
+        this API to temporarily halt tasks associated with the jobs and datafeeds and
+        prevent new jobs from opening. You can also use this API during upgrades that
+        do not require you to reindex your machine learning indices, though stopping
+        jobs is not a requirement in that case. You can see the current value for the
+        upgrade_mode setting by using the get machine learning info API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-set-upgrade-mode.html>`_
 
@@ -4112,7 +4277,16 @@ class MlClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts a data frame analytics job.
+        Starts a data frame analytics job. A data frame analytics job can be started
+        and stopped multiple times throughout its lifecycle. If the destination index
+        does not exist, it is created automatically the first time you start the data
+        frame analytics job. The `index.number_of_shards` and `index.number_of_replicas`
+        settings for the destination index are copied from the source index. If there
+        are multiple source indices, the destination index copies the highest setting
+        values. The mappings for the destination index are also copied from the source
+        indices. If there are any mapping conflicts, the job fails to start. If the destination
+        index exists, it is used as is. You can therefore set up the destination index
+        in advance with custom settings and mappings.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-dfanalytics.html>`_
 
@@ -4164,7 +4338,17 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts one or more datafeeds.
+        Starts one or more datafeeds. A datafeed must be started in order to retrieve
+        data from Elasticsearch. A datafeed can be started and stopped multiple times
+        throughout its lifecycle. Before you can start a datafeed, the anomaly detection
+        job must be open. Otherwise, an error occurs. If you restart a stopped datafeed,
+        it continues processing input data from the next millisecond after it was stopped.
+        If new data was indexed for that exact millisecond between stopping and starting,
+        it will be ignored. When Elasticsearch security features are enabled, your datafeed
+        remembers which roles the last user to create or update it had at the time of
+        creation or update and runs the query using those same roles. If you provided
+        secondary authorization headers when you created or updated the datafeed, those
+        credentials are used instead.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-start-datafeed.html>`_
 
@@ -4233,7 +4417,8 @@ class MlClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Start a trained model deployment.
+        Starts a trained model deployment, which allocates the model to every machine
+        learning node.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html>`_
 
@@ -4316,7 +4501,8 @@ class MlClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops one or more data frame analytics jobs.
+        Stops one or more data frame analytics jobs. A data frame analytics job can be
+        started and stopped multiple times throughout its lifecycle.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-dfanalytics.html>`_
 
@@ -4381,7 +4567,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops one or more datafeeds.
+        Stops one or more datafeeds. A datafeed that is stopped ceases to retrieve data
+        from Elasticsearch. A datafeed can be started and stopped multiple times throughout
+        its lifecycle.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-stop-datafeed.html>`_
 
@@ -4443,7 +4631,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stop a trained model deployment.
+        Stops a trained model deployment.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-trained-model-deployment.html>`_
 
@@ -4508,7 +4696,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a data frame analytics job.
+        Updates an existing data frame analytics job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-dfanalytics.html>`_
 
@@ -4616,7 +4804,11 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a datafeed.
+        Updates the properties of a datafeed. You must stop and start the datafeed for
+        the changes to be applied. When Elasticsearch security features are enabled,
+        your datafeed remembers which roles the user who updated it had at the time of
+        the update and runs the query using those same roles. If you provide secondary
+        authorization headers, those credentials are used instead.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-datafeed.html>`_
 
@@ -4779,7 +4971,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the description of a filter, adds items, or removes items.
+        Updates the description of a filter, adds items, or removes items from the list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-filter.html>`_
 
@@ -5058,7 +5250,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of trained model deployment.
+        Starts a trained model deployment, which allocates the model to every machine
+        learning node.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-trained-model-deployment.html>`_
 
@@ -5088,7 +5281,11 @@ class MlClient(NamespacedClient):
         if not __body:
             if number_of_allocations is not None:
                 __body["number_of_allocations"] = number_of_allocations
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5113,7 +5310,13 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Upgrades a given job snapshot to the current major version.
+        Upgrades an anomaly detection model snapshot to the latest major version. Over
+        time, older snapshot formats are deprecated and removed. Anomaly detection jobs
+        support only snapshots that are from the current or previous major version. This
+        API provides a means to upgrade a snapshot to the current major version. This
+        aids in preparing the cluster for an upgrade to the next major version. Only
+        one snapshot per anomaly detection job can be upgraded at a time and the upgraded
+        snapshot cannot be the current snapshot of the anomaly detection job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-upgrade-job-model-snapshot.html>`_
 

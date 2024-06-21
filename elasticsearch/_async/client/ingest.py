@@ -40,7 +40,7 @@ class IngestClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a pipeline.
+        Deletes one or more existing ingest pipeline.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
 
@@ -89,7 +89,7 @@ class IngestClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns statistical information about geoip databases
+        Gets download statistics for GeoIP2 databases used with the geoip processor.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
         """
@@ -129,7 +129,8 @@ class IngestClient(NamespacedClient):
         summary: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a pipeline.
+        Returns information about one or more ingest pipelines. This API returns a local
+        reference of the pipeline.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
 
@@ -180,7 +181,10 @@ class IngestClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a list of the built-in patterns.
+        Extracts structured fields out of a single text field within a document. You
+        choose which field to extract matched fields from, as well as the grok pattern
+        you expect will match. A grok pattern is like a regular expression that supports
+        aliased expressions that can be reused.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
         """
@@ -230,7 +234,8 @@ class IngestClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a pipeline.
+        Creates or updates an ingest pipeline. Changes made using this API take effect
+        immediately.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html>`_
 
@@ -316,7 +321,7 @@ class IngestClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to simulate a pipeline with example documents.
+        Executes an ingest pipeline against a set of provided documents.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
 
