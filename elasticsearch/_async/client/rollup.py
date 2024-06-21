@@ -165,8 +165,8 @@ class RollupClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
-        index where rollup data is stored).
+        Returns the rollup capabilities of all jobs inside of a rollup index (for example,
+        the index where rollup data is stored).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
 
@@ -344,7 +344,7 @@ class RollupClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables searching rolled-up data using the standard query DSL.
+        Enables searching rolled-up data using the standard Query DSL.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 

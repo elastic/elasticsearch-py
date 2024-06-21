@@ -44,7 +44,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates the user profile on behalf of another user.
+        Creates or updates a user profile on behalf of another user.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-activate-user-profile.html>`_
 
@@ -97,8 +97,12 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables authentication as a user and retrieve information about the authenticated
-        user.
+        Enables you to submit a request with a basic auth header to authenticate a user
+        and retrieve information about the authenticated user. A successful call returns
+        a JSON structure that shows user information such as their username, the roles
+        that are assigned to the user, any assigned metadata, and information about the
+        realms that authenticated and authorized the user. If the user cannot be authenticated,
+        this API returns a 401 status code.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
         """
@@ -204,7 +208,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear a subset or all entries from the API key cache.
+        Evicts a subset of all entries from the API key cache. The cache is also automatically
+        cleared on state changes of the security index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
 
@@ -431,7 +436,11 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an API key for access without requiring basic authentication.
+        Creates an API key for access without requiring basic authentication. A successful
+        request returns a JSON structure that contains the API key, its unique id, and
+        its name. If applicable, it also returns expiration information for the API key
+        in milliseconds. NOTE: By default, API keys never expire. You can specify expiration
+        information when you create the API keys.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-api-key.html>`_
 
@@ -503,7 +512,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a service account token for access without requiring basic authentication.
+        Creates a service accounts token for access without requiring basic authentication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
 
@@ -1021,8 +1030,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a kibana instance to configure itself to communicate with a secured elasticsearch
-        cluster.
+        Enables a Kibana instance to configure itself for communication with a secured
+        Elasticsearch cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
@@ -1057,7 +1066,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a new node to enroll to an existing cluster with security enabled.
+        Allows a new node to join an existing cluster with security features enabled.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
@@ -1100,7 +1109,10 @@ class SecurityClient(NamespacedClient):
         with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information for one or more API keys.
+        Retrieves information for one or more API keys. NOTE: If you have only the `manage_own_api_key`
+        privilege, this API returns only the API keys that you own. If you have `read_security`,
+        `manage_api_key` or greater privileges (including `manage_security`), this API
+        returns all API keys regardless of ownership.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
 
@@ -1259,7 +1271,9 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves roles in the native realm.
+        The role management APIs are generally the preferred way to manage roles, rather
+        than using file-based role management. The get roles API cannot retrieve roles
+        that are defined in roles files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
 
@@ -1352,7 +1366,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about service accounts.
+        This API returns a list of service accounts that match the provided path parameter(s).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
 
@@ -1629,7 +1643,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves user profiles for the given unique ID(s).
+        Retrieves a user's profile using the unique profile ID.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-profile.html>`_
 
@@ -1693,7 +1707,21 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an API key on behalf of another user.
+        Creates an API key on behalf of another user. This API is similar to Create API
+        keys, however it creates the API key for a user that is different than the user
+        that runs the API. The caller must have authentication credentials (either an
+        access token, or a username and password) for the user on whose behalf the API
+        key will be created. It is not possible to use this API to create an API key
+        without that user’s credentials. The user, for whom the authentication credentials
+        is provided, can optionally "run as" (impersonate) another user. In this case,
+        the API key will be created on behalf of the impersonated user. This API is intended
+        be used by applications that need to create and manage API keys for end users,
+        but cannot guarantee that those users have permission to create API keys on their
+        own behalf. A successful grant API key API call returns a JSON structure that
+        contains the API key, its unique id, and its name. If applicable, it also returns
+        expiration information for the API key in milliseconds. By default, API keys
+        never expire. You can specify expiration information when you create the API
+        keys.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
 
@@ -1893,7 +1921,13 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates one or more API keys.
+        Invalidates one or more API keys. The `manage_api_key` privilege allows deleting
+        any API keys. The `manage_own_api_key` only allows deleting API keys that are
+        owned by the user. In addition, with the `manage_own_api_key` privilege, an invalidation
+        request must be issued in one of the three formats: - Set the parameter `owner=true`.
+        - Or, set both `username` and `realm_name` to match the user’s identity. - Or,
+        if the request is issued by an API key, i.e. an API key invalidates itself, specify
+        its ID in the `ids` field.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
 
@@ -2104,7 +2138,9 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates roles in the native realm.
+        The role management APIs are generally the preferred way to manage roles, rather
+        than using file-based role management. The create or update roles API cannot
+        update roles that are defined in roles files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
 
@@ -2122,6 +2158,9 @@ class SecurityClient(NamespacedClient):
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         :param run_as: A list of users that the owners of this role can impersonate.
+            *Note*: in Serverless, the run-as feature is disabled. For API compatibility,
+            you can still specify an empty `run_as` field, but a non-empty list will
+            be rejected.
         :param transient_metadata: Indicates roles that might be incompatible with the
             current cluster license, specifically roles with document and field level
             security. When the cluster license doesn’t allow certain features for a given
@@ -2386,7 +2425,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information for API keys using a subset of query DSL
+        Retrieves information for API keys in a paginated manner. You can optionally
+        filter the results with a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
 
@@ -2502,8 +2542,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Exchanges a SAML Response message for an Elasticsearch access token and refresh
-        token pair
+        Submits a SAML Response message to Elasticsearch for consumption.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
 
@@ -2565,7 +2604,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Verifies the logout response sent from the SAML IdP
+        Verifies the logout response sent from the SAML IdP.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
 
@@ -2631,7 +2670,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Consumes a SAML LogoutRequest
+        Submits a SAML LogoutRequest message to Elasticsearch for consumption.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
 
@@ -2698,8 +2737,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates an access token and a refresh token that were generated via the SAML
-        Authenticate API
+        Submits a request to invalidate an access token and refresh token.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
 
@@ -2756,7 +2794,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a SAML authentication request
+        Creates a SAML authentication request (<AuthnRequest>) as a URL string, based
+        on the configuration of the respective SAML realm in Elasticsearch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
 
@@ -2811,7 +2850,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
+        Generate SAML metadata for a SAML 2.0 Service Provider.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
 
@@ -2926,7 +2965,22 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates attributes of an existing API key.
+        Updates attributes of an existing API key. Users can only update API keys that
+        they created or that were granted to them. Use this API to update API keys created
+        by the create API Key or grant API Key APIs. If you need to apply the same update
+        to many API keys, you can use bulk update API Keys to reduce overhead. It’s not
+        possible to update expired API keys, or API keys that have been invalidated by
+        invalidate API Key. This API supports updates to an API key’s access scope and
+        metadata. The access scope of an API key is derived from the `role_descriptors`
+        you specify in the request, and a snapshot of the owner user’s permissions at
+        the time of the request. The snapshot of the owner’s permissions is updated automatically
+        on every call. If you don’t specify `role_descriptors` in the request, a call
+        to this API might still change the API key’s access scope. This change can occur
+        if the owner user’s permissions have changed since the API key was created or
+        last modified. To update another user’s API key, use the `run_as` feature to
+        submit a request on behalf of another user. IMPORTANT: It’s not possible to use
+        an API key as the authentication credential for this API. To update an API key,
+        the owner user’s credentials are required.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-api-key.html>`_
 
@@ -3001,7 +3055,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Update application specific data for the user profile of the given unique ID.
+        Updates specific data for the user profile that's associated with the specified
+        unique ID.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-user-profile-data.html>`_
 

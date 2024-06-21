@@ -116,7 +116,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a search application.
+        Returns the details about a search application
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html>`_
 
@@ -353,7 +353,7 @@ class SearchApplicationClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Perform a search against a search application
+        Perform a search against a search application.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
 

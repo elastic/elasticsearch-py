@@ -45,8 +45,8 @@ class GraphClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explore extracted and summarized information about the documents and terms in
-        an index.
+        Extracts and summarizes information about the documents and terms in an Elasticsearch
+        data stream or index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
 

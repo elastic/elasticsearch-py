@@ -36,8 +36,10 @@ class InferenceClient(NamespacedClient):
                 str,
             ]
         ] = None,
+        dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -48,6 +50,10 @@ class InferenceClient(NamespacedClient):
 
         :param inference_id: The inference Id
         :param task_type: The task type
+        :param dry_run: When true, the endpoint is not deleted, and a list of ingest
+            processors which reference this endpoint is returned
+        :param force: When true, the inference endpoint is forcefully deleted even if
+            it is still being used by ingest processors or semantic text fields
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -64,10 +70,14 @@ class InferenceClient(NamespacedClient):
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
@@ -162,7 +172,7 @@ class InferenceClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Perform inference
+        Perform inference on the service
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/post-inference-api.html>`_
 
@@ -245,7 +255,7 @@ class InferenceClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Configure an inference endpoint for use in the Inference API
+        Create an inference endpoint
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-inference-api.html>`_
 

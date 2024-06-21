@@ -158,7 +158,8 @@ class TasksClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a list of tasks.
+        The task management API returns information about tasks currently executing on
+        one or more nodes in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
