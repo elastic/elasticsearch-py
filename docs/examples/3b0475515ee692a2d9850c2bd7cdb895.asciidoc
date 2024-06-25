@@ -1,0 +1,27 @@
+// mapping/dynamic/templates.asciidoc:648
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "dynamic_templates": [
+                {
+                    "unindexed_longs": {
+                        "match_mapping_type": "long",
+                        "mapping": {"type": "long", "index": False},
+                    }
+                },
+                {
+                    "unindexed_doubles": {
+                        "match_mapping_type": "double",
+                        "mapping": {"type": "float", "index": False},
+                    }
+                },
+            ]
+        }
+    },
+)
+print(resp)
+----

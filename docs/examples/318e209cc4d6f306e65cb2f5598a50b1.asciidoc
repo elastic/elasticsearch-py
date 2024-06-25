@@ -1,0 +1,18 @@
+// mapping/types/geo-shape.asciidoc:195
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "LineString",
+            "coordinates": [
+                [-77.03653, 38.897676],
+                [-77.009051, 38.889939],
+            ],
+        }
+    },
+)
+print(resp)
+----

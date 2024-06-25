@@ -1,0 +1,31 @@
+// mapping/types/dense-vector.asciidoc:18
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index",
+    body={
+        "mappings": {
+            "properties": {
+                "my_vector": {"type": "dense_vector", "dims": 3},
+                "my_text": {"type": "keyword"},
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index",
+    id="1",
+    body={"my_text": "text1", "my_vector": [0.5, 10, 6]},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index",
+    id="2",
+    body={"my_text": "text2", "my_vector": [-0.5, 10, 10]},
+)
+print(resp)
+----

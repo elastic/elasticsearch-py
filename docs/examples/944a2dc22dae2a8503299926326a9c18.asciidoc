@@ -1,0 +1,23 @@
+// mapping/types/ip.asciidoc:11
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"mappings": {"properties": {"ip_addr": {"type": "ip"}}}},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"ip_addr": "192.168.1.1"},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"ip_addr": "192.168.0.0/16"}}},
+)
+print(resp)
+----

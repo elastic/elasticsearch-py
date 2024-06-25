@@ -1,0 +1,12 @@
+// mapping/types/shape.asciidoc:242
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": "POLYGON ((1000.0 1000.0, 1001.0 1000.0, 1001.0 1001.0, 1000.0 1001.0, 1000.0 1000.0), (1000.2 1000.2, 1000.8 1000.2, 1000.8 1000.8, 1000.2 1000.8, 1000.2 1000.2))"
+    },
+)
+print(resp)
+----

@@ -1,0 +1,17 @@
+// mapping/types/range.asciidoc:195
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="range_index",
+    body={"properties": {"ip_allowlist": {"type": "ip_range"}}},
+)
+print(resp)
+
+resp = client.index(
+    index="range_index",
+    id="2",
+    body={"ip_allowlist": "192.168.0.0/16"},
+)
+print(resp)
+----

@@ -1,0 +1,15 @@
+// mapping/types/geo-shape.asciidoc:331
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "MultiPoint",
+            "coordinates": [[102, 2], [103, 2]],
+        }
+    },
+)
+print(resp)
+----

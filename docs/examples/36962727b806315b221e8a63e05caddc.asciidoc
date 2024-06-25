@@ -1,0 +1,12 @@
+// mapping/explicit-mapping.asciidoc:49
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="my-index-000001",
+    body={
+        "properties": {"employee-id": {"type": "keyword", "index": False}}
+    },
+)
+print(resp)
+----

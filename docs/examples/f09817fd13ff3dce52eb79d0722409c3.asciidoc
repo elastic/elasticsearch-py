@@ -1,0 +1,33 @@
+// mapping/types/percolator.asciidoc:115
+
+[source, python]
+----
+resp = client.indices.create(
+    index="new_index",
+    body={
+        "mappings": {
+            "properties": {
+                "query": {"type": "percolator"},
+                "body": {"type": "text"},
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.reindex(
+    refresh=True,
+    body={"source": {"index": "index"}, "dest": {"index": "new_index"}},
+)
+print(resp)
+
+resp = client.indices.update_aliases(
+    body={
+        "actions": [
+            {"remove": {"index": "index", "alias": "queries"}},
+            {"add": {"index": "new_index", "alias": "queries"}},
+        ]
+    },
+)
+print(resp)
+----

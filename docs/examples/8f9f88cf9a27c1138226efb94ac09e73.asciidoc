@@ -1,0 +1,10 @@
+// mapping/types/ip.asciidoc:112
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"ip_addr": "192.168.0.0/16"}}},
+)
+print(resp)
+----

@@ -1,0 +1,10 @@
+// mapping/types/geo-shape.asciidoc:475
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={"location": "BBOX (100.0, 102.0, 2.0, 0.0)"},
+)
+print(resp)
+----

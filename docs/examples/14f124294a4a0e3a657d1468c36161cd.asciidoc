@@ -1,0 +1,10 @@
+// mapping/types/aggregate-metric-double.asciidoc:205
+
+[source, python]
+----
+resp = client.search(
+    index="stats-index",
+    body={"query": {"term": {"agg_metric": {"value": 702.3}}}},
+)
+print(resp)
+----

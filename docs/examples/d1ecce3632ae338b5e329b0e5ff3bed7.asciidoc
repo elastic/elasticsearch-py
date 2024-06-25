@@ -1,0 +1,20 @@
+// mapping/types/parent-join.asciidoc:382
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "my_join_field": {
+                    "type": "join",
+                    "relations": {"question": "answer"},
+                    "eager_global_ordinals": False,
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

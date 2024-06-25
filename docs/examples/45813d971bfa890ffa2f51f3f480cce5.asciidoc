@@ -1,0 +1,17 @@
+// mapping/types/percolator.asciidoc:355
+
+[source, python]
+----
+resp = client.search(
+    index="test_index",
+    body={
+        "query": {
+            "percolate": {
+                "field": "query",
+                "document": {"body": "Bycicles are missing"},
+            }
+        }
+    },
+)
+print(resp)
+----

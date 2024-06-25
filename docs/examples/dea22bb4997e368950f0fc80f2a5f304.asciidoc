@@ -1,0 +1,10 @@
+// mapping/explicit-mapping.asciidoc:123
+
+[source, python]
+----
+resp = client.indices.get_field_mapping(
+    index="my-index-000001",
+    fields="employee-id",
+)
+print(resp)
+----

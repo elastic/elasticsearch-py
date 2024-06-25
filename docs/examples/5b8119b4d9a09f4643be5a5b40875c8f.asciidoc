@@ -1,0 +1,36 @@
+// mapping/types/boolean.asciidoc:78
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    refresh=True,
+    body={"is_published": True},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="2",
+    refresh=True,
+    body={"is_published": False},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={
+        "aggs": {"publish_state": {"terms": {"field": "is_published"}}},
+        "sort": ["is_published"],
+        "fields": [{"field": "weight"}],
+        "runtime_mappings": {
+            "weight": {
+                "type": "long",
+                "script": "emit(doc['is_published'].value ? 10 : 0)",
+            }
+        },
+    },
+)
+print(resp)
+----

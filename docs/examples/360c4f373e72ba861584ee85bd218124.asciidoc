@@ -1,0 +1,27 @@
+// mapping/types/percolator.asciidoc:262
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test_index",
+    body={
+        "settings": {
+            "analysis": {
+                "analyzer": {
+                    "my_analyzer": {
+                        "tokenizer": "standard",
+                        "filter": ["lowercase", "porter_stem"],
+                    }
+                }
+            }
+        },
+        "mappings": {
+            "properties": {
+                "query": {"type": "percolator"},
+                "body": {"type": "text", "analyzer": "my_analyzer"},
+            }
+        },
+    },
+)
+print(resp)
+----

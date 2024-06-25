@@ -1,0 +1,10 @@
+// mapping/types/range.asciidoc:75
+
+[source, python]
+----
+resp = client.search(
+    index="range_index",
+    body={"query": {"term": {"expected_attendees": {"value": 12}}}},
+)
+print(resp)
+----

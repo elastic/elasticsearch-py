@@ -1,0 +1,26 @@
+// mapping/types/boolean.asciidoc:22
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {"properties": {"is_published": {"type": "boolean"}}}
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    refresh=True,
+    body={"is_published": "true"},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"is_published": True}}},
+)
+print(resp)
+----

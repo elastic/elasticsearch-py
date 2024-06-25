@@ -1,0 +1,15 @@
+// mapping/runtime.asciidoc:339
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="my-index-000001",
+    body={
+        "runtime": {
+            "measures.start": {"type": "long"},
+            "measures.end": {"type": "long"},
+        }
+    },
+)
+print(resp)
+----

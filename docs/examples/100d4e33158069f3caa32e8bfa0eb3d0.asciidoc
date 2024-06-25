@@ -1,0 +1,15 @@
+// mapping/runtime.asciidoc:175
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "dynamic": "runtime",
+            "properties": {"@timestamp": {"type": "date"}},
+        }
+    },
+)
+print(resp)
+----
