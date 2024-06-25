@@ -228,9 +228,9 @@ class AsyncYamlRunner(YamlRunner):
         if XPACK_FEATURES is None:
             try:
                 xinfo = await self.client.xpack.info()
-                XPACK_FEATURES = set(
+                XPACK_FEATURES = {
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-                )
+                }
                 IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()

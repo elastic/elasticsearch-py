@@ -49,7 +49,7 @@ class OpenTelemetry:
         enabled: bool | None = None,
         tracer: trace.Tracer | None = None,
         # TODO import Literal at the top-level when dropping Python 3.7
-        body_strategy: 'Literal["omit", "raw"]' | None = None,
+        body_strategy: Literal["omit", "raw"] | None = None,
     ):
         if enabled is None:
             enabled = os.environ.get(ENABLED_ENV_VAR, "true") == "true"

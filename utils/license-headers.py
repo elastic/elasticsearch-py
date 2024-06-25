@@ -66,7 +66,7 @@ def find_files_to_fix(sources: List[str]) -> Iterator[str]:
 def does_file_need_fix(filepath: str) -> bool:
     if not re.search(r"\.pyi?$", filepath):
         return False
-    with open(filepath, mode="r") as f:
+    with open(filepath) as f:
         first_license_line = None
         for line in f:
             if line == license_header_lines[0]:
@@ -83,7 +83,7 @@ def does_file_need_fix(filepath: str) -> bool:
 
 
 def add_header_to_file(filepath: str) -> None:
-    with open(filepath, mode="r") as f:
+    with open(filepath) as f:
         lines = list(f)
     i = 0
     for i, line in enumerate(lines):

@@ -132,8 +132,7 @@ SKIP_TESTS = {
 XPACK_FEATURES = None
 ES_VERSION = None
 RUN_ASYNC_REST_API_TESTS = (
-    sys.version_info >= (3, 8)
-    and os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
+    os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
 )
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)
@@ -456,7 +455,7 @@ class YamlRunner:
         if isinstance(value, string_types):
             value = value.strip()
         elif isinstance(value, dict):
-            value = dict((k, self._resolve(v)) for (k, v) in value.items())
+            value = {k: self._resolve(v) for (k, v) in value.items()}
         elif isinstance(value, list):
             value = list(map(self._resolve, value))
         return value
@@ -495,9 +494,9 @@ class YamlRunner:
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
-                XPACK_FEATURES = set(
+                XPACK_FEATURES = {
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-                )
+                }
                 IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()
