@@ -1,0 +1,30 @@
+// mapping/dynamic/templates.asciidoc:234
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "dynamic_templates": [
+                {
+                    "longs_as_strings": {
+                        "match_mapping_type": "string",
+                        "match": "long_*",
+                        "unmatch": "*_text",
+                        "mapping": {"type": "long"},
+                    }
+                }
+            ]
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"long_num": "5", "long_text": "foo"},
+)
+print(resp)
+----

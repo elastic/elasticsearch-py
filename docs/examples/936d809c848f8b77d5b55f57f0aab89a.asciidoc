@@ -1,0 +1,17 @@
+// mapping/dynamic/field-mapping.asciidoc:81
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"mappings": {"date_detection": False}},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"create_date": "2015/09/02"},
+)
+print(resp)
+----

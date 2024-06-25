@@ -1,0 +1,10 @@
+// mapping/types/text.asciidoc:320
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="my-index-000001",
+    body={"properties": {"my_field": {"type": "text", "fielddata": True}}},
+)
+print(resp)
+----

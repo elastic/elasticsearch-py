@@ -1,0 +1,22 @@
+// mapping/types/boolean.asciidoc:242
+
+[source, python]
+----
+resp = client.indices.create(
+    index="idx",
+    body={
+        "mappings": {
+            "_source": {"mode": "synthetic"},
+            "properties": {"bool": {"type": "boolean"}},
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="idx",
+    id="1",
+    body={"bool": [True, False, True, False]},
+)
+print(resp)
+----

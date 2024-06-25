@@ -1,0 +1,10 @@
+// mapping/types/ip.asciidoc:143
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"query_string": {"query": 'ip_addr:"2001:db8::/48"'}}},
+)
+print(resp)
+----

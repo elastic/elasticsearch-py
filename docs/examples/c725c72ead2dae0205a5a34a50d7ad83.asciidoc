@@ -1,0 +1,52 @@
+// mapping/types/rank-features.asciidoc:16
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "topics": {"type": "rank_features"},
+                "negative_reviews": {
+                    "type": "rank_features",
+                    "positive_score_impact": False,
+                },
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={
+        "topics": {"politics": 20, "economics": 50.8},
+        "negative_reviews": {"1star": 10, "2star": 100},
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="2",
+    body={
+        "topics": {"politics": 5.2, "sports": 80.1},
+        "negative_reviews": {"1star": 1, "2star": 10},
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"rank_feature": {"field": "topics.politics"}}},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"rank_feature": {"field": "negative_reviews.1star"}}},
+)
+print(resp)
+----

@@ -1,0 +1,11 @@
+// mapping/types/percolator.asciidoc:40
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="match_value",
+    body={"query": {"match": {"field": "value"}}},
+)
+print(resp)
+----

@@ -1,0 +1,21 @@
+// mapping/types/geo-shape.asciidoc:422
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "GeometryCollection",
+            "geometries": [
+                {"type": "Point", "coordinates": [100, 0]},
+                {
+                    "type": "LineString",
+                    "coordinates": [[101, 0], [102, 1]],
+                },
+            ],
+        }
+    },
+)
+print(resp)
+----

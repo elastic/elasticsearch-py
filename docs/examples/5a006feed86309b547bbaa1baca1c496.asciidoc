@@ -1,0 +1,64 @@
+// mapping/dynamic/templates.asciidoc:148
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "dynamic_templates": [
+                {
+                    "numeric_counts": {
+                        "match_mapping_type": ["long", "double"],
+                        "match": "count",
+                        "mapping": {
+                            "type": "{dynamic_type}",
+                            "index": False,
+                        },
+                    }
+                },
+                {
+                    "integers": {
+                        "match_mapping_type": "long",
+                        "mapping": {"type": "integer"},
+                    }
+                },
+                {
+                    "strings": {
+                        "match_mapping_type": "string",
+                        "mapping": {
+                            "type": "text",
+                            "fields": {
+                                "raw": {
+                                    "type": "keyword",
+                                    "ignore_above": 256,
+                                }
+                            },
+                        },
+                    }
+                },
+                {
+                    "non_objects_keyword": {
+                        "match_mapping_type": "*",
+                        "unmatch_mapping_type": "object",
+                        "mapping": {"type": "keyword"},
+                    }
+                },
+            ]
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={
+        "my_integer": 5,
+        "my_string": "Some string",
+        "my_boolean": "false",
+        "field": {"count": 4},
+    },
+)
+print(resp)
+----

@@ -1,0 +1,14 @@
+// mapping/types/sparse-vector.asciidoc:13
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index",
+    body={
+        "mappings": {
+            "properties": {"text.tokens": {"type": "sparse_vector"}}
+        }
+    },
+)
+print(resp)
+----

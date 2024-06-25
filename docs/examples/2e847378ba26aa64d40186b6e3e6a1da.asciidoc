@@ -1,0 +1,19 @@
+// mapping/types/unsigned_long.asciidoc:159
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "script_score": {
+                "query": {"match_all": {}},
+                "script": {
+                    "source": "field('my_counter').asBigInteger(BigInteger.ZERO).floatValue()"
+                },
+            }
+        }
+    },
+)
+print(resp)
+----

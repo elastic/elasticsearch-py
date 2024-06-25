@@ -1,0 +1,10 @@
+// mapping/types/shape.asciidoc:299
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={"location": "MULTIPOINT (1002.0 2000.0, 1003.0 2000.0)"},
+)
+print(resp)
+----

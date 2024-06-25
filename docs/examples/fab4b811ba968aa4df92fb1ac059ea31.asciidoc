@@ -1,0 +1,10 @@
+// mapping/types/geo-shape.asciidoc:107
+
+[source, python]
+----
+resp = client.indices.create(
+    index="example",
+    body={"mappings": {"properties": {"location": {"type": "geo_shape"}}}},
+)
+print(resp)
+----

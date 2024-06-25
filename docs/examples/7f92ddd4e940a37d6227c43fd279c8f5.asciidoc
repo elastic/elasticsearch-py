@@ -1,0 +1,14 @@
+// mapping/runtime.asciidoc:759
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    body={
+        "size": 1,
+        "query": {"match": {"client_ip": "211.11.9.0"}},
+        "fields": ["*"],
+    },
+)
+print(resp)
+----

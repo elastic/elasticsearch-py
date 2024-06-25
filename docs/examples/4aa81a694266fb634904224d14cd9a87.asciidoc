@@ -1,0 +1,17 @@
+// mapping/types/percolator.asciidoc:668
+
+[source, python]
+----
+resp = client.search(
+    index="my_queries2",
+    body={
+        "query": {
+            "percolate": {
+                "field": "query",
+                "document": {"my_field": "wxyz"},
+            }
+        }
+    },
+)
+print(resp)
+----

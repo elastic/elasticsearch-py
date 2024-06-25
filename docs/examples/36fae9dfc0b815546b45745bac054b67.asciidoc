@@ -1,0 +1,10 @@
+// mapping/runtime.asciidoc:496
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"match": {"model_number": "HG537PU"}}},
+)
+print(resp)
+----

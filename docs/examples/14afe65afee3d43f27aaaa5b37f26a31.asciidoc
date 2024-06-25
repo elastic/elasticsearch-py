@@ -1,0 +1,15 @@
+// mapping/types/geo-shape.asciidoc:165
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "Point",
+            "coordinates": [-77.03653, 38.897676],
+        }
+    },
+)
+print(resp)
+----

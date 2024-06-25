@@ -1,0 +1,23 @@
+// mapping/types/shape.asciidoc:199
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "polygon",
+            "coordinates": [
+                [
+                    [1000, -1001],
+                    [1001, -1001],
+                    [1001, -1000],
+                    [1000, -1000],
+                    [1000, -1001],
+                ]
+            ],
+        }
+    },
+)
+print(resp)
+----

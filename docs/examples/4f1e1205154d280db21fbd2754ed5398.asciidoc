@@ -1,0 +1,20 @@
+// mapping/types/aggregate-metric-double.asciidoc:114
+
+[source, python]
+----
+resp = client.indices.create(
+    index="stats-index",
+    body={
+        "mappings": {
+            "properties": {
+                "agg_metric": {
+                    "type": "aggregate_metric_double",
+                    "metrics": ["min", "max", "sum", "value_count"],
+                    "default_metric": "max",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----
