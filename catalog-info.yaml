@@ -30,6 +30,9 @@ spec:
     spec:
       repository: elastic/elasticsearch-py
       pipeline_file: .buildkite/pipeline.yml
+      env:
+        ELASTIC_SLACK_NOTIFICATIONS_ENABLED: 'true'
+        SLACK_NOTIFICATIONS_CHANNEL: '#devtools-notify-python'
       teams:
         devtools-team:
           access_level: MANAGE_BUILD_AND_READ
@@ -38,12 +41,15 @@ spec:
       cancel_intermediate_builds: true
       cancel_intermediate_builds_branch_filter: '!main'
       schedules:
-        main_semi_daily:
+        main:
           branch: 'main'
-          cronline: '0 */12 * * *'
-        8_11_daily:
-          branch: '8.11'
-          cronline: '@daily'
-        8_10_daily:
-          branch: '8.10'
-          cronline: '@daily'
+          cronline: '0 10 * * *'
+          message: 'Daily run for main branch'
+        Daily 8.13:
+          branch: '8.13'
+          cronline: '0 10 * * *'
+          message: 'Daily run for 8.13 branch'
+        Daily 8.14:
+          branch: '8.14'
+          cronline: '0 10 * * *'
+          message: 'Daily run for 8.14 branch'
