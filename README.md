@@ -72,7 +72,7 @@ the new features of the 8.13 version of Elasticsearch, the 8.13 client version
 is required for that. Elasticsearch language clients are only backwards
 compatible with default distributions and without guarantees made.
 
-| Elasticsearch Version | Elasticsearch-PHP Branch | Supported |
+| Elasticsearch Version | Elasticsearch-Python Branch | Supported |
 | --------------------- | ------------------------ | --------- |
 | main                  | main                     |           |
 | 8.x                   | 8.x                      | 8.x       |
