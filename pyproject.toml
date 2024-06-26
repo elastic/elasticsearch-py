@@ -74,7 +74,8 @@ dev = [
     "mapbox-vector-tile",
     # Python 3.7 gets an old version of mapbox-vector-tile, requiring an old version of protobuf
     "protobuf<4; python_version<=\"3.7\"",
-    # Docs
+]
+docs = [
     "sphinx",
     "sphinx-rtd-theme",
     "sphinx-autodoc-typehints"
