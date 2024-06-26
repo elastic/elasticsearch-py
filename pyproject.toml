@@ -98,7 +98,7 @@ include = [
     "/CONTRIBUTING.md",
     "/LICENSE",
     "/NOTICE",
-    "/README.rst",
+    "/README.md",
     "/setup.cfg",
     "/docs/sphinx",
 ]
