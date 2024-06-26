@@ -22,7 +22,6 @@ import nox
 SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILES = (
     "docs/sphinx/conf.py",
-    "setup.py",
     "noxfile.py",
     "elasticsearch/",
     "test_elasticsearch/",
@@ -48,22 +47,17 @@ def pytest_argv():
 
 @nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"])
 def test(session):
-    session.install(
-        ".[async,requests,orjson,vectorstore_mmr]", env=INSTALL_ENV, silent=False
-    )
-    session.install("-r", "dev-requirements.txt", silent=False)
+    session.install(".[dev]", env=INSTALL_ENV, silent=False)
 
     session.run(*pytest_argv())
 
 
 @nox.session(python=["3.7", "3.12"])
 def test_otel(session):
-    session.install(".[async,requests]", env=INSTALL_ENV, silent=False)
     session.install(
+        ".[dev]",
         "opentelemetry-api",
         "opentelemetry-sdk",
-        "-r",
-        "dev-requirements.txt",
         silent=False,
     )
 
@@ -129,8 +123,5 @@ def lint(session):
 
 @nox.session()
 def docs(session):
-    session.install("-rdev-requirements.txt")
-    session.install(".")
-    session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
-
+    session.install(".[dev]")
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")
