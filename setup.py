@@ -30,19 +30,7 @@ with open(join(base_dir, package_name, "_version.py")) as f:
     ).group(1)
 
 with open(join(base_dir, "README.rst")) as f:
-    # Remove reST raw directive from README as they're not allowed on PyPI
-    # Those blocks start with a newline and continue until the next newline
-    mode = None
-    lines = []
-    for line in f:
-        if line.startswith(".. raw::"):
-            mode = "ignore_nl"
-        elif line == "\n":
-            mode = "wait_nl" if mode == "ignore_nl" else None
-        if mode is None:
-            lines.append(line)
-
-    long_description = "".join(lines)
+    readme = f.read()
 
 
 packages = [
@@ -56,8 +44,8 @@ setup(
     description="Python client for Elasticsearch",
     license="Apache-2.0",
     url="https://github.com/elastic/elasticsearch-py",
-    long_description=long_description,
-    long_description_content_type="text/x-rst",
+    long_description=readme,
+    long_description_content_type="text/markdown",
     version=package_version,
     author="Elastic Client Library Maintainers",
     author_email="client-libs@elastic.co",
