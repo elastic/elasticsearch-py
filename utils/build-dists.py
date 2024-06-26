@@ -17,7 +17,7 @@
 
 """A command line tool for building and verifying releases
 Can be used for building both 'elasticsearch' and 'elasticsearchX' dists.
-Only requires 'name' in 'setup.py' and the directory to be changed.
+Only requires 'name' in 'pyproject.toml' and the directory to be changed.
 """
 
 import contextlib
@@ -170,8 +170,8 @@ def test_dist(dist):
 
 
 def main():
-    run("git", "checkout", "--", "setup.py", "elasticsearch/")
-    run("rm", "-rf", "build/", "dist/*", "*.egg-info", ".eggs")
+    run("git", "checkout", "--", "pyproject.toml", "elasticsearch/")
+    run("rm", "-rf", "dist")
 
     # Grab the major version to be used as a suffix.
     version_path = os.path.join(base_dir, "elasticsearch/_version.py")
@@ -249,25 +249,19 @@ def main():
             f.truncate()
             f.write(version_data)
 
-        # Rewrite setup.py with the new name.
-        setup_py_path = os.path.join(base_dir, "setup.py")
-        with open(setup_py_path) as f:
-            setup_py = f.read()
-        with open(setup_py_path, "w") as f:
+        # Rewrite pyproject.toml with the new name.
+        pyproject_toml_path = os.path.join(base_dir, "pyproject.toml")
+        with open(pyproject_toml_path) as f:
+            pyproject_toml = f.read()
+        with open(pyproject_toml_path, "w") as f:
             f.truncate()
-            assert 'package_name = "elasticsearch"' in setup_py
-            f.write(
-                setup_py.replace(
-                    'package_name = "elasticsearch"',
-                    f'package_name = "elasticsearch{suffix}"',
-                )
-            )
+            f.write(pyproject_toml.replace("elasticsearch", f"elasticsearch{suffix}"))
 
         # Build the sdist/wheels
         run("python", "-m", "build")
 
         # Clean up everything.
-        run("git", "checkout", "--", "setup.py", "elasticsearch/")
+        run("git", "checkout", "--", "pyproject.toml", "elasticsearch/")
         if suffix:
             run("rm", "-rf", f"elasticsearch{suffix}/")
 
