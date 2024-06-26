@@ -1,7 +1,7 @@
 include CONTRIBUTING.md
 include LICENSE
 include MANIFEST.in
-include README.rst
+include README.md
 include NOTICE
 include CHANGELOG.md
 include setup.py
