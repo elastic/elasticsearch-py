@@ -119,7 +119,8 @@ class InferenceClient(NamespacedClient):
             __path_parts = {"inference_id": _quote(inference_id)}
             __path = f'/_inference/{__path_parts["inference_id"]}'
         else:
-            raise ValueError("Couldn't find a path for the given parameters")
+            __path_parts = {}
+            __path = "/_inference"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
