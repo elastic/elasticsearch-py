@@ -4972,9 +4972,8 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates documents that match the specified query. If no query is specified, performs
-        an update on every document in the index without changing the source, for example
-        to pick up a mapping change.
+        Performs an update on every document in the index without changing the source,
+        for example to pick up a mapping change.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.13/docs-update-by-query.html>`_
 
