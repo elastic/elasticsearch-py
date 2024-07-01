@@ -85,9 +85,12 @@ def lint(session):
     session.run("python", "-c", "from elasticsearch import Elasticsearch")
     session.run("python", "-c", "from elasticsearch._otel import OpenTelemetry")
 
-    session.install("flake8", "black~=24.0", "mypy", "isort", "types-requests")
+    session.install(
+        "flake8", "black~=24.0", "mypy", "isort", "types-requests", "unasync>=0.6.0"
+    )
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
     session.run("black", "--check", *SOURCE_FILES)
+    session.run("python", "utils/run-unasync.py", "--check")
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
