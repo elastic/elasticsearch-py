@@ -17,6 +17,7 @@
 
 import os
 import subprocess
+import sys
 from glob import glob
 from pathlib import Path
 
@@ -34,10 +35,14 @@ def cleanup(source_dir: Path, output_dir: Path, patterns: list[str]):
 def run(
     rule: unasync.Rule,
     cleanup_patterns: list[str] = [],
+    check: bool = False,
 ):
     root_dir = Path(__file__).absolute().parent.parent
     source_dir = root_dir / rule.fromdir.lstrip("/")
-    output_dir = root_dir / rule.todir.lstrip("/")
+    output_dir = check_dir = root_dir / rule.todir.lstrip("/")
+    if check:
+        rule.todir += "_sync_check/"
+        output_dir = root_dir / rule.todir.lstrip("/")
 
     filepaths = []
     for root, _, filenames in os.walk(source_dir):
@@ -53,8 +58,23 @@ def run(
     if cleanup_patterns:
         cleanup(source_dir, output_dir, cleanup_patterns)
 
+    if check:
+        subprocess.check_call(["black", output_dir])
+        subprocess.check_call(["isort", "--profile=black", output_dir])
 
-def main():
+        # make sure there are no differences between _sync and _sync_check
+        for file in glob("*.py", root_dir=output_dir):
+            subprocess.check_call(
+                [
+                    "diff",
+                    f"{check_dir}/{file}",
+                    f"{output_dir}/{file}",
+                ]
+            )
+        subprocess.check_call(["rm", "-rf", output_dir])
+
+
+def main(check: bool = False):
     run(
         rule=unasync.Rule(
             fromdir="/elasticsearch/_async/client/",
@@ -69,6 +89,7 @@ def main():
                 "_TYPE_ASYNC_SNIFF_CALLBACK": "_TYPE_SYNC_SNIFF_CALLBACK",
             },
         ),
+        check=check,
     )
 
     run(
@@ -93,8 +114,9 @@ def main():
         cleanup_patterns=[
             "/^import asyncio$/d",
         ],
+        check=check,
     )
 
 
 if __name__ == "__main__":
-    main()
+    main(check="--check" in sys.argv)
