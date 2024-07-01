@@ -60,6 +60,7 @@ class AsyncVectorStore:
         vector_field: str = "vector_field",
         metadata_mappings: Optional[Dict[str, Any]] = None,
         user_agent: str = f"elasticsearch-py-vs/{lib_version}",
+        custom_settings: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         :param user_header: user agent header specific to the 3rd party integration.
@@ -90,6 +91,7 @@ class AsyncVectorStore:
         self.text_field = text_field
         self.vector_field = vector_field
         self.metadata_mappings = metadata_mappings
+        self.custom_settings = custom_settings
 
     async def close(self) -> None:
         return await self.client.close()
@@ -306,6 +308,10 @@ class AsyncVectorStore:
             vector_field=self.vector_field,
             num_dimensions=self.num_dimensions,
         )
+        if self.custom_settings:
+            self.custom_settings.update(settings)
+            settings = self.custom_settings
+
         if self.metadata_mappings:
             metadata = mappings["properties"].get("metadata", {"properties": {}})
             for key in self.metadata_mappings.keys():
