@@ -23,10 +23,59 @@ from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
-class QueryRulesetClient(NamespacedClient):
+class QueryRulesClient(NamespacedClient):
 
     @_rewrite_parameters()
-    async def delete(
+    async def delete_rule(
+        self,
+        *,
+        ruleset_id: str,
+        rule_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Deletes a query rule within a query ruleset.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-query-rule.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset containing the
+            rule to delete
+        :param rule_id: The unique identifier of the query rule within the specified
+            ruleset to delete
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        __path_parts: t.Dict[str, str] = {
+            "ruleset_id": _quote(ruleset_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}/_rule/{__path_parts["rule_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="query_rules.delete_rule",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def delete_ruleset(
         self,
         *,
         ruleset_id: str,
@@ -61,12 +110,61 @@ class QueryRulesetClient(NamespacedClient):
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="query_ruleset.delete",
+            endpoint_id="query_rules.delete_ruleset",
             path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
-    async def get(
+    async def get_rule(
+        self,
+        *,
+        ruleset_id: str,
+        rule_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the details about a query rule within a query ruleset
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-rule.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset containing the
+            rule to retrieve
+        :param rule_id: The unique identifier of the query rule within the specified
+            ruleset to retrieve
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        __path_parts: t.Dict[str, str] = {
+            "ruleset_id": _quote(ruleset_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}/_rule/{__path_parts["rule_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="query_rules.get_rule",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def get_ruleset(
         self,
         *,
         ruleset_id: str,
@@ -101,14 +199,14 @@ class QueryRulesetClient(NamespacedClient):
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="query_ruleset.get",
+            endpoint_id="query_rules.get_ruleset",
             path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    async def list(
+    async def list_rulesets(
         self,
         *,
         error_trace: t.Optional[bool] = None,
@@ -147,14 +245,87 @@ class QueryRulesetClient(NamespacedClient):
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="query_ruleset.list",
+            endpoint_id="query_rules.list_rulesets",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("actions", "criteria", "type"),
+    )
+    async def put_rule(
+        self,
+        *,
+        ruleset_id: str,
+        rule_id: str,
+        actions: t.Optional[t.Mapping[str, t.Any]] = None,
+        criteria: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        type: t.Optional[t.Union["t.Literal['pinned']", str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates or updates a query rule within a query ruleset.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-query-rule.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset containing the
+            rule to be created or updated
+        :param rule_id: The unique identifier of the query rule within the specified
+            ruleset to be created or updated
+        :param actions:
+        :param criteria:
+        :param type:
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        if actions is None and body is None:
+            raise ValueError("Empty value passed for parameter 'actions'")
+        if criteria is None and body is None:
+            raise ValueError("Empty value passed for parameter 'criteria'")
+        if type is None and body is None:
+            raise ValueError("Empty value passed for parameter 'type'")
+        __path_parts: t.Dict[str, str] = {
+            "ruleset_id": _quote(ruleset_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}/_rule/{__path_parts["rule_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if actions is not None:
+                __body["actions"] = actions
+            if criteria is not None:
+                __body["criteria"] = criteria
+            if type is not None:
+                __body["type"] = type
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="query_rules.put_rule",
             path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_fields=("rules",),
     )
-    async def put(
+    async def put_ruleset(
         self,
         *,
         ruleset_id: str,
@@ -200,6 +371,6 @@ class QueryRulesetClient(NamespacedClient):
             params=__query,
             headers=__headers,
             body=__body,
-            endpoint_id="query_ruleset.put",
+            endpoint_id="query_rules.put_ruleset",
             path_parts=__path_parts,
         )

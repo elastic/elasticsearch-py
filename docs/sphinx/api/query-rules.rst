@@ -5,5 +5,5 @@ Query rules
 .. py:module:: elasticsearch.client
    :noindex:
 
-.. autoclass:: QueryRulesetClient
+.. autoclass:: QueryRulesClient
    :members:
