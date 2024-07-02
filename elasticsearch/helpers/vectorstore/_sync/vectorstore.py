@@ -311,11 +311,10 @@ class VectorStore:
             vector_field=self.vector_field,
             num_dimensions=self.num_dimensions,
         )
-
         if self.custom_index_settings:
             self.custom_index_settings.update(settings)
             settings = self.custom_index_settings
-            
+
         if self.metadata_mappings:
             metadata = mappings["properties"].get("metadata", {"properties": {}})
             for key in self.metadata_mappings.keys():
