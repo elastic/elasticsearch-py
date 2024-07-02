@@ -57,6 +57,7 @@ class VectorStore:
         vector_field: str = "vector_field",
         metadata_mappings: Optional[Dict[str, Any]] = None,
         user_agent: str = f"elasticsearch-py-vs/{lib_version}",
+        custom_index_settings: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         :param user_header: user agent header specific to the 3rd party integration.
@@ -69,6 +70,12 @@ class VectorStore:
             the embedding vector goes in this field.
         :param client: Elasticsearch client connection. Alternatively specify the
             Elasticsearch connection with the other es_* parameters.
+        :param custom_index_settings: A dictionary of custom settings for the index.
+            This can include configurations like the number of shards, number of replicas,
+            analysis settings, and other index-specific settings. If not provided, default
+            settings will be used. Note that if the same setting is provided by both the user
+            and the strategy, the value from the strategy will take precedence. This behavior
+            ensures that the default settings have a higher priority.
         """
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
         # client.options preserves existing (non-user-agent) headers.
@@ -87,6 +94,7 @@ class VectorStore:
         self.text_field = text_field
         self.vector_field = vector_field
         self.metadata_mappings = metadata_mappings
+        self.custom_index_settings = custom_index_settings
 
     def close(self) -> None:
         return self.client.close()
@@ -303,6 +311,11 @@ class VectorStore:
             vector_field=self.vector_field,
             num_dimensions=self.num_dimensions,
         )
+
+        if self.custom_index_settings:
+            self.custom_index_settings.update(settings)
+            settings = self.custom_index_settings
+            
         if self.metadata_mappings:
             metadata = mappings["properties"].get("metadata", {"properties": {}})
             for key in self.metadata_mappings.keys():
