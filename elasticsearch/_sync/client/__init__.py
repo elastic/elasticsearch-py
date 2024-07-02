@@ -63,7 +63,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
-from .query_ruleset import QueryRulesetClient
+from .query_rules import QueryRulesClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
@@ -455,7 +455,7 @@ class Elasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
-        self.query_ruleset = QueryRulesetClient(self)
+        self.query_rules = QueryRulesClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
