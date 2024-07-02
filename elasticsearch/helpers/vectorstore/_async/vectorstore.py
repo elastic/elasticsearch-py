@@ -314,9 +314,15 @@ class AsyncVectorStore:
             vector_field=self.vector_field,
             num_dimensions=self.num_dimensions,
         )
+
         if self.custom_index_settings:
-            self.custom_index_settings.update(settings)
-            settings = self.custom_index_settings
+            conflicting_keys = set(self.custom_index_settings.keys()) & set(
+                settings.keys()
+            )
+            if conflicting_keys:
+                raise ValueError(f"Conflicting settings: {conflicting_keys}")
+            else:
+                settings.update(self.custom_index_settings)
 
         if self.metadata_mappings:
             metadata = mappings["properties"].get("metadata", {"properties": {}})
