@@ -935,6 +935,13 @@ class TestVectorStore:
             custom_index_settings=test_settings,
         )
 
+        sample_texts = [
+            "Sample text one, with some keywords.",
+            "Another; sample, text with; different keywords.",
+            "Third example text, with more keywords."
+        ]
+        store.add_texts(texts=sample_texts)
+        
         # Fetch the actual index settings from Elasticsearch
         actual_settings = sync_client.indices.get_settings(index=index)
 
