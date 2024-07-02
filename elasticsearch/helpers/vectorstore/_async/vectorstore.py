@@ -74,11 +74,11 @@ class AsyncVectorStore:
         :param client: Elasticsearch client connection. Alternatively specify the
             Elasticsearch connection with the other es_* parameters.
         :param custom_index_settings: A dictionary of custom settings for the index.
-        This can include configurations like the number of shards, number of replicas,
-        analysis settings, and other index-specific settings. If not provided, default
-        settings will be used. Note that if the same setting is provided by both the user
-        and the strategy, the value from the strategy will take precedence. This behavior
-        ensures that the default settings have a higher priority.
+            This can include configurations like the number of shards, number of replicas,
+            analysis settings, and other index-specific settings. If not provided, default
+            settings will be used. Note that if the same setting is provided by both the user
+            and the strategy, the value from the strategy will take precedence. This behavior
+            ensures that the default settings have a higher priority.
         """
         # Add integration-specific usage header for tracking usage in Elastic Cloud.
         # client.options preserves existing (non-user-agent) headers.
