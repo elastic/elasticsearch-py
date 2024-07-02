@@ -46,9 +46,7 @@ from ._sync.client.migration import MigrationClient as MigrationClient  # noqa: 
 from ._sync.client.ml import MlClient as MlClient  # noqa: F401
 from ._sync.client.monitoring import MonitoringClient as MonitoringClient  # noqa: F401
 from ._sync.client.nodes import NodesClient as NodesClient  # noqa: F401
-from ._sync.client.query_ruleset import (  # noqa: F401
-    QueryRulesetClient as QueryRulesetClient,
-)
+from ._sync.client.query_rules import QueryRulesClient as QueryRulesClient  # noqa: F401
 from ._sync.client.rollup import RollupClient as RollupClient  # noqa: F401
 from ._sync.client.search_application import (  # noqa: F401
     SearchApplicationClient as SearchApplicationClient,
