@@ -907,3 +907,88 @@ class TestVectorStore:
         assert "metadata" in mapping_properties
         for key, val in test_mappings.items():
             assert mapping_properties["metadata"]["properties"][key] == val
+
+    def test_custom_index_settings(
+        self, sync_client: Elasticsearch, index: str
+    ) -> None:
+        """Test that the custom index settings are applied."""
+        test_settings = {
+            "analysis": {
+                "tokenizer": {
+                    "custom_tokenizer": {"type": "pattern", "pattern": "[,;\\s]+"}
+                },
+                "analyzer": {
+                    "custom_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "custom_tokenizer",
+                    }
+                },
+            }
+        }
+
+        test_mappings = {
+            "my_field": {"type": "keyword"},
+            "another_field": {"type": "text", "analyzer": "custom_analyzer"},
+        }
+
+        store = VectorStore(
+            index=index,
+            retrieval_strategy=DenseVectorStrategy(distance=DistanceMetric.COSINE),
+            embedding_service=FakeEmbeddings(),
+            num_dimensions=10,
+            client=sync_client,
+            metadata_mappings=test_mappings,
+            custom_index_settings=test_settings,
+        )
+
+        sample_texts = [
+            "Sample text one, with some keywords.",
+            "Another; sample, text with; different keywords.",
+            "Third example text, with more keywords.",
+        ]
+        store.add_texts(texts=sample_texts)
+
+        # Fetch the actual index settings from Elasticsearch
+        actual_settings = sync_client.indices.get_settings(index=index)
+
+        # Assert that the custom settings were applied correctly
+        custom_settings_applied = actual_settings[index]["settings"]["index"][
+            "analysis"
+        ]
+        assert (
+            custom_settings_applied == test_settings["analysis"]
+        ), f"Expected custom index settings {test_settings} but got {custom_settings_applied}"
+
+    def test_custom_index_settings_with_collision(
+        self, sync_client: Elasticsearch, index: str
+    ) -> None:
+        """Test that custom index settings that collide cause an error."""
+        test_settings = {
+            "default_pipeline": "my_pipeline",
+            "analysis": {
+                "tokenizer": {
+                    "custom_tokenizer": {"type": "pattern", "pattern": "[,;\\s]+"}
+                },
+                "analyzer": {
+                    "custom_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "custom_tokenizer",
+                    }
+                },
+            },
+        }
+
+        test_mappings = {
+            "my_field": {"type": "keyword"},
+            "another_field": {"type": "text", "analyzer": "custom_analyzer"},
+        }
+
+        store = VectorStore(
+            index=index,
+            retrieval_strategy=SparseVectorStrategy(),
+            client=sync_client,
+            metadata_mappings=test_mappings,
+            custom_index_settings=test_settings,
+        )
+        with pytest.raises(ValueError, match="Conflicting settings"):
+            store.add_texts(texts=["some text"])
