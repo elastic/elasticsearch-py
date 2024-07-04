@@ -43,7 +43,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Deletes the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/modules-gateway-dangling-indices.html>`_
 
         :param index_uuid: The UUID of the dangling index
         :param accept_data_loss: Must be set to true in order to delete the dangling
@@ -100,7 +100,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Imports the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/modules-gateway-dangling-indices.html>`_
 
         :param index_uuid: The UUID of the dangling index
         :param accept_data_loss: Must be set to true in order to import the dangling
@@ -151,7 +151,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Returns all dangling indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/modules-gateway-dangling-indices.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_dangling"

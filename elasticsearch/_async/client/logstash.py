@@ -38,7 +38,7 @@ class LogstashClient(NamespacedClient):
         """
         Deletes a pipeline used for Logstash Central Management.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-delete-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/logstash-api-delete-pipeline.html>`_
 
         :param id: Identifier for the pipeline.
         """
@@ -78,7 +78,7 @@ class LogstashClient(NamespacedClient):
         """
         Retrieves pipelines used for Logstash Central Management.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-get-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/logstash-api-get-pipeline.html>`_
 
         :param id: Comma-separated list of pipeline identifiers.
         """
@@ -125,7 +125,7 @@ class LogstashClient(NamespacedClient):
         """
         Creates or updates a pipeline used for Logstash Central Management.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-put-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/logstash-api-put-pipeline.html>`_
 
         :param id: Identifier for the pipeline.
         :param pipeline:
