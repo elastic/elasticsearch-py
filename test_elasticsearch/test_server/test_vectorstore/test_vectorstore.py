@@ -958,3 +958,37 @@ class TestVectorStore:
         assert (
             custom_settings_applied == test_settings["analysis"]
         ), f"Expected custom index settings {test_settings} but got {custom_settings_applied}"
+
+    def test_custom_index_settings_with_collision(
+        self, sync_client: Elasticsearch, index: str
+    ) -> None:
+        """Test that custom index settings that collide cause an error."""
+        test_settings = {
+            "default_pipeline": "my_pipeline",
+            "analysis": {
+                "tokenizer": {
+                    "custom_tokenizer": {"type": "pattern", "pattern": "[,;\\s]+"}
+                },
+                "analyzer": {
+                    "custom_analyzer": {
+                        "type": "custom",
+                        "tokenizer": "custom_tokenizer",
+                    }
+                },
+            }
+        }
+
+        test_mappings = {
+            "my_field": {"type": "keyword"},
+            "another_field": {"type": "text", "analyzer": "custom_analyzer"},
+        }
+
+        store = VectorStore(
+            index=index,
+            retrieval_strategy=SparseVectorStrategy(),
+            client=sync_client,
+            metadata_mappings=test_mappings,
+            custom_index_settings=test_settings,
+        )
+        with pytest.raises(ValueError, match="Conflicting settings"):
+            store.add_texts(texts=["some text"])
