@@ -975,7 +975,7 @@ class TestVectorStore:
                         "tokenizer": "custom_tokenizer",
                     }
                 },
-            }
+            },
         }
 
         test_mappings = {
