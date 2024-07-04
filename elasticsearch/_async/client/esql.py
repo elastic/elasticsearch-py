@@ -48,7 +48,7 @@ class EsqlClient(NamespacedClient):
         """
         Executes an ES|QL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

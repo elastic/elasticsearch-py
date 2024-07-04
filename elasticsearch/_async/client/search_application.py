@@ -38,7 +38,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Deletes a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/delete-search-application.html>`_
 
         :param name: The name of the search application to delete
         """
@@ -78,7 +78,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Delete a behavioral analytics collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/delete-analytics-collection.html>`_
 
         :param name: The name of the analytics collection to be deleted
         """
@@ -118,7 +118,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Returns the details about a search application
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/get-search-application.html>`_
 
         :param name: The name of the search application
         """
@@ -158,7 +158,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Returns the existing behavioral analytics collections.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/list-analytics-collection.html>`_
 
         :param name: A list of analytics collections to limit the returned information
         """
@@ -205,7 +205,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Returns the existing search applications.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-search-applications.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/list-search-applications.html>`_
 
         :param from_: Starting offset.
         :param q: Query in the Lucene query string syntax.
@@ -256,7 +256,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Creates or updates a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/put-search-application.html>`_
 
         :param name: The name of the search application to be created or updated.
         :param search_application:
@@ -309,7 +309,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Creates a behavioral analytics collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/put-analytics-collection.html>`_
 
         :param name: The name of the analytics collection to be created or updated.
         """
@@ -355,7 +355,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Perform a search against a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/search-application-search.html>`_
 
         :param name: The name of the search application to be searched.
         :param params: Query parameters specific to this request, which will override

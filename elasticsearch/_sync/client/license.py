@@ -37,7 +37,7 @@ class LicenseClient(NamespacedClient):
         """
         Deletes licensing information for the cluster
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/delete-license.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
@@ -76,7 +76,7 @@ class LicenseClient(NamespacedClient):
         when it expires, for example. For more information about the different types
         of licenses, see https://www.elastic.co/subscriptions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/get-license.html>`_
 
         :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
             license types. If `false`, this parameter returns platinum for both platinum
@@ -122,7 +122,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the basic license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/get-basic-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
@@ -157,7 +157,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the trial license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/get-trial-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
@@ -198,7 +198,7 @@ class LicenseClient(NamespacedClient):
         """
         Updates the license for the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/update-license.html>`_
 
         :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:
@@ -257,7 +257,7 @@ class LicenseClient(NamespacedClient):
         acknowledge parameter set to true. To check the status of your basic license,
         use the following API: [Get basic status](https://www.elastic.co/guide/en/elasticsearch/reference/current/get-basic-status.html).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
@@ -300,7 +300,7 @@ class LicenseClient(NamespacedClient):
         The start trial API enables you to start a 30-day trial, which gives access to
         all subscription features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
