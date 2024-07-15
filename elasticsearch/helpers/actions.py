@@ -331,28 +331,29 @@ def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    if isinstance(ignore_status, int):
-        ignore_status = (ignore_status,)
+    with client._otel.recover_parent_context():
+        if isinstance(ignore_status, int):
+            ignore_status = (ignore_status,)
 
-    try:
-        # send the actual request
-        resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
-    except ApiError as e:
-        gen = _process_bulk_chunk_error(
-            error=e,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_exception=raise_on_exception,
-            raise_on_error=raise_on_error,
-        )
-    else:
-        gen = _process_bulk_chunk_success(
-            resp=resp.body,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_error=raise_on_error,
-        )
-    yield from gen
+        try:
+            # send the actual request
+            resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
+        except ApiError as e:
+            gen = _process_bulk_chunk_error(
+                error=e,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_exception=raise_on_exception,
+                raise_on_error=raise_on_error,
+            )
+        else:
+            gen = _process_bulk_chunk_success(
+                resp=resp.body,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_error=raise_on_error,
+            )
+        yield from gen
 
 
 def streaming_bulk(
