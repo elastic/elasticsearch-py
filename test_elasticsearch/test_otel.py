@@ -17,9 +17,10 @@
 
 import os
 from unittest import mock
-from elasticsearch import Elasticsearch
-from elasticsearch import helpers
+
 import pytest
+
+from elasticsearch import Elasticsearch, helpers
 
 try:
     from opentelemetry.sdk.trace import TracerProvider, export
@@ -111,8 +112,6 @@ def test_forward_otel_context_to_subthreads(
 
     _call_bulk_mock.return_value = mock.Mock()
     actions = ({"x": i} for i in range(100))
-    list(
-        helpers.parallel_bulk(es_client, actions, chunk_size=4)
-    )
+    list(helpers.parallel_bulk(es_client, actions, chunk_size=4))
     # Ensures that the OTEL context has been forwarded to all chunks
     assert es_client._otel.recover_parent_context.call_count == 25
