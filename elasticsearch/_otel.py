@@ -45,7 +45,7 @@ DEFAULT_BODY_STRATEGY = "omit"
 
 
 class OpenTelemetry:
-    current_context = None
+    current_context: dict[str, str] = {}
 
     def __init__(
         self,
@@ -96,7 +96,7 @@ class OpenTelemetry:
             )
 
     @contextlib.contextmanager
-    def recover_parent_context(self):
+    def recover_parent_context(self) -> Generator[None, None, None]:
         token = None
         if self.current_context:
             otel_parent_ctx = TraceContextTextMapPropagator().extract(
