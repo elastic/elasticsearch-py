@@ -128,6 +128,122 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("names",),
+    )
+    def bulk_delete_role(
+        self,
+        *,
+        names: t.Optional[t.Sequence[str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        The role management APIs are generally the preferred way to manage roles, rather
+        than using file-based role management. The bulk delete roles API cannot delete
+        roles that are defined in roles files.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/security-api-bulk-delete-role.html>`_
+
+        :param names: An array of role names to delete
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if names is None and body is None:
+            raise ValueError("Empty value passed for parameter 'names'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/role"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if names is not None:
+                __body["names"] = names
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_delete_role",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("roles",),
+    )
+    def bulk_put_role(
+        self,
+        *,
+        roles: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        The role management APIs are generally the preferred way to manage roles, rather
+        than using file-based role management. The bulk create or update roles API cannot
+        update roles that are defined in roles files.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/security-api-bulk-put-role.html>`_
+
+        :param roles: A dictionary of role name to RoleDescriptor objects to add or update
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if roles is None and body is None:
+            raise ValueError("Empty value passed for parameter 'roles'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/role"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if roles is not None:
+                __body["roles"] = roles
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_put_role",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=("password", "password_hash"),
     )
     def change_password(
@@ -2102,6 +2218,7 @@ class SecurityClient(NamespacedClient):
         body_fields=(
             "applications",
             "cluster",
+            "description",
             "global_",
             "indices",
             "metadata",
@@ -2123,6 +2240,7 @@ class SecurityClient(NamespacedClient):
                 ]
             ]
         ] = None,
+        description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         global_: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2148,6 +2266,7 @@ class SecurityClient(NamespacedClient):
         :param applications: A list of application privilege entries.
         :param cluster: A list of cluster privileges. These privileges define the cluster-level
             actions for users with this role.
+        :param description: Optional description of the role descriptor
         :param global_: An object defining global privileges. A global privilege is a
             form of cluster privilege that is request-aware. Support for global privileges
             is currently limited to the management of application privileges.
@@ -2189,6 +2308,8 @@ class SecurityClient(NamespacedClient):
                 __body["applications"] = applications
             if cluster is not None:
                 __body["cluster"] = cluster
+            if description is not None:
+                __body["description"] = description
             if global_ is not None:
                 __body["global"] = global_
             if indices is not None:
@@ -2523,6 +2644,181 @@ class SecurityClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="security.query_api_keys",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("from_", "query", "search_after", "size", "sort"),
+        parameter_aliases={"from": "from_"},
+    )
+    def query_role(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Union[str, t.Mapping[str, t.Any]],
+            ]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Retrieves roles in a paginated manner. You can optionally filter the results
+        with a query.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/security-api-query-role.html>`_
+
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the `search_after` parameter.
+        :param query: A query to filter which roles to return. If the query parameter
+            is missing, it is equivalent to a `match_all` query. The query supports a
+            subset of query types, including `match_all`, `bool`, `term`, `terms`, `match`,
+            `ids`, `prefix`, `wildcard`, `exists`, `range`, and `simple_query_string`.
+            You can query the following information associated with roles: `name`, `description`,
+            `metadata`, `applications.application`, `applications.privileges`, `applications.resources`.
+        :param search_after: Search after definition
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param sort: All public fields of a role are eligible for sorting. In addition,
+            sort can also be applied to the `_doc` field to sort by index order.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/_query/role"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if from_ is not None:
+                __body["from"] = from_
+            if query is not None:
+                __body["query"] = query
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_role",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("from_", "query", "search_after", "size", "sort"),
+        parameter_aliases={"from": "from_"},
+    )
+    def query_user(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Union[str, t.Mapping[str, t.Any]],
+            ]
+        ] = None,
+        with_profile_uid: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Retrieves information for Users in a paginated manner. You can optionally filter
+        the results with a query.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/security-api-query-user.html>`_
+
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the `search_after` parameter.
+        :param query: A query to filter which users to return. If the query parameter
+            is missing, it is equivalent to a `match_all` query. The query supports a
+            subset of query types, including `match_all`, `bool`, `term`, `terms`, `match`,
+            `ids`, `prefix`, `wildcard`, `exists`, `range`, and `simple_query_string`.
+            You can query the following information associated with user: `username`,
+            `roles`, `enabled`
+        :param search_after: Search after definition
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param sort: Fields eligible for sorting are: username, roles, enabled In addition,
+            sort can also be applied to the `_doc` field to sort by index order.
+        :param with_profile_uid: If true will return the User Profile ID for the users
+            in the query result, if any.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/_query/user"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
+        if not __body:
+            if from_ is not None:
+                __body["from"] = from_
+            if query is not None:
+                __body["query"] = query
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_user",
             path_parts=__path_parts,
         )
 
