@@ -82,7 +82,6 @@ def test_bulk_all_errors_from_chunk_are_raised_on_failure(sync_client):
             "settings": {"number_of_shards": 1, "number_of_replicas": 0},
         },
     )
-    sync_client.cluster.health(wait_for_status="yellow")
 
     try:
         for ok, _ in helpers.streaming_bulk(
@@ -325,7 +324,6 @@ def test_errors_are_reported_correctly(sync_client):
         mappings={"properties": {"a": {"type": "integer"}}},
         settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
-    sync_client.cluster.health(wait_for_status="yellow")
 
     success, failed = helpers.bulk(
         sync_client,
@@ -339,11 +337,7 @@ def test_errors_are_reported_correctly(sync_client):
     assert "42" == error["index"]["_id"]
     assert "i" == error["index"]["_index"]
     print(error["index"]["error"])
-    assert error["index"]["error"]["type"] in [
-        "mapper_parsing_exception",
-        # Elasticsearch 8.8+: https://github.com/elastic/elasticsearch/pull/92646
-        "document_parsing_exception",
-    ]
+    assert error["index"]["error"]["type"] == "document_parsing_exception"
 
 
 def test_error_is_raised(sync_client):
@@ -352,7 +346,6 @@ def test_error_is_raised(sync_client):
         mappings={"properties": {"a": {"type": "integer"}}},
         settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
-    sync_client.cluster.health(wait_for_status="yellow")
 
     with pytest.raises(helpers.BulkIndexError):
         helpers.bulk(
@@ -399,7 +392,6 @@ def test_errors_are_collected_properly(sync_client):
         mappings={"properties": {"a": {"type": "integer"}}},
         settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
-    sync_client.cluster.health(wait_for_status="yellow")
 
     success, failed = helpers.bulk(
         sync_client,

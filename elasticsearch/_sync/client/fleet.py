@@ -125,9 +125,10 @@ class FleetClient(NamespacedClient):
         wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Multi Search API where the search will only be executed after specified checkpoints
-        are available due to a refresh. This API is designed for internal use by the
-        fleet server project.
+        Executes several [fleet searches](https://www.elastic.co/guide/en/elasticsearch/reference/current/fleet-search.html)
+        with a single API request. The API follows the same structure as the [multi search](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html)
+        API. However, similar to the fleet search API, it supports the wait_for_checkpoints
+        parameter.
 
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
@@ -369,9 +370,9 @@ class FleetClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Search API where the search will only be executed after specified checkpoints
-        are available due to a refresh. This API is designed for internal use by the
-        fleet server project.
+        The purpose of the fleet search api is to provide a search api where the search
+        will only be executed after provided checkpoint has been processed and is visible
+        for searches inside of Elasticsearch.
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.

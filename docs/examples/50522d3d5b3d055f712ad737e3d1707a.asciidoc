@@ -1,0 +1,44 @@
+// mapping/types/token-count.asciidoc:14
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "name": {
+                    "type": "text",
+                    "fields": {
+                        "length": {
+                            "type": "token_count",
+                            "analyzer": "standard",
+                        }
+                    },
+                }
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"name": "John Smith"},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="2",
+    body={"name": "Rachel Alice Williams"},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"name.length": 3}}},
+)
+print(resp)
+----

@@ -1,0 +1,21 @@
+// mapping/dynamic/templates.asciidoc:538
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "dynamic_templates": [
+                {
+                    "strings_as_keywords": {
+                        "match_mapping_type": "string",
+                        "runtime": {},
+                    }
+                }
+            ]
+        }
+    },
+)
+print(resp)
+----

@@ -1,0 +1,30 @@
+// mapping/types/histogram.asciidoc:119
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={
+        "my_text": "histogram_1",
+        "my_histogram": {
+            "values": [0.1, 0.2, 0.3, 0.4, 0.5],
+            "counts": [3, 7, 23, 12, 6],
+        },
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="2",
+    body={
+        "my_text": "histogram_2",
+        "my_histogram": {
+            "values": [0.1, 0.25, 0.35, 0.4, 0.45, 0.5],
+            "counts": [8, 17, 8, 7, 6, 2],
+        },
+    },
+)
+print(resp)
+----

@@ -1,0 +1,20 @@
+// mapping/types/dense-vector.asciidoc:72
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-2",
+    body={
+        "mappings": {
+            "properties": {
+                "my_vector": {
+                    "type": "dense_vector",
+                    "dims": 3,
+                    "similarity": "dot_product",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

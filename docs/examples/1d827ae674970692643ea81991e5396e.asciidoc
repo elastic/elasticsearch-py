@@ -1,0 +1,36 @@
+// mapping/types/flattened.asciidoc:334
+
+[source, python]
+----
+resp = client.indices.create(
+    index="idx",
+    body={
+        "mappings": {
+            "_source": {"mode": "synthetic"},
+            "properties": {"flattened": {"type": "flattened"}},
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="idx",
+    id="1",
+    body={
+        "flattened": {
+            "field": [
+                "apple",
+                "apple",
+                "banana",
+                "avocado",
+                "10",
+                "200",
+                "AVOCADO",
+                "Banana",
+                "Tangerine",
+            ]
+        }
+    },
+)
+print(resp)
+----

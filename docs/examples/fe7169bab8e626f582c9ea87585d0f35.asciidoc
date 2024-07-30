@@ -1,0 +1,17 @@
+// mapping/types/histogram.asciidoc:99
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "my_histogram": {"type": "histogram"},
+                "my_text": {"type": "keyword"},
+            }
+        }
+    },
+)
+print(resp)
+----

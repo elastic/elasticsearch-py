@@ -129,7 +129,6 @@ class TestStreamingBulk:
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         try:
             async for ok, item in helpers.async_streaming_bulk(
@@ -338,7 +337,6 @@ class TestBulk:
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
             async_client,
@@ -352,11 +350,7 @@ class TestBulk:
         assert "42" == error["index"]["_id"]
         assert "i" == error["index"]["_index"]
         print(error["index"]["error"])
-        assert error["index"]["error"]["type"] in [
-            "mapper_parsing_exception",
-            # Elasticsearch 8.8+: https://github.com/elastic/elasticsearch/pull/92646
-            "document_parsing_exception",
-        ]
+        assert error["index"]["error"]["type"] == "document_parsing_exception"
 
     async def test_error_is_raised(self, async_client):
         await async_client.indices.create(
@@ -364,7 +358,6 @@ class TestBulk:
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         with pytest.raises(helpers.BulkIndexError):
             await helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i")
@@ -408,7 +401,6 @@ class TestBulk:
             mappings={"properties": {"a": {"type": "integer"}}},
             settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
-        await async_client.cluster.health(wait_for_status="yellow")
 
         success, failed = await helpers.async_bulk(
             async_client,

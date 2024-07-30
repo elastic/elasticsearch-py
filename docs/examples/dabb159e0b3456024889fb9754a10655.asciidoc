@@ -1,0 +1,10 @@
+// mapping/types/shape.asciidoc:76
+
+[source, python]
+----
+resp = client.indices.create(
+    index="example",
+    body={"mappings": {"properties": {"geometry": {"type": "shape"}}}},
+)
+print(resp)
+----

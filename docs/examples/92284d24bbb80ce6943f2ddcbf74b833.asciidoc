@@ -1,0 +1,28 @@
+// mapping/types/flattened.asciidoc:136
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {"flattened_field": {"type": "flattened"}}
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    refresh="true",
+    body={"flattened_field": {"subfield": "value"}},
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"fields": ["flattened_field.subfield"], "_source": False},
+)
+print(resp)
+----

@@ -1,0 +1,10 @@
+// mapping/types/flattened.asciidoc:85
+
+[source, python]
+----
+resp = client.search(
+    index="bug_reports",
+    body={"query": {"term": {"labels.release": "v1.3.0"}}},
+)
+print(resp)
+----

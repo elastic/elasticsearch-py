@@ -1,0 +1,45 @@
+// mapping/runtime.asciidoc:834
+
+[source, python]
+----
+resp = client.index(
+    index="ip_location",
+    refresh=True,
+    body={"ip": "192.168.1.1", "country": "Canada", "city": "Montreal"},
+)
+print(resp)
+
+resp = client.index(
+    index="logs",
+    id="1",
+    refresh=True,
+    body={"host": "192.168.1.1", "message": "the first message"},
+)
+print(resp)
+
+resp = client.index(
+    index="logs",
+    id="2",
+    refresh=True,
+    body={"host": "192.168.1.2", "message": "the second message"},
+)
+print(resp)
+
+resp = client.search(
+    index="logs",
+    body={
+        "runtime_mappings": {
+            "location": {
+                "type": "lookup",
+                "target_index": "ip_location",
+                "input_field": "host",
+                "target_field": "ip",
+                "fetch_fields": ["country", "city"],
+            }
+        },
+        "fields": ["host", "message", "location"],
+        "_source": False,
+    },
+)
+print(resp)
+----

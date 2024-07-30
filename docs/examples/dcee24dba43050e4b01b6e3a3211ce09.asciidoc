@@ -1,0 +1,20 @@
+// mapping/runtime.asciidoc:1283
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "@timestamp": {
+                    "format": "strict_date_optional_time||epoch_second",
+                    "type": "date",
+                },
+                "message": {"type": "wildcard"},
+            }
+        }
+    },
+)
+print(resp)
+----

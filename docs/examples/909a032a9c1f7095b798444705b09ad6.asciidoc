@@ -1,0 +1,12 @@
+// mapping/types/geo-shape.asciidoc:444
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": "GEOMETRYCOLLECTION (POINT (100.0 0.0), LINESTRING (101.0 0.0, 102.0 1.0))"
+    },
+)
+print(resp)
+----

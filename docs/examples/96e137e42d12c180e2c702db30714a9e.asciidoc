@@ -1,0 +1,10 @@
+// mapping/types/text.asciidoc:39
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"mappings": {"properties": {"full_name": {"type": "text"}}}},
+)
+print(resp)
+----

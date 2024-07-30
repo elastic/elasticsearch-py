@@ -1,0 +1,10 @@
+// mapping/types/unsigned_long.asciidoc:93
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={"query": {"match_all": {}}, "sort": {"my_counter": "desc"}},
+)
+print(resp)
+----

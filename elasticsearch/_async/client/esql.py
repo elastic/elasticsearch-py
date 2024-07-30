@@ -26,14 +26,13 @@ from .utils import _rewrite_parameters
 class EsqlClient(NamespacedClient):
 
     @_rewrite_parameters(
-        body_fields=("query", "version", "columnar", "filter", "locale", "params"),
+        body_fields=("query", "columnar", "filter", "locale", "params"),
         ignore_deprecated_options={"params"},
     )
     async def query(
         self,
         *,
         query: t.Optional[str] = None,
-        version: t.Optional[t.Union["t.Literal['2024.04.01']", str]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
@@ -47,14 +46,12 @@ class EsqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes an ESQL request
+        Executes an ES|QL request
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
-        :param version: The version of the ES|QL language in which the "query" field
-            was written.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -71,8 +68,6 @@ class EsqlClient(NamespacedClient):
         """
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
-        if version is None and body is None:
-            raise ValueError("Empty value passed for parameter 'version'")
         __path_parts: t.Dict[str, str] = {}
         __path = "/_query"
         __query: t.Dict[str, t.Any] = {}
@@ -92,8 +87,6 @@ class EsqlClient(NamespacedClient):
         if not __body:
             if query is not None:
                 __body["query"] = query
-            if version is not None:
-                __body["version"] = version
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:

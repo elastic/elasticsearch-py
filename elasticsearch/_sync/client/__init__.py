@@ -63,7 +63,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
-from .query_ruleset import QueryRulesetClient
+from .query_rules import QueryRulesClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
@@ -352,7 +352,7 @@ class Elasticsearch(BaseClient):
             if node_class is not DEFAULT:
                 transport_kwargs["node_class"] = node_class
             if node_pool_class is not DEFAULT:
-                transport_kwargs["node_pool_class"] = node_class
+                transport_kwargs["node_pool_class"] = node_pool_class
             if randomize_nodes_in_pool is not DEFAULT:
                 transport_kwargs["randomize_nodes_in_pool"] = randomize_nodes_in_pool
             if node_selector_class is not DEFAULT:
@@ -455,7 +455,7 @@ class Elasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
-        self.query_ruleset = QueryRulesetClient(self)
+        self.query_rules = QueryRulesClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
@@ -636,7 +636,8 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to perform multiple index/update/delete operations in a single request.
+        Performs multiple indexing or delete operations in a single API call. This reduces
+        overhead and can greatly increase indexing speed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
 
@@ -735,7 +736,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explicitly clears the search context for a scroll.
+        Clears the search context and results for a scrolling search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
@@ -785,7 +786,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Close a point in time
+        Closes a point-in-time.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -992,8 +993,9 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new document in the index. Returns a 409 response when a document with
-        a same ID already exists in the index.
+        Adds a JSON document to the specified data stream or index and makes it searchable.
+        If the target is an index and the document already exists, the request updates
+        the document and increments its version.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -1097,7 +1099,7 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes a document from the index.
+        Removes a JSON document from the specified index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
 
@@ -1221,7 +1223,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes documents matching the provided query.
+        Deletes documents that match the specified query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1447,7 +1449,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a script.
+        Deletes a stored script or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -1515,7 +1517,7 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a document exists in an index.
+        Checks if a document in an index exists.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1616,7 +1618,7 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a document source exists in an index.
+        Checks if a document's `_source` is stored.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1716,7 +1718,8 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about why a specific matches (or doesn't match) a query.
+        Returns information about why a specific document matches (or doesn’t match)
+        a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
 
@@ -1835,7 +1838,10 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the information about the capabilities of fields among multiple indices.
+        The field capabilities API returns the information about the capabilities of
+        fields among multiple indices. The field capabilities API returns runtime fields
+        like any other field. For example, a runtime field with a type of keyword is
+        returned as any other field that belongs to the `keyword` family.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
@@ -2042,7 +2048,7 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a script.
+        Retrieves a stored script or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -2332,7 +2338,9 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a document in an index.
+        Adds a JSON document to the specified data stream or index and makes it searchable.
+        If the target is an index and the document already exists, the request updates
+        the document and increments its version.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -2841,7 +2849,7 @@ class Elasticsearch(BaseClient):
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to execute several search template operations in one request.
+        Runs multiple templated searches with a single request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -3043,7 +3051,13 @@ class Elasticsearch(BaseClient):
         routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Open a point in time that can be used in subsequent searches
+        A search request by default executes against the most recent visible data of
+        the target indices, which is called point in time. Elasticsearch pit (point in
+        time) is a lightweight view into the state of the data as it existed when initiated.
+        In some cases, it’s preferred to perform multiple search requests using the same
+        point in time. For example, if refreshes happen between `search_after` requests,
+        then the results of those requests might not be consistent as changes happening
+        between searches are only visible to the more recent point in time.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -3115,7 +3129,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a script.
+        Creates or updates a stored script or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -3200,8 +3214,8 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to evaluate the quality of ranked search results over a set of typical
-        search queries
+        Enables you to evaluate the quality of ranked search results over a set of typical
+        search queries.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
@@ -3393,7 +3407,7 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Reindex operation.
+        Copies documents from a source to a destination.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -3444,7 +3458,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to use the Mustache language to pre-render a search definition.
+        Renders a search template as a search request body.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
@@ -3512,7 +3526,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows an arbitrary script to be executed and a result to be returned
+        Runs a script and returns a result.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
 
@@ -3636,6 +3650,7 @@ class Elasticsearch(BaseClient):
             "query",
             "rank",
             "rescore",
+            "retriever",
             "runtime_mappings",
             "script_fields",
             "search_after",
@@ -3717,6 +3732,7 @@ class Elasticsearch(BaseClient):
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        retriever: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -3757,7 +3773,9 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns results matching a query.
+        Returns search hits that match the query defined in the request. You can provide
+        search queries using the `q` query string parameter or the request body. If both
+        are specified, only the query parameter is used.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -3876,6 +3894,9 @@ class Elasticsearch(BaseClient):
             example 100 - 500) documents returned by the `query` and `post_filter` phases.
         :param rest_total_hits_as_int: Indicates whether `hits.total` should be rendered
             as an integer or an object in the rest search response.
+        :param retriever: A retriever is a specification to describe top documents returned
+            from a search. A retriever replaces other elements of the search API that
+            also return top documents such as query and knn.
         :param routing: Custom value used to route operations to a specific shard.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
@@ -4072,6 +4093,8 @@ class Elasticsearch(BaseClient):
                 __body["rank"] = rank
             if rescore is not None:
                 __body["rescore"] = rescore
+            if retriever is not None:
+                __body["retriever"] = retriever
             if runtime_mappings is not None:
                 __body["runtime_mappings"] = runtime_mappings
             if script_fields is not None:
@@ -4430,7 +4453,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to use the Mustache language to pre-render a search definition.
+        Runs a search with a search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
@@ -4971,8 +4994,8 @@ class Elasticsearch(BaseClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates documents that match the specified query. If no query is specified, performs
-        an update on every document in the index without changing the source, for example
-        to pick up a mapping change.
+        an update on every document in the data stream or index without modifying the
+        source, which is useful for picking up mapping changes.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 

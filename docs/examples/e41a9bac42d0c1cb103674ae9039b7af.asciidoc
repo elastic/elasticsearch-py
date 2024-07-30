@@ -1,0 +1,17 @@
+// mapping/dynamic/field-mapping.asciidoc:234
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={"mappings": {"numeric_detection": True}},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"my_float": "1.0", "my_integer": "1"},
+)
+print(resp)
+----

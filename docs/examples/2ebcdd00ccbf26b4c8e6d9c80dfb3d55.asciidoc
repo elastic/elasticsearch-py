@@ -1,0 +1,18 @@
+// mapping/types/shape.asciidoc:170
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "linestring",
+            "coordinates": [
+                [-377.03653, 389.897676],
+                [-377.009051, 389.889939],
+            ],
+        }
+    },
+)
+print(resp)
+----

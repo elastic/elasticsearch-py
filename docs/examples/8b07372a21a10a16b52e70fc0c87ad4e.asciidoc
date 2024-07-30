@@ -1,0 +1,14 @@
+// mapping/types/object.asciidoc:11
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={
+        "region": "US",
+        "manager": {"age": 30, "name": {"first": "John", "last": "Smith"}},
+    },
+)
+print(resp)
+----

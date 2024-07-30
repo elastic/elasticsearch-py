@@ -1,0 +1,17 @@
+// mapping/types/geo-shape.asciidoc:227
+
+[source, python]
+----
+resp = client.index(
+    index="example",
+    body={
+        "location": {
+            "type": "Polygon",
+            "coordinates": [
+                [[100, 0], [101, 0], [101, 1], [100, 1], [100, 0]]
+            ],
+        }
+    },
+)
+print(resp)
+----

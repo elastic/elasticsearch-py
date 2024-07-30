@@ -235,7 +235,13 @@ class WatcherClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Forces the execution of a stored watch.
+        This API can be used to force execution of the watch outside of its triggering
+        logic or to simulate the watch execution for debugging purposes. For testing
+        and debugging purposes, you also have fine-grained control on how the watch runs.
+        You can execute the watch without executing all of its actions or alternatively
+        by simulating them. You can also force execution by ignoring the watch condition
+        and control whether a watch record would be written to the watch history after
+        execution.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-execute-watch.html>`_
 

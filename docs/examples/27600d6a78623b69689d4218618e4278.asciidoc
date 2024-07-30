@@ -1,0 +1,10 @@
+// mapping/types/unsigned_long.asciidoc:47
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={"query": {"term": {"my_counter": 18446744073709552000}}},
+)
+print(resp)
+----

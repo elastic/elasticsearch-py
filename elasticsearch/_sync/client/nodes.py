@@ -37,7 +37,8 @@ class NodesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes the archived repositories metering information present in the cluster.
+        You can use this API to clear the archived repositories metering information
+        in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
 
@@ -85,7 +86,11 @@ class NodesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns cluster repositories metering information.
+        You can use the cluster repositories metering API to retrieve repositories metering
+        information in a cluster. This API exposes monotonically non-decreasing counters
+        and it’s expected that clients would durably store the information needed to
+        compute aggregations over a period of time. Additionally, the information exposed
+        by this API is volatile, meaning that it won’t be present after node restarts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-repositories-metering-api.html>`_
 
@@ -140,7 +145,8 @@ class NodesClient(NamespacedClient):
         ] = None,
     ) -> TextApiResponse:
         """
-        Returns information about hot threads on each node in the cluster.
+        This API yields a breakdown of the hot threads on each selected node in the cluster.
+        The output is plain text with a breakdown of each node’s top hot threads.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
 
@@ -217,7 +223,7 @@ class NodesClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about nodes in the cluster.
+        Returns cluster nodes information.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
 
@@ -286,7 +292,7 @@ class NodesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reloads secure settings.
+        Reloads the keystore on nodes in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
 
@@ -359,7 +365,7 @@ class NodesClient(NamespacedClient):
         types: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns statistical information about nodes in the cluster.
+        Returns cluster nodes statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
 
@@ -476,7 +482,7 @@ class NodesClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns low-level information about REST actions usage on nodes.
+        Returns information on the usage of features.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
 

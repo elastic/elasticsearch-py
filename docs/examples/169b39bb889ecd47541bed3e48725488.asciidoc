@@ -1,0 +1,10 @@
+// mapping/types/flattened.asciidoc:73
+
+[source, python]
+----
+resp = client.search(
+    index="bug_reports",
+    body={"query": {"term": {"labels": "urgent"}}},
+)
+print(resp)
+----

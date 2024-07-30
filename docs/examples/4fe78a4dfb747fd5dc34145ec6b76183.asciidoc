@@ -1,0 +1,22 @@
+// mapping/runtime.asciidoc:130
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "runtime": {
+                "day_of_week": {
+                    "type": "keyword",
+                    "script": {
+                        "source": "emit(doc['@timestamp'].value.dayOfWeekEnum.getDisplayName(TextStyle.FULL, Locale.ROOT))"
+                    },
+                }
+            },
+            "properties": {"@timestamp": {"type": "date"}},
+        }
+    },
+)
+print(resp)
+----

@@ -6,7 +6,7 @@ metadata:
   name: elasticsearch-py
 spec:
   type: library
-  owner: group:clients-team
+  owner: group:devtools-team
   lifecycle: production
   dependsOn:
     - "resource:elasticsearch-py"
@@ -20,7 +20,7 @@ metadata:
   description: elasticsearch-py integration tests
 spec:
   type: buildkite-pipeline
-  owner: group:clients-team
+  owner: group:devtools-team
   system: buildkite
   implementation:
     apiVersion: buildkite.elastic.dev/v1
@@ -30,20 +30,26 @@ spec:
     spec:
       repository: elastic/elasticsearch-py
       pipeline_file: .buildkite/pipeline.yml
+      env:
+        ELASTIC_SLACK_NOTIFICATIONS_ENABLED: 'true'
+        SLACK_NOTIFICATIONS_CHANNEL: '#devtools-notify-python'
       teams:
-        clients-team:
+        devtools-team:
           access_level: MANAGE_BUILD_AND_READ
         everyone:
           access_level: READ_ONLY
       cancel_intermediate_builds: true
       cancel_intermediate_builds_branch_filter: '!main'
       schedules:
-        main_semi_daily:
+        main:
           branch: 'main'
-          cronline: '0 */12 * * *'
-        8_11_daily:
-          branch: '8.11'
-          cronline: '@daily'
-        8_10_daily:
-          branch: '8.10'
-          cronline: '@daily'
+          cronline: '0 10 * * *'
+          message: 'Daily run for main branch'
+        Daily 8.14:
+          branch: '8.14'
+          cronline: '0 10 * * *'
+          message: 'Daily run for 8.14 branch'
+        Daily 8.15:
+          branch: '8.15'
+          cronline: '0 10 * * *'
+          message: 'Daily run for 8.15 branch'

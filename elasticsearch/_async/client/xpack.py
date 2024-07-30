@@ -41,7 +41,7 @@ class XPackClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the installed X-Pack features.
+        Provides general information about the installed X-Pack features.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
@@ -87,7 +87,8 @@ class XPackClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information about the installed X-Pack features.
+        This API provides information about which features are currently enabled and
+        available under the current license and some usage statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
 

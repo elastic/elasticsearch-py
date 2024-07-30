@@ -215,10 +215,13 @@ def wipe_data_streams(client):
 
 
 def wipe_indices(client):
-    client.options(ignore_status=404).indices.delete(
-        index="*,-.ds-ilm-history-*",
-        expand_wildcards="all",
-    )
+    indices = client.cat.indices().strip().splitlines()
+    if len(indices) > 0:
+        index_names = [i.split(" ")[2] for i in indices]
+        client.options(ignore_status=404).indices.delete(
+            index=",".join(index_names),
+            expand_wildcards="all",
+        )
 
 
 def wipe_searchable_snapshot_indices(client):

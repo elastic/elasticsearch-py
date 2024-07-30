@@ -1,0 +1,19 @@
+// mapping/types/parent-join.asciidoc:403
+
+[source, python]
+----
+resp = client.indices.stats(
+    metric="fielddata",
+    human=True,
+    fields="my_join_field",
+)
+print(resp)
+
+resp = client.nodes.stats(
+    metric="indices",
+    index_metric="fielddata",
+    human=True,
+    fields="my_join_field",
+)
+print(resp)
+----

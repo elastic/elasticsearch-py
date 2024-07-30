@@ -270,7 +270,7 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonyms set
+        Creates or updates a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html>`_
 

@@ -1,0 +1,12 @@
+// mapping/types/percolator.asciidoc:649
+
+[source, python]
+----
+resp = client.index(
+    index="my_queries2",
+    id="2",
+    refresh=True,
+    body={"query": {"match": {"my_field.suffix": "xyz"}}},
+)
+print(resp)
+----

@@ -1,0 +1,30 @@
+// mapping/types/percolator.asciidoc:70
+
+[source, python]
+----
+resp = client.indices.create(
+    index="index",
+    body={
+        "mappings": {
+            "properties": {
+                "query": {"type": "percolator"},
+                "body": {"type": "text"},
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.indices.update_aliases(
+    body={"actions": [{"add": {"index": "index", "alias": "queries"}}]},
+)
+print(resp)
+
+resp = client.index(
+    index="queries",
+    id="1",
+    refresh=True,
+    body={"query": {"match": {"body": "quick brown fox"}}},
+)
+print(resp)
+----

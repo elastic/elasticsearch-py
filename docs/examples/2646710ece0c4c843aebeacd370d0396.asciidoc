@@ -1,0 +1,21 @@
+// mapping/types/dense-vector.asciidoc:126
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-byte-quantized-index",
+    body={
+        "mappings": {
+            "properties": {
+                "my_vector": {
+                    "type": "dense_vector",
+                    "dims": 3,
+                    "index": True,
+                    "index_options": {"type": "int8_hnsw"},
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

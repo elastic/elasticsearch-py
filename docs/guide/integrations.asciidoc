@@ -11,6 +11,15 @@ You can find integration options and information on this page.
 The Python Elasticsearch client supports native OpenTelemetry instrumentation following the https://opentelemetry.io/docs/specs/semconv/database/elasticsearch/[OpenTelemetry Semantic Conventions for Elasticsearch].
 Refer to the <<opentelemetry>> page for details.
 
+
+[discrete]
+[[esql-intro]]
+=== ES|QL
+
+{ref}/esql.html[ES|QL] is available through the Python Elasticsearch client.
+Refer to the <<esql-pandas>> page to learn more about using ES|QL and Pandas together with dataframes.
+
+
 [discrete]
 [[transport]]
 === Transport
@@ -63,3 +72,4 @@ Type hints also allow tools like your IDE to check types and provide better auto
 
 
 include::open-telemetry.asciidoc[]
+include::esql-pandas.asciidoc[]

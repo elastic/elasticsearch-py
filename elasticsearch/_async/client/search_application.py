@@ -116,7 +116,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a search application.
+        Returns the details about a search application
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html>`_
 
@@ -349,16 +349,19 @@ class SearchApplicationClient(NamespacedClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Perform a search against a search application
+        Perform a search against a search application.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
 
         :param name: The name of the search application to be searched.
         :param params: Query parameters specific to this request, which will override
             any defaults specified in the template.
+        :param typed_keys: Determines whether aggregation names are prefixed by their
+            respective types in the response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -374,6 +377,8 @@ class SearchApplicationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if typed_keys is not None:
+            __query["typed_keys"] = typed_keys
         if not __body:
             if params is not None:
                 __body["params"] = params

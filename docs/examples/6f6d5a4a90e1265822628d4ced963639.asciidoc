@@ -1,0 +1,16 @@
+// mapping/dynamic/field-mapping.asciidoc:63
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    id="1",
+    body={"create_date": "2015/09/02"},
+)
+print(resp)
+
+resp = client.indices.get_mapping(
+    index="my-index-000001",
+)
+print(resp)
+----

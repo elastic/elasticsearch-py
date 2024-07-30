@@ -40,7 +40,8 @@ class SnapshotClient(NamespacedClient):
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes stale data from repository.
+        Triggers the review of a snapshot repository’s contents and deletes any stale
+        data not referenced by existing snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
 
