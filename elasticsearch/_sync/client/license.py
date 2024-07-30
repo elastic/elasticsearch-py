@@ -72,9 +72,9 @@ class LicenseClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        This API returns information about the type of license, when it was issued, and
-        when it expires, for example. For more information about the different types
-        of licenses, see https://www.elastic.co/subscriptions.
+        Get license information. Returns information about your Elastic license, including
+        its type, its status, when it was issued, and when it expires. For more information
+        about the different types of licenses, refer to [Elastic Stack subscriptions](https://www.elastic.co/subscriptions).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
