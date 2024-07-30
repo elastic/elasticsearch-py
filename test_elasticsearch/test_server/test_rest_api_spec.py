@@ -24,7 +24,6 @@ import io
 import json
 import os
 import re
-import sys
 import warnings
 import zipfile
 from typing import Tuple, Union
@@ -131,9 +130,7 @@ SKIP_TESTS = {
 
 XPACK_FEATURES = None
 ES_VERSION = None
-RUN_ASYNC_REST_API_TESTS = (
-    os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
-)
+RUN_ASYNC_REST_API_TESTS = os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)
 

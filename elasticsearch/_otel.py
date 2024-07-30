@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import contextlib
 import os
-from typing import TYPE_CHECKING, Generator, Literal, Mapping
+from typing import Generator, Literal, Mapping
 
 try:
     from opentelemetry import trace
