@@ -19,10 +19,7 @@ from __future__ import annotations
 
 import contextlib
 import os
-from typing import TYPE_CHECKING, Generator, Mapping
-
-if TYPE_CHECKING:
-    from typing import Literal
+from typing import TYPE_CHECKING, Generator, Literal, Mapping
 
 try:
     from opentelemetry import trace
@@ -48,7 +45,6 @@ class OpenTelemetry:
         self,
         enabled: bool | None = None,
         tracer: trace.Tracer | None = None,
-        # TODO import Literal at the top-level when dropping Python 3.7
         body_strategy: Literal["omit", "raw"] | None = None,
     ):
         if enabled is None:
