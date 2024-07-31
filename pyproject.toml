@@ -7,7 +7,7 @@ name = "elasticsearch"
 description = "Python client for Elasticsearch"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 authors = [
     { name = "Elastic Client Library Maintainers", email = "client-libs@elastic.co" },
 ]
@@ -21,7 +21,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -72,8 +71,6 @@ dev = [
     "simsimd",
     "pandas",
     "mapbox-vector-tile",
-    # Python 3.7 gets an old version of mapbox-vector-tile, requiring an old version of protobuf
-    "protobuf<4; python_version<=\"3.7\"",
 ]
 docs = [
     "sphinx",

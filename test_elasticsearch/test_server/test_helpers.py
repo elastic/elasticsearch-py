@@ -27,7 +27,7 @@ from elasticsearch import ApiError, helpers
 from elasticsearch.helpers import ScanError
 
 
-class FailingBulkClient(object):
+class FailingBulkClient:
     def __init__(
         self,
         client,
@@ -463,8 +463,8 @@ def test_all_documents_are_read(sync_client):
     docs = list(helpers.scan(sync_client, index="test_index", size=2))
 
     assert 100 == len(docs)
-    assert set(map(str, range(100))) == set(d["_id"] for d in docs)
-    assert set(range(100)) == set(d["_source"]["answer"] for d in docs)
+    assert set(map(str, range(100))) == {d["_id"] for d in docs}
+    assert set(range(100)) == {d["_source"]["answer"] for d in docs}
 
 
 @pytest.mark.usefixtures("scan_teardown")
