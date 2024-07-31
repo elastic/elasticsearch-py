@@ -29,7 +29,7 @@ SOURCE_DIR = Path(__file__).absolute().parent.parent
 def find_and_replace(path, pattern, replace):
     # Does a find and replace within a file path and complains
     # if the given pattern isn't found in the file.
-    with open(path, "r") as f:
+    with open(path) as f:
         old_data = f.read()
 
     if re.search(pattern, old_data, flags=re.MULTILINE) is None:

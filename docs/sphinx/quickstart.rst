@@ -9,7 +9,7 @@ operations like indexing or searching documents.
 Requirements
 ------------
 
-- `Python <https://www.python.org/>`_ 3.7 or newer
+- `Python <https://www.python.org/>`_ 3.8 or newer
 - `pip <https://pip.pypa.io/en/stable/>`_
 
 
