@@ -88,7 +88,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Close anomaly detection jobs A job can be opened and closed multiple times throughout
+        Close anomaly detection jobs. A job can be opened and closed multiple times throughout
         its lifecycle. A closed job cannot receive data or perform analysis operations,
         but you can still explore and navigate results. When you close a job, it runs
         housekeeping tasks such as pruning the model history, flushing buffers, calculating
@@ -579,7 +579,7 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an anomaly detection job. All job configuration, model state and results
+        Delete an anomaly detection job. All job configuration, model state and results
         are deleted. It is not currently possible to delete multiple jobs using wildcards
         or a comma separated list. If you delete a job that has a datafeed, the request
         first tries to delete the datafeed. This behavior is equivalent to calling the
@@ -2739,12 +2739,12 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Opens one or more anomaly detection jobs. An anomaly detection job must be opened
-        in order for it to be ready to receive and analyze data. It can be opened and
-        closed multiple times throughout its lifecycle. When you open a new job, it starts
-        with an empty model. When you open an existing job, the most recent model state
-        is automatically loaded. The job is ready to resume its analysis from where it
-        left off, once new data is received.
+        Open anomaly detection jobs. An anomaly detection job must be opened in order
+        for it to be ready to receive and analyze data. It can be opened and closed multiple
+        times throughout its lifecycle. When you open a new job, it starts with an empty
+        model. When you open an existing job, the most recent model state is automatically
+        loaded. The job is ready to resume its analysis from where it left off, once
+        new data is received.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-open-job.html>`_
 
@@ -3612,8 +3612,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates an anomaly detection job. If you include a `datafeed_config`, you
-        must have read index privileges on the source index.
+        Create an anomaly detection job. If you include a `datafeed_config`, you must
+        have read index privileges on the source index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
 

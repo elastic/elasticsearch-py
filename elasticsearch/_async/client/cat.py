@@ -53,11 +53,11 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Retrieves the cluster’s index aliases, including filter and routing information.
-        The API does not return data stream aliases. IMPORTANT: cat APIs are only intended
+        Get aliases. Retrieves the cluster’s index aliases, including filter and routing
+        information. The API does not return data stream aliases. CAT APIs are only intended
         for human consumption using the command line or the Kibana console. They are
-        not intended for use by applications. For application consumption, use the aliases
-        API.
+        not intended for use by applications. For application consumption, use the /_alias
+        endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
@@ -231,11 +231,12 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns information about component templates in a cluster. Component templates
-        are building blocks for constructing index templates that specify index mappings,
-        settings, and aliases. IMPORTANT: cat APIs are only intended for human consumption
-        using the command line or Kibana console. They are not intended for use by applications.
-        For application consumption, use the get component template API.
+        Get component templates. Returns information about component templates in a cluster.
+        Component templates are building blocks for constructing index templates that
+        specify index mappings, settings, and aliases. CAT APIs are only intended for
+        human consumption using the command line or Kibana console. They are not intended
+        for use by applications. For application consumption, use the /_component_template
+        endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-component-templates.html>`_
 
@@ -316,12 +317,12 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Provides quick access to a document count for a data stream, an index, or an
-        entire cluster. NOTE: The document count only includes live documents, not deleted
-        documents which have not yet been removed by the merge process. IMPORTANT: cat
+        Get a document count. Provides quick access to a document count for a data stream,
+        an index, or an entire cluster.n/ The document count only includes live documents,
+        not deleted documents which have not yet been removed by the merge process. CAT
         APIs are only intended for human consumption using the command line or Kibana
         console. They are not intended for use by applications. For application consumption,
-        use the count API.
+        use /_count endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
 
@@ -585,7 +586,7 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> TextApiResponse:
         """
-        Returns help for the Cat APIs.
+        Get CAT help. Returns help for the CAT APIs.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
 
@@ -676,16 +677,16 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns high-level information about indices in a cluster, including backing
-        indices for data streams. IMPORTANT: cat APIs are only intended for human consumption
-        using the command line or Kibana console. They are not intended for use by applications.
-        For application consumption, use the get index API. Use the cat indices API to
-        get the following information for each index in a cluster: shard count; document
-        count; deleted document count; primary store size; total store size of all shards,
-        including shard replicas. These metrics are retrieved directly from Lucene, which
-        Elasticsearch uses internally to power indexing and search. As a result, all
-        document counts include hidden nested documents. To get an accurate count of
-        Elasticsearch documents, use the cat count or count APIs.
+        Get index information. Returns high-level information about indices in a cluster,
+        including backing indices for data streams. Use this request to get the following
+        information for each index in a cluster: - shard count - document count - deleted
+        document count - primary store size - total store size of all shards, including
+        shard replicas These metrics are retrieved directly from Lucene, which Elasticsearch
+        uses internally to power indexing and search. As a result, all document counts
+        include hidden nested documents. To get an accurate count of Elasticsearch documents,
+        use the /_cat/count or _count endpoints. CAT APIs are only intended for human
+        consumption using the command line or Kibana console. They are not intended for
+        use by applications. For application consumption, use an index endpoint.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
 
@@ -894,10 +895,10 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns configuration and usage information about data frame analytics jobs.
-        IMPORTANT: cat APIs are only intended for human consumption using the Kibana
-        console or command line. They are not intended for use by applications. For application
-        consumption, use the get data frame analytics jobs statistics API.
+        Get data frame analytics jobs. Returns configuration and usage information about
+        data frame analytics jobs. CAT APIs are only intended for human consumption using
+        the Kibana console or command line. They are not intended for use by applications.
+        For application consumption, use the /_ml/data_frame/analytics endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
 
@@ -1016,12 +1017,12 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns configuration and usage information about datafeeds. This API returns
-        a maximum of 10,000 datafeeds. If the Elasticsearch security features are enabled,
-        you must have `monitor_ml`, `monitor`, `manage_ml`, or `manage` cluster privileges
-        to use this API. IMPORTANT: cat APIs are only intended for human consumption
+        Get datafeeds. Returns configuration and usage information about datafeeds. This
+        API returns a maximum of 10,000 datafeeds. If the Elasticsearch security features
+        are enabled, you must have `monitor_ml`, `monitor`, `manage_ml`, or `manage`
+        cluster privileges to use this API. CAT APIs are only intended for human consumption
         using the Kibana console or command line. They are not intended for use by applications.
-        For application consumption, use the get datafeed statistics API.
+        For application consumption, use the /_ml/datafeeds endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
 
@@ -1146,13 +1147,13 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns configuration and usage information for anomaly detection jobs. This
-        API returns a maximum of 10,000 jobs. If the Elasticsearch security features
-        are enabled, you must have `monitor_ml`, `monitor`, `manage_ml`, or `manage`
-        cluster privileges to use this API. IMPORTANT: cat APIs are only intended for
+        Get anomaly detection jobs. Returns configuration and usage information for anomaly
+        detection jobs. This API returns a maximum of 10,000 jobs. If the Elasticsearch
+        security features are enabled, you must have `monitor_ml`, `monitor`, `manage_ml`,
+        or `manage` cluster privileges to use this API. CAT APIs are only intended for
         human consumption using the Kibana console or command line. They are not intended
-        for use by applications. For application consumption, use the get anomaly detection
-        job statistics API.
+        for use by applications. For application consumption, use the /_ml/anomaly_detectors
+        endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
 
@@ -1280,10 +1281,10 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns configuration and usage information about inference trained models. IMPORTANT:
-        cat APIs are only intended for human consumption using the Kibana console or
-        command line. They are not intended for use by applications. For application
-        consumption, use the get trained models statistics API.
+        Get trained models. Returns configuration and usage information about inference
+        trained models. CAT APIs are only intended for human consumption using the Kibana
+        console or command line. They are not intended for use by applications. For application
+        consumption, use the /_ml/trained_models endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
@@ -2458,10 +2459,10 @@ class CatClient(NamespacedClient):
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
-        Returns configuration and usage information about transforms. IMPORTANT: cat
-        APIs are only intended for human consumption using the Kibana console or command
-        line. They are not intended for use by applications. For application consumption,
-        use the get transform statistics API.
+        Get transforms. Returns configuration and usage information about transforms.
+        CAT APIs are only intended for human consumption using the Kibana console or
+        command line. They are not intended for use by applications. For application
+        consumption, use the /_transform endpoints.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 

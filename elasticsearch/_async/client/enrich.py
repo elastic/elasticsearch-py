@@ -36,7 +36,7 @@ class EnrichClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing enrich policy and its enrich index.
+        Delete an enrich policy. Deletes an existing enrich policy and its enrich index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
 
@@ -121,7 +121,7 @@ class EnrichClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about an enrich policy.
+        Get an enrich policy. Returns information about an enrich policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
 
@@ -171,7 +171,7 @@ class EnrichClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an enrich policy.
+        Create an enrich policy. Creates an enrich policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
 
@@ -224,8 +224,8 @@ class EnrichClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns enrich coordinator statistics and information about enrich policies that
-        are currently executing.
+        Get enrich stats. Returns enrich coordinator statistics and information about
+        enrich policies that are currently executing.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
         """
