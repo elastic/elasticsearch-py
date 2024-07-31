@@ -216,8 +216,10 @@ class WatcherClient(NamespacedClient):
             t.Mapping[
                 str,
                 t.Union[
-                    "t.Literal['execute', 'force_execute', 'force_simulate', 'simulate', 'skip']",
                     str,
+                    t.Literal[
+                        "execute", "force_execute", "force_simulate", "simulate", "skip"
+                    ],
                 ],
             ]
         ] = None,
@@ -586,13 +588,20 @@ class WatcherClient(NamespacedClient):
             t.Union[
                 t.Sequence[
                     t.Union[
-                        "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
                         str,
+                        t.Literal[
+                            "_all",
+                            "current_watches",
+                            "pending_watches",
+                            "queued_watches",
+                        ],
                     ]
                 ],
                 t.Union[
-                    "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
                     str,
+                    t.Literal[
+                        "_all", "current_watches", "pending_watches", "queued_watches"
+                    ],
                 ],
             ]
         ] = None,

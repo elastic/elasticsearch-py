@@ -31,7 +31,7 @@ class MonitoringClient(NamespacedClient):
     def bulk(
         self,
         *,
-        interval: t.Union["t.Literal[-1]", "t.Literal[0]", str],
+        interval: t.Union[str, t.Literal[-1], t.Literal[0]],
         operations: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         system_api_version: str,

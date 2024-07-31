@@ -36,11 +36,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clears a trained model deployment cache on all nodes where the trained model
-        is assigned. A trained model deployment may have an inference cache enabled.
-        As requests are handled by each allocated node, their responses may be cached
-        on that individual node. Calling this API clears the caches without restarting
-        the deployment.
+        Clear trained model deployment cache. Cache will be cleared on all nodes where
+        the trained model is assigned. A trained model deployment may have an inference
+        cache enabled. As requests are handled by each allocated node, their responses
+        may be cached on that individual node. Calling this API clears the caches without
+        restarting the deployment.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-trained-model-deployment-cache.html>`_
 
@@ -84,7 +84,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -161,7 +161,8 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes all scheduled events from a calendar, then deletes it.
+        Delete a calendar. Removes all scheduled events from a calendar, then deletes
+        it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar.html>`_
 
@@ -202,7 +203,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes scheduled events from a calendar.
+        Delete events from a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
 
@@ -250,7 +251,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes anomaly detection jobs from a calendar.
+        Delete anomaly jobs from a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-job.html>`_
 
@@ -296,10 +297,10 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a data frame analytics job.
+        Delete a data frame analytics job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-dfanalytics.html>`_
 
@@ -347,7 +348,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing datafeed.
+        Delete a datafeed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-datafeed.html>`_
 
@@ -395,17 +396,17 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes expired and unused machine learning data. Deletes all job results, model
-        snapshots and forecast data that have exceeded their retention days period. Machine
-        learning state documents that are not associated with any job are also deleted.
-        You can limit the request to a single or set of anomaly detection jobs by using
-        a job identifier, a group name, a comma-separated list of jobs, or a wildcard
-        expression. You can delete expired data for all anomaly detection jobs by using
-        _all, by specifying * as the <job_id>, or by omitting the <job_id>.
+        Delete expired ML data. Deletes all job results, model snapshots and forecast
+        data that have exceeded their retention days period. Machine learning state documents
+        that are not associated with any job are also deleted. You can limit the request
+        to a single or set of anomaly detection jobs by using a job identifier, a group
+        name, a comma-separated list of jobs, or a wildcard expression. You can delete
+        expired data for all anomaly detection jobs by using _all, by specifying * as
+        the <job_id>, or by omitting the <job_id>.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
 
@@ -464,7 +465,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a filter. If an anomaly detection job references the filter, you cannot
+        Delete a filter. If an anomaly detection job references the filter, you cannot
         delete the filter. You must update or delete the job before you can delete the
         filter.
 
@@ -506,13 +507,13 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes forecasts from a machine learning job. By default, forecasts are retained
-        for 14 days. You can specify a different retention period with the `expires_in`
-        parameter in the forecast jobs API. The delete forecast API enables you to delete
-        one or more forecasts before they expire.
+        Delete forecasts from a job. By default, forecasts are retained for 14 days.
+        You can specify a different retention period with the `expires_in` parameter
+        in the forecast jobs API. The delete forecast API enables you to delete one or
+        more forecasts before they expire.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-forecast.html>`_
 
@@ -638,10 +639,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing model snapshot. You cannot delete the active model snapshot.
-        To delete that snapshot, first revert to a different one. To identify the active
-        model snapshot, refer to the `model_snapshot_id` in the results from the get
-        jobs API.
+        Delete a model snapshot. You cannot delete the active model snapshot. To delete
+        that snapshot, first revert to a different one. To identify the active model
+        snapshot, refer to the `model_snapshot_id` in the results from the get jobs API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-snapshot.html>`_
 
@@ -688,8 +688,8 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing trained inference model that is currently not referenced
-        by an ingest pipeline.
+        Delete an unreferenced trained model. The request deletes a trained inference
+        model that is not referenced by an ingest pipeline.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models.html>`_
 
@@ -734,9 +734,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a trained model alias. This API deletes an existing model alias that
-        refers to a trained model. If the model alias is missing or refers to a model
-        other than the one identified by the `model_id`, this API returns an error.
+        Delete a trained model alias. This API deletes an existing model alias that refers
+        to a trained model. If the model alias is missing or refers to a model other
+        than the one identified by the `model_id`, this API returns an error.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models-aliases.html>`_
 
@@ -791,9 +791,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Makes an estimation of the memory usage for an anomaly detection job model. It
-        is based on analysis configuration details for the job and cardinality estimates
-        for the fields it references.
+        Estimate job model memory usage. Makes an estimation of the memory usage for
+        an anomaly detection job model. It is based on analysis configuration details
+        for the job and cardinality estimates for the fields it references.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
 
@@ -858,10 +858,10 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evaluates the data frame analytics for an annotated index. The API packages together
-        commonly used evaluation metrics for various types of machine learning features.
-        This has been designed for use on indexes created by data frame analytics. Evaluation
-        requires both a ground truth field and an analytics result field to be present.
+        Evaluate data frame analytics. The API packages together commonly used evaluation
+        metrics for various types of machine learning features. This has been designed
+        for use on indexes created by data frame analytics. Evaluation requires both
+        a ground truth field and an analytics result field to be present.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/evaluate-dfanalytics.html>`_
 
@@ -935,11 +935,11 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explains a data frame analytics config. This API provides explanations for a
-        data frame analytics config that either exists already or one that has not been
-        created yet. The following explanations are provided: * which fields are included
-        or not in the analysis and why, * how much memory is estimated to be required.
-        The estimate can be used when deciding the appropriate value for model_memory_limit
+        Explain data frame analytics config. This API provides explanations for a data
+        frame analytics config that either exists already or one that has not been created
+        yet. The following explanations are provided: * which fields are included or
+        not in the analysis and why, * how much memory is estimated to be required. The
+        estimate can be used when deciding the appropriate value for model_memory_limit
         setting later on. If you have object fields or fields that are excluded via source
         filtering, they are not included in the explanation.
 
@@ -1106,9 +1106,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        duration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        duration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         error_trace: t.Optional[bool] = None,
-        expires_in: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        expires_in: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_model_memory: t.Optional[str] = None,
@@ -2048,11 +2048,9 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get information about how machine learning jobs and trained models are using
@@ -2271,7 +2269,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         allow_no_match: t.Optional[bool] = None,
-        bucket_span: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        bucket_span: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
@@ -2481,8 +2479,14 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include: t.Optional[
             t.Union[
-                "t.Literal['definition', 'definition_status', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
                 str,
+                t.Literal[
+                    "definition",
+                    "definition_status",
+                    "feature_importance_baseline",
+                    "hyperparameters",
+                    "total_feature_importance",
+                ],
             ]
         ] = None,
         pretty: t.Optional[bool] = None,
@@ -2633,7 +2637,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2735,7 +2739,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3336,13 +3340,13 @@ class MlClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
@@ -3354,7 +3358,7 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
@@ -3593,7 +3597,7 @@ class MlClient(NamespacedClient):
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         custom_settings: t.Optional[t.Any] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
@@ -3783,7 +3787,7 @@ class MlClient(NamespacedClient):
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
         model_type: t.Optional[
-            t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
+            t.Union[str, t.Literal["lang_ident", "pytorch", "tree_ensemble"]]
         ] = None,
         platform_architecture: t.Optional[str] = None,
         prefix_strings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4219,7 +4223,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
@@ -4274,7 +4278,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Starts a data frame analytics job. A data frame analytics job can be started
@@ -4334,7 +4338,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4408,12 +4412,12 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
-        priority: t.Optional[t.Union["t.Literal['low', 'normal']", str]] = None,
+        priority: t.Optional[t.Union[str, t.Literal["low", "normal"]]] = None,
         queue_capacity: t.Optional[int] = None,
         threads_per_allocation: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for: t.Optional[
-            t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
+            t.Union[str, t.Literal["fully_allocated", "started", "starting"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4498,7 +4502,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more data frame analytics jobs. A data frame analytics job can be
@@ -4563,7 +4567,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4780,13 +4784,13 @@ class MlClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -4797,7 +4801,7 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
@@ -5038,7 +5042,7 @@ class MlClient(NamespacedClient):
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         categorization_filters: t.Optional[t.Sequence[str]] = None,
         custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -5051,7 +5055,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_prune_window: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
         per_partition_categorization: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -5306,7 +5310,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
