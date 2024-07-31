@@ -8,7 +8,7 @@ operations with it.
 [discrete]
 === Requirements
 
-* https://www.python.org/[Python] 3.7 or newer
+* https://www.python.org/[Python] 3.8 or newer
 * https://pip.pypa.io/en/stable/[`pip`], installed by default alongside Python
 
 [discrete]
