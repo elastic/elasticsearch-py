@@ -66,7 +66,7 @@ def generate_actions():
     yields a single document. This function is passed into the bulk()
     helper to create many documents in sequence.
     """
-    with open(DATASET_PATH, mode="r") as f:
+    with open(DATASET_PATH) as f:
         reader = csv.DictReader(f)
 
         for row in reader:
