@@ -32,8 +32,8 @@ class InferenceClient(NamespacedClient):
         inference_id: str,
         task_type: t.Optional[
             t.Union[
-                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
                 str,
+                t.Literal["completion", "rerank", "sparse_embedding", "text_embedding"],
             ]
         ] = None,
         dry_run: t.Optional[bool] = None,
@@ -98,8 +98,8 @@ class InferenceClient(NamespacedClient):
         *,
         task_type: t.Optional[
             t.Union[
-                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
                 str,
+                t.Literal["completion", "rerank", "sparse_embedding", "text_embedding"],
             ]
         ] = None,
         inference_id: t.Optional[str] = None,
@@ -158,8 +158,8 @@ class InferenceClient(NamespacedClient):
         input: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         task_type: t.Optional[
             t.Union[
-                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
                 str,
+                t.Literal["completion", "rerank", "sparse_embedding", "text_embedding"],
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,
@@ -168,7 +168,7 @@ class InferenceClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
         task_settings: t.Optional[t.Any] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -245,8 +245,8 @@ class InferenceClient(NamespacedClient):
         body: t.Optional[t.Mapping[str, t.Any]] = None,
         task_type: t.Optional[
             t.Union[
-                "t.Literal['completion', 'rerank', 'sparse_embedding', 'text_embedding']",
                 str,
+                t.Literal["completion", "rerank", "sparse_embedding", "text_embedding"],
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,

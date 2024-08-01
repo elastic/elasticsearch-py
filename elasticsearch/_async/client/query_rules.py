@@ -261,7 +261,7 @@ class QueryRulesClient(NamespacedClient):
         criteria: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
-        type: t.Optional[t.Union["t.Literal['pinned']", str]] = None,
+        type: t.Optional[t.Union[str, t.Literal["pinned"]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
