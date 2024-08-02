@@ -85,6 +85,7 @@ __all__ = [
     "CatClient",
     "CcrClient",
     "ClusterClient",
+    "ConnectorClient",
     "DanglingIndicesClient",
     "Elasticsearch",
     "EnrichClient",
