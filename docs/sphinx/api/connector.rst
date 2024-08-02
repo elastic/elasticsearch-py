@@ -1,4 +1,4 @@
-.. _cluster:
+.. _connector:
 
 Connector
 ---------
