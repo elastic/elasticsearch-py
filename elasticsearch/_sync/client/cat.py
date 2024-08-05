@@ -54,8 +54,8 @@ class CatClient(NamespacedClient):
         Get aliases. Retrieves the cluster’s index aliases, including filter and routing
         information. The API does not return data stream aliases. CAT APIs are only intended
         for human consumption using the command line or the Kibana console. They are
-        not intended for use by applications. For application consumption, use the /_alias
-        endpoints.
+        not intended for use by applications. For application consumption, use the aliases
+        API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
@@ -229,8 +229,8 @@ class CatClient(NamespacedClient):
         Component templates are building blocks for constructing index templates that
         specify index mappings, settings, and aliases. CAT APIs are only intended for
         human consumption using the command line or Kibana console. They are not intended
-        for use by applications. For application consumption, use the /_component_template
-        endpoints.
+        for use by applications. For application consumption, use the get component template
+        API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-component-templates.html>`_
 
@@ -314,7 +314,7 @@ class CatClient(NamespacedClient):
         not deleted documents which have not yet been removed by the merge process. CAT
         APIs are only intended for human consumption using the command line or Kibana
         console. They are not intended for use by applications. For application consumption,
-        use /_count endpoints.
+        use the count API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
 
@@ -668,9 +668,9 @@ class CatClient(NamespacedClient):
         shard replicas These metrics are retrieved directly from Lucene, which Elasticsearch
         uses internally to power indexing and search. As a result, all document counts
         include hidden nested documents. To get an accurate count of Elasticsearch documents,
-        use the /_cat/count or _count endpoints. CAT APIs are only intended for human
-        consumption using the command line or Kibana console. They are not intended for
-        use by applications. For application consumption, use an index endpoint.
+        use the cat count or count APIs. CAT APIs are only intended for human consumption
+        using the command line or Kibana console. They are not intended for use by applications.
+        For application consumption, use an index endpoint.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
 
@@ -946,7 +946,8 @@ class CatClient(NamespacedClient):
         Get data frame analytics jobs. Returns configuration and usage information about
         data frame analytics jobs. CAT APIs are only intended for human consumption using
         the Kibana console or command line. They are not intended for use by applications.
-        For application consumption, use the /_ml/data_frame/analytics endpoints.
+        For application consumption, use the get data frame analytics jobs statistics
+        API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
 
@@ -1120,7 +1121,7 @@ class CatClient(NamespacedClient):
         are enabled, you must have `monitor_ml`, `monitor`, `manage_ml`, or `manage`
         cluster privileges to use this API. CAT APIs are only intended for human consumption
         using the Kibana console or command line. They are not intended for use by applications.
-        For application consumption, use the /_ml/datafeeds endpoints.
+        For application consumption, use the get datafeed statistics API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
 
@@ -1492,8 +1493,8 @@ class CatClient(NamespacedClient):
         security features are enabled, you must have `monitor_ml`, `monitor`, `manage_ml`,
         or `manage` cluster privileges to use this API. CAT APIs are only intended for
         human consumption using the Kibana console or command line. They are not intended
-        for use by applications. For application consumption, use the /_ml/anomaly_detectors
-        endpoints.
+        for use by applications. For application consumption, use the get anomaly detection
+        job statistics API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
 
@@ -1682,7 +1683,7 @@ class CatClient(NamespacedClient):
         Get trained models. Returns configuration and usage information about inference
         trained models. CAT APIs are only intended for human consumption using the Kibana
         console or command line. They are not intended for use by applications. For application
-        consumption, use the /_ml/trained_models endpoints.
+        consumption, use the get trained models statistics API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
@@ -2970,7 +2971,7 @@ class CatClient(NamespacedClient):
         Get transforms. Returns configuration and usage information about transforms.
         CAT APIs are only intended for human consumption using the Kibana console or
         command line. They are not intended for use by applications. For application
-        consumption, use the /_transform endpoints.
+        consumption, use the get transform statistics API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 
