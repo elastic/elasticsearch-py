@@ -3,7 +3,7 @@
 Searchable Snapshots
 --------------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SearchableSnapshotsClient
    :members:

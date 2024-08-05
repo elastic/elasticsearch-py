@@ -3,7 +3,7 @@
 Logstash
 --------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: LogstashClient
    :members:

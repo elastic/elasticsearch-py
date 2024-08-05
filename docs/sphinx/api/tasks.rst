@@ -3,7 +3,7 @@
 Tasks
 -----
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: TasksClient
    :members:

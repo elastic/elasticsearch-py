@@ -3,7 +3,7 @@
 Nodes
 -----
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: NodesClient
    :members:

@@ -3,7 +3,7 @@
 TLS/SSL
 -------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SslClient
    :members:
