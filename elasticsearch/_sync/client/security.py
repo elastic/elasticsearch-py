@@ -32,7 +32,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         grant_type: t.Optional[
-            t.Union["t.Literal['access_token', 'password']", str]
+            t.Union[str, t.Literal["access_token", "password"]]
         ] = None,
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
@@ -137,7 +137,7 @@ class SecurityClient(NamespacedClient):
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -418,14 +418,14 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        expiration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -499,7 +499,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -569,7 +569,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -625,7 +625,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -673,7 +673,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -723,7 +723,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -781,7 +781,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -829,7 +829,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -877,7 +877,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -925,7 +925,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -973,7 +973,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1455,8 +1455,10 @@ class SecurityClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         grant_type: t.Optional[
             t.Union[
-                "t.Literal['_kerberos', 'client_credentials', 'password', 'refresh_token']",
                 str,
+                t.Literal[
+                    "_kerberos", "client_credentials", "password", "refresh_token"
+                ],
             ]
         ] = None,
         human: t.Optional[bool] = None,
@@ -1680,7 +1682,7 @@ class SecurityClient(NamespacedClient):
         *,
         api_key: t.Optional[t.Mapping[str, t.Any]] = None,
         grant_type: t.Optional[
-            t.Union["t.Literal['access_token', 'password']", str]
+            t.Union[str, t.Literal["access_token", "password"]]
         ] = None,
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
@@ -1761,8 +1763,68 @@ class SecurityClient(NamespacedClient):
         cluster: t.Optional[
             t.Sequence[
                 t.Union[
-                    "t.Literal['all', 'cancel_task', 'create_snapshot', 'cross_cluster_replication', 'cross_cluster_search', 'delegate_pki', 'grant_api_key', 'manage', 'manage_api_key', 'manage_autoscaling', 'manage_behavioral_analytics', 'manage_ccr', 'manage_data_frame_transforms', 'manage_data_stream_global_retention', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_inference', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_search_application', 'manage_search_query_rules', 'manage_search_synonyms', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_data_frame_transforms', 'monitor_data_stream_global_retention', 'monitor_enrich', 'monitor_inference', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'none', 'post_behavioral_analytics_event', 'read_ccr', 'read_connector_secrets', 'read_fleet_secrets', 'read_ilm', 'read_pipeline', 'read_security', 'read_slm', 'transport_client', 'write_connector_secrets', 'write_fleet_secrets']",
                     str,
+                    t.Literal[
+                        "all",
+                        "cancel_task",
+                        "create_snapshot",
+                        "cross_cluster_replication",
+                        "cross_cluster_search",
+                        "delegate_pki",
+                        "grant_api_key",
+                        "manage",
+                        "manage_api_key",
+                        "manage_autoscaling",
+                        "manage_behavioral_analytics",
+                        "manage_ccr",
+                        "manage_data_frame_transforms",
+                        "manage_data_stream_global_retention",
+                        "manage_enrich",
+                        "manage_ilm",
+                        "manage_index_templates",
+                        "manage_inference",
+                        "manage_ingest_pipelines",
+                        "manage_logstash_pipelines",
+                        "manage_ml",
+                        "manage_oidc",
+                        "manage_own_api_key",
+                        "manage_pipeline",
+                        "manage_rollup",
+                        "manage_saml",
+                        "manage_search_application",
+                        "manage_search_query_rules",
+                        "manage_search_synonyms",
+                        "manage_security",
+                        "manage_service_account",
+                        "manage_slm",
+                        "manage_token",
+                        "manage_transform",
+                        "manage_user_profile",
+                        "manage_watcher",
+                        "monitor",
+                        "monitor_data_frame_transforms",
+                        "monitor_data_stream_global_retention",
+                        "monitor_enrich",
+                        "monitor_inference",
+                        "monitor_ml",
+                        "monitor_rollup",
+                        "monitor_snapshot",
+                        "monitor_text_structure",
+                        "monitor_transform",
+                        "monitor_watcher",
+                        "none",
+                        "post_behavioral_analytics_event",
+                        "read_ccr",
+                        "read_connector_secrets",
+                        "read_fleet_secrets",
+                        "read_ilm",
+                        "read_pipeline",
+                        "read_security",
+                        "read_slm",
+                        "transport_client",
+                        "write_connector_secrets",
+                        "write_fleet_secrets",
+                    ],
                 ]
             ]
         ] = None,
@@ -2020,7 +2082,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2084,8 +2146,68 @@ class SecurityClient(NamespacedClient):
         cluster: t.Optional[
             t.Sequence[
                 t.Union[
-                    "t.Literal['all', 'cancel_task', 'create_snapshot', 'cross_cluster_replication', 'cross_cluster_search', 'delegate_pki', 'grant_api_key', 'manage', 'manage_api_key', 'manage_autoscaling', 'manage_behavioral_analytics', 'manage_ccr', 'manage_data_frame_transforms', 'manage_data_stream_global_retention', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_inference', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_search_application', 'manage_search_query_rules', 'manage_search_synonyms', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_data_frame_transforms', 'monitor_data_stream_global_retention', 'monitor_enrich', 'monitor_inference', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'none', 'post_behavioral_analytics_event', 'read_ccr', 'read_connector_secrets', 'read_fleet_secrets', 'read_ilm', 'read_pipeline', 'read_security', 'read_slm', 'transport_client', 'write_connector_secrets', 'write_fleet_secrets']",
                     str,
+                    t.Literal[
+                        "all",
+                        "cancel_task",
+                        "create_snapshot",
+                        "cross_cluster_replication",
+                        "cross_cluster_search",
+                        "delegate_pki",
+                        "grant_api_key",
+                        "manage",
+                        "manage_api_key",
+                        "manage_autoscaling",
+                        "manage_behavioral_analytics",
+                        "manage_ccr",
+                        "manage_data_frame_transforms",
+                        "manage_data_stream_global_retention",
+                        "manage_enrich",
+                        "manage_ilm",
+                        "manage_index_templates",
+                        "manage_inference",
+                        "manage_ingest_pipelines",
+                        "manage_logstash_pipelines",
+                        "manage_ml",
+                        "manage_oidc",
+                        "manage_own_api_key",
+                        "manage_pipeline",
+                        "manage_rollup",
+                        "manage_saml",
+                        "manage_search_application",
+                        "manage_search_query_rules",
+                        "manage_search_synonyms",
+                        "manage_security",
+                        "manage_service_account",
+                        "manage_slm",
+                        "manage_token",
+                        "manage_transform",
+                        "manage_user_profile",
+                        "manage_watcher",
+                        "monitor",
+                        "monitor_data_frame_transforms",
+                        "monitor_data_stream_global_retention",
+                        "monitor_enrich",
+                        "monitor_inference",
+                        "monitor_ml",
+                        "monitor_rollup",
+                        "monitor_snapshot",
+                        "monitor_text_structure",
+                        "monitor_transform",
+                        "monitor_watcher",
+                        "none",
+                        "post_behavioral_analytics_event",
+                        "read_ccr",
+                        "read_connector_secrets",
+                        "read_fleet_secrets",
+                        "read_ilm",
+                        "read_pipeline",
+                        "read_security",
+                        "read_slm",
+                        "transport_client",
+                        "write_connector_secrets",
+                        "write_fleet_secrets",
+                    ],
                 ]
             ]
         ] = None,
@@ -2097,7 +2219,7 @@ class SecurityClient(NamespacedClient):
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2192,7 +2314,7 @@ class SecurityClient(NamespacedClient):
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         role_templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         roles: t.Optional[t.Sequence[str]] = None,
@@ -2282,7 +2404,7 @@ class SecurityClient(NamespacedClient):
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         roles: t.Optional[t.Sequence[str]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -2917,7 +3039,7 @@ class SecurityClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        expiration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2996,7 +3118,7 @@ class SecurityClient(NamespacedClient):
         labels: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
