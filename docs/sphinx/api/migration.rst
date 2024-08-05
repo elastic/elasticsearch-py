@@ -3,7 +3,7 @@
 Migration
 ---------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: MigrationClient
    :members:

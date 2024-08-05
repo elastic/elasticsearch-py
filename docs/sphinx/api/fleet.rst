@@ -3,7 +3,7 @@
 Fleet
 -----
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: FleetClient
    :members:

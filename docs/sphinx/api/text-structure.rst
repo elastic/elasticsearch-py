@@ -3,7 +3,7 @@
 Text Structure
 --------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: TextStructureClient
    :members:

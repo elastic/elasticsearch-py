@@ -3,7 +3,7 @@
 Snapshot Lifecycle Management (SLM)
 -----------------------------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SlmClient
    :members:

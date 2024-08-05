@@ -17,6 +17,7 @@ arguments are required for all calls.
    :maxdepth: 1
 
    api/elasticsearch
+   api/async-search
    api/autoscaling
    api/cat
    api/ccr

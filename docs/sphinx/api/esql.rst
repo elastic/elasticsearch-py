@@ -3,7 +3,7 @@
 ES|QL
 -----
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: EsqlClient
    :members:
