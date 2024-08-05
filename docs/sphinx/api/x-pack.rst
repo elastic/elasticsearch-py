@@ -3,7 +3,7 @@
 X-Pack
 ------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: XPackClient
    :members:

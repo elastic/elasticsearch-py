@@ -3,7 +3,7 @@
 Connector
 ---------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: ConnectorClient
    :members:

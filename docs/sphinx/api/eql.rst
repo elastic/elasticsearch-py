@@ -3,7 +3,7 @@
 Event Query Language (EQL)
 --------------------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: EqlClient
    :members:
