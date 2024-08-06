@@ -822,6 +822,7 @@ class TestVectorStore:
         texts = ["foo", "bar", "baz"]
         vector_field = "vector_field"
         text_field = "text_field"
+        query_embedding = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
         embedding_service = ConsistentFakeEmbeddings()
         store = VectorStore(
             index=index,
@@ -834,7 +835,6 @@ class TestVectorStore:
         store.add_texts(texts)
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=3,
@@ -843,8 +843,17 @@ class TestVectorStore:
         sim_output = store.search(query=texts[0], k=3)
         assert mmr_output == sim_output
 
+        # search using query embeddings vector instead of query
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
+            query_embedding=query_embedding,
+            vector_field=vector_field,
+            k=3,
+            num_candidates=3,
+        )
+        sim_output = store.search(query_vector=query_embedding, k=3)
+        assert mmr_output == sim_output
+
+        mmr_output = store.max_marginal_relevance_search(
             query=texts[0],
             vector_field=vector_field,
             k=2,
@@ -855,7 +864,6 @@ class TestVectorStore:
         assert mmr_output[1]["_source"][text_field] == texts[1]
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=2,
@@ -868,7 +876,6 @@ class TestVectorStore:
 
         # if fetch_k < k, then the output will be less than k
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=3,
