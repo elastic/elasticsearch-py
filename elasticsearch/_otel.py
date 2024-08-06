@@ -45,7 +45,7 @@ DEFAULT_BODY_STRATEGY = "omit"
 
 
 class OpenTelemetry:
-    current_context: dict[str, str] = {}
+    context_carrier: dict[str, str] = {}
 
     def __init__(
         self,
@@ -80,8 +80,7 @@ class OpenTelemetry:
 
         span_name = endpoint_id or method
         with self.tracer.start_as_current_span(span_name) as otel_span:
-            self.current_context = {}
-            TraceContextTextMapPropagator().inject(self.current_context)
+            TraceContextTextMapPropagator().inject(self.context_carrier)
             otel_span.set_attribute("http.request.method", method)
             otel_span.set_attribute("db.system", "elasticsearch")
             if endpoint_id is not None:
@@ -98,12 +97,13 @@ class OpenTelemetry:
     @contextlib.contextmanager
     def recover_parent_context(self) -> Generator[None, None, None]:
         token = None
-        if self.current_context:
+        if self.context_carrier:
             otel_parent_ctx = TraceContextTextMapPropagator().extract(
-                carrier=self.current_context
+                carrier=self.context_carrier
             )
             token = otel_context.attach(otel_parent_ctx)
-        yield
-
-        if token:
-            otel_context.detach(token)
+        try:
+            yield
+        finally:
+            if token:
+                otel_context.detach(token)
