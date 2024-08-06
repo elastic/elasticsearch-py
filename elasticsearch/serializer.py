@@ -49,6 +49,14 @@ except ImportError:
     _OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 
+try:
+    import pyarrow as pa
+
+    __all__.append("PyArrowSerializer")
+except ImportError:
+    pa = None
+
+
 class JsonSerializer(_JsonSerializer):
     mimetype: ClassVar[str] = "application/json"
 
@@ -114,6 +122,29 @@ class MapboxVectorTileSerializer(Serializer):
         raise SerializationError(f"Cannot serialize {data!r} into a MapBox vector tile")
 
 
+if pa is not None:
+
+    class PyArrowSerializer(Serializer):
+        """PyArrow serializer for deserializing Arrow Stream data."""
+
+        mimetype: ClassVar[str] = "application/vnd.apache.arrow.stream"
+
+        def loads(self, data: bytes) -> pa.Table:
+            try:
+                with pa.ipc.open_stream(data) as reader:
+                    return reader.read_all()
+            except pa.ArrowException as e:
+                raise SerializationError(
+                    message=f"Unable to deserialize as Arrow stream: {data!r}",
+                    errors=(e,),
+                )
+
+        def dumps(self, data: Any) -> bytes:
+            raise SerializationError(
+                message="Elasticsearch does not accept Arrow input data"
+            )
+
+
 DEFAULT_SERIALIZERS: Dict[str, Serializer] = {
     JsonSerializer.mimetype: JsonSerializer(),
     MapboxVectorTileSerializer.mimetype: MapboxVectorTileSerializer(),
@@ -121,6 +152,9 @@ DEFAULT_SERIALIZERS: Dict[str, Serializer] = {
     CompatibilityModeJsonSerializer.mimetype: CompatibilityModeJsonSerializer(),
     CompatibilityModeNdjsonSerializer.mimetype: CompatibilityModeNdjsonSerializer(),
 }
+
+if pa is not None:
+    DEFAULT_SERIALIZERS[PyArrowSerializer.mimetype] = PyArrowSerializer()
 
 # Alias for backwards compatibility
 JSONSerializer = JsonSerializer
