@@ -108,11 +108,9 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes component templates. Component templates are building blocks for constructing
@@ -209,9 +207,7 @@ class ClusterClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
@@ -266,9 +262,7 @@ class ClusterClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -330,11 +324,9 @@ class ClusterClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns cluster-wide settings. By default, it returns only settings that have
@@ -389,36 +381,34 @@ class ClusterClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
+            t.Union[str, t.Literal["cluster", "indices", "shards"]]
         ] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         wait_for_events: t.Optional[
             t.Union[
-                "t.Literal['high', 'immediate', 'languid', 'low', 'normal', 'urgent']",
                 str,
+                t.Literal["high", "immediate", "languid", "low", "normal", "urgent"],
             ]
         ] = None,
         wait_for_no_initializing_shards: t.Optional[bool] = None,
         wait_for_no_relocating_shards: t.Optional[bool] = None,
         wait_for_nodes: t.Optional[t.Union[int, str]] = None,
         wait_for_status: t.Optional[
-            t.Union["t.Literal['green', 'red', 'yellow']", str]
+            t.Union[str, t.Literal["green", "red", "yellow"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -435,9 +425,9 @@ class ClusterClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.15/cluster-health.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
-            used to limit the request. Wildcard expressions (*) are supported. To target
+            used to limit the request. Wildcard expressions (`*`) are supported. To target
             all data streams and indices in a cluster, omit this parameter or use _all
-            or *.
+            or `*`.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
         :param level: Can be one of cluster, indices or shards. Controls the details
@@ -523,12 +513,10 @@ class ClusterClient(NamespacedClient):
         target: t.Union[
             t.Sequence[
                 t.Union[
-                    "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']", str
+                    str, t.Literal["_all", "http", "ingest", "script", "thread_pool"]
                 ]
             ],
-            t.Union[
-                "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']", str
-            ],
+            t.Union[str, t.Literal["_all", "http", "ingest", "script", "thread_pool"]],
         ],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -574,9 +562,7 @@ class ClusterClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -632,7 +618,7 @@ class ClusterClient(NamespacedClient):
         node_ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         node_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the cluster voting config exclusions by node ids or node names.
@@ -690,9 +676,7 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         version: t.Optional[int] = None,
@@ -792,12 +776,10 @@ class ClusterClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         persistent: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         transient: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -895,13 +877,11 @@ class ClusterClient(NamespacedClient):
         explain: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
         retry_failed: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -976,9 +956,9 @@ class ClusterClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -986,14 +966,10 @@ class ClusterClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         wait_for_metadata_version: t.Optional[int] = None,
-        wait_for_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        wait_for_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns a comprehensive information about the state of the cluster.
@@ -1077,7 +1053,7 @@ class ClusterClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns cluster statistics. It returns basic index metrics (shard numbers, store

@@ -76,10 +76,10 @@ class EqlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -194,9 +194,9 @@ class EqlClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         fetch_size: t.Optional[int] = None,
@@ -209,16 +209,16 @@ class EqlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        result_position: t.Optional[t.Union["t.Literal['head', 'tail']", str]] = None,
+        result_position: t.Optional[t.Union[str, t.Literal["head", "tail"]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         size: t.Optional[int] = None,
         tiebreaker_field: t.Optional[str] = None,
         timestamp_field: t.Optional[str] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
