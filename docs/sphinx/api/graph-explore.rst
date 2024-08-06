@@ -3,7 +3,7 @@
 Graph Explore
 -------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: GraphClient
    :members:

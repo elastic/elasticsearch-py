@@ -3,7 +3,7 @@
 Dangling Indices
 ----------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: DanglingIndicesClient
    :members:

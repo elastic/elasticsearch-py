@@ -3,7 +3,7 @@
 Snapshots
 ---------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SnapshotClient
    :members:
