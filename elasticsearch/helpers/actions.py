@@ -590,27 +590,32 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    pool = BlockingPool(thread_count)
+    with client._otel.span(
+        "parallel_bulk", endpoint_id="", path_parts={}, inject_context=True
+    ):
+        pool = BlockingPool(thread_count)
 
-    try:
-        for result in pool.imap(
-            lambda bulk_chunk: list(
-                _process_bulk_chunk(
-                    client,
-                    bulk_chunk[1],
-                    bulk_chunk[0],
-                    ignore_status=ignore_status,  # type: ignore[misc]
-                    *args,
-                    **kwargs,
-                )
-            ),
-            _chunk_actions(expanded_actions, chunk_size, max_chunk_bytes, serializer),
-        ):
-            yield from result
+        try:
+            for result in pool.imap(
+                lambda bulk_chunk: list(
+                    _process_bulk_chunk(
+                        client,
+                        bulk_chunk[1],
+                        bulk_chunk[0],
+                        ignore_status=ignore_status,  # type: ignore[misc]
+                        *args,
+                        **kwargs,
+                    )
+                ),
+                _chunk_actions(
+                    expanded_actions, chunk_size, max_chunk_bytes, serializer
+                ),
+            ):
+                yield from result
 
-    finally:
-        pool.close()
-        pool.join()
+        finally:
+            pool.close()
+            pool.join()
 
 
 def scan(

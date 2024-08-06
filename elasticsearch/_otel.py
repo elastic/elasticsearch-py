@@ -73,6 +73,7 @@ class OpenTelemetry:
         *,
         endpoint_id: str | None,
         path_parts: Mapping[str, str],
+        inject_context: bool = False,
     ) -> Generator[OpenTelemetrySpan, None, None]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
@@ -80,7 +81,8 @@ class OpenTelemetry:
 
         span_name = endpoint_id or method
         with self.tracer.start_as_current_span(span_name) as otel_span:
-            TraceContextTextMapPropagator().inject(self.context_carrier)
+            if inject_context:
+                TraceContextTextMapPropagator().inject(self.context_carrier)
             otel_span.set_attribute("http.request.method", method)
             otel_span.set_attribute("db.system", "elasticsearch")
             if endpoint_id is not None:
