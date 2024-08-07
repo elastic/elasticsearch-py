@@ -45,7 +45,7 @@ class TextStructureClient(NamespacedClient):
         lines_to_sample: t.Optional[int] = None,
         quote: t.Optional[str] = None,
         should_trim_fields: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         timestamp_field: t.Optional[str] = None,
         timestamp_format: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
