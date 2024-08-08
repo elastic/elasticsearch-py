@@ -229,7 +229,7 @@ class VectorStore:
     def search(
         self,
         *,
-        query: Optional[str],
+        query: Optional[str] = None,
         query_vector: Optional[List[float]] = None,
         k: int = 4,
         num_candidates: int = 50,
@@ -341,8 +341,9 @@ class VectorStore:
     def max_marginal_relevance_search(
         self,
         *,
-        embedding_service: EmbeddingService,
-        query: str,
+        query: Optional[str] = None,
+        query_embedding: Optional[List[float]] = None,
+        embedding_service: Optional[EmbeddingService] = None,
         vector_field: str,
         k: int = 4,
         num_candidates: int = 20,
@@ -358,6 +359,8 @@ class VectorStore:
             among selected documents.
 
         :param query (str): Text to look up documents similar to.
+        :param query_embedding: Input embedding vector. If given, input query string is
+            ignored.
         :param k (int): Number of Documents to return. Defaults to 4.
         :param fetch_k (int): Number of Documents to fetch to pass to MMR algorithm.
         :param lambda_mult (float): Number between 0 and 1 that determines the degree
@@ -378,12 +381,17 @@ class VectorStore:
             remove_vector_query_field_from_metadata = False
 
         # Embed the query
-        query_embedding = embedding_service.embed_query(query)
+        if query_embedding:
+            query_vector = query_embedding
+        elif self.embedding_service:
+            if not query:
+                raise ValueError("specify a query or a query_embedding to search")
+            query_vector = self.embedding_service.embed_query(query)
 
         # Fetch the initial documents
         got_hits = self.search(
             query=None,
-            query_vector=query_embedding,
+            query_vector=query_vector,
             k=num_candidates,
             fields=fields,
             custom_query=custom_query,
@@ -394,7 +402,7 @@ class VectorStore:
 
         # Select documents using maximal marginal relevance
         selected_indices = maximal_marginal_relevance(
-            query_embedding, got_embeddings, lambda_mult=lambda_mult, k=k
+            query_vector, got_embeddings, lambda_mult=lambda_mult, k=k
         )
         selected_hits = [got_hits[i] for i in selected_indices]
 
