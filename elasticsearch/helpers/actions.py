@@ -331,28 +331,29 @@ def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    if isinstance(ignore_status, int):
-        ignore_status = (ignore_status,)
+    with client._otel.recover_parent_context():
+        if isinstance(ignore_status, int):
+            ignore_status = (ignore_status,)
 
-    try:
-        # send the actual request
-        resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
-    except ApiError as e:
-        gen = _process_bulk_chunk_error(
-            error=e,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_exception=raise_on_exception,
-            raise_on_error=raise_on_error,
-        )
-    else:
-        gen = _process_bulk_chunk_success(
-            resp=resp.body,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_error=raise_on_error,
-        )
-    yield from gen
+        try:
+            # send the actual request
+            resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
+        except ApiError as e:
+            gen = _process_bulk_chunk_error(
+                error=e,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_exception=raise_on_exception,
+                raise_on_error=raise_on_error,
+            )
+        else:
+            gen = _process_bulk_chunk_success(
+                resp=resp.body,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_error=raise_on_error,
+            )
+        yield from gen
 
 
 def streaming_bulk(
@@ -589,27 +590,32 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    pool = BlockingPool(thread_count)
+    with client._otel.span(
+        "parallel_bulk", endpoint_id="", path_parts={}, inject_context=True
+    ):
+        pool = BlockingPool(thread_count)
 
-    try:
-        for result in pool.imap(
-            lambda bulk_chunk: list(
-                _process_bulk_chunk(
-                    client,
-                    bulk_chunk[1],
-                    bulk_chunk[0],
-                    ignore_status=ignore_status,  # type: ignore[misc]
-                    *args,
-                    **kwargs,
-                )
-            ),
-            _chunk_actions(expanded_actions, chunk_size, max_chunk_bytes, serializer),
-        ):
-            yield from result
+        try:
+            for result in pool.imap(
+                lambda bulk_chunk: list(
+                    _process_bulk_chunk(
+                        client,
+                        bulk_chunk[1],
+                        bulk_chunk[0],
+                        ignore_status=ignore_status,  # type: ignore[misc]
+                        *args,
+                        **kwargs,
+                    )
+                ),
+                _chunk_actions(
+                    expanded_actions, chunk_size, max_chunk_bytes, serializer
+                ),
+            ):
+                yield from result
 
-    finally:
-        pool.close()
-        pool.join()
+        finally:
+            pool.close()
+            pool.join()
 
 
 def scan(

@@ -41,6 +41,7 @@ class FailingBulkClient:
         ),
     ):
         self.client = client
+        self._otel = client._otel
         self._called = 0
         self._fail_at = fail_at
         self.transport = client.transport
