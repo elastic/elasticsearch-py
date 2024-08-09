@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-15-0>>
 * <<rn-8-14-0>>
 * <<rn-8-13-2>>
 * <<rn-8-13-1>>
@@ -38,6 +39,19 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-15-0]]
+=== 8.15.0 (2024-08-09)
+
+- Added the Connector API (https://github.com/elastic/elasticsearch-py/pull/2623[#2623])
+- Added support for sequences of job id, model id and tags where applicable in ML APIs
+- Added `dry_run` and `force` parameters to the Perform inference API
+- Added optional Arrow deserialization support (https://github.com/elastic/elasticsearch-py/pull/2632[#2632])
+- Merged Query Ruleset API into new Query Rules API (https://github.com/elastic/elasticsearch-py/pull/2607[#2607])
+- Added mapping code examples (https://github.com/elastic/elasticsearch-py/pull/2596[#2596])
+- Fixed reference docs (https://github.com/elastic/elasticsearch-py/pull/2629[#2629])
+- Dropped Python 3.7 support (https://github.com/elastic/elasticsearch-py/pull/2618[#2618])
 
 [discrete]
 [[rn-8-14-0]]

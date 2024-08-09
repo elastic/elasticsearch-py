@@ -5,7 +5,7 @@
 resp = client.index(
     index="test_index",
     id="1",
-    refresh=True,
+    refresh="true",
     body={
         "query": {
             "match": {

@@ -49,4 +49,10 @@ resp = client.search(
     body={"query": {"rank_feature": {"field": "negative_reviews.1star"}}},
 )
 print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"topics": "economics"}}},
+)
+print(resp)
 ----
