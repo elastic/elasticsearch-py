@@ -1,4 +1,4 @@
-// mapping/types/sparse-vector.asciidoc:13
+// mapping/types/sparse-vector.asciidoc:14
 
 [source, python]
 ----

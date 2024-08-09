@@ -1,4 +1,4 @@
-// inference/post-inference.asciidoc:102
+// inference/post-inference.asciidoc:106
 
 [source, python]
 ----

@@ -1,0 +1,67 @@
+// mapping/types/sparse-vector.asciidoc:46
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "text": {"type": "text", "analyzer": "standard"},
+                "impact": {"type": "sparse_vector"},
+                "positive": {"type": "sparse_vector"},
+                "negative": {"type": "sparse_vector"},
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    body={
+        "text": "I had some terribly delicious carrots.",
+        "impact": [
+            {
+                "I": 0.55,
+                "had": 0.4,
+                "some": 0.28,
+                "terribly": 0.01,
+                "delicious": 1.2,
+                "carrots": 0.8,
+            },
+            {
+                "I": 0.54,
+                "had": 0.4,
+                "some": 0.28,
+                "terribly": 2.01,
+                "delicious": 0.02,
+                "carrots": 0.4,
+            },
+        ],
+        "positive": {
+            "I": 0.55,
+            "had": 0.4,
+            "some": 0.28,
+            "terribly": 0.01,
+            "delicious": 1.2,
+            "carrots": 0.8,
+        },
+        "negative": {
+            "I": 0.54,
+            "had": 0.4,
+            "some": 0.28,
+            "terribly": 2.01,
+            "delicious": 0.02,
+            "carrots": 0.4,
+        },
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="my-index-000001",
+    body={"query": {"term": {"impact": {"value": "delicious"}}}},
+)
+print(resp)
+----

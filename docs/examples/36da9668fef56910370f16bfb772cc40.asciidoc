@@ -4,7 +4,7 @@
 ----
 resp = client.indices.stats(
     metric="request_cache",
-    human=True,
+    human="true",
 )
 print(resp)
 ----

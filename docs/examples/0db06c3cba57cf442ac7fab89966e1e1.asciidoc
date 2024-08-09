@@ -5,7 +5,7 @@
 resp = client.index(
     index="my-index-000001",
     id="1",
-    refresh=True,
+    refresh="true",
     body={
         "my_id": "1",
         "text": "This is a question",
@@ -17,7 +17,7 @@ print(resp)
 resp = client.index(
     index="my-index-000001",
     id="2",
-    refresh=True,
+    refresh="true",
     body={
         "my_id": "2",
         "text": "This is another question",

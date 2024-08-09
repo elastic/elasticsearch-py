@@ -5,7 +5,7 @@
 resp = client.index(
     index="my-index-000001",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"is_published": True},
 )
 print(resp)
@@ -13,7 +13,7 @@ print(resp)
 resp = client.index(
     index="my-index-000001",
     id="2",
-    refresh=True,
+    refresh="true",
     body={"is_published": False},
 )
 print(resp)

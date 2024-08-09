@@ -1,0 +1,24 @@
+// mapping/types/binary.asciidoc:68
+
+[source, python]
+----
+resp = client.indices.create(
+    index="idx",
+    body={
+        "mappings": {
+            "_source": {"mode": "synthetic"},
+            "properties": {
+                "binary": {"type": "binary", "doc_values": True}
+            },
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="idx",
+    id="1",
+    body={"binary": ["IAA=", "EAA="]},
+)
+print(resp)
+----

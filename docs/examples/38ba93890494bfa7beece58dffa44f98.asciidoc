@@ -1,0 +1,18 @@
+// mapping/types/semantic-text.asciidoc:177
+
+[source, python]
+----
+resp = client.bulk(
+    index="test-index",
+    body=[
+        {"update": {"_id": "1"}},
+        {
+            "doc": {
+                "infer_field": "updated inference field",
+                "source_field": "updated source field",
+            }
+        },
+    ],
+)
+print(resp)
+----

@@ -1,4 +1,4 @@
-// mapping/types/boolean.asciidoc:242
+// mapping/types/boolean.asciidoc:249
 
 [source, python]
 ----

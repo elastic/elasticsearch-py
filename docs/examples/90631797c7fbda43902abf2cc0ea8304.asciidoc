@@ -5,7 +5,7 @@
 resp = client.nodes.stats(
     metric="indices",
     index_metric="request_cache",
-    human=True,
+    human="true",
 )
 print(resp)
 ----

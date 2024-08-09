@@ -6,7 +6,7 @@ resp = client.index(
     index="my-index-000001",
     id="3",
     routing="1",
-    refresh=True,
+    refresh="true",
     body={
         "text": "This is a vote",
         "my_join_field": {"name": "vote", "parent": "2"},

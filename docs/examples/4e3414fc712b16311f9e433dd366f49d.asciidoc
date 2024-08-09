@@ -1,8 +1,8 @@
-// inference/delete-inference.asciidoc:55
+// inference/delete-inference.asciidoc:70
 
 [source, python]
 ----
-resp = client.inference.delete_model(
+resp = client.inference.delete(
     task_type="sparse_embedding",
     inference_id="my-elser-model",
 )

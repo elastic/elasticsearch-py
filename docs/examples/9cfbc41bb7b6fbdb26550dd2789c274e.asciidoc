@@ -4,7 +4,7 @@
 ----
 resp = client.delete_by_query(
     index="my-index-000001",
-    refresh=True,
+    refresh="true",
     slices="5",
     body={"query": {"range": {"http.response.bytes": {"lt": 2000000}}}},
 )

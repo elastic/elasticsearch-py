@@ -6,7 +6,7 @@ resp = client.index(
     index="my-index-000001",
     id="3",
     routing="1",
-    refresh=True,
+    refresh="true",
     body={
         "my_id": "3",
         "text": "This is an answer",
@@ -19,7 +19,7 @@ resp = client.index(
     index="my-index-000001",
     id="4",
     routing="1",
-    refresh=True,
+    refresh="true",
     body={
         "my_id": "4",
         "text": "This is another answer",

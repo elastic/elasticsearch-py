@@ -1,0 +1,14 @@
+// inference/post-inference.asciidoc:248
+
+[source, python]
+----
+resp = client.inference.inference(
+    task_type="text_embedding",
+    inference_id="my-cohere-endpoint",
+    body={
+        "input": "The sky above the port was the color of television tuned to a dead channel.",
+        "task_settings": {"input_type": "ingest"},
+    },
+)
+print(resp)
+----

@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-resp = client.inference.get_model(
+resp = client.inference.get(
     task_type="sparse_embedding",
     inference_id="my-elser-model",
 )

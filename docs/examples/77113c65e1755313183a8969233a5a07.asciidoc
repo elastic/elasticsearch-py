@@ -1,4 +1,4 @@
-// mapping/types/keyword.asciidoc:250
+// mapping/types/keyword.asciidoc:249
 
 [source, python]
 ----

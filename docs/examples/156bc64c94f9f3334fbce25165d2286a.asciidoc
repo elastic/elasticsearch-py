@@ -1,4 +1,4 @@
-// index-modules/index-sorting.asciidoc:16
+// index-modules/index-sorting.asciidoc:15
 
 [source, python]
 ----

@@ -4,7 +4,7 @@
 ----
 resp = client.update_by_query(
     index="my-index-000001",
-    refresh=True,
+    refresh="true",
     slices="5",
     body={"script": {"source": "ctx._source['extra'] = 'test'"}},
 )

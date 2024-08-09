@@ -4,7 +4,7 @@
 ----
 resp = client.bulk(
     index="my_index",
-    refresh=True,
+    refresh="true",
     body=[
         {"index": {"_id": 1}},
         {"my_counter": 0},

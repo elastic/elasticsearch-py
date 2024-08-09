@@ -1,4 +1,4 @@
-// setup/secure-settings.asciidoc:35
+// setup/secure-settings.asciidoc:39
 
 [source, python]
 ----

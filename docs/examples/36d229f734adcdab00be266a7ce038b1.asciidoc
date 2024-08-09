@@ -1,0 +1,20 @@
+// mapping/types/dense-vector.asciidoc:375
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-bit-vectors",
+    body={
+        "mappings": {
+            "properties": {
+                "my_vector": {
+                    "type": "dense_vector",
+                    "dims": 40,
+                    "element_type": "bit",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

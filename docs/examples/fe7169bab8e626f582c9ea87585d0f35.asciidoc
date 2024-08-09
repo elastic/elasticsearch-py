@@ -1,4 +1,4 @@
-// mapping/types/histogram.asciidoc:99
+// mapping/types/histogram.asciidoc:98
 
 [source, python]
 ----

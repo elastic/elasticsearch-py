@@ -15,14 +15,14 @@ print(resp)
 
 resp = client.index(
     index="test",
-    refresh=True,
+    refresh="true",
     body={"text": "words words", "flag": "bar"},
 )
 print(resp)
 
 resp = client.index(
     index="test",
-    refresh=True,
+    refresh="true",
     body={"text": "words words", "flag": "foo"},
 )
 print(resp)
