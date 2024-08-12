@@ -386,10 +386,15 @@ class AsyncVectorStore:
         # Embed the query
         if query_embedding:
             query_vector = query_embedding
-        elif self.embedding_service:
+        else:
             if not query:
-                raise ValueError("specify a query or a query_embedding to search")
-            query_vector = await self.embedding_service.embed_query(query)
+                raise ValueError("specify either query or query_embedding to search")
+            elif embedding_service:
+                query_vector = await embedding_service.embed_query(query)
+            elif self.embedding_service:
+                query_vector = await self.embedding_service.embed_query(query)
+            else:
+                raise ValueError("specify embedding_service to search with query")
 
         # Fetch the initial documents
         got_hits = await self.search(
