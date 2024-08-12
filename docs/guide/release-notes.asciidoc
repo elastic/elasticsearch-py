@@ -45,6 +45,7 @@
 === 8.15.0 (2024-08-09)
 
 - Added the Connector API (https://github.com/elastic/elasticsearch-py/pull/2623[#2623])
+- Added support for https://www.elastic.co/guide/en/elasticsearch/reference/master/semantic-text.html[semantic_text] and https://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-semantic-query.html[semantic query].
 - Added support for sequences of job id, model id and tags where applicable in ML APIs
 - Added `dry_run` and `force` parameters to the Perform inference API
 - Added optional Arrow deserialization support (https://github.com/elastic/elasticsearch-py/pull/2632[#2632])
