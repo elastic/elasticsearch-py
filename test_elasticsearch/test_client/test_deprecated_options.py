@@ -134,6 +134,7 @@ def test_serializer_and_serializers():
         "application/x-ndjson",
         "application/json",
         "text/*",
+        "application/vnd.apache.arrow.stream",
         "application/vnd.elasticsearch+json",
         "application/vnd.elasticsearch+x-ndjson",
     }
@@ -154,6 +155,7 @@ def test_serializer_and_serializers():
         "application/x-ndjson",
         "application/json",
         "text/*",
+        "application/vnd.apache.arrow.stream",
         "application/vnd.elasticsearch+json",
         "application/vnd.elasticsearch+x-ndjson",
         "application/cbor",

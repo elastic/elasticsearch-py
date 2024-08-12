@@ -3,7 +3,7 @@
 Snapshottable Features
 ----------------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: FeaturesClient
    :members:

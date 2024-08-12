@@ -3,7 +3,7 @@
 Autoscaling
 -----------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: AutoscalingClient
    :members:

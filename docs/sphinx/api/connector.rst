@@ -1,9 +1,9 @@
-.. _inference:
+.. _connector:
 
-Inference
+Connector
 ---------
 .. py:module:: elasticsearch.client
    :no-index:
 
-.. autoclass:: InferenceClient
+.. autoclass:: ConnectorClient
    :members:
