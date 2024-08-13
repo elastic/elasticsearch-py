@@ -1,0 +1,18 @@
+// mapping/types/dense-vector.asciidoc:406
+
+[source, python]
+----
+resp = client.search(
+    index="my-bit-vectors",
+    filter_path="hits.hits",
+    body={
+        "query": {
+            "knn": {
+                "query_vector": [127, -127, 0, 1, 42],
+                "field": "my_vector",
+            }
+        }
+    },
+)
+print(resp)
+----

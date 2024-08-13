@@ -20,7 +20,7 @@ print(resp)
 resp = client.index(
     index="my-index-000001",
     id="example",
-    refresh=True,
+    refresh="true",
     body={"date": 1618321898},
 )
 print(resp)

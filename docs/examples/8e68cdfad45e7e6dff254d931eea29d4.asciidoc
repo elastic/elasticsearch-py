@@ -4,7 +4,7 @@
 ----
 resp = client.bulk(
     index="my-index-000001",
-    refresh=True,
+    refresh="true",
     body=[
         {"index": {}},
         {

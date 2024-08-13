@@ -1,4 +1,4 @@
-// mapping/types/geo-point.asciidoc:230
+// mapping/types/geo-point.asciidoc:229
 
 [source, python]
 ----
