@@ -1,0 +1,20 @@
+// mapping/types/semantic-text.asciidoc:155
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test-index",
+    body={
+        "mappings": {
+            "properties": {
+                "infer_field": {
+                    "type": "semantic_text",
+                    "inference_id": "my-elser-endpoint",
+                },
+                "source_field": {"type": "text", "copy_to": "infer_field"},
+            }
+        }
+    },
+)
+print(resp)
+----

@@ -1,0 +1,27 @@
+// mapping/types/range.asciidoc:316
+
+[source, python]
+----
+resp = client.indices.create(
+    index="idx",
+    body={
+        "mappings": {
+            "_source": {"mode": "synthetic"},
+            "properties": {"my_range": {"type": "ip_range"}},
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="idx",
+    id="1",
+    body={
+        "my_range": [
+            "10.0.0.0/24",
+            {"gte": "10.0.0.0", "lte": "10.0.0.255"},
+        ]
+    },
+)
+print(resp)
+----

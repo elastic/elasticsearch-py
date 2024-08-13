@@ -20,7 +20,7 @@ print(resp)
 resp = client.index(
     index="drivers",
     id="2",
-    refresh=True,
+    refresh="true",
     body={
         "driver": {
             "last_name": "Hudson",

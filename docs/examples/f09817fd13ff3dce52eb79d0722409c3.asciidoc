@@ -16,7 +16,7 @@ resp = client.indices.create(
 print(resp)
 
 resp = client.reindex(
-    refresh=True,
+    refresh="true",
     body={"source": {"index": "index"}, "dest": {"index": "new_index"}},
 )
 print(resp)

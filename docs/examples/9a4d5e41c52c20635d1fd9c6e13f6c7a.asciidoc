@@ -5,7 +5,7 @@
 resp = client.index(
     index="metricbeat-2016.05.30",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"system.cpu.idle.pct": 0.908},
 )
 print(resp)
@@ -13,7 +13,7 @@ print(resp)
 resp = client.index(
     index="metricbeat-2016.05.31",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"system.cpu.idle.pct": 0.105},
 )
 print(resp)

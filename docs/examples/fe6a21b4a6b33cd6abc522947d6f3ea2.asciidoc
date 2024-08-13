@@ -1,4 +1,4 @@
-// mapping/types/date.asciidoc:250
+// mapping/types/date.asciidoc:249
 
 [source, python]
 ----

@@ -10,7 +10,7 @@ print(resp)
 
 resp = client.bulk(
     index="my-index-000001",
-    refresh=True,
+    refresh="true",
     body=[
         {"index": {"_id": "1"}},
         {"date": "2015-01-01"},

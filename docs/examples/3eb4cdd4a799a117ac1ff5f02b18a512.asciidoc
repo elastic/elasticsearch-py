@@ -23,7 +23,7 @@ print(resp)
 resp = client.index(
     index="queries",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"query": {"match": {"body": "quick brown fox"}}},
 )
 print(resp)
