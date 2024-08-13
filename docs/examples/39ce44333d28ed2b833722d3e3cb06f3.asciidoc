@@ -3,7 +3,7 @@
 [source, python]
 ----
 resp = client.search(
-    include_named_queries_score=True,
+    include_named_queries_score="true",
     body={
         "query": {
             "bool": {

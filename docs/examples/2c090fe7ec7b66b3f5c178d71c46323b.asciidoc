@@ -4,7 +4,7 @@
 ----
 resp = client.indices.stats(
     metric="fielddata",
-    human=True,
+    human="true",
     fields="my_join_field",
 )
 print(resp)
@@ -12,7 +12,7 @@ print(resp)
 resp = client.nodes.stats(
     metric="indices",
     index_metric="fielddata",
-    human=True,
+    human="true",
     fields="my_join_field",
 )
 print(resp)

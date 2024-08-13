@@ -4,7 +4,7 @@
 ----
 resp = client.update_by_query(
     index="test",
-    refresh=True,
+    refresh="true",
     conflicts="proceed",
 )
 print(resp)
