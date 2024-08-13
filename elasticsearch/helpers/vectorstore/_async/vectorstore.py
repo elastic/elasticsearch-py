@@ -232,7 +232,7 @@ class AsyncVectorStore:
     async def search(
         self,
         *,
-        query: Optional[str],
+        query: Optional[str] = None,
         query_vector: Optional[List[float]] = None,
         k: int = 4,
         num_candidates: int = 50,
@@ -344,8 +344,9 @@ class AsyncVectorStore:
     async def max_marginal_relevance_search(
         self,
         *,
-        embedding_service: AsyncEmbeddingService,
-        query: str,
+        query: Optional[str] = None,
+        query_embedding: Optional[List[float]] = None,
+        embedding_service: Optional[AsyncEmbeddingService] = None,
         vector_field: str,
         k: int = 4,
         num_candidates: int = 20,
@@ -361,6 +362,8 @@ class AsyncVectorStore:
             among selected documents.
 
         :param query (str): Text to look up documents similar to.
+        :param query_embedding: Input embedding vector. If given, input query string is
+            ignored.
         :param k (int): Number of Documents to return. Defaults to 4.
         :param fetch_k (int): Number of Documents to fetch to pass to MMR algorithm.
         :param lambda_mult (float): Number between 0 and 1 that determines the degree
@@ -381,12 +384,22 @@ class AsyncVectorStore:
             remove_vector_query_field_from_metadata = False
 
         # Embed the query
-        query_embedding = await embedding_service.embed_query(query)
+        if query_embedding:
+            query_vector = query_embedding
+        else:
+            if not query:
+                raise ValueError("specify either query or query_embedding to search")
+            elif embedding_service:
+                query_vector = await embedding_service.embed_query(query)
+            elif self.embedding_service:
+                query_vector = await self.embedding_service.embed_query(query)
+            else:
+                raise ValueError("specify embedding_service to search with query")
 
         # Fetch the initial documents
         got_hits = await self.search(
             query=None,
-            query_vector=query_embedding,
+            query_vector=query_vector,
             k=num_candidates,
             fields=fields,
             custom_query=custom_query,
@@ -397,7 +410,7 @@ class AsyncVectorStore:
 
         # Select documents using maximal marginal relevance
         selected_indices = maximal_marginal_relevance(
-            query_embedding, got_embeddings, lambda_mult=lambda_mult, k=k
+            query_vector, got_embeddings, lambda_mult=lambda_mult, k=k
         )
         selected_hits = [got_hits[i] for i in selected_indices]
 
