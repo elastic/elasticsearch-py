@@ -22,7 +22,7 @@ print(resp)
 resp = client.index(
     index="range_index",
     id="1",
-    refresh=True,
+    refresh="true",
     body={
         "expected_attendees": {"gte": 10, "lt": 20},
         "time_frame": {"gte": "2015-10-31 12:00:00", "lte": "2015-11-01"},

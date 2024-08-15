@@ -5,7 +5,7 @@
 resp = client.index(
     index="my_queries1",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"query": {"term": {"my_field.prefix": "abc"}}},
 )
 print(resp)

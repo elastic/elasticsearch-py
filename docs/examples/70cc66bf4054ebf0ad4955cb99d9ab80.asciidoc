@@ -1,4 +1,4 @@
-// ml/trained-models/apis/update-trained-model-deployment.asciidoc:55
+// ml/trained-models/apis/update-trained-model-deployment.asciidoc:74
 
 [source, python]
 ----

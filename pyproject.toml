@@ -48,6 +48,7 @@ dependencies = [
 async = ["aiohttp>=3,<4"]
 requests = ["requests>=2.4.0, !=2.32.2, <3.0.0"]
 orjson = ["orjson>=3"]
+pyarrow = ["pyarrow>=1"]
 # Maximal Marginal Relevance (MMR) for search results
 vectorstore_mmr = ["numpy>=1", "simsimd>=3"]
 dev = [
@@ -69,6 +70,7 @@ dev = [
     "orjson",
     "numpy",
     "simsimd",
+    "pyarrow",
     "pandas",
     "mapbox-vector-tile",
 ]

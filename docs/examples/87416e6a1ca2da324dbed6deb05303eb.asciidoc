@@ -5,7 +5,7 @@
 resp = client.index(
     index="my-index-000001",
     id="1",
-    refresh=True,
+    refresh="true",
     body={"user.id": "kimchy"},
 )
 print(resp)

@@ -1,0 +1,22 @@
+// mapping/types/range.asciidoc:394
+
+[source, python]
+----
+resp = client.indices.create(
+    index="idx",
+    body={
+        "mappings": {
+            "_source": {"mode": "synthetic"},
+            "properties": {"my_range": {"type": "integer_range"}},
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="idx",
+    id="1",
+    body={"my_range": {"lte": 2147483647}},
+)
+print(resp)
+----

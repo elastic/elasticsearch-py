@@ -815,6 +815,47 @@ class TestVectorStore:
         # 1 for index exist, 1 for index create, 3 to index docs
         assert len(store.client.transport.requests) == 5  # type: ignore
 
+    def test_max_marginal_relevance_search_errors(
+        self, sync_client: Elasticsearch, index: str
+    ) -> None:
+        """Test max marginal relevance search error conditions."""
+        texts = ["foo", "bar", "baz"]
+        vector_field = "vector_field"
+        embedding_service = ConsistentFakeEmbeddings()
+        store = VectorStore(
+            index=index,
+            retrieval_strategy=DenseVectorScriptScoreStrategy(),
+            embedding_service=embedding_service,
+            client=sync_client,
+        )
+        store.add_texts(texts)
+
+        # search without query embeddings vector or query
+        with pytest.raises(
+            ValueError, match="specify either query or query_embedding to search"
+        ):
+            store.max_marginal_relevance_search(
+                vector_field=vector_field,
+                k=3,
+                num_candidates=3,
+            )
+
+        # search without service
+        no_service_store = VectorStore(
+            index=index,
+            retrieval_strategy=DenseVectorScriptScoreStrategy(),
+            client=sync_client,
+        )
+        with pytest.raises(
+            ValueError, match="specify embedding_service to search with query"
+        ):
+            no_service_store.max_marginal_relevance_search(
+                query=texts[0],
+                vector_field=vector_field,
+                k=3,
+                num_candidates=3,
+            )
+
     def test_max_marginal_relevance_search(
         self, sync_client: Elasticsearch, index: str
     ) -> None:
@@ -822,6 +863,7 @@ class TestVectorStore:
         texts = ["foo", "bar", "baz"]
         vector_field = "vector_field"
         text_field = "text_field"
+        query_embedding = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
         embedding_service = ConsistentFakeEmbeddings()
         store = VectorStore(
             index=index,
@@ -833,8 +875,8 @@ class TestVectorStore:
         )
         store.add_texts(texts)
 
+        # search with query
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=3,
@@ -843,8 +885,17 @@ class TestVectorStore:
         sim_output = store.search(query=texts[0], k=3)
         assert mmr_output == sim_output
 
+        # search with query embeddings
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
+            query_embedding=query_embedding,
+            vector_field=vector_field,
+            k=3,
+            num_candidates=3,
+        )
+        sim_output = store.search(query_vector=query_embedding, k=3)
+        assert mmr_output == sim_output
+
+        mmr_output = store.max_marginal_relevance_search(
             query=texts[0],
             vector_field=vector_field,
             k=2,
@@ -855,7 +906,6 @@ class TestVectorStore:
         assert mmr_output[1]["_source"][text_field] == texts[1]
 
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=2,
@@ -868,7 +918,6 @@ class TestVectorStore:
 
         # if fetch_k < k, then the output will be less than k
         mmr_output = store.max_marginal_relevance_search(
-            embedding_service=embedding_service,
             query=texts[0],
             vector_field=vector_field,
             k=3,
