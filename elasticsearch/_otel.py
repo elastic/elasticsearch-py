@@ -110,14 +110,11 @@ class OpenTelemetry:
 
     @contextlib.contextmanager
     def recover_parent_context(self) -> Generator[None, None, None]:
-        token = None
-        if self.context_carrier:
-            otel_parent_ctx = TraceContextTextMapPropagator().extract(
-                carrier=self.context_carrier
-            )
-            token = otel_context.attach(otel_parent_ctx)
+        otel_parent_ctx = TraceContextTextMapPropagator().extract(
+            carrier=self.context_carrier
+        )
+        token = otel_context.attach(otel_parent_ctx)
         try:
             yield
         finally:
-            if token:
-                otel_context.detach(token)
+            otel_context.detach(token)
