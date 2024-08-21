@@ -73,7 +73,6 @@ class OpenTelemetry:
         *,
         endpoint_id: str | None,
         path_parts: Mapping[str, str],
-        inject_context: bool = False,
     ) -> Generator[OpenTelemetrySpan, None, None]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
@@ -81,8 +80,6 @@ class OpenTelemetry:
 
         span_name = endpoint_id or method
         with self.tracer.start_as_current_span(span_name) as otel_span:
-            if inject_context:
-                TraceContextTextMapPropagator().inject(self.context_carrier)
             otel_span.set_attribute("http.request.method", method)
             otel_span.set_attribute("db.system", "elasticsearch")
             if endpoint_id is not None:
@@ -95,6 +92,21 @@ class OpenTelemetry:
                 endpoint_id=endpoint_id,
                 body_strategy=self.body_strategy,
             )
+
+
+    @contextlib.contextmanager
+    def helpers_span(self, span_name: str):
+        if not self.enabled or self.tracer is None:
+            return
+
+        with self.tracer.start_as_current_span(span_name) as otel_span:
+            TraceContextTextMapPropagator().inject(self.context_carrier)
+            otel_span.set_attribute("db.system", "elasticsearch")
+            otel_span.set_attribute("db.operation", span_name)
+            # Without a request method, Elastic APM does not display the traces
+            otel_span.set_attribute("http.request.method", "null")
+            yield
+
 
     @contextlib.contextmanager
     def recover_parent_context(self) -> Generator[None, None, None]:

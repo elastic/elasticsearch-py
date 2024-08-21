@@ -590,9 +590,7 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    with client._otel.span(
-        "parallel_bulk", endpoint_id="", path_parts={}, inject_context=True
-    ):
+    with client._otel.helpers_span("helpers.parallel_bulk"):
         pool = BlockingPool(thread_count)
 
         try:
