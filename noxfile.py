@@ -52,7 +52,7 @@ def test(session):
     session.run(*pytest_argv())
 
 
-@nox.session(python=["3.7", "3.8", "3.12"])
+@nox.session(python=["3.8", "3.12"])
 def test_otel(session):
     session.install(
         ".[dev]",
