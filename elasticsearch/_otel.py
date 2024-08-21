@@ -93,10 +93,10 @@ class OpenTelemetry:
                 body_strategy=self.body_strategy,
             )
 
-
     @contextlib.contextmanager
-    def helpers_span(self, span_name: str):
+    def helpers_span(self, span_name: str) -> Generator[None, None, None]:
         if not self.enabled or self.tracer is None:
+            yield
             return
 
         with self.tracer.start_as_current_span(span_name) as otel_span:
@@ -106,7 +106,6 @@ class OpenTelemetry:
             # Without a request method, Elastic APM does not display the traces
             otel_span.set_attribute("http.request.method", "null")
             yield
-
 
     @contextlib.contextmanager
     def recover_parent_context(self) -> Generator[None, None, None]:

@@ -422,7 +422,10 @@ def streaming_bulk(
         ]
         bulk_actions: List[bytes]
         for bulk_data, bulk_actions in _chunk_actions(
-            map(expand_action_callback, actions), chunk_size, max_chunk_bytes, serializer
+            map(expand_action_callback, actions),
+            chunk_size,
+            max_chunk_bytes,
+            serializer,
         ):
             for attempt in range(max_retries + 1):
                 to_retry: List[bytes] = []
