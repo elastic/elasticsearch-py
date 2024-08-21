@@ -109,6 +109,10 @@ class OpenTelemetry:
 
     @contextlib.contextmanager
     def recover_parent_context(self) -> Generator[None, None, None]:
+        if not self.enabled or self.tracer is None:
+            yield
+            return
+
         otel_parent_ctx = TraceContextTextMapPropagator().extract(
             carrier=self.context_carrier
         )
