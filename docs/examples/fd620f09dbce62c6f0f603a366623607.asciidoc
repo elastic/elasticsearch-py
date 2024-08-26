@@ -3,22 +3,18 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/my-sql-connector/_filtering",
-    headers={"Content-Type": "application/json"},
-    body={
-        "advanced_snippet": {
-            "value": [
-                {
-                    "tables": [
-                        "users",
-                        "orders"
-                    ],
-                    "query": "SELECT users.id AS id, orders.order_id AS order_id FROM users JOIN orders ON users.id = orders.user_id"
-                }
-            ]
-        }
+resp = client.connector.update_filtering(
+    connector_id="my-sql-connector",
+    advanced_snippet={
+        "value": [
+            {
+                "tables": [
+                    "users",
+                    "orders"
+                ],
+                "query": "SELECT users.id AS id, orders.order_id AS order_id FROM users JOIN orders ON users.id = orders.user_id"
+            }
+        ]
     },
 )
 print(resp)

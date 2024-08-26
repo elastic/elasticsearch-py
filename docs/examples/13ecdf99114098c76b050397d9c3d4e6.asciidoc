@@ -3,13 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_inference/sparse_embedding/my-elser-model",
-    headers={"Content-Type": "application/json"},
-    body={
-        "input": "The sky above the port was the color of television tuned to a dead channel."
-    },
+resp = client.inference.inference(
+    task_type="sparse_embedding",
+    inference_id="my-elser-model",
+    input="The sky above the port was the color of television tuned to a dead channel.",
 )
 print(resp)
 ----

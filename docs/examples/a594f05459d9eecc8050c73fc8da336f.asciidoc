@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/text_embedding/azure_openai_embeddings",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="text_embedding",
+    inference_id="azure_openai_embeddings",
+    inference_config={
         "service": "azureopenai",
         "service_settings": {
             "api_key": "<api_key>",

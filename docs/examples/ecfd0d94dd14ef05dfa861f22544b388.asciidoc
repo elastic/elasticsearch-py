@@ -3,13 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/my-connector/_error",
-    headers={"Content-Type": "application/json"},
-    body={
-        "error": "Houston, we have a problem!"
-    },
+resp = client.connector.update_error(
+    connector_id="my-connector",
+    error="Houston, we have a problem!",
 )
 print(resp)
 ----

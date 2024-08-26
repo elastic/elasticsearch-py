@@ -3,30 +3,26 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/my-g-drive-connector/_filtering",
-    headers={"Content-Type": "application/json"},
-    body={
-        "rules": [
-            {
-                "field": "file_extension",
-                "id": "exclude-txt-files",
-                "order": 0,
-                "policy": "exclude",
-                "rule": "equals",
-                "value": "txt"
-            },
-            {
-                "field": "_",
-                "id": "DEFAULT",
-                "order": 1,
-                "policy": "include",
-                "rule": "regex",
-                "value": ".*"
-            }
-        ]
-    },
+resp = client.connector.update_filtering(
+    connector_id="my-g-drive-connector",
+    rules=[
+        {
+            "field": "file_extension",
+            "id": "exclude-txt-files",
+            "order": 0,
+            "policy": "exclude",
+            "rule": "equals",
+            "value": "txt"
+        },
+        {
+            "field": "_",
+            "id": "DEFAULT",
+            "order": 1,
+            "policy": "include",
+            "rule": "regex",
+            "value": ".*"
+        }
+    ],
 )
 print(resp)
 ----

@@ -3,22 +3,19 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_inference/rerank/cohere_rerank",
-    headers={"Content-Type": "application/json"},
-    body={
-        "input": [
-            "luke",
-            "like",
-            "leia",
-            "chewy",
-            "r2d2",
-            "star",
-            "wars"
-        ],
-        "query": "star wars main character"
-    },
+resp = client.inference.inference(
+    task_type="rerank",
+    inference_id="cohere_rerank",
+    input=[
+        "luke",
+        "like",
+        "leia",
+        "chewy",
+        "r2d2",
+        "star",
+        "wars"
+    ],
+    query="star wars main character",
 )
 print(resp)
 ----

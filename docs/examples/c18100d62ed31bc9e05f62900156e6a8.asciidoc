@@ -3,12 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector",
-    params={
-        "index_name": "search-google-drive"
-    },
+resp = client.connector.list(
+    index_name="search-google-drive",
 )
 print(resp)
 ----

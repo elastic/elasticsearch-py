@@ -3,15 +3,12 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_inference/text_embedding/my-cohere-endpoint",
-    headers={"Content-Type": "application/json"},
-    body={
-        "input": "The sky above the port was the color of television tuned to a dead channel.",
-        "task_settings": {
-            "input_type": "ingest"
-        }
+resp = client.inference.inference(
+    task_type="text_embedding",
+    inference_id="my-cohere-endpoint",
+    input="The sky above the port was the color of television tuned to a dead channel.",
+    task_settings={
+        "input_type": "ingest"
     },
 )
 print(resp)

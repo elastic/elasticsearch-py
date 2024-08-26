@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/text_embedding/amazon_bedrock_embeddings",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="text_embedding",
+    inference_id="amazon_bedrock_embeddings",
+    inference_config={
         "service": "amazonbedrock",
         "service_settings": {
             "access_key": "<aws_access_key>",
