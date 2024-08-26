@@ -3,9 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "DELETE",
-    "/_inference/sparse_embedding/my-elser-model",
+resp = client.inference.delete(
+    task_type="sparse_embedding",
+    inference_id="my-elser-model",
 )
 print(resp)
 ----

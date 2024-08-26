@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/text_embedding/mistral-embeddings-test",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="text_embedding",
+    inference_id="mistral-embeddings-test",
+    inference_config={
         "service": "mistral",
         "service_settings": {
             "api_key": "<api_key>",

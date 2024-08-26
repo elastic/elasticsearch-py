@@ -3,16 +3,12 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/my-connector/_scheduling",
-    headers={"Content-Type": "application/json"},
-    body={
-        "scheduling": {
-            "full": {
-                "enabled": True,
-                "interval": "0 10 0 * * ?"
-            }
+resp = client.connector.update_scheduling(
+    connector_id="my-connector",
+    scheduling={
+        "full": {
+            "enabled": True,
+            "interval": "0 10 0 * * ?"
         }
     },
 )

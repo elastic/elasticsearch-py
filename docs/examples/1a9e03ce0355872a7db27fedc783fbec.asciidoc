@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/rerank/google_vertex_ai_rerank",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="rerank",
+    inference_id="google_vertex_ai_rerank",
+    inference_config={
         "service": "googlevertexai",
         "service_settings": {
             "service_account_json": "<service_account_json>",

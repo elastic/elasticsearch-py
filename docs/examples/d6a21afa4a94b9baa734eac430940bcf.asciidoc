@@ -3,13 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector",
-    params={
-        "from": "0",
-        "size": "2"
-    },
+resp = client.connector.list(
+    from_="0",
+    size="2",
 )
 print(resp)
 ----

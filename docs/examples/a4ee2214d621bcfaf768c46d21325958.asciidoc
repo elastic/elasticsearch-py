@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/text_embedding/hugging_face_embeddings",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="text_embedding",
+    inference_id="hugging_face_embeddings",
+    inference_config={
         "service": "hugging_face",
         "service_settings": {
             "api_key": "<access_token>",

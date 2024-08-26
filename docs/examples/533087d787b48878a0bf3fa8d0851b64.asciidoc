@@ -3,9 +3,9 @@
 
 [source, python]
 ----
-resp = client.ingest.delete_geoip_database(
-    id="example-database-id",
-    body=None,
+resp = client.perform_request(
+    "DELETE",
+    "/_ingest/geoip/database/example-database-id",
 )
 print(resp)
 ----
