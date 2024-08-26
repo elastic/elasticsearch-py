@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector/my-connector",
+resp = client.connector.get(
+    connector_id="my-connector",
 )
 print(resp)
 ----

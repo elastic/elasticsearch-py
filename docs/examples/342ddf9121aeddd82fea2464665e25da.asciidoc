@@ -3,15 +3,11 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/my-connector",
-    headers={"Content-Type": "application/json"},
-    body={
-        "index_name": "search-google-drive",
-        "name": "My Connector",
-        "service_type": "google_drive"
-    },
+resp = client.connector.put(
+    connector_id="my-connector",
+    index_name="search-google-drive",
+    name="My Connector",
+    service_type="google_drive",
 )
 print(resp)
 ----

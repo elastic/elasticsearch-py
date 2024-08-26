@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/completion/openai-completion",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="completion",
+    inference_id="openai-completion",
+    inference_config={
         "service": "openai",
         "service_settings": {
             "api_key": "<api_key>",

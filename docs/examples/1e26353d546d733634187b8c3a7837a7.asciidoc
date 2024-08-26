@@ -3,12 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector",
-    params={
-        "service_type": "sharepoint_online"
-    },
+resp = client.connector.list(
+    service_type="sharepoint_online",
 )
 print(resp)
 ----

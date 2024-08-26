@@ -3,11 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_inference/sparse_embedding/my-elser-endpoint",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.inference.put(
+    task_type="sparse_embedding",
+    inference_id="my-elser-endpoint",
+    inference_config={
         "service": "elser",
         "service_settings": {
             "num_allocations": 1,

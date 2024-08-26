@@ -3,12 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "DELETE",
-    "/_connector/another-connector",
-    params={
-        "delete_sync_jobs": "true"
-    },
+resp = client.connector.delete(
+    connector_id="another-connector",
+    delete_sync_jobs=True,
 )
 print(resp)
 ----
