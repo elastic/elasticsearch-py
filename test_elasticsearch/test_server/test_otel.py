@@ -21,6 +21,8 @@ import pytest
 
 import elasticsearch
 
+from ..test_otel import setup_tracing
+
 try:
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider, export
@@ -38,13 +40,9 @@ pytestmark = [
 ]
 
 
-def test_otel_end_to_end(monkeypatch, sync_client):
-    # Sets the global default tracer provider
-    tracer_provider = TracerProvider()
-    memory_exporter = InMemorySpanExporter()
-    span_processor = export.SimpleSpanProcessor(memory_exporter)
-    tracer_provider.add_span_processor(span_processor)
-    trace.set_tracer_provider(tracer_provider)
+def test_otel_end_to_end(sync_client):
+    tracer, memory_exporter = setup_tracing()
+    sync_client._otel.tracer = tracer
 
     resp = sync_client.search(index="logs-*", query={"match_all": {}})
     assert resp.meta.status == 200
