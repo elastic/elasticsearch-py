@@ -20,7 +20,6 @@ import os
 import pytest
 
 import elasticsearch
-from test_elasticsearch.utils import CA_CERTS
 
 try:
     from opentelemetry import trace
@@ -39,7 +38,7 @@ pytestmark = [
 ]
 
 
-def test_otel_end_to_end(monkeypatch, elasticsearch_url: str):
+def test_otel_end_to_end(monkeypatch, sync_client):
     # Sets the global default tracer provider
     tracer_provider = TracerProvider()
     memory_exporter = InMemorySpanExporter()
@@ -47,14 +46,7 @@ def test_otel_end_to_end(monkeypatch, elasticsearch_url: str):
     tracer_provider.add_span_processor(span_processor)
     trace.set_tracer_provider(tracer_provider)
 
-    # Once OpenTelemetry is enabled by default, we can use the sync_client fixture instead
-    monkeypatch.setenv("OTEL_PYTHON_INSTRUMENTATION_ELASTICSEARCH_ENABLED", "true")
-    kw = {}
-    if elasticsearch_url.startswith("https://"):
-        kw["ca_certs"] = CA_CERTS
-    client = elasticsearch.Elasticsearch(elasticsearch_url, **kw)
-
-    resp = client.search(index="logs-*", query={"match_all": {}})
+    resp = sync_client.search(index="logs-*", query={"match_all": {}})
     assert resp.meta.status == 200
 
     spans = memory_exporter.get_finished_spans()
