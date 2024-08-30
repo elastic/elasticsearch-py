@@ -56,7 +56,7 @@ def test_otel_end_to_end(sync_client):
 @pytest.mark.parametrize(
     "bulk_helper_name", ["bulk", "streaming_bulk", "parallel_bulk"]
 )
-def test_otel_bulk(sync_client, bulk_helper_name):
+def test_otel_bulk(sync_client, elasticsearch_url, bulk_helper_name):
     tracer, memory_exporter = setup_tracing()
 
     # Create a new client with our tracer
@@ -102,7 +102,7 @@ def test_otel_bulk(sync_client, bulk_helper_name):
             "db.system": "elasticsearch",
             "db.operation": "bulk",
             "db.elasticsearch.path_parts.index": "test-index",
-            "url.full": "http://localhost:9200/test-index/_bulk?refresh=true",
+            "url.full": f"{elasticsearch_url}/test-index/_bulk?refresh=true",
             "server.address": "localhost",
             "server.port": 9200,
         }
