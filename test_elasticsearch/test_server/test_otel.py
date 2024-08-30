@@ -20,17 +20,9 @@ import os
 import pytest
 
 import elasticsearch
+import elasticsearch.helpers
 
 from ..test_otel import setup_tracing
-
-try:
-    from opentelemetry import trace
-    from opentelemetry.sdk.trace import TracerProvider, export
-    from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
-        InMemorySpanExporter,
-    )
-except ModuleNotFoundError:
-    pass
 
 pytestmark = [
     pytest.mark.skipif(
@@ -59,3 +51,59 @@ def test_otel_end_to_end(sync_client):
     # Assert expected atttributes are here, but allow other attributes too
     # to make this test robust to elastic-transport changes
     assert expected_attributes.items() <= spans[0].attributes.items()
+
+
+@pytest.mark.parametrize(
+    "bulk_helper_name", ["bulk", "streaming_bulk", "parallel_bulk"]
+)
+def test_otel_bulk(sync_client, bulk_helper_name):
+    tracer, memory_exporter = setup_tracing()
+
+    # Create a new client with our tracer
+    sync_client = sync_client.options()
+    sync_client._otel.tracer = tracer
+    # "Disable" options to keep sync_client with tracer enabled
+    sync_client.options = lambda: sync_client
+
+    docs = [{"answer": x, "helper": bulk_helper_name, "_id": x} for x in range(10)]
+    bulk_function = getattr(elasticsearch.helpers, bulk_helper_name)
+    if bulk_helper_name == "bulk":
+        success, failed = bulk_function(
+            sync_client, docs, index="test-index", chunk_size=2, refresh=True
+        )
+        assert success, failed == (5, 0)
+    else:
+        for ok, resp in bulk_function(
+            sync_client, docs, index="test-index", chunk_size=2, refresh=True
+        ):
+            assert ok is True
+
+    memory_exporter.shutdown()
+
+    assert 10 == sync_client.count(index="test-index")["count"]
+    assert {"answer": 4, "helper": bulk_helper_name} == sync_client.get(
+        index="test-index", id=4
+    )["_source"]
+
+    spans = list(memory_exporter.get_finished_spans())
+    parent_span = spans.pop()
+    assert parent_span.name == f"helpers.{bulk_helper_name}"
+    assert parent_span.attributes == {
+        "db.system": "elasticsearch",
+        "db.operation": f"helpers.{bulk_helper_name}",
+        "http.request.method": "null",
+    }
+
+    assert len(spans) == 5
+    for span in spans:
+        assert span.name == "bulk"
+        assert span.attributes == {
+            "http.request.method": "PUT",
+            "db.system": "elasticsearch",
+            "db.operation": "bulk",
+            "db.elasticsearch.path_parts.index": "test-index",
+            "url.full": "http://localhost:9200/test-index/_bulk?refresh=true",
+            "server.address": "localhost",
+            "server.port": 9200,
+        }
+        assert span.parent.trace_id == parent_span.context.trace_id
