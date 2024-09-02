@@ -97,13 +97,13 @@ def test_otel_bulk(sync_client, elasticsearch_url, bulk_helper_name):
     assert len(spans) == 5
     for span in spans:
         assert span.name == "bulk"
-        assert span.attributes == {
+        expected_attributes = {
             "http.request.method": "PUT",
             "db.system": "elasticsearch",
             "db.operation": "bulk",
             "db.elasticsearch.path_parts.index": "test-index",
-            "url.full": f"{elasticsearch_url}/test-index/_bulk?refresh=true",
-            "server.address": "localhost",
-            "server.port": 9200,
         }
+        # Assert expected atttributes are here, but allow other attributes too
+        # to make this test robust to elastic-transport changes
+        assert expected_attributes.items() <= spans[0].attributes.items()
         assert span.parent.trace_id == parent_span.context.trace_id
