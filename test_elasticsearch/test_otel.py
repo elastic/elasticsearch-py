@@ -100,7 +100,7 @@ def test_detailed_span():
     }
 
 
-@mock.patch("elasticsearch._otel.OpenTelemetry.recover_parent_context")
+@mock.patch("elasticsearch._otel.OpenTelemetry.use_span")
 @mock.patch("elasticsearch._otel.OpenTelemetry.helpers_span")
 @mock.patch("elasticsearch.helpers.actions._process_bulk_chunk_success")
 @mock.patch("elasticsearch.Elasticsearch.bulk")
@@ -108,7 +108,7 @@ def test_forward_otel_context_to_subthreads(
     _call_bulk_mock,
     _process_bulk_success_mock,
     _mock_otel_helpers_span,
-    _mock_otel_recv_context,
+    _mock_otel_use_span,
 ):
     tracer, memory_exporter = setup_tracing()
     es_client = Elasticsearch("http://localhost:9200")
@@ -119,4 +119,4 @@ def test_forward_otel_context_to_subthreads(
     list(helpers.parallel_bulk(es_client, actions, chunk_size=4))
     # Ensures that the OTEL context has been forwarded to all chunks
     assert es_client._otel.helpers_span.call_count == 1
-    assert es_client._otel.recover_parent_context.call_count == 25
+    assert es_client._otel.use_span.call_count == 25

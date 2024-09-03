@@ -24,9 +24,6 @@ from typing import Generator, Literal, Mapping
 try:
     from opentelemetry import context as otel_context
     from opentelemetry import trace
-    from opentelemetry.trace.propagation.tracecontext import (
-        TraceContextTextMapPropagator,
-    )
 
     _tracer: trace.Tracer | None = trace.get_tracer("elasticsearch-api")
 except ModuleNotFoundError:
@@ -45,8 +42,6 @@ DEFAULT_BODY_STRATEGY = "omit"
 
 
 class OpenTelemetry:
-    context_carrier: dict[str, str] = {}
-
     def __init__(
         self,
         enabled: bool | None = None,
@@ -94,30 +89,23 @@ class OpenTelemetry:
             )
 
     @contextlib.contextmanager
-    def helpers_span(self, span_name: str) -> Generator[None, None, None]:
+    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan, None, None]:
         if not self.enabled or self.tracer is None:
-            yield
+            yield OpenTelemetrySpan(None)
             return
 
         with self.tracer.start_as_current_span(span_name) as otel_span:
-            TraceContextTextMapPropagator().inject(self.context_carrier)
             otel_span.set_attribute("db.system", "elasticsearch")
             otel_span.set_attribute("db.operation", span_name)
             # Without a request method, Elastic APM does not display the traces
             otel_span.set_attribute("http.request.method", "null")
-            yield
+            yield otel_span
 
     @contextlib.contextmanager
-    def recover_parent_context(self) -> Generator[None, None, None]:
+    def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
         if not self.enabled or self.tracer is None:
             yield
             return
 
-        otel_parent_ctx = TraceContextTextMapPropagator().extract(
-            carrier=self.context_carrier
-        )
-        token = otel_context.attach(otel_parent_ctx)
-        try:
+        with trace.use_span(span):
             yield
-        finally:
-            otel_context.detach(token)

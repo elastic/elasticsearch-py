@@ -34,6 +34,7 @@ from typing import (
     Union,
 )
 
+from elastic_transport import OpenTelemetrySpan
 from .. import Elasticsearch
 from ..compat import to_bytes
 from ..exceptions import ApiError, NotFoundError, TransportError
@@ -322,6 +323,7 @@ def _process_bulk_chunk(
             Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
         ]
     ],
+    otel_span: OpenTelemetrySpan,
     raise_on_exception: bool = True,
     raise_on_error: bool = True,
     ignore_status: Union[int, Collection[int]] = (),
@@ -331,7 +333,7 @@ def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    with client._otel.recover_parent_context():
+    with client._otel.use_span(otel_span):
         if isinstance(ignore_status, int):
             ignore_status = (ignore_status,)
 
@@ -408,7 +410,7 @@ def streaming_bulk(
     :arg yield_ok: if set to False will skip successful documents in the output
     :arg ignore_status: list of HTTP status code that you want to ignore
     """
-    with client._otel.helpers_span(span_name):
+    with client._otel.helpers_span(span_name) as otel_span:
         client = client.options()
         client._client_meta = (("h", "bp"),)
 
@@ -445,6 +447,7 @@ def streaming_bulk(
                             client,
                             bulk_actions,
                             bulk_data,
+                            otel_span,
                             raise_on_exception,
                             raise_on_error,
                             ignore_status,
@@ -595,7 +598,7 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    with client._otel.helpers_span("helpers.parallel_bulk"):
+    with client._otel.helpers_span("helpers.parallel_bulk") as otel_span:
         pool = BlockingPool(thread_count)
 
         try:
@@ -605,6 +608,7 @@ def parallel_bulk(
                         client,
                         bulk_chunk[1],
                         bulk_chunk[0],
+                        otel_span=otel_span,
                         ignore_status=ignore_status,  # type: ignore[misc]
                         *args,
                         **kwargs,
