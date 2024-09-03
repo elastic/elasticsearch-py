@@ -35,6 +35,7 @@ from typing import (
 )
 
 from elastic_transport import OpenTelemetrySpan
+
 from .. import Elasticsearch
 from ..compat import to_bytes
 from ..exceptions import ApiError, NotFoundError, TransportError

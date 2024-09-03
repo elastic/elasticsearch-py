@@ -22,7 +22,6 @@ import os
 from typing import Generator, Literal, Mapping
 
 try:
-    from opentelemetry import context as otel_context
     from opentelemetry import trace
 
     _tracer: trace.Tracer | None = trace.get_tracer("elasticsearch-api")
