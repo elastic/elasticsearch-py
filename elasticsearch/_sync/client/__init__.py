@@ -2712,6 +2712,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         max_concurrent_searches: t.Optional[int] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         pre_filter_shard_size: t.Optional[int] = None,
@@ -2745,6 +2746,13 @@ class Elasticsearch(BaseClient):
             when frozen.
         :param ignore_unavailable: If true, missing or closed indices are not included
             in the response.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
             search API can execute.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
@@ -2794,6 +2802,8 @@ class Elasticsearch(BaseClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if max_concurrent_searches is not None:
             __query["max_concurrent_searches"] = max_concurrent_searches
         if max_concurrent_shard_requests is not None:
@@ -3026,7 +3036,9 @@ class Elasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("index_filter",),
+    )
     def open_point_in_time(
         self,
         *,
@@ -3044,9 +3056,11 @@ class Elasticsearch(BaseClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         A search request by default executes against the most recent visible data of
@@ -3068,17 +3082,20 @@ class Elasticsearch(BaseClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param index_filter: Allows to filter indices if the provided query rewrites
+            to `match_none` on every shard.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if keep_alive is None:
+        if keep_alive is None and body is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
         if error_trace is not None:
@@ -3097,12 +3114,20 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
+        if not __body:
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="open_point_in_time",
             path_parts=__path_parts,
         )
@@ -3707,6 +3732,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
@@ -3834,6 +3860,13 @@ class Elasticsearch(BaseClient):
             be ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param knn: Defines the approximate kNN search to run.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -4015,6 +4048,8 @@ class Elasticsearch(BaseClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
@@ -4961,6 +4996,7 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
@@ -5027,6 +5063,7 @@ class Elasticsearch(BaseClient):
             parameter.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
+        :param q: Query in the Lucene query string syntax.
         :param query: Specifies the documents to update using the Query DSL.
         :param refresh: If `true`, Elasticsearch refreshes affected shards to make the
             operation visible to search.
@@ -5111,6 +5148,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:

@@ -262,7 +262,9 @@ class SynonymsClient(NamespacedClient):
         self,
         *,
         id: str,
-        synonyms_set: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        synonyms_set: t.Optional[
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
