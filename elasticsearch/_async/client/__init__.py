@@ -3038,7 +3038,9 @@ class AsyncElasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("index_filter",),
+    )
     async def open_point_in_time(
         self,
         *,
@@ -3056,9 +3058,11 @@ class AsyncElasticsearch(BaseClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         A search request by default executes against the most recent visible data of
@@ -3080,17 +3084,20 @@ class AsyncElasticsearch(BaseClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param index_filter: Allows to filter indices if the provided query rewrites
+            to `match_none` on every shard.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if keep_alive is None:
+        if keep_alive is None and body is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
         if error_trace is not None:
@@ -3109,12 +3116,20 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
+        if not __body:
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="open_point_in_time",
             path_parts=__path_parts,
         )
