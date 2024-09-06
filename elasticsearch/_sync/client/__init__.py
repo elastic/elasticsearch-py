@@ -4978,6 +4978,7 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
@@ -5044,6 +5045,7 @@ class Elasticsearch(BaseClient):
             parameter.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
+        :param q: Query in the Lucene query string syntax.
         :param query: Specifies the documents to update using the Query DSL.
         :param refresh: If `true`, Elasticsearch refreshes affected shards to make the
             operation visible to search.
@@ -5128,6 +5130,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:
