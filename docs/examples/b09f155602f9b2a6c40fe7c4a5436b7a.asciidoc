@@ -7,7 +7,7 @@ resp = client.search(
     runtime_mappings={
         "day_of_week": {
             "type": "keyword",
-            "script": "\n        emit(doc['timestamp'].value.dayOfWeekEnum\n          .getDisplayName(TextStyle.FULL, Locale.ROOT))\n      "
+            "script": "\n        emit(doc['timestamp'].value.dayOfWeekEnum\n          .getDisplayName(TextStyle.FULL, Locale.ENGLISH))\n      "
         }
     },
     size=0,

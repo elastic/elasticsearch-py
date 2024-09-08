@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-15-1>>
 * <<rn-8-15-0>>
 * <<rn-8-14-0>>
 * <<rn-8-13-2>>
@@ -39,6 +40,18 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-15-1]]
+=== 8.15.1 (2024-09-08)
+
+- Fix OTel context loss in parallel bulk helper (https://github.com/elastic/elasticsearch-py/pull/2616[#2616])
+- Use request converter to generate python examples (https://github.com/elastic/elasticsearch-py/pull/2645[#2645])
+- Add Geoip database configuration APIs: Create or update, Get and Delete
+- Add `q` parameter to Update by Query API
+- Add `allow_no_indices` and `ignore_unavailable` parameters to Resolve index API
+
+
 
 [discrete]
 [[rn-8-15-0]]

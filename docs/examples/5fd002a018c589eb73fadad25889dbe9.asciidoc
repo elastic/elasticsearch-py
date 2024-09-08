@@ -35,7 +35,7 @@ resp = client.query_rules.put_ruleset(
         },
         {
             "rule_id": "rule2",
-            "type": "pinned",
+            "type": "exclude",
             "criteria": [
                 {
                     "type": "contains",
