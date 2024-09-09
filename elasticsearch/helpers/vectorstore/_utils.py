@@ -100,7 +100,8 @@ def _cosine_similarity(X: Matrix, Y: Matrix) -> "npt.NDArray[np.float64]":
 
     X = np.array(X, dtype=np.float32)
     Y = np.array(Y, dtype=np.float32)
-    Z = 1 - np.array(simd.cdist(X, Y, metric="cosine"))
+    # https://github.com/ashvardanian/SimSIMD/issues/171
+    Z = 1 - np.array(simd.cdist(X, Y, metric="cosine"))  # type: ignore[arg-type]
     if isinstance(Z, float):
         return np.array([Z])
     return np.array(Z)
