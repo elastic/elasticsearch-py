@@ -96,7 +96,7 @@ class RetrievalStrategy(ABC):
 
 
 class SparseVectorStrategy(RetrievalStrategy):
-    """Sparse retrieval strategy using the `text_expansion` processor."""
+    """Sparse retrieval strategy using the `sparse_vector` processor."""
 
     def __init__(self, model_id: str = ".elser_model_2"):
         self.model_id = model_id
@@ -127,11 +127,10 @@ class SparseVectorStrategy(RetrievalStrategy):
                 "bool": {
                     "must": [
                         {
-                            "text_expansion": {
-                                f"{vector_field}.{self._tokens_field}": {
-                                    "model_id": self.model_id,
-                                    "model_text": query,
-                                }
+                            "sparse_vector": {
+                                "field": f"{vector_field}.{self._tokens_field}",
+                                "inference_id": self.model_id,
+                                "query": query,
                             }
                         }
                     ],
@@ -150,7 +149,7 @@ class SparseVectorStrategy(RetrievalStrategy):
         mappings: Dict[str, Any] = {
             "properties": {
                 vector_field: {
-                    "properties": {self._tokens_field: {"type": "rank_features"}}
+                    "properties": {self._tokens_field: {"type": "sparse_vector"}}
                 }
             }
         }
@@ -172,11 +171,12 @@ class SparseVectorStrategy(RetrievalStrategy):
                     {
                         "inference": {
                             "model_id": self.model_id,
-                            "target_field": vector_field,
-                            "field_map": {text_field: "text_field"},
-                            "inference_config": {
-                                "text_expansion": {"results_field": self._tokens_field}
-                            },
+                            "input_output": [
+                                {
+                                    "input_field": text_field,
+                                    "output_field": f"{vector_field}.{self._tokens_field}",
+                                },
+                            ],
                         }
                     }
                 ],
