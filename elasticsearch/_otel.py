@@ -98,7 +98,7 @@ class OpenTelemetry:
             otel_span.set_attribute("db.operation", span_name)
             # Without a request method, Elastic APM does not display the traces
             otel_span.set_attribute("http.request.method", "null")
-            yield otel_span
+            yield OpenTelemetrySpan(otel_span)
 
     @contextlib.contextmanager
     def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
@@ -106,5 +106,5 @@ class OpenTelemetry:
             yield
             return
 
-        with trace.use_span(span):
+        with trace.use_span(span.otel_span):
             yield
