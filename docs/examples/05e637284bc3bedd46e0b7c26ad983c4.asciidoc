@@ -4,7 +4,7 @@
 [source, python]
 ----
 resp = client.ingest.put_pipeline(
-    id="alibabacloud_ai_search_embeddings",
+    id="alibabacloud_ai_search_embeddings_pipeline",
     processors=[
         {
             "inference": {
