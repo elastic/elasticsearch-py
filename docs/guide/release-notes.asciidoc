@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-17-12>>
 * <<rn-7-17-7>>
 * <<rn-7-17-6>>
 * <<rn-7-17-5>>
@@ -43,6 +44,12 @@
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
 
+
+[discrete]
+[[rn-7-17-12]]
+=== 7.17.12 (2024-09-19)
+
+* Fix compatibility with NumPy 2.0
 
 [discrete]
 [[rn-7-17-7]]
