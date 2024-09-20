@@ -5,7 +5,7 @@
 ----
 resp = client.cat.thread_pool(
     v=True,
-    h="id,name,active,rejected,completed",
+    h="id,name,queue,active,rejected,completed",
 )
 print(resp)
 ----

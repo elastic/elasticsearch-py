@@ -4,7 +4,7 @@
 [source, python]
 ----
 resp = client.ingest.put_pipeline(
-    id="amazon_bedrock_embeddings",
+    id="amazon_bedrock_embeddings_pipeline",
     processors=[
         {
             "inference": {

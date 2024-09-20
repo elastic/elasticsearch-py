@@ -4,7 +4,7 @@
 [source, python]
 ----
 resp = client.ingest.put_pipeline(
-    id="google_vertex_ai_embeddings",
+    id="google_vertex_ai_embeddings_pipeline",
     processors=[
         {
             "inference": {
