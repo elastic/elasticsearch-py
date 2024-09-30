@@ -291,7 +291,7 @@ class DenseVectorStrategy(RetrievalStrategy):
                 rrf_options["rank_constant"] = self.rrf["rank_constant"]
             if "window_size" in self.rrf:
                 # 'window_size' was renamed to 'rank_window_size', but we support
-                # the older name for backwards compatiblit
+                # the older name for backwards compatibility
                 rrf_options["rank_window_size"] = self.rrf["window_size"]
             if "rank_window_size" in self.rrf:
                 rrf_options["rank_window_size"] = self.rrf["rank_window_size"]

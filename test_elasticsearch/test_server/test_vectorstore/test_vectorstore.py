@@ -33,6 +33,7 @@ from elasticsearch.helpers.vectorstore import (
     VectorStore,
 )
 from elasticsearch.helpers.vectorstore._sync._utils import model_is_deployed
+from test_elasticsearch.utils import es_version
 
 from . import ConsistentFakeEmbeddings, FakeEmbeddings
 
@@ -337,6 +338,9 @@ class TestVectorStore:
         self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and search with metadata."""
+        if es_version(sync_client) < (8, 14):
+            pytest.skip("This test requires Elasticsearch 8.14 or newer")
+
         store = VectorStore(
             index=index,
             retrieval_strategy=DenseVectorStrategy(hybrid=True),
@@ -401,6 +405,9 @@ class TestVectorStore:
         self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test end to end construction and rrf hybrid search with metadata."""
+        if es_version(sync_client) < (8, 14):
+            pytest.skip("This test requires Elasticsearch 8.14 or newer")
+
         texts = ["foo", "bar", "baz"]
 
         def assert_query(
