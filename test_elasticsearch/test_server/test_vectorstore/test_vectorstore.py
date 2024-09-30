@@ -349,20 +349,48 @@ class TestVectorStore:
 
         def assert_query(query_body: dict, query: Optional[str]) -> dict:
             assert query_body == {
-                "knn": {
-                    "field": "vector_field",
-                    "filter": [],
-                    "k": 1,
-                    "num_candidates": 50,
-                    "query_vector": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
-                },
-                "query": {
-                    "bool": {
-                        "filter": [],
-                        "must": [{"match": {"text_field": {"query": "foo"}}}],
+                "retriever": {
+                    "rrf": {
+                        "retrievers": [
+                            {
+                                "standard": {
+                                    "query": {
+                                        "bool": {
+                                            "filter": [],
+                                            "must": [
+                                                {
+                                                    "match": {
+                                                        "text_field": {"query": "foo"}
+                                                    }
+                                                }
+                                            ],
+                                        }
+                                    },
+                                },
+                            },
+                            {
+                                "knn": {
+                                    "field": "vector_field",
+                                    "filter": [],
+                                    "k": 1,
+                                    "num_candidates": 50,
+                                    "query_vector": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0,
+                                    ],
+                                },
+                            },
+                        ],
                     }
-                },
-                "rank": {"rrf": {}},
+                }
             }
             return query_body
 
@@ -381,36 +409,52 @@ class TestVectorStore:
             expected_rrf: Union[dict, bool],
         ) -> dict:
             cmp_query_body = {
-                "knn": {
-                    "field": "vector_field",
-                    "filter": [],
-                    "k": 3,
-                    "num_candidates": 50,
-                    "query_vector": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0,
-                    ],
-                },
-                "query": {
-                    "bool": {
-                        "filter": [],
-                        "must": [{"match": {"text_field": {"query": "foo"}}}],
+                "retriever": {
+                    "rrf": {
+                        "retrievers": [
+                            {
+                                "standard": {
+                                    "query": {
+                                        "bool": {
+                                            "filter": [],
+                                            "must": [
+                                                {
+                                                    "match": {
+                                                        "text_field": {"query": "foo"}
+                                                    }
+                                                }
+                                            ],
+                                        }
+                                    },
+                                },
+                            },
+                            {
+                                "knn": {
+                                    "field": "vector_field",
+                                    "filter": [],
+                                    "k": 3,
+                                    "num_candidates": 50,
+                                    "query_vector": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0,
+                                    ],
+                                },
+                            },
+                        ],
                     }
-                },
+                }
             }
 
             if isinstance(expected_rrf, dict):
-                cmp_query_body["rank"] = {"rrf": expected_rrf}
-            elif isinstance(expected_rrf, bool) and expected_rrf is True:
-                cmp_query_body["rank"] = {"rrf": {}}
+                cmp_query_body["retriever"]["rrf"].update(expected_rrf)
 
             assert query_body == cmp_query_body
 
@@ -420,7 +464,7 @@ class TestVectorStore:
         rrf_test_cases: List[Union[dict, bool]] = [
             True,
             False,
-            {"rank_constant": 1, "window_size": 5},
+            {"rank_constant": 1, "rank_window_size": 5},
         ]
         for rrf_test_case in rrf_test_cases:
             store = VectorStore(
@@ -441,21 +485,47 @@ class TestVectorStore:
         # 2. check query result is okay
         es_output = store.client.search(
             index=index,
-            query={
-                "bool": {
-                    "filter": [],
-                    "must": [{"match": {"text_field": {"query": "foo"}}}],
+            retriever={
+                "rrf": {
+                    "retrievers": [
+                        {
+                            "knn": {
+                                "field": "vector_field",
+                                "filter": [],
+                                "k": 3,
+                                "num_candidates": 50,
+                                "query_vector": [
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    1.0,
+                                    0.0,
+                                ],
+                            },
+                        },
+                        {
+                            "standard": {
+                                "query": {
+                                    "bool": {
+                                        "filter": [],
+                                        "must": [
+                                            {"match": {"text_field": {"query": "foo"}}}
+                                        ],
+                                    }
+                                },
+                            },
+                        },
+                    ],
+                    "rank_constant": 1,
+                    "rank_window_size": 5,
                 }
             },
-            knn={
-                "field": "vector_field",
-                "filter": [],
-                "k": 3,
-                "num_candidates": 50,
-                "query_vector": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
-            },
             size=3,
-            rank={"rrf": {"rank_constant": 1, "window_size": 5}},
         )
 
         assert [o["_source"]["text_field"] for o in output] == [
