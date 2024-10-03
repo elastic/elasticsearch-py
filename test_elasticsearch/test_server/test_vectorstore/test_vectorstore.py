@@ -415,64 +415,67 @@ class TestVectorStore:
             query: Optional[str],
             expected_rrf: Union[dict, bool],
         ) -> dict:
-            cmp_query_body = {
-                "retriever": {
-                    "rrf": {
-                        "retrievers": [
-                            {
-                                "standard": {
-                                    "query": {
-                                        "bool": {
-                                            "filter": [],
-                                            "must": [
-                                                {
-                                                    "match": {
-                                                        "text_field": {"query": "foo"}
-                                                    }
-                                                }
-                                            ],
-                                        }
-                                    },
-                                },
-                            },
-                            {
-                                "knn": {
-                                    "field": "vector_field",
-                                    "filter": [],
-                                    "k": 3,
-                                    "num_candidates": 50,
-                                    "query_vector": [
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        1.0,
-                                        0.0,
-                                    ],
-                                },
-                            },
-                        ],
+            standard_query = {
+                "query": {
+                    "bool": {
+                        "filter": [],
+                        "must": [{"match": {"text_field": {"query": "foo"}}}],
                     }
                 }
             }
+            knn_query = {
+                "field": "vector_field",
+                "filter": [],
+                "k": 3,
+                "num_candidates": 50,
+                "query_vector": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.0,
+                ],
+            }
 
-            if isinstance(expected_rrf, dict):
-                cmp_query_body["retriever"]["rrf"].update(expected_rrf)
+            if expected_rrf is not False:
+                cmp_query_body = {
+                    "retriever": {
+                        "rrf": {
+                            "retrievers": [
+                                {"standard": standard_query},
+                                {"knn": knn_query},
+                            ],
+                        }
+                    }
+                }
+                if isinstance(expected_rrf, dict):
+                    cmp_query_body["retriever"]["rrf"].update(expected_rrf)
+            else:
+                cmp_query_body = {
+                    "knn": knn_query,
+                    **standard_query,
+                }
 
             assert query_body == cmp_query_body
 
             return query_body
 
         # 1. check query_body is okay
-        rrf_test_cases: List[Union[dict, bool]] = [
-            True,
-            False,
-            {"rank_constant": 1, "rank_window_size": 5},
-        ]
+        if es_version(sync_client) >= (8, 14):
+            rrf_test_cases: List[Union[dict, bool]] = [
+                True,
+                False,
+                {"rank_constant": 1, "rank_window_size": 5},
+            ]
+        else:
+            # for 8.13.x and older there is no retriever query, so we can only
+            # run hybrid searches with rrf=False
+            rrf_test_cases: List[Union[dict, bool]] = [False]
         for rrf_test_case in rrf_test_cases:
             store = VectorStore(
                 index=index,
