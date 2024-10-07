@@ -38,7 +38,14 @@ class EsqlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        format: t.Optional[str] = None,
+        format: t.Optional[
+            t.Union[
+                str,
+                t.Literal[
+                    "arrow", "cbor", "csv", "json", "smile", "tsv", "txt", "yaml"
+                ],
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
         params: t.Optional[t.Sequence[t.Union[None, bool, float, int, str]]] = None,
