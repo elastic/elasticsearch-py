@@ -1053,8 +1053,8 @@ class ClusterClient(NamespacedClient):
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        include_remotes: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1067,7 +1067,7 @@ class ClusterClient(NamespacedClient):
 
         :param node_id: Comma-separated list of node filters used to limit returned information.
             Defaults to all nodes in the cluster.
-        :param flat_settings: If `true`, returns settings in flat format.
+        :param include_remotes: Include remote cluster data into the response
         :param timeout: Period to wait for each node to respond. If a node does not respond
             before its timeout expires, the response does not include its stats. However,
             timed out nodes are included in the response’s `_nodes.failed` property.
@@ -1085,10 +1085,10 @@ class ClusterClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if flat_settings is not None:
-            __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
+        if include_remotes is not None:
+            __query["include_remotes"] = include_remotes
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:

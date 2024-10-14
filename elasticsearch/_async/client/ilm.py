@@ -304,10 +304,10 @@ class IlmClient(NamespacedClient):
         *,
         index: str,
         current_step: t.Optional[t.Mapping[str, t.Any]] = None,
+        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -322,6 +322,10 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
+        if current_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'current_step'")
+        if next_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'next_step'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/_ilm/move/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}

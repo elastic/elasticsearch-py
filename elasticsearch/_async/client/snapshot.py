@@ -616,6 +616,84 @@ class SnapshotClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    async def repository_verify_integrity(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        blob_thread_pool_concurrency: t.Optional[int] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        index_snapshot_verification_concurrency: t.Optional[int] = None,
+        index_verification_concurrency: t.Optional[int] = None,
+        max_bytes_per_sec: t.Optional[str] = None,
+        max_failed_shard_snapshots: t.Optional[int] = None,
+        meta_thread_pool_concurrency: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        snapshot_verification_concurrency: t.Optional[int] = None,
+        verify_blob_contents: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Verifies the integrity of the contents of a snapshot repository
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+
+        :param name: A repository name
+        :param blob_thread_pool_concurrency: Number of threads to use for reading blob
+            contents
+        :param index_snapshot_verification_concurrency: Number of snapshots to verify
+            concurrently within each index
+        :param index_verification_concurrency: Number of indices to verify concurrently
+        :param max_bytes_per_sec: Rate limit for individual blob verification
+        :param max_failed_shard_snapshots: Maximum permitted number of failed shard snapshots
+        :param meta_thread_pool_concurrency: Number of threads to use for reading metadata
+        :param snapshot_verification_concurrency: Number of snapshots to verify concurrently
+        :param verify_blob_contents: Whether to verify the contents of individual blobs
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_verify_integrity'
+        __query: t.Dict[str, t.Any] = {}
+        if blob_thread_pool_concurrency is not None:
+            __query["blob_thread_pool_concurrency"] = blob_thread_pool_concurrency
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index_snapshot_verification_concurrency is not None:
+            __query["index_snapshot_verification_concurrency"] = (
+                index_snapshot_verification_concurrency
+            )
+        if index_verification_concurrency is not None:
+            __query["index_verification_concurrency"] = index_verification_concurrency
+        if max_bytes_per_sec is not None:
+            __query["max_bytes_per_sec"] = max_bytes_per_sec
+        if max_failed_shard_snapshots is not None:
+            __query["max_failed_shard_snapshots"] = max_failed_shard_snapshots
+        if meta_thread_pool_concurrency is not None:
+            __query["meta_thread_pool_concurrency"] = meta_thread_pool_concurrency
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if snapshot_verification_concurrency is not None:
+            __query["snapshot_verification_concurrency"] = (
+                snapshot_verification_concurrency
+            )
+        if verify_blob_contents is not None:
+            __query["verify_blob_contents"] = verify_blob_contents
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.repository_verify_integrity",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=(
             "feature_states",

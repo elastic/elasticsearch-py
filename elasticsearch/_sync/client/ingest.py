@@ -40,7 +40,7 @@ class IngestClient(NamespacedClient):
         """
         Deletes a geoip database configuration.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/TODO.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-geoip-database-api.html>`_
 
         :param id: A comma-separated list of geoip database configurations to delete
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -177,7 +177,7 @@ class IngestClient(NamespacedClient):
         """
         Returns information about one or more geoip database configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/TODO.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-geoip-database-api.html>`_
 
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
@@ -327,7 +327,7 @@ class IngestClient(NamespacedClient):
         """
         Returns information about one or more geoip database configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/TODO.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-geoip-database-api.html>`_
 
         :param id: ID of the database configuration to create or update.
         :param maxmind: The configuration necessary to identify which IP geolocation
