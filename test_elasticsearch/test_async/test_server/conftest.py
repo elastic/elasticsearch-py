@@ -44,9 +44,9 @@ async def async_client_factory(elasticsearch_url):
 
 
 @pytest.fixture(scope="function")
-def async_client(async_client_factory, elasticsearch_api_key):
+def async_client(async_client_factory):
     try:
         yield async_client_factory
     finally:
         # Wipe the cluster clean after every test execution.
-        wipe_cluster(async_client_factory, elasticsearch_api_key)
+        wipe_cluster(async_client_factory)
