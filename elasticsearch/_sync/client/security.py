@@ -2285,6 +2285,7 @@ class SecurityClient(NamespacedClient):
             "global_",
             "indices",
             "metadata",
+            "remote_indices",
             "run_as",
             "transient_metadata",
         ),
@@ -2373,6 +2374,7 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        remote_indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -2384,7 +2386,10 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
 
-        :param name: The name of the role.
+        :param name: The name of the role that is being created or updated. On Elasticsearch
+            Serverless, the role name must begin with a letter or digit and can only
+            contain letters, digits and the characters '_', '-', and '.'. Each role must
+            have a unique name, as this will serve as the identifier for that role.
         :param applications: A list of application privilege entries.
         :param cluster: A list of cluster privileges. These privileges define the cluster-level
             actions for users with this role.
@@ -2398,6 +2403,7 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param remote_indices: A list of remote indices permissions entries.
         :param run_as: A list of users that the owners of this role can impersonate.
             *Note*: in Serverless, the run-as feature is disabled. For API compatibility,
             you can still specify an empty `run_as` field, but a non-empty list will
@@ -2438,6 +2444,8 @@ class SecurityClient(NamespacedClient):
                 __body["indices"] = indices
             if metadata is not None:
                 __body["metadata"] = metadata
+            if remote_indices is not None:
+                __body["remote_indices"] = remote_indices
             if run_as is not None:
                 __body["run_as"] = run_as
             if transient_metadata is not None:
