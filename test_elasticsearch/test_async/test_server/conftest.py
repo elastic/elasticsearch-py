@@ -26,7 +26,7 @@ pytestmark = pytest.mark.asyncio
 
 
 @pytest_asyncio.fixture(scope="function")
-async def async_client(elasticsearch_url):
+async def async_client_factory(elasticsearch_url):
 
     if not hasattr(elasticsearch, "AsyncElasticsearch"):
         pytest.skip("test requires 'AsyncElasticsearch' and aiohttp to be installed")
@@ -37,10 +37,18 @@ async def async_client(elasticsearch_url):
     client = None
     try:
         client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, request_timeout=3, ca_certs=CA_CERTS
+            elasticsearch_url, ca_certs=CA_CERTS
         )
         yield client
     finally:
         if client:
-            wipe_cluster(client)
             await client.close()
+
+
+@pytest.fixture(scope="function")
+def async_client(async_client_factory, elasticsearch_api_key):
+    try:
+        yield async_client_factory
+    finally:
+        # Wipe the cluster clean after every test execution.
+        wipe_cluster(async_client_factory, elasticsearch_api_key)
