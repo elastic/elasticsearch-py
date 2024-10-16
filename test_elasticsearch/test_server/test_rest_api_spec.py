@@ -24,7 +24,6 @@ import io
 import json
 import os
 import re
-import sys
 import warnings
 import zipfile
 from typing import Tuple, Union
@@ -33,11 +32,9 @@ import pytest
 import urllib3
 import yaml
 
-from elasticsearch import ApiError, Elasticsearch, ElasticsearchWarning, RequestError
+from elasticsearch import ApiError, ElasticsearchWarning, RequestError
 from elasticsearch._sync.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
-
-from ..utils import es_url
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly

@@ -26,7 +26,6 @@ from elasticsearch import (
     ConnectionError,
     Elasticsearch,
     NotFoundError,
-    RequestError,
 )
 
 SOURCE_DIR = Path(__file__).absolute().parent.parent

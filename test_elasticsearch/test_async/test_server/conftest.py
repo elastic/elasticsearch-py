@@ -36,9 +36,7 @@ async def async_client_factory(elasticsearch_url):
     # event loops (one per test!)
     client = None
     try:
-        client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, ca_certs=CA_CERTS
-        )
+        client = elasticsearch.AsyncElasticsearch(elasticsearch_url, ca_certs=CA_CERTS)
         yield client
     finally:
         if client:
