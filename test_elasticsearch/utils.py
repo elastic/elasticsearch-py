@@ -281,6 +281,9 @@ def wipe_ilm_policies(client):
                 ".monitoring-8-ilm-policy",
             }
             and "-history-ilm-polcy" not in policy
+            and "-meta-ilm-policy" not in policy
+            and "-data-ilm-policy" not in policy
+            and "@lifecycle" not in policy
         ):
             client.ilm.delete_lifecycle(name=policy)
 
@@ -408,11 +411,7 @@ def wait_for_cluster_state_updates_to_finish(client, timeout=30):
 
 
 def is_xpack_template(name):
-    if name.startswith(".alerts-"):
-        return True
-    elif name.startswith(".kibana-data-quality-dashboard-"):
-        return True
-    elif name.startswith(".kibana-elastic-ai-assistant-component-template-"):
+    if name.startswith("."):
         return True
     elif name.startswith("behavioral_analytics-events"):
         return True
@@ -420,7 +419,9 @@ def is_xpack_template(name):
         return True
     elif name.startswith("entities_v1_"):
         return True
-    elif name.startswith(".deprecation-"):
+    elif name.endswith("@ilm"):
+        return True
+    elif name.endswith("@template"):
         return True
 
     return name in {
@@ -432,15 +433,19 @@ def is_xpack_template(name):
         "apm@settings",
         "data-streams-mappings",
         "data-streams@mappings",
+        "elastic-connectors",
         "ecs@dynamic_templates",
         "ecs@mappings",
+        "ilm-history-7",
         "kibana-reporting@settings",
+        "logs",
         "logs-apm.error@mappings",
         "logs-apm@settings",
         "logs-mappings",
         "logs@mappings",
         "logs-settings",
         "logs@settings",
+        "metrics",
         "metrics-apm@mappings",
         "metrics-apm.service_destination@mappings",
         "metrics-apm.service_summary@mappings",
@@ -453,6 +458,8 @@ def is_xpack_template(name):
         "metrics@settings",
         "metrics-tsdb-settings",
         "metrics@tsdb-settings",
+        "search-acl-filter",
+        "synthetics",
         "synthetics-mappings",
         "synthetics@mappings",
         "synthetics-settings",
