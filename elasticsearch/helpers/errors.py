@@ -23,6 +23,9 @@ class BulkIndexError(Exception):
         super().__init__(message)
         self.errors: List[Dict[str, Any]] = errors
 
+    def __reduce__(self):
+        return (self.__class__, (self.args[0], self.errors))
+
 
 class ScanError(Exception):
     scroll_id: str
@@ -30,3 +33,7 @@ class ScanError(Exception):
     def __init__(self, scroll_id: str, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.scroll_id = scroll_id
+
+    def __reduce__(self):
+        return (self.__class__, (self.scroll_id,) + self.args)
+
