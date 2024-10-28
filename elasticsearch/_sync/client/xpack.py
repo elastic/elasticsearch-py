@@ -34,7 +34,9 @@ class XPackClient(NamespacedClient):
         self,
         *,
         accept_enterprise: t.Optional[bool] = None,
-        categories: t.Optional[t.Sequence[str]] = None,
+        categories: t.Optional[
+            t.Sequence[t.Union[str, t.Literal["build", "features", "license"]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -43,7 +45,7 @@ class XPackClient(NamespacedClient):
         """
         Provides general information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
         :param categories: A comma-separated list of the information categories to include
@@ -88,7 +90,7 @@ class XPackClient(NamespacedClient):
         This API provides information about which features are currently enabled and
         available under the current license and some usage statistics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/usage-api.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
