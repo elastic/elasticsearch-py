@@ -36,13 +36,13 @@ class AsyncSearchClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async search by identifier. If the search is still running, the search
-        request will be cancelled. Otherwise, the saved search results are deleted. If
-        the Elasticsearch security features are enabled, the deletion of a specific async
-        search is restricted to: the authenticated user that submitted the original search
-        request; users that have the `cancel_task` cluster privilege.
+        Delete an async search. If the asynchronous search is still running, it is cancelled.
+        Otherwise, the saved search results are deleted. If the Elasticsearch security
+        features are enabled, the deletion of a specific async search is restricted to:
+        the authenticated user that submitted the original search request; users that
+        have the `cancel_task` cluster privilege.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -85,12 +85,12 @@ class AsyncSearchClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the results of a previously submitted async search request given its
-        identifier. If the Elasticsearch security features are enabled, access to the
-        results of a specific async search is restricted to the user or API key that
+        Get async search results. Retrieve the results of a previously submitted asynchronous
+        search request. If the Elasticsearch security features are enabled, access to
+        the results of a specific async search is restricted to the user or API key that
         submitted it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: Specifies how long the async search should be available in
@@ -148,12 +148,12 @@ class AsyncSearchClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get async search status Retrieves the status of a previously submitted async
+        Get async search status. Retrieve the status of a previously submitted async
         search request given its identifier, without retrieving search results. If the
         Elasticsearch security features are enabled, use of this API is restricted to
         the `monitoring_user` role.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -323,17 +323,17 @@ class AsyncSearchClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Runs a search request asynchronously. When the primary sort of the results is
-        an indexed field, shards get sorted based on minimum and maximum value that they
-        hold for that field, hence partial results become available following the sort
-        criteria that was requested. Warning: Async search does not support scroll nor
-        search requests that only include the suggest section. By default, Elasticsearch
-        doesn’t allow you to store an async search response larger than 10Mb and an attempt
-        to do this results in an error. The maximum allowed size for a stored async search
-        response can be set by changing the `search.max_async_search_response_size` cluster
-        level setting.
+        Run an async search. When the primary sort of the results is an indexed field,
+        shards get sorted based on minimum and maximum value that they hold for that
+        field. Partial results become available following the sort criteria that was
+        requested. Warning: Asynchronous search does not support scroll or search requests
+        that include only the suggest section. By default, Elasticsearch does not allow
+        you to store an async search response larger than 10Mb and an attempt to do this
+        results in an error. The maximum allowed size for a stored async search response
+        can be set by changing the `search.max_async_search_response_size` cluster level
+        setting.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
