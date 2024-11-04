@@ -72,7 +72,7 @@ class TestVectorStore:
                     "filter": [],
                     "k": 1,
                     "num_candidates": 50,
-                    "query_vector": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0],
+                    "query_vector": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0],
                 }
             }
             return query_body
@@ -80,7 +80,7 @@ class TestVectorStore:
         store = VectorStore(
             index=index,
             retrieval_strategy=DenseVectorStrategy(),
-            embedding_service=FakeEmbeddings(),
+            embedding_service=ConsistentFakeEmbeddings(),
             client=sync_client,
         )
 
@@ -97,7 +97,7 @@ class TestVectorStore:
         store = VectorStore(
             index=index,
             retrieval_strategy=DenseVectorStrategy(),
-            embedding_service=FakeEmbeddings(),
+            embedding_service=ConsistentFakeEmbeddings(),
             client=sync_client,
         )
 
@@ -950,6 +950,11 @@ class TestVectorStore:
             "type": "dense_vector",
             "dims": 10,
             "index": True,
+            "index_options": {
+                "ef_construction": 100,
+                "m": 16,
+                "type": "int8_hnsw",
+            },
             "similarity": "cosine",
         }
 
