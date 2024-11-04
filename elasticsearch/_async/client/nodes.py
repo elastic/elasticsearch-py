@@ -40,7 +40,7 @@ class NodesClient(NamespacedClient):
         You can use this API to clear the archived repositories metering information
         in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clear-repositories-metering-archive-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
@@ -92,7 +92,7 @@ class NodesClient(NamespacedClient):
         compute aggregations over a period of time. Additionally, the information exposed
         by this API is volatile, meaning that it won’t be present after node restarts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-repositories-metering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-repositories-metering-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
@@ -146,7 +146,7 @@ class NodesClient(NamespacedClient):
         This API yields a breakdown of the hot threads on each selected node in the cluster.
         The output is plain text with a breakdown of each node’s top hot threads.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cluster-nodes-hot-threads.html>`_
 
         :param node_id: List of node IDs or names used to limit returned information.
         :param ignore_idle_threads: If true, known idle threads (e.g. waiting in a socket
@@ -221,7 +221,7 @@ class NodesClient(NamespacedClient):
         """
         Returns cluster nodes information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cluster-nodes-info.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -290,7 +290,7 @@ class NodesClient(NamespacedClient):
         """
         Reloads the keystore on nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/secure-settings.html#reloadable-secure-settings>`_
 
         :param node_id: The names of particular nodes in the cluster to target.
         :param secure_settings_password: The password for the Elasticsearch keystore.
@@ -361,7 +361,7 @@ class NodesClient(NamespacedClient):
         """
         Returns cluster nodes statistics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cluster-nodes-stats.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -478,7 +478,7 @@ class NodesClient(NamespacedClient):
         """
         Returns information on the usage of features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cluster-nodes-usage.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
