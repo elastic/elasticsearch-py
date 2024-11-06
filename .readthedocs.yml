@@ -7,7 +7,7 @@ build:
     # to set AIOHTTP_NO_EXTENSIONS to 1 but it has to be done in
     # https://readthedocs.org/dashboard/elasticsearch-py/environmentvariables/
     # because of https://github.com/readthedocs/readthedocs.org/issues/6311
-    python: "3.12"
+    python: "3.13"
 
 python:
   install:
