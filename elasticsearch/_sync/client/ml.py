@@ -3368,7 +3368,7 @@ class MlClient(NamespacedClient):
         Create a datafeed. Datafeeds retrieve data from Elasticsearch for analysis by
         an anomaly detection job. You can associate only one datafeed with each anomaly
         detection job. The datafeed contains a query that runs at a defined interval
-        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay')
+        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay`)
         at each interval. When Elasticsearch security features are enabled, your datafeed
         remembers which roles the user who created it had at the time of creation and
         runs the query using those same roles. If you provide secondary authorization
