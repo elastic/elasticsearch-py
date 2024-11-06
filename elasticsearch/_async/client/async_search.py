@@ -148,10 +148,10 @@ class AsyncSearchClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get async search status. Retrieve the status of a previously submitted async
-        search request given its identifier, without retrieving search results. If the
-        Elasticsearch security features are enabled, use of this API is restricted to
-        the `monitoring_user` role.
+        Get the async search status. Get the status of a previously submitted async search
+        request given its identifier, without retrieving search results. If the Elasticsearch
+        security features are enabled, use of this API is restricted to the `monitoring_user`
+        role.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 

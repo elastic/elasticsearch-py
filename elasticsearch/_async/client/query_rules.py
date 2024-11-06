@@ -382,3 +382,56 @@ class QueryRulesClient(NamespacedClient):
             endpoint_id="query_rules.put_ruleset",
             path_parts=__path_parts,
         )
+
+    @_rewrite_parameters(
+        body_fields=("match_criteria",),
+    )
+    async def test(
+        self,
+        *,
+        ruleset_id: str,
+        match_criteria: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates or updates a query ruleset.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/test-query-ruleset.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset to be created or
+            updated
+        :param match_criteria:
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if match_criteria is None and body is None:
+            raise ValueError("Empty value passed for parameter 'match_criteria'")
+        __path_parts: t.Dict[str, str] = {"ruleset_id": _quote(ruleset_id)}
+        __path = f'/_query_rules/{__path_parts["ruleset_id"]}/_test'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if match_criteria is not None:
+                __body["match_criteria"] = match_criteria
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="query_rules.test",
+            path_parts=__path_parts,
+        )
