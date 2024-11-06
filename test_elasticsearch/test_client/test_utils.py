@@ -16,7 +16,10 @@
 #  under the License.
 
 
-from elasticsearch._sync.client.utils import _quote
+import warnings
+
+from elasticsearch._sync.client.utils import Stability, _quote, _stability_warning
+from elasticsearch.exceptions import GeneralAvailabilityWarning
 
 
 def test_handles_ascii():
@@ -36,3 +39,62 @@ def test_handles_unicode():
 def test_handles_unicode2():
     string = "中*文,"
     assert "%E4%B8%AD*%E6%96%87," == _quote(string)
+
+
+class TestStabilityWarning:
+    def test_default(self):
+
+        @_stability_warning(stability=Stability.STABLE)
+        def func_default(*args, **kwargs):
+            pass
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            func_default()
+
+    def test_beta(self, recwarn):
+
+        @_stability_warning(stability=Stability.BETA)
+        def func_beta(*args, **kwargs):
+            pass
+
+        func_beta()
+
+        assert len(recwarn) == 1
+        user_warning = recwarn.pop(GeneralAvailabilityWarning)
+        assert user_warning.category == GeneralAvailabilityWarning
+        assert user_warning.message.args[0].startswith(
+            "This API is in beta and is subject to change."
+        )
+
+    def test_experimental(self, recwarn):
+
+        @_stability_warning(stability=Stability.EXPERIMENTAL)
+        def func_experimental(*args, **kwargs):
+            pass
+
+        func_experimental()
+
+        assert len(recwarn) == 1
+        user_warning = recwarn.pop(GeneralAvailabilityWarning)
+        assert user_warning.category == GeneralAvailabilityWarning
+        assert user_warning.message.args[0].startswith(
+            "This API is in technical preview and may be changed or removed in a future release."
+        )
+
+    def test_deprecated(self, recwarn):
+
+        @_stability_warning(
+            stability=Stability.DEPRECATED, version="8.4.0", message="Use bar instead."
+        )
+        def func_deprecated(*args, **kwargs):
+            pass
+
+        func_deprecated()
+
+        assert len(recwarn) == 1
+        user_warning = recwarn.pop(DeprecationWarning)
+        assert user_warning.category == DeprecationWarning
+        assert user_warning.message.args[0] == (
+            "This API was deprecated in Elasticsearch 8.4.0. Use bar instead."
+        )
