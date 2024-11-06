@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class MlClient(NamespacedClient):
@@ -2842,6 +2848,11 @@ class MlClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_name="data",
+    )
+    @_stability_warning(
+        Stability.DEPRECATED,
+        version="7.11.0",
+        message="Posting data directly to anomaly detection jobs is deprecated, in a future major version a datafeed will be required.",
     )
     def post_data(
         self,
