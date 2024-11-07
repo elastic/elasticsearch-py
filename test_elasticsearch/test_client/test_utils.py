@@ -60,7 +60,7 @@ class TestStabilityWarning:
 
         func_beta()
 
-        assert len(recwarn) == 1
+        assert len(recwarn) == 1, [w.message for w in recwarn]
         user_warning = recwarn.pop(GeneralAvailabilityWarning)
         assert user_warning.category == GeneralAvailabilityWarning
         assert user_warning.message.args[0].startswith(
@@ -75,7 +75,7 @@ class TestStabilityWarning:
 
         func_experimental()
 
-        assert len(recwarn) == 1
+        assert len(recwarn) == 1, [w.message for w in recwarn]
         user_warning = recwarn.pop(GeneralAvailabilityWarning)
         assert user_warning.category == GeneralAvailabilityWarning
         assert user_warning.message.args[0].startswith(
