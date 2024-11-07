@@ -197,7 +197,7 @@ class TasksClient(NamespacedClient):
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if node_id is not None:
-            __query["node_id"] = node_id
+            __query["nodes"] = node_id
         if parent_task_id is not None:
             __query["parent_task_id"] = parent_task_id
         if pretty is not None:
