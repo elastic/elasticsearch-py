@@ -18,6 +18,8 @@
 
 import warnings
 
+import pytest
+
 from elasticsearch._sync.client.utils import Stability, _quote, _stability_warning
 from elasticsearch.exceptions import GeneralAvailabilityWarning
 
@@ -58,14 +60,11 @@ class TestStabilityWarning:
         def func_beta(*args, **kwargs):
             pass
 
-        func_beta()
-
-        assert len(recwarn) == 1, [w.message for w in recwarn]
-        user_warning = recwarn.pop(GeneralAvailabilityWarning)
-        assert user_warning.category == GeneralAvailabilityWarning
-        assert user_warning.message.args[0].startswith(
-            "This API is in beta and is subject to change."
-        )
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is in beta and is subject to change.",
+        ):
+            func_beta()
 
     def test_experimental(self, recwarn):
 
@@ -73,11 +72,8 @@ class TestStabilityWarning:
         def func_experimental(*args, **kwargs):
             pass
 
-        func_experimental()
-
-        assert len(recwarn) == 1, [w.message for w in recwarn]
-        user_warning = recwarn.pop(GeneralAvailabilityWarning)
-        assert user_warning.category == GeneralAvailabilityWarning
-        assert user_warning.message.args[0].startswith(
-            "This API is in technical preview and may be changed or removed in a future release."
-        )
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is in technical preview and may be changed or removed in a future release.",
+        ):
+            func_experimental()
