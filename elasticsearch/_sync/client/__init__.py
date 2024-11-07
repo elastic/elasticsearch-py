@@ -2494,11 +2494,6 @@ class Elasticsearch(BaseClient):
         ),
         parameter_aliases={"_source": "source"},
     )
-    @_stability_warning(
-        Stability.DEPRECATED,
-        version="8.4.0",
-        message="The kNN search API has been replaced by the `knn` option in the search API.",
-    )
     def knn_search(
         self,
         *,

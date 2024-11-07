@@ -81,20 +81,3 @@ class TestStabilityWarning:
         assert user_warning.message.args[0].startswith(
             "This API is in technical preview and may be changed or removed in a future release."
         )
-
-    def test_deprecated(self, recwarn):
-
-        @_stability_warning(
-            stability=Stability.DEPRECATED, version="8.4.0", message="Use bar instead."
-        )
-        def func_deprecated(*args, **kwargs):
-            pass
-
-        func_deprecated()
-
-        assert len(recwarn) == 1
-        user_warning = recwarn.pop(DeprecationWarning)
-        assert user_warning.category == DeprecationWarning
-        assert user_warning.message.args[0] == (
-            "This API was deprecated in Elasticsearch 8.4.0. Use bar instead."
-        )
