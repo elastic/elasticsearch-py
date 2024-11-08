@@ -115,6 +115,10 @@ class ElasticsearchWarning(TransportWarning):
     """
 
 
+class GeneralAvailabilityWarning(TransportWarning):
+    """Warning that is raised when a feature is not yet GA."""
+
+
 # Aliases for backwards compatibility
 ElasticsearchDeprecationWarning = ElasticsearchWarning
 RequestError = BadRequestError
