@@ -20,12 +20,19 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class RollupClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def delete_job(
         self,
         *,
@@ -66,6 +73,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def get_jobs(
         self,
         *,
@@ -110,6 +118,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def get_rollup_caps(
         self,
         *,
@@ -155,6 +164,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def get_rollup_index_caps(
         self,
         *,
@@ -209,6 +219,7 @@ class RollupClient(NamespacedClient):
         ),
         ignore_deprecated_options={"headers"},
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def put_job(
         self,
         *,
@@ -327,6 +338,7 @@ class RollupClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("aggregations", "aggs", "query", "size"),
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def rollup_search(
         self,
         *,
@@ -397,6 +409,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def start_job(
         self,
         *,
@@ -437,6 +450,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def stop_job(
         self,
         *,
