@@ -1,5 +1,5 @@
 steps:
-  - label: ":elasticsearch: :python: ES Python ({{ matrix.python }}) {{ matrix.nox_session }} "
+  - label: ":elasticsearch: :python: ES Python {{ matrix.python }} {{ matrix.nox_session }} ({{ matrix.connection }})"
     agents:
       provider: "gcp"
     env:
@@ -16,6 +16,7 @@ steps:
           - "3.10"
           - "3.11"
           - "3.12"
+          - "3.13"
         connection:
           - "urllib3"
           - "requests"
@@ -27,7 +28,7 @@ steps:
             connection: "urllib3"
             nox_session: "test_otel"
         - with:
-            python: "3.12"
+            python: "3.13"
             connection: "urllib3"
             nox_session: "test_otel"
     command: ./.buildkite/run-tests
