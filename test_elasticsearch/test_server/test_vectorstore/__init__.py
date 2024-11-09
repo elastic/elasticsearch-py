@@ -69,7 +69,7 @@ class ConsistentFakeEmbeddings(FakeEmbeddings):
             if text not in self.known_texts:
                 self.known_texts.append(text)
             vector = [float(1.0)] * (self.dimensionality - 1) + [
-                float(self.known_texts.index(text))
+                float(self.known_texts.index(text) + 1)
             ]
             out_vectors.append(vector)
         return out_vectors
