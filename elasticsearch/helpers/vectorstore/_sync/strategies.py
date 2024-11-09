@@ -283,10 +283,9 @@ class DenseVectorStrategy(RetrievalStrategy):
     ) -> Dict[str, Any]:
         # Add a query to the knn query.
         # RRF is used to even the score from the knn query and text query
-        # RRF has two optional parameters: {'rank_constant':int, 'window_size':int}
+        # RRF has two optional parameters: {'rank_constant':int, 'rank_window_size':int}
         # https://www.elastic.co/guide/en/elasticsearch/reference/current/rrf.html
-        query_body = {
-            "knn": knn,
+        standard_query = {
             "query": {
                 "bool": {
                     "must": [
@@ -300,14 +299,36 @@ class DenseVectorStrategy(RetrievalStrategy):
                     ],
                     "filter": filter,
                 }
-            },
+            }
         }
 
-        if isinstance(self.rrf, Dict):
-            query_body["rank"] = {"rrf": self.rrf}
-        elif isinstance(self.rrf, bool) and self.rrf is True:
-            query_body["rank"] = {"rrf": {}}
-
+        if self.rrf is False:
+            query_body = {
+                "knn": knn,
+                **standard_query,
+            }
+        else:
+            rrf_options = {}
+            if isinstance(self.rrf, Dict):
+                if "rank_constant" in self.rrf:
+                    rrf_options["rank_constant"] = self.rrf["rank_constant"]
+                if "window_size" in self.rrf:
+                    # 'window_size' was renamed to 'rank_window_size', but we support
+                    # the older name for backwards compatibility
+                    rrf_options["rank_window_size"] = self.rrf["window_size"]
+                if "rank_window_size" in self.rrf:
+                    rrf_options["rank_window_size"] = self.rrf["rank_window_size"]
+            query_body = {
+                "retriever": {
+                    "rrf": {
+                        "retrievers": [
+                            {"standard": standard_query},
+                            {"knn": knn},
+                        ],
+                        **rrf_options,
+                    },
+                },
+            }
         return query_body
 
     def needs_inference(self) -> bool:
