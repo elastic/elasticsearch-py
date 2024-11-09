@@ -49,7 +49,7 @@ def pytest_argv():
 def test(session):
     session.install(".[dev]", env=INSTALL_ENV, silent=False)
 
-    session.run(*pytest_argv())
+    session.run(*pytest_argv(), *session.posargs)
 
 
 @nox.session(python=["3.8", "3.12"])
