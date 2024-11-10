@@ -20,7 +20,7 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import _rewrite_parameters
+from .utils import Stability, _rewrite_parameters, _stability_warning
 
 
 class FeaturesClient(NamespacedClient):
@@ -62,6 +62,7 @@ class FeaturesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def reset_features(
         self,
         *,
