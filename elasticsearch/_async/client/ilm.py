@@ -42,7 +42,7 @@ class IlmClient(NamespacedClient):
         that are currently in use. If the policy is being used to manage any indices,
         the request fails and returns an error.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-delete-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -97,7 +97,7 @@ class IlmClient(NamespacedClient):
         currently executing phase, action, and step. Shows when the index entered each
         one, the definition of the running phase, and information about any failures.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-explain-lifecycle.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to target.
             Supports wildcards (`*`). To target all data streams and indices, use `*`
@@ -159,7 +159,7 @@ class IlmClient(NamespacedClient):
         """
         Retrieves a lifecycle policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-get-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -210,7 +210,7 @@ class IlmClient(NamespacedClient):
         """
         Retrieves the current index lifecycle management (ILM) status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-get-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/status"
@@ -254,7 +254,7 @@ class IlmClient(NamespacedClient):
         data tiers, and optionally deletes one legacy index template.+ Using node roles
         enables ILM to automatically move the indices between data tiers.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-migrate-to-data-tiers.html>`_
 
         :param dry_run: If true, simulates the migration from node attributes based allocation
             filters to data tiers, but does not perform the migration. This provides
@@ -304,17 +304,17 @@ class IlmClient(NamespacedClient):
         *,
         index: str,
         current_step: t.Optional[t.Mapping[str, t.Any]] = None,
+        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Manually moves an index into the specified step and executes that step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-move-to-step.html>`_
 
         :param index: The name of the index whose lifecycle step is to change
         :param current_step:
@@ -322,6 +322,10 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
+        if current_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'current_step'")
+        if next_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'next_step'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/_ilm/move/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
@@ -374,7 +378,7 @@ class IlmClient(NamespacedClient):
         Creates a lifecycle policy. If the specified policy exists, the policy is replaced
         and the policy version is incremented.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-put-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -433,7 +437,7 @@ class IlmClient(NamespacedClient):
         """
         Removes the assigned lifecycle policy and stops managing the specified index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-remove-policy.html>`_
 
         :param index: The name of the index to remove policy on
         """
@@ -473,7 +477,7 @@ class IlmClient(NamespacedClient):
         """
         Retries executing the policy for an index that is in the ERROR step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-retry-policy.html>`_
 
         :param index: The name of the indices (comma-separated) whose failed lifecycle
             step is to be retry
@@ -515,7 +519,7 @@ class IlmClient(NamespacedClient):
         """
         Start the index lifecycle management (ILM) plugin.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-start.html>`_
 
         :param master_timeout:
         :param timeout:
@@ -560,7 +564,7 @@ class IlmClient(NamespacedClient):
         Halts all lifecycle management operations and stops the index lifecycle management
         (ILM) plugin
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-stop.html>`_
 
         :param master_timeout:
         :param timeout:
