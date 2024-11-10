@@ -20,12 +20,19 @@ import typing as t
 from elastic_transport import ObjectApiResponse, TextApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class NodesClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def clear_repositories_metering_archive(
         self,
         *,
@@ -76,6 +83,7 @@ class NodesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def get_repositories_metering_info(
         self,
         *,

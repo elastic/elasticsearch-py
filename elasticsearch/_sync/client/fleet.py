@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class FleetClient(NamespacedClient):
@@ -91,6 +97,7 @@ class FleetClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="searches",
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def msearch(
         self,
         *,
@@ -277,6 +284,7 @@ class FleetClient(NamespacedClient):
             "from": "from_",
         },
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def search(
         self,
         *,
