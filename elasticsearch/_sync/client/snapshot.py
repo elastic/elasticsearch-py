@@ -41,7 +41,7 @@ class SnapshotClient(NamespacedClient):
         Triggers the review of a snapshot repository’s contents and deletes any stale
         data not referenced by existing snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clean-up-snapshot-repo-api.html>`_
 
         :param name: Snapshot repository to clean up.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -95,7 +95,7 @@ class SnapshotClient(NamespacedClient):
         """
         Clones indices from one snapshot into another snapshot in the same repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: The name of the snapshot to clone from
@@ -178,7 +178,7 @@ class SnapshotClient(NamespacedClient):
         """
         Creates a snapshot in a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: Repository for the snapshot.
         :param snapshot: Name of the snapshot. Must be unique in the repository.
@@ -282,7 +282,7 @@ class SnapshotClient(NamespacedClient):
         """
         Creates a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param name: A repository name
         :param repository:
@@ -342,7 +342,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes one or more snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -393,7 +393,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
             are supported.
@@ -467,7 +467,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: Comma-separated list of snapshot repository names used to
             limit the request. Wildcard (*) expressions are supported.
@@ -579,7 +579,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param name: A comma-separated list of repository names
         :param local: Return local information, do not retrieve the state from master
@@ -613,6 +613,84 @@ class SnapshotClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="snapshot.get_repository",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def repository_verify_integrity(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        blob_thread_pool_concurrency: t.Optional[int] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        index_snapshot_verification_concurrency: t.Optional[int] = None,
+        index_verification_concurrency: t.Optional[int] = None,
+        max_bytes_per_sec: t.Optional[str] = None,
+        max_failed_shard_snapshots: t.Optional[int] = None,
+        meta_thread_pool_concurrency: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        snapshot_verification_concurrency: t.Optional[int] = None,
+        verify_blob_contents: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Verifies the integrity of the contents of a snapshot repository
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
+
+        :param name: A repository name
+        :param blob_thread_pool_concurrency: Number of threads to use for reading blob
+            contents
+        :param index_snapshot_verification_concurrency: Number of snapshots to verify
+            concurrently within each index
+        :param index_verification_concurrency: Number of indices to verify concurrently
+        :param max_bytes_per_sec: Rate limit for individual blob verification
+        :param max_failed_shard_snapshots: Maximum permitted number of failed shard snapshots
+        :param meta_thread_pool_concurrency: Number of threads to use for reading metadata
+        :param snapshot_verification_concurrency: Number of snapshots to verify concurrently
+        :param verify_blob_contents: Whether to verify the contents of individual blobs
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_verify_integrity'
+        __query: t.Dict[str, t.Any] = {}
+        if blob_thread_pool_concurrency is not None:
+            __query["blob_thread_pool_concurrency"] = blob_thread_pool_concurrency
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index_snapshot_verification_concurrency is not None:
+            __query["index_snapshot_verification_concurrency"] = (
+                index_snapshot_verification_concurrency
+            )
+        if index_verification_concurrency is not None:
+            __query["index_verification_concurrency"] = index_verification_concurrency
+        if max_bytes_per_sec is not None:
+            __query["max_bytes_per_sec"] = max_bytes_per_sec
+        if max_failed_shard_snapshots is not None:
+            __query["max_failed_shard_snapshots"] = max_failed_shard_snapshots
+        if meta_thread_pool_concurrency is not None:
+            __query["meta_thread_pool_concurrency"] = meta_thread_pool_concurrency
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if snapshot_verification_concurrency is not None:
+            __query["snapshot_verification_concurrency"] = (
+                snapshot_verification_concurrency
+            )
+        if verify_blob_contents is not None:
+            __query["verify_blob_contents"] = verify_blob_contents
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.repository_verify_integrity",
             path_parts=__path_parts,
         )
 
@@ -656,7 +734,7 @@ class SnapshotClient(NamespacedClient):
         """
         Restores a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A snapshot name
@@ -749,7 +827,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about the status of a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -808,7 +886,7 @@ class SnapshotClient(NamespacedClient):
         """
         Verifies a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
 
         :param name: A repository name
         :param master_timeout: Explicit operation timeout for connection to master node

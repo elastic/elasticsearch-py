@@ -57,7 +57,7 @@ class CatClient(NamespacedClient):
         not intended for use by applications. For application consumption, use the aliases
         API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-alias.html>`_
 
         :param name: A comma-separated list of aliases to retrieve. Supports wildcards
             (`*`). To retrieve all aliases, omit this parameter or use `*` or `_all`.
@@ -145,7 +145,7 @@ class CatClient(NamespacedClient):
         disk space. IMPORTANT: cat APIs are only intended for human consumption using
         the command line or Kibana console. They are not intended for use by applications.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-allocation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-allocation.html>`_
 
         :param node_id: Comma-separated list of node identifiers or names used to limit
             the returned information.
@@ -232,7 +232,7 @@ class CatClient(NamespacedClient):
         for use by applications. For application consumption, use the get component template
         API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-component-templates.html>`_
 
         :param name: The name of the component template. Accepts wildcard expressions.
             If omitted, all component templates are returned.
@@ -316,7 +316,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the count API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-count.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -402,7 +402,7 @@ class CatClient(NamespacedClient):
         using the command line or Kibana console. They are not intended for use by applications.
         For application consumption, use the nodes stats API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-fielddata.html>`_
 
         :param fields: Comma-separated list of fields used to limit returned information.
             To retrieve all fields, omit this parameter.
@@ -497,7 +497,7 @@ class CatClient(NamespacedClient):
         across multiple nodes. You also can use the API to track the recovery of a large
         cluster over a longer period of time.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-health.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -574,7 +574,7 @@ class CatClient(NamespacedClient):
         """
         Get CAT help. Returns help for the CAT APIs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -672,7 +672,7 @@ class CatClient(NamespacedClient):
         using the command line or Kibana console. They are not intended for use by applications.
         For application consumption, use an index endpoint.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-indices.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -774,7 +774,7 @@ class CatClient(NamespacedClient):
         command line or Kibana console. They are not intended for use by applications.
         For application consumption, use the nodes info API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-master.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -949,7 +949,7 @@ class CatClient(NamespacedClient):
         For application consumption, use the get data frame analytics jobs statistics
         API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-dfanalytics.html>`_
 
         :param id: The ID of the data frame analytics to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -1123,7 +1123,7 @@ class CatClient(NamespacedClient):
         using the Kibana console or command line. They are not intended for use by applications.
         For application consumption, use the get datafeed statistics API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-datafeeds.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed.
@@ -1496,7 +1496,7 @@ class CatClient(NamespacedClient):
         for use by applications. For application consumption, use the get anomaly detection
         job statistics API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-anomaly-detectors.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
@@ -1685,7 +1685,7 @@ class CatClient(NamespacedClient):
         console or command line. They are not intended for use by applications. For application
         consumption, use the get trained models statistics API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-trained-model.html>`_
 
         :param model_id: A unique identifier for the trained model.
         :param allow_no_match: Specifies what to do when the request: contains wildcard
@@ -1782,7 +1782,7 @@ class CatClient(NamespacedClient):
         are not intended for use by applications. For application consumption, use the
         nodes info API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodeattrs.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-nodeattrs.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1861,7 +1861,7 @@ class CatClient(NamespacedClient):
         are not intended for use by applications. For application consumption, use the
         nodes info API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-nodes.html>`_
 
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
@@ -1946,7 +1946,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the pending cluster tasks API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-pending-tasks.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -2020,7 +2020,7 @@ class CatClient(NamespacedClient):
         They are not intended for use by applications. For application consumption, use
         the nodes info API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-plugins.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -2104,7 +2104,7 @@ class CatClient(NamespacedClient):
         line or Kibana console. They are not intended for use by applications. For application
         consumption, use the index recovery API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-recovery.html>`_
 
         :param index: A comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -2196,7 +2196,7 @@ class CatClient(NamespacedClient):
         are not intended for use by applications. For application consumption, use the
         get snapshot repository API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-repositories.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-repositories.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -2275,7 +2275,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the index segments API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-segments.html>`_
 
         :param index: A comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -2364,7 +2364,7 @@ class CatClient(NamespacedClient):
         for human consumption using the command line or Kibana console. They are not
         intended for use by applications.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-shards.html>`_
 
         :param index: A comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -2452,7 +2452,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the get snapshot API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-snapshots.html>`_
 
         :param repository: A comma-separated list of snapshot repositories used to limit
             the request. Accepts wildcard expressions. `_all` returns all repositories.
@@ -2542,7 +2542,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the task management API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/tasks.html>`_
 
         :param actions: The task action names, which are used to limit the response.
         :param detailed: If `true`, the response includes detailed information about
@@ -2632,7 +2632,7 @@ class CatClient(NamespacedClient):
         console. They are not intended for use by applications. For application consumption,
         use the get index template API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-templates.html>`_
 
         :param name: The name of the template to return. Accepts wildcard expressions.
             If omitted, all templates are returned.
@@ -2718,7 +2718,7 @@ class CatClient(NamespacedClient):
         They are not intended for use by applications. For application consumption, use
         the nodes info API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-thread-pool.html>`_
 
         :param thread_pool_patterns: A comma-separated list of thread pool names used
             to limit the request. Accepts wildcard expressions.
@@ -2973,7 +2973,7 @@ class CatClient(NamespacedClient):
         command line. They are not intended for use by applications. For application
         consumption, use the get transform statistics API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cat-transforms.html>`_
 
         :param transform_id: A transform identifier or a wildcard expression. If you
             do not specify one of these options, the API returns information for all
