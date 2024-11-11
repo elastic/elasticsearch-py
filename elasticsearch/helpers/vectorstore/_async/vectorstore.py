@@ -83,7 +83,10 @@ class AsyncVectorStore:
         # client.options preserves existing (non-user-agent) headers.
         client = client.options(headers={"User-Agent": user_agent})
 
-        if hasattr(retrieval_strategy, "text_field") and retrieval_strategy.text_field is None:
+        if (
+            hasattr(retrieval_strategy, "text_field")
+            and retrieval_strategy.text_field is None
+        ):
             retrieval_strategy.text_field = text_field
 
         self.client = client
