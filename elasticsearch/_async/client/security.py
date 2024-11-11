@@ -617,6 +617,90 @@ class SecurityClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=("access", "name", "expiration", "metadata"),
+    )
+    async def create_cross_cluster_api_key(
+        self,
+        *,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Create a cross-cluster API key. Create an API key of the `cross_cluster` type
+        for the API key based remote cluster access. A `cross_cluster` API key cannot
+        be used to authenticate through the REST interface. IMPORTANT: To authenticate
+        this request you must use a credential that is not an API key. Even if you use
+        an API key that has the required privilege, the API returns an error. Cross-cluster
+        API keys are created by the Elasticsearch API key service, which is automatically
+        enabled. NOTE: Unlike REST API keys, a cross-cluster API key does not capture
+        permissions of the authenticated user. The API key’s effective permission is
+        exactly as specified with the `access` property. A successful request returns
+        a JSON structure that contains the API key, its unique ID, and its name. If applicable,
+        it also returns expiration information for the API key in milliseconds. By default,
+        API keys never expire. You can specify expiration information when you create
+        the API keys. Cross-cluster API keys can only be updated with the update cross-cluster
+        API key API. Attempting to update them with the update REST API key API or the
+        bulk update REST API keys API will result in an error.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/security-api-create-cross-cluster-api-key.html>`_
+
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross-cluster search and cross-cluster replication. At
+            least one of them must be specified. NOTE: No explicit privileges should
+            be specified for either search or replication access. The creation process
+            automatically converts the access specification to a role descriptor which
+            has relevant privileges assigned accordingly.
+        :param name: Specifies the name for this API key.
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage.
+        """
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        if name is None and body is None:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/cross_cluster/api_key"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if name is not None:
+                __body["name"] = name
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.create_cross_cluster_api_key",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def create_service_token(
         self,
@@ -3488,6 +3572,74 @@ class SecurityClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="security.update_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("access", "expiration", "metadata"),
+    )
+    async def update_cross_cluster_api_key(
+        self,
+        *,
+        id: str,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update a cross-cluster API key. Update the attributes of an existing cross-cluster
+        API key, which is used for API key based remote cluster access.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/security-api-update-cross-cluster-api-key.html>`_
+
+        :param id: The ID of the cross-cluster API key to update.
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross cluster search and cross cluster replication. At
+            least one of them must be specified. When specified, the new access assignment
+            fully replaces the previously assigned access.
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire. This property can be omitted to leave the value unchanged.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage. When specified, this information
+            fully replaces metadata previously associated with the API key.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_security/cross_cluster/api_key/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_cross_cluster_api_key",
             path_parts=__path_parts,
         )
 
