@@ -1,7 +1,0 @@
-// docs/update-by-query.asciidoc:12
-
-[source, python]
-----
-resp = client.update_by_query(index="twitter", conflicts="proceed")
-print(resp)
-----

@@ -24,16 +24,19 @@ from .utils import _rewrite_parameters
 
 
 class TextStructureClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_name="text_files",
     )
     def find_structure(
         self,
         *,
-        text_files: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        text_files: t.Optional[t.Sequence[t.Any]] = None,
+        body: t.Optional[t.Sequence[t.Any]] = None,
         charset: t.Optional[str] = None,
         column_names: t.Optional[str] = None,
         delimiter: t.Optional[str] = None,
+        ecs_compatibility: t.Optional[str] = None,
         explain: t.Optional[bool] = None,
         format: t.Optional[str] = None,
         grok_pattern: t.Optional[str] = None,
@@ -42,7 +45,7 @@ class TextStructureClient(NamespacedClient):
         lines_to_sample: t.Optional[int] = None,
         quote: t.Optional[str] = None,
         should_trim_fields: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         timestamp_field: t.Optional[str] = None,
         timestamp_format: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -69,6 +72,8 @@ class TextStructureClient(NamespacedClient):
             default scenario, all rows must have the same number of fields for the delimited
             format to be detected. If you specify a delimiter, up to 10% of the rows
             can have a different number of columns than the first row.
+        :param ecs_compatibility: The mode of compatibility with ECS compliant Grok patterns
+            (disabled or v1, default: disabled).
         :param explain: If this parameter is set to true, the response includes a field
             named explanation, which is an array of strings that indicate how the structure
             finder produced its result.
@@ -116,8 +121,13 @@ class TextStructureClient(NamespacedClient):
             the file
         :param timestamp_format: The Java time format of the timestamp field in the text.
         """
-        if text_files is None:
-            raise ValueError("Empty value passed for parameter 'text_files'")
+        if text_files is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'text_files' and 'body', one of them should be set."
+            )
+        elif text_files is not None and body is not None:
+            raise ValueError("Cannot set both 'text_files' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_text_structure/find_structure"
         __query: t.Dict[str, t.Any] = {}
         if charset is not None:
@@ -126,6 +136,8 @@ class TextStructureClient(NamespacedClient):
             __query["column_names"] = column_names
         if delimiter is not None:
             __query["delimiter"] = delimiter
+        if ecs_compatibility is not None:
+            __query["ecs_compatibility"] = ecs_compatibility
         if explain is not None:
             __query["explain"] = explain
         if format is not None:
@@ -148,11 +160,76 @@ class TextStructureClient(NamespacedClient):
             __query["timestamp_field"] = timestamp_field
         if timestamp_format is not None:
             __query["timestamp_format"] = timestamp_format
-        __body = text_files
+        __body = text_files if text_files is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="text_structure.find_structure",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("grok_pattern", "text"),
+    )
+    def test_grok_pattern(
+        self,
+        *,
+        grok_pattern: t.Optional[str] = None,
+        text: t.Optional[t.Sequence[str]] = None,
+        ecs_compatibility: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Tests a Grok pattern on some text.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/test-grok-pattern.html>`_
+
+        :param grok_pattern: Grok pattern to run on the text.
+        :param text: Lines of text to run the Grok pattern on.
+        :param ecs_compatibility: The mode of compatibility with ECS compliant Grok patterns
+            (disabled or v1, default: disabled).
+        """
+        if grok_pattern is None and body is None:
+            raise ValueError("Empty value passed for parameter 'grok_pattern'")
+        if text is None and body is None:
+            raise ValueError("Empty value passed for parameter 'text'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_text_structure/test_grok_pattern"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if ecs_compatibility is not None:
+            __query["ecs_compatibility"] = ecs_compatibility
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if grok_pattern is not None:
+                __body["grok_pattern"] = grok_pattern
+            if text is not None:
+                __body["text"] = text
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="text_structure.test_grok_pattern",
+            path_parts=__path_parts,
         )

@@ -1,9 +1,0 @@
-// indices/aliases.asciidoc:182
-
-[source, python]
-----
-resp = client.indices.update_aliases(
-    body={"actions": [{"remove": {"index": "test1", "alias": "alias1"}}]},
-)
-print(resp)
-----

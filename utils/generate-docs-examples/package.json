@@ -1,0 +1,19 @@
+{
+  "name": "generate-docs-examples",
+  "version": "1.0.0",
+  "main": "generate-docs-examples.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "description": "",
+  "dependencies": {
+    "@elastic/request-converter": "^8.15.2",
+    "minimist": "^1.2.6",
+    "node-fetch": "^2.6.7",
+    "ora": "^5.4.1",
+    "rimraf": "^3.0.2"
+  }
+}

@@ -16,6 +16,7 @@
 #  under the License.
 
 import pytest
+import pytest_asyncio
 
 import elasticsearch
 
@@ -24,10 +25,8 @@ from ...utils import CA_CERTS, wipe_cluster
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture(scope="function")
-@pytest.mark.usefixtures("sync_client")
+@pytest_asyncio.fixture(scope="function")
 async def async_client(elasticsearch_url):
-    # 'sync_client' fixture is used for the guaranteed wipe_cluster() call.
 
     if not hasattr(elasticsearch, "AsyncElasticsearch"):
         pytest.skip("test requires 'AsyncElasticsearch' and aiohttp to be installed")

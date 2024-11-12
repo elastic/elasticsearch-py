@@ -19,6 +19,7 @@
 
 import collections
 import json
+import os
 import tempfile
 from pathlib import Path
 
@@ -51,7 +52,7 @@ files_to_generate = [
     "docs/index_.asciidoc",
     "aggregations/bucket/terms-aggregation.asciidoc",
     "query-dsl/range-query.asciidoc",
-    "/search/search.asciidoc",
+    "search/search.asciidoc",
     "query-dsl/multi-match-query.asciidoc",
     "docs/bulk.asciidoc",
     "indices/delete-index.asciidoc",
@@ -100,6 +101,94 @@ files_to_generate = [
     "mapping/fields/id-field.asciidoc",
     "search.asciidoc",
     "mapping/params/multi-fields.asciidoc",
+    "cluster/allocation-explain.asciidoc",
+    "cluster/get-settings.asciidoc",
+    "cluster/update-settings.asciidoc",
+    "health/health.asciidoc",
+    "cluster/reroute.asciidoc",
+    "inference/get-inference.asciidoc",
+    "inference/delete-inference.asciidoc",
+    "inference/post-inference.asciidoc",
+    "inference/put-inference.asciidoc",
+    "ml/trained-models/apis/clear-trained-model-deployment-cache.asciidoc",
+    "ml/trained-models/apis/delete-trained-models-aliases.asciidoc",
+    "ml/trained-models/apis/delete-trained-models.asciidoc",
+    "ml/trained-models/apis/get-trained-models-stats.asciidoc",
+    "ml/trained-models/apis/get-trained-models.asciidoc",
+    "ml/trained-models/apis/infer-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/infer-trained-model.asciidoc",
+    "ml/trained-models/apis/put-trained-model-definition-part.asciidoc",
+    "ml/trained-models/apis/put-trained-model-vocabulary.asciidoc",
+    "ml/trained-models/apis/put-trained-models-aliases.asciidoc",
+    "ml/trained-models/apis/put-trained-models.asciidoc",
+    "ml/trained-models/apis/start-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/stop-trained-model-deployment.asciidoc",
+    "ml/trained-models/apis/update-trained-model-deployment.asciidoc",
+    "setup/run-elasticsearch-locally.asciidoc",
+    "setup/important-settings.asciidoc",
+    "setup/secure-settings.asciidoc",
+    "modules/cluster.asciidoc",
+    "modules/cluster/misc.asciidoc",
+    "modules/network.asciidoc",
+    "modules/indices/request_cache.asciidoc",
+    "setup/advanced-configuration.asciidoc",
+    "setup/sysconfig/swap.asciidoc",
+    "setup/sysconfig/file-descriptors.asciidoc",
+    "modules/discovery/voting.asciidoc",
+    "setup/add-nodes.asciidoc",
+    "setup/restart-cluster.asciidoc",
+    "modules/cluster/remote-clusters-api-key.asciidoc",
+    "modules/cluster/remote-clusters-cert.asciidoc",
+    "modules/discovery/voting.asciidoc",
+    "modules/cluster/remote-clusters-migration.asciidoc",
+    "modules/cluster/remote-clusters-troubleshooting.asciidoc",
+    "upgrade/archived-settings.asciidoc",
+    "index-modules/allocation/filtering.asciidoc",
+    "index-modules/allocation/delayed.asciidoc",
+    "index-modules/allocation/prioritization.asciidoc",
+    "index-modules/allocation/total_shards.asciidoc",
+    "index-modules/allocation/data_tier_allocation.asciidoc",
+    "index-modules/blocks.asciidoc",
+    "index-modules/similarity.asciidoc",
+    "index-modules/slowlog.asciidoc",
+    "index-modules/store.asciidoc",
+    "index-modules/index-sorting.asciidoc",
+    "index-modules/indexing-pressure.asciidoc",
+    "mapping/dynamic-mapping.asciidoc",
+    "mapping/dynamic/field-mapping.asciidoc",
+    "mapping/dynamic/templates.asciidoc",
+    "mapping/explicit-mapping.asciidoc",
+    "mapping/runtime.asciidoc",
+    "mapping/runtime.asciidoc",
+    "mapping/types.asciidoc",
+    "mapping/types/aggregate-metric-double.asciidoc",
+    "mapping/types/alias.asciidoc",
+    "mapping/types/array.asciidoc",
+    "mapping/types/binary.asciidoc",
+    "mapping/types/boolean.asciidoc",
+    "mapping/types/completion.asciidoc",
+    "mapping/types/date_nanos.asciidoc",
+    "mapping/types/dense-vector.asciidoc",
+    "mapping/types/flattened.asciidoc",
+    "mapping/types/geo-point.asciidoc",
+    "mapping/types/geo-shape.asciidoc",
+    "mapping/types/histogram.asciidoc",
+    "mapping/types/ip.asciidoc",
+    "mapping/types/parent-join.asciidoc",
+    "mapping/types/object.asciidoc",
+    "mapping/types/percolator.asciidoc",
+    "mapping/types/point.asciidoc",
+    "mapping/types/range.asciidoc",
+    "mapping/types/rank-feature.asciidoc",
+    "mapping/types/rank-features.asciidoc",
+    "mapping/types/search-as-you-type.asciidoc",
+    "mapping/types/semantic-text.asciidoc",
+    "mapping/types/shape.asciidoc",
+    "mapping/types/sparse-vector.asciidoc",
+    "mapping/types/text.asciidoc",
+    "mapping/types/token-count.asciidoc",
+    "mapping/types/unsigned_long.asciidoc",
+    "mapping/types/version.asciidoc",
 ]
 
 
@@ -109,7 +198,7 @@ ParsedSource = collections.namedtuple("ParsedSource", ["api", "params", "body"])
 def blacken(filename):
     runner = CliRunner()
     result = runner.invoke(
-        black.main, [str(filename), "--line-length=75", "--target-version=py27"]
+        black.main, [str(filename), "--line-length=75", "--target-version=py37"]
     )
     assert result.exit_code == 0, result.output
 
@@ -154,16 +243,21 @@ def main():
                 )
             )
 
-        tmp_path = Path(tempfile.mktemp())
-        with tmp_path.open(mode="w") as f:
-            f.write(t.render(parsed_sources=parsed_sources))
+        with tempfile.NamedTemporaryFile("w+", delete=False) as tmp_file:
+            tmp_file.write(t.render(parsed_sources=parsed_sources))
 
-        blacken(tmp_path)
+        try:
+            blacken(tmp_file.name)
+        except AssertionError:
+            loc = exm["source_location"]
+            print(f"Failed to format {loc['file']}:{loc['line']}, skipping.")
+            continue
 
-        with tmp_path.open(mode="r") as f:
+        with open(tmp_file.name) as f:
             data = f.read()
-        data = data.rstrip().replace(",)", ")")
-        tmp_path.unlink()
+            data = data.rstrip().replace(",)", ")")
+
+        os.unlink(tmp_file.name)
 
         with (asciidocs_dir / f"{exm['digest']}.asciidoc").open(mode="w") as f:
             f.truncate()

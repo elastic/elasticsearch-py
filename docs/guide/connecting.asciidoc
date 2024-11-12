@@ -251,22 +251,20 @@ or via the per-request `.options()` method:
 from elasticsearch import Elasticsearch
 
 # Authenticate from the constructor
-es = Elasticsearch(
+client = Elasticsearch(
     "https://localhost:9200",
     ca_certs="/path/to/http_ca.crt",
     basic_auth=("username", "password")
 )
 
 # Authenticate via the .options() method:
-es.options(
+client.options(
     basic_auth=("username", "password")
 ).indices.get(index="*")
 
 # You can persist the authenticated client to use
 # later or use for multiple API calls:
-auth_client = es.options(
-    api_key=("api-key-id", "api-key-secret")
-)
+auth_client = client.options(api_key="api_key")
 for i in range(10):
     auth_client.index(
         index="example-index",
@@ -287,7 +285,7 @@ username and password within a tuple:
 from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: Basic <base64 username:password>'
-es = Elasticsearch(
+client = Elasticsearch(
     "https://localhost:9200",
     ca_certs="/path/to/http_ca.crt",
     basic_auth=("username", "password")
@@ -301,15 +299,15 @@ es = Elasticsearch(
 
 HTTP Bearer authentication uses the `bearer_auth` parameter by passing the token
 as a string. This authentication method is used by 
-https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html[Service Account Tokens]
-and https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html[Bearer Tokens].
+https://www.elastic.co/guide/en/elasticsearch/reference/{branch}/security-api-create-service-token.html[Service Account Tokens]
+and https://www.elastic.co/guide/en/elasticsearch/reference/{branch}/security-api-get-token.html[Bearer Tokens].
 
 [source,python]
 ----
 from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: Bearer token-value'
-es = Elasticsearch(
+client = Elasticsearch(
     "https://localhost:9200",
     bearer_auth="token-value"
 )
@@ -320,19 +318,20 @@ es = Elasticsearch(
 [[auth-apikey]]
 ==== API Key authentication
 
-You can configure the client to use {es}'s API Key for connecting to your 
-cluster. Note that you need the values of `id` and `api_key` to
-https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[authenticate via an API Key].
+You can configure the client to use {es}'s API Key for connecting to your
+cluster. These can be generated through the
+https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[Elasticsearch Create API key API]
+or https://www.elastic.co/guide/en/kibana/current/api-keys.html#create-api-key[Kibana Stack Management].
 
 [source,python]
 ----
 from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: ApiKey <base64 api_key.id:api_key.api_key>'
-es = Elasticsearch(
+client = Elasticsearch(
     "https://localhost:9200",
     ca_certs="/path/to/http_ca.crt",
-    api_key=("api_key.id", "api_key.api_key")
+    api_key="api_key",
 )
 ----
 

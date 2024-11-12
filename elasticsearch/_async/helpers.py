@@ -133,11 +133,11 @@ def aiter(x: Union[Iterable[T], AsyncIterable[T]]) -> AsyncIterator[T]:
     if hasattr(x, "__anext__"):
         return x  # type: ignore[return-value]
     elif hasattr(x, "__aiter__"):
-        return x.__aiter__()  # type: ignore[union-attr]
+        return x.__aiter__()
 
     async def f() -> AsyncIterable[T]:
         nonlocal x
-        ix: Iterable[T] = x  # type: ignore[assignment]
+        ix: Iterable[T] = x
         for item in ix:
             yield item
 
@@ -183,7 +183,6 @@ async def async_streaming_bulk(
     *args: Any,
     **kwargs: Any,
 ) -> AsyncIterable[Tuple[bool, Dict[str, Any]]]:
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -242,7 +241,6 @@ async def async_streaming_bulk(
     async for bulk_data, bulk_actions in _chunk_actions(
         map_actions(), chunk_size, max_chunk_bytes, serializer
     ):
-
         for attempt in range(max_retries + 1):
             to_retry: List[bytes] = []
             to_retry_data: List[
@@ -276,7 +274,6 @@ async def async_streaming_bulk(
                         **kwargs,
                     ),
                 ):
-
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we are not in the last attempt,
@@ -413,7 +410,7 @@ async def async_scan(
     .. code-block:: python
 
         async_scan(
-            es,
+            client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*"
         )
@@ -463,7 +460,7 @@ async def async_scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = await client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
+        resp = await client.search(body=query, **search_kwargs)
 
     scroll_id: Optional[str] = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
@@ -524,7 +521,6 @@ async def async_reindex(
     scan_kwargs: MutableMapping[str, Any] = {},
     bulk_kwargs: MutableMapping[str, Any] = {},
 ) -> Tuple[int, Union[int, List[Any]]]:
-
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.

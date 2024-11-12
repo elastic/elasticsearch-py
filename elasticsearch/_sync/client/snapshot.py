@@ -24,24 +24,22 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SnapshotClient(NamespacedClient):
+
     @_rewrite_parameters()
     def cleanup_repository(
         self,
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes stale data from repository.
+        Triggers the review of a snapshot repository’s contents and deletes any stale
+        data not referenced by existing snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
 
@@ -51,7 +49,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}/_cleanup"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_cleanup'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -67,11 +66,16 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.cleanup_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("indices",),
     )
     def clone(
         self,
@@ -79,17 +83,14 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         target_snapshot: str,
-        indices: str,
+        indices: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Clones indices from one snapshot into another snapshot in the same repository.
@@ -109,13 +110,16 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         if target_snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target_snapshot'")
-        if indices is None:
+        if indices is None and body is None:
             raise ValueError("Empty value passed for parameter 'indices'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_clone/{_quote(target_snapshot)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+            "target_snapshot": _quote(target_snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_clone/{__path_parts["target_snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
-        if indices is not None:
-            __body["indices"] = indices
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -128,13 +132,29 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if indices is not None:
+                __body["indices"] = indices
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.clone",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "feature_states",
+            "ignore_unavailable",
+            "include_global_state",
+            "indices",
+            "metadata",
+            "partial",
+        ),
     )
     def create(
         self,
@@ -142,23 +162,18 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         partial: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a snapshot in a repository.
@@ -200,62 +215,68 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if feature_states is not None:
-            __body["feature_states"] = feature_states
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ignore_unavailable is not None:
-            __body["ignore_unavailable"] = ignore_unavailable
-        if include_global_state is not None:
-            __body["include_global_state"] = include_global_state
-        if indices is not None:
-            __body["indices"] = indices
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if metadata is not None:
-            __body["metadata"] = metadata
-        if partial is not None:
-            __body["partial"] = partial
         if pretty is not None:
             __query["pretty"] = pretty
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if feature_states is not None:
+                __body["feature_states"] = feature_states
+            if ignore_unavailable is not None:
+                __body["ignore_unavailable"] = ignore_unavailable
+            if include_global_state is not None:
+                __body["include_global_state"] = include_global_state
+            if indices is not None:
+                __body["indices"] = indices
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if partial is not None:
+                __body["partial"] = partial
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_name="repository",
     )
     def create_repository(
         self,
         *,
         name: str,
-        settings: t.Mapping[str, t.Any],
-        type: str,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
-        pretty: t.Optional[bool] = None,
         repository: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         verify: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -264,26 +285,22 @@ class SnapshotClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :param name: A repository name
-        :param settings:
-        :param type:
-        :param master_timeout: Explicit operation timeout for connection to master node
         :param repository:
+        :param master_timeout: Explicit operation timeout for connection to master node
         :param timeout: Explicit operation timeout
         :param verify: Whether to verify the repository after creation
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if settings is None:
-            raise ValueError("Empty value passed for parameter 'settings'")
-        if type is None:
-            raise ValueError("Empty value passed for parameter 'type'")
-        __path = f"/_snapshot/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
+        if repository is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'repository' and 'body', one of them should be set."
+            )
+        elif repository is not None and body is not None:
+            raise ValueError("Cannot set both 'repository' and 'body'")
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
-        if settings is not None:
-            __body["settings"] = settings
-        if type is not None:
-            __body["type"] = type
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -294,15 +311,20 @@ class SnapshotClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if repository is not None:
-            __body["repository"] = repository
         if timeout is not None:
             __query["timeout"] = timeout
         if verify is not None:
             __query["verify"] = verify
+        __body = repository if repository is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.create_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -312,13 +334,9 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -334,7 +352,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -348,24 +370,25 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def delete_repository(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a repository.
@@ -379,7 +402,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -395,7 +419,12 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.delete_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -403,30 +432,34 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: str,
-        snapshot: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        snapshot: t.Union[str, t.Sequence[str]],
         after: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_sort_value: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_repository: t.Optional[bool] = None,
         index_details: t.Optional[bool] = None,
         index_names: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         offset: t.Optional[int] = None,
-        order: t.Optional[t.Union["t.Literal['asc', 'desc']", str]] = None,
+        order: t.Optional[t.Union[str, t.Literal["asc", "desc"]]] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         slm_policy_filter: t.Optional[str] = None,
         sort: t.Optional[
             t.Union[
-                "t.Literal['duration', 'failed_shard_count', 'index_count', 'name', 'repository', 'shard_count', 'start_time']",
                 str,
+                t.Literal[
+                    "duration",
+                    "failed_shard_count",
+                    "index_count",
+                    "name",
+                    "repository",
+                    "shard_count",
+                    "start_time",
+                ],
             ]
         ] = None,
         verbose: t.Optional[bool] = None,
@@ -481,7 +514,11 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}'
         __query: t.Dict[str, t.Any] = {}
         if after is not None:
             __query["after"] = after
@@ -519,23 +556,24 @@ class SnapshotClient(NamespacedClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_repository(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -548,9 +586,12 @@ class SnapshotClient(NamespacedClient):
             node (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(name)}"
+            __path_parts = {"repository": _quote(name)}
+            __path = f'/_snapshot/{__path_parts["repository"]}'
         else:
+            __path_parts = {}
             __path = "/_snapshot"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -567,11 +608,27 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.get_repository",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "feature_states",
+            "ignore_index_settings",
+            "ignore_unavailable",
+            "include_aliases",
+            "include_global_state",
+            "index_settings",
+            "indices",
+            "partial",
+            "rename_pattern",
+            "rename_replacement",
+        ),
     )
     def restore(
         self,
@@ -579,28 +636,22 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        ignore_index_settings: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        ignore_index_settings: t.Optional[t.Sequence[str]] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_aliases: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
         index_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         partial: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rename_pattern: t.Optional[str] = None,
         rename_replacement: t.Optional[str] = None,
         wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Restores a snapshot.
@@ -609,6 +660,7 @@ class SnapshotClient(NamespacedClient):
 
         :param repository: A repository name
         :param snapshot: A snapshot name
+        :param feature_states:
         :param ignore_index_settings:
         :param ignore_unavailable:
         :param include_aliases:
@@ -626,46 +678,59 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'repository'")
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
-        __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_restore"
+        __path_parts: t.Dict[str, str] = {
+            "repository": _quote(repository),
+            "snapshot": _quote(snapshot),
+        }
+        __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_restore'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if ignore_index_settings is not None:
-            __body["ignore_index_settings"] = ignore_index_settings
-        if ignore_unavailable is not None:
-            __body["ignore_unavailable"] = ignore_unavailable
-        if include_aliases is not None:
-            __body["include_aliases"] = include_aliases
-        if include_global_state is not None:
-            __body["include_global_state"] = include_global_state
-        if index_settings is not None:
-            __body["index_settings"] = index_settings
-        if indices is not None:
-            __body["indices"] = indices
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if partial is not None:
-            __body["partial"] = partial
         if pretty is not None:
             __query["pretty"] = pretty
-        if rename_pattern is not None:
-            __body["rename_pattern"] = rename_pattern
-        if rename_replacement is not None:
-            __body["rename_replacement"] = rename_replacement
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if feature_states is not None:
+                __body["feature_states"] = feature_states
+            if ignore_index_settings is not None:
+                __body["ignore_index_settings"] = ignore_index_settings
+            if ignore_unavailable is not None:
+                __body["ignore_unavailable"] = ignore_unavailable
+            if include_aliases is not None:
+                __body["include_aliases"] = include_aliases
+            if include_global_state is not None:
+                __body["include_global_state"] = include_global_state
+            if index_settings is not None:
+                __body["index_settings"] = index_settings
+            if indices is not None:
+                __body["indices"] = indices
+            if partial is not None:
+                __body["partial"] = partial
+            if rename_pattern is not None:
+                __body["rename_pattern"] = rename_pattern
+            if rename_replacement is not None:
+                __body["rename_replacement"] = rename_replacement
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="snapshot.restore",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -673,18 +738,12 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: t.Optional[str] = None,
-        snapshot: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        snapshot: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -698,11 +757,18 @@ class SnapshotClient(NamespacedClient):
             to false which means a SnapshotMissingException is thrown
         :param master_timeout: Explicit operation timeout for connection to master node
         """
+        __path_parts: t.Dict[str, str]
         if repository not in SKIP_IN_PATH and snapshot not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_status"
+            __path_parts = {
+                "repository": _quote(repository),
+                "snapshot": _quote(snapshot),
+            }
+            __path = f'/_snapshot/{__path_parts["repository"]}/{__path_parts["snapshot"]}/_status'
         elif repository not in SKIP_IN_PATH:
-            __path = f"/_snapshot/{_quote(repository)}/_status"
+            __path_parts = {"repository": _quote(repository)}
+            __path = f'/_snapshot/{__path_parts["repository"]}/_status'
         else:
+            __path_parts = {}
             __path = "/_snapshot/_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -719,7 +785,12 @@ class SnapshotClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -728,15 +799,11 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Verifies a repository.
@@ -749,7 +816,8 @@ class SnapshotClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_snapshot/{_quote(name)}/_verify"
+        __path_parts: t.Dict[str, str] = {"repository": _quote(name)}
+        __path = f'/_snapshot/{__path_parts["repository"]}/_verify'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -765,5 +833,10 @@ class SnapshotClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="snapshot.verify_repository",
+            path_parts=__path_parts,
         )

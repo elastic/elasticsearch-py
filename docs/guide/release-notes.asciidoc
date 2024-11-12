@@ -1,6 +1,29 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-15-0>>
+* <<rn-8-14-0>>
+* <<rn-8-13-2>>
+* <<rn-8-13-1>>
+* <<rn-8-13-0>>
+* <<rn-8-12-1>>
+* <<rn-8-12-0>>
+* <<rn-8-11-1>>
+* <<rn-8-11-0>>
+* <<rn-8-10-1>>
+* <<rn-8-10-0>>
+* <<rn-8-9-0>>
+* <<rn-8-8-1>>
+* <<rn-8-8-0>>
+* <<rn-8-7-0>>
+* <<rn-8-6-2>>
+* <<rn-8-6-1>>
+* <<rn-8-6-0>>
+* <<rn-8-5-3>>
+* <<rn-8-5-2>>
+* <<rn-8-5-1>>
+* <<rn-8-5-0>>
+* <<rn-8-4-3>>
 * <<rn-8-4-2>>
 * <<rn-8-4-1>>
 * <<rn-8-4-0>>
@@ -16,6 +39,259 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-15-0]]
+=== 8.15.0 (2024-08-09)
+
+- Added the Connector API (https://github.com/elastic/elasticsearch-py/pull/2623[#2623])
+- Added support for https://www.elastic.co/guide/en/elasticsearch/reference/master/semantic-text.html[semantic_text] and https://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-semantic-query.html[semantic query].
+- Added support for sequences of job id, model id and tags where applicable in ML APIs
+- Added `dry_run` and `force` parameters to the Perform inference API
+- Added optional Arrow deserialization support (https://github.com/elastic/elasticsearch-py/pull/2632[#2632])
+- Merged Query Ruleset API into new Query Rules API (https://github.com/elastic/elasticsearch-py/pull/2607[#2607])
+- Added mapping code examples (https://github.com/elastic/elasticsearch-py/pull/2596[#2596])
+- Fixed reference docs (https://github.com/elastic/elasticsearch-py/pull/2629[#2629])
+- Dropped Python 3.7 support (https://github.com/elastic/elasticsearch-py/pull/2618[#2618])
+
+[discrete]
+[[rn-8-14-0]]
+=== 8.14.0 (2024-06-06)
+
+- Fixed `node_pool_class` override (#2581, contributed by Tallak Hellebust)
+- Added `retriever` to the Search API
+- Added `deprecated` and removed `allow_auto_create` from the Create or update component template API
+- Added `allow_auto_create`, `cause`, `deprecated`, `ignore_missing_component_templates` and `master_timeout` to the Create or update index template API
+- Added `cause`, removed `flat_settings` and `timeout` from the Create or update index template legacy API
+- Removed various unsupported parameters from the Simulate index API
+- Added various supported paramters to the Simulate index template API
+- Added the `completion` and `rerank` task types to the Inference APIs
+- Added the `query` and `timeout` parameters to the Perform inference API
+- Added `typed_keys` to the Search Application Search API
+- Added `with_profile_uid` to the Get API key information and Query API key information APIs
+
+
+[discrete]
+[[rn-8-13-2]]
+=== 8.13.2 (2024-05-24)
+
+- Added the `ml.update_trained_model_deployment` API
+- Marked Requests 2.32.2 as incompatible with the Elasticsearch client
+
+[discrete]
+[[rn-8-13-1]]
+=== 8.13.1 (2024-05-03)
+
+- Added `force_synthetic_source` to the Get API
+- Added `wait_for_completion` to the Create trained model API
+- Added `typed_keys` to the Query API key information API
+
+[discrete]
+[[rn-8-13-0]]
+=== 8.13.0 (2024-03-22)
+
+- Added native OpenTelemetry support
+- Added optional `orjson` (a fast, correct JSON library) serialization support
+- Added the `text_structure.test_grok_pattern` API
+- Added the `indices.resolve_cluster` API
+- Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
+- Changed all `synonyms` APIs from **experimental** to **stable**.
+- Fixed API key documentation
+
+[discrete]
+[[rn-8-12-1]]
+=== 8.12.1 (2024-02-22)
+
+- Fixed but deprecated parameter aliases in body parameter
+- Added mappings and bulk to quickstart page
+
+[discrete]
+[[rn-8-12-0]]
+=== 8.12.0 (2024-01-19)
+
+- Dropped support for Python 3.6
+- Allowed unrestricted `body` parameter again
+- Added the Inference APIs
+- Added the ES|QL API
+- Added `active_only` parameter to `security.get_api_key` API
+- Added `expiration` parameter to `security.update_api_key` API
+
+[discrete]
+[[rn-8-11-1]]
+=== 8.11.1 (2023-12-08)
+
+- Added missing `role_templates` to `security.put_role_mapping` API
+- Added interactive examples page to documentation
+- Changed API reference to have one page per sub-client
+
+[discrete]
+[[rn-8-11-0]]
+=== 8.11.0 (2023-11-13)
+
+- Support Python 3.12
+- Added missing `scores` parameter to create trained model vocabulary API
+- Added missing `delete_dest_index` parameter to delete transform API
+
+[discrete]
+[[rn-8-10-1]]
+=== 8.10.1 (2023-10-13)
+
+- Removed deprecation warnings when using `body` parameter
+- Fixed some type hints to use covariant Sequence instead of invariant List
+
+[discrete]
+[[rn-8-10-0]]
+=== 8.10.0 (2023-09-22)
+
+- Added the Query rules APIs
+- Added the Synonyms APIs
+
+[discrete]
+[[rn-8-9-0]]
+=== 8.9.0 (2023-08-10)
+
+- Added the `cluster.info` API
+- Updated the `inference_config` argument in `ml.put_trained_model` API to reflect an improvement in the specification
+
+[discrete]
+[[rn-8-8-1]]
+=== 8.8.1 (2023-07-06)
+
+* Added the `rank` parameter to the `search` API
+
+[discrete]
+[[rn-8-8-0]]
+=== 8.8.0 (2023-05-25)
+
+* Added `include_defaults` parameter to the `cluster.get_component_template`, `indices.get_data_stream`, and `indices.get_index_template` API
+* Added the `indices.delete_data_lifecycle`, `indices.explain_data_lifecycle`, `indices.get_data_lifecycle`, and `indices.put_data_lifecycle` APIs
+* Added the **experimental** `search_application.delete`, `search_application.delete_behavioral_analytics`, `search_application.get`, `search_application.get_behavioral_analytics`, `search_application.list`, `search_application.put`, `search_application.put_behavioral_analytics`, and `search_application.search` APIs.
+
+[discrete]
+[[rn-8-7-0]]
+=== 8.7.0 (2023-04-06)
+
+* Added the `health_report` API
+* Added the `transform.schedule_now_transform` API
+* Added the `from_` request parameter to the `transform.start_transform` API
+* Added the `buffer`, `grid_agg`, and `with_labels` parameters to the `search_mvt` API
+* Added the `allow_auto_create` parameter to the `cluster.create_component_template` API
+* Added the `delete_user_annotations` parameter to the `ml.delete_job`, `ml.reset_job` API
+* Added the `start` and `end` parameters to the `ml.preview_datafeed` API
+* Added the `priority` parameter to the `ml.start_datafeed` API
+* Added the `job_id` parameter to the `ml.update_datafeed` API
+* Added the `model_prune_window` parameter to the `ml.update_job` API
+* Added the `feature_states` parameter to the `snapshot.restore_snapshot` API
+* Added the `timeout` parameter to the `transform.get_transform_stats` API
+* Added the `from_` parameter to the `transform.start_transform` API
+* Changed the `input` parameter of the `ml.put_trained_models` API from required to optional
+* Fixed the `cluster.create_component_template` API by removing the erroneously provided `aliases`, `mappings`, and `settings` parameters. Only the `template` parameter should be used for specifying component templates.
+
+[discrete]
+[[rn-8-6-2]]
+=== 8.6.2 (2023-02-16)
+
+* Client is compatible with Elasticsearch 8.6.2
+
+[discrete]
+[[rn-8-6-1]]
+=== 8.6.1 (2023-01-27)
+
+* Client is compatible with Elasticsearch 8.6.1
+
+[discrete]
+==== Core
+
+* Added the `expand_wildcards`, `preference`, and `routing` parameters to the `open_point_in_time` API.
+
+[discrete]
+[[rn-8-6-0]]
+=== 8.6.0 (2023-01-10)
+
+* Client is compatible with Elasticsearch 8.6.0
+
+[discrete]
+==== Core
+
+* Changed the `fields` parameter of the `field_caps` API to be encoded in the HTTP request body.
+* Changed the `index` parameter of the `rank_eval` API to be optional.
+* Changed the `requests` parameter of the `rank_eval` API to be optional.
+
+[discrete]
+==== CAT
+
+* Added the `time` parameter to the `cat.indices` API
+
+[discrete]
+==== Machine Learning
+
+* Fixed the `model_id` parameter of the `ml.clear_trained_model_deployment_cache` API to be required.
+
+[discrete]
+[[rn-8-5-3]]
+=== 8.5.3 (2022-12-08)
+
+* Client is compatible with Elasticsearch 8.5.3
+
+[discrete]
+[[rn-8-5-2]]
+=== 8.5.2 (2022-11-23)
+
+* Client is compatible with Elasticsearch 8.5.2
+
+[discrete]
+[[rn-8-5-1]]
+=== 8.5.1 (2022-11-21)
+
+* Client is compatible with Elasticsearch 8.5.1
+
+[discrete]
+[[rn-8-5-0]]
+=== 8.5.0 (2022-11-2)
+
+[discrete]
+==== Indices
+
+* Added the **experimental** `indices.downsample` API
+
+[discrete]
+==== Rollup
+
+* Removed the deprecated `rollup.rollup` API.
+
+[discrete]
+==== Snapshot
+
+* Added the `index_names` parameter to the `snapshot.get` API.
+
+[discrete]
+==== Machine Learning
+
+* Added the **beta** `ml.clear_trained_model_deployment_cache` API.
+* Changed the `ml.put_trained_model_definition_part` API from **experimental** to **stable**.
+* Changed the `ml.put_trained_model_vocabulary` API from **experimental** to **stable**.
+* Changed the `ml.start_trained_model_deployment` API from **experimental** to **stable**.
+* Changed the `ml.stop_trained_model_deployment` API from **experimental** to **stable**.
+
+[discrete]
+==== Security
+
+* Added the `with_limited_by` parameter to the `get_api_key` API.
+* Added the `with_limited_by` parameter to the `query_api_keys` API.
+* Added the `with_profile_uid` parameter to the `get_user` API.
+* Changed the `security.activate_user_profile` API from **beta** to **stable**.
+* Changed the `security.disable_user_profile` API from **beta** to **stable**.
+* Changed the `security.enable_user_profile` API from **beta** to **stable**.
+* Changed the `security.get_user_profile` API from **beta** to **stable**.
+* Changed the `security.suggest_user_profiles` API from **beta** to **stable**.
+* Changed the `security.update_user_profile_data` API from **beta** to **stable**.
+* Changed the `security.has_privileges_user_profile` API from **experimental** to **stable**.
+
+[discrete]
+[[rn-8-4-3]]
+=== 8.4.3 (2022-10-06)
+
+* Client is compatible with Elasticsearch 8.4.3
 
 [discrete]
 [[rn-8-4-2]]

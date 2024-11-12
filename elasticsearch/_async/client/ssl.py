@@ -24,14 +24,13 @@ from .utils import _rewrite_parameters
 
 
 class SslClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def certificates(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -41,6 +40,7 @@ class SslClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ssl/certificates"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -53,5 +53,10 @@ class SslClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ssl.certificates",
+            path_parts=__path_parts,
         )

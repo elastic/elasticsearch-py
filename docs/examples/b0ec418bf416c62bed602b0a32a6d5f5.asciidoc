@@ -1,7 +1,0 @@
-// indices/aliases.asciidoc:435
-
-[source, python]
-----
-resp = client.index(index="alias1", id="1", body={"foo": "bar"})
-print(resp)
-----

@@ -1,7 +1,0 @@
-// indices/delete-index.asciidoc:10
-
-[source, python]
-----
-resp = client.indices.delete(index="twitter")
-print(resp)
-----

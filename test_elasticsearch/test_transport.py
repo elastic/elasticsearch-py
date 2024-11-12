@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -22,7 +21,13 @@ import warnings
 from typing import Any, Dict, Optional, Union
 
 import pytest
-from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
+from elastic_transport import (
+    ApiResponseMeta,
+    BaseNode,
+    HttpHeaders,
+    NodeConfig,
+    NodePool,
+)
 from elastic_transport._node import NodeApiResponse
 from elastic_transport.client_utils import DEFAULT
 
@@ -62,6 +67,14 @@ class DummyNode(BaseNode):
             ),
             self.resp_data,
         )
+
+
+class NoTimeoutConnectionPool(NodePool):
+    def mark_dead(self, connection):
+        pass
+
+    def mark_live(self, connection):
+        pass
 
 
 CLUSTER_NODES = """{
@@ -223,6 +236,20 @@ class TestTransport:
         assert calls[0][0] == ("GET", "/")
         assert calls[0][1]["headers"]["user-agent"] == "my-custom-value/1.2.3"
 
+    def test_request_with_custom_user_agent_header_set_at_client_level(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            headers={"User-Agent": "my-custom-value/1.2.3"},
+        )
+
+        client.info()
+        calls = client.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        assert calls[0][0] == ("GET", "/")
+        assert calls[0][1]["headers"]["user-agent"] == "my-custom-value/1.2.3"
+
     def test_client_meta_header(self):
         client = Elasticsearch("http://localhost:9200", node_class=DummyNode)
         client.info()
@@ -283,7 +310,7 @@ class TestTransport:
         assert dt is client.transport.node_pool.dead_node_backoff_factor
 
     def test_custom_node_class(self):
-        class MyConnection(object):
+        class MyConnection:
             def __init__(self, *_, **__):
                 pass
 
@@ -361,6 +388,27 @@ class TestTransport:
 
         assert len(client.transport.node_pool._alive_nodes) == 1
         assert len(client.transport.node_pool._dead_consecutive_failures) == 1
+
+    def test_override_mark_dead_mark_live(self):
+        client = Elasticsearch(
+            [
+                NodeConfig("http", "localhost", 9200),
+                NodeConfig("http", "localhost", 9201),
+            ],
+            node_class=DummyNode,
+            node_pool_class=NoTimeoutConnectionPool,
+        )
+        node1 = client.transport.node_pool.get()
+        node2 = client.transport.node_pool.get()
+        assert node1 is not node2
+        client.transport.node_pool.mark_dead(node1)
+        client.transport.node_pool.mark_dead(node2)
+        assert len(client.transport.node_pool._alive_nodes) == 2
+
+        client.info()
+
+        assert len(client.transport.node_pool._alive_nodes) == 2
+        assert len(client.transport.node_pool._dead_consecutive_failures) == 0
 
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],

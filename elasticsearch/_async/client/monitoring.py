@@ -24,22 +24,20 @@ from .utils import _rewrite_parameters
 
 
 class MonitoringClient(NamespacedClient):
+
     @_rewrite_parameters(
         body_name="operations",
     )
     async def bulk(
         self,
         *,
-        interval: t.Union["t.Literal[-1]", "t.Literal[0]", str],
-        operations: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        interval: t.Union[str, t.Literal[-1], t.Literal[0]],
+        operations: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         system_api_version: str,
         system_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -55,12 +53,17 @@ class MonitoringClient(NamespacedClient):
         """
         if interval is None:
             raise ValueError("Empty value passed for parameter 'interval'")
-        if operations is None:
-            raise ValueError("Empty value passed for parameter 'operations'")
+        if operations is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'operations' and 'body', one of them should be set."
+            )
+        elif operations is not None and body is not None:
+            raise ValueError("Cannot set both 'operations' and 'body'")
         if system_api_version is None:
             raise ValueError("Empty value passed for parameter 'system_api_version'")
         if system_id is None:
             raise ValueError("Empty value passed for parameter 'system_id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_monitoring/bulk"
         __query: t.Dict[str, t.Any] = {}
         if interval is not None:
@@ -77,11 +80,17 @@ class MonitoringClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = operations
+        __body = operations if operations is not None else body
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="monitoring.bulk",
+            path_parts=__path_parts,
         )

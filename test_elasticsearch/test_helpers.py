@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -75,7 +74,7 @@ class TestParallelBulk:
                 chunk_size=2,
             )
         )
-        assert len(set([r[1] for r in results])) > 1
+        assert len({r[1] for r in results}) > 1
 
 
 class TestChunkActions:

@@ -1,24 +1,20 @@
-Using Asyncio with Elasticsearch
+Using asyncio with Elasticsearch
 ================================
 
  .. py:module:: elasticsearch
+    :no-index:
 
-Starting in ``elasticsearch-py`` v7.8.0 for Python 3.6+ the ``elasticsearch`` package supports async/await with
-`Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
+The ``elasticsearch`` package supports async/await with
+`asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `aiohttp <https://docs.aiohttp.org>`_.
 You can either install ``aiohttp`` directly or use the ``[async]`` extra:
 
  .. code-block:: bash
 
-    $ python -m pip install elasticsearch>=7.8.0 aiohttp
+    $ python -m pip install elasticsearch aiohttp
 
     # - OR -
 
-    $ python -m pip install elasticsearch[async]>=7.8.0
-
- .. note::
-    Async functionality is a new feature of this library in v7.8.0+ so
-    `please open an issue <https://github.com/elastic/elasticsearch-py/issues>`_
-    if you find an issue or have a question about async support.
+    $ python -m pip install elasticsearch[async]
 
 Getting Started with Async
 --------------------------
@@ -31,10 +27,10 @@ and are used in the same way as other APIs, just with an extra ``await``:
     import asyncio
     from elasticsearch import AsyncElasticsearch
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def main():
-        resp = await es.search(
+        resp = await client.search(
             index="documents",
             body={"query": {"match_all": {}}},
             size=20,
@@ -66,13 +62,13 @@ in the ``examples/fastapi-apm`` directory.
 Frequently Asked Questions
 --------------------------
 
-NameError / ImportError when importing ``AsyncElasticsearch``?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ValueError when initializing ``AsyncElasticsearch``?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or ``ImportError``
-you should ensure that you're running Python 3.6+ (check with ``$ python --version``) and
-that you have ``aiohttp`` installed in your environment (check with ``$ python -m pip freeze | grep aiohttp``).
-If either of the above conditions is not met then async support won't be available.
+If when trying to use ``AsyncElasticsearch`` you receive ``ValueError: You must
+have 'aiohttp' installed to use AiohttpHttpNode`` you should ensure that you
+have ``aiohttp`` installed in your environment (check with ``$ python -m pip
+freeze | grep aiohttp``). Otherwise, async support won't be available.
 
 What about the ``elasticsearch-async`` package?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,16 +90,30 @@ For example if using FastAPI that might look like this:
 
  .. code-block:: python
 
+    import os
+    from contextlib import asynccontextmanager
+
     from fastapi import FastAPI
     from elasticsearch import AsyncElasticsearch
 
-    app = FastAPI()
-    es = AsyncElasticsearch()
+    ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
+    client = None
 
-    # This gets called once the app is shutting down.
-    @app.on_event("shutdown")
-    async def app_shutdown():
-        await es.close()
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        global client
+        client = AsyncElasticsearch(ELASTICSEARCH_URL)
+        yield
+        await client.close()
+
+    app = FastAPI(lifespan=lifespan)
+
+    @app.get("/")
+    async def main():
+        return await client.info()
+
+You can run this example by saving it to ``main.py`` and executing
+``ELASTICSEARCH_URL=http://localhost:9200 uvicorn main:app``.
 
 
 Async Helpers
@@ -117,6 +127,7 @@ All async helpers that accept an iterator or generator also accept async iterato
 and async generators.
 
  .. py:module:: elasticsearch.helpers
+    :no-index:
 
 Bulk and Streaming Bulk
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,7 +140,7 @@ Bulk and Streaming Bulk
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_bulk
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def gendata():
         mywords = ['foo', 'bar', 'baz']
@@ -140,7 +151,7 @@ Bulk and Streaming Bulk
             }
 
     async def main():
-        await async_bulk(es, gendata())
+        await async_bulk(client, gendata())
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
@@ -153,7 +164,7 @@ Bulk and Streaming Bulk
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_streaming_bulk
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def gendata():
         mywords = ['foo', 'bar', 'baz']
@@ -164,7 +175,7 @@ Bulk and Streaming Bulk
             }
 
     async def main():
-        async for ok, result in async_streaming_bulk(es, gendata()):
+        async for ok, result in async_streaming_bulk(client, gendata()):
             action, result = result.popitem()
             if not ok:
                 print("failed to %s document %s" % ())
@@ -183,11 +194,11 @@ Scan
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_scan
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def main():
         async for doc in async_scan(
-            client=es,
+            client=client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*"
         ):
@@ -206,6 +217,7 @@ API Reference
 -------------
 
  .. py:module:: elasticsearch
+    :no-index:
 
 The API of :class:`~elasticsearch.AsyncElasticsearch` is nearly identical
 to the API of :class:`~elasticsearch.Elasticsearch` with the exception that

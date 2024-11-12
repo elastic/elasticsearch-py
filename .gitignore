@@ -25,6 +25,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+node_modules
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -143,5 +144,8 @@ cython_debug/
 # elasticsearch files
 test_elasticsearch/cover
 test_elasticsearch/local.py
-.ci/output
+.buildkite/output
 junit/
+
+# sample code for GitHub issues
+issues/

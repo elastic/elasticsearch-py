@@ -1,7 +1,0 @@
-// search/request-body.asciidoc:65
-
-[source, python]
-----
-resp = client.search(q="message:number", size="0", terminate_after="1")
-print(resp)
-----

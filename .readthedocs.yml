@@ -1,9 +1,16 @@
 version: 2
-sphinx:
-  configuration: docs/sphinx/conf.py
+
+build:
+  os: ubuntu-22.04
+  tools:
+    # To work around https://github.com/aio-libs/aiohttp/issues/7675, we need
+    # to set AIOHTTP_NO_EXTENSIONS to 1 but it has to be done in
+    # https://readthedocs.org/dashboard/elasticsearch-py/environmentvariables/
+    # because of https://github.com/readthedocs/readthedocs.org/issues/6311
+    python: "3.12"
 
 python:
-  version: 3.7
   install:
-    - requirements: dev-requirements.txt
     - path: .
+      extra_requirements:
+        - "docs"

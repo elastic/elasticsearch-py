@@ -42,17 +42,19 @@ class TestRewriteParameters:
     def wrapped_func_body_name(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
-    @_rewrite_parameters(body_fields=True)
+    @_rewrite_parameters(body_fields=("query", "source"))
     def wrapped_func_body_fields(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
     @_rewrite_parameters(
-        body_fields=True, ignore_deprecated_options={"api_key", "body", "params"}
+        body_fields=("query",), ignore_deprecated_options={"api_key", "body", "params"}
     )
     def wrapped_func_ignore(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
-    @_rewrite_parameters(body_fields=True, parameter_aliases={"_source": "source"})
+    @_rewrite_parameters(
+        body_fields=("source",), parameter_aliases={"_source": "source"}
+    )
     def wrapped_func_aliases(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
@@ -81,23 +83,27 @@ class TestRewriteParameters:
             ((), {"query": {"match_all": {}}, "key": "value"}),
         ]
 
+    def test_default_params_conflict(self):
+        with pytest.raises(ValueError) as e:
+            self.wrapped_func_default(
+                query={"match_all": {}},
+                params={"query": {"match_all": {}}},
+            )
+        assert str(e.value) == (
+            "Received multiple values for 'query', specify parameters directly instead of using 'params'"
+        )
+
     def test_body_name_using_body(self):
         with warnings.catch_warnings(record=True) as w:
             self.wrapped_func_body_name(
                 api_key=("id", "api_key"), body={"query": {"match_all": {}}}
             )
 
-        assert len(w) == 2
+        assert len(w) == 1
         assert w[0].category == DeprecationWarning
         assert (
             str(w[0].message)
             == "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead."
-        )
-        assert w[1].category == DeprecationWarning
-        assert str(w[1].message) == (
-            "The 'body' parameter is deprecated and will be removed in a "
-            "future version. Instead use the 'document' parameter. See https://github.com/elastic/elasticsearch-py/issues/1698 "
-            "for more information"
         )
 
         assert self.calls == [
@@ -139,31 +145,30 @@ class TestRewriteParameters:
                 api_key=("id", "api_key"), body={"query": {"match_all": {}}}
             )
 
-        assert len(w) == 2
+        assert len(w) == 1
         assert w[0].category == DeprecationWarning
         assert (
             str(w[0].message)
             == "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead."
         )
-        assert w[1].category == DeprecationWarning
-        assert str(w[1].message) == (
-            "The 'body' parameter is deprecated and will be removed in a future version. Instead use individual parameters."
-        )
 
         assert self.calls == [
             ((), {"api_key": ("id", "api_key")}),
-            ((), {"query": {"match_all": {}}}),
+            ((), {"body": {"query": {"match_all": {}}}}),
         ]
 
     @pytest.mark.parametrize(
-        "body", ['{"query": {"match_all": {}}}', b'{"query": {"match_all": {}}}']
+        "body, kwargs",
+        [
+            ('{"query": {"match_all": {}}}', {"query": {"match_all": {}}}),
+            (b'{"query": {"match_all": {}}}', {"query": {"match_all": {}}}),
+        ],
     )
-    def test_error_on_body_merge(self, body):
+    def test_error_on_body_merge(self, body, kwargs):
         with pytest.raises(ValueError) as e:
-            self.wrapped_func_body_fields(body=body)
+            self.wrapped_func_body_fields(body=body, **kwargs)
         assert str(e.value) == (
-            "Couldn't merge 'body' with other parameters as it wasn't a mapping. Instead of "
-            "using 'body' use individual API parameters"
+            "Couldn't merge 'body' with other parameters as it wasn't a mapping."
         )
 
     @pytest.mark.parametrize(
@@ -175,6 +180,25 @@ class TestRewriteParameters:
         assert str(e.value) == (
             "Couldn't merge 'params' with other parameters as it wasn't a mapping. Instead of "
             "using 'params' use individual API parameters"
+        )
+
+    def test_body_fields_merge(self):
+        with warnings.catch_warnings(record=True) as w:
+            self.wrapped_func_body_fields(source=False, body={"query": {}})
+
+        assert len(w) == 1
+        assert w[0].category == DeprecationWarning
+        assert str(w[0].message) == (
+            "Received 'source' via a specific parameter in the presence of a "
+            "'body' parameter, which is deprecated and will be removed in a future "
+            "version. Instead, use only 'body' or only specific parameters."
+        )
+
+    def test_body_fields_conflict(self):
+        with pytest.raises(ValueError) as e:
+            self.wrapped_func_body_fields(query={"match_all": {}}, body={"query": {}})
+        assert str(e.value) == (
+            "Received multiple values for 'query', specify parameters using either body or parameters, not both."
         )
 
     def test_ignore_deprecated_options(self):
@@ -213,6 +237,41 @@ class TestRewriteParameters:
 
         self.wrapped_func_aliases(source=["key3"])
         assert self.calls[-1] == ((), {"source": ["key3"]})
+
+    def test_parameter_aliases_body(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "Using 'source' alias in 'body' is deprecated and will be removed in a future version of elasticsearch-py. "
+                "Use '_source' directly instead."
+            ),
+        ):
+            self.wrapped_func_aliases(body={"source": ["key4"]})
+
+        # using the correct name does not warn
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            self.wrapped_func_aliases(body={"_source": ["key4"]})
+
+    def test_parameter_aliases_body_param(self):
+        with pytest.warns(
+            DeprecationWarning,
+            match=(
+                "Received 'source' via a specific parameter in the presence of a "
+                "'body' parameter, which is deprecated and will be removed in a future "
+                "version. Instead, use only 'body' or only specific parameters."
+            ),
+        ):
+            self.wrapped_func_aliases(
+                source=["key4"], body={"query": {"match_all": {}}}
+            )
+
+        # using the correct name does not warn
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            self.wrapped_func_aliases(
+                body={"query": {"match_all": {}}, "_source": ["key4"]}
+            )
 
     @pytest.mark.parametrize("client_cls", [Elasticsearch, AsyncElasticsearch])
     def test_positional_argument_error(self, client_cls):

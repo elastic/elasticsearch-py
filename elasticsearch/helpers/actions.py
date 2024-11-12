@@ -262,7 +262,7 @@ def _process_bulk_chunk_success(
         if not ok and raise_on_error and status_code not in ignore_status:
             # include original document source
             if len(data) > 1:
-                item["data"] = data[1]  # type: ignore[misc]
+                item["data"] = data[1]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -299,7 +299,7 @@ def _process_bulk_chunk_error(
         op_type, action = data[0].copy().popitem()
         info = {"error": err_message, "status": error.status_code, "exception": error}
         if op_type != "delete" and len(data) > 1:
-            info["data"] = data[1]  # type: ignore[misc]
+            info["data"] = data[1]
         info.update(action)
         exc_errors.append({op_type: info})
 
@@ -380,7 +380,6 @@ def streaming_bulk(
     *args: Any,
     **kwargs: Any,
 ) -> Iterable[Tuple[bool, Dict[str, Any]]]:
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -434,7 +433,6 @@ def streaming_bulk(
     for bulk_data, bulk_actions in _chunk_actions(
         map(expand_action_callback, actions), chunk_size, max_chunk_bytes, serializer
     ):
-
         for attempt in range(max_retries + 1):
             to_retry: List[bytes] = []
             to_retry_data: List[
@@ -460,7 +458,6 @@ def streaming_bulk(
                         **kwargs,
                     ),
                 ):
-
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we are not in the last attempt,
@@ -674,7 +671,7 @@ def scan(
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
 
-        scan(es,
+        scan(client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*",
             doc_type="books"
@@ -690,7 +687,14 @@ def scan(
         # Grab options that should be propagated to every
         # API call within this helper instead of just 'search()'
         transport_kwargs = {}
-        for key in ("headers", "api_key", "http_auth", "basic_auth", "bearer_auth"):
+        for key in (
+            "headers",
+            "api_key",
+            "http_auth",
+            "basic_auth",
+            "bearer_auth",
+            "opaque_id",
+        ):
             try:
                 value = kw.pop(key)
                 if key == "http_auth":
@@ -725,7 +729,7 @@ def scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
+        resp = client.search(body=query, **search_kwargs)
 
     scroll_id = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
@@ -785,7 +789,6 @@ def reindex(
     scan_kwargs: MutableMapping[str, Any] = {},
     bulk_kwargs: MutableMapping[str, Any] = {},
 ) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
-
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.

@@ -38,12 +38,14 @@ from elastic_transport import (
     ListApiResponse,
     NodeConfig,
     ObjectApiResponse,
+    OpenTelemetrySpan,
     SniffOptions,
     TextApiResponse,
     Transport,
 )
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
+from ..._otel import OpenTelemetry
 from ..._version import __versionstr__
 from ...compat import warn_stacklevel
 from ...exceptions import (
@@ -71,7 +73,6 @@ def resolve_auth_headers(
     basic_auth: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
     bearer_auth: Union[DefaultType, None, str] = DEFAULT,
 ) -> HttpHeaders:
-
     if headers is None:
         headers = HttpHeaders()
     elif not isinstance(headers, HttpHeaders):
@@ -127,9 +128,9 @@ def resolve_auth_headers(
         if resolved_api_key:
             headers["authorization"] = f"ApiKey {_base64_auth_header(resolved_api_key)}"
         if resolved_basic_auth:
-            headers[
-                "authorization"
-            ] = f"Basic {_base64_auth_header(resolved_basic_auth)}"
+            headers["authorization"] = (
+                f"Basic {_base64_auth_header(resolved_basic_auth)}"
+            )
         if resolved_bearer_auth:
             headers["authorization"] = f"Bearer {resolved_bearer_auth}"
 
@@ -245,6 +246,7 @@ class BaseClient:
         self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
         self._verified_elasticsearch = False
+        self._otel = OpenTelemetry()
 
     @property
     def transport(self) -> Transport:
@@ -258,6 +260,34 @@ class BaseClient:
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
+        endpoint_id: Optional[str] = None,
+        path_parts: Optional[Mapping[str, Any]] = None,
+    ) -> ApiResponse[Any]:
+        with self._otel.span(
+            method,
+            endpoint_id=endpoint_id,
+            path_parts=path_parts or {},
+        ) as otel_span:
+            response = self._perform_request(
+                method,
+                path,
+                params=params,
+                headers=headers,
+                body=body,
+                otel_span=otel_span,
+            )
+            otel_span.set_elastic_cloud_metadata(response.meta.headers)
+            return response
+
+    def _perform_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: Optional[Mapping[str, Any]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+        body: Optional[Any] = None,
+        otel_span: OpenTelemetrySpan,
     ) -> ApiResponse[Any]:
         if headers:
             request_headers = self._headers.copy()
@@ -293,6 +323,7 @@ class BaseClient:
             retry_on_status=self._retry_on_status,
             retry_on_timeout=self._retry_on_timeout,
             client_meta=self._client_meta,
+            otel_span=otel_span,
         )
 
         # HEAD with a 404 is returned as a normal response
@@ -384,9 +415,17 @@ class NamespacedClient(BaseClient):
         params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
+        endpoint_id: Optional[str] = None,
+        path_parts: Optional[Mapping[str, Any]] = None,
     ) -> ApiResponse[Any]:
         # Use the internal clients .perform_request() implementation
         # so we take advantage of their transport options.
         return self._client.perform_request(
-            method, path, params=params, headers=headers, body=body
+            method,
+            path,
+            params=params,
+            headers=headers,
+            body=body,
+            endpoint_id=endpoint_id,
+            path_parts=path_parts,
         )

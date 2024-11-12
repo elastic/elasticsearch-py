@@ -16,13 +16,14 @@
 #  under the License.
 
 import pytest
+import pytest_asyncio
 
-from elasticsearch import AsyncElasticsearch, RequestError
+from elasticsearch import RequestError
 
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def mvt_setup(async_client):
     await async_client.indices.create(
         index="museums",
@@ -73,9 +74,8 @@ async def mvt_setup(async_client):
     )
 
 
-async def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, ca_certs):
-    client = AsyncElasticsearch(elasticsearch_url, ca_certs=ca_certs)
-    await client.search_mvt(
+async def test_mapbox_vector_tile_error(async_client, mvt_setup):
+    await async_client.search_mvt(
         index="museums",
         zoom=13,
         x=4207,
@@ -84,7 +84,7 @@ async def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, ca_certs):
     )
 
     with pytest.raises(RequestError) as e:
-        await client.search_mvt(
+        await async_client.search_mvt(
             index="museums",
             zoom=-100,
             x=4207,
@@ -113,15 +113,13 @@ async def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, ca_certs):
     }
 
 
-async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_certs):
+async def test_mapbox_vector_tile_response(async_client, mvt_setup):
     try:
         import mapbox_vector_tile
     except ImportError:
         return pytest.skip("Requires the 'mapbox-vector-tile' package")
 
-    client = AsyncElasticsearch(elasticsearch_url, ca_certs=ca_certs)
-
-    resp = await client.search_mvt(
+    resp = await async_client.search_mvt(
         index="museums",
         zoom=13,
         x=4207,

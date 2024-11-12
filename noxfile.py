@@ -22,22 +22,18 @@ import nox
 SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILES = (
     "docs/sphinx/conf.py",
-    "setup.py",
     "noxfile.py",
     "elasticsearch/",
     "test_elasticsearch/",
     "utils/",
 )
+# Allow building aiohttp when no wheels are available (eg. for recent Python versions)
+INSTALL_ENV = {"AIOHTTP_NO_EXTENSIONS": "1"}
 
 
-@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"])
-def test(session):
-    session.install(".")
-    session.install("-r", "dev-requirements.txt")
-
-    python_version = tuple(int(x) for x in session.python.split("."))
+def pytest_argv():
     junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
-    pytest_argv = [
+    return [
         "pytest",
         "--cov-report=term-missing",
         "--cov=elasticsearch",
@@ -47,21 +43,36 @@ def test(session):
         "--cache-clear",
         "-vv",
     ]
-    # Python 3.6+ is required for async
-    if python_version < (3, 6):
-        pytest_argv.append("--ignore=test_elasticsearch/test_async/")
 
-    session.run(*pytest_argv)
+
+@nox.session(python=["3.8", "3.9", "3.10", "3.11", "3.12"])
+def test(session):
+    session.install(".[dev]", env=INSTALL_ENV, silent=False)
+
+    session.run(*pytest_argv())
+
+
+@nox.session(python=["3.8", "3.12"])
+def test_otel(session):
+    session.install(
+        ".[dev]",
+        "opentelemetry-api",
+        "opentelemetry-sdk",
+        silent=False,
+    )
+
+    argv = pytest_argv() + ["-m", "otel"]
+    session.run(*argv, env={"TEST_WITH_OTEL": "1"})
 
 
 @nox.session()
 def format(session):
-    session.install("black", "isort", "flynt", "unasync")
+    session.install("black~=24.0", "isort", "flynt", "unasync>=0.6.0")
 
     session.run("python", "utils/run-unasync.py")
     session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("flynt", *SOURCE_FILES)
-    session.run("python", "utils/run-black.py", *SOURCE_FILES)
+    session.run("black", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
     lint(session)
@@ -69,15 +80,21 @@ def format(session):
 
 @nox.session()
 def lint(session):
-    session.install("flake8", "black", "mypy", "isort", "types-requests")
+    # Check that importing the client still works without optional dependencies
+    session.install(".", env=INSTALL_ENV)
+    session.run("python", "-c", "from elasticsearch import Elasticsearch")
+    session.run("python", "-c", "from elasticsearch._otel import OpenTelemetry")
 
+    session.install(
+        "flake8", "black~=24.0", "mypy", "isort", "types-requests", "unasync>=0.6.0"
+    )
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
-    session.run("python", "utils/run-black.py", "--check", *SOURCE_FILES)
+    session.run("black", "--check", *SOURCE_FILES)
+    session.run("python", "utils/run-unasync.py", "--check")
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
-    # Workaround to make '-r' to still work despite uninstalling aiohttp below.
-    session.install(".[async,requests]")
+    session.install(".[async,requests,orjson,pyarrow,vectorstore_mmr]", env=INSTALL_ENV)
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.
@@ -109,10 +126,5 @@ def lint(session):
 
 @nox.session()
 def docs(session):
-    session.install(
-        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints"
-    )
-    session.install(".")
-    session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
-
+    session.install(".[docs]")
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")

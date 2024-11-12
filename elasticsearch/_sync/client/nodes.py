@@ -24,21 +24,21 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class NodesClient(NamespacedClient):
+
     @_rewrite_parameters()
     def clear_repositories_metering_archive(
         self,
         *,
-        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        node_id: t.Union[str, t.Sequence[str]],
         max_archive_version: int,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes the archived repositories metering information present in the cluster.
+        You can use this API to clear the archived repositories metering information
+        in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
 
@@ -51,7 +51,11 @@ class NodesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'node_id'")
         if max_archive_version in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'max_archive_version'")
-        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering/{_quote(max_archive_version)}"
+        __path_parts: t.Dict[str, str] = {
+            "node_id": _quote(node_id),
+            "max_archive_version": _quote(max_archive_version),
+        }
+        __path = f'/_nodes/{__path_parts["node_id"]}/_repositories_metering/{__path_parts["max_archive_version"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -63,23 +67,30 @@ class NodesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.clear_repositories_metering_archive",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_repositories_metering_info(
         self,
         *,
-        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        node_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns cluster repositories metering information.
+        You can use the cluster repositories metering API to retrieve repositories metering
+        information in a cluster. This API exposes monotonically non-decreasing counters
+        and it’s expected that clients would durably store the information needed to
+        compute aggregations over a period of time. Additionally, the information exposed
+        by this API is volatile, meaning that it won’t be present after node restarts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-repositories-metering-api.html>`_
 
@@ -88,7 +99,8 @@ class NodesClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering"
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/_repositories_metering'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -100,39 +112,39 @@ class NodesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.get_repositories_metering_info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def hot_threads(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_idle_threads: t.Optional[bool] = None,
-        interval: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        interval: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         snapshots: t.Optional[int] = None,
         sort: t.Optional[
-            t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
+            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
         ] = None,
         threads: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         type: t.Optional[
-            t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
+            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
         ] = None,
     ) -> TextApiResponse:
         """
-        Returns information about hot threads on each node in the cluster.
+        This API yields a breakdown of the hot threads on each selected node in the cluster.
+        The output is plain text with a breakdown of each node’s top hot threads.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
 
@@ -150,9 +162,12 @@ class NodesClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         :param type: The type to sample.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/hot_threads"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/hot_threads'
         else:
+            __path_parts = {}
             __path = "/_nodes/hot_threads"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -181,33 +196,30 @@ class NodesClient(NamespacedClient):
             __query["type"] = type
         __headers = {"accept": "text/plain"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.hot_threads",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def info(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about nodes in the cluster.
+        Returns cluster nodes information.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
 
@@ -222,13 +234,18 @@ class NodesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/{__path_parts["metric"]}'
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -247,43 +264,48 @@ class NodesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("secure_settings_password",),
     )
     def reload_secure_settings(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         secure_settings_password: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reloads secure settings.
+        Reloads the keystore on nodes in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
 
-        :param node_id: A comma-separated list of node IDs to span the reload/reinit
-            call. Should stay empty because reloading usually involves all cluster nodes.
-        :param secure_settings_password:
-        :param timeout: Explicit operation timeout
+        :param node_id: The names of particular nodes in the cluster to target.
+        :param secure_settings_password: The password for the Elasticsearch keystore.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/reload_secure_settings'
         else:
+            __path_parts = {}
             __path = "/_nodes/reload_secure_settings"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -292,61 +314,52 @@ class NodesClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if secure_settings_password is not None:
-            __body["secure_settings_password"] = secure_settings_password
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if secure_settings_password is not None:
+                __body["secure_settings_password"] = secure_settings_password
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="nodes.reload_secure_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def stats(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        index_metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        completion_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        index_metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        completion_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        fielddata_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         groups: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
+            t.Union[str, t.Literal["cluster", "indices", "shards"]]
         ] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        types: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns statistical information about nodes in the cluster.
+        Returns cluster nodes statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
 
@@ -367,8 +380,8 @@ class NodesClient(NamespacedClient):
         :param include_segment_file_sizes: If true, the call reports the aggregated disk
             usage of each one of the Lucene index files (only applies if segment stats
             are requested).
-        :param include_unloaded_segments: If set to true segment stats will include stats
-            for segments that are not currently loaded into memory
+        :param include_unloaded_segments: If `true`, the response includes information
+            from segments that are not loaded into memory.
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -379,21 +392,37 @@ class NodesClient(NamespacedClient):
         :param types: A comma-separated list of document types for the indexing index
             metric.
         """
+        __path_parts: t.Dict[str, str]
         if (
             node_id not in SKIP_IN_PATH
             and metric not in SKIP_IN_PATH
             and index_metric not in SKIP_IN_PATH
         ):
-            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}/{_quote(index_metric)}"
+            __path_parts = {
+                "node_id": _quote(node_id),
+                "metric": _quote(metric),
+                "index_metric": _quote(index_metric),
+            }
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats/{__path_parts["metric"]}/{__path_parts["index_metric"]}'
         elif node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats/{__path_parts["metric"]}'
         elif metric not in SKIP_IN_PATH and index_metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/stats/{_quote(metric)}/{_quote(index_metric)}"
+            __path_parts = {
+                "metric": _quote(metric),
+                "index_metric": _quote(index_metric),
+            }
+            __path = (
+                f'/_nodes/stats/{__path_parts["metric"]}/{__path_parts["index_metric"]}'
+            )
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/stats"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/stats'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/stats/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/stats/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes/stats"
         __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
@@ -426,45 +455,51 @@ class NodesClient(NamespacedClient):
             __query["types"] = types
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def usage(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns low-level information about REST actions usage on nodes.
+        Returns information on the usage of features.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
             to, leave empty to get information from all nodes
-        :param metric: Limit the information returned to the specified metrics
-        :param timeout: Explicit operation timeout
+        :param metric: Limits the information returned to the specific metrics. A comma-separated
+            list of the following options: `_all`, `rest_actions`.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/usage/{_quote(metric)}"
+            __path_parts = {"node_id": _quote(node_id), "metric": _quote(metric)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/usage/{__path_parts["metric"]}'
         elif node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/usage"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/usage'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_nodes/usage/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_nodes/usage/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_nodes/usage"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -479,5 +514,10 @@ class NodesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="nodes.usage",
+            path_parts=__path_parts,
         )

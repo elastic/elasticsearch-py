@@ -1,7 +1,0 @@
-// cluster/health.asciidoc:179
-
-[source, python]
-----
-resp = client.cluster.health(index="twitter", level="shards")
-print(resp)
-----

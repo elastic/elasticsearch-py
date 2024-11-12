@@ -24,15 +24,14 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class AutoscalingClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete_autoscaling_policy(
         self,
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -46,7 +45,8 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -58,7 +58,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.delete_autoscaling_policy",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -66,9 +71,7 @@ class AutoscalingClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -78,6 +81,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_autoscaling/capacity"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -90,7 +94,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.get_autoscaling_capacity",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -99,9 +108,7 @@ class AutoscalingClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -115,7 +122,8 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -127,7 +135,12 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="autoscaling.get_autoscaling_policy",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -137,11 +150,10 @@ class AutoscalingClient(NamespacedClient):
         self,
         *,
         name: str,
-        policy: t.Mapping[str, t.Any],
+        policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -156,9 +168,14 @@ class AutoscalingClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if policy is None:
-            raise ValueError("Empty value passed for parameter 'policy'")
-        __path = f"/_autoscaling/policy/{_quote(name)}"
+        if policy is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'policy' and 'body', one of them should be set."
+            )
+        elif policy is not None and body is not None:
+            raise ValueError("Cannot set both 'policy' and 'body'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_autoscaling/policy/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -168,8 +185,14 @@ class AutoscalingClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = policy
+        __body = policy if policy is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="autoscaling.put_autoscaling_policy",
+            path_parts=__path_parts,
         )

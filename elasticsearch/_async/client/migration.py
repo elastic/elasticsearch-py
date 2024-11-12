@@ -24,15 +24,14 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MigrationClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def deprecations(
         self,
         *,
         index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -46,9 +45,12 @@ class MigrationClient(NamespacedClient):
         :param index: Comma-separate list of data streams or indices to check. Wildcard
             (*) expressions are supported.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_migration/deprecations"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_migration/deprecations'
         else:
+            __path_parts = {}
             __path = "/_migration/deprecations"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -61,7 +63,12 @@ class MigrationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="migration.deprecations",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -69,9 +76,7 @@ class MigrationClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -80,6 +85,7 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -92,7 +98,12 @@ class MigrationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="migration.get_feature_upgrade_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -100,9 +111,7 @@ class MigrationClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -111,6 +120,7 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -123,5 +133,10 @@ class MigrationClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="migration.post_feature_upgrade",
+            path_parts=__path_parts,
         )

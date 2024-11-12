@@ -1,0 +1,14 @@
+{
+  "jobs": [
+    {
+      "enabled": true,
+      "pipeline_slug": "elasticsearch-py-integration-tests",
+      "allow_org_users": true
+    },
+    {
+      "enabled": true,
+      "pipeline_slug": "docs-build-pr",
+      "allow_org_users": true
+    }
+  ]
+}
