@@ -86,3 +86,25 @@ class OpenTelemetry:
                 endpoint_id=endpoint_id,
                 body_strategy=self.body_strategy,
             )
+
+    @contextlib.contextmanager
+    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan, None, None]:
+        if not self.enabled or self.tracer is None:
+            yield OpenTelemetrySpan(None)
+            return
+
+        with self.tracer.start_as_current_span(span_name) as otel_span:
+            otel_span.set_attribute("db.system", "elasticsearch")
+            otel_span.set_attribute("db.operation", span_name)
+            # Without a request method, Elastic APM does not display the traces
+            otel_span.set_attribute("http.request.method", "null")
+            yield otel_span
+
+    @contextlib.contextmanager
+    def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
+        if not self.enabled or self.tracer is None:
+            yield
+            return
+
+        with trace.use_span(span):
+            yield
