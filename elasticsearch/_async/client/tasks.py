@@ -159,7 +159,7 @@ class TasksClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        node_id: t.Optional[t.Sequence[str]] = None,
+        nodes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -179,7 +179,7 @@ class TasksClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param node_id: Comma-separated list of node IDs or names used to limit returned
+        :param nodes: Comma-separated list of node IDs or names used to limit returned
             information.
         :param parent_task_id: Parent task ID used to limit returned information. To
             return all tasks, omit this parameter or use a value of `-1`.
@@ -205,8 +205,8 @@ class TasksClient(NamespacedClient):
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
-        if node_id is not None:
-            __query["node_id"] = node_id
+        if nodes is not None:
+            __query["nodes"] = nodes
         if parent_task_id is not None:
             __query["parent_task_id"] = parent_task_id
         if pretty is not None:
