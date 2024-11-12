@@ -25,7 +25,7 @@ try:
     from opentelemetry import trace
 
     _tracer: trace.Tracer | None = trace.get_tracer("elasticsearch-api")
-except ModuleNotFoundError:
+except ImportError:
     _tracer = None
 
 from elastic_transport import OpenTelemetrySpan
