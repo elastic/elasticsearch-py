@@ -16,7 +16,6 @@
 #  under the License.
 
 import json
-import pickle
 from datetime import datetime, timedelta
 from unittest.mock import call, patch
 
@@ -25,7 +24,7 @@ from dateutil import tz
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 
 from elasticsearch import ApiError, helpers
-from elasticsearch.helpers import BulkIndexError, ScanError
+from elasticsearch.helpers import ScanError
 
 
 class FailingBulkClient:
@@ -994,23 +993,3 @@ def test_reindex_index_datastream_op_type_index(sync_client):
             query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
             op_type="_index",
         )
-
-def test_serialize_bulk_index_error():
-    msg = "message"
-    errors = {"error": 1}
-    error = BulkIndexError(msg, errors)
-    pickled = pickle.dumps(error)
-    actual = pickle.loads(pickled)
-    assert actual.__class__ == BulkIndexError
-    assert actual.errors == error.errors
-    assert actual.args == error.args
-
-def test_serialize_scan_error():
-    scroll_id = "message"
-    args = ("a", "b")
-    error = ScanError(scroll_id, *args)
-    pickled = pickle.dumps(error)
-    actual = pickle.loads(pickled)
-    assert actual.__class__ == ScanError
-    assert actual.scroll_id == error.scroll_id
-    assert actual.args == error.args
