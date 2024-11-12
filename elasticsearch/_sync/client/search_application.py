@@ -20,12 +20,19 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class SearchApplicationClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.BETA)
     def delete(
         self,
         *,
@@ -67,6 +74,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def delete_behavioral_analytics(
         self,
         *,
@@ -108,6 +116,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.BETA)
     def get(
         self,
         *,
@@ -148,6 +157,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_behavioral_analytics(
         self,
         *,
@@ -193,6 +203,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
+    @_stability_warning(Stability.BETA)
     def list(
         self,
         *,
@@ -243,6 +254,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="search_application",
     )
+    @_stability_warning(Stability.BETA)
     def put(
         self,
         *,
@@ -299,6 +311,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def put_behavioral_analytics(
         self,
         *,
@@ -342,6 +355,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
+    @_stability_warning(Stability.BETA)
     def search(
         self,
         *,

@@ -174,6 +174,7 @@ class EqlClient(NamespacedClient):
             "filter",
             "keep_alive",
             "keep_on_completion",
+            "max_samples_per_key",
             "result_position",
             "runtime_mappings",
             "size",
@@ -211,6 +212,7 @@ class EqlClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
+        max_samples_per_key: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         result_position: t.Optional[t.Union[str, t.Literal["head", "tail"]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -244,6 +246,11 @@ class EqlClient(NamespacedClient):
             in the response.
         :param keep_alive:
         :param keep_on_completion:
+        :param max_samples_per_key: By default, the response of a sample query contains
+            up to `10` samples, with one sample per unique set of join keys. Use the
+            `size` parameter to get a smaller or larger set of samples. To retrieve more
+            than one sample per set of join keys, use the `max_samples_per_key` parameter.
+            Pipes are not supported for sample queries.
         :param result_position:
         :param runtime_mappings:
         :param size: For basic queries, the maximum number of matching events to return.
@@ -292,6 +299,8 @@ class EqlClient(NamespacedClient):
                 __body["keep_alive"] = keep_alive
             if keep_on_completion is not None:
                 __body["keep_on_completion"] = keep_on_completion
+            if max_samples_per_key is not None:
+                __body["max_samples_per_key"] = max_samples_per_key
             if result_position is not None:
                 __body["result_position"] = result_position
             if runtime_mappings is not None:

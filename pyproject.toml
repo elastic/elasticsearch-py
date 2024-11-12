@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
 ]
@@ -69,7 +70,7 @@ dev = [
     "nox",
     "orjson",
     "numpy",
-    "simsimd",
+    "simsimd ; python_version<'3.13'",
     "pyarrow",
     "pandas",
     "mapbox-vector-tile",
