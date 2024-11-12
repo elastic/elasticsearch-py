@@ -288,6 +288,45 @@ def test_bulk_transport_error_is_raised_with_max_retries(sync_client):
     assert 4 == failing_client._called
 
 
+def test_connection_timeout_is_retried_with_retry_status_callback(sync_client):
+    failing_client = FailingBulkClient(
+        sync_client,
+        fail_with=ApiError(
+            message="Connection timed out!",
+            body={},
+            meta=ApiResponseMeta(
+                status=522, headers={}, http_version="1.1", duration=0, node=None
+            ),
+        ),
+    )
+    docs = [
+        {"_index": "i", "_id": 47, "f": "v"},
+        {"_index": "i", "_id": 45, "f": "v"},
+        {"_index": "i", "_id": 42, "f": "v"},
+    ]
+
+    results = list(
+        helpers.streaming_bulk(
+            failing_client,
+            docs,
+            index="i",
+            raise_on_exception=False,
+            raise_on_error=False,
+            chunk_size=1,
+            retry_on_status=522,
+            max_retries=1,
+            initial_backoff=0,
+        )
+    )
+    assert 3 == len(results)
+    print(results)
+    assert [True, True, True] == [r[0] for r in results]
+    sync_client.indices.refresh(index="i")
+    res = sync_client.search(index="i")
+    assert {"value": 3, "relation": "eq"} == res["hits"]["total"]
+    assert 4 == failing_client._called
+
+
 def test_bulk_works_with_single_item(sync_client):
     docs = [{"answer": 42, "_id": 1}]
     success, failed = helpers.bulk(sync_client, docs, index="test-index", refresh=True)

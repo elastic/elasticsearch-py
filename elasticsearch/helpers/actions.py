@@ -374,6 +374,7 @@ def streaming_bulk(
     max_backoff: float = 600,
     yield_ok: bool = True,
     ignore_status: Union[int, Collection[int]] = (),
+    retry_on_status: Union[int, Collection[int]] = (429,),
     span_name: str = "helpers.streaming_bulk",
     *args: Any,
     **kwargs: Any,
@@ -386,10 +387,11 @@ def streaming_bulk(
     entire input is consumed and sent.
 
     If you specify ``max_retries`` it will also retry any documents that were
-    rejected with a ``429`` status code. To do this it will wait (**by calling
-    time.sleep which will block**) for ``initial_backoff`` seconds and then,
-    every subsequent rejection for the same chunk, for double the time every
-    time up to ``max_backoff`` seconds.
+    rejected with a ``429`` status code. Use ``retry_on_status`` to
+    configure which status codes will be retried. To do this it will wait
+    (**by calling time.sleep which will block**) for ``initial_backoff`` seconds
+    and then, every subsequent rejection for the same chunk, for double the time
+    every time up to ``max_backoff`` seconds.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
@@ -402,8 +404,11 @@ def streaming_bulk(
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
+    :arg retry_on_status: HTTP status code that will trigger a retry.
+        (if `None` is specified only status 429 will retry).
     :arg max_retries: maximum number of times a document will be retried when
-        ``429`` is received, set to 0 (default) for no retries on ``429``
+        retry_on_status (defaulting to ``429``) is received,
+        set to 0 (default) for no retries
     :arg initial_backoff: number of seconds we should wait before the first
         retry. Any subsequent retries will be powers of ``initial_backoff *
         2**retry_number``
@@ -414,6 +419,9 @@ def streaming_bulk(
     with client._otel.helpers_span(span_name) as otel_span:
         client = client.options()
         client._client_meta = (("h", "bp"),)
+
+        if isinstance(retry_on_status, int):
+            retry_on_status = (retry_on_status,)
 
         serializer = client.transport.serializers.get_serializer("application/json")
 
@@ -458,11 +466,11 @@ def streaming_bulk(
                     ):
                         if not ok:
                             action, info = info.popitem()
-                            # retry if retries enabled, we get 429, and we are not
-                            # in the last attempt
+                            # retry if retries enabled, we are not in the last attempt,
+                            # and status in retry_on_status (defaulting to 429)
                             if (
                                 max_retries
-                                and info["status"] == 429
+                                and info["status"] in retry_on_status
                                 and (attempt + 1) <= max_retries
                             ):
                                 # _process_bulk_chunk expects bytes so we need to
@@ -475,8 +483,9 @@ def streaming_bulk(
                             yield ok, info
 
                 except ApiError as e:
-                    # suppress 429 errors since we will retry them
-                    if attempt == max_retries or e.status_code != 429:
+                    # suppress any status in retry_on_status (429 by default)
+                    # since we will retry them
+                    if attempt == max_retries or e.status_code not in retry_on_status:
                         raise
                 else:
                     if not to_retry:
