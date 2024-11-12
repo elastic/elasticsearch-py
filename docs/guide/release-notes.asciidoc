@@ -51,6 +51,7 @@
 - Vectorstore: use a retriever query for hybrid search (https://github.com/elastic/elasticsearch-py/pull/2682[#2682])
 - Allow retries for statuses other than 429 in streaming bulk (https://github.com/elastic/elasticsearch-py/pull/2702[#2702])
 - Make `BulkIndexError` and `ScanError` serializable (https://github.com/elastic/elasticsearch-py/pull/2700[#2700])
+- Fix import when `trace` is missing from `opentelemetry` package (https://github.com/elastic/elasticsearch-py/pull/2705[#2705])
 - Update APIs:
   * Fix `nodes` parameter in Task management API
   * Add Test query rule API
