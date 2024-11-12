@@ -187,7 +187,7 @@ async def async_streaming_bulk(
     If you specify ``max_retries`` it will also retry any documents that were
     rejected with a ``429`` status code. Use ``retry_on_status`` to
     configure which status codes will be retried. To do this it will wait
-    (**by calling time.sleep which will block**) for ``initial_backoff`` seconds
+    (**by calling asyncio.sleep which will block**) for ``initial_backoff`` seconds
     and then, every subsequent rejection for the same chunk, for double the time
     every time up to ``max_backoff`` seconds.
 
@@ -273,7 +273,7 @@ async def async_streaming_bulk(
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we are not in the last attempt,
-                        # and status not in retry_on_status (defaulting to 429)
+                        # and status in retry_on_status (defaulting to 429)
                         if (
                             max_retries
                             and info["status"] in retry_on_status

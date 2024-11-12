@@ -467,7 +467,7 @@ def streaming_bulk(
                         if not ok:
                             action, info = info.popitem()
                             # retry if retries enabled, we are not in the last attempt,
-                            # and status not in retry_on_status (defaulting to 429)
+                            # and status in retry_on_status (defaulting to 429)
                             if (
                                 max_retries
                                 and info["status"] in retry_on_status
