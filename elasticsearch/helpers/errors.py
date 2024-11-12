@@ -32,9 +32,9 @@ class BulkIndexError(Exception):
 class ScanError(Exception):
     scroll_id: str
 
-    def __init__(self, scroll_id: str, shards_message: str) -> None:
-        super().__init__(shards_message)
+    def __init__(self, scroll_id: str, *args: Any) -> None:
+        super().__init__(*args)
         self.scroll_id = scroll_id
 
     def __reduce__(self) -> Tuple[Type["ScanError"], Tuple[str, str]]:
-        return (self.__class__, (self.scroll_id, self.args[0]))
+        return (self.__class__, (self.scroll_id,) + self.args)
