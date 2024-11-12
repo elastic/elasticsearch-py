@@ -15,18 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple, Type
 
 
 class BulkIndexError(Exception):
-    def __init__(self, message: Any, errors: List[Dict[str, Any]]):
+    def __init__(self, message: str, errors: List[Dict[str, Any]]):
         super().__init__(message)
         self.errors: List[Dict[str, Any]] = errors
+
+    def __reduce__(
+        self,
+    ) -> Tuple[Type["BulkIndexError"], Tuple[str, List[Dict[str, Any]]]]:
+        return (self.__class__, (self.args[0], self.errors))
 
 
 class ScanError(Exception):
     scroll_id: str
 
-    def __init__(self, scroll_id: str, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, scroll_id: str, *args: Any) -> None:
+        super().__init__(*args)
         self.scroll_id = scroll_id
+
+    def __reduce__(self) -> Tuple[Type["ScanError"], Tuple[str, str]]:
+        return (self.__class__, (self.scroll_id,) + self.args)
