@@ -36,7 +36,8 @@ class AutoscalingClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Delete an autoscaling policy. NOTE: This feature is designed for indirect use
+        by Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
         Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
@@ -76,8 +77,18 @@ class AutoscalingClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets the current autoscaling capacity based on the configured autoscaling policy.
-        Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
+        Get the autoscaling capacity. NOTE: This feature is designed for indirect use
+        by Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
+        Direct use is not supported. This API gets the current autoscaling capacity based
+        on the configured autoscaling policy. It will return information to size the
+        cluster appropriately to the current workload. The `required_capacity` is calculated
+        as the maximum of the `required_capacity` result of all individual deciders that
+        are enabled for the policy. The operator should verify that the `current_nodes`
+        match the operator’s knowledge of the cluster to avoid making autoscaling decisions
+        based on stale or incomplete information. The response contains decider-specific
+        information you can use to diagnose how and why autoscaling determined a certain
+        capacity was required. This information is provided for diagnosis only. Do not
+        use this information to make autoscaling decisions.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
         """
@@ -113,7 +124,8 @@ class AutoscalingClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Get an autoscaling policy. NOTE: This feature is designed for indirect use by
+        Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
         Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
@@ -158,8 +170,9 @@ class AutoscalingClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
-        Direct use is not supported.
+        Create or update an autoscaling policy. NOTE: This feature is designed for indirect
+        use by Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on
+        Kubernetes. Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
 

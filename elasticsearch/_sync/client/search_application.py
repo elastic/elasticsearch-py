@@ -20,12 +20,19 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class SearchApplicationClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.BETA)
     def delete(
         self,
         *,
@@ -36,7 +43,8 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a search application.
+        Delete a search application. Remove a search application and its associated alias.
+        Indices attached to the search application are not removed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-search-application.html>`_
 
@@ -66,6 +74,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def delete_behavioral_analytics(
         self,
         *,
@@ -76,7 +85,8 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a behavioral analytics collection.
+        Delete a behavioral analytics collection. The associated data stream is also
+        deleted.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-analytics-collection.html>`_
 
@@ -106,6 +116,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.BETA)
     def get(
         self,
         *,
@@ -116,7 +127,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a search application
+        Get search application details.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html>`_
 
@@ -146,6 +157,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_behavioral_analytics(
         self,
         *,
@@ -156,7 +168,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the existing behavioral analytics collections.
+        Get behavioral analytics collections.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-analytics-collection.html>`_
 
@@ -191,6 +203,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
+    @_stability_warning(Stability.BETA)
     def list(
         self,
         *,
@@ -241,6 +254,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="search_application",
     )
+    @_stability_warning(Stability.BETA)
     def put(
         self,
         *,
@@ -254,7 +268,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a search application.
+        Create or update a search application.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
 
@@ -297,6 +311,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def put_behavioral_analytics(
         self,
         *,
@@ -307,7 +322,7 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a behavioral analytics collection.
+        Create a behavioral analytics collection.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html>`_
 
@@ -340,6 +355,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
+    @_stability_warning(Stability.BETA)
     def search(
         self,
         *,
@@ -353,7 +369,10 @@ class SearchApplicationClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Perform a search against a search application.
+        Run a search application search. Generate and run an Elasticsearch query that
+        uses the specified query parameteter and the search template associated with
+        the search application or default template. Unspecified template parameters are
+        assigned their default values if applicable.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
 

@@ -44,7 +44,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a user profile on behalf of another user.
+        Activate a user profile. Create or update a user profile on behalf of another
+        user.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-activate-user-profile.html>`_
 
@@ -144,9 +145,9 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The role management APIs are generally the preferred way to manage roles, rather
-        than using file-based role management. The bulk delete roles API cannot delete
-        roles that are defined in roles files.
+        Bulk delete roles. The role management APIs are generally the preferred way to
+        manage roles, rather than using file-based role management. The bulk delete roles
+        API cannot delete roles that are defined in roles files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-bulk-delete-role.html>`_
 
@@ -202,9 +203,9 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The role management APIs are generally the preferred way to manage roles, rather
-        than using file-based role management. The bulk create or update roles API cannot
-        update roles that are defined in roles files.
+        Bulk create or update roles. The role management APIs are generally the preferred
+        way to manage roles, rather than using file-based role management. The bulk create
+        or update roles API cannot update roles that are defined in roles files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-bulk-put-role.html>`_
 
@@ -262,7 +263,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the passwords of users in the native realm and built-in users.
+        Change passwords. Change the passwords of users in the native realm and built-in
+        users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-change-password.html>`_
 
@@ -324,8 +326,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts a subset of all entries from the API key cache. The cache is also automatically
-        cleared on state changes of the security index.
+        Clear the API key cache. Evict a subset of all entries from the API key cache.
+        The cache is also automatically cleared on state changes of the security index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
 
@@ -366,7 +368,9 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts application privileges from the native application privileges cache.
+        Clear the privileges cache. Evict privileges from the native application privilege
+        cache. The cache is also automatically cleared for applications that have their
+        privileges updated.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
 
@@ -407,8 +411,8 @@ class SecurityClient(NamespacedClient):
         usernames: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts users from the user cache. Can completely clear the cache or evict specific
-        users.
+        Clear the user cache. Evict users from the user cache. You can completely clear
+        the cache or evict specific users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-cache.html>`_
 
@@ -451,7 +455,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts roles from the native role cache.
+        Clear the roles cache. Evict roles from the native role cache.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-role-cache.html>`_
 
@@ -493,7 +497,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts tokens from the service account token caches.
+        Clear service account token caches. Evict a subset of all entries from the service
+        account token caches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-service-token-caches.html>`_
 
@@ -552,7 +557,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create an API key. Creates an API key for access without requiring basic authentication.
+        Create an API key. Create an API key for access without requiring basic authentication.
         A successful request returns a JSON structure that contains the API key, its
         unique id, and its name. If applicable, it also returns expiration information
         for the API key in milliseconds. NOTE: By default, API keys never expire. You
@@ -612,6 +617,90 @@ class SecurityClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=("access", "name", "expiration", "metadata"),
+    )
+    async def create_cross_cluster_api_key(
+        self,
+        *,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Create a cross-cluster API key. Create an API key of the `cross_cluster` type
+        for the API key based remote cluster access. A `cross_cluster` API key cannot
+        be used to authenticate through the REST interface. IMPORTANT: To authenticate
+        this request you must use a credential that is not an API key. Even if you use
+        an API key that has the required privilege, the API returns an error. Cross-cluster
+        API keys are created by the Elasticsearch API key service, which is automatically
+        enabled. NOTE: Unlike REST API keys, a cross-cluster API key does not capture
+        permissions of the authenticated user. The API key’s effective permission is
+        exactly as specified with the `access` property. A successful request returns
+        a JSON structure that contains the API key, its unique ID, and its name. If applicable,
+        it also returns expiration information for the API key in milliseconds. By default,
+        API keys never expire. You can specify expiration information when you create
+        the API keys. Cross-cluster API keys can only be updated with the update cross-cluster
+        API key API. Attempting to update them with the update REST API key API or the
+        bulk update REST API keys API will result in an error.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-cross-cluster-api-key.html>`_
+
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross-cluster search and cross-cluster replication. At
+            least one of them must be specified. NOTE: No explicit privileges should
+            be specified for either search or replication access. The creation process
+            automatically converts the access specification to a role descriptor which
+            has relevant privileges assigned accordingly.
+        :param name: Specifies the name for this API key.
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage.
+        """
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        if name is None and body is None:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/cross_cluster/api_key"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if name is not None:
+                __body["name"] = name
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.create_cross_cluster_api_key",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def create_service_token(
         self,
@@ -628,7 +717,8 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a service accounts token for access without requiring basic authentication.
+        Create a service account token. Create a service accounts token for access without
+        requiring basic authentication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
 
@@ -698,7 +788,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes application privileges.
+        Delete application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-privilege.html>`_
 
@@ -754,7 +844,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes roles in the native realm.
+        Delete roles. Delete roles in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role.html>`_
 
@@ -802,7 +892,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes role mappings.
+        Delete role mappings.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role-mapping.html>`_
 
@@ -852,7 +942,8 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a service account token.
+        Delete service account tokens. Delete service account tokens for a service in
+        a specified namespace.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-service-token.html>`_
 
@@ -910,7 +1001,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes users from the native realm.
+        Delete users. Delete users from the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-user.html>`_
 
@@ -958,7 +1049,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Disables users in the native realm.
+        Disable users. Disable users in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user.html>`_
 
@@ -1006,7 +1097,8 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Disables a user profile so it's not visible in user profile searches.
+        Disable a user profile. Disable user profiles so that they are not visible in
+        user profile searches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user-profile.html>`_
 
@@ -1054,7 +1146,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables users in the native realm.
+        Enable users. Enable users in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user.html>`_
 
@@ -1102,7 +1194,8 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables a user profile so it's visible in user profile searches.
+        Enable a user profile. Enable user profiles to make them visible in user profile
+        searches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user-profile.html>`_
 
@@ -1146,8 +1239,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables a Kibana instance to configure itself for communication with a secured
-        Elasticsearch cluster.
+        Enroll Kibana. Enable a Kibana instance to configure itself for communication
+        with a secured Elasticsearch cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
@@ -1182,7 +1275,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a new node to join an existing cluster with security features enabled.
+        Enroll a node. Enroll a new node to allow it to join an existing cluster with
+        security features enabled.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
@@ -1303,8 +1397,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the list of cluster privileges and index privileges that are available
-        in this version of Elasticsearch.
+        Get builtin privileges. Get the list of cluster privileges and index privileges
+        that are available in this version of Elasticsearch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
         """
@@ -1341,7 +1435,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves application privileges.
+        Get application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
 
@@ -1388,9 +1482,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The role management APIs are generally the preferred way to manage roles, rather
-        than using file-based role management. The get roles API cannot retrieve roles
-        that are defined in roles files.
+        Get roles. Get roles in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
 
@@ -1435,7 +1527,10 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves role mappings.
+        Get role mappings. Role mappings define which roles are assigned to each user.
+        The role mapping APIs are generally the preferred way to manage role mappings
+        rather than using role mapping files. The get role mappings API cannot retrieve
+        role mappings that are defined in role mapping files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
 
@@ -1483,7 +1578,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        This API returns a list of service accounts that match the provided path parameter(s).
+        Get service accounts. Get a list of service accounts that match the provided
+        path parameters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
 
@@ -1534,7 +1630,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information of all service credentials for a service account.
+        Get service account credentials.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-credentials.html>`_
 
@@ -1602,7 +1698,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a bearer token for access without requiring basic authentication.
+        Get a token. Create a bearer token for access without requiring basic authentication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html>`_
 
@@ -1661,7 +1757,7 @@ class SecurityClient(NamespacedClient):
         with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about users in the native realm and built-in users.
+        Get users. Get information about users in the native realm and built-in users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user.html>`_
 
@@ -1712,7 +1808,7 @@ class SecurityClient(NamespacedClient):
         username: t.Optional[t.Union[None, str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves security privileges for the logged in user.
+        Get user privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
 
@@ -1762,7 +1858,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a user's profile using the unique profile ID.
+        Get a user profile. Get a user's profile using the unique profile ID.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-profile.html>`_
 
@@ -1826,21 +1922,21 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an API key on behalf of another user. This API is similar to Create API
-        keys, however it creates the API key for a user that is different than the user
-        that runs the API. The caller must have authentication credentials (either an
-        access token, or a username and password) for the user on whose behalf the API
-        key will be created. It is not possible to use this API to create an API key
-        without that user’s credentials. The user, for whom the authentication credentials
-        is provided, can optionally "run as" (impersonate) another user. In this case,
-        the API key will be created on behalf of the impersonated user. This API is intended
-        be used by applications that need to create and manage API keys for end users,
-        but cannot guarantee that those users have permission to create API keys on their
-        own behalf. A successful grant API key API call returns a JSON structure that
-        contains the API key, its unique id, and its name. If applicable, it also returns
-        expiration information for the API key in milliseconds. By default, API keys
-        never expire. You can specify expiration information when you create the API
-        keys.
+        Grant an API key. Create an API key on behalf of another user. This API is similar
+        to the create API keys API, however it creates the API key for a user that is
+        different than the user that runs the API. The caller must have authentication
+        credentials (either an access token, or a username and password) for the user
+        on whose behalf the API key will be created. It is not possible to use this API
+        to create an API key without that user’s credentials. The user, for whom the
+        authentication credentials is provided, can optionally "run as" (impersonate)
+        another user. In this case, the API key will be created on behalf of the impersonated
+        user. This API is intended be used by applications that need to create and manage
+        API keys for end users, but cannot guarantee that those users have permission
+        to create API keys on their own behalf. A successful grant API key API call returns
+        a JSON structure that contains the API key, its unique id, and its name. If applicable,
+        it also returns expiration information for the API key in milliseconds. By default,
+        API keys never expire. You can specify expiration information when you create
+        the API keys.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
 
@@ -1980,8 +2076,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Check user privileges. Determines whether the specified user has a specified
-        list of privileges.
+        Check user privileges. Determine whether the specified user has a specified list
+        of privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges.html>`_
 
@@ -2040,8 +2136,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Determines whether the users associated with the specified profile IDs have all
-        the requested privileges.
+        Check user profile privileges. Determine whether the users associated with the
+        specified user profile IDs have all the requested privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges-user-profile.html>`_
 
@@ -2100,13 +2196,17 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidate API keys. Invalidates one or more API keys. The `manage_api_key` privilege
-        allows deleting any API keys. The `manage_own_api_key` only allows deleting API
-        keys that are owned by the user. In addition, with the `manage_own_api_key` privilege,
-        an invalidation request must be issued in one of the three formats: - Set the
-        parameter `owner=true`. - Or, set both `username` and `realm_name` to match the
-        user’s identity. - Or, if the request is issued by an API key, i.e. an API key
-        invalidates itself, specify its ID in the `ids` field.
+        Invalidate API keys. This API invalidates API keys created by the create API
+        key or grant API key APIs. Invalidated API keys fail authentication, but they
+        can still be viewed using the get API key information and query API key information
+        APIs, for at least the configured retention period, until they are automatically
+        deleted. The `manage_api_key` privilege allows deleting any API keys. The `manage_own_api_key`
+        only allows deleting API keys that are owned by the user. In addition, with the
+        `manage_own_api_key` privilege, an invalidation request must be issued in one
+        of the three formats: - Set the parameter `owner=true`. - Or, set both `username`
+        and `realm_name` to match the user’s identity. - Or, if the request is issued
+        by an API key, that is to say an API key invalidates itself, specify its ID in
+        the `ids` field.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
 
@@ -2177,7 +2277,12 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates one or more access tokens or refresh tokens.
+        Invalidate a token. The access tokens returned by the get token API have a finite
+        period of time for which they are valid. After that time period, they can no
+        longer be used. The time period is defined by the `xpack.security.authc.token.timeout`
+        setting. The refresh tokens returned by the get token API are only valid for
+        24 hours. They can also be used exactly once. If you want to invalidate one or
+        more access or refresh tokens immediately, use this invalidate token API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-token.html>`_
 
@@ -2237,7 +2342,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds or updates application privileges.
+        Create or update application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-privileges.html>`_
 
@@ -2285,6 +2390,7 @@ class SecurityClient(NamespacedClient):
             "global_",
             "indices",
             "metadata",
+            "remote_indices",
             "run_as",
             "transient_metadata",
         ),
@@ -2373,18 +2479,23 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        remote_indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The role management APIs are generally the preferred way to manage roles, rather
-        than using file-based role management. The create or update roles API cannot
-        update roles that are defined in roles files.
+        Create or update roles. The role management APIs are generally the preferred
+        way to manage roles in the native realm, rather than using file-based role management.
+        The create or update roles API cannot update roles that are defined in roles
+        files. File-based role management is not available in Elastic Serverless.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
 
-        :param name: The name of the role.
+        :param name: The name of the role that is being created or updated. On Elasticsearch
+            Serverless, the role name must begin with a letter or digit and can only
+            contain letters, digits and the characters '_', '-', and '.'. Each role must
+            have a unique name, as this will serve as the identifier for that role.
         :param applications: A list of application privilege entries.
         :param cluster: A list of cluster privileges. These privileges define the cluster-level
             actions for users with this role.
@@ -2398,6 +2509,7 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param remote_indices: A list of remote indices permissions entries.
         :param run_as: A list of users that the owners of this role can impersonate.
             *Note*: in Serverless, the run-as feature is disabled. For API compatibility,
             you can still specify an empty `run_as` field, but a non-empty list will
@@ -2438,6 +2550,8 @@ class SecurityClient(NamespacedClient):
                 __body["indices"] = indices
             if metadata is not None:
                 __body["metadata"] = metadata
+            if remote_indices is not None:
+                __body["remote_indices"] = remote_indices
             if run_as is not None:
                 __body["run_as"] = run_as
             if transient_metadata is not None:
@@ -2483,7 +2597,14 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates and updates role mappings.
+        Create or update role mappings. Role mappings define which roles are assigned
+        to each user. Each mapping has rules that identify users and a list of roles
+        that are granted to those users. The role mapping APIs are generally the preferred
+        way to manage role mappings rather than using role mapping files. The create
+        or update role mappings API cannot update role mappings that are defined in role
+        mapping files. This API does not create roles. Rather, it maps users to existing
+        roles. Roles can be created by using the create or update roles API or roles
+        files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
 
@@ -2570,8 +2691,9 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates users in the native realm. These users are commonly referred
-        to as native users.
+        Create or update users. A password is required for adding a new user but is optional
+        when updating an existing user. To change a user’s password without updating
+        any other fields, use the change password API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-user.html>`_
 
@@ -2668,7 +2790,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Query API keys. Retrieves a paginated list of API keys and their information.
+        Find API keys with a query. Get a paginated list of API keys and their information.
         You can optionally filter the results with a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
@@ -2795,8 +2917,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves roles in a paginated manner. You can optionally filter the results
-        with a query.
+        Find roles with a query. Get roles in a paginated manner. You can optionally
+        filter the results with a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-role.html>`_
 
@@ -2881,8 +3003,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information for Users in a paginated manner. You can optionally filter
-        the results with a query.
+        Find users with a query. Get information for users in a paginated manner. You
+        can optionally filter the results with a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-user.html>`_
 
@@ -2960,7 +3082,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Submits a SAML Response message to Elasticsearch for consumption.
+        Authenticate SAML. Submits a SAML response message to Elasticsearch for consumption.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
 
@@ -3022,7 +3144,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Verifies the logout response sent from the SAML IdP.
+        Logout of SAML completely. Verifies the logout response sent from the SAML IdP.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
 
@@ -3088,7 +3210,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Submits a SAML LogoutRequest message to Elasticsearch for consumption.
+        Invalidate SAML. Submits a SAML LogoutRequest message to Elasticsearch for consumption.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
 
@@ -3155,7 +3277,7 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Submits a request to invalidate an access token and refresh token.
+        Logout of SAML. Submits a request to invalidate an access token and refresh token.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
 
@@ -3212,8 +3334,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a SAML authentication request (<AuthnRequest>) as a URL string, based
-        on the configuration of the respective SAML realm in Elasticsearch.
+        Prepare SAML authentication. Creates a SAML authentication request (`<AuthnRequest>`)
+        as a URL string, based on the configuration of the respective SAML realm in Elasticsearch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
 
@@ -3268,7 +3390,8 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Generate SAML metadata for a SAML 2.0 Service Provider.
+        Create SAML service provider metadata. Generate SAML metadata for a SAML 2.0
+        Service Provider.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
 
@@ -3314,7 +3437,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get suggestions for user profiles that match specified search criteria.
+        Suggest a user profile. Get suggestions for user profiles that match specified
+        search criteria.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-suggest-user-profile.html>`_
 
@@ -3453,6 +3577,74 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("access", "expiration", "metadata"),
+    )
+    async def update_cross_cluster_api_key(
+        self,
+        *,
+        id: str,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update a cross-cluster API key. Update the attributes of an existing cross-cluster
+        API key, which is used for API key based remote cluster access.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-cross-cluster-api-key.html>`_
+
+        :param id: The ID of the cross-cluster API key to update.
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross cluster search and cross cluster replication. At
+            least one of them must be specified. When specified, the new access assignment
+            fully replaces the previously assigned access.
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire. This property can be omitted to leave the value unchanged.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage. When specified, this information
+            fully replaces metadata previously associated with the API key.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_security/cross_cluster/api_key/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_cross_cluster_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=("data", "labels"),
     )
     async def update_user_profile_data(
@@ -3473,8 +3665,8 @@ class SecurityClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates specific data for the user profile that's associated with the specified
-        unique ID.
+        Update user profile data. Update specific data for the user profile that is associated
+        with a unique ID.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-user-profile-data.html>`_
 

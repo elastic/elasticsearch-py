@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import HeadApiResponse, ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class IndicesClient(NamespacedClient):
@@ -137,7 +143,8 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs analysis on a text string and returns the resulting tokens.
+        Get tokens from text analysis. The analyze API performs [analysis](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
+        on a text string and returns the resulting tokens.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-analyze.html>`_
 
@@ -561,7 +568,9 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Create a data stream. Creates a data stream. You must have a matching index template
@@ -574,6 +583,11 @@ class IndicesClient(NamespacedClient):
             `#`, `:`, or a space character; Cannot start with `-`, `_`, `+`, or `.ds-`;
             Cannot be `.` or `..`; Cannot be longer than 255 bytes. Multi-byte characters
             count towards this limit faster.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -586,8 +600,12 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -869,6 +887,7 @@ class IndicesClient(NamespacedClient):
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -880,6 +899,9 @@ class IndicesClient(NamespacedClient):
             are supported.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values,such as `open,hidden`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -894,6 +916,8 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -1014,6 +1038,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def disk_usage(
         self,
         *,
@@ -1096,6 +1121,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="config",
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def downsample(
         self,
         *,
@@ -1254,7 +1280,6 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        local: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
@@ -1275,8 +1300,6 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, requests that include a missing data stream
             or index in the target indices or data streams return an error.
-        :param local: If `true`, the request retrieves information from the local node
-            only.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1302,8 +1325,6 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if local is not None:
-            __query["local"] = local
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -1470,6 +1491,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def field_usage_stats(
         self,
         *,
@@ -1846,7 +1868,6 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        local: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1868,8 +1889,6 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
-        :param local: If `true`, the request retrieves information from the local node
-            only.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
@@ -1897,8 +1916,6 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if local is not None:
-            __query["local"] = local
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -1928,6 +1945,7 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1943,6 +1961,9 @@ class IndicesClient(NamespacedClient):
             Supports comma-separated values, such as `open,hidden`. Valid values are:
             `all`, `open`, `closed`, `hidden`, `none`.
         :param include_defaults: If `true`, return all default settings in the response.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1959,6 +1980,8 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -1988,7 +2011,9 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get data streams. Retrieves information about one or more data streams.
@@ -2002,6 +2027,11 @@ class IndicesClient(NamespacedClient):
             Supports comma-separated values, such as `open,hidden`.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param verbose: Whether the maximum timestamp for each data stream should be
+            calculated and returned.
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -2021,8 +2051,12 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if verbose is not None:
+            __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -2435,7 +2469,9 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Convert an index alias to a data stream. Converts an index alias to a data stream.
@@ -2450,6 +2486,11 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
         :param name: Name of the index alias to convert to a data stream.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -2462,8 +2503,12 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -2620,6 +2665,7 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2629,6 +2675,9 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
         :param name: The name of the data stream
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -2641,6 +2690,8 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -2758,14 +2809,14 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("data_retention", "downsampling"),
+        body_name="lifecycle",
     )
     async def put_data_lifecycle(
         self,
         *,
         name: t.Union[str, t.Sequence[str]],
-        data_retention: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        downsampling: t.Optional[t.Mapping[str, t.Any]] = None,
+        lifecycle: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
@@ -2780,7 +2831,6 @@ class IndicesClient(NamespacedClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Update data stream lifecycles. Update the data stream lifecycle of the specified
@@ -2790,13 +2840,7 @@ class IndicesClient(NamespacedClient):
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.
-        :param data_retention: If defined, every document added to this data stream will
-            be stored at least for this time frame. Any time after this duration the
-            document could be deleted. When empty, every document in this data stream
-            will be stored indefinitely.
-        :param downsampling: If defined, every backing index will execute the configured
-            downsampling configuration after the backing index is not the data stream
-            write index anymore.
+        :param lifecycle:
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values, such as `open,hidden`. Valid values are:
             `all`, `hidden`, `open`, `closed`, `none`.
@@ -2808,10 +2852,15 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
+        if lifecycle is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'lifecycle' and 'body', one of them should be set."
+            )
+        elif lifecycle is not None and body is not None:
+            raise ValueError("Cannot set both 'lifecycle' and 'body'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -2826,16 +2875,8 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if not __body:
-            if data_retention is not None:
-                __body["data_retention"] = data_retention
-            if downsampling is not None:
-                __body["downsampling"] = downsampling
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __body = lifecycle if lifecycle is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3621,6 +3662,7 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: t.Union[str, t.Sequence[str]],
+        allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
@@ -3632,6 +3674,7 @@ class IndicesClient(NamespacedClient):
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3643,16 +3686,25 @@ class IndicesClient(NamespacedClient):
         :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
             and data streams to resolve. Resources on remote clusters can be specified
             using the `<cluster>`:`<name>` syntax.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_resolve/index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -3661,6 +3713,8 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -3800,7 +3854,6 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns low-level information about the Lucene segments in index shards. For
@@ -3820,7 +3873,6 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
-        :param verbose: If `true`, the request returns a verbose response.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -3844,8 +3896,6 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
-        if verbose is not None:
-            __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",

@@ -34,7 +34,9 @@ class XPackClient(NamespacedClient):
         self,
         *,
         accept_enterprise: t.Optional[bool] = None,
-        categories: t.Optional[t.Sequence[str]] = None,
+        categories: t.Optional[
+            t.Sequence[t.Union[str, t.Literal["build", "features", "license"]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,

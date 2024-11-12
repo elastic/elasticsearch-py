@@ -82,8 +82,10 @@ from .utils import (
     _TYPE_HOSTS,
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
+    Stability,
     _quote,
     _rewrite_parameters,
+    _stability_warning,
     client_node_configs,
     is_requests_http_auth,
     is_requests_node_class,
@@ -741,7 +743,8 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clears the search context and results for a scrolling search.
+        Clear a scrolling search. Clear the search context and results for a scrolling
+        search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
@@ -791,7 +794,11 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Closes a point-in-time.
+        Close a point in time. A point in time must be opened explicitly before being
+        used in search requests. The `keep_alive` parameter tells Elasticsearch how long
+        it should persist. A point in time is automatically closed when the `keep_alive`
+        period has elapsed. However, keeping points in time has a cost; close them as
+        soon as they are no longer required for search requests.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -1404,7 +1411,10 @@ class AsyncElasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Delete By Query operation.
+        Throttle a delete by query operation. Change the number of requests per second
+        for a particular delete by query operation. Rethrottling that speeds up the query
+        takes effect immediately but rethrotting that slows down the query takes effect
+        after completing the current batch to prevent scroll timeouts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1839,10 +1849,11 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The field capabilities API returns the information about the capabilities of
-        fields among multiple indices. The field capabilities API returns runtime fields
-        like any other field. For example, a runtime field with a type of keyword is
-        returned as any other field that belongs to the `keyword` family.
+        Get the field capabilities. Get information about the capabilities of fields
+        among multiple indices. For data streams, the API returns field capabilities
+        among the stream’s backing indices. It returns runtime fields like any other
+        field. For example, a runtime field with a type of keyword is returned the same
+        as any other field that belongs to the `keyword` family.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
@@ -2090,7 +2101,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns all script contexts.
+        Get script contexts. Get a list of supported script contexts and their methods.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
@@ -2125,7 +2136,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns available script types, languages and contexts
+        Get script languages. Get a list of available script types, languages, and contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
@@ -2485,6 +2496,7 @@ class AsyncElasticsearch(BaseClient):
         ),
         parameter_aliases={"_source": "source"},
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def knn_search(
         self,
         *,
@@ -2505,7 +2517,15 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs a kNN search.
+        Run a knn search. NOTE: The kNN search API has been replaced by the `knn` option
+        in the search API. Perform a k-nearest neighbor (kNN) search on a dense_vector
+        field and return the matching documents. Given a query vector, the API finds
+        the k closest vectors and returns those documents as search hits. Elasticsearch
+        uses the HNSW algorithm to support efficient kNN search. Like most kNN algorithms,
+        HNSW is an approximate method that sacrifices result accuracy for improved search
+        speed. This means the results returned are not always the true k closest neighbors.
+        The kNN search API supports restricting the search using a filter. The search
+        will return the top k documents that also match the filter query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -2606,7 +2626,10 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to get multiple documents in one request.
+        Get multiple documents. Get multiple JSON documents by ID from one or more indices.
+        If you specify an index in the request URI, you only need to specify the document
+        IDs in the request body. To ensure fast responses, this multi get (mget) API
+        responds with partial results if one or more shards fail.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
 
@@ -2714,6 +2737,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         max_concurrent_searches: t.Optional[int] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         pre_filter_shard_size: t.Optional[int] = None,
@@ -2726,7 +2750,13 @@ class AsyncElasticsearch(BaseClient):
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to execute several search operations in one request.
+        Run multiple searches. The format of the request is similar to the bulk API format
+        and makes use of the newline delimited JSON (NDJSON) format. The structure is
+        as follows: ``` header\\n body\\n header\\n body\\n ``` This structure is specifically
+        optimized to reduce parsing if a specific search ends up redirected to another
+        node. IMPORTANT: The final line of data must end with a newline character `\\n`.
+        Each newline character may be preceded by a carriage return `\\r`. When sending
+        requests to this endpoint the `Content-Type` header should be set to `application/x-ndjson`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -2747,6 +2777,13 @@ class AsyncElasticsearch(BaseClient):
             when frozen.
         :param ignore_unavailable: If true, missing or closed indices are not included
             in the response.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
             search API can execute.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
@@ -2796,6 +2833,8 @@ class AsyncElasticsearch(BaseClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if max_concurrent_searches is not None:
             __query["max_concurrent_searches"] = max_concurrent_searches
         if max_concurrent_shard_requests is not None:
@@ -2849,7 +2888,7 @@ class AsyncElasticsearch(BaseClient):
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Runs multiple templated searches with a single request.
+        Run multiple templated searches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -2944,7 +2983,11 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns multiple termvectors in one request.
+        Get multiple term vectors. You can specify existing documents by index and ID
+        or provide artificial documents in the body of the request. You can specify the
+        index in the request body or request URI. The response contains a `docs` array
+        with all the fetched termvectors. Each element has the structure provided by
+        the termvectors API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
 
@@ -3028,7 +3071,9 @@ class AsyncElasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("index_filter",),
+    )
     async def open_point_in_time(
         self,
         *,
@@ -3046,18 +3091,22 @@ class AsyncElasticsearch(BaseClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        A search request by default executes against the most recent visible data of
-        the target indices, which is called point in time. Elasticsearch pit (point in
-        time) is a lightweight view into the state of the data as it existed when initiated.
-        In some cases, it’s preferred to perform multiple search requests using the same
-        point in time. For example, if refreshes happen between `search_after` requests,
-        then the results of those requests might not be consistent as changes happening
-        between searches are only visible to the more recent point in time.
+        Open a point in time. A search request by default runs against the most recent
+        visible data of the target indices, which is called point in time. Elasticsearch
+        pit (point in time) is a lightweight view into the state of the data as it existed
+        when initiated. In some cases, it’s preferred to perform multiple search requests
+        using the same point in time. For example, if refreshes happen between `search_after`
+        requests, then the results of those requests might not be consistent as changes
+        happening between searches are only visible to the more recent point in time.
+        A point in time must be opened explicitly before being used in search requests.
+        The `keep_alive` parameter tells Elasticsearch how long it should persist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -3070,17 +3119,20 @@ class AsyncElasticsearch(BaseClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param index_filter: Allows to filter indices if the provided query rewrites
+            to `match_none` on every shard.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if keep_alive is None:
+        if keep_alive is None and body is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
         if error_trace is not None:
@@ -3099,12 +3151,20 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
+        if not __body:
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="open_point_in_time",
             path_parts=__path_parts,
         )
@@ -3213,8 +3273,8 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables you to evaluate the quality of ranked search results over a set of typical
-        search queries.
+        Evaluate ranked search results. Evaluate the quality of ranked search results
+        over a set of typical search queries.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
@@ -3406,7 +3466,8 @@ class AsyncElasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Copies documents from a source to a destination.
+        Throttle a reindex operation. Change the number of requests per second for a
+        particular reindex operation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -3457,7 +3518,7 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Renders a search template as a search request body.
+        Render a search template. Render a search template as a search request body.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
@@ -3512,6 +3573,7 @@ class AsyncElasticsearch(BaseClient):
     @_rewrite_parameters(
         body_fields=("context", "context_setup", "script"),
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def scripts_painless_execute(
         self,
         *,
@@ -3583,7 +3645,22 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to retrieve a large numbers of results from a single search request.
+        Run a scrolling search. IMPORTANT: The scroll API is no longer recommend for
+        deep pagination. If you need to preserve the index state while paging through
+        more than 10,000 hits, use the `search_after` parameter with a point in time
+        (PIT). The scroll API gets large sets of results from a single scrolling search
+        request. To get the necessary scroll ID, submit a search API request that includes
+        an argument for the `scroll` query parameter. The `scroll` parameter indicates
+        how long Elasticsearch should retain the search context for the request. The
+        search response returns a scroll ID in the `_scroll_id` response body parameter.
+        You can then use the scroll ID with the scroll API to retrieve the next batch
+        of results for the request. If the Elasticsearch security features are enabled,
+        the access to the results of a specific scroll ID is restricted to the user or
+        API key that submitted the search. You can also use the scroll API to specify
+        a new scroll parameter that extends or shortens the retention period for the
+        search context. IMPORTANT: Results from a scrolling search reflect the state
+        of the index at the time of the initial search request. Subsequent indexing or
+        document changes only affect later search and scroll requests.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
 
@@ -3709,13 +3786,13 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3772,9 +3849,9 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns search hits that match the query defined in the request. You can provide
-        search queries using the `q` query string parameter or the request body. If both
-        are specified, only the query parameter is used.
+        Run a search. Get search hits that match the query defined in the request. You
+        can provide search queries using the `q` query string parameter or the request
+        body. If both are specified, only the query parameter is used.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -3836,6 +3913,13 @@ class AsyncElasticsearch(BaseClient):
             be ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param knn: Defines the approximate kNN search to run.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3845,8 +3929,6 @@ class AsyncElasticsearch(BaseClient):
             requests per node this search executes concurrently. This value should be
             used to limit the impact of the search on the cluster in order to limit the
             number of concurrent shard requests.
-        :param min_compatible_shard_node: The minimum version of the node that can handle
-            the request Any handling node with a lower version will fail the request.
         :param min_score: Minimum `_score` for matching documents. Documents with a lower
             `_score` are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
@@ -4017,12 +4099,12 @@ class AsyncElasticsearch(BaseClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
@@ -4195,7 +4277,7 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> BinaryApiResponse:
         """
-        Search a vector tile. Searches a vector tile for geospatial values.
+        Search a vector tile. Search a vector tile for geospatial values.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-vector-tile-api.html>`_
 
@@ -4349,8 +4431,10 @@ class AsyncElasticsearch(BaseClient):
         routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about the indices and shards that a search request would
-        be executed against.
+        Get the search shards. Get the indices and shards that a search request would
+        be run against. This information can be useful for working out issues or planning
+        optimizations with routing and shard preferences. When filtered aliases are used,
+        the filter is returned as part of the indices section.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
 
@@ -4451,7 +4535,7 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Runs a search with a search template.
+        Run a search with a search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
@@ -4583,9 +4667,15 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The terms enum API can be used to discover terms in the index that begin with
-        the provided string. It is designed for low-latency look-ups used in auto-complete
-        scenarios.
+        Get terms in an index. Discover terms that match a partial string in an index.
+        This "terms enum" API is designed for low-latency look-ups used in auto-complete
+        scenarios. If the `complete` property in the response is false, the returned
+        terms set may be incomplete and should be treated as approximate. This can occur
+        due to a few reasons, such as a request timeout or a node error. NOTE: The terms
+        enum API may return terms from deleted documents. Deleted documents are initially
+        only marked as deleted. It is not until their segments are merged that documents
+        are actually deleted. Until that happens, the terms enum API will return terms
+        from these documents.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
 
@@ -4683,8 +4773,8 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get term vector information. Returns information and statistics about terms in
-        the fields of a particular document.
+        Get term vector information. Get information and statistics about terms in the
+        fields of a particular document.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
 
@@ -4963,6 +5053,7 @@ class AsyncElasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
@@ -5029,6 +5120,7 @@ class AsyncElasticsearch(BaseClient):
             parameter.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
+        :param q: Query in the Lucene query string syntax.
         :param query: Specifies the documents to update using the Query DSL.
         :param refresh: If `true`, Elasticsearch refreshes affected shards to make the
             operation visible to search.
@@ -5113,6 +5205,8 @@ class AsyncElasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:
@@ -5185,7 +5279,10 @@ class AsyncElasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Update By Query operation.
+        Throttle an update by query operation. Change the number of requests per second
+        for a particular update by query operation. Rethrottling that speeds up the query
+        takes effect immediately but rethrotting that slows down the query takes effect
+        after completing the current batch to prevent scroll timeouts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 

@@ -91,19 +91,6 @@ Documentation for the client is [available on elastic.co] and [Read the Docs].
 [Read the Docs]: https://elasticsearch-py.readthedocs.io
 
 
-## Feedback 🗣️
-
-The engineering team here at Elastic is looking for developers to participate in
-research and feedback sessions to learn more about how you use our Python client and
-what improvements we can make to their design and your workflow. If you're interested in
-sharing your insights into developer experience and language client design, please fill
-out this [short form]. Depending on the number of responses we get, we may either
-contact you for a 1:1 conversation or a focus group with other developers who use the
-same client. Thank you in advance - your feedback is crucial to improving the user
-experience for all Elasticsearch developers!
-
-[short form]: https://forms.gle/bYZwDQXijfhfwshn9
-
 ## License
 
 This software is licensed under the [Apache License 2.0](./LICENSE). See [NOTICE](./NOTICE).

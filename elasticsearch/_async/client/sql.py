@@ -251,7 +251,11 @@ class SqlClient(NamespacedClient):
         field_multi_value_leniency: t.Optional[bool] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        format: t.Optional[str] = None,
+        format: t.Optional[
+            t.Union[
+                str, t.Literal["cbor", "csv", "json", "smile", "tsv", "txt", "yaml"]
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         index_using_frozen: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
