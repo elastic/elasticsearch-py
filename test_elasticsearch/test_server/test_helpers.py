@@ -305,11 +305,6 @@ def test_connection_timeout_is_retried_with_retry_status_callback(sync_client):
         {"_index": "i", "_id": 42, "f": "v"},
     ]
 
-    def _retry_for_connection_timeout(status):
-        if status == 522:
-            return True
-        return False
-
     results = list(
         helpers.streaming_bulk(
             failing_client,
@@ -318,7 +313,7 @@ def test_connection_timeout_is_retried_with_retry_status_callback(sync_client):
             raise_on_exception=False,
             raise_on_error=False,
             chunk_size=1,
-            retry_for_status_callback=_retry_for_connection_timeout,
+            retry_on_status=522,
             max_retries=1,
             initial_backoff=0,
         )

@@ -359,12 +359,6 @@ def _process_bulk_chunk(
         yield from gen
 
 
-def _retry_for_status(status: int) -> bool:
-    if status == 429:
-        return True
-    return False
-
-
 def streaming_bulk(
     client: Elasticsearch,
     actions: Iterable[_TYPE_BULK_ACTION],
@@ -374,13 +368,13 @@ def streaming_bulk(
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
     ] = expand_action,
-    retry_for_status_callback: Callable[[int], bool] = _retry_for_status,
     raise_on_exception: bool = True,
     max_retries: int = 0,
     initial_backoff: float = 2,
     max_backoff: float = 600,
     yield_ok: bool = True,
     ignore_status: Union[int, Collection[int]] = (),
+    retry_on_status: Union[int, Collection[int]] = (429,),
     span_name: str = "helpers.streaming_bulk",
     *args: Any,
     **kwargs: Any,
@@ -393,7 +387,7 @@ def streaming_bulk(
     entire input is consumed and sent.
 
     If you specify ``max_retries`` it will also retry any documents that were
-    rejected with a ``429`` status code. Use ``retry_for_status_callback`` to
+    rejected with a ``429`` status code. Use ``retry_on_status`` to
     configure which status codes will be retried. To do this it will wait
     (**by calling time.sleep which will block**) for ``initial_backoff`` seconds
     and then, every subsequent rejection for the same chunk, for double the time
@@ -410,12 +404,11 @@ def streaming_bulk(
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
-    :arg retry_for_status_callback: callback executed on each item's status,
-        should return a True if the status require a retry and False if not.
+    :arg retry_on_status: HTTP status code that will trigger a retry.
         (if `None` is specified only status 429 will retry).
     :arg max_retries: maximum number of times a document will be retried when
-        retry_for_status_callback (defaulting to ``429``) is received,
-        set to 0 (default) for no retries on retry_for_status_callback
+        retry_on_status (defaulting to ``429``) is received,
+        set to 0 (default) for no retries
     :arg initial_backoff: number of seconds we should wait before the first
         retry. Any subsequent retries will be powers of ``initial_backoff *
         2**retry_number``
@@ -426,6 +419,9 @@ def streaming_bulk(
     with client._otel.helpers_span(span_name) as otel_span:
         client = client.options()
         client._client_meta = (("h", "bp"),)
+
+        if isinstance(retry_on_status, int):
+            retry_on_status = (retry_on_status,)
 
         serializer = client.transport.serializers.get_serializer("application/json")
 
@@ -471,10 +467,10 @@ def streaming_bulk(
                         if not ok:
                             action, info = info.popitem()
                             # retry if retries enabled, we are not in the last attempt,
-                            # and retry_for_status_callback is true (defaulting to 429)
+                            # and status not in retry_on_status (defaulting to 429)
                             if (
                                 max_retries
-                                and retry_for_status_callback(info["status"])
+                                and info["status"] in retry_on_status
                                 and (attempt + 1) <= max_retries
                             ):
                                 # _process_bulk_chunk expects bytes so we need to
@@ -487,11 +483,9 @@ def streaming_bulk(
                             yield ok, info
 
                 except ApiError as e:
-                    # suppress any status which retry_for_status_callback is true (defaulting to 429)
+                    # suppress any status in retry_on_status (429 by default)
                     # since we will retry them
-                    if attempt == max_retries or not retry_for_status_callback(
-                        e.status_code
-                    ):
+                    if attempt == max_retries or e.status_code not in retry_on_status:
                         raise
                 else:
                     if not to_retry:
