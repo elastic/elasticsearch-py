@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.snapshot.create(
-    repository="my_repository",
-    snapshot="_verify_integrity",
+resp = client.snapshot.repository_verify_integrity(
+    name="my_repository",
 )
 print(resp)
 ----
