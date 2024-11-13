@@ -56,10 +56,9 @@ from elastic_transport.client_utils import (
     url_to_node_config,
 )
 
-from elasticsearch.exceptions import GeneralAvailabilityWarning
-
 from ..._version import __versionstr__
 from ...compat import to_bytes, to_str, warn_stacklevel
+from ...exceptions import GeneralAvailabilityWarning
 
 if TYPE_CHECKING:
     from ._base import NamespacedClient
