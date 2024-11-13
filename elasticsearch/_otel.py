@@ -102,7 +102,7 @@ class OpenTelemetry:
 
     @contextlib.contextmanager
     def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
-        if not self.enabled or self.tracer is None:
+        if not self.enabled or self.tracer is None or span.otel_span is None:
             yield
             return
 
