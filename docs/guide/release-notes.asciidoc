@@ -63,9 +63,15 @@
   * Add `include_remotes` and remove `flat_settings` from Cluster stats API
   * Add `remote_indices` to Create or update application privileges and Create or update roles APIs
 
+Note that the new Python warnings can be disabled as follows:
 
+[source,python]
+----
+import warnings
+from elasticsearch.exceptions import GeneralAvailabilityWarning
 
-
+warnings.filterwarnings("ignore", category=GeneralAvailabilityWarning)
+----
 
 [discrete]
 [[rn-8-15-1]]
@@ -76,8 +82,6 @@
 - Add Geoip database configuration APIs: Create or update, Get and Delete
 - Add `q` parameter to Update by Query API
 - Add `allow_no_indices` and `ignore_unavailable` parameters to Resolve index API
-
-
 
 [discrete]
 [[rn-8-15-0]]
