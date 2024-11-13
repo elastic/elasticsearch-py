@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-16-0>>
 * <<rn-8-15-1>>
 * <<rn-8-15-0>>
 * <<rn-8-14-0>>
@@ -40,6 +41,31 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-16-0]]
+=== 8.16.0 (2024-11-12)
+
+- Support Python 3.13 (https://github.com/elastic/elasticsearch-py/pull/2689[#2689])
+- Emit Python warnings for beta and tech preview APIs (https://github.com/elastic/elasticsearch-py/pull/2685[#2685])
+- Vectorstore: use a retriever query for hybrid search (https://github.com/elastic/elasticsearch-py/pull/2682[#2682])
+- Allow retries for statuses other than 429 in streaming bulk (https://github.com/elastic/elasticsearch-py/pull/2702[#2702])
+- Make `BulkIndexError` and `ScanError` serializable (https://github.com/elastic/elasticsearch-py/pull/2700[#2700])
+- Fix import when `trace` is missing from `opentelemetry` package (https://github.com/elastic/elasticsearch-py/pull/2705[#2705])
+- Update APIs:
+  * Fix `nodes` parameter in Task management API
+  * Add Test query rule API
+  * Add Create Cross-Cluster API key and Update Cross-Cluster API key APIs
+  * Add Verify snapshot repository API
+  * Add `data_stream_name` and `settings` to Delete auto-follow pattern API
+  * Add `max_samples_per_key` to Get async EQL status API
+  * Add `lifecycle` and remove unused `data_retention` and `downsampling parameters` from Put data stream lifecycle API
+  * Add `include_remotes` and remove `flat_settings` from Cluster stats API
+  * Add `remote_indices` to Create or update application privileges and Create or update roles APIs
+
+
+
+
 
 [discrete]
 [[rn-8-15-1]]
