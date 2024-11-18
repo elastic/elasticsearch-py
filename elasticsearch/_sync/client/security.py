@@ -2050,6 +2050,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_ml",
                         "monitor_rollup",
                         "monitor_snapshot",
+                        "monitor_stats",
                         "monitor_text_structure",
                         "monitor_transform",
                         "monitor_watcher",
@@ -2390,6 +2391,7 @@ class SecurityClient(NamespacedClient):
             "global_",
             "indices",
             "metadata",
+            "remote_cluster",
             "remote_indices",
             "run_as",
             "transient_metadata",
@@ -2450,6 +2452,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_ml",
                         "monitor_rollup",
                         "monitor_snapshot",
+                        "monitor_stats",
                         "monitor_text_structure",
                         "monitor_transform",
                         "monitor_watcher",
@@ -2479,6 +2482,7 @@ class SecurityClient(NamespacedClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        remote_cluster: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         remote_indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2509,6 +2513,7 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param remote_cluster: A list of remote cluster permissions entries.
         :param remote_indices: A list of remote indices permissions entries.
         :param run_as: A list of users that the owners of this role can impersonate.
             *Note*: in Serverless, the run-as feature is disabled. For API compatibility,
@@ -2550,6 +2555,8 @@ class SecurityClient(NamespacedClient):
                 __body["indices"] = indices
             if metadata is not None:
                 __body["metadata"] = metadata
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
             if remote_indices is not None:
                 __body["remote_indices"] = remote_indices
             if run_as is not None:
