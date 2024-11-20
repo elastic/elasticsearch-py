@@ -899,8 +899,6 @@ class TestVectorStore:
         self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test max marginal relevance search error conditions."""
-        pytest.importorskip("simsimd")
-
         texts = ["foo", "bar", "baz"]
         vector_field = "vector_field"
         embedding_service = ConsistentFakeEmbeddings()
@@ -942,8 +940,6 @@ class TestVectorStore:
         self, sync_client: Elasticsearch, index: str
     ) -> None:
         """Test max marginal relevance search."""
-        pytest.importorskip("simsimd")
-
         texts = ["foo", "bar", "baz"]
         vector_field = "vector_field"
         text_field = "text_field"
