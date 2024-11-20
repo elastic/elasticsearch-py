@@ -70,7 +70,7 @@ dev = [
     "nox",
     "orjson",
     "numpy",
-    "simsimd ; python_version<'3.13'",
+    "simsimd",
     "pyarrow",
     "pandas",
     "mapbox-vector-tile",
