@@ -53,7 +53,7 @@ class TextStructureClient(NamespacedClient):
         Finds the structure of a text file. The text file must contain data that is suitable
         to be ingested into Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/find-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-structure.html>`_
 
         :param text_files:
         :param charset: The text’s character set. It must be a character set that is
@@ -193,7 +193,7 @@ class TextStructureClient(NamespacedClient):
         """
         Tests a Grok pattern on some text.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/test-grok-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/test-grok-pattern.html>`_
 
         :param grok_pattern: Grok pattern to run on the text.
         :param text: Lines of text to run the Grok pattern on.

@@ -644,7 +644,7 @@ class Elasticsearch(BaseClient):
         in a single API call. This reduces overhead and can greatly increase indexing
         speed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-bulk.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-bulk.html>`_
 
         :param operations:
         :param index: Name of the data stream, index, or index alias to perform bulk
@@ -744,7 +744,7 @@ class Elasticsearch(BaseClient):
         Clear a scrolling search. Clear the search context and results for a scrolling
         search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clear-scroll-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clear-scroll-api.html>`_
 
         :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
@@ -798,7 +798,7 @@ class Elasticsearch(BaseClient):
         period has elapsed. However, keeping points in time has a cost; close them as
         soon as they are no longer required for search requests.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/point-in-time-api.html>`_
 
         :param id: The ID of the point-in-time.
         """
@@ -870,9 +870,9 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns number of documents matching a query.
+        Count search results. Get the number of documents matching a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-count.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (`*`). To search all data streams and indices, omit this
@@ -1007,7 +1007,7 @@ class Elasticsearch(BaseClient):
         and makes it searchable. If the target is an index and the document already exists,
         the request updates the document and increments its version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-index_.html>`_
 
         :param index: Name of the data stream or index to target. If the target doesn’t
             exist and matches the name or wildcard (`*`) pattern of an index template
@@ -1111,7 +1111,7 @@ class Elasticsearch(BaseClient):
         """
         Delete a document. Removes a JSON document from the specified index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-delete.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-delete.html>`_
 
         :param index: Name of the target index.
         :param id: Unique identifier for the document.
@@ -1233,7 +1233,7 @@ class Elasticsearch(BaseClient):
         """
         Delete documents. Deletes documents that match the specified query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-delete-by-query.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (`*`). To search all data streams or indices, omit this
@@ -1414,7 +1414,7 @@ class Elasticsearch(BaseClient):
         takes effect immediately but rethrotting that slows down the query takes effect
         after completing the current batch to prevent scroll timeouts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-delete-by-query.html>`_
 
         :param task_id: The ID for the task.
         :param requests_per_second: The throttle for this request in sub-requests per
@@ -1460,7 +1460,7 @@ class Elasticsearch(BaseClient):
         """
         Delete a script or search template. Deletes a stored script or search template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-scripting.html>`_
 
         :param id: Identifier for the stored script or search template.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -1528,7 +1528,7 @@ class Elasticsearch(BaseClient):
         """
         Check a document. Checks if a specified document exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-get.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases. Supports
             wildcards (`*`).
@@ -1629,7 +1629,7 @@ class Elasticsearch(BaseClient):
         """
         Check for a document source. Checks if a document's `_source` is stored.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-get.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases. Supports
             wildcards (`*`).
@@ -1730,7 +1730,7 @@ class Elasticsearch(BaseClient):
         Explain a document match result. Returns information about why a specific document
         matches, or doesn’t match, a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-explain.html>`_
 
         :param index: Index names used to limit the request. Only a single index name
             can be provided to this parameter.
@@ -1853,7 +1853,7 @@ class Elasticsearch(BaseClient):
         field. For example, a runtime field with a type of keyword is returned the same
         as any other field that belongs to the `keyword` family.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-field-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-field-caps.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (*). To target all data streams
@@ -1970,7 +1970,7 @@ class Elasticsearch(BaseClient):
         Get a document by its ID. Retrieves the document with the specified ID from an
         index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-get.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
@@ -2059,7 +2059,7 @@ class Elasticsearch(BaseClient):
         """
         Get a script or search template. Retrieves a stored script or search template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-scripting.html>`_
 
         :param id: Identifier for the stored script or search template.
         :param master_timeout: Specify timeout for connection to master
@@ -2101,7 +2101,7 @@ class Elasticsearch(BaseClient):
         """
         Get script contexts. Get a list of supported script contexts and their methods.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.16/painless-contexts.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.17/painless-contexts.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_script_context"
@@ -2136,7 +2136,7 @@ class Elasticsearch(BaseClient):
         """
         Get script languages. Get a list of available script types, languages, and contexts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-scripting.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_script_language"
@@ -2191,7 +2191,7 @@ class Elasticsearch(BaseClient):
         """
         Get a document's source. Returns the source of a document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-get.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
@@ -2274,7 +2274,7 @@ class Elasticsearch(BaseClient):
         """
         Returns the health of the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/health-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/health-api.html>`_
 
         :param feature: A feature of the cluster, as returned by the top-level health
             report API.
@@ -2351,7 +2351,7 @@ class Elasticsearch(BaseClient):
         and makes it searchable. If the target is an index and the document already exists,
         the request updates the document and increments its version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-index_.html>`_
 
         :param index: Name of the data stream or index to target.
         :param document:
@@ -2460,7 +2460,7 @@ class Elasticsearch(BaseClient):
         """
         Get cluster info. Returns basic information about the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/index.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/"
@@ -2525,7 +2525,7 @@ class Elasticsearch(BaseClient):
         The kNN search API supports restricting the search using a filter. The search
         will return the top k documents that also match the filter query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             to perform the operation on all indices
@@ -2629,7 +2629,7 @@ class Elasticsearch(BaseClient):
         IDs in the request body. To ensure fast responses, this multi get (mget) API
         responds with partial results if one or more shards fail.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-multi-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-multi-get.html>`_
 
         :param index: Name of the index to retrieve documents from when `ids` are specified,
             or when a document in the `docs` array does not specify an index.
@@ -2756,7 +2756,7 @@ class Elasticsearch(BaseClient):
         Each newline character may be preceded by a carriage return `\\r`. When sending
         requests to this endpoint the `Content-Type` header should be set to `application/x-ndjson`.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-multi-search.html>`_
 
         :param searches:
         :param index: Comma-separated list of data streams, indices, and index aliases
@@ -2888,7 +2888,7 @@ class Elasticsearch(BaseClient):
         """
         Run multiple templated searches.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-multi-search.html>`_
 
         :param search_templates:
         :param index: Comma-separated list of data streams, indices, and aliases to search.
@@ -2987,7 +2987,7 @@ class Elasticsearch(BaseClient):
         with all the fetched termvectors. Each element has the structure provided by
         the termvectors API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-multi-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-multi-termvectors.html>`_
 
         :param index: Name of the index that contains the documents.
         :param docs: Array of existing or artificial documents.
@@ -3077,6 +3077,7 @@ class Elasticsearch(BaseClient):
         *,
         index: t.Union[str, t.Sequence[str]],
         keep_alive: t.Union[str, t.Literal[-1], t.Literal[0]],
+        allow_partial_search_results: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
@@ -3106,11 +3107,15 @@ class Elasticsearch(BaseClient):
         A point in time must be opened explicitly before being used in search requests.
         The `keep_alive` parameter tells Elasticsearch how long it should persist.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/point-in-time-api.html>`_
 
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
         :param keep_alive: Extends the time to live of the corresponding point in time.
+        :param allow_partial_search_results: If `false`, creating a point in time request
+            when a shard is missing or unavailable will throw an exception. If `true`,
+            the point in time will contain all the shards that are available at the time
+            of the request.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
@@ -3133,6 +3138,8 @@ class Elasticsearch(BaseClient):
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
+        if allow_partial_search_results is not None:
+            __query["allow_partial_search_results"] = allow_partial_search_results
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -3188,7 +3195,7 @@ class Elasticsearch(BaseClient):
         Create or update a script or search template. Creates or updates a stored script
         or search template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-scripting.html>`_
 
         :param id: Identifier for the stored script or search template. Must be unique
             within the cluster.
@@ -3274,7 +3281,7 @@ class Elasticsearch(BaseClient):
         Evaluate ranked search results. Evaluate the quality of ranked search results
         over a set of typical search queries.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-rank-eval.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-rank-eval.html>`_
 
         :param requests: A set of typical search requests, together with their provided
             ratings.
@@ -3370,7 +3377,7 @@ class Elasticsearch(BaseClient):
         can be any existing index, alias, or data stream. The destination must differ
         from the source. For example, you cannot reindex a data stream into itself.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-reindex.html>`_
 
         :param dest: The destination you are copying to.
         :param source: The source you are copying from.
@@ -3467,7 +3474,7 @@ class Elasticsearch(BaseClient):
         Throttle a reindex operation. Change the number of requests per second for a
         particular reindex operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-reindex.html>`_
 
         :param task_id: Identifier for the task.
         :param requests_per_second: The throttle for this request in sub-requests per
@@ -3518,7 +3525,7 @@ class Elasticsearch(BaseClient):
         """
         Render a search template. Render a search template as a search request body.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/render-search-template-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/render-search-template-api.html>`_
 
         :param id: ID of the search template to render. If no `source` is specified,
             this or the `id` request body parameter is required.
@@ -3587,7 +3594,7 @@ class Elasticsearch(BaseClient):
         """
         Run a script. Runs a script and returns a result.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.16/painless-execute-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.17/painless-execute-api.html>`_
 
         :param context: The context that the script should run in.
         :param context_setup: Additional parameters for the `context`.
@@ -3660,7 +3667,7 @@ class Elasticsearch(BaseClient):
         of the index at the time of the initial search request. Subsequent indexing or
         document changes only affect later search and scroll requests.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-request-body.html#request-body-search-scroll>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-request-body.html#request-body-search-scroll>`_
 
         :param scroll_id: Scroll ID of the search.
         :param rest_total_hits_as_int: If true, the API response’s hit.total property
@@ -3852,7 +3859,7 @@ class Elasticsearch(BaseClient):
         can provide search queries using the `q` query string parameter or the request
         body. If both are specified, only the query parameter is used.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-search.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (`*`). To search all data streams and indices, omit this
@@ -4282,7 +4289,7 @@ class Elasticsearch(BaseClient):
         """
         Search a vector tile. Search a vector tile for geospatial values.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-vector-tile-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-vector-tile-api.html>`_
 
         :param index: Comma-separated list of data streams, indices, or aliases to search
         :param field: Field containing geospatial data to return
@@ -4439,7 +4446,7 @@ class Elasticsearch(BaseClient):
         optimizations with routing and shard preferences. When filtered aliases are used,
         the filter is returned as part of the indices section.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-shards.html>`_
 
         :param index: Returns the indices and shards that a search request would be executed
             against.
@@ -4540,7 +4547,7 @@ class Elasticsearch(BaseClient):
         """
         Run a search with a search template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-template.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (*).
@@ -4680,7 +4687,7 @@ class Elasticsearch(BaseClient):
         are actually deleted. Until that happens, the terms enum API will return terms
         from these documents.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-terms-enum.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-terms-enum.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             to search. Wildcard (*) expressions are supported.
@@ -4779,7 +4786,7 @@ class Elasticsearch(BaseClient):
         Get term vector information. Get information and statistics about terms in the
         fields of a particular document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-termvectors.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
@@ -4922,7 +4929,7 @@ class Elasticsearch(BaseClient):
         Update a document. Updates a document by running a script or passing a partial
         document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-update.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-update.html>`_
 
         :param index: The name of the index
         :param id: Document ID
@@ -5088,7 +5095,7 @@ class Elasticsearch(BaseClient):
         is specified, performs an update on every document in the data stream or index
         without modifying the source, which is useful for picking up mapping changes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-update-by-query.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (`*`). To search all data streams or indices, omit this
@@ -5287,7 +5294,7 @@ class Elasticsearch(BaseClient):
         takes effect immediately but rethrotting that slows down the query takes effect
         after completing the current batch to prevent scroll timeouts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/docs-update-by-query.html>`_
 
         :param task_id: The ID for the task.
         :param requests_per_second: The throttle for this request in sub-requests per

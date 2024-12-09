@@ -36,9 +36,9 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym set
+        Delete a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-synonyms-set.html>`_
 
         :param id: The id of the synonyms set to be deleted
         """
@@ -77,9 +77,9 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym rule in a synonym set
+        Delete a synonym rule. Delete a synonym rule from a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to be updated
         :param rule_id: The id of the synonym rule to be deleted
@@ -127,9 +127,9 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym set
+        Get a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-synonyms-set.html>`_
 
         :param id: "The id of the synonyms set to be retrieved
         :param from_: Starting offset for query rules to be retrieved
@@ -174,9 +174,9 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym rule from a synonym set
+        Get a synonym rule. Get a synonym rule from a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to retrieve the synonym rule from
         :param rule_id: The id of the synonym rule to retrieve
@@ -223,9 +223,9 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a summary of all defined synonym sets
+        Get all synonym sets. Get a summary of all defined synonym sets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-synonyms-sets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-synonyms-sets.html>`_
 
         :param from_: Starting offset
         :param size: specifies a max number of results to get
@@ -272,9 +272,11 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonym set.
+        Create or update a synonym set. Synonyms sets are limited to a maximum of 10,000
+        synonym rules per set. If you need to manage more synonym rules, you can create
+        multiple synonym sets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-synonyms-set.html>`_
 
         :param id: The id of the synonyms set to be created or updated
         :param synonyms_set: The synonym set information to update
@@ -325,9 +327,10 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonym rule in a synonym set
+        Create or update a synonym rule. Create or update a synonym rule in a synonym
+        set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-synonym-rule.html>`_
 
         :param set_id: The id of the synonym set to be updated with the synonym rule
         :param rule_id: The id of the synonym rule to be updated or created

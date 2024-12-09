@@ -37,9 +37,9 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a query rule within a query ruleset.
+        Delete a query rule. Delete a query rule within a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to delete
@@ -85,9 +85,9 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a query ruleset.
+        Delete a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to delete
         """
@@ -126,9 +126,9 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a query rule within a query ruleset
+        Get a query rule. Get details about a query rule within a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to retrieve
@@ -174,9 +174,9 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a query ruleset
+        Get a query ruleset. Get details about a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset
         """
@@ -217,9 +217,9 @@ class QueryRulesClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns summarized information about existing query rulesets.
+        Get all query rulesets. Get summarized information about the query rulesets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-query-rulesets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-query-rulesets.html>`_
 
         :param from_: Starting offset (default: 0)
         :param size: specifies a max number of results to get
@@ -270,9 +270,9 @@ class QueryRulesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a query rule within a query ruleset.
+        Create or update a query rule. Create or update a query rule within a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to be created or updated
@@ -345,9 +345,9 @@ class QueryRulesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a query ruleset.
+        Create or update a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated
@@ -398,9 +398,10 @@ class QueryRulesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a query ruleset.
+        Test a query ruleset. Evaluate match criteria against a query ruleset to identify
+        the rules that would match that criteria.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/test-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/test-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated

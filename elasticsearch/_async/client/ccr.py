@@ -38,7 +38,7 @@ class CcrClient(NamespacedClient):
         """
         Deletes auto-follow patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-delete-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-delete-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern.
         """
@@ -109,7 +109,7 @@ class CcrClient(NamespacedClient):
         """
         Creates a new follower index configured to follow the referenced leader index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-put-follow.html>`_
 
         :param index: The name of the follower index
         :param leader_index:
@@ -201,7 +201,7 @@ class CcrClient(NamespacedClient):
         Retrieves information about all follower indices, including parameters and status
         for each follower index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-follow-info.html>`_
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
@@ -243,7 +243,7 @@ class CcrClient(NamespacedClient):
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-follow-stats.html>`_
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
@@ -296,7 +296,7 @@ class CcrClient(NamespacedClient):
         """
         Removes the follower retention leases from the leader.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-forget-follower.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-forget-follower.html>`_
 
         :param index: the name of the leader index for which specified follower retention
             leases should be removed
@@ -353,7 +353,7 @@ class CcrClient(NamespacedClient):
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-auto-follow-pattern.html>`_
 
         :param name: Specifies the auto-follow pattern collection that you want to retrieve.
             If you do not specify a name, the API returns information for all collections.
@@ -397,7 +397,7 @@ class CcrClient(NamespacedClient):
         """
         Pauses an auto-follow pattern
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-pause-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-pause-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern that should pause discovering
             new indices to follow.
@@ -439,7 +439,7 @@ class CcrClient(NamespacedClient):
         Pauses a follower index. The follower index will not fetch any additional operations
         from the leader index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-pause-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-pause-follow.html>`_
 
         :param index: The name of the follower index that should pause following its
             leader index.
@@ -516,7 +516,7 @@ class CcrClient(NamespacedClient):
         cluster. Newly created indices on the remote cluster matching any of the specified
         patterns will be automatically configured as follower indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-put-auto-follow-pattern.html>`_
 
         :param name: The name of the collection of auto-follow patterns.
         :param remote_cluster: The remote cluster containing the leader indices to match
@@ -640,7 +640,7 @@ class CcrClient(NamespacedClient):
         """
         Resumes an auto-follow pattern that has been paused
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-resume-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-resume-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern to resume discovering new indices
             to follow.
@@ -705,7 +705,7 @@ class CcrClient(NamespacedClient):
         """
         Resumes a follower index that has been paused
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-resume-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-resume-follow.html>`_
 
         :param index: The name of the follow index to resume following.
         :param max_outstanding_read_requests:
@@ -787,7 +787,7 @@ class CcrClient(NamespacedClient):
         """
         Gets all stats related to cross-cluster replication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-stats.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ccr/stats"
@@ -824,7 +824,7 @@ class CcrClient(NamespacedClient):
         Stops the following task associated with a follower index and removes index metadata
         and settings associated with cross-cluster replication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-unfollow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-unfollow.html>`_
 
         :param index: The name of the follower index that should be turned into a regular
             index.
