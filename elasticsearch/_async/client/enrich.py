@@ -77,7 +77,7 @@ class EnrichClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates the enrich index for an existing enrich policy.
+        Run an enrich policy. Create the enrich index for an existing enrich policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
 
