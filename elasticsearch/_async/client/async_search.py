@@ -145,6 +145,7 @@ class AsyncSearchClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -156,6 +157,9 @@ class AsyncSearchClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
 
         :param id: A unique identifier for the async search.
+        :param keep_alive: Specifies how long the async search needs to be available.
+            Ongoing async searches and any saved search results are deleted after this
+            period.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -168,6 +172,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if keep_alive is not None:
+            __query["keep_alive"] = keep_alive
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -283,7 +289,6 @@ class AsyncSearchClient(NamespacedClient):
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_after: t.Optional[
             t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
@@ -412,7 +417,6 @@ class AsyncSearchClient(NamespacedClient):
             These fields take precedence over mapped fields with the same name.
         :param script_fields: Retrieve a script evaluation (based on different fields)
             for each hit.
-        :param scroll:
         :param search_after:
         :param search_type: Search operation type
         :param seq_no_primary_term: If true, returns sequence number and primary term
@@ -533,8 +537,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if scroll is not None:
-            __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
         if source_excludes is not None:

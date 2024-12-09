@@ -1354,7 +1354,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a particular index template exists.
+        Check index templates. Check whether index templates exist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/index-templates.html>`_
 
@@ -3698,8 +3698,8 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resolves the specified name(s) and/or index patterns for indices, aliases, and
-        data streams. Multiple patterns and remote clusters are supported.
+        Resolve indices. Resolve the names and/or index patterns for indices, aliases,
+        and data streams. Multiple patterns and remote clusters are supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/indices-resolve-index-api.html>`_
 
