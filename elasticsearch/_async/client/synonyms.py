@@ -36,7 +36,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym set
+        Delete a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonyms-set.html>`_
 
@@ -77,7 +77,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym rule in a synonym set
+        Delete a synonym rule. Delete a synonym rule from a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonym-rule.html>`_
 
@@ -127,7 +127,7 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym set
+        Get a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonyms-set.html>`_
 
@@ -174,7 +174,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym rule from a synonym set
+        Get a synonym rule. Get a synonym rule from a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonym-rule.html>`_
 
@@ -223,7 +223,7 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a summary of all defined synonym sets
+        Get all synonym sets. Get a summary of all defined synonym sets.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-synonyms-sets.html>`_
 
@@ -272,7 +272,9 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonym set.
+        Create or update a synonym set. Synonyms sets are limited to a maximum of 10,000
+        synonym rules per set. If you need to manage more synonym rules, you can create
+        multiple synonym sets.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html>`_
 
@@ -325,7 +327,8 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonym rule in a synonym set
+        Create or update a synonym rule. Create or update a synonym rule in a synonym
+        set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonym-rule.html>`_
 
