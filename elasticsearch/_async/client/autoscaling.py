@@ -33,16 +33,23 @@ class AutoscalingClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Delete an autoscaling policy. NOTE: This feature is designed for indirect use
         by Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/autoscaling-delete-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -55,8 +62,12 @@ class AutoscalingClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -74,6 +85,7 @@ class AutoscalingClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -90,7 +102,11 @@ class AutoscalingClient(NamespacedClient):
         capacity was required. This information is provided for diagnosis only. Do not
         use this information to make autoscaling decisions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/autoscaling-get-autoscaling-capacity.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_autoscaling/capacity"
@@ -101,6 +117,8 @@ class AutoscalingClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -121,6 +139,7 @@ class AutoscalingClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -128,9 +147,12 @@ class AutoscalingClient(NamespacedClient):
         Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/autoscaling-get-autoscaling-capacity.html>`_
 
         :param name: the name of the autoscaling policy
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -143,6 +165,8 @@ class AutoscalingClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -167,17 +191,24 @@ class AutoscalingClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Create or update an autoscaling policy. NOTE: This feature is designed for indirect
         use by Elasticsearch Service, Elastic Cloud Enterprise, and Elastic Cloud on
         Kubernetes. Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/autoscaling-put-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/autoscaling-put-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
         :param policy:
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -196,8 +227,12 @@ class AutoscalingClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __body = policy if policy is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]

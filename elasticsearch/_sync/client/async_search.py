@@ -42,7 +42,7 @@ class AsyncSearchClient(NamespacedClient):
         the authenticated user that submitted the original search request; users that
         have the `cancel_task` cluster privilege.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -90,7 +90,7 @@ class AsyncSearchClient(NamespacedClient):
         the results of a specific async search is restricted to the user or API key that
         submitted it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: Specifies how long the async search should be available in
@@ -145,6 +145,7 @@ class AsyncSearchClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -153,9 +154,12 @@ class AsyncSearchClient(NamespacedClient):
         security features are enabled, use of this API is restricted to the `monitoring_user`
         role.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
+        :param keep_alive: Specifies how long the async search needs to be available.
+            Ongoing async searches and any saved search results are deleted after this
+            period.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -168,6 +172,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if keep_alive is not None:
+            __query["keep_alive"] = keep_alive
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -258,7 +264,6 @@ class AsyncSearchClient(NamespacedClient):
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
-        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
@@ -269,7 +274,6 @@ class AsyncSearchClient(NamespacedClient):
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
-        pre_filter_shard_size: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
@@ -283,7 +287,6 @@ class AsyncSearchClient(NamespacedClient):
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_after: t.Optional[
             t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
@@ -333,7 +336,7 @@ class AsyncSearchClient(NamespacedClient):
         can be set by changing the `search.max_async_search_response_size` cluster level
         setting.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -376,9 +379,6 @@ class AsyncSearchClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param indices_boost: Boosts the _score of documents from specified indices.
-        :param keep_alive: Specifies how long the async search needs to be available.
-            Ongoing async searches and any saved search results are deleted after this
-            period.
         :param keep_on_completion: If `true`, results are stored for later retrieval
             when the search completes within the `wait_for_completion_timeout`.
         :param knn: Defines the approximate kNN search to run.
@@ -394,10 +394,6 @@ class AsyncSearchClient(NamespacedClient):
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an <index> in the request path.
         :param post_filter:
-        :param pre_filter_shard_size: The default value cannot be changed, which enforces
-            the execution of a pre-filter roundtrip to retrieve statistics from each
-            shard so that the ones that surely don’t hold any document matching the query
-            get skipped.
         :param preference: Specify the node or shard the operation should be performed
             on (default: random)
         :param profile:
@@ -406,13 +402,13 @@ class AsyncSearchClient(NamespacedClient):
         :param request_cache: Specify if request cache should be used for this request
             or not, defaults to true
         :param rescore:
-        :param rest_total_hits_as_int:
+        :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
+            as an integer or an object in the rest search response
         :param routing: A comma-separated list of specific routing values
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
         :param script_fields: Retrieve a script evaluation (based on different fields)
             for each hit.
-        :param scroll:
         :param search_after:
         :param search_type: Search operation type
         :param seq_no_primary_term: If true, returns sequence number and primary term
@@ -509,8 +505,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if keep_alive is not None:
-            __query["keep_alive"] = keep_alive
         if keep_on_completion is not None:
             __query["keep_on_completion"] = keep_on_completion
         if lenient is not None:
@@ -519,8 +513,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if min_compatible_shard_node is not None:
             __query["min_compatible_shard_node"] = min_compatible_shard_node
-        if pre_filter_shard_size is not None:
-            __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -533,8 +525,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if scroll is not None:
-            __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
         if source_excludes is not None:

@@ -36,10 +36,10 @@ class EqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async EQL search or a stored synchronous EQL search. The API also
-        deletes results for the search.
+        Delete an async EQL search. Delete an async EQL search or a stored synchronous
+        EQL search. The API also deletes results for the search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/eql-search-api.html>`_
 
         :param id: Identifier for the search to delete. A search ID is provided in the
             EQL search API's response for an async search. A search ID is also provided
@@ -83,10 +83,10 @@ class EqlClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status and available results for an async EQL search or a
-        stored synchronous EQL search.
+        Get async EQL search results. Get the current status and available results for
+        an async EQL search or a stored synchronous EQL search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-eql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param keep_alive: Period for which the search and its results are stored on
@@ -134,10 +134,10 @@ class EqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status for an async EQL search or a stored synchronous EQL
-        search without returning results.
+        Get the async EQL status. Get the current status for an async EQL search or a
+        stored synchronous EQL search without returning results.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-eql-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-eql-status-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -223,9 +223,11 @@ class EqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns results matching a query expressed in Event Query Language (EQL)
+        Get EQL search results. Returns search results for an Event Query Language (EQL)
+        query. EQL assumes each document in a data stream or index corresponds to an
+        event.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/eql-search-api.html>`_
 
         :param index: The name of the index to scope the operation
         :param query: EQL query you wish to run.

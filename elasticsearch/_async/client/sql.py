@@ -39,9 +39,9 @@ class SqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clears the SQL cursor
+        Clear an SQL search cursor.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clear-sql-cursor-api.html>`_
 
         :param cursor: Cursor to clear.
         """
@@ -84,10 +84,10 @@ class SqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async SQL search or a stored synchronous SQL search. If the search
-        is still running, the API cancels it.
+        Delete an async SQL search. Delete an async SQL search or a stored synchronous
+        SQL search. If the search is still running, the API cancels it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-async-sql-search-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -131,10 +131,10 @@ class SqlClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status and available results for an async SQL search or stored
-        synchronous SQL search
+        Get async SQL search results. Get the current status and available results for
+        an async SQL search or stored synchronous SQL search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-sql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param delimiter: Separator for CSV results. The API only supports this parameter
@@ -189,10 +189,10 @@ class SqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status of an async SQL search or a stored synchronous SQL
-        search
+        Get the async SQL search status. Get the current status of an async SQL search
+        or a stored synchronous SQL search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-sql-search-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-sql-search-status-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -273,9 +273,9 @@ class SqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes a SQL request
+        Get SQL search results. Run an SQL request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/sql-search-api.html>`_
 
         :param catalog: Default catalog (cluster) for queries. If unspecified, the queries
             execute on the data in the local cluster only.
@@ -383,9 +383,10 @@ class SqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Translates SQL into Elasticsearch queries
+        Translate SQL into Elasticsearch queries. Translate an SQL search into a search
+        API request containing Query DSL.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/sql-translate-api.html>`_
 
         :param query: SQL query to run.
         :param fetch_size: The maximum number of rows (or entries) to return in one response.
