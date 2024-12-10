@@ -20,19 +20,12 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import (
-    SKIP_IN_PATH,
-    Stability,
-    _quote,
-    _rewrite_parameters,
-    _stability_warning,
-)
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class InferenceClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
     def delete(
         self,
         *,
@@ -53,7 +46,7 @@ class InferenceClient(NamespacedClient):
         """
         Delete an inference endpoint
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param task_type: The task type
@@ -100,7 +93,6 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
     def get(
         self,
         *,
@@ -119,7 +111,7 @@ class InferenceClient(NamespacedClient):
         """
         Get an inference endpoint
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-inference-api.html>`_
 
         :param task_type: The task type
         :param inference_id: The inference Id
@@ -159,7 +151,6 @@ class InferenceClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("input", "query", "task_settings"),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
     def inference(
         self,
         *,
@@ -183,7 +174,7 @@ class InferenceClient(NamespacedClient):
         """
         Perform inference on the service
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/post-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/post-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
@@ -246,7 +237,6 @@ class InferenceClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="inference_config",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
     def put(
         self,
         *,
@@ -267,7 +257,7 @@ class InferenceClient(NamespacedClient):
         """
         Create an inference endpoint
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param inference_config:

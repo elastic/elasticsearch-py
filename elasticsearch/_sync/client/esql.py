@@ -68,9 +68,10 @@ class EsqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes an ES|QL request
+        Run an ES|QL query. Get search results for an ES|QL (Elasticsearch query language)
+        query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

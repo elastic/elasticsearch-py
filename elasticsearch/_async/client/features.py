@@ -38,7 +38,7 @@ class FeaturesClient(NamespacedClient):
         Gets a list of features which can be included in snapshots using the feature_states
         field when creating a snapshot
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-features-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-features-api.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_features"
@@ -74,7 +74,7 @@ class FeaturesClient(NamespacedClient):
         """
         Resets the internal state of features, usually by deleting system indices
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_features/_reset"
