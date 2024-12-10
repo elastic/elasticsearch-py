@@ -46,8 +46,8 @@ class FleetClient(NamespacedClient):
         wait_for_index: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current global checkpoints for an index. This API is design for internal
-        use by the fleet server project.
+        Get global checkpoints. Get the current global checkpoints for an index. This
+        API is designed for internal use by the Fleet server project.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-global-checkpoints.html>`_
 
@@ -132,10 +132,9 @@ class FleetClient(NamespacedClient):
         wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes several [fleet searches](https://www.elastic.co/guide/en/elasticsearch/reference/current/fleet-search.html)
-        with a single API request. The API follows the same structure as the [multi search](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html)
-        API. However, similar to the fleet search API, it supports the wait_for_checkpoints
-        parameter.
+        Run multiple Fleet searches. Run several Fleet searches with a single API request.
+        The API follows the same structure as the multi search API. However, similar
+        to the Fleet search API, it supports the `wait_for_checkpoints` parameter.
 
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
@@ -377,9 +376,9 @@ class FleetClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The purpose of the fleet search api is to provide a search api where the search
-        will only be executed after provided checkpoint has been processed and is visible
-        for searches inside of Elasticsearch.
+        Run a Fleet search. The purpose of the Fleet search API is to provide an API
+        where the search will be run only after the provided checkpoint has been processed
+        and is visible for searches inside of Elasticsearch.
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
