@@ -36,8 +36,8 @@ class EqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async EQL search or a stored synchronous EQL search. The API also
-        deletes results for the search.
+        Delete an async EQL search. Delete an async EQL search or a stored synchronous
+        EQL search. The API also deletes results for the search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/eql-search-api.html>`_
 
@@ -83,8 +83,8 @@ class EqlClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status and available results for an async EQL search or a
-        stored synchronous EQL search.
+        Get async EQL search results. Get the current status and available results for
+        an async EQL search or a stored synchronous EQL search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-eql-search-api.html>`_
 
@@ -134,8 +134,8 @@ class EqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status for an async EQL search or a stored synchronous EQL
-        search without returning results.
+        Get the async EQL status. Get the current status for an async EQL search or a
+        stored synchronous EQL search without returning results.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-eql-status-api.html>`_
 
@@ -223,7 +223,9 @@ class EqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns results matching a query expressed in Event Query Language (EQL)
+        Get EQL search results. Returns search results for an Event Query Language (EQL)
+        query. EQL assumes each document in a data stream or index corresponds to an
+        event.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/eql-search-api.html>`_
 
