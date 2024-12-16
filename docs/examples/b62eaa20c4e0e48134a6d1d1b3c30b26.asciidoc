@@ -186,10 +186,13 @@ resp = client.bulk(
 )
 print(resp)
 
-resp1 = client.text_structure.find_field_structure(
-    index="test-logs",
-    field="message",
-    body=None,
+resp1 = client.perform_request(
+    "GET",
+    "/_text_structure/find_field_structure",
+    params={
+        "index": "test-logs",
+        "field": "message"
+    },
 )
 print(resp1)
 ----

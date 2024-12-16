@@ -3,7 +3,10 @@
 
 [source, python]
 ----
-resp = client.text_structure.find_message_structure(
+resp = client.perform_request(
+    "POST",
+    "/_text_structure/find_message_structure",
+    headers={"Content-Type": "application/json"},
     body={
         "messages": [
             "[2024-03-05T10:52:36,256][INFO ][o.a.l.u.VectorUtilPanamaProvider] [laptop] Java vector incubator API enabled; uses preferredBitSize=128",

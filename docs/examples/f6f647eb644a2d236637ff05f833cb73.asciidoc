@@ -3,7 +3,10 @@
 
 [source, python]
 ----
-resp = client.connector.secret_post(
+resp = client.perform_request(
+    "POST",
+    "/_connector/_secret",
+    headers={"Content-Type": "application/json"},
     body={
         "value": "encoded_api_key"
     },
