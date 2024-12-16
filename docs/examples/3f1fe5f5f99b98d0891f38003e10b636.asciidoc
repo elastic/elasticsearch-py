@@ -3,7 +3,10 @@
 
 [source, python]
 ----
-resp = client.esql.async_query(
+resp = client.perform_request(
+    "POST",
+    "/_query/async",
+    headers={"Content-Type": "application/json"},
     body={
         "query": "\n    FROM library\n    | EVAL year = DATE_TRUNC(1 YEARS, release_date)\n    | STATS MAX(page_count) BY year\n    | SORT year\n    | LIMIT 5\n  ",
         "wait_for_completion_timeout": "2s"

@@ -3,7 +3,10 @@
 
 [source, python]
 ----
-resp = client.simulate.ingest(
+resp = client.perform_request(
+    "POST",
+    "/_ingest/_simulate",
+    headers={"Content-Type": "application/json"},
     body={
         "docs": [
             {

@@ -3,9 +3,10 @@
 
 [source, python]
 ----
-resp = client.search_application.post_behavioral_analytics_event(
-    collection_name="my_analytics_collection",
-    event_type="search_click",
+resp = client.perform_request(
+    "POST",
+    "/_application/analytics/my_analytics_collection/event/search_click",
+    headers={"Content-Type": "application/json"},
     body={
         "session": {
             "id": "1797ca95-91c9-4e2e-b1bd-9c38e6f386a9"

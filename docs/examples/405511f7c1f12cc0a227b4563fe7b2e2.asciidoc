@@ -3,9 +3,9 @@
 
 [source, python]
 ----
-resp = client.esql.async_query_get(
-    id="FkpMRkJGS1gzVDRlM3g4ZzMyRGlLbkEaTXlJZHdNT09TU2VTZVBoNDM3cFZMUToxMDM=",
-    body=None,
+resp = client.perform_request(
+    "GET",
+    "/_query/async/FkpMRkJGS1gzVDRlM3g4ZzMyRGlLbkEaTXlJZHdNT09TU2VTZVBoNDM3cFZMUToxMDM&#x3D;",
 )
 print(resp)
 ----

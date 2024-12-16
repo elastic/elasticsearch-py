@@ -3,7 +3,10 @@
 
 [source, python]
 ----
-resp = client.security.oidc_prepare_authentication(
+resp = client.perform_request(
+    "POST",
+    "/_security/oidc/prepare",
+    headers={"Content-Type": "application/json"},
     body={
         "iss": "http://127.0.0.1:8080",
         "login_hint": "this_is_an_opaque_string"
