@@ -78,6 +78,59 @@ class IngestClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    async def delete_ip_location_database(
+        self,
+        *,
+        id: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Delete IP geolocation database configurations.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-ip-location-database-api.html>`_
+
+        :param id: A comma-separated list of IP location database configurations.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. A value
+            of `-1` indicates that the request should never time out.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ingest/ip_location/database/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.delete_ip_location_database",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     async def delete_pipeline(
         self,
         *,
@@ -218,6 +271,58 @@ class IngestClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    async def get_ip_location_database(
+        self,
+        *,
+        id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Get IP geolocation database configurations.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ip-location-database-api.html>`_
+
+        :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
+            (`*`) expressions are supported. To get all database configurations, omit
+            this parameter or use `*`.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
+        """
+        __path_parts: t.Dict[str, str]
+        if id not in SKIP_IN_PATH:
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ingest/ip_location/database/{__path_parts["id"]}'
+        else:
+            __path_parts = {}
+            __path = "/_ingest/ip_location/database"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ingest.get_ip_location_database",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     async def get_pipeline(
         self,
         *,
@@ -328,8 +433,8 @@ class IngestClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update GeoIP database configurations. Create or update IP geolocation
-        database configurations.
+        Create or update a GeoIP database configuration. Refer to the create or update
+        IP geolocation database configuration API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-geoip-database-api.html>`_
 
@@ -381,6 +486,74 @@ class IngestClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="ingest.put_geoip_database",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="configuration",
+    )
+    async def put_ip_location_database(
+        self,
+        *,
+        id: str,
+        configuration: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Create or update an IP geolocation database configuration.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-ip-location-database-api.html>`_
+
+        :param id: The database configuration identifier.
+        :param configuration:
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response indicates that it was not completely acknowledged. A value of
+            `-1` indicates that the request should never time out.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if configuration is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'configuration' and 'body', one of them should be set."
+            )
+        elif configuration is not None and body is not None:
+            raise ValueError("Cannot set both 'configuration' and 'body'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ingest/ip_location/database/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = configuration if configuration is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ingest.put_ip_location_database",
             path_parts=__path_parts,
         )
 

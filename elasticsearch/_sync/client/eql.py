@@ -167,6 +167,8 @@ class EqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=(
             "query",
+            "allow_partial_search_results",
+            "allow_partial_sequence_results",
             "case_sensitive",
             "event_category_field",
             "fetch_size",
@@ -189,6 +191,8 @@ class EqlClient(NamespacedClient):
         index: t.Union[str, t.Sequence[str]],
         query: t.Optional[str] = None,
         allow_no_indices: t.Optional[bool] = None,
+        allow_partial_search_results: t.Optional[bool] = None,
+        allow_partial_sequence_results: t.Optional[bool] = None,
         case_sensitive: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         event_category_field: t.Optional[str] = None,
@@ -234,6 +238,8 @@ class EqlClient(NamespacedClient):
         :param index: The name of the index to scope the operation
         :param query: EQL query you wish to run.
         :param allow_no_indices:
+        :param allow_partial_search_results:
+        :param allow_partial_sequence_results:
         :param case_sensitive:
         :param event_category_field: Field containing the event classification, such
             as process, file, or network.
@@ -287,6 +293,12 @@ class EqlClient(NamespacedClient):
         if not __body:
             if query is not None:
                 __body["query"] = query
+            if allow_partial_search_results is not None:
+                __body["allow_partial_search_results"] = allow_partial_search_results
+            if allow_partial_sequence_results is not None:
+                __body["allow_partial_sequence_results"] = (
+                    allow_partial_sequence_results
+                )
             if case_sensitive is not None:
                 __body["case_sensitive"] = case_sensitive
             if event_category_field is not None:
