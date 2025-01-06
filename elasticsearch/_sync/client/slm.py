@@ -36,7 +36,9 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing snapshot lifecycle policy.
+        Delete a policy. Delete a snapshot lifecycle policy definition. This operation
+        prevents any future snapshots from being taken but does not cancel in-progress
+        snapshots or remove previously-taken snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-delete-policy.html>`_
 
@@ -76,8 +78,10 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Immediately creates a snapshot according to the lifecycle policy, without waiting
-        for the scheduled time.
+        Run a policy. Immediately create a snapshot according to the snapshot lifecycle
+        policy without waiting for the scheduled time. The snapshot policy is normally
+        applied according to its schedule, but you might want to manually run a policy
+        before performing an upgrade or other maintenance.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-execute-lifecycle.html>`_
 
@@ -116,7 +120,9 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes any snapshots that are expired according to the policy's retention rules.
+        Run a retention policy. Manually apply the retention policy to force immediate
+        removal of snapshots that are expired according to the snapshot lifecycle policy
+        retention rules. The retention policy is normally applied according to its schedule.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-execute-retention.html>`_
         """
@@ -152,8 +158,8 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves one or more snapshot lifecycle policy definitions and information about
-        the latest snapshot attempts.
+        Get policy information. Get snapshot lifecycle policy definitions and information
+        about the latest snapshot attempts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-policy.html>`_
 
@@ -195,8 +201,8 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns global and policy-level statistics about actions taken by snapshot lifecycle
-        management.
+        Get snapshot lifecycle management statistics. Get global and policy-level statistics
+        about actions taken by snapshot lifecycle management.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-stats.html>`_
         """
@@ -231,7 +237,7 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the status of snapshot lifecycle management (SLM).
+        Get the snapshot lifecycle management status.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-status.html>`_
         """
@@ -277,12 +283,14 @@ class SlmClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a snapshot lifecycle policy.
+        Create or update a policy. Create or update a snapshot lifecycle policy. If the
+        policy already exists, this request increments the policy version. Only the latest
+        version of a policy is stored.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-put-policy.html>`_
 
-        :param policy_id: ID for the snapshot lifecycle policy you want to create or
-            update.
+        :param policy_id: The identifier for the snapshot lifecycle policy you want to
+            create or update.
         :param config: Configuration for each snapshot created by the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -354,7 +362,9 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Turns on snapshot lifecycle management (SLM).
+        Start snapshot lifecycle management. Snapshot lifecycle management (SLM) starts
+        automatically when a cluster is formed. Manually starting SLM is necessary only
+        if it has been stopped using the stop SLM API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-start.html>`_
         """
@@ -389,7 +399,15 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Turns off snapshot lifecycle management (SLM).
+        Stop snapshot lifecycle management. Stop all snapshot lifecycle management (SLM)
+        operations and the SLM plugin. This API is useful when you are performing maintenance
+        on a cluster and need to prevent SLM from performing any actions on your data
+        streams or indices. Stopping SLM does not stop any snapshots that are in progress.
+        You can manually trigger snapshots with the run snapshot lifecycle policy API
+        even if SLM is stopped. The API returns a response as soon as the request is
+        acknowledged, but the plugin might continue to run until in-progress operations
+        complete and it can be safely stopped. Use the get snapshot lifecycle management
+        status API to see if SLM is running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-stop.html>`_
         """

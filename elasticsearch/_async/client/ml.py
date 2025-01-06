@@ -2488,6 +2488,7 @@ class MlClient(NamespacedClient):
                 ],
             ]
         ] = None,
+        include_model_definition: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         tags: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2514,6 +2515,8 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of models.
         :param include: A comma delimited string of optional fields to include in the
             response body.
+        :param include_model_definition: parameter is deprecated! Use [include=definition]
+            instead
         :param size: Specifies the maximum number of models to obtain.
         :param tags: A comma delimited string of tags. A trained model can have many
             tags, or none. When supplied, only trained models that contain all the supplied
@@ -2543,6 +2546,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if include is not None:
             __query["include"] = include
+        if include_model_definition is not None:
+            __query["include_model_definition"] = include_model_definition
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
@@ -2697,7 +2702,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Return ML defaults and limits. Returns defaults and limits used by machine learning.
+        Get machine learning information. Get defaults and limits used by machine learning.
         This endpoint is designed to be used by a user interface that needs to fully
         understand machine learning configurations where some options are not specified,
         meaning that the defaults should be used. This endpoint may be used to find out
@@ -3169,9 +3174,11 @@ class MlClient(NamespacedClient):
             "description",
             "headers",
             "max_num_threads",
+            "meta",
             "model_memory_limit",
             "version",
         ),
+        parameter_aliases={"_meta": "meta"},
         ignore_deprecated_options={"headers"},
     )
     async def put_data_frame_analytics(
@@ -3189,6 +3196,7 @@ class MlClient(NamespacedClient):
         headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
         model_memory_limit: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         version: t.Optional[str] = None,
@@ -3249,6 +3257,7 @@ class MlClient(NamespacedClient):
             Using more threads may decrease the time necessary to complete the analysis
             at the cost of using more CPU. Note that the process may use additional threads
             for operational functionality other than the analysis itself.
+        :param meta:
         :param model_memory_limit: The approximate maximum amount of memory resources
             that are permitted for analytical processing. If your `elasticsearch.yml`
             file contains an `xpack.ml.max_model_memory_limit` setting, an error occurs
@@ -3293,6 +3302,8 @@ class MlClient(NamespacedClient):
                 __body["headers"] = headers
             if max_num_threads is not None:
                 __body["max_num_threads"] = max_num_threads
+            if meta is not None:
+                __body["_meta"] = meta
             if model_memory_limit is not None:
                 __body["model_memory_limit"] = model_memory_limit
             if version is not None:
@@ -3311,6 +3322,7 @@ class MlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=(
             "aggregations",
+            "aggs",
             "chunking_config",
             "delayed_data_check_config",
             "frequency",
@@ -3333,6 +3345,7 @@ class MlClient(NamespacedClient):
         *,
         datafeed_id: str,
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         chunking_config: t.Optional[t.Mapping[str, t.Any]] = None,
         delayed_data_check_config: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3386,6 +3399,8 @@ class MlClient(NamespacedClient):
         :param aggregations: If set, the datafeed performs aggregation searches. Support
             for aggregations is limited and should be used only with low cardinality
             data.
+        :param aggs: If set, the datafeed performs aggregation searches. Support for
+            aggregations is limited and should be used only with low cardinality data.
         :param allow_no_indices: If true, wildcard indices expressions that resolve into
             no concrete indices are ignored. This includes the `_all` string or when
             no indices are specified.
@@ -3473,6 +3488,8 @@ class MlClient(NamespacedClient):
         if not __body:
             if aggregations is not None:
                 __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
             if chunking_config is not None:
                 __body["chunking_config"] = chunking_config
             if delayed_data_check_config is not None:
@@ -3595,6 +3612,7 @@ class MlClient(NamespacedClient):
         analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
         data_description: t.Optional[t.Mapping[str, t.Any]] = None,
         allow_lazy_open: t.Optional[bool] = None,
+        allow_no_indices: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
             t.Union[str, t.Literal[-1], t.Literal[0]]
@@ -3604,9 +3622,19 @@ class MlClient(NamespacedClient):
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         groups: t.Optional[t.Sequence[str]] = None,
         human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
@@ -3641,6 +3669,9 @@ class MlClient(NamespacedClient):
             to true, the open anomaly detection jobs API does not return an error and
             the job waits in the opening state until sufficient machine learning node
             capacity is available.
+        :param allow_no_indices: If `true`, wildcard indices expressions that resolve
+            into no concrete indices are ignored. This includes the `_all` string or
+            when no indices are specified.
         :param analysis_limits: Limits can be applied for the resources required to hold
             the mathematical models in memory. These limits are approximate and can be
             set per job. They do not control the memory used by other processes, for
@@ -3664,7 +3695,20 @@ class MlClient(NamespacedClient):
             using those same roles. If you provide secondary authorization headers, those
             credentials are used instead.
         :param description: A description of the job.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values. Valid
+            values are: * `all`: Match any data stream or index, including hidden ones.
+            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
+            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
+            streams and hidden indices. Must be combined with `open`, `closed`, or both.
+            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
+            indices. Also matches any non-hidden data stream.
         :param groups: A list of job groups. A job can belong to no groups or many.
+        :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
+            ignored when frozen.
+        :param ignore_unavailable: If `true`, unavailable indices (missing or closed)
+            are ignored.
         :param model_plot_config: This advanced configuration option stores model information
             along with the results. It provides a more detailed view into anomaly detection.
             If you enable model plot it can add considerable overhead to the performance
@@ -3704,12 +3748,20 @@ class MlClient(NamespacedClient):
         __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -5469,7 +5521,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Validates an anomaly detection detector.
+        Validate an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/machine-learning/8.16/ml-jobs.html>`_
 

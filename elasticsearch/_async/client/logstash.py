@@ -36,11 +36,12 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a pipeline used for Logstash Central Management.
+        Delete a Logstash pipeline. Delete a pipeline that is used for Logstash Central
+        Management.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/logstash-api-delete-pipeline.html>`_
 
-        :param id: Identifier for the pipeline.
+        :param id: An identifier for the pipeline.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -76,11 +77,11 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves pipelines used for Logstash Central Management.
+        Get Logstash pipelines. Get pipelines that are used for Logstash Central Management.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/logstash-api-get-pipeline.html>`_
 
-        :param id: Comma-separated list of pipeline identifiers.
+        :param id: A comma-separated list of pipeline identifiers.
         """
         __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
@@ -123,11 +124,12 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a pipeline used for Logstash Central Management.
+        Create or update a Logstash pipeline. Create a pipeline that is used for Logstash
+        Central Management. If the specified pipeline exists, it is replaced.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/logstash-api-put-pipeline.html>`_
 
-        :param id: Identifier for the pipeline.
+        :param id: An identifier for the pipeline.
         :param pipeline:
         """
         if id in SKIP_IN_PATH:
