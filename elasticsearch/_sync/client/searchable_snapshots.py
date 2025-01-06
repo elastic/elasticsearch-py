@@ -44,7 +44,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieve node-level cache statistics about searchable snapshots.
+        Get cache statistics. Get statistics about the shared cache for partially mounted
+        indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-apis.html>`_
 
@@ -103,7 +104,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear the cache of searchable snapshots.
+        Clear the cache. Clear indices and data streams from the shared cache for partially
+        mounted indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-apis.html>`_
 
@@ -175,7 +177,9 @@ class SearchableSnapshotsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Mount a snapshot as a searchable index.
+        Mount a snapshot. Mount a snapshot as a searchable snapshot index. Do not use
+        this API for snapshots managed by index lifecycle management (ILM). Manually
+        mounting ILM-managed snapshots can interfere with ILM processes.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-api-mount-snapshot.html>`_
 
@@ -255,7 +259,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieve shard-level statistics about searchable snapshots.
+        Get searchable snapshot statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-apis.html>`_
 
