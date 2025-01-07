@@ -36,7 +36,8 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes auto-follow patterns.
+        Delete auto-follow patterns. Delete a collection of cross-cluster replication
+        auto-follow patterns.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-delete-auto-follow-pattern.html>`_
 
@@ -68,6 +69,8 @@ class CcrClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=(
             "leader_index",
+            "remote_cluster",
+            "data_stream_name",
             "max_outstanding_read_requests",
             "max_outstanding_write_requests",
             "max_read_request_operation_count",
@@ -78,59 +81,89 @@ class CcrClient(NamespacedClient):
             "max_write_request_operation_count",
             "max_write_request_size",
             "read_poll_timeout",
-            "remote_cluster",
+            "settings",
         ),
     )
     def follow(
         self,
         *,
         index: str,
+        leader_index: t.Optional[str] = None,
+        remote_cluster: t.Optional[str] = None,
+        data_stream_name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        leader_index: t.Optional[str] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
-        max_read_request_size: t.Optional[str] = None,
+        max_read_request_size: t.Optional[t.Union[int, str]] = None,
         max_retry_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_write_buffer_count: t.Optional[int] = None,
-        max_write_buffer_size: t.Optional[str] = None,
+        max_write_buffer_size: t.Optional[t.Union[int, str]] = None,
         max_write_request_operation_count: t.Optional[int] = None,
-        max_write_request_size: t.Optional[str] = None,
+        max_write_request_size: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
         read_poll_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        remote_cluster: t.Optional[str] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new follower index configured to follow the referenced leader index.
+        Create a follower. Create a cross-cluster replication follower index that follows
+        a specific leader index. When the API returns, the follower index exists and
+        cross-cluster replication starts replicating operations from the leader index
+        to the follower index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-follow.html>`_
 
-        :param index: The name of the follower index
-        :param leader_index:
-        :param max_outstanding_read_requests:
-        :param max_outstanding_write_requests:
-        :param max_read_request_operation_count:
-        :param max_read_request_size:
-        :param max_retry_delay:
-        :param max_write_buffer_count:
-        :param max_write_buffer_size:
-        :param max_write_request_operation_count:
-        :param max_write_request_size:
-        :param read_poll_timeout:
-        :param remote_cluster:
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before returning. Defaults to 0. Set to `all` for all shard copies, otherwise
-            set to any non-negative value less than or equal to the total number of copies
-            for the shard (number of replicas + 1)
+        :param index: The name of the follower index.
+        :param leader_index: The name of the index in the leader cluster to follow.
+        :param remote_cluster: The remote cluster containing the leader index.
+        :param data_stream_name: If the leader index is part of a data stream, the name
+            to which the local data stream for the followed index should be renamed.
+        :param max_outstanding_read_requests: The maximum number of outstanding reads
+            requests from the remote cluster.
+        :param max_outstanding_write_requests: The maximum number of outstanding write
+            requests on the follower.
+        :param max_read_request_operation_count: The maximum number of operations to
+            pull per read from the remote cluster.
+        :param max_read_request_size: The maximum size in bytes of per read of a batch
+            of operations pulled from the remote cluster.
+        :param max_retry_delay: The maximum time to wait before retrying an operation
+            that failed exceptionally. An exponential backoff strategy is employed when
+            retrying.
+        :param max_write_buffer_count: The maximum number of operations that can be queued
+            for writing. When this limit is reached, reads from the remote cluster will
+            be deferred until the number of queued operations goes below the limit.
+        :param max_write_buffer_size: The maximum total bytes of operations that can
+            be queued for writing. When this limit is reached, reads from the remote
+            cluster will be deferred until the total bytes of queued operations goes
+            below the limit.
+        :param max_write_request_operation_count: The maximum number of operations per
+            bulk write request executed on the follower.
+        :param max_write_request_size: The maximum total bytes of operations per bulk
+            write request executed on the follower.
+        :param read_poll_timeout: The maximum time to wait for new operations on the
+            remote cluster when the follower index is synchronized with the leader index.
+            When the timeout has elapsed, the poll for operations will return to the
+            follower so that it can update some statistics. Then the follower will immediately
+            attempt to read from the leader again.
+        :param settings: Settings to override from the leader index.
+        :param wait_for_active_shards: Specifies the number of shards to wait on being
+            active before responding. This defaults to waiting on none of the shards
+            to be active. A shard must be restored from the leader index before being
+            active. Restoring a follower shard requires transferring all the remote Lucene
+            segment files to the follower index.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
+        if leader_index is None and body is None:
+            raise ValueError("Empty value passed for parameter 'leader_index'")
+        if remote_cluster is None and body is None:
+            raise ValueError("Empty value passed for parameter 'remote_cluster'")
         __path_parts: t.Dict[str, str] = {"index": _quote(index)}
         __path = f'/{__path_parts["index"]}/_ccr/follow'
         __query: t.Dict[str, t.Any] = {}
@@ -148,6 +181,10 @@ class CcrClient(NamespacedClient):
         if not __body:
             if leader_index is not None:
                 __body["leader_index"] = leader_index
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
+            if data_stream_name is not None:
+                __body["data_stream_name"] = data_stream_name
             if max_outstanding_read_requests is not None:
                 __body["max_outstanding_read_requests"] = max_outstanding_read_requests
             if max_outstanding_write_requests is not None:
@@ -174,8 +211,8 @@ class CcrClient(NamespacedClient):
                 __body["max_write_request_size"] = max_write_request_size
             if read_poll_timeout is not None:
                 __body["read_poll_timeout"] = read_poll_timeout
-            if remote_cluster is not None:
-                __body["remote_cluster"] = remote_cluster
+            if settings is not None:
+                __body["settings"] = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -198,8 +235,10 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about all follower indices, including parameters and status
-        for each follower index
+        Get follower information. Get information about all cross-cluster replication
+        follower indices. For example, the results include follower index names, leader
+        index names, replication options, and whether the follower indices are active
+        or paused.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-info.html>`_
 
@@ -240,8 +279,9 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves follower stats. return shard-level stats about the following tasks
-        associated with each shard for the specified indices.
+        Get follower stats. Get cross-cluster replication follower stats. The API returns
+        shard-level stats about the "following tasks" associated with each shard for
+        the specified indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-stats.html>`_
 
@@ -294,7 +334,23 @@ class CcrClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes the follower retention leases from the leader.
+        Forget a follower. Remove the cross-cluster replication follower retention leases
+        from the leader. A following index takes out retention leases on its leader index.
+        These leases are used to increase the likelihood that the shards of the leader
+        index retain the history of operations that the shards of the following index
+        need to run replication. When a follower index is converted to a regular index
+        by the unfollow API (either by directly calling the API or by index lifecycle
+        management tasks), these leases are removed. However, removal of the leases can
+        fail, for example when the remote cluster containing the leader index is unavailable.
+        While the leases will eventually expire on their own, their extended existence
+        can cause the leader index to hold more history than necessary and prevent index
+        lifecycle management from performing some operations on the leader index. This
+        API exists to enable manually removing the leases when the unfollow API is unable
+        to do so. NOTE: This API does not stop replication by a following index. If you
+        use this API with a follower index that is still actively following, the following
+        index will add back retention leases on the leader. The only purpose of this
+        API is to handle the case of failure to remove the following retention leases
+        after the unfollow API is invoked.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-forget-follower.html>`_
 
@@ -350,8 +406,7 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets configured auto-follow patterns. Returns the specified auto-follow pattern
-        collection.
+        Get auto-follow patterns. Get cross-cluster replication auto-follow patterns.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-auto-follow-pattern.html>`_
 
@@ -395,7 +450,14 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Pauses an auto-follow pattern
+        Pause an auto-follow pattern. Pause a cross-cluster replication auto-follow pattern.
+        When the API returns, the auto-follow pattern is inactive. New indices that are
+        created on the remote cluster and match the auto-follow patterns are ignored.
+        You can resume auto-following with the resume auto-follow pattern API. When it
+        resumes, the auto-follow pattern is active again and automatically configures
+        follower indices for newly created indices on the remote cluster that match its
+        patterns. Remote indices that were created while the pattern was paused will
+        also be followed, unless they have been deleted or closed in the interim.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-pause-auto-follow-pattern.html>`_
 
@@ -436,8 +498,10 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Pauses a follower index. The follower index will not fetch any additional operations
-        from the leader index.
+        Pause a follower. Pause a cross-cluster replication follower index. The follower
+        index will not fetch any additional operations from the leader index. You can
+        resume following with the resume follower API. You can pause and resume a follower
+        index to change the configuration of the following task.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-pause-follow.html>`_
 
@@ -512,9 +576,14 @@ class CcrClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new named collection of auto-follow patterns against a specified remote
-        cluster. Newly created indices on the remote cluster matching any of the specified
-        patterns will be automatically configured as follower indices.
+        Create or update auto-follow patterns. Create a collection of cross-cluster replication
+        auto-follow patterns for a remote cluster. Newly created indices on the remote
+        cluster that match any of the patterns are automatically configured as follower
+        indices. Indices on the remote cluster that were created before the auto-follow
+        pattern was created will not be auto-followed even if they match the pattern.
+        This API can also be used to update auto-follow patterns. NOTE: Follower indices
+        that were configured automatically before updating an auto-follow pattern will
+        remain unchanged even if they do not match against the new patterns.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-auto-follow-pattern.html>`_
 
@@ -638,7 +707,11 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resumes an auto-follow pattern that has been paused
+        Resume an auto-follow pattern. Resume a cross-cluster replication auto-follow
+        pattern that was paused. The auto-follow pattern will resume configuring following
+        indices for newly created indices that match its patterns on the remote cluster.
+        Remote indices created while the pattern was paused will also be followed unless
+        they have been deleted or closed in the interim.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-resume-auto-follow-pattern.html>`_
 
@@ -703,7 +776,11 @@ class CcrClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resumes a follower index that has been paused
+        Resume a follower. Resume a cross-cluster replication follower index that was
+        paused. The follower index could have been paused with the pause follower API.
+        Alternatively it could be paused due to replication that cannot be retried due
+        to failures during following tasks. When this API returns, the follower index
+        will resume fetching operations from the leader index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-resume-follow.html>`_
 
@@ -785,7 +862,8 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets all stats related to cross-cluster replication.
+        Get cross-cluster replication stats. This API returns stats about auto-following
+        and the same shard-level stats as the get follower stats API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-stats.html>`_
         """
@@ -821,8 +899,13 @@ class CcrClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops the following task associated with a follower index and removes index metadata
-        and settings associated with cross-cluster replication.
+        Unfollow an index. Convert a cross-cluster replication follower index to a regular
+        index. The API stops the following task associated with a follower index and
+        removes index metadata and settings associated with cross-cluster replication.
+        The follower index must be paused and closed before you call the unfollow API.
+        NOTE: Currently cross-cluster replication does not support converting an existing
+        regular index to a follower index. Converting a follower index to a regular index
+        is an irreversible operation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-unfollow.html>`_
 
