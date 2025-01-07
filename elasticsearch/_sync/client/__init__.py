@@ -624,12 +624,14 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        list_executed_pipelines: t.Optional[bool] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
+        require_data_stream: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -649,6 +651,8 @@ class Elasticsearch(BaseClient):
         :param operations:
         :param index: Name of the data stream, index, or index alias to perform bulk
             actions on.
+        :param list_executed_pipelines: If `true`, the response will include the ingest
+            pipelines that were executed for each index or create.
         :param pipeline: ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, then setting the value
             to `_none` disables the default ingest pipeline for this request. If a final
@@ -659,6 +663,8 @@ class Elasticsearch(BaseClient):
             make this operation visible to search, if `false` do nothing with refreshes.
             Valid values: `true`, `false`, `wait_for`.
         :param require_alias: If `true`, the request’s actions must target an index alias.
+        :param require_data_stream: If `true`, the request's actions must target a data
+            stream (existing or to-be-created).
         :param routing: Custom value used to route operations to a specific shard.
         :param source: `true` or `false` to return the `_source` field or not, or a list
             of fields to return.
@@ -692,6 +698,8 @@ class Elasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if list_executed_pipelines is not None:
+            __query["list_executed_pipelines"] = list_executed_pipelines
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
@@ -700,6 +708,8 @@ class Elasticsearch(BaseClient):
             __query["refresh"] = refresh
         if require_alias is not None:
             __query["require_alias"] = require_alias
+        if require_data_stream is not None:
+            __query["require_data_stream"] = require_data_stream
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
