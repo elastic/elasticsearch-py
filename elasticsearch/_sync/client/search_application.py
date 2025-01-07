@@ -216,7 +216,7 @@ class SearchApplicationClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the existing search applications.
+        Get search applications. Get information about search applications.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-search-applications.html>`_
 
@@ -348,6 +348,70 @@ class SearchApplicationClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="search_application.put_behavioral_analytics",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("params",),
+        ignore_deprecated_options={"params"},
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def render_query(
+        self,
+        *,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        params: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Render a search application query. Generate an Elasticsearch query using the
+        specified query parameters and the search template associated with the search
+        application or a default template if none is specified. If a parameter used in
+        the search template is not specified in `params`, the parameter's default value
+        will be used. The API returns the specific Elasticsearch query that would be
+        generated and run by calling the search application search API. You must have
+        `read` privileges on the backing alias of the search application.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-application-render-query.html>`_
+
+        :param name: The name of the search application to render teh query for.
+        :param params:
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = (
+            f'/_application/search_application/{__path_parts["name"]}/_render_query'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if params is not None:
+                __body["params"] = params
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_application.render_query",
             path_parts=__path_parts,
         )
 

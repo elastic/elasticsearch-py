@@ -47,7 +47,17 @@ class TasksClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Cancels a task, if it can be cancelled through an API.
+        Cancel a task. A task may continue to run for some time after it has been cancelled
+        because it may not be able to safely stop its current activity straight away.
+        It is also possible that Elasticsearch must complete its work on other tasks
+        before it can process the cancellation. The get task information API will continue
+        to list these cancelled tasks until they complete. The cancelled flag in the
+        response indicates that the cancellation command has been processed and the task
+        will stop as soon as possible. To troubleshoot why a cancelled task does not
+        complete promptly, use the get task information API with the `?detailed` parameter
+        to identify the other tasks the system is running. You can also use the node
+        hot threads API to obtain detailed information about the work the system is doing
+        instead of completing the cancelled task.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/tasks.html>`_
 
@@ -107,8 +117,7 @@ class TasksClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get task information. Returns information about the tasks currently executing
-        in the cluster.
+        Get task information. Get information about a task currently running in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/tasks.html>`_
 
@@ -166,15 +175,16 @@ class TasksClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The task management API returns information about tasks currently executing on
-        one or more nodes in the cluster.
+        Get all tasks. Get information about the tasks currently running on one or more
+        nodes in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/tasks.html>`_
 
         :param actions: Comma-separated list or wildcard expression of actions used to
             limit the request.
         :param detailed: If `true`, the response includes detailed information about
-            shard recoveries.
+            shard recoveries. This information is useful to distinguish tasks from each
+            other but is more costly to run.
         :param group_by: Key used to group tasks in the response.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and

@@ -37,7 +37,11 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Acknowledges a watch, manually throttling the execution of the watch's actions.
+        Acknowledge a watch. Acknowledging a watch enables you to manually throttle the
+        execution of the watch's actions. The acknowledgement state of an action is stored
+        in the `status.actions.<id>.ack.state` structure. IMPORTANT: If the specified
+        watch is currently being executed, this API will return an error The reason for
+        this behavior is to prevent overwriting the watch status from a watch execution.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-ack-watch.html>`_
 
@@ -88,7 +92,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Activates a currently inactive watch.
+        Activate a watch. A watch can be either active or inactive.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-activate-watch.html>`_
 
@@ -128,7 +132,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deactivates a currently active watch.
+        Deactivate a watch. A watch can be either active or inactive.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-deactivate-watch.html>`_
 
@@ -168,7 +172,13 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes a watch from Watcher.
+        Delete a watch. When the watch is removed, the document representing the watch
+        in the `.watches` index is gone and it will never be run again. Deleting a watch
+        does not delete any watch execution records related to this watch from the watch
+        history. IMPORTANT: Deleting a watch must be done by using only this API. Do
+        not delete the watch directly from the `.watches` index using the Elasticsearch
+        delete document API When Elasticsearch security features are enabled, make sure
+        no write privileges are granted to anyone for the `.watches` index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-delete-watch.html>`_
 
@@ -237,13 +247,15 @@ class WatcherClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        This API can be used to force execution of the watch outside of its triggering
-        logic or to simulate the watch execution for debugging purposes. For testing
-        and debugging purposes, you also have fine-grained control on how the watch runs.
-        You can execute the watch without executing all of its actions or alternatively
+        Run a watch. This API can be used to force execution of the watch outside of
+        its triggering logic or to simulate the watch execution for debugging purposes.
+        For testing and debugging purposes, you also have fine-grained control on how
+        the watch runs. You can run the watch without running all of its actions or alternatively
         by simulating them. You can also force execution by ignoring the watch condition
         and control whether a watch record would be written to the watch history after
-        execution.
+        it runs. You can use the run watch API to run watches that are not yet registered
+        by specifying the watch definition inline. This serves as great tool for testing
+        and debugging your watches prior to adding them to Watcher.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-execute-watch.html>`_
 
@@ -326,7 +338,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a watch by its ID.
+        Get a watch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-get-watch.html>`_
 
@@ -388,7 +400,17 @@ class WatcherClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new watch, or updates an existing one.
+        Create or update a watch. When a watch is registered, a new document that represents
+        the watch is added to the `.watches` index and its trigger is immediately registered
+        with the relevant trigger engine. Typically for the `schedule` trigger, the scheduler
+        is the trigger engine. IMPORTANT: You must use Kibana or this API to create a
+        watch. Do not add a watch directly to the `.watches` index by using the Elasticsearch
+        index API. If Elasticsearch security features are enabled, do not give users
+        write privileges on the `.watches` index. When you add a watch you can also define
+        its initial active state by setting the *active* parameter. When Elasticsearch
+        security features are enabled, your watch can index or search only on indices
+        for which the user that stored the watch has privileges. If the user is able
+        to read index `a`, but not index `b`, the same will apply when the watch runs.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-put-watch.html>`_
 
@@ -485,7 +507,8 @@ class WatcherClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves stored watches.
+        Query watches. Get all registered watches in a paginated manner and optionally
+        filter watches by a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-query-watches.html>`_
 
@@ -555,7 +578,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts Watcher if it is not already running.
+        Start the watch service. Start the Watcher service if it is not already running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-start.html>`_
         """
@@ -612,7 +635,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the current Watcher metrics.
+        Get Watcher statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-stats.html>`_
 
@@ -658,7 +681,7 @@ class WatcherClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops Watcher if it is running.
+        Stop the watch service. Stop the Watcher service if it is running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-stop.html>`_
         """

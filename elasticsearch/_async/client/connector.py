@@ -590,6 +590,125 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def sync_job_check_in(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Check in a connector sync job. Check in a connector sync job and set the `last_seen`
+        field to the current time before updating it in the internal index. To sync data
+        using self-managed connectors, you need to deploy the Elastic connector service
+        on your own infrastructure. This service runs automatically on Elastic Cloud
+        for Elastic managed connectors.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/check-in-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job
+            to be checked in.
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = (
+            f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_check_in'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.sync_job_check_in",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("worker_hostname", "sync_cursor"),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def sync_job_claim(
+        self,
+        *,
+        connector_sync_job_id: str,
+        worker_hostname: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        sync_cursor: t.Optional[t.Any] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Claim a connector sync job. This action updates the job status to `in_progress`
+        and sets the `last_seen` and `started_at` timestamps to the current time. Additionally,
+        it can set the `sync_cursor` property for the sync job. This API is not intended
+        for direct connector management by users. It supports the implementation of services
+        that utilize the connector protocol to communicate with Elasticsearch. To sync
+        data using self-managed connectors, you need to deploy the Elastic connector
+        service on your own infrastructure. This service runs automatically on Elastic
+        Cloud for Elastic managed connectors.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/claim-connector-sync-job-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job.
+        :param worker_hostname: The host name of the current system that will run the
+            job.
+        :param sync_cursor: The cursor object from the last incremental sync job. This
+            should reference the `sync_cursor` field in the connector state for which
+            the job runs.
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        if worker_hostname is None and body is None:
+            raise ValueError("Empty value passed for parameter 'worker_hostname'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_claim'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if worker_hostname is not None:
+                __body["worker_hostname"] = worker_hostname
+            if sync_cursor is not None:
+                __body["sync_cursor"] = sync_cursor
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.sync_job_claim",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     @_stability_warning(Stability.BETA)
     async def sync_job_delete(
         self,
@@ -631,6 +750,64 @@ class ConnectorClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="connector.sync_job_delete",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("error",),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def sync_job_error(
+        self,
+        *,
+        connector_sync_job_id: str,
+        error: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Set a connector sync job error. Set the `error` field for a connector sync job
+        and set its `status` to `error`. To sync data using self-managed connectors,
+        you need to deploy the Elastic connector service on your own infrastructure.
+        This service runs automatically on Elastic Cloud for Elastic managed connectors.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/set-connector-sync-job-error-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier for the connector sync job.
+        :param error: The error for the connector sync job error field.
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        if error is None and body is None:
+            raise ValueError("Empty value passed for parameter 'error'")
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_error'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if error is not None:
+                __body["error"] = error
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.sync_job_error",
             path_parts=__path_parts,
         )
 
@@ -1029,6 +1206,66 @@ class ConnectorClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="connector.update_error",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("features",),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def update_features(
+        self,
+        *,
+        connector_id: str,
+        features: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update the connector features. Update the connector features in the connector
+        document. This API can be used to control the following aspects of a connector:
+        * document-level security * incremental syncs * advanced sync rules * basic sync
+        rules Normally, the running connector service automatically manages these features.
+        However, you can use this API to override the default behavior. To sync data
+        using self-managed connectors, you need to deploy the Elastic connector service
+        on your own infrastructure. This service runs automatically on Elastic Cloud
+        for Elastic managed connectors.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-features-api.html>`_
+
+        :param connector_id: The unique identifier of the connector to be updated.
+        :param features:
+        """
+        if connector_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_id'")
+        if features is None and body is None:
+            raise ValueError("Empty value passed for parameter 'features'")
+        __path_parts: t.Dict[str, str] = {"connector_id": _quote(connector_id)}
+        __path = f'/_connector/{__path_parts["connector_id"]}/_features'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if features is not None:
+                __body["features"] = features
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.update_features",
             path_parts=__path_parts,
         )
 

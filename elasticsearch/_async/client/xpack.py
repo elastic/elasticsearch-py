@@ -43,7 +43,10 @@ class XPackClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Provides general information about the installed X-Pack features.
+        Get information. The information provided by the API includes: * Build information
+        including the build number and timestamp. * License information about the currently
+        installed license. * Feature information for the features that are currently
+        enabled and available under the current license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/info-api.html>`_
 
@@ -87,8 +90,9 @@ class XPackClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        This API provides information about which features are currently enabled and
-        available under the current license and some usage statistics.
+        Get usage information. Get information about the features that are currently
+        enabled and available under the current license. The API also provides some usage
+        statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/usage-api.html>`_
 
