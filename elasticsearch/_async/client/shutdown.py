@@ -34,11 +34,11 @@ class ShutdownClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -56,7 +56,8 @@ class ShutdownClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -72,7 +73,12 @@ class ShutdownClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.delete_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -84,11 +90,11 @@ class ShutdownClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -104,9 +110,12 @@ class ShutdownClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/shutdown"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         else:
+            __path_parts = {}
             __path = "/_nodes/shutdown"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -123,7 +132,12 @@ class ShutdownClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.get_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -135,19 +149,19 @@ class ShutdownClient(NamespacedClient):
         node_id: str,
         reason: t.Optional[str] = None,
         type: t.Optional[
-            t.Union["t.Literal['remove', 'replace', 'restart']", str]
+            t.Union[str, t.Literal["remove", "replace", "restart"]]
         ] = None,
         allocation_delay: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
         target_node_name: t.Optional[str] = None,
         timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -196,7 +210,8 @@ class ShutdownClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'reason'")
         if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -222,5 +237,11 @@ class ShutdownClient(NamespacedClient):
                 __body["target_node_name"] = target_node_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="shutdown.put_node",
+            path_parts=__path_parts,
         )

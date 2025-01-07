@@ -46,6 +46,7 @@ from .autoscaling import AutoscalingClient
 from .cat import CatClient
 from .ccr import CcrClient
 from .cluster import ClusterClient
+from .connector import ConnectorClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
@@ -63,7 +64,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
-from .query_ruleset import QueryRulesetClient
+from .query_rules import QueryRulesClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
@@ -81,8 +82,10 @@ from .utils import (
     _TYPE_HOSTS,
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
+    Stability,
     _quote,
     _rewrite_parameters,
+    _stability_warning,
     client_node_configs,
     is_requests_http_auth,
     is_requests_node_class,
@@ -122,12 +125,12 @@ class Elasticsearch(BaseClient):
         # Set 'api_key' on the constructor
         client = Elasticsearch(
             "http://localhost:9200",
-            api_key=("id", "api_key")
+            api_key="api_key",
         )
         client.search(...)
 
         # Set 'api_key' per request
-        client.options(api_key=("id", "api_key")).search(...)
+        client.options(api_key="api_key").search(...)
     """
 
     def __init__(
@@ -352,7 +355,7 @@ class Elasticsearch(BaseClient):
             if node_class is not DEFAULT:
                 transport_kwargs["node_class"] = node_class
             if node_pool_class is not DEFAULT:
-                transport_kwargs["node_pool_class"] = node_class
+                transport_kwargs["node_pool_class"] = node_pool_class
             if randomize_nodes_in_pool is not DEFAULT:
                 transport_kwargs["randomize_nodes_in_pool"] = randomize_nodes_in_pool
             if node_selector_class is not DEFAULT:
@@ -433,6 +436,7 @@ class Elasticsearch(BaseClient):
         self.autoscaling = AutoscalingClient(self)
         self.cat = CatClient(self)
         self.cluster = ClusterClient(self)
+        self.connector = ConnectorClient(self)
         self.fleet = FleetClient(self)
         self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
@@ -455,7 +459,7 @@ class Elasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
-        self.query_ruleset = QueryRulesetClient(self)
+        self.query_rules = QueryRulesClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
@@ -623,20 +627,22 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to perform multiple index/update/delete operations in a single request.
+        Bulk index or delete documents. Performs multiple indexing or delete operations
+        in a single API call. This reduces overhead and can greatly increase indexing
+        speed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
 
@@ -672,9 +678,12 @@ class Elasticsearch(BaseClient):
             )
         elif operations is not None and body is not None:
             raise ValueError("Cannot set both 'operations' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_bulk"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_bulk'
         else:
+            __path_parts = {}
             __path = "/_bulk"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -709,7 +718,13 @@ class Elasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="bulk",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -726,12 +741,14 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explicitly clears the search context for a scroll.
+        Clear a scrolling search. Clear the search context and results for a scrolling
+        search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
         :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -752,7 +769,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="clear_scroll",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -769,7 +792,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Close a point in time
+        Close a point in time. A point in time must be opened explicitly before being
+        used in search requests. The `keep_alive` parameter tells Elasticsearch how long
+        it should persist. A point in time is automatically closed when the `keep_alive`
+        period has elapsed. However, keeping points in time has a cost; close them as
+        soon as they are no longer required for search requests.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -777,6 +804,7 @@ class Elasticsearch(BaseClient):
         """
         if id is None and body is None:
             raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_pit"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -797,7 +825,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="close_point_in_time",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -810,15 +844,15 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -836,7 +870,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns number of documents matching a query.
+        Count search results. Get the number of documents matching a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
 
@@ -877,9 +911,12 @@ class Elasticsearch(BaseClient):
             If a query reaches this limit, Elasticsearch terminates the query early.
             Elasticsearch collects documents before sorting.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_count"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_count'
         else:
+            __path_parts = {}
             __path = "/_count"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -928,7 +965,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="count",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -947,21 +990,22 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new document in the index. Returns a 409 response when a document with
-        a same ID already exists in the index.
+        Index a document. Adds a JSON document to the specified data stream or index
+        and makes it searchable. If the target is an index and the document already exists,
+        the request updates the document and increments its version.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -1002,7 +1046,8 @@ class Elasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
-        __path = f"/{_quote(index)}/_create/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_create/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1029,7 +1074,13 @@ class Elasticsearch(BaseClient):
         __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1045,20 +1096,20 @@ class Elasticsearch(BaseClient):
         if_seq_no: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes a document from the index.
+        Delete a document. Removes a JSON document from the specified index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
 
@@ -1086,7 +1137,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1114,7 +1166,12 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1128,16 +1185,16 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1154,29 +1211,27 @@ class Elasticsearch(BaseClient):
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
+        slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
         sort: t.Optional[t.Sequence[str]] = None,
         stats: t.Optional[t.Sequence[str]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes documents matching the provided query.
+        Delete documents. Deletes documents that match the specified query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1245,7 +1300,8 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_delete_by_query"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_delete_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -1332,7 +1388,13 @@ class Elasticsearch(BaseClient):
                 __body["slice"] = slice
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="delete_by_query",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1347,7 +1409,10 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Delete By Query operation.
+        Throttle a delete by query operation. Change the number of requests per second
+        for a particular delete by query operation. Rethrottling that speeds up the query
+        takes effect immediately but rethrotting that slows down the query takes effect
+        after completing the current batch to prevent scroll timeouts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1357,7 +1422,8 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_delete_by_query/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1371,7 +1437,12 @@ class Elasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete_by_query_rethrottle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1382,14 +1453,12 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a script.
+        Delete a script or search template. Deletes a stored script or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -1402,7 +1471,8 @@ class Elasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_scripts/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1418,7 +1488,12 @@ class Elasticsearch(BaseClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="delete_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1447,11 +1522,11 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a document exists in an index.
+        Check a document. Checks if a specified document exists.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1482,7 +1557,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1514,7 +1590,12 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="exists",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1542,11 +1623,11 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a document source exists in an index.
+        Check for a document source. Checks if a document's `_source` is stored.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1574,7 +1655,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_source/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1604,7 +1686,12 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="exists_source",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1622,7 +1709,7 @@ class Elasticsearch(BaseClient):
         id: str,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1640,7 +1727,8 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about why a specific matches (or doesn't match) a query.
+        Explain a document match result. Returns information about why a specific document
+        matches, or doesn’t match, a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
 
@@ -1674,7 +1762,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_explain/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_explain/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if analyze_wildcard is not None:
@@ -1718,7 +1807,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="explain",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1733,9 +1828,9 @@ class Elasticsearch(BaseClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1752,7 +1847,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the information about the capabilities of fields among multiple indices.
+        Get the field capabilities. Get information about the capabilities of fields
+        among multiple indices. For data streams, the API returns field capabilities
+        among the stream’s backing indices. It returns runtime fields like any other
+        field. For example, a runtime field with a type of keyword is returned the same
+        as any other field that belongs to the `keyword` family.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
@@ -1784,9 +1883,12 @@ class Elasticsearch(BaseClient):
         :param types: Only return results for fields that have one of the types in the
             list
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_field_caps"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_field_caps'
         else:
+            __path_parts = {}
             __path = "/_field_caps"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1825,7 +1927,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="field_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1842,6 +1950,7 @@ class Elasticsearch(BaseClient):
         id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -1854,16 +1963,21 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a document.
+        Get a document by its ID. Retrieves the document with the specified ID from an
+        index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param realtime: If `true`, the request is real-time as opposed to near-real-time.
@@ -1888,12 +2002,15 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if preference is not None:
@@ -1920,7 +2037,12 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1931,13 +2053,11 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns a script.
+        Get a script or search template. Retrieves a stored script or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -1946,7 +2066,8 @@ class Elasticsearch(BaseClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_scripts/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_scripts/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1960,7 +2081,12 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1973,10 +2099,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns all script contexts.
+        Get script contexts. Get a list of supported script contexts and their methods.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_context"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1989,7 +2116,12 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script_context",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2002,10 +2134,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns available script types, languages and contexts
+        Get script languages. Get a list of available script types, languages, and contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_script_language"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2018,7 +2151,12 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_script_languages",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2047,11 +2185,11 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the source of a document.
+        Get a document's source. Returns the source of a document.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -2079,7 +2217,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_source/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_source/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2111,7 +2250,12 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_source",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2124,11 +2268,30 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the health of the cluster.
+        Get the cluster health. Get a report with the health status of an Elasticsearch
+        cluster. The report contains a list of indicators that compose Elasticsearch
+        functionality. Each indicator has a health status of: green, unknown, yellow
+        or red. The indicator will provide an explanation and metadata describing the
+        reason for its current health status. The cluster’s status is controlled by the
+        worst indicator status. In the event that an indicator’s status is non-green,
+        a list of impacts may be present in the indicator result which detail the functionalities
+        that are negatively affected by the health issue. Each impact carries with it
+        a severity level, an area of the system that is affected, and a simple description
+        of the impact on the system. Some health indicators can determine the root cause
+        of a health problem and prescribe a set of steps that can be performed in order
+        to improve the health of the system. The root cause and remediation steps are
+        encapsulated in a diagnosis. A diagnosis contains a cause detailing a root cause
+        analysis, an action containing a brief description of the steps to take to fix
+        the problem, the list of affected resources (if applicable), and a detailed step-by-step
+        troubleshooting guide to fix the diagnosed problem. NOTE: The health indicators
+        perform root cause analysis of non-green health statuses. This can be computationally
+        expensive when called frequently. When setting up automated polling of the API
+        for health status, set verbose to false to disable the more expensive analysis
+        logic.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/health-api.html>`_
 
@@ -2138,9 +2301,12 @@ class Elasticsearch(BaseClient):
         :param timeout: Explicit operation timeout.
         :param verbose: Opt-in for more information about the health of the system.
         """
+        __path_parts: t.Dict[str, str]
         if feature not in SKIP_IN_PATH:
-            __path = f"/_health_report/{_quote(feature)}"
+            __path_parts = {"feature": _quote(feature)}
+            __path = f'/_health_report/{__path_parts["feature"]}'
         else:
+            __path_parts = {}
             __path = "/_health_report"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2159,7 +2325,12 @@ class Elasticsearch(BaseClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="health_report",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2177,25 +2348,27 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
-        op_type: t.Optional[t.Union["t.Literal['create', 'index']", str]] = None,
+        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a document in an index.
+        Index a document. Adds a JSON document to the specified data stream or index
+        and makes it searchable. If the target is an index and the document already exists,
+        the request updates the document and increments its version.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -2240,11 +2413,14 @@ class Elasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_doc/{_quote(id)}"
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
             __method = "PUT"
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_doc"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_doc'
             __method = "POST"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
@@ -2282,7 +2458,13 @@ class Elasticsearch(BaseClient):
         __body = document if document is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            __method, __path, params=__query, headers=__headers, body=__body
+            __method,
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2295,10 +2477,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns basic information about the cluster.
+        Get cluster info. Returns basic information about the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2311,7 +2494,12 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2325,6 +2513,7 @@ class Elasticsearch(BaseClient):
         ),
         parameter_aliases={"_source": "source"},
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def knn_search(
         self,
         *,
@@ -2345,7 +2534,15 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs a kNN search.
+        Run a knn search. NOTE: The kNN search API has been replaced by the `knn` option
+        in the search API. Perform a k-nearest neighbor (kNN) search on a dense_vector
+        field and return the matching documents. Given a query vector, the API finds
+        the k closest vectors and returns those documents as search hits. Elasticsearch
+        uses the HNSW algorithm to support efficient kNN search. Like most kNN algorithms,
+        HNSW is an approximate method that sacrifices result accuracy for improved search
+        speed. This means the results returned are not always the true k closest neighbors.
+        The kNN search API supports restricting the search using a filter. The search
+        will return the top k documents that also match the filter query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -2374,7 +2571,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if knn is None and body is None:
             raise ValueError("Empty value passed for parameter 'knn'")
-        __path = f"/{_quote(index)}/_knn_search"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_knn_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2406,7 +2604,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="knn_search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2424,6 +2628,7 @@ class Elasticsearch(BaseClient):
         docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         preference: t.Optional[str] = None,
@@ -2438,7 +2643,10 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to get multiple documents in one request.
+        Get multiple documents. Get multiple JSON documents by ID from one or more indices.
+        If you specify an index in the request URI, you only need to specify the document
+        IDs in the request body. To ensure fast responses, this multi get (mget) API
+        responds with partial results if one or more shards fail.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
 
@@ -2446,6 +2654,10 @@ class Elasticsearch(BaseClient):
             or when a document in the `docs` array does not specify an index.
         :param docs: The documents you want to retrieve. Required if no index is specified
             in the request URI.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param ids: The IDs of the documents you want to retrieve. Allowed when the index
             is specified in the request URI.
         :param preference: Specifies the node or shard the operation should be performed
@@ -2467,9 +2679,12 @@ class Elasticsearch(BaseClient):
         :param stored_fields: If `true`, retrieves the document fields stored in the
             index rather than the document `_source`.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mget"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mget'
         else:
+            __path_parts = {}
             __path = "/_mget"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2477,6 +2692,8 @@ class Elasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if preference is not None:
@@ -2504,7 +2721,13 @@ class Elasticsearch(BaseClient):
                 __body["ids"] = ids
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="mget",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2522,15 +2745,16 @@ class Elasticsearch(BaseClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         max_concurrent_searches: t.Optional[int] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         pre_filter_shard_size: t.Optional[int] = None,
@@ -2538,12 +2762,18 @@ class Elasticsearch(BaseClient):
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to execute several search operations in one request.
+        Run multiple searches. The format of the request is similar to the bulk API format
+        and makes use of the newline delimited JSON (NDJSON) format. The structure is
+        as follows: ``` header\\n body\\n header\\n body\\n ``` This structure is specifically
+        optimized to reduce parsing if a specific search ends up redirected to another
+        node. IMPORTANT: The final line of data must end with a newline character `\\n`.
+        Each newline character may be preceded by a carriage return `\\r`. When sending
+        requests to this endpoint the `Content-Type` header should be set to `application/x-ndjson`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -2564,6 +2794,13 @@ class Elasticsearch(BaseClient):
             when frozen.
         :param ignore_unavailable: If true, missing or closed indices are not included
             in the response.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
             search API can execute.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
@@ -2589,9 +2826,12 @@ class Elasticsearch(BaseClient):
             )
         elif searches is not None and body is not None:
             raise ValueError("Cannot set both 'searches' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_msearch"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_msearch'
         else:
+            __path_parts = {}
             __path = "/_msearch"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2610,6 +2850,8 @@ class Elasticsearch(BaseClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if max_concurrent_searches is not None:
             __query["max_concurrent_searches"] = max_concurrent_searches
         if max_concurrent_shard_requests is not None:
@@ -2632,7 +2874,13 @@ class Elasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="msearch",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2652,12 +2900,12 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to execute several search template operations in one request.
+        Run multiple templated searches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -2682,9 +2930,12 @@ class Elasticsearch(BaseClient):
             )
         elif search_templates is not None and body is not None:
             raise ValueError("Cannot set both 'search_templates' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_msearch/template"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_msearch/template'
         else:
+            __path_parts = {}
             __path = "/_msearch/template"
         __query: t.Dict[str, t.Any] = {}
         if ccs_minimize_roundtrips is not None:
@@ -2711,7 +2962,13 @@ class Elasticsearch(BaseClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="msearch_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2738,12 +2995,16 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns multiple termvectors in one request.
+        Get multiple term vectors. You can specify existing documents by index and ID
+        or provide artificial documents in the body of the request. You can specify the
+        index in the request body or request URI. The response contains a `docs` array
+        with all the fetched termvectors. Each element has the structure provided by
+        the termvectors API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
 
@@ -2768,9 +3029,12 @@ class Elasticsearch(BaseClient):
         :param version: If `true`, returns the document version as part of a hit.
         :param version_type: Specific version type.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mtermvectors"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mtermvectors'
         else:
+            __path_parts = {}
             __path = "/_mtermvectors"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2815,57 +3079,86 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="mtermvectors",
+            path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("index_filter",),
+    )
     def open_point_in_time(
         self,
         *,
         index: t.Union[str, t.Sequence[str]],
-        keep_alive: t.Union["t.Literal[-1]", "t.Literal[0]", str],
+        keep_alive: t.Union[str, t.Literal[-1], t.Literal[0]],
+        allow_partial_search_results: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Open a point in time that can be used in subsequent searches
+        Open a point in time. A search request by default runs against the most recent
+        visible data of the target indices, which is called point in time. Elasticsearch
+        pit (point in time) is a lightweight view into the state of the data as it existed
+        when initiated. In some cases, it’s preferred to perform multiple search requests
+        using the same point in time. For example, if refreshes happen between `search_after`
+        requests, then the results of those requests might not be consistent as changes
+        happening between searches are only visible to the more recent point in time.
+        A point in time must be opened explicitly before being used in search requests.
+        The `keep_alive` parameter tells Elasticsearch how long it should persist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
         :param keep_alive: Extends the time to live of the corresponding point in time.
+        :param allow_partial_search_results: If `false`, creating a point in time request
+            when a shard is missing or unavailable will throw an exception. If `true`,
+            the point in time will contain all the shards that are available at the time
+            of the request.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param index_filter: Allows to filter indices if the provided query rewrites
+            to `match_none` on every shard.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if keep_alive is None:
+        if keep_alive is None and body is None:
             raise ValueError("Empty value passed for parameter 'keep_alive'")
-        __path = f"/{_quote(index)}/_pit"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_pit'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
+        if allow_partial_search_results is not None:
+            __query["allow_partial_search_results"] = allow_partial_search_results
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -2882,9 +3175,22 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
+        if not __body:
+            if index_filter is not None:
+                __body["index_filter"] = index_filter
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="open_point_in_time",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2899,15 +3205,14 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a script.
+        Create or update a script or search template. Creates or updates a stored script
+        or search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -2928,10 +3233,13 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'id'")
         if script is None and body is None:
             raise ValueError("Empty value passed for parameter 'script'")
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH and context not in SKIP_IN_PATH:
-            __path = f"/_scripts/{_quote(id)}/{_quote(context)}"
+            __path_parts = {"id": _quote(id), "context": _quote(context)}
+            __path = f'/_scripts/{__path_parts["id"]}/{__path_parts["context"]}'
         elif id not in SKIP_IN_PATH:
-            __path = f"/_scripts/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_scripts/{__path_parts["id"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -2953,7 +3261,13 @@ class Elasticsearch(BaseClient):
                 __body["script"] = script
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="put_script",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2969,9 +3283,9 @@ class Elasticsearch(BaseClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2983,8 +3297,8 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to evaluate the quality of ranked search results over a set of typical
-        search queries
+        Evaluate ranked search results. Evaluate the quality of ranked search results
+        over a set of typical search queries.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
@@ -3008,9 +3322,12 @@ class Elasticsearch(BaseClient):
         """
         if requests is None and body is None:
             raise ValueError("Empty value passed for parameter 'requests'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_rank_eval"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_rank_eval'
         else:
+            __path_parts = {}
             __path = "/_rank_eval"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3037,7 +3354,13 @@ class Elasticsearch(BaseClient):
                 __body["metric"] = metric
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rank_eval",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3048,7 +3371,7 @@ class Elasticsearch(BaseClient):
         *,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
-        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
+        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -3058,20 +3381,20 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
         require_alias: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         size: t.Optional[int] = None,
-        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to copy documents from one index to another, optionally filtering the
-        source documents by a query, changing the destination index settings, or fetching
-        the documents from a remote cluster.
+        Reindex documents. Copies documents from a source to a destination. The source
+        can be any existing index, alias, or data stream. The destination must differ
+        from the source. For example, you cannot reindex a data stream into itself.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -3103,6 +3426,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_reindex"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3145,7 +3469,13 @@ class Elasticsearch(BaseClient):
                 __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="reindex",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3160,7 +3490,8 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Reindex operation.
+        Throttle a reindex operation. Change the number of requests per second for a
+        particular reindex operation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -3170,7 +3501,8 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_reindex/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3184,7 +3516,12 @@ class Elasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="reindex_rethrottle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3205,7 +3542,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to use the Mustache language to pre-render a search definition.
+        Render a search template. Render a search template as a search request body.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
@@ -3218,9 +3555,12 @@ class Elasticsearch(BaseClient):
             search API's request body. These parameters also support Mustache variables.
             If no `id` or `<templated-id>` is specified, this parameter is required.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_render/template/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_render/template/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_render/template"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3245,12 +3585,19 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="render_search_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_fields=("context", "context_setup", "script"),
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def scripts_painless_execute(
         self,
         *,
@@ -3264,7 +3611,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows an arbitrary script to be executed and a result to be returned
+        Run a script. Runs a script and returns a result.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
 
@@ -3272,6 +3619,7 @@ class Elasticsearch(BaseClient):
         :param context_setup: Additional parameters for the `context`.
         :param script: The Painless script to execute.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_scripts/painless/_execute"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3296,7 +3644,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="scripts_painless_execute",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3311,11 +3665,26 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to retrieve a large numbers of results from a single search request.
+        Run a scrolling search. IMPORTANT: The scroll API is no longer recommend for
+        deep pagination. If you need to preserve the index state while paging through
+        more than 10,000 hits, use the `search_after` parameter with a point in time
+        (PIT). The scroll API gets large sets of results from a single scrolling search
+        request. To get the necessary scroll ID, submit a search API request that includes
+        an argument for the `scroll` query parameter. The `scroll` parameter indicates
+        how long Elasticsearch should retain the search context for the request. The
+        search response returns a scroll ID in the `_scroll_id` response body parameter.
+        You can then use the scroll ID with the scroll API to retrieve the next batch
+        of results for the request. If the Elasticsearch security features are enabled,
+        the access to the results of a specific scroll ID is restricted to the user or
+        API key that submitted the search. You can also use the scroll API to specify
+        a new scroll parameter that extends or shortens the retention period for the
+        search context. IMPORTANT: Results from a scrolling search reflect the state
+        of the index at the time of the initial search request. Subsequent indexing or
+        document changes only affect later search and scroll requests.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
 
@@ -3327,6 +3696,7 @@ class Elasticsearch(BaseClient):
         """
         if scroll_id is None and body is None:
             raise ValueError("Empty value passed for parameter 'scroll_id'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3351,7 +3721,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="scroll",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3374,6 +3750,7 @@ class Elasticsearch(BaseClient):
             "query",
             "rank",
             "rescore",
+            "retriever",
             "runtime_mappings",
             "script_fields",
             "search_after",
@@ -3411,34 +3788,35 @@ class Elasticsearch(BaseClient):
         batched_reduce_size: t.Optional[int] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
         fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_synthetic_source: t.Optional[bool] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_named_queries_score: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3454,15 +3832,16 @@ class Elasticsearch(BaseClient):
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        retriever: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_after: t.Optional[
             t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         seq_no_primary_term: t.Optional[bool] = None,
         size: t.Optional[int] = None,
@@ -3481,7 +3860,7 @@ class Elasticsearch(BaseClient):
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
-            t.Union["t.Literal['always', 'missing', 'popular']", str]
+            t.Union[str, t.Literal["always", "missing", "popular"]]
         ] = None,
         suggest_size: t.Optional[int] = None,
         suggest_text: t.Optional[str] = None,
@@ -3494,7 +3873,9 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns results matching a query.
+        Run a search. Get search hits that match the query defined in the request. You
+        can provide search queries using the `q` query string parameter or the request
+        body. If both are specified, only the query parameter is used.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -3543,6 +3924,10 @@ class Elasticsearch(BaseClient):
         :param fields: Array of wildcard (`*`) patterns. The request returns values for
             field names matching these patterns in the `hits.fields` property of the
             response.
+        :param force_synthetic_source: Should this request force synthetic _source? Use
+            this to test if the mapping supports synthetic _source and to get a sense
+            of the worst case performance. Fetches with this enabled will be slower the
+            enabling synthetic source natively in the index.
         :param from_: Starting document offset. Needs to be non-negative. By default,
             you cannot page through more than 10,000 hits using the `from` and `size`
             parameters. To page through more hits, use the `search_after` parameter.
@@ -3552,6 +3937,13 @@ class Elasticsearch(BaseClient):
             be ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param include_named_queries_score: Indicates whether hit.matched_queries should
+            be rendered as a map that includes the name of the matched query associated
+            with its score (true) or as an array containing the name of the matched queries
+            (false) This functionality reruns each named query on every hit in a search
+            response. Typically, this adds a small overhead to a request. However, using
+            computationally expensive named queries on a large number of hits may add
+            significant overhead.
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param knn: Defines the approximate kNN search to run.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3561,8 +3953,6 @@ class Elasticsearch(BaseClient):
             requests per node this search executes concurrently. This value should be
             used to limit the impact of the search on the cluster in order to limit the
             number of concurrent shard requests.
-        :param min_compatible_shard_node: The minimum version of the node that can handle
-            the request Any handling node with a lower version will fail the request.
         :param min_score: Minimum `_score` for matching documents. Documents with a lower
             `_score` are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
@@ -3609,6 +3999,9 @@ class Elasticsearch(BaseClient):
             example 100 - 500) documents returned by the `query` and `post_filter` phases.
         :param rest_total_hits_as_int: Indicates whether `hits.total` should be rendered
             as an integer or an object in the rest search response.
+        :param retriever: A retriever is a specification to describe top documents returned
+            from a search. A retriever replaces other elements of the search API that
+            also return top documents such as query and knn.
         :param routing: Custom value used to route operations to a specific shard.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
@@ -3680,9 +4073,12 @@ class Elasticsearch(BaseClient):
             by their respective types in the response.
         :param version: If true, returns document version as part of a hit.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search'
         else:
+            __path_parts = {}
             __path = "/_search"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -3719,18 +4115,20 @@ class Elasticsearch(BaseClient):
             __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force_synthetic_source is not None:
+            __query["force_synthetic_source"] = force_synthetic_source
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_named_queries_score is not None:
+            __query["include_named_queries_score"] = include_named_queries_score
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
@@ -3800,6 +4198,8 @@ class Elasticsearch(BaseClient):
                 __body["rank"] = rank
             if rescore is not None:
                 __body["rescore"] = rescore
+            if retriever is not None:
+                __body["retriever"] = retriever
             if runtime_mappings is not None:
                 __body["runtime_mappings"] = runtime_mappings
             if script_fields is not None:
@@ -3838,7 +4238,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3874,10 +4280,10 @@ class Elasticsearch(BaseClient):
         extent: t.Optional[int] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        grid_agg: t.Optional[t.Union["t.Literal['geohex', 'geotile']", str]] = None,
+        grid_agg: t.Optional[t.Union[str, t.Literal["geohex", "geotile"]]] = None,
         grid_precision: t.Optional[int] = None,
         grid_type: t.Optional[
-            t.Union["t.Literal['centroid', 'grid', 'point']", str]
+            t.Union[str, t.Literal["centroid", "grid", "point"]]
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3895,8 +4301,7 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> BinaryApiResponse:
         """
-        Searches a vector tile for geospatial values. Returns results as a binary Mapbox
-        vector tile.
+        Search a vector tile. Search a vector tile for geospatial values.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-vector-tile-api.html>`_
 
@@ -3953,7 +4358,14 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'x'")
         if y in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'y'")
-        __path = f"/{_quote(index)}/_mvt/{_quote(field)}/{_quote(zoom)}/{_quote(x)}/{_quote(y)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "field": _quote(field),
+            "zoom": _quote(zoom),
+            "x": _quote(x),
+            "y": _quote(y),
+        }
+        __path = f'/{__path_parts["index"]}/_mvt/{__path_parts["field"]}/{__path_parts["zoom"]}/{__path_parts["x"]}/{__path_parts["y"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -4010,7 +4422,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_mvt",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4023,9 +4441,9 @@ class Elasticsearch(BaseClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -4037,8 +4455,10 @@ class Elasticsearch(BaseClient):
         routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about the indices and shards that a search request would
-        be executed against.
+        Get the search shards. Get the indices and shards that a search request would
+        be run against. This information can be useful for working out issues or planning
+        optimizations with routing and shard preferences. When filtered aliases are used,
+        the filter is returned as part of the indices section.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
 
@@ -4061,9 +4481,12 @@ class Elasticsearch(BaseClient):
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search_shards"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search_shards'
         else:
+            __path_parts = {}
             __path = "/_search_shards"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -4088,7 +4511,12 @@ class Elasticsearch(BaseClient):
             __query["routing"] = routing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="search_shards",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4105,9 +4533,9 @@ class Elasticsearch(BaseClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
@@ -4122,16 +4550,16 @@ class Elasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         source: t.Optional[str] = None,
         typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows to use the Mustache language to pre-render a search definition.
+        Run a search with a search template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
@@ -4173,9 +4601,12 @@ class Elasticsearch(BaseClient):
         :param typed_keys: If `true`, the response prefixes aggregation and suggester
             names with their respective types.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_search/template"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_search/template'
         else:
+            __path_parts = {}
             __path = "/_search/template"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4222,7 +4653,13 @@ class Elasticsearch(BaseClient):
                 __body["source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4250,13 +4687,19 @@ class Elasticsearch(BaseClient):
         search_after: t.Optional[str] = None,
         size: t.Optional[int] = None,
         string: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        The terms enum API can be used to discover terms in the index that begin with
-        the provided string. It is designed for low-latency look-ups used in auto-complete
-        scenarios.
+        Get terms in an index. Discover terms that match a partial string in an index.
+        This "terms enum" API is designed for low-latency look-ups used in auto-complete
+        scenarios. If the `complete` property in the response is false, the returned
+        terms set may be incomplete and should be treated as approximate. This can occur
+        due to a few reasons, such as a request timeout or a node error. NOTE: The terms
+        enum API may return terms from deleted documents. Deleted documents are initially
+        only marked as deleted. It is not until their segments are merged that documents
+        are actually deleted. Until that happens, the terms enum API will return terms
+        from these documents.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
 
@@ -4281,7 +4724,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if field is None and body is None:
             raise ValueError("Empty value passed for parameter 'field'")
-        __path = f"/{_quote(index)}/_terms_enum"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_terms_enum'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4313,7 +4757,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="terms_enum",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4342,13 +4792,13 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
+            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information and statistics about terms in the fields of a particular
-        document.
+        Get term vector information. Get information and statistics about terms in the
+        fields of a particular document.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
 
@@ -4377,10 +4827,13 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_termvectors/{_quote(id)}"
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_termvectors/{__path_parts["id"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_termvectors"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_termvectors'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -4428,7 +4881,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="termvectors",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4463,7 +4922,7 @@ class Elasticsearch(BaseClient):
         lang: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
         retry_on_conflict: t.Optional[int] = None,
@@ -4473,15 +4932,16 @@ class Elasticsearch(BaseClient):
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         upsert: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates a document with a script or partial document.
+        Update a document. Updates a document by running a script or passing a partial
+        document.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
 
@@ -4525,7 +4985,8 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_update/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
+        __path = f'/{__path_parts["index"]}/_update/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4575,7 +5036,13 @@ class Elasticsearch(BaseClient):
                 __body["upsert"] = upsert
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="update",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4589,16 +5056,16 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -4610,37 +5077,37 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
+        slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
         sort: t.Optional[t.Sequence[str]] = None,
         stats: t.Optional[t.Sequence[str]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[bool] = None,
         version_type: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs an update on every document in the index without changing the source,
-        for example to pick up a mapping change.
+        Update documents. Updates documents that match the specified query. If no query
+        is specified, performs an update on every document in the data stream or index
+        without modifying the source, which is useful for picking up mapping changes.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
@@ -4677,6 +5144,7 @@ class Elasticsearch(BaseClient):
             parameter.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
+        :param q: Query in the Lucene query string syntax.
         :param query: Specifies the documents to update using the Query DSL.
         :param refresh: If `true`, Elasticsearch refreshes affected shards to make the
             operation visible to search.
@@ -4716,7 +5184,8 @@ class Elasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_update_by_query"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_update_by_query'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -4760,6 +5229,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
         if refresh is not None:
             __query["refresh"] = refresh
         if request_cache is not None:
@@ -4811,7 +5282,13 @@ class Elasticsearch(BaseClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="update_by_query",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4826,7 +5303,10 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the number of requests per second for a particular Update By Query operation.
+        Throttle an update by query operation. Change the number of requests per second
+        for a particular update by query operation. Rethrottling that speeds up the query
+        takes effect immediately but rethrotting that slows down the query takes effect
+        after completing the current batch to prevent scroll timeouts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
@@ -4836,7 +5316,8 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
-        __path = f"/_update_by_query/{_quote(task_id)}/_rethrottle"
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -4850,5 +5331,10 @@ class Elasticsearch(BaseClient):
             __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="update_by_query_rethrottle",
+            path_parts=__path_parts,
         )

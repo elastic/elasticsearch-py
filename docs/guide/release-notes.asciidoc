@@ -1,6 +1,14 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-17-0>>
+* <<rn-8-16-0>>
+* <<rn-8-15-1>>
+* <<rn-8-15-0>>
+* <<rn-8-14-0>>
+* <<rn-8-13-2>>
+* <<rn-8-13-1>>
+* <<rn-8-13-0>>
 * <<rn-8-12-1>>
 * <<rn-8-12-0>>
 * <<rn-8-11-1>>
@@ -34,6 +42,123 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-17-0]]
+=== 8.17.0 (2024-12-13)
+
+- Allow simsimd again on Python 3.13 (https://github.com/elastic/elasticsearch-py/pull/2722[#2722])
+- Update APIs:
+  * Mark all Inference APIs as stable.
+  * Add `allow_partial_search_results` to the Open Point in Time API
+  * Add `keep_alive` to the Get async search status API
+  * Remove the `keep_alive`, `pre_filter_shard_size` and `scroll` parameters from the Submit async search API. They were never supported.
+  * Add `master_timeout` and `timeout` to all autoscaling policy APIs
+  * Add `master_timeout` to the Alias exists and Get alias APIs
+  * Add `list_executed_pipelines` and `require_data_stream` to Bulk API
+  * Add `include_model_definition` to Get trained models API
+  * Add `meta` to Create data frame analytics API
+  * Add `aggs` to Create datafeeds API
+  * Add `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_unavailable` to Create anomaly detection jobs API
+
+[discrete]
+[[rn-8-16-0]]
+=== 8.16.0 (2024-11-12)
+
+- Support Python 3.13 (https://github.com/elastic/elasticsearch-py/pull/2689[#2689])
+- Emit Python warnings for beta and tech preview APIs (https://github.com/elastic/elasticsearch-py/pull/2685[#2685])
+- Vectorstore: use a retriever query for hybrid search (https://github.com/elastic/elasticsearch-py/pull/2682[#2682])
+- Allow retries for statuses other than 429 in streaming bulk (https://github.com/elastic/elasticsearch-py/pull/2702[#2702])
+- Make `BulkIndexError` and `ScanError` serializable (https://github.com/elastic/elasticsearch-py/pull/2700[#2700])
+- Fix import when `trace` is missing from `opentelemetry` package (https://github.com/elastic/elasticsearch-py/pull/2705[#2705])
+- Update APIs:
+  * Fix `nodes` parameter in Task management API
+  * Add Test query rule API
+  * Add Create Cross-Cluster API key and Update Cross-Cluster API key APIs
+  * Add Verify snapshot repository API
+  * Add `data_stream_name` and `settings` to Delete auto-follow pattern API
+  * Add `max_samples_per_key` to Get async EQL status API
+  * Add `lifecycle` and remove unused `data_retention` and `downsampling parameters` from Put data stream lifecycle API
+  * Add `include_remotes` and remove `flat_settings` from Cluster stats API
+  * Add `remote_indices` to Create or update application privileges and Create or update roles APIs
+
+Note that the new Python warnings can be disabled as follows:
+
+[source,python]
+----
+import warnings
+from elasticsearch.exceptions import GeneralAvailabilityWarning
+
+warnings.filterwarnings("ignore", category=GeneralAvailabilityWarning)
+----
+
+[discrete]
+[[rn-8-15-1]]
+=== 8.15.1 (2024-09-08)
+
+- Fix OTel context loss in parallel bulk helper (https://github.com/elastic/elasticsearch-py/pull/2616[#2616])
+- Use request converter to generate python examples (https://github.com/elastic/elasticsearch-py/pull/2645[#2645])
+- Add Geoip database configuration APIs: Create or update, Get and Delete
+- Add `q` parameter to Update by Query API
+- Add `allow_no_indices` and `ignore_unavailable` parameters to Resolve index API
+
+[discrete]
+[[rn-8-15-0]]
+=== 8.15.0 (2024-08-09)
+
+- Added the Connector API (https://github.com/elastic/elasticsearch-py/pull/2623[#2623])
+- Added support for https://www.elastic.co/guide/en/elasticsearch/reference/master/semantic-text.html[semantic_text] and https://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-semantic-query.html[semantic query].
+- Added support for sequences of job id, model id and tags where applicable in ML APIs
+- Added `dry_run` and `force` parameters to the Perform inference API
+- Added optional Arrow deserialization support (https://github.com/elastic/elasticsearch-py/pull/2632[#2632])
+- Merged Query Ruleset API into new Query Rules API (https://github.com/elastic/elasticsearch-py/pull/2607[#2607])
+- Added mapping code examples (https://github.com/elastic/elasticsearch-py/pull/2596[#2596])
+- Fixed reference docs (https://github.com/elastic/elasticsearch-py/pull/2629[#2629])
+- Dropped Python 3.7 support (https://github.com/elastic/elasticsearch-py/pull/2618[#2618])
+
+[discrete]
+[[rn-8-14-0]]
+=== 8.14.0 (2024-06-06)
+
+- Fixed `node_pool_class` override (#2581, contributed by Tallak Hellebust)
+- Added `retriever` to the Search API
+- Added `deprecated` and removed `allow_auto_create` from the Create or update component template API
+- Added `allow_auto_create`, `cause`, `deprecated`, `ignore_missing_component_templates` and `master_timeout` to the Create or update index template API
+- Added `cause`, removed `flat_settings` and `timeout` from the Create or update index template legacy API
+- Removed various unsupported parameters from the Simulate index API
+- Added various supported paramters to the Simulate index template API
+- Added the `completion` and `rerank` task types to the Inference APIs
+- Added the `query` and `timeout` parameters to the Perform inference API
+- Added `typed_keys` to the Search Application Search API
+- Added `with_profile_uid` to the Get API key information and Query API key information APIs
+
+
+[discrete]
+[[rn-8-13-2]]
+=== 8.13.2 (2024-05-24)
+
+- Added the `ml.update_trained_model_deployment` API
+- Marked Requests 2.32.2 as incompatible with the Elasticsearch client
+
+[discrete]
+[[rn-8-13-1]]
+=== 8.13.1 (2024-05-03)
+
+- Added `force_synthetic_source` to the Get API
+- Added `wait_for_completion` to the Create trained model API
+- Added `typed_keys` to the Query API key information API
+
+[discrete]
+[[rn-8-13-0]]
+=== 8.13.0 (2024-03-22)
+
+- Added native OpenTelemetry support
+- Added optional `orjson` (a fast, correct JSON library) serialization support
+- Added the `text_structure.test_grok_pattern` API
+- Added the `indices.resolve_cluster` API
+- Renamed the `model_id` parameter to `inference_id` in the `inference` APIs
+- Changed all `synonyms` APIs from **experimental** to **stable**.
+- Fixed API key documentation
 
 [discrete]
 [[rn-8-12-1]]

@@ -24,7 +24,6 @@ import io
 import json
 import os
 import re
-import sys
 import warnings
 import zipfile
 from typing import Tuple, Union
@@ -33,11 +32,9 @@ import pytest
 import urllib3
 import yaml
 
-from elasticsearch import ApiError, Elasticsearch, ElasticsearchWarning, RequestError
+from elasticsearch import ApiError, ElasticsearchWarning, RequestError
 from elasticsearch._sync.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
-
-from ..utils import CA_CERTS, es_url, parse_version
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -71,70 +68,38 @@ IMPLEMENTED_FEATURES = {
 }
 
 # broken YAML tests on some releases
-SKIP_TESTS = {
-    # Warning about date_histogram.interval deprecation is raised randomly
-    "search/aggregation/250_moving_fn[1]",
-    # body: null
-    "indices/simulate_index_template/10_basic[2]",
-    # No ML node with sufficient capacity / random ML failing
-    "ml/start_stop_datafeed",
-    "ml/post_data",
-    "ml/jobs_crud",
-    "ml/datafeeds_crud",
-    "ml/set_upgrade_mode",
-    "ml/reset_job[2]",
-    "ml/jobs_get_stats",
-    "ml/get_datafeed_stats",
-    "ml/get_trained_model_stats",
-    "ml/delete_job_force",
-    "ml/jobs_get_result_overall_buckets",
-    "ml/bucket_correlation_agg[0]",
-    "ml/job_groups",
-    "transform/transforms_stats_continuous[0]",
-    # Fails bad request instead of 404?
-    "ml/inference_crud",
-    # rollup/security_tests time out?
-    "rollup/security_tests",
-    # Our TLS certs are custom
-    "ssl/10_basic[0]",
-    # Our user is custom
-    "users/10_basic[3]",
-    # License warning not sent?
-    "license/30_enterprise_license[0]",
-    # Shards/snapshots aren't right?
-    "searchable_snapshots/10_usage[1]",
-    # flaky data streams?
-    "data_stream/10_basic[1]",
-    "data_stream/80_resolve_index_data_streams[1]",
-    # bad formatting?
-    "cat/allocation/10_basic",
-    "runtime_fields/10_keyword[8]",
-    # service account number not right?
-    "service_accounts/10_basic[1]",
-    # doesn't use 'contains' properly?
-    "xpack/10_basic[0]",
-    "privileges/40_get_user_privs[0]",
-    "privileges/40_get_user_privs[1]",
-    "features/get_features/10_basic[0]",
-    "features/reset_features/10_basic[0]",
-    # bad use of 'is_false'?
-    "indices/get_alias/10_basic[22]",
-    # unique usage of 'set'
-    "indices/stats/50_disk_usage[0]",
-    "indices/stats/60_field_usage[0]",
-    # actual Elasticsearch failure?
-    "transform/transforms_stats",
-    "transform/transforms_cat_apis",
-    "transform/transforms_update",
+FAILING_TESTS = {
+    # ping has a custom implementation in Python and returns a boolean
+    "ping/ping",
+    # Not investigated yet
+    "cat/aliases",
+    "cat/fielddata",
+    "cluster/delete_voting_config_exclusions",
+    "cluster/voting_config_exclusions",
+    "entsearch/10_basic",
+    "indices/clone",
+    "indices/resolve_cluster",
+    "indices/settings",
+    "indices/split",
+    "indices/simulate_template_stack",
+    "logstash/10_basic",
+    "machine_learning/30_trained_model_stack",
+    "machine_learning/jobs_crud",
+    "scroll/10_basic",
+    "security/10_api_key_basic",
+    "transform/10_basic",
+}
+SKIPPED_TESTS = {
+    # Timeouts
+    # https://github.com/elastic/elasticsearch-serverless-python/issues/63
+    "cluster/cluster_info[0]",
+    "inference/10_basic[0]",
+    "machine_learning/20_trained_model[0]",
 }
 
 
 XPACK_FEATURES = None
-ES_VERSION = None
-RUN_ASYNC_REST_API_TESTS = (
-    sys.version_info >= (3, 8)
-    and os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
-)
+RUN_ASYNC_REST_API_TESTS = os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)
 
@@ -176,16 +141,6 @@ class YamlRunner:
         if self._teardown_code:
             self.section("teardown")
             self.run_code(self._teardown_code)
-
-    def es_version(self):
-        global ES_VERSION
-        if ES_VERSION is None:
-            version_string = (self.client.info())["version"]["number"]
-            if "." not in version_string:
-                return ()
-            version = version_string.strip().split(".")
-            ES_VERSION = tuple(int(v) if v.isdigit() else 999 for v in version)
-        return ES_VERSION
 
     def section(self, name):
         print(("=" * 10) + " " + name + " " + ("=" * 10))
@@ -335,16 +290,6 @@ class YamlRunner:
                     continue
                 pytest.skip(f"feature '{feature}' is not supported")
 
-        if "version" in skip:
-            version, reason = skip["version"], skip["reason"]
-            if version == "all":
-                pytest.skip(reason)
-            min_version, _, max_version = version.partition("-")
-            min_version = parse_version(min_version.strip()) or (0,)
-            max_version = parse_version(max_version.strip()) or (999,)
-            if min_version <= (self.es_version()) <= max_version:
-                pytest.skip(reason)
-
     def run_gt(self, action):
         for key, value in action.items():
             value = self._resolve(value)
@@ -456,7 +401,7 @@ class YamlRunner:
         if isinstance(value, string_types):
             value = value.strip()
         elif isinstance(value, dict):
-            value = dict((k, self._resolve(v)) for (k, v) in value.items())
+            value = {k: self._resolve(v) for (k, v) in value.items()}
         elif isinstance(value, list):
             value = list(map(self._resolve, value))
         return value
@@ -495,9 +440,9 @@ class YamlRunner:
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
-                XPACK_FEATURES = set(
+                XPACK_FEATURES = {
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-                )
+                }
                 IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()
@@ -520,8 +465,9 @@ class YamlRunner:
 
 
 @pytest.fixture(scope="function")
-def sync_runner(sync_client):
-    return YamlRunner(sync_client)
+def sync_runner(sync_client_factory):
+    # sync_client_factory does not wipe the cluster between tests
+    return YamlRunner(sync_client_factory)
 
 
 # Source: https://stackoverflow.com/a/37958106/5763213
@@ -550,62 +496,36 @@ YAML_TEST_SPECS = []
 try:
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(retries=10)
-    client = Elasticsearch(es_url(), request_timeout=3, ca_certs=CA_CERTS)
 
-    # Make a request to Elasticsearch for the build hash, we'll be looking for
-    # an artifact with this same hash to download test specs for.
-    client_info = client.info()
-    version_number = client_info["version"]["number"]
-    build_hash = client_info["version"]["build_hash"]
-
-    # Now talk to the artifacts API with the 'STACK_VERSION' environment variable
-    resp = http.request(
-        "GET",
-        f"https://artifacts-api.elastic.co/v1/versions/{version_number}",
+    yaml_tests_url = (
+        "https://api.github.com/repos/elastic/elasticsearch-clients-tests/zipball/main"
     )
-    resp = json.loads(resp.data.decode("utf-8"))
-
-    # Look through every build and see if one matches the commit hash
-    # we're looking for. If not it's okay, we'll just use the latest and
-    # hope for the best!
-    builds = resp["version"]["builds"]
-    for build in builds:
-        if build["projects"]["elasticsearch"]["commit_hash"] == build_hash:
-            break
-    else:
-        build = builds[0]  # Use the latest
-
-    # Now we're looking for the 'rest-api-spec-<VERSION>-sources.jar' file
-    # to download and extract in-memory.
-    packages = build["projects"]["elasticsearch"]["packages"]
-    for package in packages:
-        if re.match(r"rest-resources-zip-.*\.zip", package):
-            package_url = packages[package]["url"]
-            break
-    else:
-        raise RuntimeError(
-            f"Could not find the package 'rest-resources-zip-*.zip' in build {build!r}"
-        )
 
     # Download the zip and start reading YAML from the files in memory
-    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", package_url).data))
+    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", yaml_tests_url).data))
+
     for yaml_file in package_zip.namelist():
-        if not re.match(r"^rest-api-spec/test/.*\.ya?ml$", yaml_file):
+        if not re.match(r"^.*\/tests\/.*\.ya?ml$", yaml_file):
             continue
         yaml_tests = list(
             yaml.load_all(package_zip.read(yaml_file), Loader=NoDatesSafeLoader)
         )
 
-        # Each file may have a "test" named 'setup' or 'teardown',
-        # these sets of steps should be run at the beginning and end
-        # of every other test within the file so we do one pass to capture those.
-        setup_steps = teardown_steps = None
+        # Each file has a `requires` section with `serverless` and `stack`
+        # boolean entries indicating whether the test should run with
+        # serverless, stack or both. Additionally, each file may have a section
+        # named 'setup' or 'teardown', these sets of steps should be run at the
+        # beginning and end of every other test within the file so we do one
+        # pass to capture those.
+        requires = setup_steps = teardown_steps = None
         test_numbers_and_steps = []
         test_number = 0
 
         for yaml_test in yaml_tests:
             test_name, test_step = yaml_test.popitem()
-            if test_name == "setup":
+            if test_name == "requires":
+                requires = test_step
+            elif test_name == "setup":
                 setup_steps = test_step
             elif test_name == "teardown":
                 teardown_steps = test_step
@@ -613,14 +533,17 @@ try:
                 test_numbers_and_steps.append((test_number, test_step))
                 test_number += 1
 
+        if not requires["stack"]:
+            continue
+
         # Now we combine setup, teardown, and test_steps into
         # a set of pytest.param() instances
         for test_number, test_step in test_numbers_and_steps:
-            # Build the id from the name of the YAML file and
-            # the number within that file. Most important step
-            # is to remove most of the file path prefixes and
-            # the .yml suffix.
-            pytest_test_name = yaml_file.rpartition(".")[0].replace(".", "/")
+            # Build the id from the name of the YAML file and the number within
+            # that file. Most important step is to remove most of the file path
+            # prefixes and the .yml suffix.
+            test_path = "/".join(yaml_file.split("/")[2:])
+            pytest_test_name = test_path.rpartition(".")[0].replace(".", "/")
             for prefix in ("rest-api-spec/", "test/", "free/", "platinum/"):
                 if pytest_test_name.startswith(prefix):
                     pytest_test_name = pytest_test_name[len(prefix) :]
@@ -632,7 +555,9 @@ try:
                 "teardown": teardown_steps,
             }
             # Skip either 'test_name' or 'test_name[x]'
-            if pytest_test_name in SKIP_TESTS or pytest_param_id in SKIP_TESTS:
+            if pytest_test_name in FAILING_TESTS or pytest_param_id in FAILING_TESTS:
+                pytest_param["fail"] = True
+            elif pytest_test_name in SKIPPED_TESTS or pytest_param_id in SKIPPED_TESTS:
                 pytest_param["skip"] = True
 
             YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
@@ -649,12 +574,13 @@ def _pytest_param_sort_key(param: pytest.param) -> Tuple[Union[str, int], ...]:
 # Sort the tests by ID so they're grouped together nicely.
 YAML_TEST_SPECS = sorted(YAML_TEST_SPECS, key=_pytest_param_sort_key)
 
-
 if not RUN_ASYNC_REST_API_TESTS:
 
     @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
     def test_rest_api_spec(test_spec, sync_runner):
-        if test_spec.get("skip", False):
-            pytest.skip("Manually skipped in 'SKIP_TESTS'")
+        if test_spec.get("fail", False):
+            pytest.xfail("Manually marked as failing in 'FAILING_TESTS'")
+        elif test_spec.get("skip", False):
+            pytest.skip("Manually marked as skipped")
         sync_runner.use_spec(test_spec)
         sync_runner.run()

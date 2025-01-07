@@ -39,6 +39,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -51,7 +52,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -66,7 +72,9 @@ class LicenseClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves licensing information for the cluster
+        Get license information. Returns information about your Elastic license, including
+        its type, its status, when it was issued, and when it expires. For more information
+        about the different types of licenses, refer to [Elastic Stack subscriptions](https://www.elastic.co/subscriptions).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
@@ -77,6 +85,7 @@ class LicenseClient(NamespacedClient):
         :param local: Specifies whether to retrieve local information. The default value
             is `false`, which means the information is retrieved from the master node.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -93,7 +102,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -110,6 +124,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -122,7 +137,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_basic_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -139,6 +159,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -151,7 +172,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_trial_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -179,6 +205,7 @@ class LicenseClient(NamespacedClient):
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -203,7 +230,13 @@ class LicenseClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="license.post",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -217,13 +250,19 @@ class LicenseClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts an indefinite basic license.
+        The start basic API enables you to initiate an indefinite basic license, which
+        gives access to all the basic features. If the basic license does not support
+        all of the features that are available with your current license, however, you
+        are notified in the response. You must then re-submit the API request with the
+        acknowledge parameter set to true. To check the status of your basic license,
+        use the following API: [Get basic status](https://www.elastic.co/guide/en/elasticsearch/reference/current/get-basic-status.html).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_basic"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -238,7 +277,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_basic",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -253,7 +297,8 @@ class LicenseClient(NamespacedClient):
         type_query_string: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        starts a limited time trial license.
+        The start trial API enables you to start a 30-day trial, which gives access to
+        all subscription features.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
 
@@ -261,6 +306,7 @@ class LicenseClient(NamespacedClient):
             false)
         :param type_query_string:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_trial"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -277,5 +323,10 @@ class LicenseClient(NamespacedClient):
             __query["type_query_string"] = type_query_string
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_trial",
+            path_parts=__path_parts,
         )

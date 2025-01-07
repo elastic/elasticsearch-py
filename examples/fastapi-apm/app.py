@@ -15,14 +15,14 @@ from elasticapm.contrib.starlette import ElasticAPM, make_apm_client
 apm = make_apm_client(
     {"SERVICE_NAME": "fastapi-app", "SERVER_URL": "http://apm-server:8200"}
 )
-es = AsyncElasticsearch(os.environ["ELASTICSEARCH_HOSTS"])
+client = AsyncElasticsearch(os.environ["ELASTICSEARCH_HOSTS"])
 app = FastAPI()
 app.add_middleware(ElasticAPM, client=apm)
 
 
 @app.on_event("shutdown")
 async def app_shutdown():
-    await es.close()
+    await client.close()
 
 
 async def download_games_db():
@@ -35,16 +35,16 @@ async def download_games_db():
 
 @app.get("/")
 async def index():
-    return await es.cluster.health()
+    return await client.cluster.health()
 
 
 @app.get("/ingest")
 async def ingest():
-    if not (await es.indices.exists(index="games")):
-        await es.indices.create(index="games")
+    if not (await client.indices.exists(index="games")):
+        await client.indices.create(index="games")
 
     async for _ in async_streaming_bulk(
-        client=es, index="games", actions=download_games_db()
+        client=client, index="games", actions=download_games_db()
     ):
         pass
 
@@ -53,20 +53,20 @@ async def ingest():
 
 @app.get("/search/{query}")
 async def search(query):
-    return await es.search(
+    return await client.search(
         index="games", body={"query": {"multi_match": {"query": query}}}
     )
 
 
 @app.get("/delete")
 async def delete():
-    return await es.delete_by_query(index="games", body={"query": {"match_all": {}}})
+    return await client.delete_by_query(index="games", body={"query": {"match_all": {}}})
 
 
 @app.get("/delete/{id}")
 async def delete_id(id):
     try:
-        return await es.delete(index="games", id=id)
+        return await client.delete(index="games", id=id)
     except NotFoundError as e:
         return e.info, 404
 
@@ -74,13 +74,13 @@ async def delete_id(id):
 @app.get("/update")
 async def update():
     response = []
-    docs = await es.search(
+    docs = await client.search(
         index="games", body={"query": {"multi_match": {"query": ""}}}
     )
     now = datetime.datetime.utcnow()
     for doc in docs["hits"]["hits"]:
         response.append(
-            await es.update(
+            await client.update(
                 index="games", id=doc["_id"], body={"doc": {"modified": now}}
             )
         )
@@ -91,11 +91,11 @@ async def update():
 @app.get("/error")
 async def error():
     try:
-        await es.delete(index="games", id="somerandomid")
+        await client.delete(index="games", id="somerandomid")
     except NotFoundError as e:
         return e.info
 
 
 @app.get("/doc/{id}")
 async def get_doc(id):
-    return await es.get(index="games", id=id)
+    return await client.get(index="games", id=id)

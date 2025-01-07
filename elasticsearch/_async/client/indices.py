@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import HeadApiResponse, ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class IndicesClient(NamespacedClient):
@@ -30,28 +36,27 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         index: str,
-        block: t.Union["t.Literal['metadata', 'read', 'read_only', 'write']", str],
+        block: t.Union[str, t.Literal["metadata", "read", "read_only", "write"]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds a block to an index.
+        Add an index block. Limits the operations allowed on an index by blocking specific
+        operation types.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-modules-blocks.html>`_
 
@@ -71,7 +76,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if block in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'block'")
-        __path = f"/{_quote(index)}/_block/{_quote(block)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "block": _quote(block),
+        }
+        __path = f'/{__path_parts["index"]}/_block/{__path_parts["block"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -93,7 +102,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.add_block",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -129,8 +143,8 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs the analysis process on a text and return the tokens breakdown of the
-        text.
+        Get tokens from text analysis. The analyze API performs [analysis](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
+        on a text string and returns the resulting tokens.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-analyze.html>`_
 
@@ -155,9 +169,12 @@ class IndicesClient(NamespacedClient):
             as a multi-value field.
         :param tokenizer: Tokenizer to use to convert text into tokens.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_analyze"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_analyze'
         else:
+            __path_parts = {}
             __path = "/_analyze"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -194,7 +211,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.analyze",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -207,9 +230,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         fielddata: t.Optional[bool] = None,
@@ -222,7 +245,8 @@ class IndicesClient(NamespacedClient):
         request: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clears all or specific caches for one or more indices.
+        Clears the caches of one or more indices. For data streams, the API clears the
+        caches of the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clearcache.html>`_
 
@@ -245,9 +269,12 @@ class IndicesClient(NamespacedClient):
         :param query: If `true`, clears the query cache.
         :param request: If `true`, clears the request cache.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_cache/clear"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_cache/clear'
         else:
+            __path_parts = {}
             __path = "/_cache/clear"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -274,7 +301,12 @@ class IndicesClient(NamespacedClient):
             __query["request"] = request
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.clear_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -289,19 +321,17 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clones an index
+        Clones an existing index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clone-index.html>`_
 
@@ -322,7 +352,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_clone/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_clone/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -350,7 +384,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.clone",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -363,21 +403,19 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -407,7 +445,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_close"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -431,7 +470,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.close",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -446,19 +490,17 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an index with optional settings and mappings.
+        Create an index. Creates a new index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-create-index.html>`_
 
@@ -478,7 +520,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -508,7 +551,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.create",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -519,10 +568,13 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a data stream
+        Create a data stream. Creates a data stream. You must have a matching index template
+        with data stream enabled.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
@@ -531,10 +583,16 @@ class IndicesClient(NamespacedClient):
             `#`, `:`, or a space character; Cannot start with `-`, `_`, `+`, or `.ds-`;
             Cannot be `.` or `..`; Cannot be longer than 255 bytes. Multi-byte characters
             count towards this limit faster.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -542,11 +600,20 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.create_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -558,9 +625,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -568,7 +635,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Provides statistics on operations happening in a data stream.
+        Get data stream stats. Retrieves statistics for one or more data streams.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
@@ -578,9 +645,12 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values, such as `open,hidden`.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_data_stream/{_quote(name)}/_stats"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_data_stream/{__path_parts["name"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_data_stream/_stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -595,7 +665,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.data_streams_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -608,22 +683,20 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an index.
+        Delete indices. Deletes one or more indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-index.html>`_
 
@@ -648,7 +721,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -670,7 +744,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -682,14 +761,12 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an alias.
+        Delete an alias. Removes a data stream or index from an alias.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
 
@@ -707,7 +784,8 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
+        __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -723,7 +801,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -735,21 +818,20 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes the data stream lifecycle of the selected data streams.
+        Delete data stream lifecycles. Removes the data stream lifecycle from a data
+        stream, rendering it not managed by the data stream lifecycle.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams-delete-lifecycle.html>`_
 
@@ -762,7 +844,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -780,7 +863,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -792,17 +880,18 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a data stream.
+        Delete data streams. Deletes one or more data streams and their backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
@@ -810,10 +899,14 @@ class IndicesClient(NamespacedClient):
             are supported.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values,such as `open,hidden`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -823,11 +916,18 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -838,14 +938,15 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an index template.
+        Delete an index template. The provided <index-template> may contain multiple
+        template names separated by a comma. If multiple template names are specified
+        then there is no wildcard support and the provided names should match completely
+        with existing templates.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-template.html>`_
 
@@ -859,7 +960,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -875,7 +977,12 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -886,14 +993,12 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an index template.
+        Deletes a legacy index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-template-v1.html>`_
 
@@ -907,7 +1012,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -923,10 +1029,16 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def disk_usage(
         self,
         *,
@@ -936,9 +1048,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -949,7 +1061,7 @@ class IndicesClient(NamespacedClient):
         run_expensive_tasks: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Analyzes the disk usage of each field of an index or data stream
+        Analyzes the disk usage of each field of an index or data stream.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-disk-usage.html>`_
 
@@ -975,7 +1087,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_disk_usage"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_disk_usage'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -997,12 +1110,18 @@ class IndicesClient(NamespacedClient):
             __query["run_expensive_tasks"] = run_expensive_tasks
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.disk_usage",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_name="config",
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def downsample(
         self,
         *,
@@ -1016,7 +1135,9 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Downsample an index
+        Aggregates a time series (TSDS) index and stores pre-computed statistical summaries
+        (`min`, `max`, `sum`, `value_count` and `avg`) for each metric field grouped
+        by a configured time interval.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-downsample-data-stream.html>`_
 
@@ -1034,7 +1155,11 @@ class IndicesClient(NamespacedClient):
             )
         elif config is not None and body is not None:
             raise ValueError("Cannot set both 'config' and 'body'")
-        __path = f"/{_quote(index)}/_downsample/{_quote(target_index)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target_index": _quote(target_index),
+        }
+        __path = f'/{__path_parts["index"]}/_downsample/{__path_parts["target_index"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1047,7 +1172,13 @@ class IndicesClient(NamespacedClient):
         __body = config if config is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.downsample",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1060,9 +1191,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1074,7 +1205,8 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a particular index exists.
+        Check indices. Checks if one or more indices, index aliases, or data streams
+        exist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-exists.html>`_
 
@@ -1096,7 +1228,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1120,7 +1253,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1134,19 +1272,19 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a particular alias exists.
+        Check aliases. Checks if one or more data stream or index aliases exist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
 
@@ -1163,15 +1301,19 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, requests that include a missing data stream
             or index in the target indices or data streams return an error.
-        :param local: If `true`, the request retrieves information from the local node
-            only.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_alias/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_alias/{__path_parts["name"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1187,13 +1329,18 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if local is not None:
-            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1204,13 +1351,11 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a particular index template exists.
+        Check index templates. Check whether index templates exist.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-templates.html>`_
 
@@ -1222,7 +1367,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1236,7 +1382,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1249,13 +1400,12 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
-        Returns information about whether a particular index template exists.
+        Check existence of index templates. Returns information about whether a particular
+        index template exists.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-template-exists-v1.html>`_
 
@@ -1267,7 +1417,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1285,7 +1436,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "HEAD", __path, params=__query, headers=__headers
+            "HEAD",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.exists_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1297,14 +1453,14 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the index's current data stream lifecycle, such as
-        any potential encountered error, time since creation etc.
+        Get the status for a data stream lifecycle. Retrieves information about an index
+        or data stream’s current data stream lifecycle status, such as time since index
+        creation, time since rollover, the lifecycle configuration managing the index,
+        or any errors encountered during lifecycle execution.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams-explain-lifecycle.html>`_
 
@@ -1315,7 +1471,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_lifecycle/explain"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_lifecycle/explain'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1331,10 +1488,16 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.explain_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     async def field_usage_stats(
         self,
         *,
@@ -1344,26 +1507,24 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the field usage stats for each field of an index
+        Returns field usage information for each shard and field of an index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/field-usage-stats.html>`_
 
@@ -1393,7 +1554,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_field_usage_stats"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_field_usage_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1419,7 +1581,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.field_usage_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1432,9 +1599,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1445,7 +1612,7 @@ class IndicesClient(NamespacedClient):
         wait_if_ongoing: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs the flush operation on one or more indices.
+        Flushes one or more data streams or indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-flush.html>`_
 
@@ -1467,9 +1634,12 @@ class IndicesClient(NamespacedClient):
             when another flush operation is running. If `false`, Elasticsearch returns
             an error if you request a flush when another flush operation is running.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_flush"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_flush'
         else:
+            __path_parts = {}
             __path = "/_flush"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1492,7 +1662,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_if_ongoing"] = wait_if_ongoing
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.flush",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1505,9 +1680,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1542,9 +1717,12 @@ class IndicesClient(NamespacedClient):
         :param wait_for_completion: Should the request wait until the force merge is
             completed.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_forcemerge"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_forcemerge'
         else:
+            __path_parts = {}
             __path = "/_forcemerge"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1571,7 +1749,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.forcemerge",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1584,17 +1767,15 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         features: t.Optional[
             t.Union[
-                t.Sequence[
-                    t.Union["t.Literal['aliases', 'mappings', 'settings']", str]
-                ],
-                t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
+                t.Sequence[t.Union[str, t.Literal["aliases", "mappings", "settings"]]],
+                t.Union[str, t.Literal["aliases", "mappings", "settings"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1603,13 +1784,12 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about one or more indices.
+        Get index information. Returns information about one or more indices. For data
+        streams, the API returns information about the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-index.html>`_
 
@@ -1638,7 +1818,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -1666,7 +1847,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1680,19 +1866,19 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns an alias.
+        Get aliases. Retrieves information for one or more data stream or index aliases.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
 
@@ -1710,16 +1896,22 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
-        :param local: If `true`, the request retrieves information from the local node
-            only.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_alias"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_alias'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_alias/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_alias/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_alias"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -1734,13 +1926,18 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if local is not None:
-            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1752,18 +1949,20 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the data stream lifecycle of the selected data streams.
+        Get data stream lifecycles. Retrieves the data stream lifecycle configuration
+        of one or more data streams.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams-get-lifecycle.html>`_
 
@@ -1774,10 +1973,14 @@ class IndicesClient(NamespacedClient):
             Supports comma-separated values, such as `open,hidden`. Valid values are:
             `all`, `open`, `closed`, `hidden`, `none`.
         :param include_defaults: If `true`, return all default settings in the response.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1789,11 +1992,18 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1805,18 +2015,20 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns data streams.
+        Get data streams. Retrieves information about one or more data streams.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
@@ -1827,10 +2039,18 @@ class IndicesClient(NamespacedClient):
             Supports comma-separated values, such as `open,hidden`.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param verbose: Whether the maximum timestamp for each data stream should be
+            calculated and returned.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_data_stream/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_data_stream/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_data_stream"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1843,11 +2063,20 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if verbose is not None:
+            __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1861,9 +2090,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1874,7 +2103,8 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns mapping for one or more fields.
+        Get mapping definitions. Retrieves mapping definitions for one or more fields.
+        For data streams, the API retrieves field mappings for the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
 
@@ -1898,10 +2128,13 @@ class IndicesClient(NamespacedClient):
         """
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'fields'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and fields not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mapping/field/{_quote(fields)}"
+            __path_parts = {"index": _quote(index), "fields": _quote(fields)}
+            __path = f'/{__path_parts["index"]}/_mapping/field/{__path_parts["fields"]}'
         elif fields not in SKIP_IN_PATH:
-            __path = f"/_mapping/field/{_quote(fields)}"
+            __path_parts = {"fields": _quote(fields)}
+            __path = f'/_mapping/field/{__path_parts["fields"]}'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1925,7 +2158,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_field_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1939,13 +2177,11 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns an index template.
+        Get index templates. Returns information about one or more index templates.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-template.html>`_
 
@@ -1961,9 +2197,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_index_template/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_index_template/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_index_template"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1984,7 +2223,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1997,22 +2241,21 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns mappings for one or more indices.
+        Get mapping definitions. Retrieves mapping definitions for one or more indices.
+        For data streams, the API retrieves mappings for the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-mapping.html>`_
 
@@ -2034,9 +2277,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_mapping"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_mapping'
         else:
+            __path_parts = {}
             __path = "/_mapping"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2059,7 +2305,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2073,9 +2324,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2084,13 +2335,12 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns settings for one or more indices.
+        Get index settings. Returns setting information for one or more indices. For
+        data streams, returns setting information for the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
 
@@ -2117,13 +2367,18 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings/{_quote(name)}"
+            __path_parts = {"index": _quote(index), "name": _quote(name)}
+            __path = f'/{__path_parts["index"]}/_settings/{__path_parts["name"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_settings'
         elif name not in SKIP_IN_PATH:
-            __path = f"/_settings/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_settings/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_settings"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2150,7 +2405,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2163,13 +2423,11 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns an index template.
+        Get index templates. Retrieves information about one or more index templates.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-template-v1.html>`_
 
@@ -2183,9 +2441,12 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_template/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_template/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_template"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2204,7 +2465,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2215,18 +2481,33 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Migrates an alias to a data stream
+        Convert an index alias to a data stream. Converts an index alias to a data stream.
+        You must have a matching index template that is data stream enabled. The alias
+        must meet the following criteria: The alias must have a write index; All indices
+        for the alias must have a `@timestamp` field mapping of a `date` or `date_nanos`
+        field type; The alias must not have any filters; The alias must not use custom
+        routing. If successful, the request removes the alias and creates a data stream
+        with the same name. The indices for the alias become hidden backing indices for
+        the stream. The write index for the alias becomes the write index for the stream.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
         :param name: Name of the index alias to convert to a data stream.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/_migrate/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/_migrate/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2234,11 +2515,20 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.migrate_to_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2255,7 +2545,8 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Modifies a data stream
+        Update data streams. Performs one or more data stream modification actions in
+        a single atomic operation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
@@ -2263,6 +2554,7 @@ class IndicesClient(NamespacedClient):
         """
         if actions is None and body is None:
             raise ValueError("Empty value passed for parameter 'actions'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_data_stream/_modify"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2279,7 +2571,13 @@ class IndicesClient(NamespacedClient):
                 __body["actions"] = actions
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.modify_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2292,25 +2590,23 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Opens an index.
+        Opens a closed index. For data streams, the API opens any closed backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
 
@@ -2340,7 +2636,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_open"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -2364,7 +2661,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.open",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2375,6 +2677,7 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2384,10 +2687,14 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
         :param name: The name of the data stream
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/_promote/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/_promote/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2395,11 +2702,18 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.promote_data_stream",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2422,17 +2736,15 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         index_routing: t.Optional[str] = None,
         is_write_index: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         search_routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates an alias.
+        Create or update an alias. Adds a data stream or index to an alias.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
 
@@ -2466,7 +2778,8 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index), "name": _quote(name)}
+        __path = f'/{__path_parts["index"]}/_alias/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2498,52 +2811,48 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=("data_retention", "downsampling"),
+        body_name="lifecycle",
     )
     async def put_data_lifecycle(
         self,
         *,
         name: t.Union[str, t.Sequence[str]],
-        data_retention: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
-        downsampling: t.Optional[t.Mapping[str, t.Any]] = None,
+        lifecycle: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the data stream lifecycle of the selected data streams.
+        Update data stream lifecycles. Update the data stream lifecycle of the specified
+        data streams.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams-put-lifecycle.html>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.
-        :param data_retention: If defined, every document added to this data stream will
-            be stored at least for this time frame. Any time after this duration the
-            document could be deleted. When empty, every document in this data stream
-            will be stored indefinitely.
-        :param downsampling: If defined, every backing index will execute the configured
-            downsampling configuration after the backing index is not the data stream
-            write index anymore.
+        :param lifecycle:
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
             Supports comma-separated values, such as `open,hidden`. Valid values are:
             `all`, `hidden`, `open`, `closed`, `none`.
@@ -2555,9 +2864,15 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_data_stream/{_quote(name)}/_lifecycle"
+        if lifecycle is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'lifecycle' and 'body', one of them should be set."
+            )
+        elif lifecycle is not None and body is not None:
+            raise ValueError("Cannot set both 'lifecycle' and 'body'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_lifecycle'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -2572,24 +2887,25 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if not __body:
-            if data_retention is not None:
-                __body["data_retention"] = data_retention
-            if downsampling is not None:
-                __body["downsampling"] = downsampling
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __body = lifecycle if lifecycle is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_data_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_fields=(
+            "allow_auto_create",
             "composed_of",
             "data_stream",
+            "deprecated",
+            "ignore_missing_component_templates",
             "index_patterns",
             "meta",
             "priority",
@@ -2602,13 +2918,18 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: str,
+        allow_auto_create: t.Optional[bool] = None,
+        cause: t.Optional[str] = None,
         composed_of: t.Optional[t.Sequence[str]] = None,
         create: t.Optional[bool] = None,
         data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
+        deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_missing_component_templates: t.Optional[t.Sequence[str]] = None,
         index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         priority: t.Optional[int] = None,
@@ -2617,11 +2938,19 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates an index template.
+        Create or update an index template. Index templates define settings, mappings,
+        and aliases that can be applied automatically to new indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-template.html>`_
 
         :param name: Index or template name
+        :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
+            cluster setting. If set to `true` in a template, then indices can be automatically
+            created using that template even if auto-creation of indices is disabled
+            via `actions.auto_create_index`. If set to `false`, then indices or data
+            streams matching the template must always be explicitly created, and may
+            never be automatically created.
+        :param cause: User defined reason for creating/updating the index template
         :param composed_of: An ordered list of component template names. Component templates
             are merged in the order specified, meaning that the last component template
             specified has the highest precedence.
@@ -2630,7 +2959,16 @@ class IndicesClient(NamespacedClient):
         :param data_stream: If this object is included, the template is used to create
             data streams and their backing indices. Supports an empty object. Data streams
             require a matching index template with a `data_stream` object.
+        :param deprecated: Marks this index template as deprecated. When creating or
+            updating a non-deprecated index template that uses deprecated components,
+            Elasticsearch will emit a deprecation warning.
+        :param ignore_missing_component_templates: The configuration option ignore_missing_component_templates
+            can be used when an index template references a component template that might
+            not exist
         :param index_patterns: Name of the index template to create.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param meta: Optional user metadata about the index template. May have any contents.
             This map is not automatically generated by Elasticsearch.
         :param priority: Priority to determine index template precedence when a new data
@@ -2645,9 +2983,12 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -2656,13 +2997,23 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
+            if allow_auto_create is not None:
+                __body["allow_auto_create"] = allow_auto_create
             if composed_of is not None:
                 __body["composed_of"] = composed_of
             if data_stream is not None:
                 __body["data_stream"] = data_stream
+            if deprecated is not None:
+                __body["deprecated"] = deprecated
+            if ignore_missing_component_templates is not None:
+                __body["ignore_missing_component_templates"] = (
+                    ignore_missing_component_templates
+                )
             if index_patterns is not None:
                 __body["index_patterns"] = index_patterns
             if meta is not None:
@@ -2675,7 +3026,13 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2706,7 +3063,7 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: t.Optional[bool] = None,
         date_detection: t.Optional[bool] = None,
         dynamic: t.Optional[
-            t.Union["t.Literal['false', 'runtime', 'strict', 'true']", str]
+            t.Union[str, t.Literal["false", "runtime", "strict", "true"]]
         ] = None,
         dynamic_date_formats: t.Optional[t.Sequence[str]] = None,
         dynamic_templates: t.Optional[
@@ -2719,18 +3076,16 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         field_names: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         numeric_detection: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2738,12 +3093,14 @@ class IndicesClient(NamespacedClient):
         routing: t.Optional[t.Mapping[str, t.Any]] = None,
         runtime: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         write_index_only: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the index mappings.
+        Update field mappings. Adds new fields to an existing data stream or index. You
+        can also use this API to change the search settings of existing fields. For data
+        streams, these changes are applied to all backing indices by default.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-mapping.html>`_
 
@@ -2785,7 +3142,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_mapping"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_mapping'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -2833,7 +3191,13 @@ class IndicesClient(NamespacedClient):
                 __body["_source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2850,24 +3214,23 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preserve_existing: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the index settings.
+        Update index settings. Changes dynamic index settings in real time. For data
+        streams, index setting changes are applied to all backing indices by default.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
 
@@ -2899,9 +3262,12 @@ class IndicesClient(NamespacedClient):
             )
         elif settings is not None and body is not None:
             raise ValueError("Cannot set both 'settings' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_settings"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_settings'
         else:
+            __path_parts = {}
             __path = "/_settings"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -2929,7 +3295,13 @@ class IndicesClient(NamespacedClient):
         __body = settings if settings is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2947,33 +3319,31 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        cause: t.Optional[str] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         order: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates an index template.
+        Create or update an index template. Index templates define settings, mappings,
+        and aliases that can be applied automatically to new indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates-v1.html>`_
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
+        :param cause:
         :param create: If true, this request cannot replace or update existing index
             templates.
-        :param flat_settings: If `true`, returns settings in flat format.
         :param index_patterns: Array of wildcard expressions used to match the names
             of indices during creation.
         :param mappings: Mapping for fields in the index.
@@ -2985,32 +3355,29 @@ class IndicesClient(NamespacedClient):
             Templates with higher 'order' values are merged later, overriding templates
             with lower values.
         :param settings: Configuration options for the index.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
         :param version: Version number used to manage index templates externally. This
             number is not automatically generated by Elasticsearch.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_template/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if flat_settings is not None:
-            __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
         if not __body:
             if aliases is not None:
                 __body["aliases"] = aliases
@@ -3026,7 +3393,13 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3042,7 +3415,9 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about ongoing index shard recoveries.
+        Returns information about ongoing and completed shard recoveries for one or more
+        indices. For data streams, the API returns information for the stream’s backing
+        indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
 
@@ -3053,9 +3428,12 @@ class IndicesClient(NamespacedClient):
         :param detailed: If `true`, the response includes detailed information about
             shard recoveries.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_recovery"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_recovery'
         else:
+            __path_parts = {}
             __path = "/_recovery"
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
@@ -3072,7 +3450,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.recovery",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3085,9 +3468,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3096,7 +3479,9 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Performs the refresh operation in one or more indices.
+        Refresh an index. A refresh makes recent operations performed on one or more
+        indices available for search. For data streams, the API runs the refresh operation
+        on the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-refresh.html>`_
 
@@ -3113,9 +3498,12 @@ class IndicesClient(NamespacedClient):
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_refresh"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_refresh'
         else:
+            __path_parts = {}
             __path = "/_refresh"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3134,7 +3522,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.refresh",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3147,9 +3540,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3173,7 +3566,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_reload_search_analyzers"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_reload_search_analyzers'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -3191,44 +3585,66 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.reload_search_analyzers",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
-    async def resolve_index(
+    async def resolve_cluster(
         self,
         *,
         name: t.Union[str, t.Sequence[str]],
+        allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about any matching indices, aliases, and data streams
+        Resolves the specified index expressions to return information about each cluster,
+        including the local cluster, if included. Multiple patterns and remote clusters
+        are supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-cluster-api.html>`_
 
         :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
             and data streams to resolve. Resources on remote clusters can be specified
             using the `<cluster>`:`<name>` syntax.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
+            when frozen. Defaults to false.
+        :param ignore_unavailable: If false, the request returns an error if it targets
+            a missing or closed index. Defaults to false.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_resolve/index/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_resolve/cluster/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -3237,11 +3653,90 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.resolve_cluster",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def resolve_index(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Resolve indices. Resolve the names and/or index patterns for indices, aliases,
+        and data streams. Multiple patterns and remote clusters are supported.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
+
+        :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
+            and data streams to resolve. Resources on remote clusters can be specified
+            using the `<cluster>`:`<name>` syntax.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_resolve/index/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.resolve_index",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3259,20 +3754,17 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates an alias to point to a new index when the existing index is considered
-        to be too large or too old.
+        Roll over to a new index. Creates a new index for a data stream or index alias.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-rollover-index.html>`_
 
@@ -3304,10 +3796,13 @@ class IndicesClient(NamespacedClient):
         """
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'alias'")
+        __path_parts: t.Dict[str, str]
         if alias not in SKIP_IN_PATH and new_index not in SKIP_IN_PATH:
-            __path = f"/{_quote(alias)}/_rollover/{_quote(new_index)}"
+            __path_parts = {"alias": _quote(alias), "new_index": _quote(new_index)}
+            __path = f'/{__path_parts["alias"]}/_rollover/{__path_parts["new_index"]}'
         elif alias not in SKIP_IN_PATH:
-            __path = f"/{_quote(alias)}/_rollover"
+            __path_parts = {"alias": _quote(alias)}
+            __path = f'/{__path_parts["alias"]}/_rollover'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -3343,7 +3838,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.rollover",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3356,19 +3857,19 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Provides low-level information about segments in a Lucene index.
+        Returns low-level information about the Lucene segments in index shards. For
+        data streams, the API returns information about the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-segments.html>`_
 
@@ -3384,11 +3885,13 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
-        :param verbose: If `true`, the request returns a verbose response.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_segments"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_segments'
         else:
+            __path_parts = {}
             __path = "/_segments"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3405,11 +3908,14 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
-        if verbose is not None:
-            __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.segments",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3422,9 +3928,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3433,13 +3939,14 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         status: t.Optional[
             t.Union[
-                t.Sequence[t.Union["t.Literal['all', 'green', 'red', 'yellow']", str]],
-                t.Union["t.Literal['all', 'green', 'red', 'yellow']", str],
+                t.Sequence[t.Union[str, t.Literal["all", "green", "red", "yellow"]]],
+                t.Union[str, t.Literal["all", "green", "red", "yellow"]],
             ]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Provides store information for shard copies of indices.
+        Retrieves store information about replica shards in one or more indices. For
+        data streams, the API retrieves store information for the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shards-stores.html>`_
 
@@ -3454,9 +3961,12 @@ class IndicesClient(NamespacedClient):
             in the response.
         :param status: List of shard health statuses used to limit the request.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_shard_stores"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_shard_stores'
         else:
+            __path_parts = {}
             __path = "/_shard_stores"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -3477,7 +3987,12 @@ class IndicesClient(NamespacedClient):
             __query["status"] = status
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.shard_stores",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3492,19 +4007,17 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allow to shrink an existing index into a new index with fewer primary shards.
+        Shrinks an existing index into a new index with fewer primary shards.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html>`_
 
@@ -3525,7 +4038,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_shrink/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_shrink/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3553,7 +4070,65 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.shrink",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def simulate_index_template(
+        self,
+        *,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Simulate an index. Returns the index configuration that would be applied to the
+        specified index from an existing index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-index.html>`_
+
+        :param name: Name of the index to simulate
+        :param include_defaults: If true, returns all relevant default configurations
+            for the index template.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.simulate_index_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3561,6 +4136,8 @@ class IndicesClient(NamespacedClient):
             "allow_auto_create",
             "composed_of",
             "data_stream",
+            "deprecated",
+            "ignore_missing_component_templates",
             "index_patterns",
             "meta",
             "priority",
@@ -3569,22 +4146,22 @@ class IndicesClient(NamespacedClient):
         ),
         parameter_aliases={"_meta": "meta"},
     )
-    async def simulate_index_template(
+    async def simulate_template(
         self,
         *,
-        name: str,
+        name: t.Optional[str] = None,
         allow_auto_create: t.Optional[bool] = None,
         composed_of: t.Optional[t.Sequence[str]] = None,
         create: t.Optional[bool] = None,
         data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
+        deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_missing_component_templates: t.Optional[t.Sequence[str]] = None,
         include_defaults: t.Optional[bool] = None,
         index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         priority: t.Optional[int] = None,
@@ -3593,11 +4170,14 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Simulate matching the given index name against the index templates in the system
+        Simulate an index template. Returns the index configuration that would be applied
+        by a particular index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-template.html>`_
 
-        :param name: Index or template name to simulate
+        :param name: Name of the index template to simulate. To test a template configuration
+            before you add it to the cluster, omit this parameter and specify the template
+            configuration in the request body.
         :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
             cluster setting. If set to `true` in a template, then indices can be automatically
             created using that template even if auto-creation of indices is disabled
@@ -3607,13 +4187,19 @@ class IndicesClient(NamespacedClient):
         :param composed_of: An ordered list of component template names. Component templates
             are merged in the order specified, meaning that the last component template
             specified has the highest precedence.
-        :param create: If `true`, the template passed in the body is only used if no
-            existing templates match the same index patterns. If `false`, the simulation
-            uses the template with the highest priority. Note that the template is not
-            permanently added or updated in either case; it is only used for the simulation.
+        :param create: If true, the template passed in the body is only used if no existing
+            templates match the same index patterns. If false, the simulation uses the
+            template with the highest priority. Note that the template is not permanently
+            added or updated in either case; it is only used for the simulation.
         :param data_stream: If this object is included, the template is used to create
             data streams and their backing indices. Supports an empty object. Data streams
             require a matching index template with a `data_stream` object.
+        :param deprecated: Marks this index template as deprecated. When creating or
+            updating a non-deprecated index template that uses deprecated components,
+            Elasticsearch will emit a deprecation warning.
+        :param ignore_missing_component_templates: The configuration option ignore_missing_component_templates
+            can be used when an index template references a component template that might
+            not exist
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
         :param index_patterns: Array of wildcard (`*`) expressions used to match the
@@ -3633,9 +4219,13 @@ class IndicesClient(NamespacedClient):
         :param version: Version number used to manage index templates externally. This
             number is not automatically generated by Elasticsearch.
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_index_template/_simulate_index/{_quote(name)}"
+        __path_parts: t.Dict[str, str]
+        if name not in SKIP_IN_PATH:
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_index_template/_simulate/{__path_parts["name"]}'
+        else:
+            __path_parts = {}
+            __path = "/_index_template/_simulate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if create is not None:
@@ -3659,6 +4249,12 @@ class IndicesClient(NamespacedClient):
                 __body["composed_of"] = composed_of
             if data_stream is not None:
                 __body["data_stream"] = data_stream
+            if deprecated is not None:
+                __body["deprecated"] = deprecated
+            if ignore_missing_component_templates is not None:
+                __body["ignore_missing_component_templates"] = (
+                    ignore_missing_component_templates
+                )
             if index_patterns is not None:
                 __body["index_patterns"] = index_patterns
             if meta is not None:
@@ -3675,80 +4271,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
-        )
-
-    @_rewrite_parameters(
-        body_name="template",
-    )
-    async def simulate_template(
-        self,
-        *,
-        name: t.Optional[str] = None,
-        create: t.Optional[bool] = None,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        include_defaults: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
-        pretty: t.Optional[bool] = None,
-        template: t.Optional[t.Mapping[str, t.Any]] = None,
-        body: t.Optional[t.Mapping[str, t.Any]] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Simulate resolving the given template name or body
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-simulate-template.html>`_
-
-        :param name: Name of the index template to simulate. To test a template configuration
-            before you add it to the cluster, omit this parameter and specify the template
-            configuration in the request body.
-        :param create: If true, the template passed in the body is only used if no existing
-            templates match the same index patterns. If false, the simulation uses the
-            template with the highest priority. Note that the template is not permanently
-            added or updated in either case; it is only used for the simulation.
-        :param include_defaults: If true, returns all relevant default configurations
-            for the index template.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param template:
-        """
-        if template is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'template' and 'body', one of them should be set."
-            )
-        elif template is not None and body is not None:
-            raise ValueError("Cannot set both 'template' and 'body'")
-        if name not in SKIP_IN_PATH:
-            __path = f"/_index_template/_simulate/{_quote(name)}"
-        else:
-            __path = "/_index_template/_simulate"
-        __query: t.Dict[str, t.Any] = {}
-        if create is not None:
-            __query["create"] = create
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if include_defaults is not None:
-            __query["include_defaults"] = include_defaults
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __body = template if template is not None else body
-        if not __body:
-            __body = None
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
-        return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.simulate_template",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3763,19 +4292,17 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows you to split an existing index into a new index with more primary shards.
+        Splits an existing index into a new index with more primary shards.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
 
@@ -3796,7 +4323,11 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
-        __path = f"/{_quote(index)}/_split/{_quote(target)}"
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "target": _quote(target),
+        }
+        __path = f'/{__path_parts["index"]}/_split/{__path_parts["target"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3824,7 +4355,13 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.split",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3838,9 +4375,9 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3852,12 +4389,13 @@ class IndicesClient(NamespacedClient):
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
+            t.Union[str, t.Literal["cluster", "indices", "shards"]]
         ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Provides statistics on operations happening in an index.
+        Returns statistics for one or more indices. For data streams, the API retrieves
+        statistics for the stream’s backing indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-stats.html>`_
 
@@ -3886,13 +4424,18 @@ class IndicesClient(NamespacedClient):
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_stats/{_quote(metric)}"
+            __path_parts = {"index": _quote(index), "metric": _quote(metric)}
+            __path = f'/{__path_parts["index"]}/_stats/{__path_parts["metric"]}'
         elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_stats"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_stats'
         elif metric not in SKIP_IN_PATH:
-            __path = f"/_stats/{_quote(metric)}"
+            __path_parts = {"metric": _quote(metric)}
+            __path = f'/_stats/{__path_parts["metric"]}'
         else:
+            __path_parts = {}
             __path = "/_stats"
         __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
@@ -3923,7 +4466,12 @@ class IndicesClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3936,24 +4484,21 @@ class IndicesClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Unfreezes an index. When a frozen index is unfrozen, the index goes through the
-        normal recovery process and becomes writeable again.
+        Unfreezes an index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/unfreeze-index-api.html>`_
 
@@ -3978,7 +4523,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_unfreeze"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_unfreeze'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
@@ -4002,7 +4548,12 @@ class IndicesClient(NamespacedClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.unfreeze",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4015,15 +4566,13 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates index aliases.
+        Create or update an alias. Adds a data stream or index to an alias.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
 
@@ -4034,6 +4583,7 @@ class IndicesClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_aliases"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4054,7 +4604,13 @@ class IndicesClient(NamespacedClient):
                 __body["actions"] = actions
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.update_aliases",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4068,15 +4624,15 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
@@ -4091,7 +4647,7 @@ class IndicesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a user to validate a potentially expensive query without executing it.
+        Validate a query. Validates a query without running it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
 
@@ -4126,9 +4682,12 @@ class IndicesClient(NamespacedClient):
         :param rewrite: If `true`, returns a more detailed explanation showing the actual
             Lucene query that will be executed.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_validate/query"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_validate/query'
         else:
+            __path_parts = {}
             __path = "/_validate/query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4173,5 +4732,11 @@ class IndicesClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.validate_query",
+            path_parts=__path_parts,
         )

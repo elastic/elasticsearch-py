@@ -3,7 +3,7 @@
 Index Lifecycle Management (ILM)
 --------------------------------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: IlmClient
    :members:

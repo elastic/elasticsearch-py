@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -16,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import pickle
 import threading
 import time
 from unittest import mock
@@ -75,7 +75,7 @@ class TestParallelBulk:
                 chunk_size=2,
             )
         )
-        assert len(set([r[1] for r in results])) > 1
+        assert len({r[1] for r in results}) > 1
 
 
 class TestChunkActions:
@@ -183,3 +183,19 @@ class TestExpandActions:
     @pytest.mark.parametrize("action", ["whatever", b"whatever"])
     def test_string_actions_are_marked_as_simple_inserts(self, action):
         assert ({"index": {}}, b"whatever") == helpers.expand_action(action)
+
+
+def test_serialize_bulk_index_error():
+    error = helpers.BulkIndexError("message", [{"error": 1}])
+    pickled = pickle.loads(pickle.dumps(error))
+    assert pickled.__class__ == helpers.BulkIndexError
+    assert pickled.errors == error.errors
+    assert pickled.args == error.args
+
+
+def test_serialize_scan_error():
+    error = helpers.ScanError("scroll_id", "shard_message")
+    pickled = pickle.loads(pickle.dumps(error))
+    assert pickled.__class__ == helpers.ScanError
+    assert pickled.scroll_id == error.scroll_id
+    assert pickled.args == error.args

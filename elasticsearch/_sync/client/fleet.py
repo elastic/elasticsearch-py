@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class FleetClient(NamespacedClient):
@@ -35,13 +41,13 @@ class FleetClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_advance: t.Optional[bool] = None,
         wait_for_index: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current global checkpoints for an index. This API is design for internal
-        use by the fleet server project.
+        Get global checkpoints. Get the current global checkpoints for an index. This
+        API is designed for internal use by the Fleet server project.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-global-checkpoints.html>`_
 
@@ -59,7 +65,8 @@ class FleetClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_fleet/global_checkpoints"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_fleet/global_checkpoints'
         __query: t.Dict[str, t.Any] = {}
         if checkpoints is not None:
             __query["checkpoints"] = checkpoints
@@ -79,12 +86,18 @@ class FleetClient(NamespacedClient):
             __query["wait_for_index"] = wait_for_index
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="fleet.global_checkpoints",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_name="searches",
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def msearch(
         self,
         *,
@@ -98,9 +111,9 @@ class FleetClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -113,15 +126,15 @@ class FleetClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         typed_keys: t.Optional[bool] = None,
         wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Multi Search API where the search will only be executed after specified checkpoints
-        are available due to a refresh. This API is designed for internal use by the
-        fleet server project.
+        Run multiple Fleet searches. Run several Fleet searches with a single API request.
+        The API follows the same structure as the multi search API. However, similar
+        to the Fleet search API, it supports the `wait_for_checkpoints` parameter.
 
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
@@ -171,9 +184,12 @@ class FleetClient(NamespacedClient):
             )
         elif searches is not None and body is not None:
             raise ValueError("Cannot set both 'searches' and 'body'")
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_fleet/_fleet_msearch"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_fleet/_fleet_msearch'
         else:
+            __path_parts = {}
             __path = "/_fleet/_fleet_msearch"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
@@ -216,7 +232,13 @@ class FleetClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="fleet.msearch",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -261,6 +283,7 @@ class FleetClient(NamespacedClient):
             "from": "from_",
         },
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def search(
         self,
         *,
@@ -274,16 +297,16 @@ class FleetClient(NamespacedClient):
         batched_reduce_size: t.Optional[int] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
@@ -298,7 +321,6 @@ class FleetClient(NamespacedClient):
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -316,12 +338,12 @@ class FleetClient(NamespacedClient):
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_after: t.Optional[
             t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         seq_no_primary_term: t.Optional[bool] = None,
         size: t.Optional[int] = None,
@@ -340,7 +362,7 @@ class FleetClient(NamespacedClient):
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
-            t.Union["t.Literal['always', 'missing', 'popular']", str]
+            t.Union[str, t.Literal["always", "missing", "popular"]]
         ] = None,
         suggest_size: t.Optional[int] = None,
         suggest_text: t.Optional[str] = None,
@@ -354,9 +376,9 @@ class FleetClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Search API where the search will only be executed after specified checkpoints
-        are available due to a refresh. This API is designed for internal use by the
-        fleet server project.
+        Run a Fleet search. The purpose of the Fleet search API is to provide an API
+        where the search will be run only after the provided checkpoint has been processed
+        and is visible for searches inside of Elasticsearch.
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
@@ -392,7 +414,6 @@ class FleetClient(NamespacedClient):
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param lenient:
         :param max_concurrent_shard_requests:
-        :param min_compatible_shard_node:
         :param min_score: Minimum _score for matching documents. Documents with a lower
             _score are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
@@ -460,7 +481,8 @@ class FleetClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_fleet/_fleet_search"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_fleet/_fleet_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -506,8 +528,6 @@ class FleetClient(NamespacedClient):
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
         if pre_filter_shard_size is not None:
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
@@ -613,5 +633,11 @@ class FleetClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="fleet.search",
+            path_parts=__path_parts,
         )

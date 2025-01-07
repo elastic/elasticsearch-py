@@ -36,8 +36,11 @@ class AsyncSearchClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async search by ID. If the search is still running, the search request
-        will be cancelled. Otherwise, the saved search results are deleted.
+        Delete an async search. If the asynchronous search is still running, it is cancelled.
+        Otherwise, the saved search results are deleted. If the Elasticsearch security
+        features are enabled, the deletion of a specific async search is restricted to:
+        the authenticated user that submitted the original search request; users that
+        have the `cancel_task` cluster privilege.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
@@ -45,7 +48,8 @@ class AsyncSearchClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_async_search/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_async_search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -57,7 +61,12 @@ class AsyncSearchClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="async_search.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -68,16 +77,18 @@ class AsyncSearchClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         typed_keys: t.Optional[bool] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the results of a previously submitted async search request given its
-        ID.
+        Get async search results. Retrieve the results of a previously submitted asynchronous
+        search request. If the Elasticsearch security features are enabled, access to
+        the results of a specific async search is restricted to the user or API key that
+        submitted it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
@@ -99,7 +110,8 @@ class AsyncSearchClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_async_search/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_async_search/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -117,7 +129,12 @@ class AsyncSearchClient(NamespacedClient):
             __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="async_search.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -128,19 +145,26 @@ class AsyncSearchClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the status of a previously submitted async search request given its
-        ID.
+        Get the async search status. Get the status of a previously submitted async search
+        request given its identifier, without retrieving search results. If the Elasticsearch
+        security features are enabled, use of this API is restricted to the `monitoring_user`
+        role.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
         :param id: A unique identifier for the async search.
+        :param keep_alive: Specifies how long the async search needs to be available.
+            Ongoing async searches and any saved search results are deleted after this
+            period.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_async_search/status/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_async_search/status/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -148,11 +172,18 @@ class AsyncSearchClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if keep_alive is not None:
+            __query["keep_alive"] = keep_alive
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="async_search.status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -211,16 +242,16 @@ class AsyncSearchClient(NamespacedClient):
         batched_reduce_size: t.Optional[int] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
-        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
         df: t.Optional[str] = None,
         docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
@@ -233,18 +264,15 @@ class AsyncSearchClient(NamespacedClient):
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
-        pre_filter_shard_size: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
@@ -258,12 +286,11 @@ class AsyncSearchClient(NamespacedClient):
         routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
-            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
         seq_no_primary_term: t.Optional[bool] = None,
         size: t.Optional[int] = None,
@@ -282,7 +309,7 @@ class AsyncSearchClient(NamespacedClient):
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
-            t.Union["t.Literal['always', 'missing', 'popular']", str]
+            t.Union[str, t.Literal["always", "missing", "popular"]]
         ] = None,
         suggest_size: t.Optional[int] = None,
         suggest_text: t.Optional[str] = None,
@@ -293,12 +320,20 @@ class AsyncSearchClient(NamespacedClient):
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes a search request asynchronously.
+        Run an async search. When the primary sort of the results is an indexed field,
+        shards get sorted based on minimum and maximum value that they hold for that
+        field. Partial results become available following the sort criteria that was
+        requested. Warning: Asynchronous search does not support scroll or search requests
+        that include only the suggest section. By default, Elasticsearch does not allow
+        you to store an async search response larger than 10Mb and an attempt to do this
+        results in an error. The maximum allowed size for a stored async search response
+        can be set by changing the `search.max_async_search_response_size` cluster level
+        setting.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
@@ -343,9 +378,6 @@ class AsyncSearchClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param indices_boost: Boosts the _score of documents from specified indices.
-        :param keep_alive: Specifies how long the async search needs to be available.
-            Ongoing async searches and any saved search results are deleted after this
-            period.
         :param keep_on_completion: If `true`, results are stored for later retrieval
             when the search completes within the `wait_for_completion_timeout`.
         :param knn: Defines the approximate kNN search to run.
@@ -355,16 +387,11 @@ class AsyncSearchClient(NamespacedClient):
             per node this search executes concurrently. This value should be used to
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests
-        :param min_compatible_shard_node:
         :param min_score: Minimum _score for matching documents. Documents with a lower
             _score are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an <index> in the request path.
         :param post_filter:
-        :param pre_filter_shard_size: The default value cannot be changed, which enforces
-            the execution of a pre-filter roundtrip to retrieve statistics from each
-            shard so that the ones that surely don’t hold any document matching the query
-            get skipped.
         :param preference: Specify the node or shard the operation should be performed
             on (default: random)
         :param profile:
@@ -373,13 +400,13 @@ class AsyncSearchClient(NamespacedClient):
         :param request_cache: Specify if request cache should be used for this request
             or not, defaults to true
         :param rescore:
-        :param rest_total_hits_as_int:
+        :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
+            as an integer or an object in the rest search response
         :param routing: A comma-separated list of specific routing values
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
         :param script_fields: Retrieve a script evaluation (based on different fields)
             for each hit.
-        :param scroll:
         :param search_after:
         :param search_type: Search operation type
         :param seq_no_primary_term: If true, returns sequence number and primary term
@@ -428,9 +455,12 @@ class AsyncSearchClient(NamespacedClient):
             up to a certain timeout. When the async search completes within the timeout,
             the response won’t include the ID as the results are not stored in the cluster.
         """
+        __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_async_search"
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_async_search'
         else:
+            __path_parts = {}
             __path = "/_async_search"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -473,18 +503,12 @@ class AsyncSearchClient(NamespacedClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if keep_alive is not None:
-            __query["keep_alive"] = keep_alive
         if keep_on_completion is not None:
             __query["keep_on_completion"] = keep_on_completion
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
-        if pre_filter_shard_size is not None:
-            __query["pre_filter_shard_size"] = pre_filter_shard_size
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -497,8 +521,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
             __query["routing"] = routing
-        if scroll is not None:
-            __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
         if source_excludes is not None:
@@ -590,5 +612,11 @@ class AsyncSearchClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="async_search.submit",
+            path_parts=__path_parts,
         )

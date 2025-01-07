@@ -5,6 +5,22 @@ You can find integration options and information on this page.
 
 
 [discrete]
+[[opentelemetry-intro]]
+=== OpenTelemetry instrumentation
+
+The Python Elasticsearch client supports native OpenTelemetry instrumentation following the https://opentelemetry.io/docs/specs/semconv/database/elasticsearch/[OpenTelemetry Semantic Conventions for Elasticsearch].
+Refer to the <<opentelemetry>> page for details.
+
+
+[discrete]
+[[esql-intro]]
+=== ES|QL
+
+{ref}/esql.html[ES|QL] is available through the Python Elasticsearch client.
+Refer to the <<esql-pandas>> page to learn more about using ES|QL and Pandas together with dataframes.
+
+
+[discrete]
 [[transport]]
 === Transport
 
@@ -23,8 +39,8 @@ The opaque ID can be set via the `opaque_id` parameter via the client `.options(
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(...)
-es.options(opaque_id="request-id-...").search(...)
+client = Elasticsearch(...)
+client.options(opaque_id="request-id-...").search(...)
 ------------------------------------
 
 
@@ -41,8 +57,8 @@ If we write a script that has a type error like using `request_timeout` with a `
 # script.py
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch(...)
-es.options(
+client = Elasticsearch(...)
+client.options(
     request_timeout="5"  # type error!
 ).search(...)
 
@@ -53,3 +69,7 @@ es.options(
 ------------------------------------
 
 Type hints also allow tools like your IDE to check types and provide better auto-complete functionality.
+
+
+include::open-telemetry.asciidoc[]
+include::esql-pandas.asciidoc[]

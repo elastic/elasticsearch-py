@@ -3,7 +3,7 @@
 SQL
 ---
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SqlClient
    :members:

@@ -44,7 +44,8 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}"
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
+        __path = f'/_slm/policy/{__path_parts["policy_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,7 +57,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.delete_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -79,7 +85,8 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}/_execute"
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
+        __path = f'/_slm/policy/{__path_parts["policy_id"]}/_execute'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -91,7 +98,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.execute_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -108,6 +120,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-execute-retention.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/_execute_retention"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -120,7 +133,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.execute_retention",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -141,9 +159,12 @@ class SlmClient(NamespacedClient):
 
         :param policy_id: Comma-separated list of snapshot lifecycle policies to retrieve
         """
+        __path_parts: t.Dict[str, str]
         if policy_id not in SKIP_IN_PATH:
-            __path = f"/_slm/policy/{_quote(policy_id)}"
+            __path_parts = {"policy_id": _quote(policy_id)}
+            __path = f'/_slm/policy/{__path_parts["policy_id"]}'
         else:
+            __path_parts = {}
             __path = "/_slm/policy"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -156,7 +177,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.get_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -174,6 +200,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -186,7 +213,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.get_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -203,6 +235,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -215,7 +248,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.get_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -229,15 +267,13 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         repository: t.Optional[str] = None,
         retention: t.Optional[t.Mapping[str, t.Any]] = None,
         schedule: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -266,7 +302,8 @@ class SlmClient(NamespacedClient):
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}"
+        __path_parts: t.Dict[str, str] = {"policy_id": _quote(policy_id)}
+        __path = f'/_slm/policy/{__path_parts["policy_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -298,7 +335,13 @@ class SlmClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="slm.put_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -315,6 +358,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-start.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/start"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -327,7 +371,12 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.start",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -344,6 +393,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-stop.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stop"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -356,5 +406,10 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="slm.stop",
+            path_parts=__path_parts,
         )

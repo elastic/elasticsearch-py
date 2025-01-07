@@ -36,7 +36,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym set
+        Delete a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonyms-set.html>`_
 
@@ -44,7 +44,8 @@ class SynonymsClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,7 +57,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.delete_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -71,7 +77,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a synonym rule in a synonym set
+        Delete a synonym rule. Delete a synonym rule from a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonym-rule.html>`_
 
@@ -82,7 +88,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'set_id'")
         if rule_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'rule_id'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -94,7 +104,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.delete_synonym_rule",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -112,7 +127,7 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym set
+        Get a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonyms-set.html>`_
 
@@ -122,7 +137,8 @@ class SynonymsClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -138,7 +154,12 @@ class SynonymsClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -153,7 +174,7 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a synonym rule from a synonym set
+        Get a synonym rule. Get a synonym rule from a synonym set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonym-rule.html>`_
 
@@ -164,7 +185,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'set_id'")
         if rule_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'rule_id'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -176,7 +201,12 @@ class SynonymsClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonym_rule",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -193,13 +223,14 @@ class SynonymsClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves a summary of all defined synonym sets
+        Get all synonym sets. Get a summary of all defined synonym sets.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-synonyms-sets.html>`_
 
         :param from_: Starting offset
         :param size: specifies a max number of results to get
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_synonyms"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -216,7 +247,12 @@ class SynonymsClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="synonyms.get_synonyms_sets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -226,7 +262,9 @@ class SynonymsClient(NamespacedClient):
         self,
         *,
         id: str,
-        synonyms_set: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        synonyms_set: t.Optional[
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -234,7 +272,9 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonyms set
+        Create or update a synonym set. Synonyms sets are limited to a maximum of 10,000
+        synonym rules per set. If you need to manage more synonym rules, you can create
+        multiple synonym sets.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html>`_
 
@@ -245,7 +285,8 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'id'")
         if synonyms_set is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms_set'")
-        __path = f"/_synonyms/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_synonyms/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -261,7 +302,13 @@ class SynonymsClient(NamespacedClient):
                 __body["synonyms_set"] = synonyms_set
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="synonyms.put_synonym",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -280,7 +327,8 @@ class SynonymsClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a synonym rule in a synonym set
+        Create or update a synonym rule. Create or update a synonym rule in a synonym
+        set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonym-rule.html>`_
 
@@ -294,7 +342,11 @@ class SynonymsClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'rule_id'")
         if synonyms is None and body is None:
             raise ValueError("Empty value passed for parameter 'synonyms'")
-        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "set_id": _quote(set_id),
+            "rule_id": _quote(rule_id),
+        }
+        __path = f'/_synonyms/{__path_parts["set_id"]}/{__path_parts["rule_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -310,5 +362,11 @@ class SynonymsClient(NamespacedClient):
                 __body["synonyms"] = synonyms
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="synonyms.put_synonym_rule",
+            path_parts=__path_parts,
         )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -16,9 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from __future__ import unicode_literals
 
-from elasticsearch._sync.client.utils import _quote
+import warnings
+
+import pytest
+
+from elasticsearch._sync.client.utils import Stability, _quote, _stability_warning
+from elasticsearch.exceptions import GeneralAvailabilityWarning
 
 
 def test_handles_ascii():
@@ -38,3 +41,39 @@ def test_handles_unicode():
 def test_handles_unicode2():
     string = "中*文,"
     assert "%E4%B8%AD*%E6%96%87," == _quote(string)
+
+
+class TestStabilityWarning:
+    def test_default(self):
+
+        @_stability_warning(stability=Stability.STABLE)
+        def func_default(*args, **kwargs):
+            pass
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            func_default()
+
+    def test_beta(self, recwarn):
+
+        @_stability_warning(stability=Stability.BETA)
+        def func_beta(*args, **kwargs):
+            pass
+
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is in beta and is subject to change.",
+        ):
+            func_beta()
+
+    def test_experimental(self, recwarn):
+
+        @_stability_warning(stability=Stability.EXPERIMENTAL)
+        def func_experimental(*args, **kwargs):
+            pass
+
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is in technical preview and may be changed or removed in a future release.",
+        ):
+            func_experimental()

@@ -36,7 +36,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear the cached results from a trained model deployment
+        Clear trained model deployment cache. Cache will be cleared on all nodes where
+        the trained model is assigned. A trained model deployment may have an inference
+        cache enabled. As requests are handled by each allocated node, their responses
+        may be cached on that individual node. Calling this API clears the caches without
+        restarting the deployment.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-trained-model-deployment-cache.html>`_
 
@@ -44,7 +48,10 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/cache/_clear"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = (
+            f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/cache/_clear'
+        )
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,7 +63,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.clear_trained_model_deployment_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -72,12 +84,23 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Closes one or more anomaly detection jobs. A job can be opened and closed multiple
-        times throughout its lifecycle.
+        Close anomaly detection jobs. A job can be opened and closed multiple times throughout
+        its lifecycle. A closed job cannot receive data or perform analysis operations,
+        but you can still explore and navigate results. When you close a job, it runs
+        housekeeping tasks such as pruning the model history, flushing buffers, calculating
+        final results and persisting the model snapshots. Depending upon the size of
+        the job, it could take several minutes to close and the equivalent time to re-open.
+        After it is closed, the job has a minimal overhead on the cluster except for
+        maintaining its meta data. Therefore it is a best practice to close jobs that
+        are no longer required to process data. If you close an anomaly detection job
+        whose datafeed is running, the request first tries to stop the datafeed. This
+        behavior is equivalent to calling stop datafeed API with the same timeout and
+        force parameters as the close job request. When a datafeed that has a specified
+        end date stops, it automatically closes its associated job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-close-job.html>`_
 
@@ -93,7 +116,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_close'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -117,7 +141,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.close_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -131,7 +161,8 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a calendar.
+        Delete a calendar. Removes all scheduled events from a calendar, then deletes
+        it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar.html>`_
 
@@ -139,7 +170,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -151,7 +183,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -166,7 +203,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes scheduled events from a calendar.
+        Delete events from a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
 
@@ -178,7 +215,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if event_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'event_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events/{_quote(event_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "event_id": _quote(event_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events/{__path_parts["event_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -190,7 +231,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar_event",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -205,7 +251,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes anomaly detection jobs from a calendar.
+        Delete anomaly jobs from a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-job.html>`_
 
@@ -217,7 +263,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -229,7 +279,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_calendar_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -242,10 +297,10 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing data frame analytics job.
+        Delete a data frame analytics job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-dfanalytics.html>`_
 
@@ -256,7 +311,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -272,7 +328,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -287,7 +348,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing datafeed.
+        Delete a datafeed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-datafeed.html>`_
 
@@ -300,7 +361,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -314,7 +376,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -329,11 +396,17 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes expired and unused machine learning data.
+        Delete expired ML data. Deletes all job results, model snapshots and forecast
+        data that have exceeded their retention days period. Machine learning state documents
+        that are not associated with any job are also deleted. You can limit the request
+        to a single or set of anomaly detection jobs by using a job identifier, a group
+        name, a comma-separated list of jobs, or a wildcard expression. You can delete
+        expired data for all anomaly detection jobs by using _all, by specifying * as
+        the <job_id>, or by omitting the <job_id>.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
 
@@ -344,9 +417,12 @@ class MlClient(NamespacedClient):
         :param timeout: How long can the underlying delete processes run until they are
             canceled.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/_delete_expired_data/{_quote(job_id)}"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/_delete_expired_data/{__path_parts["job_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/_delete_expired_data"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -369,7 +445,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.delete_expired_data",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -383,7 +465,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a filter.
+        Delete a filter. If an anomaly detection job references the filter, you cannot
+        delete the filter. You must update or delete the job before you can delete the
+        filter.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-filter.html>`_
 
@@ -391,7 +475,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -403,7 +488,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -417,10 +507,13 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes forecasts from a machine learning job.
+        Delete forecasts from a job. By default, forecasts are retained for 14 days.
+        You can specify a different retention period with the `expires_in` parameter
+        in the forecast jobs API. The delete forecast API enables you to delete one or
+        more forecasts before they expire.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-forecast.html>`_
 
@@ -438,10 +531,16 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and forecast_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast/{_quote(forecast_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "forecast_id": _quote(forecast_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast/{__path_parts["forecast_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -459,7 +558,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_forecast",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -476,7 +580,12 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing anomaly detection job.
+        Delete an anomaly detection job. All job configuration, model state and results
+        are deleted. It is not currently possible to delete multiple jobs using wildcards
+        or a comma separated list. If you delete a job that has a datafeed, the request
+        first tries to delete the datafeed. This behavior is equivalent to calling the
+        delete datafeed API with the same timeout and force parameters as the delete
+        job request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-job.html>`_
 
@@ -491,7 +600,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
             __query["delete_user_annotations"] = delete_user_annotations
@@ -509,7 +619,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -524,7 +639,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing model snapshot.
+        Delete a model snapshot. You cannot delete the active model snapshot. To delete
+        that snapshot, first revert to a different one. To identify the active model
+        snapshot, refer to the `model_snapshot_id` in the results from the get jobs API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-snapshot.html>`_
 
@@ -535,7 +652,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -547,7 +668,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_model_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -562,8 +688,8 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing trained inference model that is currently not referenced
-        by an ingest pipeline.
+        Delete an unreferenced trained model. The request deletes a trained inference
+        model that is not referenced by an ingest pipeline.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models.html>`_
 
@@ -573,7 +699,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -587,7 +714,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -602,7 +734,9 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a model alias that refers to the trained model
+        Delete a trained model alias. This API deletes an existing model alias that refers
+        to a trained model. If the model alias is missing or refers to a model other
+        than the one identified by the `model_id`, this API returns an error.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models-aliases.html>`_
 
@@ -613,7 +747,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "model_alias": _quote(model_alias),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/model_aliases/{__path_parts["model_alias"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -625,7 +763,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.delete_trained_model_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -648,7 +791,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Estimates the model memory
+        Estimate job model memory usage. Makes an estimation of the memory usage for
+        an anomaly detection job model. It is based on analysis configuration details
+        for the job and cardinality estimates for the fields it references.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
 
@@ -667,6 +812,7 @@ class MlClient(NamespacedClient):
             from the request if no detectors have a `by_field_name`, `over_field_name`
             or `partition_field_name`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_estimate_model_memory"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -687,7 +833,13 @@ class MlClient(NamespacedClient):
                 __body["overall_cardinality"] = overall_cardinality
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.estimate_model_memory",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -706,7 +858,10 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evaluates the data frame analytics for an annotated index.
+        Evaluate data frame analytics. The API packages together commonly used evaluation
+        metrics for various types of machine learning features. This has been designed
+        for use on indexes created by data frame analytics. Evaluation requires both
+        a ground truth field and an analytics result field to be present.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/evaluate-dfanalytics.html>`_
 
@@ -719,6 +874,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'evaluation'")
         if index is None and body is None:
             raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/data_frame/_evaluate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -739,7 +895,13 @@ class MlClient(NamespacedClient):
                 __body["query"] = query
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.evaluate_data_frame",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -773,7 +935,13 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explains a data frame analytics config.
+        Explain data frame analytics config. This API provides explanations for a data
+        frame analytics config that either exists already or one that has not been created
+        yet. The following explanations are provided: * which fields are included or
+        not in the analysis and why, * how much memory is estimated to be required. The
+        estimate can be used when deciding the appropriate value for model_memory_limit
+        setting later on. If you have object fields or fields that are excluded via source
+        filtering, they are not included in the explanation.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/explain-dfanalytics.html>`_
 
@@ -805,9 +973,12 @@ class MlClient(NamespacedClient):
         :param source: The configuration of how to source the analysis data. It requires
             an index. Optionally, query and _source may be specified.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_explain'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_explain"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -842,7 +1013,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.explain_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -864,7 +1041,14 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Forces any buffered data to be processed by the job.
+        Force buffered data to be processed. The flush jobs API is only applicable when
+        sending data for analysis using the post data API. Depending on the content of
+        the buffer, then it might additionally calculate new results. Both flush and
+        close operations are similar, however the flush is more efficient if you are
+        expecting to send more data for analysis. When flushing, the job remains open
+        and is available to continue analyzing data. A close operation additionally prunes
+        and persists the model state to disk and the job must be opened again before
+        analyzing further data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-flush-job.html>`_
 
@@ -877,7 +1061,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_flush"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_flush'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -905,7 +1090,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.flush_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -915,9 +1106,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        duration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        duration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         error_trace: t.Optional[bool] = None,
-        expires_in: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        expires_in: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_model_memory: t.Optional[str] = None,
@@ -925,7 +1116,10 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Predicts the future behavior of a time series by using its historical behavior.
+        Predict future behavior of a time series. Forecasts are not supported for jobs
+        that perform population analysis; an error occurs if you try to create a forecast
+        for a job that has an `over_field_name` in its configuration. Forcasts predict
+        future behavior based on historical data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-forecast.html>`_
 
@@ -938,7 +1132,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_forecast'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -962,7 +1157,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.forecast",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1000,7 +1201,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly detection job results for one or more buckets.
+        Get anomaly detection job results for buckets. The API presents a chronological
+        view of the records, grouped by bucket.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-bucket.html>`_
 
@@ -1022,10 +1224,13 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and timestamp not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets/{_quote(timestamp)}"
+            __path_parts = {"job_id": _quote(job_id), "timestamp": _quote(timestamp)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/buckets/{__path_parts["timestamp"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/buckets'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1065,7 +1270,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_buckets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1086,7 +1297,7 @@ class MlClient(NamespacedClient):
         start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the scheduled events in calendars.
+        Get info about events in calendars.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar-event.html>`_
 
@@ -1103,7 +1314,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         if end is not None:
             __query["end"] = end
@@ -1125,7 +1337,12 @@ class MlClient(NamespacedClient):
             __query["start"] = start
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_calendar_events",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1146,7 +1363,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for calendars.
+        Get calendar configuration info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar.html>`_
 
@@ -1160,9 +1377,12 @@ class MlClient(NamespacedClient):
         :param size: Specifies the maximum number of calendars to obtain. This parameter
             is supported only when you omit the calendar identifier.
         """
+        __path_parts: t.Dict[str, str]
         if calendar_id not in SKIP_IN_PATH:
-            __path = f"/_ml/calendars/{_quote(calendar_id)}"
+            __path_parts = {"calendar_id": _quote(calendar_id)}
+            __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/calendars"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -1187,7 +1407,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_calendars",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1210,7 +1436,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly detection job results for one or more categories.
+        Get anomaly detection job results for categories.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-category.html>`_
 
@@ -1227,10 +1453,18 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and category_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories/{_quote(category_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "category_id": _quote(category_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/categories/{__path_parts["category_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = (
+                f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/categories'
+            )
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1258,7 +1492,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_categories",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1278,7 +1518,9 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for data frame analytics jobs.
+        Get data frame analytics job configuration info. You can get information for
+        multiple data frame analytics jobs in a single API request by using a comma-separated
+        list of data frame analytics jobs or a wildcard expression.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics.html>`_
 
@@ -1299,9 +1541,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of data frame analytics jobs.
         :param size: Specifies the maximum number of data frame analytics jobs to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1322,7 +1567,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1342,7 +1592,7 @@ class MlClient(NamespacedClient):
         verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for data frame analytics jobs.
+        Get data frame analytics jobs usage info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics-stats.html>`_
 
@@ -1361,9 +1611,12 @@ class MlClient(NamespacedClient):
         :param size: Specifies the maximum number of data frame analytics jobs to obtain.
         :param verbose: Defines whether the stats response should be verbose.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stats"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1384,7 +1637,12 @@ class MlClient(NamespacedClient):
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_data_frame_analytics_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1399,7 +1657,12 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for datafeeds.
+        Get datafeeds usage info. You can get statistics for multiple datafeeds in a
+        single API request by using a comma-separated list of datafeeds or a wildcard
+        expression. You can get statistics for all datafeeds by using `_all`, by specifying
+        `*` as the `<feed_id>`, or by omitting the `<feed_id>`. If the datafeed is stopped,
+        the only information you receive is the `datafeed_id` and the `state`. This API
+        returns a maximum of 10,000 datafeeds.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed-stats.html>`_
 
@@ -1414,9 +1677,12 @@ class MlClient(NamespacedClient):
             when there are partial matches. If this parameter is `false`, the request
             returns a `404` status code when there are no matches or only partial matches.
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stats"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1431,7 +1697,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_datafeed_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1447,7 +1718,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for datafeeds.
+        Get datafeeds configuration info. You can get information for multiple datafeeds
+        in a single API request by using a comma-separated list of datafeeds or a wildcard
+        expression. You can get information for all datafeeds by using `_all`, by specifying
+        `*` as the `<feed_id>`, or by omitting the `<feed_id>`. This API returns a maximum
+        of 10,000 datafeeds.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed.html>`_
 
@@ -1465,9 +1740,12 @@ class MlClient(NamespacedClient):
             the configuration on retrieval. This allows the configuration to be in an
             acceptable format to be retrieved and then added to another cluster.
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1484,7 +1762,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_datafeeds",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1502,7 +1785,7 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves filters.
+        Get filters. You can get a single filter or all filters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-filter.html>`_
 
@@ -1510,9 +1793,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of filters.
         :param size: Specifies the maximum number of filters to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if filter_id not in SKIP_IN_PATH:
-            __path = f"/_ml/filters/{_quote(filter_id)}"
+            __path_parts = {"filter_id": _quote(filter_id)}
+            __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/filters"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1529,7 +1815,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_filters",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1556,7 +1847,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly detection job results for one or more influencers.
+        Get anomaly detection job results for influencers. Influencers are the entities
+        that have contributed to, or are to blame for, the anomalies. Influencer results
+        are available only if an `influencer_field_name` is specified in the job configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-influencer.html>`_
 
@@ -1579,7 +1872,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/influencers"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/influencers'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if desc is not None:
@@ -1615,7 +1909,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_influencers",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1630,7 +1930,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for anomaly detection jobs.
+        Get anomaly detection jobs usage info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-stats.html>`_
 
@@ -1646,9 +1946,12 @@ class MlClient(NamespacedClient):
             partial matches. If `false`, the API returns a `404` status code when there
             are no matches or only partial matches.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_stats"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/anomaly_detectors/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1663,7 +1966,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_job_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1679,7 +1987,11 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for anomaly detection jobs.
+        Get anomaly detection jobs configuration info. You can get information for multiple
+        anomaly detection jobs in a single API request by using a group name, a comma-separated
+        list of jobs, or a wildcard expression. You can get information for all anomaly
+        detection jobs by using `_all`, by specifying `*` as the `<job_id>`, or by omitting
+        the `<job_id>`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job.html>`_
 
@@ -1697,9 +2009,12 @@ class MlClient(NamespacedClient):
             the configuration on retrieval. This allows the configuration to be in an
             acceptable format to be retrieved and then added to another cluster.
         """
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/anomaly_detectors"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -1716,7 +2031,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_jobs",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1727,14 +2047,14 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information on how ML is using memory.
+        Get machine learning memory usage info. Get information about how machine learning
+        jobs and trained models are using memory, on each node, both within the JVM heap,
+        and natively, outside of the JVM.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-memory.html>`_
 
@@ -1746,9 +2066,12 @@ class MlClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_ml/memory/{_quote(node_id)}/_stats"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_ml/memory/{__path_parts["node_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/memory/_stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1765,7 +2088,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_memory_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1781,7 +2109,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets stats for anomaly detection job model snapshot upgrades that are in progress.
+        Get anomaly detection job model snapshot upgrade usage info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-model-snapshot-upgrade-stats.html>`_
 
@@ -1803,7 +2131,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade/_stats"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade/_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -1817,7 +2149,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_model_snapshot_upgrade_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1843,7 +2180,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about model snapshots.
+        Get model snapshots info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-snapshot.html>`_
 
@@ -1863,10 +2200,16 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        __path_parts: t.Dict[str, str]
         if job_id not in SKIP_IN_PATH and snapshot_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+            __path_parts = {
+                "job_id": _quote(job_id),
+                "snapshot_id": _quote(snapshot_id),
+            }
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}'
         elif job_id not in SKIP_IN_PATH:
-            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
+            __path_parts = {"job_id": _quote(job_id)}
+            __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots'
         else:
             raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
@@ -1900,7 +2243,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_model_snapshots",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1919,7 +2268,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         allow_no_match: t.Optional[bool] = None,
-        bucket_span: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        bucket_span: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
@@ -1932,8 +2281,19 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves overall bucket results that summarize the bucket results of multiple
-        anomaly detection jobs.
+        Get overall bucket results. Retrievs overall bucket results that summarize the
+        bucket results of multiple anomaly detection jobs. The `overall_score` is calculated
+        by combining the scores of all the buckets within the overall bucket span. First,
+        the maximum `anomaly_score` per anomaly detection job in the overall bucket is
+        calculated. Then the `top_n` of those scores are averaged to result in the `overall_score`.
+        This means that you can fine-tune the `overall_score` so that it is more or less
+        sensitive to the number of jobs that detect an anomaly at the same time. For
+        example, if you set `top_n` to `1`, the `overall_score` is the maximum bucket
+        score in the overall bucket. Alternatively, if you set `top_n` to the number
+        of jobs, the `overall_score` is high only when all jobs detect anomalies in that
+        overall bucket. If you set the `bucket_span` parameter (to a value greater than
+        its default), the `overall_score` is the maximum `overall_score` of the overall
+        buckets that have a span equal to the jobs' largest bucket span.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-overall-buckets.html>`_
 
@@ -1954,7 +2314,10 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = (
+            f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/overall_buckets'
+        )
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -1986,7 +2349,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_overall_buckets",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2021,7 +2390,15 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves anomaly records for an anomaly detection job.
+        Get anomaly records for an anomaly detection job. Records contain the detailed
+        analytical results. They describe the anomalous activity that has been identified
+        in the input data based on the detector configuration. There can be many anomaly
+        records depending on the characteristics and size of the input data. In practice,
+        there are often too many to be able to manually process them. The machine learning
+        features therefore perform a sophisticated aggregation of the anomaly records
+        into buckets. The number of record results depends on the number of anomalies
+        found in each bucket, which relates to the number of time series being modeled
+        and the number of detectors.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-record.html>`_
 
@@ -2039,7 +2416,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/records"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/results/records'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2075,7 +2453,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.get_records",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2084,7 +2468,7 @@ class MlClient(NamespacedClient):
     def get_trained_models(
         self,
         *,
-        model_id: t.Optional[str] = None,
+        model_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         decompress_definition: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -2094,20 +2478,28 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include: t.Optional[
             t.Union[
-                "t.Literal['definition', 'definition_status', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
                 str,
+                t.Literal[
+                    "definition",
+                    "definition_status",
+                    "feature_importance_baseline",
+                    "hyperparameters",
+                    "total_feature_importance",
+                ],
             ]
         ] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
-        tags: t.Optional[str] = None,
+        tags: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for a trained inference model.
+        Get trained model configuration info.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models.html>`_
 
-        :param model_id: The unique identifier of the trained model.
+        :param model_id: The unique identifier of the trained model or a model alias.
+            You can get information for multiple trained models in a single API request
+            by using a comma-separated list of model IDs or a wildcard expression.
         :param allow_no_match: Specifies what to do when the request: - Contains wildcard
             expressions and there are no models that match. - Contains the _all string
             or no identifiers and there are no matches. - Contains wildcard expressions
@@ -2127,9 +2519,12 @@ class MlClient(NamespacedClient):
             tags, or none. When supplied, only trained models that contain all the supplied
             tags are returned.
         """
+        __path_parts: t.Dict[str, str]
         if model_id not in SKIP_IN_PATH:
-            __path = f"/_ml/trained_models/{_quote(model_id)}"
+            __path_parts = {"model_id": _quote(model_id)}
+            __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         else:
+            __path_parts = {}
             __path = "/_ml/trained_models"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -2156,7 +2551,12 @@ class MlClient(NamespacedClient):
             __query["tags"] = tags
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_trained_models",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2175,7 +2575,9 @@ class MlClient(NamespacedClient):
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for trained inference models.
+        Get trained models usage info. You can get usage information for multiple trained
+        models in a single API request by using a comma-separated list of model IDs or
+        a wildcard expression.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models-stats.html>`_
 
@@ -2189,9 +2591,12 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of models.
         :param size: Specifies the maximum number of models to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if model_id not in SKIP_IN_PATH:
-            __path = f"/_ml/trained_models/{_quote(model_id)}/_stats"
+            __path_parts = {"model_id": _quote(model_id)}
+            __path = f'/_ml/trained_models/{__path_parts["model_id"]}/_stats'
         else:
+            __path_parts = {}
             __path = "/_ml/trained_models/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -2210,7 +2615,12 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.get_trained_models_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2226,7 +2636,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2247,7 +2657,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if docs is None and body is None:
             raise ValueError("Empty value passed for parameter 'docs'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/_infer"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/_infer'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2267,7 +2678,13 @@ class MlClient(NamespacedClient):
                 __body["inference_config"] = inference_config
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.infer_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2280,10 +2697,16 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns defaults and limits used by machine learning.
+        Return ML defaults and limits. Returns defaults and limits used by machine learning.
+        This endpoint is designed to be used by a user interface that needs to fully
+        understand machine learning configurations where some options are not specified,
+        meaning that the defaults should be used. This endpoint may be used to find out
+        what those defaults are. It also provides information about the maximum size
+        of machine learning jobs that could run in the current cluster configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/info"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -2296,7 +2719,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2310,11 +2738,16 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Opens one or more anomaly detection jobs.
+        Open anomaly detection jobs. An anomaly detection job must be opened to be ready
+        to receive and analyze data. It can be opened and closed multiple times throughout
+        its lifecycle. When you open a new job, it starts with an empty model. When you
+        open an existing job, the most recent model state is automatically loaded. The
+        job is ready to resume its analysis from where it left off, once new data is
+        received.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-open-job.html>`_
 
@@ -2323,7 +2756,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_open"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_open'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2343,7 +2777,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.open_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2361,7 +2801,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Posts scheduled events in a calendar.
+        Add scheduled events to the calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-calendar-event.html>`_
 
@@ -2374,7 +2814,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if events is None and body is None:
             raise ValueError("Empty value passed for parameter 'events'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/events'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2390,7 +2831,13 @@ class MlClient(NamespacedClient):
                 __body["events"] = events
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.post_calendar_events",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2410,7 +2857,9 @@ class MlClient(NamespacedClient):
         reset_start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Sends data to an anomaly detection job for analysis.
+        Send data to an anomaly detection job for analysis. IMPORTANT: For each job,
+        data can be accepted from only a single connection at a time. It is not currently
+        possible to post data to multiple jobs using wildcards or a comma-separated list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-data.html>`_
 
@@ -2428,7 +2877,8 @@ class MlClient(NamespacedClient):
             )
         elif data is not None and body is not None:
             raise ValueError("Cannot set both 'data' and 'body'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_data"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_data'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2448,7 +2898,13 @@ class MlClient(NamespacedClient):
             "content-type": "application/x-ndjson",
         }
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.post_data",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2466,7 +2922,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Previews that will be analyzed given a data frame analytics config.
+        Preview features used by data frame analytics. Previews the extracted features
+        used by a data frame analytics config.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-dfanalytics.html>`_
 
@@ -2475,9 +2932,12 @@ class MlClient(NamespacedClient):
             analytics jobs. Note that `id` and `dest` don’t need to be provided in the
             context of this API.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_preview'
         else:
+            __path_parts = {}
             __path = "/_ml/data_frame/analytics/_preview"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2498,7 +2958,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.preview_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2519,7 +2985,15 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Previews a datafeed.
+        Preview a datafeed. This API returns the first "page" of search results from
+        a datafeed. You can preview an existing datafeed or provide configuration details
+        for a datafeed and anomaly detection job in the API. The preview shows the structure
+        of the data that will be passed to the anomaly detection engine. IMPORTANT: When
+        Elasticsearch security features are enabled, the preview uses the credentials
+        of the user that called the API. However, when the datafeed starts it uses the
+        roles of the last user that created or updated the datafeed. To get a preview
+        that accurately reflects the behavior of the datafeed, use the appropriate credentials.
+        You can also use secondary authorization headers to supply the credentials.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-preview-datafeed.html>`_
 
@@ -2538,9 +3012,12 @@ class MlClient(NamespacedClient):
             object unless you also supply a `datafeed_config` object.
         :param start: The start time from where the datafeed preview should begin
         """
+        __path_parts: t.Dict[str, str]
         if datafeed_id not in SKIP_IN_PATH:
-            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
+            __path_parts = {"datafeed_id": _quote(datafeed_id)}
+            __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_preview'
         else:
+            __path_parts = {}
             __path = "/_ml/datafeeds/_preview"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -2567,7 +3044,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.preview_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2586,7 +3069,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a calendar.
+        Create a calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar.html>`_
 
@@ -2596,7 +3079,8 @@ class MlClient(NamespacedClient):
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __path_parts: t.Dict[str, str] = {"calendar_id": _quote(calendar_id)}
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2618,7 +3102,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_calendar",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2626,14 +3116,14 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        job_id: str,
+        job_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds an anomaly detection job to a calendar.
+        Add anomaly detection job to calendar.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar-job.html>`_
 
@@ -2645,7 +3135,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {
+            "calendar_id": _quote(calendar_id),
+            "job_id": _quote(job_id),
+        }
+        __path = f'/_ml/calendars/{__path_parts["calendar_id"]}/jobs/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2657,7 +3151,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.put_calendar_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2696,7 +3195,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a data frame analytics job.
+        Create a data frame analytics job. This API creates a data frame analytics job
+        that performs an analysis on the source indices and stores the outcome in a destination
+        index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-dfanalytics.html>`_
 
@@ -2763,7 +3264,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'dest'")
         if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -2797,7 +3299,13 @@ class MlClient(NamespacedClient):
                 __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -2832,13 +3340,13 @@ class MlClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
@@ -2850,14 +3358,24 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a datafeed.
+        Create a datafeed. Datafeeds retrieve data from Elasticsearch for analysis by
+        an anomaly detection job. You can associate only one datafeed with each anomaly
+        detection job. The datafeed contains a query that runs at a defined interval
+        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay`)
+        at each interval. When Elasticsearch security features are enabled, your datafeed
+        remembers which roles the user who created it had at the time of creation and
+        runs the query using those same roles. If you provide secondary authorization
+        headers, those credentials are used instead. You must use Kibana, this API, or
+        the create anomaly detection jobs API to create a datafeed. Do not add a datafeed
+        directly to the `.ml-config` index. Do not give users `write` privileges on the
+        `.ml-config` index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-datafeed.html>`_
 
@@ -2932,7 +3450,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -2984,7 +3503,13 @@ class MlClient(NamespacedClient):
                 __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3003,7 +3528,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a filter.
+        Create a filter. A filter contains a list of strings. It can be used by one or
+        more anomaly detection jobs. Specifically, filters are referenced in the `custom_rules`
+        property of detector configuration objects.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-filter.html>`_
 
@@ -3014,7 +3541,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3032,7 +3560,13 @@ class MlClient(NamespacedClient):
                 __body["items"] = items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3063,7 +3597,7 @@ class MlClient(NamespacedClient):
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         custom_settings: t.Optional[t.Any] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
@@ -3082,7 +3616,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates an anomaly detection job.
+        Create an anomaly detection job. If you include a `datafeed_config`, you must
+        have read index privileges on the source index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
 
@@ -3165,7 +3700,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'analysis_config'")
         if data_description is None and body is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3211,7 +3747,13 @@ class MlClient(NamespacedClient):
                 __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3225,6 +3767,7 @@ class MlClient(NamespacedClient):
             "model_size_bytes",
             "model_type",
             "platform_architecture",
+            "prefix_strings",
             "tags",
         ),
     )
@@ -3244,15 +3787,18 @@ class MlClient(NamespacedClient):
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
         model_type: t.Optional[
-            t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
+            t.Union[str, t.Literal["lang_ident", "pytorch", "tree_ensemble"]]
         ] = None,
         platform_architecture: t.Optional[str] = None,
+        prefix_strings: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Sequence[str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an inference trained model.
+        Create a trained model. Enable you to supply a trained model that is not created
+        by data frame analytics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models.html>`_
 
@@ -3284,11 +3830,15 @@ class MlClient(NamespacedClient):
             `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
             (those that work independent of processor architecture or OS features), leave
             this field unset.
+        :param prefix_strings: Optional prefix strings applied at inference
         :param tags: An array of tags to organize the model.
+        :param wait_for_completion: Whether to wait for all child operations (e.g. model
+            download) to complete.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_definition_decompression is not None:
@@ -3301,6 +3851,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
         if not __body:
             if compressed_definition is not None:
                 __body["compressed_definition"] = compressed_definition
@@ -3320,11 +3872,19 @@ class MlClient(NamespacedClient):
                 __body["model_type"] = model_type
             if platform_architecture is not None:
                 __body["platform_architecture"] = platform_architecture
+            if prefix_strings is not None:
+                __body["prefix_strings"] = prefix_strings
             if tags is not None:
                 __body["tags"] = tags
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3340,8 +3900,19 @@ class MlClient(NamespacedClient):
         reassign: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a new model alias (or reassigns an existing one) to refer to the trained
-        model
+        Create or update a trained model alias. A trained model alias is a logical name
+        used to reference a single trained model. You can use aliases instead of trained
+        model identifiers to make it easier to reference your models. For example, you
+        can use aliases in inference aggregations and processors. An alias must be unique
+        and refer to only a single trained model. However, you can have multiple aliases
+        for each trained model. If you use this API to update an alias such that it references
+        a different trained model ID and the model uses a different type of data frame
+        analytics, an error occurs. For example, this situation occurs if you have a
+        trained model for regression analysis and a trained model for classification
+        analysis; you cannot reassign an alias from one type of trained model to another.
+        If you use this API to update an alias and there are very few input fields in
+        common between the old and new trained models for the model alias, the API returns
+        a warning.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models-aliases.html>`_
 
@@ -3355,7 +3926,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "model_alias": _quote(model_alias),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/model_aliases/{__path_parts["model_alias"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3369,7 +3944,12 @@ class MlClient(NamespacedClient):
             __query["reassign"] = reassign
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.put_trained_model_alias",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3390,7 +3970,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates part of a trained model definition
+        Create part of a trained model definition.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-definition-part.html>`_
 
@@ -3417,7 +3997,11 @@ class MlClient(NamespacedClient):
             )
         if total_parts is None and body is None:
             raise ValueError("Empty value passed for parameter 'total_parts'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/definition/{_quote(part)}"
+        __path_parts: t.Dict[str, str] = {
+            "model_id": _quote(model_id),
+            "part": _quote(part),
+        }
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/definition/{__path_parts["part"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3437,7 +4021,13 @@ class MlClient(NamespacedClient):
                 __body["total_parts"] = total_parts
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model_definition_part",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3457,7 +4047,9 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a trained model vocabulary
+        Create a trained model vocabulary. This API is supported only for natural language
+        processing (NLP) models. The vocabulary is stored in the index as described in
+        `inference_config.*.vocabulary` of the trained model definition.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-vocabulary.html>`_
 
@@ -3470,7 +4062,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if vocabulary is None and body is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/vocabulary'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3490,7 +4083,13 @@ class MlClient(NamespacedClient):
                 __body["scores"] = scores
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.put_trained_model_vocabulary",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3506,7 +4105,9 @@ class MlClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resets an existing anomaly detection job.
+        Reset an anomaly detection job. All model state and results are deleted. The
+        job is ready to start over as if it had just been created. It is not currently
+        possible to reset multiple jobs using wildcards or a comma separated list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-reset-job.html>`_
 
@@ -3519,7 +4120,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_reset"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_reset'
         __query: t.Dict[str, t.Any] = {}
         if delete_user_annotations is not None:
             __query["delete_user_annotations"] = delete_user_annotations
@@ -3535,7 +4137,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.reset_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3554,7 +4161,13 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reverts to a specific snapshot.
+        Revert to a snapshot. The machine learning features react quickly to anomalous
+        input, learning new behaviors in data. Highly anomalous input increases the variance
+        in the models whilst the system learns whether this is a new step-change in behavior
+        or a one-off event. In the case where this anomalous input is known to be a one-off,
+        then it might be appropriate to reset the model state to a time before this event.
+        For example, you might consider reverting to a saved snapshot after Black Friday
+        or a critical system failure.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-revert-snapshot.html>`_
 
@@ -3569,7 +4182,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_revert"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_revert'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3589,7 +4206,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.revert_model_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3601,11 +4224,20 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Sets a cluster wide upgrade_mode setting that prepares machine learning indices
-        for an upgrade.
+        Set upgrade_mode for ML indices. Sets a cluster wide upgrade_mode setting that
+        prepares machine learning indices for an upgrade. When upgrading your cluster,
+        in some circumstances you must restart your nodes and reindex your machine learning
+        indices. In those circumstances, there must be no machine learning jobs running.
+        You can close the machine learning jobs, do the upgrade, then open all the jobs
+        again. Alternatively, you can use this API to temporarily halt tasks associated
+        with the jobs and datafeeds and prevent new jobs from opening. You can also use
+        this API during upgrades that do not require you to reindex your machine learning
+        indices, though stopping jobs is not a requirement in that case. You can see
+        the current value for the upgrade_mode setting by using the get machine learning
+        info API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-set-upgrade-mode.html>`_
 
@@ -3614,6 +4246,7 @@ class MlClient(NamespacedClient):
             starting.
         :param timeout: The time to wait for the request to be completed.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/set_upgrade_mode"
         __query: t.Dict[str, t.Any] = {}
         if enabled is not None:
@@ -3630,7 +4263,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.set_upgrade_mode",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3642,10 +4280,19 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts a data frame analytics job.
+        Start a data frame analytics job. A data frame analytics job can be started and
+        stopped multiple times throughout its lifecycle. If the destination index does
+        not exist, it is created automatically the first time you start the data frame
+        analytics job. The `index.number_of_shards` and `index.number_of_replicas` settings
+        for the destination index are copied from the source index. If there are multiple
+        source indices, the destination index copies the highest setting values. The
+        mappings for the destination index are also copied from the source indices. If
+        there are any mapping conflicts, the job fails to start. If the destination index
+        exists, it is used as is. You can therefore set up the destination index in advance
+        with custom settings and mappings.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-dfanalytics.html>`_
 
@@ -3657,7 +4304,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_start"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3671,7 +4319,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.start_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3687,11 +4340,21 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts one or more datafeeds.
+        Start datafeeds. A datafeed must be started in order to retrieve data from Elasticsearch.
+        A datafeed can be started and stopped multiple times throughout its lifecycle.
+        Before you can start a datafeed, the anomaly detection job must be open. Otherwise,
+        an error occurs. If you restart a stopped datafeed, it continues processing input
+        data from the next millisecond after it was stopped. If new data was indexed
+        for that exact millisecond between stopping and starting, it will be ignored.
+        When Elasticsearch security features are enabled, your datafeed remembers which
+        roles the last user to create or update it had at the time of creation or update
+        and runs the query using those same roles. If you provided secondary authorization
+        headers when you created or updated the datafeed, those credentials are used
+        instead.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-start-datafeed.html>`_
 
@@ -3705,7 +4368,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_start"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3729,7 +4393,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.start_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3744,16 +4414,17 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
-        priority: t.Optional[t.Union["t.Literal['low', 'normal']", str]] = None,
+        priority: t.Optional[t.Union[str, t.Literal["low", "normal"]]] = None,
         queue_capacity: t.Optional[int] = None,
         threads_per_allocation: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for: t.Optional[
-            t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
+            t.Union[str, t.Literal["fully_allocated", "started", "starting"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Start a trained model deployment.
+        Start a trained model deployment. It allocates the model to every machine learning
+        node.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html>`_
 
@@ -3785,7 +4456,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_start"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_start'
         __query: t.Dict[str, t.Any] = {}
         if cache_size is not None:
             __query["cache_size"] = cache_size
@@ -3813,7 +4485,12 @@ class MlClient(NamespacedClient):
             __query["wait_for"] = wait_for
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.start_trained_model_deployment",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3827,10 +4504,11 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops one or more data frame analytics jobs.
+        Stop data frame analytics jobs. A data frame analytics job can be started and
+        stopped multiple times throughout its lifecycle.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-dfanalytics.html>`_
 
@@ -3851,7 +4529,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -3869,7 +4548,12 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.stop_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -3885,11 +4569,12 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops one or more datafeeds.
+        Stop datafeeds. A datafeed that is stopped ceases to retrieve data from Elasticsearch.
+        A datafeed can be started and stopped multiple times throughout its lifecycle.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-stop-datafeed.html>`_
 
@@ -3904,7 +4589,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -3928,7 +4614,13 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.stop_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -3961,7 +4653,8 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_stop"
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -3977,7 +4670,12 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.stop_trained_model_deployment",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4003,7 +4701,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a data frame analytics job.
+        Update a data frame analytics job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-dfanalytics.html>`_
 
@@ -4025,7 +4723,8 @@ class MlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_update"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4047,7 +4746,13 @@ class MlClient(NamespacedClient):
                 __body["model_memory_limit"] = model_memory_limit
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_data_frame_analytics",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4080,13 +4785,13 @@ class MlClient(NamespacedClient):
         expand_wildcards: t.Optional[
             t.Union[
                 t.Sequence[
-                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
                 ],
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -4097,14 +4802,18 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a datafeed.
+        Update a datafeed. You must stop and start the datafeed for the changes to be
+        applied. When Elasticsearch security features are enabled, your datafeed remembers
+        which roles the user who updated it had at the time of the update and runs the
+        query using those same roles. If you provide secondary authorization headers,
+        those credentials are used instead.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-datafeed.html>`_
 
@@ -4190,7 +4899,8 @@ class MlClient(NamespacedClient):
         """
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
-        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"datafeed_id": _quote(datafeed_id)}
+        __path = f'/_ml/datafeeds/{__path_parts["datafeed_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
@@ -4240,7 +4950,13 @@ class MlClient(NamespacedClient):
                 __body["scroll_size"] = scroll_size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_datafeed",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4260,7 +4976,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the description of a filter, adds items, or removes items.
+        Update a filter. Updates the description of a filter, adds items, or removes
+        items from the list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-filter.html>`_
 
@@ -4271,7 +4988,8 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
-        __path = f"/_ml/filters/{_quote(filter_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"filter_id": _quote(filter_id)}
+        __path = f'/_ml/filters/{__path_parts["filter_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4291,7 +5009,13 @@ class MlClient(NamespacedClient):
                 __body["remove_items"] = remove_items
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_filter",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4320,7 +5044,7 @@ class MlClient(NamespacedClient):
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
         background_persist_interval: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         categorization_filters: t.Optional[t.Sequence[str]] = None,
         custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4333,7 +5057,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_prune_window: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
         per_partition_categorization: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4343,7 +5067,8 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of an anomaly detection job.
+        Update an anomaly detection job. Updates certain properties of an anomaly detection
+        job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-job.html>`_
 
@@ -4398,7 +5123,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"job_id": _quote(job_id)}
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4444,7 +5170,13 @@ class MlClient(NamespacedClient):
                 __body["results_retention_days"] = results_retention_days
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4464,7 +5196,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a snapshot.
+        Update a snapshot. Updates certain properties of a snapshot.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-snapshot.html>`_
 
@@ -4479,7 +5211,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_update"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -4497,7 +5233,73 @@ class MlClient(NamespacedClient):
                 __body["retain"] = retain
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_model_snapshot",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("number_of_allocations",),
+    )
+    def update_trained_model_deployment(
+        self,
+        *,
+        model_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        number_of_allocations: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update a trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-trained-model-deployment.html>`_
+
+        :param model_id: The unique identifier of the trained model. Currently, only
+            PyTorch models are supported.
+        :param number_of_allocations: The number of model allocations on each node where
+            the model is deployed. All allocations on a node share the same copy of the
+            model in memory but use a separate set of threads to evaluate the model.
+            Increasing this value generally increases the throughput. If this setting
+            is greater than the number of hardware threads it will automatically be changed
+            to a value less than the number of hardware threads.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
+        __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_update'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if number_of_allocations is not None:
+                __body["number_of_allocations"] = number_of_allocations
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.update_trained_model_deployment",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -4510,11 +5312,18 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Upgrades a given job snapshot to the current major version.
+        Upgrade a snapshot. Upgrades an anomaly detection model snapshot to the latest
+        major version. Over time, older snapshot formats are deprecated and removed.
+        Anomaly detection jobs support only snapshots that are from the current or previous
+        major version. This API provides a means to upgrade a snapshot to the current
+        major version. This aids in preparing the cluster for an upgrade to the next
+        major version. Only one snapshot per anomaly detection job can be upgraded at
+        a time and the upgraded snapshot cannot be the current snapshot of the anomaly
+        detection job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-upgrade-job-model-snapshot.html>`_
 
@@ -4530,7 +5339,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
-        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade"
+        __path_parts: t.Dict[str, str] = {
+            "job_id": _quote(job_id),
+            "snapshot_id": _quote(snapshot_id),
+        }
+        __path = f'/_ml/anomaly_detectors/{__path_parts["job_id"]}/model_snapshots/{__path_parts["snapshot_id"]}/_upgrade'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -4546,7 +5359,12 @@ class MlClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ml.upgrade_job_snapshot",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4595,6 +5413,7 @@ class MlClient(NamespacedClient):
         :param model_snapshot_retention_days:
         :param results_index_name:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -4627,7 +5446,13 @@ class MlClient(NamespacedClient):
                 __body["results_index_name"] = results_index_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.validate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -4656,6 +5481,7 @@ class MlClient(NamespacedClient):
             )
         elif detector is not None and body is not None:
             raise ValueError("Cannot set both 'detector' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/anomaly_detectors/_validate/detector"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -4669,5 +5495,11 @@ class MlClient(NamespacedClient):
         __body = detector if detector is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ml.validate_detector",
+            path_parts=__path_parts,
         )

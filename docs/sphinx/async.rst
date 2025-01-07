@@ -1,11 +1,11 @@
-Using Asyncio with Elasticsearch
+Using asyncio with Elasticsearch
 ================================
 
  .. py:module:: elasticsearch
     :no-index:
 
 The ``elasticsearch`` package supports async/await with
-`Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
+`asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `aiohttp <https://docs.aiohttp.org>`_.
 You can either install ``aiohttp`` directly or use the ``[async]`` extra:
 
  .. code-block:: bash
@@ -27,10 +27,10 @@ and are used in the same way as other APIs, just with an extra ``await``:
     import asyncio
     from elasticsearch import AsyncElasticsearch
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def main():
-        resp = await es.search(
+        resp = await client.search(
             index="documents",
             body={"query": {"match_all": {}}},
             size=20,
@@ -97,20 +97,20 @@ For example if using FastAPI that might look like this:
     from elasticsearch import AsyncElasticsearch
 
     ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
-    es = None
+    client = None
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        global es
-        es = AsyncElasticsearch(ELASTICSEARCH_URL)
+        global client
+        client = AsyncElasticsearch(ELASTICSEARCH_URL)
         yield
-        await es.close()
+        await client.close()
 
     app = FastAPI(lifespan=lifespan)
 
     @app.get("/")
     async def main():
-        return await es.info()
+        return await client.info()
 
 You can run this example by saving it to ``main.py`` and executing
 ``ELASTICSEARCH_URL=http://localhost:9200 uvicorn main:app``.
@@ -140,7 +140,7 @@ Bulk and Streaming Bulk
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_bulk
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def gendata():
         mywords = ['foo', 'bar', 'baz']
@@ -151,7 +151,7 @@ Bulk and Streaming Bulk
             }
 
     async def main():
-        await async_bulk(es, gendata())
+        await async_bulk(client, gendata())
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
@@ -164,7 +164,7 @@ Bulk and Streaming Bulk
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_streaming_bulk
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def gendata():
         mywords = ['foo', 'bar', 'baz']
@@ -175,7 +175,7 @@ Bulk and Streaming Bulk
             }
 
     async def main():
-        async for ok, result in async_streaming_bulk(es, gendata()):
+        async for ok, result in async_streaming_bulk(client, gendata()):
             action, result = result.popitem()
             if not ok:
                 print("failed to %s document %s" % ())
@@ -194,11 +194,11 @@ Scan
     from elasticsearch import AsyncElasticsearch
     from elasticsearch.helpers import async_scan
 
-    es = AsyncElasticsearch()
+    client = AsyncElasticsearch()
 
     async def main():
         async for doc in async_scan(
-            client=es,
+            client=client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*"
         ):

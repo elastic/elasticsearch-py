@@ -34,14 +34,16 @@ class XPackClient(NamespacedClient):
         self,
         *,
         accept_enterprise: t.Optional[bool] = None,
-        categories: t.Optional[t.Sequence[str]] = None,
+        categories: t.Optional[
+            t.Sequence[t.Union[str, t.Literal["build", "features", "license"]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the installed X-Pack features.
+        Provides general information about the installed X-Pack features.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
@@ -49,6 +51,7 @@ class XPackClient(NamespacedClient):
         :param categories: A comma-separated list of the information categories to include
             in the response. For example, `build,license,features`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_xpack"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -65,7 +68,12 @@ class XPackClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="xpack.info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -75,13 +83,12 @@ class XPackClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information about the installed X-Pack features.
+        This API provides information about which features are currently enabled and
+        available under the current license and some usage statistics.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
 
@@ -89,6 +96,7 @@ class XPackClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_xpack/usage"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -103,5 +111,10 @@ class XPackClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="xpack.usage",
+            path_parts=__path_parts,
         )

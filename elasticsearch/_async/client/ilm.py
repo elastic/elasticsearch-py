@@ -33,15 +33,14 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes the specified lifecycle policy definition. A currently used policy cannot
-        be deleted.
+        Deletes the specified lifecycle policy definition. You cannot delete policies
+        that are currently in use. If the policy is being used to manage any indices,
+        the request fails and returns an error.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
 
@@ -54,7 +53,8 @@ class IlmClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ilm/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"policy": _quote(name)}
+        __path = f'/_ilm/policy/{__path_parts["policy"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -70,7 +70,12 @@ class IlmClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.delete_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -81,17 +86,16 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         only_errors: t.Optional[bool] = None,
         only_managed: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the index's current lifecycle state, such as the
-        currently executing phase, action, and step.
+        Retrieves information about the index’s current lifecycle state, such as the
+        currently executing phase, action, and step. Shows when the index entered each
+        one, the definition of the running phase, and information about any failures.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
 
@@ -111,7 +115,8 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ilm/explain"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ilm/explain'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -131,7 +136,12 @@ class IlmClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.explain_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -142,15 +152,12 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the specified policy definition. Includes the policy version and last
-        modified date.
+        Retrieves a lifecycle policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
 
@@ -161,9 +168,12 @@ class IlmClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_ilm/policy/{_quote(name)}"
+            __path_parts = {"policy": _quote(name)}
+            __path = f'/_ilm/policy/{__path_parts["policy"]}'
         else:
+            __path_parts = {}
             __path = "/_ilm/policy"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -180,7 +190,12 @@ class IlmClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.get_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -197,6 +212,7 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -209,7 +225,12 @@ class IlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.get_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -228,8 +249,10 @@ class IlmClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Migrates the indices and ILM policies away from custom node attribute allocation
-        routing to data tiers routing
+        Switches the indices, ILM policies, and legacy, composable and component templates
+        from using custom node attributes and attribute-based allocation filters to using
+        data tiers, and optionally deletes one legacy index template.+ Using node roles
+        enables ILM to automatically move the indices between data tiers.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
 
@@ -239,6 +262,7 @@ class IlmClient(NamespacedClient):
         :param legacy_template_to_delete:
         :param node_attribute:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/migrate_to_data_tiers"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -263,7 +287,13 @@ class IlmClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ilm.migrate_to_data_tiers",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -274,10 +304,10 @@ class IlmClient(NamespacedClient):
         *,
         index: str,
         current_step: t.Optional[t.Mapping[str, t.Any]] = None,
+        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        next_step: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -292,7 +322,12 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/_ilm/move/{_quote(index)}"
+        if current_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'current_step'")
+        if next_step is None and body is None:
+            raise ValueError("Empty value passed for parameter 'next_step'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/_ilm/move/{__path_parts["index"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -314,7 +349,13 @@ class IlmClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ilm.move_to_step",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -327,16 +368,15 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         policy: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a lifecycle policy
+        Creates a lifecycle policy. If the specified policy exists, the policy is replaced
+        and the policy version is incremented.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
 
@@ -350,7 +390,8 @@ class IlmClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ilm/policy/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"policy": _quote(name)}
+        __path = f'/_ilm/policy/{__path_parts["policy"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -374,7 +415,13 @@ class IlmClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ilm.put_lifecycle",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -396,7 +443,8 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ilm/remove"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ilm/remove'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -408,7 +456,12 @@ class IlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.remove_policy",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -431,7 +484,8 @@ class IlmClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ilm/retry"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ilm/retry'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -443,7 +497,12 @@ class IlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.retry",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -453,11 +512,9 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Start the index lifecycle management (ILM) plugin.
@@ -467,6 +524,7 @@ class IlmClient(NamespacedClient):
         :param master_timeout:
         :param timeout:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/start"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -483,7 +541,12 @@ class IlmClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.start",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -493,11 +556,9 @@ class IlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Halts all lifecycle management operations and stops the index lifecycle management
@@ -508,6 +569,7 @@ class IlmClient(NamespacedClient):
         :param master_timeout:
         :param timeout:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/stop"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -524,5 +586,10 @@ class IlmClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ilm.stop",
+            path_parts=__path_parts,
         )

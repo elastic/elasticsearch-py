@@ -1,6 +1,0 @@
-// aggregations/bucket/datehistogram-aggregation.asciidoc:568
-
-[source, python]
-----
-
-----

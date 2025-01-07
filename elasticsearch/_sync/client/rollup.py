@@ -20,12 +20,19 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class RollupClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def delete_job(
         self,
         *,
@@ -44,7 +51,8 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,10 +64,16 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.delete_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_jobs(
         self,
         *,
@@ -77,9 +91,12 @@ class RollupClient(NamespacedClient):
         :param id: Identifier for the rollup job. If it is `_all` or omitted, the API
             returns all rollup jobs.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_rollup/job/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_rollup/job/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_rollup/job"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -92,10 +109,16 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_jobs",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_rollup_caps(
         self,
         *,
@@ -114,9 +137,12 @@ class RollupClient(NamespacedClient):
         :param id: Index, indices or index-pattern to return rollup capabilities for.
             `_all` may be used to fetch rollup capabilities from all jobs.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_rollup/data/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_rollup/data/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_rollup/data"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -129,10 +155,16 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_rollup_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_rollup_index_caps(
         self,
         *,
@@ -143,8 +175,8 @@ class RollupClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
-        index where rollup data is stored).
+        Returns the rollup capabilities of all jobs inside of a rollup index (for example,
+        the index where rollup data is stored).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
 
@@ -153,7 +185,8 @@ class RollupClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_rollup/data"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_rollup/data'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -165,7 +198,12 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_rollup_index_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -181,6 +219,7 @@ class RollupClient(NamespacedClient):
         ),
         ignore_deprecated_options={"headers"},
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def put_job(
         self,
         *,
@@ -196,7 +235,7 @@ class RollupClient(NamespacedClient):
         human: t.Optional[bool] = None,
         metrics: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -256,7 +295,8 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'page_size'")
         if rollup_index is None and body is None:
             raise ValueError("Empty value passed for parameter 'rollup_index'")
-        __path = f"/_rollup/job/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -286,12 +326,19 @@ class RollupClient(NamespacedClient):
                 __body["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rollup.put_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_fields=("aggregations", "aggs", "query", "size"),
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def rollup_search(
         self,
         *,
@@ -309,7 +356,7 @@ class RollupClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables searching rolled-up data using the standard query DSL.
+        Enables searching rolled-up data using the standard Query DSL.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 
@@ -325,7 +372,8 @@ class RollupClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_rollup_search"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_rollup_search'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -351,10 +399,17 @@ class RollupClient(NamespacedClient):
                 __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rollup.rollup_search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def start_job(
         self,
         *,
@@ -373,7 +428,8 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}/_start"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -385,10 +441,16 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.start_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def stop_job(
         self,
         *,
@@ -397,7 +459,7 @@ class RollupClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -415,7 +477,8 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -431,5 +494,10 @@ class RollupClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.stop_job",
+            path_parts=__path_parts,
         )

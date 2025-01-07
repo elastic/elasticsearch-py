@@ -20,6 +20,7 @@ import inspect
 import urllib.parse
 import warnings
 from datetime import date, datetime
+from enum import Enum, auto
 from functools import wraps
 from typing import (
     TYPE_CHECKING,
@@ -57,6 +58,7 @@ from elastic_transport.client_utils import (
 
 from ..._version import __versionstr__
 from ...compat import to_bytes, to_str, warn_stacklevel
+from ...exceptions import GeneralAvailabilityWarning
 
 if TYPE_CHECKING:
     from ._base import NamespacedClient
@@ -69,6 +71,13 @@ CLIENT_META_SERVICE = ("es", client_meta_version(__versionstr__))
 
 # Default User-Agent used by the client
 USER_AGENT = create_user_agent("elasticsearch-py", __versionstr__)
+
+
+class Stability(Enum):
+    STABLE = auto()
+    BETA = auto()
+    EXPERIMENTAL = auto()
+
 
 _TYPE_HOSTS = Union[
     str, Sequence[Union[str, Mapping[str, Union[str, int]], NodeConfig]]
@@ -442,6 +451,37 @@ def _rewrite_parameters(
                         kwargs[rename_to] = kwargs.pop(alias)
                     except KeyError:
                         pass
+
+            return api(*args, **kwargs)
+
+        return wrapped  # type: ignore[return-value]
+
+    return wrapper
+
+
+def _stability_warning(
+    stability: Stability,
+    version: Optional[str] = None,
+    message: Optional[str] = None,
+) -> Callable[[F], F]:
+    def wrapper(api: F) -> F:
+        @wraps(api)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            if stability == Stability.BETA:
+                warnings.warn(
+                    "This API is in beta and is subject to change. "
+                    "The design and code is less mature than official GA features and is being provided as-is with no warranties. "
+                    "Beta features are not subject to the support SLA of official GA features.",
+                    category=GeneralAvailabilityWarning,
+                    stacklevel=warn_stacklevel(),
+                )
+            elif stability == Stability.EXPERIMENTAL:
+                warnings.warn(
+                    "This API is in technical preview and may be changed or removed in a future release. "
+                    "Elastic will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.",
+                    category=GeneralAvailabilityWarning,
+                    stacklevel=warn_stacklevel(),
+                )
 
             return api(*args, **kwargs)
 

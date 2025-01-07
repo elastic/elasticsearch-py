@@ -44,7 +44,8 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -56,12 +57,19 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.delete_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
         body_fields=(
             "leader_index",
+            "remote_cluster",
+            "data_stream_name",
             "max_outstanding_read_requests",
             "max_outstanding_write_requests",
             "max_read_request_operation_count",
@@ -72,35 +80,33 @@ class CcrClient(NamespacedClient):
             "max_write_request_operation_count",
             "max_write_request_size",
             "read_poll_timeout",
-            "remote_cluster",
+            "settings",
         ),
     )
     def follow(
         self,
         *,
         index: str,
+        leader_index: t.Optional[str] = None,
+        remote_cluster: t.Optional[str] = None,
+        data_stream_name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        leader_index: t.Optional[str] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
-        max_read_request_size: t.Optional[str] = None,
-        max_retry_delay: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        max_read_request_size: t.Optional[t.Union[int, str]] = None,
+        max_retry_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_write_buffer_count: t.Optional[int] = None,
-        max_write_buffer_size: t.Optional[str] = None,
+        max_write_buffer_size: t.Optional[t.Union[int, str]] = None,
         max_write_request_operation_count: t.Optional[int] = None,
-        max_write_request_size: t.Optional[str] = None,
+        max_write_request_size: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
-        remote_cluster: t.Optional[str] = None,
+        read_poll_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
+            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -109,27 +115,53 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-put-follow.html>`_
 
-        :param index: The name of the follower index
-        :param leader_index:
-        :param max_outstanding_read_requests:
-        :param max_outstanding_write_requests:
-        :param max_read_request_operation_count:
-        :param max_read_request_size:
-        :param max_retry_delay:
-        :param max_write_buffer_count:
-        :param max_write_buffer_size:
-        :param max_write_request_operation_count:
-        :param max_write_request_size:
-        :param read_poll_timeout:
-        :param remote_cluster:
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before returning. Defaults to 0. Set to `all` for all shard copies, otherwise
-            set to any non-negative value less than or equal to the total number of copies
-            for the shard (number of replicas + 1)
+        :param index: The name of the follower index.
+        :param leader_index: The name of the index in the leader cluster to follow.
+        :param remote_cluster: The remote cluster containing the leader index.
+        :param data_stream_name: If the leader index is part of a data stream, the name
+            to which the local data stream for the followed index should be renamed.
+        :param max_outstanding_read_requests: The maximum number of outstanding reads
+            requests from the remote cluster.
+        :param max_outstanding_write_requests: The maximum number of outstanding write
+            requests on the follower.
+        :param max_read_request_operation_count: The maximum number of operations to
+            pull per read from the remote cluster.
+        :param max_read_request_size: The maximum size in bytes of per read of a batch
+            of operations pulled from the remote cluster.
+        :param max_retry_delay: The maximum time to wait before retrying an operation
+            that failed exceptionally. An exponential backoff strategy is employed when
+            retrying.
+        :param max_write_buffer_count: The maximum number of operations that can be queued
+            for writing. When this limit is reached, reads from the remote cluster will
+            be deferred until the number of queued operations goes below the limit.
+        :param max_write_buffer_size: The maximum total bytes of operations that can
+            be queued for writing. When this limit is reached, reads from the remote
+            cluster will be deferred until the total bytes of queued operations goes
+            below the limit.
+        :param max_write_request_operation_count: The maximum number of operations per
+            bulk write request executed on the follower.
+        :param max_write_request_size: The maximum total bytes of operations per bulk
+            write request executed on the follower.
+        :param read_poll_timeout: The maximum time to wait for new operations on the
+            remote cluster when the follower index is synchronized with the leader index.
+            When the timeout has elapsed, the poll for operations will return to the
+            follower so that it can update some statistics. Then the follower will immediately
+            attempt to read from the leader again.
+        :param settings: Settings to override from the leader index.
+        :param wait_for_active_shards: Specifies the number of shards to wait on being
+            active before responding. This defaults to waiting on none of the shards
+            to be active. A shard must be restored from the leader index before being
+            active. Restoring a follower shard requires transferring all the remote Lucene
+            segment files to the follower index.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/follow"
+        if leader_index is None and body is None:
+            raise ValueError("Empty value passed for parameter 'leader_index'")
+        if remote_cluster is None and body is None:
+            raise ValueError("Empty value passed for parameter 'remote_cluster'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -145,6 +177,10 @@ class CcrClient(NamespacedClient):
         if not __body:
             if leader_index is not None:
                 __body["leader_index"] = leader_index
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
+            if data_stream_name is not None:
+                __body["data_stream_name"] = data_stream_name
             if max_outstanding_read_requests is not None:
                 __body["max_outstanding_read_requests"] = max_outstanding_read_requests
             if max_outstanding_write_requests is not None:
@@ -171,11 +207,17 @@ class CcrClient(NamespacedClient):
                 __body["max_write_request_size"] = max_write_request_size
             if read_poll_timeout is not None:
                 __body["read_poll_timeout"] = read_poll_timeout
-            if remote_cluster is not None:
-                __body["remote_cluster"] = remote_cluster
+            if settings is not None:
+                __body["settings"] = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -199,7 +241,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/info"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/info'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -211,7 +254,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.follow_info",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -235,7 +283,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/stats"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/stats'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -247,7 +296,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.follow_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -286,7 +340,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/forget_follower"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/forget_follower'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -308,7 +363,13 @@ class CcrClient(NamespacedClient):
                 __body["leader_remote_cluster"] = leader_remote_cluster
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.forget_follower",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -330,9 +391,12 @@ class CcrClient(NamespacedClient):
         :param name: Specifies the auto-follow pattern collection that you want to retrieve.
             If you do not specify a name, the API returns information for all collections.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_ccr/auto_follow/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_ccr/auto_follow"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -345,7 +409,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.get_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -368,7 +437,8 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}/pause"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}/pause'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -380,7 +450,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.pause_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -404,7 +479,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/pause_follow"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/pause_follow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -416,7 +492,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.pause_follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -453,17 +534,13 @@ class CcrClient(NamespacedClient):
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
         max_read_request_size: t.Optional[t.Union[int, str]] = None,
-        max_retry_delay: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        max_retry_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_write_buffer_count: t.Optional[int] = None,
         max_write_buffer_size: t.Optional[t.Union[int, str]] = None,
         max_write_request_operation_count: t.Optional[int] = None,
         max_write_request_size: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        read_poll_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -521,7 +598,8 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'name'")
         if remote_cluster is None and body is None:
             raise ValueError("Empty value passed for parameter 'remote_cluster'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -573,7 +651,13 @@ class CcrClient(NamespacedClient):
                 __body["settings"] = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.put_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -596,7 +680,8 @@ class CcrClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_ccr/auto_follow/{_quote(name)}/resume"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_ccr/auto_follow/{__path_parts["name"]}/resume'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -608,7 +693,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.resume_auto_follow_pattern",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -636,17 +726,13 @@ class CcrClient(NamespacedClient):
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
         max_read_request_size: t.Optional[str] = None,
-        max_retry_delay: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        max_retry_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_write_buffer_count: t.Optional[int] = None,
         max_write_buffer_size: t.Optional[str] = None,
         max_write_request_operation_count: t.Optional[int] = None,
         max_write_request_size: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        read_poll_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -668,7 +754,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/resume_follow"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/resume_follow'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -712,7 +799,13 @@ class CcrClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="ccr.resume_follow",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -729,6 +822,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-stats.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_ccr/stats"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -741,7 +835,12 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -765,7 +864,8 @@ class CcrClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_ccr/unfollow"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_ccr/unfollow'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -777,5 +877,10 @@ class CcrClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="ccr.unfollow",
+            path_parts=__path_parts,
         )

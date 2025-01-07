@@ -91,7 +91,7 @@ client = Elasticsearch(
 
     # Include your authentication like 'api_key'
     # 'basic_auth', or 'bearer_auth' here:
-    api_key=("<name>", "<key>")
+    api_key="api_key"
 )
 ------------------------------------
 
@@ -133,7 +133,7 @@ from elasticsearch import Elasticsearch
 client = Elasticsearch("http://localhost:9200")
 
 # 8.0+ SUPPORTED USAGE:
-client.options(api_key=("id", "api_key")).search(index="blogs")
+client.options(api_key="api_key").search(index="blogs")
 
 # 7.x DEPRECATED USAGE (Don't do this!):
 client.search(index="blogs", api_key=("id", "api_key"))
@@ -171,7 +171,7 @@ with the `security.grant_api_key` API:
 resp = (
     client.options(
         # This is the API key being used for the request
-        api_key=("request-id", "request-api-key")
+        api_key="request-api-key"
     ).security.grant_api_key(
         # This is the API key being granted
         api_key={
@@ -209,7 +209,7 @@ Starting with the 8.12 client, using a body parameter is fully supported again, 
 resp = (
     client.options(
         # This is the API key being used for the request
-        api_key=("request-id", "request-api-key")
+        api_key="request-api-key"
     ).security.grant_api_key(
         body={
             # This is the API key being granted

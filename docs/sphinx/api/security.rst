@@ -3,7 +3,7 @@
 Security
 --------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
 .. autoclass:: SecurityClient
    :members:

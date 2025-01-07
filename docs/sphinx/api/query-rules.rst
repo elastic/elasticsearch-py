@@ -3,7 +3,7 @@
 Query rules
 -----------
 .. py:module:: elasticsearch.client
-   :noindex:
+   :no-index:
 
-.. autoclass:: QueryRulesetClient
+.. autoclass:: QueryRulesClient
    :members:

@@ -39,7 +39,7 @@ class SqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clears the SQL cursor
+        Clear an SQL search cursor.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-sql-cursor-api.html>`_
 
@@ -47,6 +47,7 @@ class SqlClient(NamespacedClient):
         """
         if cursor is None and body is None:
             raise ValueError("Empty value passed for parameter 'cursor'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_sql/close"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -63,7 +64,13 @@ class SqlClient(NamespacedClient):
                 __body["cursor"] = cursor
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="sql.clear_cursor",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -77,8 +84,8 @@ class SqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an async SQL search or a stored synchronous SQL search. If the search
-        is still running, the API cancels it.
+        Delete an async SQL search. Delete an async SQL search or a stored synchronous
+        SQL search. If the search is still running, the API cancels it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html>`_
 
@@ -86,7 +93,8 @@ class SqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_sql/async/delete/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_sql/async/delete/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -98,7 +106,12 @@ class SqlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="sql.delete_async",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -111,15 +124,15 @@ class SqlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status and available results for an async SQL search or stored
-        synchronous SQL search
+        Get async SQL search results. Get the current status and available results for
+        an async SQL search or stored synchronous SQL search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html>`_
 
@@ -136,7 +149,8 @@ class SqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_sql/async/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_sql/async/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if delimiter is not None:
             __query["delimiter"] = delimiter
@@ -156,7 +170,12 @@ class SqlClient(NamespacedClient):
             __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="sql.get_async",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -170,8 +189,8 @@ class SqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the current status of an async SQL search or a stored synchronous SQL
-        search
+        Get the async SQL search status. Get the current status of an async SQL search
+        or a stored synchronous SQL search.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html>`_
 
@@ -179,7 +198,8 @@ class SqlClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_sql/async/status/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_sql/async/status/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -191,7 +211,12 @@ class SqlClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="sql.get_async_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -226,27 +251,29 @@ class SqlClient(NamespacedClient):
         field_multi_value_leniency: t.Optional[bool] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        format: t.Optional[str] = None,
+        format: t.Optional[
+            t.Union[
+                str, t.Literal["cbor", "csv", "json", "smile", "tsv", "txt", "yaml"]
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         index_using_frozen: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
-        page_timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        page_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
-        request_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
+        request_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         time_zone: t.Optional[str] = None,
         wait_for_completion_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+            t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Executes a SQL request
+        Get SQL search results. Run an SQL request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-search-api.html>`_
 
@@ -281,6 +308,7 @@ class SqlClient(NamespacedClient):
             to no timeout, meaning the request waits for complete search results. If
             the search doesn’t finish within this period, the search becomes async.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_sql"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -329,7 +357,13 @@ class SqlClient(NamespacedClient):
                 __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="sql.query",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -349,7 +383,8 @@ class SqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Translates SQL into Elasticsearch queries
+        Translate SQL into Elasticsearch queries. Translate an SQL search into a search
+        API request containing Query DSL.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate-api.html>`_
 
@@ -360,6 +395,7 @@ class SqlClient(NamespacedClient):
         """
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_sql/translate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
@@ -382,5 +418,11 @@ class SqlClient(NamespacedClient):
                 __body["time_zone"] = time_zone
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="sql.translate",
+            path_parts=__path_parts,
         )

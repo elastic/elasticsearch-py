@@ -17,10 +17,12 @@ arguments are required for all calls.
    :maxdepth: 1
 
    api/elasticsearch
+   api/async-search
    api/autoscaling
    api/cat
    api/ccr
    api/cluster
+   api/connector
    api/dangling-indices
    api/enrich-policies
    api/eql
