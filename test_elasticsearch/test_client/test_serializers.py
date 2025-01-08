@@ -32,6 +32,7 @@ EXPECTED_SERIALIZERS = {
 
 try:
     import pyarrow as pa
+
     EXPECTED_SERIALIZERS.add("application/vnd.apache.arrow.stream")
 except ImportError:
     pa = None
