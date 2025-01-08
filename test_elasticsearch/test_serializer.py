@@ -19,8 +19,14 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-import pyarrow as pa
 import pytest
+
+try:
+    import pyarrow as pa
+
+    from elasticsearch.serializer import PyArrowSerializer
+except ImportError:
+    pa = None
 
 try:
     import numpy as np
@@ -32,12 +38,7 @@ import re
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import SerializationError
-from elasticsearch.serializer import (
-    JSONSerializer,
-    OrjsonSerializer,
-    PyArrowSerializer,
-    TextSerializer,
-)
+from elasticsearch.serializer import JSONSerializer, OrjsonSerializer, TextSerializer
 
 requires_numpy_and_pandas = pytest.mark.skipif(
     np is None or pd is None, reason="Test requires numpy and pandas to be available"
@@ -163,6 +164,7 @@ def test_serializes_pandas_category(json_serializer):
     assert b'{"d":[1,2,3]}' == json_serializer.dumps({"d": cat})
 
 
+@pytest.mark.skipif(pa is None, reason="Test requires pyarrow to be available")
 def test_pyarrow_loads():
     data = [
         pa.array([1, 2, 3, 4]),
