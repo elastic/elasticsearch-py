@@ -49,7 +49,6 @@ if TYPE_CHECKING:
     from elastic_transport.client_utils import DefaultType
 
     from . import types, wrappers
-
     from .document_base import InstrumentedField
 
 _T = TypeVar("_T")

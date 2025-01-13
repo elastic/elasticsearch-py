@@ -16,8 +16,8 @@
 #  under the License.
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import analyzer, token_filter, tokenizer
 
 

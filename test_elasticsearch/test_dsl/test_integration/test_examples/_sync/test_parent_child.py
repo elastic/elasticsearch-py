@@ -18,8 +18,8 @@
 from datetime import datetime
 
 import pytest
-from elasticsearch import Elasticsearch
 
+from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Q
 
 from ..examples.parent_child import Answer, Comment, Question, User, setup

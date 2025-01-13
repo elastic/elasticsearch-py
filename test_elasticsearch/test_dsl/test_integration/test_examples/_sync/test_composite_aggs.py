@@ -16,8 +16,8 @@
 #  under the License.
 
 import pytest
-from elasticsearch import Elasticsearch
 
+from elasticsearch import Elasticsearch
 from elasticsearch.dsl import A, Search
 
 from ..examples.composite_agg import scan_aggs

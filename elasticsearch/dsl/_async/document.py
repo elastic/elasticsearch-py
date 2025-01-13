@@ -28,9 +28,10 @@ from typing import (
     cast,
 )
 
+from typing_extensions import Self, dataclass_transform
+
 from elasticsearch.exceptions import NotFoundError, RequestError
 from elasticsearch.helpers import async_bulk
-from typing_extensions import Self, dataclass_transform
 
 from .._async.index import AsyncIndex
 from ..async_connections import get_connection

@@ -17,9 +17,9 @@
 
 from typing import Any, List
 
-from elasticsearch import Elasticsearch
 from pytest import raises
 
+from elasticsearch import Elasticsearch
 from elasticsearch.dsl import connections, serializer
 
 

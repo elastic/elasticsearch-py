@@ -16,6 +16,7 @@
 #  under the License.
 
 import pytest
+
 from elasticsearch import AsyncElasticsearch
 
 from ..async_examples import alias_migration

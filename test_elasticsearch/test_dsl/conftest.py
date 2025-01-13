@@ -27,15 +27,15 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest_asyncio
 from elastic_transport import ObjectApiResponse
-from elasticsearch import AsyncElasticsearch, Elasticsearch
-from elasticsearch.exceptions import ConnectionError
-from elasticsearch.helpers import bulk
 from pytest import fixture, skip
 
+from elasticsearch import AsyncElasticsearch, Elasticsearch
 from elasticsearch.dsl import Search
 from elasticsearch.dsl.async_connections import add_connection as add_async_connection
 from elasticsearch.dsl.async_connections import connections as async_connections
 from elasticsearch.dsl.connections import add_connection, connections
+from elasticsearch.exceptions import ConnectionError
+from elasticsearch.helpers import bulk
 
 from .test_integration._async import test_document as async_document
 from .test_integration._sync import test_document as sync_document

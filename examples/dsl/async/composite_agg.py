@@ -19,10 +19,9 @@ import asyncio
 import os
 from typing import Any, AsyncIterator, Dict, Mapping, Sequence, cast
 
-from elasticsearch.helpers import async_bulk
-
 from elasticsearch.dsl import Agg, AsyncSearch, Response, aggs, async_connections
 from elasticsearch.dsl.types import CompositeAggregate
+from elasticsearch.helpers import async_bulk
 from test_elasticsearch.test_dsl.test_integration.test_data import DATA, GIT_INDEX
 
 

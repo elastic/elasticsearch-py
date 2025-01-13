@@ -29,6 +29,7 @@ from .update_by_query import AsyncUpdateByQuery
 
 if TYPE_CHECKING:
     from elastic_transport import ObjectApiResponse
+
     from elasticsearch import AsyncElasticsearch
 
 

@@ -18,7 +18,6 @@
 from typing import Any
 
 from elasticsearch import Elasticsearch
-
 from elasticsearch.dsl.search import Q, Search
 
 

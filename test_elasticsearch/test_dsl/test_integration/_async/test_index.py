@@ -16,8 +16,8 @@
 #  under the License.
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import (
     AsyncComposableIndexTemplate,
     AsyncDocument,

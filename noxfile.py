@@ -86,7 +86,13 @@ def lint(session):
     session.run("python", "-c", "from elasticsearch._otel import OpenTelemetry")
 
     session.install(
-        "flake8", "black~=24.0", "mypy", "isort", "types-requests", "unasync>=0.6.0"
+        "flake8",
+        "black~=24.0",
+        "mypy",
+        "isort",
+        "types-requests",
+        "types-python-dateutil",
+        "unasync>=0.6.0",
     )
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
     session.run("black", "--check", *SOURCE_FILES)
@@ -98,7 +104,14 @@ def lint(session):
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.
-    session.run("mypy", "--strict", "--show-error-codes", "elasticsearch/")
+    session.run(
+        "mypy",
+        "--strict",
+        "--implicit-reexport",
+        "--explicit-package-bases",
+        "--show-error-codes",
+        "elasticsearch/",
+    )
     session.run(
         "mypy",
         "--strict",
@@ -111,11 +124,26 @@ def lint(session):
         "--show-error-codes",
         "test_elasticsearch/test_types/async_types.py",
     )
+    session.run(
+        "mypy",
+        "--strict",
+        "--implicit-reexport",
+        "--explicit-package-bases",
+        "--show-error-codes",
+        "examples/dsl/",
+    )
 
     # Make sure we don't require aiohttp to be installed for users to
     # receive type hint information from mypy.
     session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp")
-    session.run("mypy", "--strict", "--show-error-codes", "elasticsearch/")
+    session.run(
+        "mypy",
+        "--strict",
+        "--implicit-reexport",
+        "--explicit-package-bases",
+        "--show-error-codes",
+        "elasticsearch/",
+    )
     session.run(
         "mypy",
         "--strict",
