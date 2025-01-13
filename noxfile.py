@@ -67,10 +67,13 @@ def test_otel(session):
 
 @nox.session()
 def format(session):
-    session.install("black~=24.0", "isort", "flynt", "unasync>=0.6.0")
+    session.install(
+        "black~=24.0", "isort", "flynt", "unasync>=0.6.0", "jinja2", "elastic-transport"
+    )
 
     session.run("python", "utils/run-unasync.py")
     session.run("python", "utils/run-unasync-dsl.py")
+    session.run("python", "utils/dsl-generator.py", env={"PYTHONPATH": "./"})
     session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("flynt", *SOURCE_FILES)
     session.run("black", *SOURCE_FILES)
