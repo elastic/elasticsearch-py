@@ -20,7 +20,7 @@
 
 Requirements:
 
-$ pip install nltk tqdm elasticsearch-dsl
+$ pip install nltk tqdm elasticsearch
 
 Before running this example, the ELSER v2 model must be downloaded and deployed
 to the Elasticsearch cluster, and an ingest pipeline must be defined. This can

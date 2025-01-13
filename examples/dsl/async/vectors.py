@@ -20,7 +20,7 @@
 
 Requirements:
 
-$ pip install nltk sentence_transformers tqdm elasticsearch-dsl[async]
+$ pip install nltk sentence_transformers tqdm elasticsearch[async]
 
 To run the example:
 

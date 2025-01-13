@@ -21,7 +21,7 @@
 
 Requirements:
 
-$ pip install "elasticsearch-dsl" tqdm
+$ pip install "elasticsearch" tqdm
 
 Before running this example, an ELSER inference endpoint must be created in the
 Elasticsearch cluster. This can be done manually from Kibana, or with the
