@@ -45,6 +45,7 @@ arguments are required for all calls.
    api/searchable-snapshots
    api/security
    api/shutdown
+   api/simulate
    api/snapshot-lifecycle-management
    api/snapshots
    api/snapshottable-features
