@@ -16,9 +16,9 @@
 #  under the License.
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 from pytest import raises
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import AsyncMapping, analysis, exceptions
 
 

@@ -20,8 +20,8 @@ from typing import Any, List, Tuple
 from unittest import SkipTest
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from test_elasticsearch.test_dsl.async_sleep import sleep
 
 from ..async_examples import vectors

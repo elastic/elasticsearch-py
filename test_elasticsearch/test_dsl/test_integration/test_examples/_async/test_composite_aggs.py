@@ -16,8 +16,8 @@
 #  under the License.
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import A, AsyncSearch
 
 from ..async_examples.composite_agg import scan_aggs

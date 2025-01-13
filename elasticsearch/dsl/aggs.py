@@ -43,7 +43,6 @@ if TYPE_CHECKING:
     from elastic_transport.client_utils import DefaultType
 
     from . import types
-
     from .document_base import InstrumentedField
     from .search_base import SearchBase
 

@@ -50,7 +50,7 @@ from datetime import datetime
 from typing import Any, List, Optional, cast
 from urllib.request import urlopen
 
-import nltk  # type: ignore
+import nltk
 from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 

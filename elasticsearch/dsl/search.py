@@ -15,14 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ._async.search import (  # noqa: F401
-    AsyncEmptySearch,
-    AsyncMultiSearch,
-    AsyncSearch,
-)
-from ._sync.search import (  # noqa: F401
-    EmptySearch,
-    MultiSearch,
-    Search,
-)
+from ._async.search import AsyncEmptySearch, AsyncMultiSearch, AsyncSearch  # noqa: F401
+from ._sync.search import EmptySearch, MultiSearch, Search  # noqa: F401
 from .search_base import Q  # noqa: F401

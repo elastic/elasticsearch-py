@@ -19,8 +19,8 @@ from datetime import datetime
 
 import pytest
 import pytest_asyncio
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import Q
 
 from ..async_examples.parent_child import Answer, Comment, Question, User, setup

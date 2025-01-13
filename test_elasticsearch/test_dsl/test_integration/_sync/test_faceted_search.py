@@ -19,8 +19,8 @@ from datetime import datetime
 from typing import Tuple, Type
 
 import pytest
-from elasticsearch import Elasticsearch
 
+from elasticsearch import Elasticsearch
 from elasticsearch.dsl import A, Boolean, Date, Document, Keyword, Search
 from elasticsearch.dsl.faceted_search import (
     DateHistogramFacet,

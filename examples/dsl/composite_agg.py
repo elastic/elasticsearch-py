@@ -18,10 +18,9 @@
 import os
 from typing import Any, Dict, Iterator, Mapping, Sequence, cast
 
-from elasticsearch.helpers import bulk
-
 from elasticsearch.dsl import Agg, Response, Search, aggs, connections
 from elasticsearch.dsl.types import CompositeAggregate
+from elasticsearch.helpers import bulk
 from test_elasticsearch.test_dsl.test_integration.test_data import DATA, GIT_INDEX
 
 

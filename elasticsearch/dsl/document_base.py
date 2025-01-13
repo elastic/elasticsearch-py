@@ -34,9 +34,9 @@ from typing import (
 )
 
 try:
-    from types import UnionType  # type: ignore[attr-defined]
+    from types import UnionType
 except ImportError:
-    UnionType = None
+    UnionType = None  # type: ignore
 
 from typing_extensions import dataclass_transform
 

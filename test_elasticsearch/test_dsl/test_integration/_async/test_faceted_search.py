@@ -19,8 +19,8 @@ from datetime import datetime
 from typing import Tuple, Type
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import A, AsyncDocument, AsyncSearch, Boolean, Date, Keyword
 from elasticsearch.dsl.faceted_search import (
     AsyncFacetedSearch,

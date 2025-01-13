@@ -27,9 +27,10 @@ from typing import (
     cast,
 )
 
+from typing_extensions import Self
+
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import async_scan
-from typing_extensions import Self
 
 from ..async_connections import get_connection
 from ..response import Response

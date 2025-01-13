@@ -16,6 +16,7 @@
 #  under the License.
 
 import pytest
+
 from elasticsearch import Elasticsearch
 
 from ..examples.percolate import BlogPost, setup

@@ -26,11 +26,10 @@ from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Tuple, Union
 
 import pytest
-from elasticsearch import AsyncElasticsearch, ConflictError, NotFoundError
-from elasticsearch.helpers.errors import BulkIndexError
 from pytest import raises
 from pytz import timezone
 
+from elasticsearch import AsyncElasticsearch, ConflictError, NotFoundError
 from elasticsearch.dsl import (
     AsyncDocument,
     AsyncSearch,
@@ -54,6 +53,7 @@ from elasticsearch.dsl import (
     mapped_field,
 )
 from elasticsearch.dsl.utils import AttrList
+from elasticsearch.helpers.errors import BulkIndexError
 
 snowball = analyzer("my_snow", tokenizer="standard", filter=["lowercase", "snowball"])
 

@@ -67,7 +67,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from urllib.request import urlopen
 
-import nltk  # type: ignore
+import nltk
 from tqdm import tqdm
 
 from elasticsearch.dsl import (

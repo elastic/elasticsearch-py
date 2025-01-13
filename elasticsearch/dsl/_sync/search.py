@@ -18,9 +18,10 @@
 import contextlib
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, cast
 
+from typing_extensions import Self
+
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import scan
-from typing_extensions import Self
 
 from ..connections import get_connection
 from ..response import Response

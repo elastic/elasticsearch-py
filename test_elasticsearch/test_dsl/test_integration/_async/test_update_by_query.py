@@ -16,8 +16,8 @@
 #  under the License.
 
 import pytest
-from elasticsearch import AsyncElasticsearch
 
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import AsyncUpdateByQuery
 from elasticsearch.dsl.search import Q
 

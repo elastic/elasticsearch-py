@@ -17,9 +17,9 @@
 
 
 import pytest
-from elasticsearch import ApiError, AsyncElasticsearch
 from pytest import raises
 
+from elasticsearch import ApiError, AsyncElasticsearch
 from elasticsearch.dsl import (
     AsyncDocument,
     AsyncMultiSearch,

@@ -18,7 +18,6 @@
 from typing import TYPE_CHECKING
 
 from ..faceted_search_base import FacetedResponse, FacetedSearchBase
-
 from ..utils import _R
 from .search import AsyncSearch
 
