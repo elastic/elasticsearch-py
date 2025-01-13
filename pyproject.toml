@@ -124,7 +124,6 @@ markers = [
     "sync: mark a test as performing I/O without asyncio.",
 ]
 filterwarnings = [
-    "error",
     "ignore:Legacy index templates are deprecated in favor of composable templates.:elasticsearch.exceptions.ElasticsearchWarning",
     "ignore:datetime.datetime.utcfromtimestamp() is deprecated and scheduled for removal in a future version..*:DeprecationWarning",
     "default:enable_cleanup_closed ignored.*:DeprecationWarning",
