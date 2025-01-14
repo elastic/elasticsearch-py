@@ -90,16 +90,18 @@ class IngestClient(NamespacedClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an IP location database configuration.
+        Delete IP geolocation database configurations.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-ip-location-database-api.html>`_
 
-        :param id: A comma-separated list of IP location database configurations to delete
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param id: A comma-separated list of IP location database configurations.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. A value
+            of `-1` indicates that the request should never time out.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -280,16 +282,17 @@ class IngestClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about one or more IP location database configurations.
+        Get IP geolocation database configurations.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-ip-location-database-api.html>`_
 
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
             this parameter or use `*`.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
         """
         __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
@@ -430,8 +433,8 @@ class IngestClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update GeoIP database configurations. Create or update IP geolocation
-        database configurations.
+        Create or update a GeoIP database configuration. Refer to the create or update
+        IP geolocation database configuration API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-geoip-database-api.html>`_
 
@@ -503,17 +506,21 @@ class IngestClient(NamespacedClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns information about one or more IP location database configurations.
+        Create or update an IP geolocation database configuration.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-ip-location-database-api.html>`_
 
-        :param id: ID of the database configuration to create or update.
+        :param id: The database configuration identifier.
         :param configuration:
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. A value of `-1` indicates that the request should never
+            time out.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response indicates that it was not completely acknowledged. A value of
+            `-1` indicates that the request should never time out.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")

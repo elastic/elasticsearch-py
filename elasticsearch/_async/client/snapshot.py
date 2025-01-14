@@ -102,7 +102,7 @@ class SnapshotClient(NamespacedClient):
         Clone a snapshot. Clone part of all of a snapshot into another snapshot in the
         same repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clone-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: The name of the snapshot to clone from
@@ -185,7 +185,7 @@ class SnapshotClient(NamespacedClient):
         """
         Create a snapshot. Take a snapshot of a cluster or of data streams and indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/create-snapshot-api.html>`_
 
         :param repository: Repository for the snapshot.
         :param snapshot: Name of the snapshot. Must be unique in the repository.
@@ -353,7 +353,7 @@ class SnapshotClient(NamespacedClient):
         """
         Delete snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -406,7 +406,7 @@ class SnapshotClient(NamespacedClient):
         removes only the reference to the location where the repository is storing the
         snapshots. The snapshots themselves are left untouched and in place.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-snapshot-repo-api.html>`_
 
         :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
             are supported.
@@ -480,7 +480,7 @@ class SnapshotClient(NamespacedClient):
         """
         Get snapshot information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-api.html>`_
 
         :param repository: Comma-separated list of snapshot repository names used to
             limit the request. Wildcard (*) expressions are supported.
@@ -592,7 +592,7 @@ class SnapshotClient(NamespacedClient):
         """
         Get snapshot repository information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-repo-api.html>`_
 
         :param name: A comma-separated list of repository names
         :param local: Return local information, do not retrieve the state from master
@@ -684,7 +684,7 @@ class SnapshotClient(NamespacedClient):
         in future versions. NOTE: This API may not work correctly in a mixed-version
         cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/verify-repo-integrity-api.html>`_
 
         :param name: A repository name
         :param blob_thread_pool_concurrency: Number of threads to use for reading blob
@@ -794,7 +794,7 @@ class SnapshotClient(NamespacedClient):
         or Workplace Search, you must restore the Enterprise Search encryption key before
         you restore the snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/restore-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A snapshot name
@@ -898,7 +898,7 @@ class SnapshotClient(NamespacedClient):
         These requests can also tax machine resources and, when using cloud storage,
         incur high processing costs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-status-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -958,7 +958,7 @@ class SnapshotClient(NamespacedClient):
         Verify a snapshot repository. Check for common misconfigurations in a snapshot
         repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/verify-snapshot-repo-api.html>`_
 
         :param name: A repository name
         :param master_timeout: Explicit operation timeout for connection to master node

@@ -2491,9 +2491,9 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get cluster info. Returns basic information about the cluster.
+        Get cluster info. Get basic build, version, and cluster information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rest-api-root.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/"

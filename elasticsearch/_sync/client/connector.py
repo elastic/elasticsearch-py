@@ -996,6 +996,106 @@ class ConnectorClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=(
+            "deleted_document_count",
+            "indexed_document_count",
+            "indexed_document_volume",
+            "last_seen",
+            "metadata",
+            "total_document_count",
+        ),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def sync_job_update_stats(
+        self,
+        *,
+        connector_sync_job_id: str,
+        deleted_document_count: t.Optional[int] = None,
+        indexed_document_count: t.Optional[int] = None,
+        indexed_document_volume: t.Optional[int] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        last_seen: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        total_document_count: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Set the connector sync job stats. Stats include: `deleted_document_count`, `indexed_document_count`,
+        `indexed_document_volume`, and `total_document_count`. You can also update `last_seen`.
+        This API is mainly used by the connector service for updating sync job information.
+        To sync data using self-managed connectors, you need to deploy the Elastic connector
+        service on your own infrastructure. This service runs automatically on Elastic
+        Cloud for Elastic managed connectors.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/set-connector-sync-job-stats-api.html>`_
+
+        :param connector_sync_job_id: The unique identifier of the connector sync job.
+        :param deleted_document_count: The number of documents the sync job deleted.
+        :param indexed_document_count: The number of documents the sync job indexed.
+        :param indexed_document_volume: The total size of the data (in MiB) the sync
+            job indexed.
+        :param last_seen: The timestamp to use in the `last_seen` property for the connector
+            sync job.
+        :param metadata: The connector-specific metadata.
+        :param total_document_count: The total number of documents in the target index
+            after the sync job finished.
+        """
+        if connector_sync_job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'connector_sync_job_id'")
+        if deleted_document_count is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameter 'deleted_document_count'"
+            )
+        if indexed_document_count is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameter 'indexed_document_count'"
+            )
+        if indexed_document_volume is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameter 'indexed_document_volume'"
+            )
+        __path_parts: t.Dict[str, str] = {
+            "connector_sync_job_id": _quote(connector_sync_job_id)
+        }
+        __path = f'/_connector/_sync_job/{__path_parts["connector_sync_job_id"]}/_stats'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if deleted_document_count is not None:
+                __body["deleted_document_count"] = deleted_document_count
+            if indexed_document_count is not None:
+                __body["indexed_document_count"] = indexed_document_count
+            if indexed_document_volume is not None:
+                __body["indexed_document_volume"] = indexed_document_volume
+            if last_seen is not None:
+                __body["last_seen"] = last_seen
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if total_document_count is not None:
+                __body["total_document_count"] = total_document_count
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.sync_job_update_stats",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)
     def update_active_filtering(

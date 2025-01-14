@@ -245,6 +245,94 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("ids", "expiration", "metadata", "role_descriptors"),
+    )
+    def bulk_update_api_keys(
+        self,
+        *,
+        ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Bulk update API keys. Update the attributes for multiple API keys. IMPORTANT:
+        It is not possible to use an API key as the authentication credential for this
+        API. To update API keys, the owner user's credentials are required. This API
+        is similar to the update API key API but enables you to apply the same update
+        to multiple API keys in one API call. This operation can greatly improve performance
+        over making individual updates. It is not possible to update expired or invalidated
+        API keys. This API supports updates to API key access scope, metadata and expiration.
+        The access scope of each API key is derived from the `role_descriptors` you specify
+        in the request and a snapshot of the owner user's permissions at the time of
+        the request. The snapshot of the owner's permissions is updated automatically
+        on every call. IMPORTANT: If you don't specify `role_descriptors` in the request,
+        a call to this API might still change an API key's access scope. This change
+        can occur if the owner user's permissions have changed since the API key was
+        created or last modified. A successful request returns a JSON structure that
+        contains the IDs of all updated API keys, the IDs of API keys that already had
+        the requested changes and did not require an update, and error details for any
+        failed update.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-bulk-update-api-keys.html>`_
+
+        :param ids: The API key identifiers.
+        :param expiration: Expiration time for the API keys. By default, API keys never
+            expire. This property can be omitted to leave the value unchanged.
+        :param metadata: Arbitrary nested metadata to associate with the API keys. Within
+            the `metadata` object, top-level keys beginning with an underscore (`_`)
+            are reserved for system usage. Any information specified with this parameter
+            fully replaces metadata previously associated with the API key.
+        :param role_descriptors: The role descriptors to assign to the API keys. An API
+            key's effective permissions are an intersection of its assigned privileges
+            and the point-in-time snapshot of permissions of the owner user. You can
+            assign new privileges by specifying them in this parameter. To remove assigned
+            privileges, supply the `role_descriptors` parameter as an empty object `{}`.
+            If an API key has no assigned privileges, it inherits the owner user's full
+            permissions. The snapshot of the owner's permissions is always updated, whether
+            you supply the `role_descriptors` parameter. The structure of a role descriptor
+            is the same as the request for the create API keys API.
+        """
+        if ids is None and body is None:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/api_key/_bulk_update"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if ids is not None:
+                __body["ids"] = ids
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if role_descriptors is not None:
+                __body["role_descriptors"] = role_descriptors
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_update_api_keys",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=("password", "password_hash"),
     )
     def change_password(
@@ -770,6 +858,74 @@ class SecurityClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="security.create_service_token",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("x509_certificate_chain",),
+    )
+    def delegate_pki(
+        self,
+        *,
+        x509_certificate_chain: t.Optional[t.Sequence[str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Delegate PKI authentication. This API implements the exchange of an X509Certificate
+        chain for an Elasticsearch access token. The certificate chain is validated,
+        according to RFC 5280, by sequentially considering the trust configuration of
+        every installed PKI realm that has `delegation.enabled` set to `true`. A successfully
+        trusted client certificate is also subject to the validation of the subject distinguished
+        name according to thw `username_pattern` of the respective realm. This API is
+        called by smart and trusted proxies, such as Kibana, which terminate the user's
+        TLS session but still want to authenticate the user by using a PKI realm—-​as
+        if the user connected directly to Elasticsearch. IMPORTANT: The association between
+        the subject public key in the target certificate and the corresponding private
+        key is not validated. This is part of the TLS authentication process and it is
+        delegated to the proxy that calls this API. The proxy is trusted to have performed
+        the TLS authentication and this API translates that authentication into an Elasticsearch
+        access token.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-delegate-pki-authentication.html>`_
+
+        :param x509_certificate_chain: The X509Certificate chain, which is represented
+            as an ordered string array. Each string in the array is a base64-encoded
+            (Section 4 of RFC4648 - not base64url-encoded) of the certificate's DER encoding.
+            The first element is the target certificate that contains the subject distinguished
+            name that is requesting access. This may be followed by additional certificates;
+            each subsequent certificate is used to certify the previous one.
+        """
+        if x509_certificate_chain is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameter 'x509_certificate_chain'"
+            )
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/delegate_pki"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if x509_certificate_chain is not None:
+                __body["x509_certificate_chain"] = x509_certificate_chain
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.delegate_pki",
             path_parts=__path_parts,
         )
 
@@ -1667,6 +1823,49 @@ class SecurityClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def get_settings(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Get security index settings. Get the user-configurable settings for the security
+        internal index (`.security` and associated indices).
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-get-settings.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/settings"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_settings",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=(
             "grant_type",
@@ -2323,6 +2522,230 @@ class SecurityClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="security.invalidate_token",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("nonce", "redirect_uri", "state", "realm"),
+    )
+    def oidc_authenticate(
+        self,
+        *,
+        nonce: t.Optional[str] = None,
+        redirect_uri: t.Optional[str] = None,
+        state: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Authenticate OpenID Connect. Exchange an OpenID Connect authentication response
+        message for an Elasticsearch internal access token and refresh token that can
+        be subsequently used for authentication. Elasticsearch exposes all the necessary
+        OpenID Connect related functionality with the OpenID Connect APIs. These APIs
+        are used internally by Kibana in order to provide OpenID Connect based authentication,
+        but can also be used by other, custom web applications or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-oidc-authenticate.html>`_
+
+        :param nonce: Associate a client session with an ID token and mitigate replay
+            attacks. This value needs to be the same as the one that was provided to
+            the `/_security/oidc/prepare` API or the one that was generated by Elasticsearch
+            and included in the response to that call.
+        :param redirect_uri: The URL to which the OpenID Connect Provider redirected
+            the User Agent in response to an authentication request after a successful
+            authentication. This URL must be provided as-is (URL encoded), taken from
+            the body of the response or as the value of a location header in the response
+            from the OpenID Connect Provider.
+        :param state: Maintain state between the authentication request and the response.
+            This value needs to be the same as the one that was provided to the `/_security/oidc/prepare`
+            API or the one that was generated by Elasticsearch and included in the response
+            to that call.
+        :param realm: The name of the OpenID Connect realm. This property is useful in
+            cases where multiple realms are defined.
+        """
+        if nonce is None and body is None:
+            raise ValueError("Empty value passed for parameter 'nonce'")
+        if redirect_uri is None and body is None:
+            raise ValueError("Empty value passed for parameter 'redirect_uri'")
+        if state is None and body is None:
+            raise ValueError("Empty value passed for parameter 'state'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/authenticate"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if nonce is not None:
+                __body["nonce"] = nonce
+            if redirect_uri is not None:
+                __body["redirect_uri"] = redirect_uri
+            if state is not None:
+                __body["state"] = state
+            if realm is not None:
+                __body["realm"] = realm
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_authenticate",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("access_token", "refresh_token"),
+    )
+    def oidc_logout(
+        self,
+        *,
+        access_token: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh_token: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Logout of OpenID Connect. Invalidate an access token and a refresh token that
+        were generated as a response to the `/_security/oidc/authenticate` API. If the
+        OpenID Connect authentication realm in Elasticsearch is accordingly configured,
+        the response to this call will contain a URI pointing to the end session endpoint
+        of the OpenID Connect Provider in order to perform single logout. Elasticsearch
+        exposes all the necessary OpenID Connect related functionality with the OpenID
+        Connect APIs. These APIs are used internally by Kibana in order to provide OpenID
+        Connect based authentication, but can also be used by other, custom web applications
+        or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-oidc-logout.html>`_
+
+        :param access_token: The access token to be invalidated.
+        :param refresh_token: The refresh token to be invalidated.
+        """
+        if access_token is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access_token'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/logout"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access_token is not None:
+                __body["access_token"] = access_token
+            if refresh_token is not None:
+                __body["refresh_token"] = refresh_token
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_logout",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("iss", "login_hint", "nonce", "realm", "state"),
+    )
+    def oidc_prepare_authentication(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        iss: t.Optional[str] = None,
+        login_hint: t.Optional[str] = None,
+        nonce: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        state: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Prepare OpenID connect authentication. Create an oAuth 2.0 authentication request
+        as a URL string based on the configuration of the OpenID Connect authentication
+        realm in Elasticsearch. The response of this API is a URL pointing to the Authorization
+        Endpoint of the configured OpenID Connect Provider, which can be used to redirect
+        the browser of the user in order to continue the authentication process. Elasticsearch
+        exposes all the necessary OpenID Connect related functionality with the OpenID
+        Connect APIs. These APIs are used internally by Kibana in order to provide OpenID
+        Connect based authentication, but can also be used by other, custom web applications
+        or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-oidc-prepare-authentication.html>`_
+
+        :param iss: In the case of a third party initiated single sign on, this is the
+            issuer identifier for the OP that the RP is to send the authentication request
+            to. It cannot be specified when *realm* is specified. One of *realm* or *iss*
+            is required.
+        :param login_hint: In the case of a third party initiated single sign on, it
+            is a string value that is included in the authentication request as the *login_hint*
+            parameter. This parameter is not valid when *realm* is specified.
+        :param nonce: The value used to associate a client session with an ID token and
+            to mitigate replay attacks. If the caller of the API does not provide a value,
+            Elasticsearch will generate one with sufficient entropy and return it in
+            the response.
+        :param realm: The name of the OpenID Connect realm in Elasticsearch the configuration
+            of which should be used in order to generate the authentication request.
+            It cannot be specified when *iss* is specified. One of *realm* or *iss* is
+            required.
+        :param state: The value used to maintain state between the authentication request
+            and the response, typically used as a Cross-Site Request Forgery mitigation.
+            If the caller of the API does not provide a value, Elasticsearch will generate
+            one with sufficient entropy and return it in the response.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/prepare"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if iss is not None:
+                __body["iss"] = iss
+            if login_hint is not None:
+                __body["login_hint"] = login_hint
+            if nonce is not None:
+                __body["nonce"] = nonce
+            if realm is not None:
+                __body["realm"] = realm
+            if state is not None:
+                __body["state"] = state
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_prepare_authentication",
             path_parts=__path_parts,
         )
 
@@ -3647,6 +4070,81 @@ class SecurityClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="security.update_cross_cluster_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("security", "security_profile", "security_tokens"),
+        parameter_aliases={
+            "security-profile": "security_profile",
+            "security-tokens": "security_tokens",
+        },
+    )
+    def update_settings(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        security: t.Optional[t.Mapping[str, t.Any]] = None,
+        security_profile: t.Optional[t.Mapping[str, t.Any]] = None,
+        security_tokens: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update security index settings. Update the user-configurable settings for the
+        security internal index (`.security` and associated indices). Only a subset of
+        settings are allowed to be modified, for example `index.auto_expand_replicas`
+        and `index.number_of_replicas`. If a specific index is not in use on the system
+        and settings are provided for it, the request will be rejected. This API does
+        not yet support configuring the settings for indices before they are in use.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-update-settings.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param security: Settings for the index used for most security configuration,
+            including native realm users and roles configured with the API.
+        :param security_profile: Settings for the index used to store profile information.
+        :param security_tokens: Settings for the index used to store tokens.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/settings"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if security is not None:
+                __body["security"] = security
+            if security_profile is not None:
+                __body["security-profile"] = security_profile
+            if security_tokens is not None:
+                __body["security-tokens"] = security_tokens
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_settings",
             path_parts=__path_parts,
         )
 
