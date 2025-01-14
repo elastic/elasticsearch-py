@@ -70,6 +70,7 @@ from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
 from .shutdown import ShutdownClient
+from .simulate import SimulateClient
 from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
@@ -465,6 +466,7 @@ class Elasticsearch(BaseClient):
         self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.security = SecurityClient(self)
         self.slm = SlmClient(self)
+        self.simulate = SimulateClient(self)
         self.shutdown = ShutdownClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
