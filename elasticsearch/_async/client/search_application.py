@@ -252,6 +252,71 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_name="payload",
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def post_behavioral_analytics_event(
+        self,
+        *,
+        collection_name: str,
+        event_type: t.Union[str, t.Literal["page_view", "search", "search_click"]],
+        payload: t.Optional[t.Any] = None,
+        body: t.Optional[t.Any] = None,
+        debug: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Create a behavioral analytics collection event.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/post-analytics-collection-event.html>`_
+
+        :param collection_name: The name of the behavioral analytics collection.
+        :param event_type: The analytics event type.
+        :param payload:
+        :param debug: Whether the response type has to include more details
+        """
+        if collection_name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'collection_name'")
+        if event_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'event_type'")
+        if payload is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'payload' and 'body', one of them should be set."
+            )
+        elif payload is not None and body is not None:
+            raise ValueError("Cannot set both 'payload' and 'body'")
+        __path_parts: t.Dict[str, str] = {
+            "collection_name": _quote(collection_name),
+            "event_type": _quote(event_type),
+        }
+        __path = f'/_application/analytics/{__path_parts["collection_name"]}/event/{__path_parts["event_type"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if debug is not None:
+            __query["debug"] = debug
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = payload if payload is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="search_application.post_behavioral_analytics_event",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_name="search_application",
     )
     @_stability_warning(Stability.BETA)

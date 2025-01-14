@@ -341,8 +341,8 @@ class IlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-move-to-step.html>`_
 
         :param index: The name of the index whose lifecycle step is to change
-        :param current_step:
-        :param next_step:
+        :param current_step: The step that the index is expected to be in.
+        :param next_step: The step that you want to run.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -552,8 +552,8 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-start.html>`_
 
-        :param master_timeout:
-        :param timeout:
+        :param master_timeout: Explicit operation timeout for connection to master node
+        :param timeout: Explicit operation timeout
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/start"
@@ -601,8 +601,8 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-stop.html>`_
 
-        :param master_timeout:
-        :param timeout:
+        :param master_timeout: Explicit operation timeout for connection to master node
+        :param timeout: Explicit operation timeout
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/stop"
