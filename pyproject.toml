@@ -59,6 +59,7 @@ dev = [
     "aiohttp",
     "pytest",
     "pytest-cov",
+    "pytest-mock",
     "pytest-asyncio",
     "coverage",
     "jinja2",

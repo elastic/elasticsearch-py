@@ -37,7 +37,7 @@ def main(check=False):
         ("test_elasticsearch/test_dsl/_async/", "test_elasticsearch/test_dsl/_sync/"),
         (
             "test_elasticsearch/test_dsl/test_integration/_async/",
-            "test_elasticsearch/test/dsl/test_integration/_sync/",
+            "test_elasticsearch/test_dsl/test_integration/_sync/",
         ),
         (
             "test_elasticsearch/test_dsl/test_integration/test_examples/_async/",
