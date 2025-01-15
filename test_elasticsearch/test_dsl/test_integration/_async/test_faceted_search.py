@@ -58,7 +58,7 @@ class MetricSearch(AsyncFacetedSearch):
     }
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def commit_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     if es_version >= (7, 2):
         interval_kwargs = {"fixed_interval": "1d"}
@@ -86,7 +86,7 @@ def commit_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     return CommitSearch
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def repo_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     interval_type = "calendar_interval" if es_version >= (7, 2) else "interval"
 
@@ -107,7 +107,7 @@ def repo_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     return RepoSearch
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def pr_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     interval_type = "calendar_interval" if es_version >= (7, 2) else "interval"
 

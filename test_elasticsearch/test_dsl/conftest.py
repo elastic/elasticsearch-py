@@ -37,7 +37,7 @@ from elasticsearch.dsl.connections import add_connection, connections
 from elasticsearch.exceptions import ConnectionError
 from elasticsearch.helpers import bulk
 
-from ..utils import CA_CERTS
+from ..utils import CA_CERTS, wipe_cluster
 from .test_integration._async import test_document as async_document
 from .test_integration._sync import test_document as sync_document
 from .test_integration.test_data import (
@@ -110,14 +110,16 @@ def _get_version(version_string: str) -> Tuple[int, ...]:
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
 
-@fixture(scope="session")
+@fixture
 def client(elasticsearch_url) -> Elasticsearch:
     try:
         connection = get_test_client(
             elasticsearch_url, wait="WAIT_FOR_ES" in os.environ
         )
         add_connection("default", connection)
-        return connection
+        yield connection
+        wipe_cluster(connection)
+        connection.close()
     except SkipTest:
         skip()
 
@@ -130,12 +132,13 @@ async def async_client(elasticsearch_url) -> AsyncGenerator[AsyncElasticsearch, 
         )
         add_async_connection("default", connection)
         yield connection
+        wipe_cluster(connection)
         await connection.close()
     except SkipTest:
         skip()
 
 
-@fixture(scope="session")
+@fixture
 def es_version(client: Elasticsearch) -> Generator[Tuple[int, ...], None, None]:
     info = client.info()
     yield tuple(
@@ -192,7 +195,7 @@ def async_mock_client(
     async_connections._kwargs = {}
 
 
-@fixture(scope="session")
+@fixture
 def data_client(client: Elasticsearch) -> Generator[Elasticsearch, None, None]:
     # create mappings
     create_git_index(client, "git")
