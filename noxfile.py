@@ -37,7 +37,6 @@ def pytest_argv():
         "pytest",
         "--cov-report=term-missing",
         "--cov=elasticsearch",
-        "--cov-config=setup.cfg",
         f"--junitxml={junit_xml}",
         "--log-level=DEBUG",
         "--cache-clear",
