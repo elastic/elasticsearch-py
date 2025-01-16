@@ -20,24 +20,43 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class RollupClient(NamespacedClient):
+
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def delete_job(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing rollup job.
+        Delete a rollup job. A job must be stopped before it can be deleted. If you attempt
+        to delete a started job, an error occurs. Similarly, if you attempt to delete
+        a nonexistent job, an exception occurs. IMPORTANT: When you delete a job, you
+        remove only the process that is actively monitoring and rolling up data. The
+        API does not delete any previously rolled up data. This is by design; a user
+        may wish to roll up a static data set. Because the data set is static, after
+        it has been fully rolled up there is no need to keep the indexing rollup job
+        around (as there will be no new data). Thus the job can be deleted, leaving behind
+        the rolled up data for analysis. If you wish to also remove the rollup data and
+        the rollup index contains the data for only a single job, you can delete the
+        whole rollup index. If the rollup index stores data from several jobs, you must
+        issue a delete-by-query that targets the rollup job's identifier in the rollup
+        index. For example: ``` POST my_rollup_index/_delete_by_query { "query": { "term":
+        { "_rollup.id": "the_rollup_job_id" } } } ```
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
 
@@ -45,7 +64,8 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -57,32 +77,43 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.delete_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_jobs(
         self,
         *,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the configuration, stats, and status of rollup jobs.
+        Get rollup job information. Get the configuration, stats, and status of rollup
+        jobs. NOTE: This API returns only active (both `STARTED` and `STOPPED`) jobs.
+        If a job was created, ran for a while, then was deleted, the API does not return
+        any details about it. For details about a historical rollup job, the rollup capabilities
+        API may be more useful.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
 
         :param id: Identifier for the rollup job. If it is `_all` or omitted, the API
             returns all rollup jobs.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_rollup/job/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_rollup/job/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_rollup/job"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -95,33 +126,47 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_jobs",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_rollup_caps(
         self,
         *,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the capabilities of any rollup jobs that have been configured for a specific
-        index or index pattern.
+        Get the rollup job capabilities. Get the capabilities of any rollup jobs that
+        have been configured for a specific index or index pattern. This API is useful
+        because a rollup job is often configured to rollup only a subset of fields from
+        the source index. Furthermore, only certain aggregations can be configured for
+        various fields, leading to a limited subset of functionality depending on that
+        configuration. This API enables you to inspect an index and determine: 1. Does
+        this index have associated rollup data somewhere in the cluster? 2. If yes to
+        the first question, what fields were rolled up, what aggregations can be performed,
+        and where does the data live?
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-caps.html>`_
 
         :param id: Index, indices or index-pattern to return rollup capabilities for.
             `_all` may be used to fetch rollup capabilities from all jobs.
         """
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_rollup/data/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_rollup/data/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_rollup/data"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -134,24 +179,32 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_rollup_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def get_rollup_index_caps(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
-        index where rollup data is stored).
+        Get the rollup index capabilities. Get the rollup capabilities of all jobs inside
+        of a rollup index. A single rollup index may store the data for multiple rollup
+        jobs and may have a variety of capabilities depending on those jobs. This API
+        enables you to determine: * What jobs are stored in an index (or indices specified
+        via a pattern)? * What target indices were rolled up, what fields were used in
+        those rollups, and what aggregations can be performed on each job?
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
 
@@ -160,7 +213,8 @@ class RollupClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_rollup/data"
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_rollup/data'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -172,38 +226,57 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.get_rollup_index_caps",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "cron",
+            "groups",
+            "index_pattern",
+            "page_size",
+            "rollup_index",
+            "headers",
+            "metrics",
+            "timeout",
+        ),
         ignore_deprecated_options={"headers"},
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def put_job(
         self,
         *,
         id: str,
-        cron: str,
-        groups: t.Mapping[str, t.Any],
-        index_pattern: str,
-        page_size: int,
-        rollup_index: str,
+        cron: t.Optional[str] = None,
+        groups: t.Optional[t.Mapping[str, t.Any]] = None,
+        index_pattern: t.Optional[str] = None,
+        page_size: t.Optional[int] = None,
+        rollup_index: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
-        metrics: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        metrics: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a rollup job.
+        Create a rollup job. WARNING: From 8.15.0, calling this API in a cluster with
+        no rollup usage will fail with a message about the deprecation and planned removal
+        of rollup features. A cluster needs to contain either a rollup job or a rollup
+        index in order for this API to be allowed to run. The rollup job configuration
+        contains all the details about how the job should run, when it indexes documents,
+        and what future queries will be able to run against the rollup index. There are
+        three main sections to the job configuration: the logistical details about the
+        job (for example, the cron schedule), the fields that are used for grouping,
+        and what metrics to collect for each group. Jobs are created in a `STOPPED` state.
+        You can start them with the start rollup jobs API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
 
@@ -249,77 +322,112 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if cron is None:
+        if cron is None and body is None:
             raise ValueError("Empty value passed for parameter 'cron'")
-        if groups is None:
+        if groups is None and body is None:
             raise ValueError("Empty value passed for parameter 'groups'")
-        if index_pattern is None:
+        if index_pattern is None and body is None:
             raise ValueError("Empty value passed for parameter 'index_pattern'")
-        if page_size is None:
+        if page_size is None and body is None:
             raise ValueError("Empty value passed for parameter 'page_size'")
-        if rollup_index is None:
+        if rollup_index is None and body is None:
             raise ValueError("Empty value passed for parameter 'rollup_index'")
-        __path = f"/_rollup/job/{_quote(id)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
-        if cron is not None:
-            __body["cron"] = cron
-        if groups is not None:
-            __body["groups"] = groups
-        if index_pattern is not None:
-            __body["index_pattern"] = index_pattern
-        if page_size is not None:
-            __body["page_size"] = page_size
-        if rollup_index is not None:
-            __body["rollup_index"] = rollup_index
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if headers is not None:
-            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
-        if metrics is not None:
-            __body["metrics"] = metrics
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __body["timeout"] = timeout
+        if not __body:
+            if cron is not None:
+                __body["cron"] = cron
+            if groups is not None:
+                __body["groups"] = groups
+            if index_pattern is not None:
+                __body["index_pattern"] = index_pattern
+            if page_size is not None:
+                __body["page_size"] = page_size
+            if rollup_index is not None:
+                __body["rollup_index"] = rollup_index
+            if headers is not None:
+                __body["headers"] = headers
+            if metrics is not None:
+                __body["metrics"] = metrics
+            if timeout is not None:
+                __body["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rollup.put_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("aggregations", "aggs", "query", "size"),
     )
+    @_stability_warning(Stability.EXPERIMENTAL)
     def rollup_search(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         typed_keys: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables searching rolled-up data using the standard query DSL.
+        Search rolled-up data. The rollup search endpoint is needed because, internally,
+        rolled-up documents utilize a different document structure than the original
+        data. It rewrites standard Query DSL into a format that matches the rollup documents
+        then takes the response and rewrites it back to what a client would expect given
+        the original query. The request body supports a subset of features from the regular
+        search API. The following functionality is not available: `size`: Because rollups
+        work on pre-aggregated data, no search hits can be returned and so size must
+        be set to zero or omitted entirely. `highlighter`, `suggestors`, `post_filter`,
+        `profile`, `explain`: These are similarly disallowed. **Searching both historical
+        rollup and non-rollup data** The rollup search API has the capability to search
+        across both "live" non-rollup data and the aggregated rollup data. This is done
+        by simply adding the live indices to the URI. For example: ``` GET sensor-1,sensor_rollup/_rollup_search
+        { "size": 0, "aggregations": { "max_temperature": { "max": { "field": "temperature"
+        } } } } ``` The rollup search endpoint does two things when the search runs:
+        * The original request is sent to the non-rollup index unaltered. * A rewritten
+        version of the original request is sent to the rollup index. When the two responses
+        are received, the endpoint rewrites the rollup response and merges the two together.
+        During the merging process, if there is any overlap in buckets between the two
+        responses, the buckets from the non-rollup index are used.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 
-        :param index: Enables searching rolled-up data using the standard Query DSL.
+        :param index: A comma-separated list of data streams and indices used to limit
+            the request. This parameter has the following rules: * At least one data
+            stream, index, or wildcard expression must be specified. This target can
+            include a rollup or non-rollup index. For data streams, the stream's backing
+            indices can only serve as non-rollup indices. Omitting the parameter or using
+            `_all` are not permitted. * Multiple non-rollup indices may be specified.
+            * Only one rollup index may be specified. If more than one are supplied,
+            an exception occurs. * Wildcard expressions (`*`) may be used. If they match
+            more than one rollup index, an exception occurs. However, you can use an
+            expression to match multiple non-rollup indices or data streams.
         :param aggregations: Specifies aggregations.
         :param aggs: Specifies aggregations.
-        :param query: Specifies a DSL query.
+        :param query: Specifies a DSL query that is subject to some limitations.
         :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
             as an integer or an object in the rest search response
         :param size: Must be zero if set, as rollups work on pre-aggregated data.
@@ -328,13 +436,10 @@ class RollupClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_rollup_search"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_rollup_search'
         __query: t.Dict[str, t.Any] = {}
-        if aggregations is not None:
-            __body["aggregations"] = aggregations
-        if aggs is not None:
-            __body["aggs"] = aggs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -343,33 +448,44 @@ class RollupClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
-        if size is not None:
-            __body["size"] = size
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if query is not None:
+                __body["query"] = query
+            if size is not None:
+                __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="rollup.rollup_search",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def start_job(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts an existing, stopped rollup job.
+        Start rollup jobs. If you try to start a job that does not exist, an exception
+        occurs. If you try to start a job that is already started, nothing happens.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
 
@@ -377,7 +493,8 @@ class RollupClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}/_start"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -389,39 +506,54 @@ class RollupClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.start_job",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
     def stop_job(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops an existing, started rollup job.
+        Stop rollup jobs. If you try to stop a job that does not exist, an exception
+        occurs. If you try to stop a job that is already stopped, nothing happens. Since
+        only a stopped job can be deleted, it can be useful to block the API until the
+        indexer has fully stopped. This is accomplished with the `wait_for_completion`
+        query parameter, and optionally a timeout. For example: ``` POST _rollup/job/sensor/_stop?wait_for_completion=true&timeout=10s
+        ``` The parameter blocks the API call from returning until either the job has
+        moved to STOPPED or the specified time has elapsed. If the specified time elapses
+        without the job moving to STOPPED, a timeout exception occurs.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
 
         :param id: Identifier for the rollup job.
         :param timeout: If `wait_for_completion` is `true`, the API blocks for (at maximum)
             the specified duration while waiting for the job to stop. If more than `timeout`
-            time has passed, the API throws a timeout exception.
+            time has passed, the API throws a timeout exception. NOTE: Even if a timeout
+            occurs, the stop request is still processing and eventually moves the job
+            to STOPPED. The timeout simply means the API call itself timed out while
+            waiting for the status change.
         :param wait_for_completion: If set to `true`, causes the API to block until the
             indexer state completely stops. If set to `false`, the API returns immediately
             and the indexer is stopped asynchronously in the background.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_rollup/job/{_quote(id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_rollup/job/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -437,5 +569,10 @@ class RollupClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="rollup.stop_job",
+            path_parts=__path_parts,
         )

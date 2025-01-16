@@ -1,7 +1,0 @@
-// docs/reindex.asciidoc:731
-
-[source, python]
-----
-resp = client.get(index="test2", id="1")
-print(resp)
-----

@@ -29,7 +29,7 @@ SOURCE_DIR = Path(__file__).absolute().parent.parent
 def find_and_replace(path, pattern, replace):
     # Does a find and replace within a file path and complains
     # if the given pattern isn't found in the file.
-    with open(path, "r") as f:
+    with open(path) as f:
         old_data = f.read()
 
     if re.search(pattern, old_data, flags=re.MULTILINE) is None:
@@ -70,9 +70,9 @@ def main():
     # These values should always be the 'major.minor-SNAPSHOT'
     major_minor_version = ".".join(python_version.split(".")[:2])
     find_and_replace(
-        path=SOURCE_DIR / ".ci/test-matrix.yml",
-        pattern=r'STACK_VERSION:\s+\- "[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
-        replace=f'STACK_VERSION:\n  - "{major_minor_version}.0-SNAPSHOT"',
+        path=SOURCE_DIR / ".buildkite/pipeline.yml",
+        pattern=r'STACK_VERSION:\s+"[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
+        replace=f'STACK_VERSION: "{major_minor_version}.0-SNAPSHOT"',
     )
 
 

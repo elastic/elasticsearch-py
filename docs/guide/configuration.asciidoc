@@ -20,7 +20,7 @@ If you have your own CA bundle to use you can configure via the `ca_certs` param
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     "https://...",
     ca_certs="/path/to/certs.pem"
 )
@@ -32,7 +32,7 @@ In Python 3.9 and earlier only the leaf certificate will be verified but in Pyth
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     "https://...",
     ssl_assert_fingerprint=(
         "315f5bdb76d078c43b8ac0064e4a0164612b1fce77c869345bfc94c75894edd3"
@@ -44,7 +44,7 @@ To disable certificate verification use the `verify_certs=False` parameter. This
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     "https://...",
     verify_certs=False
 )
@@ -53,20 +53,13 @@ es = Elasticsearch(
 [discrete]
 ==== TLS versions
 
-Configuring the minimum TLS version to connect to is done via the `ssl_version` parameter. By default this is set to a minimum value of TLSv1.2. In Python 3.7+ you can use the new `ssl.TLSVersion` enumeration to specify versions.
+Configuring the minimum TLS version to connect to is done via the `ssl_version` parameter. By default this is set to a minimum value of TLSv1.2. Use the `ssl.TLSVersion` enumeration to specify versions.
 
 [source,python]
 ------------------------------------
 import ssl
 
-# Python 3.6
-es = Elasticsearch(
-    ...,
-    ssl_version=ssl.PROTOCOL_TSLv1_2
-)
-
-# Python 3.7+
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     ssl_version=ssl.TLSVersion.TLSv1_2
 )
@@ -79,7 +72,7 @@ Elasticsearch can be configured to authenticate clients via TLS client certifica
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     client_cert="/path/to/cert.pem",
     client_key="/path/to/key.pem",
@@ -100,7 +93,7 @@ import ssl
 ctx = ssl.create_default_context()
 ctx.load_verify_locations(...)
 
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     ssl_context=ctx
 )
@@ -117,7 +110,7 @@ the `Accept-Encoding: gzip` HTTP header. By default compression is disabled.
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     http_compress=True  # Enable compression!
 )
@@ -137,13 +130,13 @@ Setting `request_timeout` to `None` will disable timeouts.
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     request_timeout=10  # 10 second timeout
 )
 
 # Search request will timeout in 5 seconds
-es.options(request_timeout=5).search(...)
+client.options(request_timeout=5).search(...)
 ------------------------------------
 
 [discrete]
@@ -155,7 +148,7 @@ In the example below there are three different configurable timeouts for the `cl
 
 [source,python]
 ------------------------------------
-es.options(
+client.options(
     # Amount of time to wait for an HTTP response to start.
     request_timeout=30
 ).cluster.health(
@@ -177,13 +170,13 @@ The maximum number of retries per request can be configured via the `max_retries
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     max_retries=5
 )
 
 # For this API request we disable retries with 'max_retries=0'
-es.options(max_retries=0).index(
+client.options(max_retries=0).index(
     index="blogs",
     document={
         "title": "..."
@@ -198,11 +191,11 @@ Connection errors are automatically retried if retries are enabled. Retrying req
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     retry_on_timeout=True
 )
-es.options(retry_on_timeout=False).info()
+client.options(retry_on_timeout=False).info()
 ------------------------------------
 
 [discrete]
@@ -212,13 +205,13 @@ By default if retries are enabled `retry_on_status` is set to `(429, 502, 503, 5
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     retry_on_status=()
 )
 
 # Retry this API on '500 Internal Error' statuses
-es.options(retry_on_status=[500]).index(
+client.options(retry_on_status=[500]).index(
     index="blogs",
     document={
         "title": "..."
@@ -235,14 +228,14 @@ A good example where this is useful is setting up or cleaning up resources in a 
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(...)
+client = Elasticsearch(...)
 
 # API request is robust against the index not existing:
-resp = es.options(ignore_status=404).indices.delete(index="delete-this")
+resp = client.options(ignore_status=404).indices.delete(index="delete-this")
 resp.meta.status  # Can be either '2XX' or '404'
 
 # API request is robust against the index already existing:
-resp = es.options(ignore_status=[400]).indices.create(
+resp = client.options(ignore_status=[400]).indices.create(
     index="create-this",
     mapping={
         "properties": {"field": {"type": "integer"}}
@@ -329,7 +322,7 @@ You can specify a node selector pattern via the `node_selector_class` parameter.
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     node_selector_class="round_robin"
 )
@@ -344,7 +337,7 @@ from elastic_transport import NodeSelector
 class CustomSelector(NodeSelector):
     def select(nodes): ...
 
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     node_selector_class=CustomSelector
 )
@@ -366,7 +359,7 @@ The calculation is equal to `min(dead_node_backoff_factor * (2 ** (consecutive_f
 [[serializer]]
 === Serializers
 
-Serializers transform bytes on the wire into native Python objects and vice-versa. By default the client ships with serializers for `application/json`, `application/x-ndjson`, `text/*`, and `application/mapbox-vector-tile`.
+Serializers transform bytes on the wire into native Python objects and vice-versa. By default the client ships with serializers for `application/json`, `application/x-ndjson`, `text/*`, `application/vnd.apache.arrow.stream` and `application/mapbox-vector-tile`.
 
 You can define custom serializers via the `serializers` parameter:
 
@@ -381,13 +374,31 @@ class JsonSetSerializer(JsonSerializer):
             return list(data)
         return super().default(data)
 
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     # Serializers are a mapping of 'mimetype' to Serializer class.
     serializers={"application/json": JsonSetSerializer()}
 )
 ------------------------------------
 
+If the `orjson` package is installed, you can use the faster ``OrjsonSerializer`` for the default mimetype (``application/json``):
+
+[source,python]
+------------------------------------
+from elasticsearch import Elasticsearch, OrjsonSerializer
+
+es = Elasticsearch(
+    ...,
+    serializer=OrjsonSerializer()
+)
+------------------------------------
+
+orjson is particularly fast when serializing vectors as it has native numpy support. This will be the default in a future release. Note that you can install orjson with the `orjson` extra:
+
+[source,sh]
+--------------------------------------------
+$ python -m pip install elasticsearch[orjson]
+--------------------------------------------
 
 [discrete]
 [[nodes]]
@@ -404,7 +415,7 @@ For all of the built-in HTTP node implementations like `urllib3`, `requests`, an
 ------------------------------------
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     node_class="requests"
 )
@@ -420,7 +431,7 @@ from elastic_transport import Urllib3HttpNode
 class CustomHttpNode(Urllib3HttpNode):
     ...
 
-es = Elasticsearch(
+client = Elasticsearch(
     ...
     node_class=CustomHttpNode
 )
@@ -433,7 +444,7 @@ Each node contains its own pool of HTTP connections to allow for concurrent requ
 
 [source,python]
 ------------------------------------
-es = Elasticsearch(
+client = Elasticsearch(
     ...,
     connections_per_node=5
 )

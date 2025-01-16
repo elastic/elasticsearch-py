@@ -24,28 +24,30 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class LogstashClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete_pipeline(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes Logstash Pipelines used by Central Management
+        Delete a Logstash pipeline. Delete a pipeline that is used for Logstash Central
+        Management. If the request succeeds, you receive an empty response with an appropriate
+        status code.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-delete-pipeline.html>`_
 
-        :param id: Identifier for the pipeline.
+        :param id: An identifier for the pipeline.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_logstash/pipeline/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_logstash/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -57,33 +59,37 @@ class LogstashClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="logstash.delete_pipeline",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_pipeline(
         self,
         *,
-        id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves Logstash Pipelines used by Central Management
+        Get Logstash pipelines. Get pipelines that are used for Logstash Central Management.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-get-pipeline.html>`_
 
-        :param id: Comma-separated list of pipeline identifiers.
+        :param id: A comma-separated list of pipeline identifiers.
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
-            __path = f"/_logstash/pipeline/{_quote(id)}"
+            __path_parts = {"id": _quote(id)}
+            __path = f'/_logstash/pipeline/{__path_parts["id"]}'
         else:
+            __path_parts = {}
             __path = "/_logstash/pipeline"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -96,7 +102,12 @@ class LogstashClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="logstash.get_pipeline",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -106,27 +117,32 @@ class LogstashClient(NamespacedClient):
         self,
         *,
         id: str,
-        pipeline: t.Mapping[str, t.Any],
+        pipeline: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates Logstash Pipelines used for Central Management
+        Create or update a Logstash pipeline. Create a pipeline that is used for Logstash
+        Central Management. If the specified pipeline exists, it is replaced.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-put-pipeline.html>`_
 
-        :param id: Identifier for the pipeline.
+        :param id: An identifier for the pipeline.
         :param pipeline:
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if pipeline is None:
-            raise ValueError("Empty value passed for parameter 'pipeline'")
-        __path = f"/_logstash/pipeline/{_quote(id)}"
+        if pipeline is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'pipeline' and 'body', one of them should be set."
+            )
+        elif pipeline is not None and body is not None:
+            raise ValueError("Cannot set both 'pipeline' and 'body'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_logstash/pipeline/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -136,8 +152,14 @@ class LogstashClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = pipeline
+        __body = pipeline if pipeline is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="logstash.put_pipeline",
+            path_parts=__path_parts,
         )

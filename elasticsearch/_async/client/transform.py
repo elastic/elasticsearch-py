@@ -24,26 +24,29 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class TransformClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_transform(
         self,
         *,
         transform_id: str,
+        delete_dest_index: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing transform.
+        Delete a transform. Deletes a transform.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-transform.html>`_
 
         :param transform_id: Identifier for the transform.
+        :param delete_dest_index: If this value is true, the destination index is deleted
+            together with the transform. If false, the destination index will not be
+            deleted
         :param force: If this value is false, the transform must be stopped before it
             can be deleted. If true, the transform is deleted regardless of its current
             state.
@@ -52,8 +55,11 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}'
         __query: t.Dict[str, t.Any] = {}
+        if delete_dest_index is not None:
+            __query["delete_dest_index"] = delete_dest_index
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -68,7 +74,12 @@ class TransformClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.delete_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -77,22 +88,18 @@ class TransformClient(NamespacedClient):
     async def get_transform(
         self,
         *,
-        transform_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        transform_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves configuration information for transforms.
+        Get transforms. Retrieves configuration information for transforms.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-transform.html>`_
 
@@ -110,9 +117,12 @@ class TransformClient(NamespacedClient):
         :param from_: Skips the specified number of transforms.
         :param size: Specifies the maximum number of transforms to obtain.
         """
+        __path_parts: t.Dict[str, str]
         if transform_id not in SKIP_IN_PATH:
-            __path = f"/_transform/{_quote(transform_id)}"
+            __path_parts = {"transform_id": _quote(transform_id)}
+            __path = f'/_transform/{__path_parts["transform_id"]}'
         else:
+            __path_parts = {}
             __path = "/_transform"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
@@ -133,7 +143,12 @@ class TransformClient(NamespacedClient):
             __query["size"] = size
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.get_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -142,20 +157,18 @@ class TransformClient(NamespacedClient):
     async def get_transform_stats(
         self,
         *,
-        transform_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        transform_id: t.Union[str, t.Sequence[str]],
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves usage information for transforms.
+        Get transform stats. Retrieves usage information for transforms.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-transform-stats.html>`_
 
@@ -173,7 +186,8 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_stats"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_stats'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -193,11 +207,26 @@ class TransformClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.get_transform_stats",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "description",
+            "dest",
+            "frequency",
+            "latest",
+            "pivot",
+            "retention_policy",
+            "settings",
+            "source",
+            "sync",
+        ),
     )
     async def preview_transform(
         self,
@@ -206,10 +235,8 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
         pivot: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -218,10 +245,16 @@ class TransformClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Previews a transform.
+        Preview a transform. Generates a preview of the results that you will get when
+        you create a transform with the same configuration. It returns a maximum of 100
+        results. The calculations are based on all the current data in the source index.
+        It also generates a list of mappings and settings for the destination index.
+        These values are determined based on the field types of the source index and
+        the transform aggregations.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-transform.html>`_
 
@@ -247,66 +280,85 @@ class TransformClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if transform_id not in SKIP_IN_PATH:
-            __path = f"/_transform/{_quote(transform_id)}/_preview"
+            __path_parts = {"transform_id": _quote(transform_id)}
+            __path = f'/_transform/{__path_parts["transform_id"]}/_preview'
         else:
+            __path_parts = {}
             __path = "/_transform/_preview"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if description is not None:
-            __body["description"] = description
-        if dest is not None:
-            __body["dest"] = dest
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if latest is not None:
-            __body["latest"] = latest
-        if pivot is not None:
-            __body["pivot"] = pivot
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if source is not None:
-            __body["source"] = source
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if dest is not None:
+                __body["dest"] = dest
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if latest is not None:
+                __body["latest"] = latest
+            if pivot is not None:
+                __body["pivot"] = pivot
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if source is not None:
+                __body["source"] = source
+            if sync is not None:
+                __body["sync"] = sync
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="transform.preview_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "dest",
+            "source",
+            "description",
+            "frequency",
+            "latest",
+            "meta",
+            "pivot",
+            "retention_policy",
+            "settings",
+            "sync",
+        ),
         parameter_aliases={"_meta": "meta"},
     )
     async def put_transform(
         self,
         *,
         transform_id: str,
-        dest: t.Mapping[str, t.Any],
-        source: t.Mapping[str, t.Any],
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
         defer_validation: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -315,10 +367,31 @@ class TransformClient(NamespacedClient):
         retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Instantiates a transform.
+        Create a transform. Creates a transform. A transform copies data from source
+        indices, transforms it, and persists it into an entity-centric destination index.
+        You can also think of the destination index as a two-dimensional tabular data
+        structure (known as a data frame). The ID for each document in the data frame
+        is generated from a hash of the entity, so there is a unique row per entity.
+        You must choose either the latest or pivot method for your transform; you cannot
+        use both in a single transform. If you choose to use the pivot method for your
+        transform, the entities are defined by the set of `group_by` fields in the pivot
+        object. If you choose to use the latest method, the entities are defined by the
+        `unique_key` field values in the latest object. You must have `create_index`,
+        `index`, and `read` privileges on the destination index and `read` and `view_index_metadata`
+        privileges on the source indices. When Elasticsearch security features are enabled,
+        the transform remembers which roles the user that created it had at the time
+        of creation and uses those same roles. If those roles do not have the required
+        privileges on the source and destination indices, the transform fails when it
+        attempts unauthorized operations. NOTE: You must use Kibana or this API to create
+        a transform. Do not add a transform directly into any `.transform-internal*`
+        indices using the Elasticsearch index API. If Elasticsearch security features
+        are enabled, do not give users any privileges on `.transform-internal*` indices.
+        If you used transforms prior to 7.5, also do not give users any privileges on
+        `.data-frame-internal*` indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-transform.html>`_
 
@@ -354,48 +427,56 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        if dest is None:
+        if dest is None and body is None:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if source is None:
+        if source is None and body is None:
             raise ValueError("Empty value passed for parameter 'source'")
-        __path = f"/_transform/{_quote(transform_id)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}'
         __query: t.Dict[str, t.Any] = {}
-        if dest is not None:
-            __body["dest"] = dest
-        if source is not None:
-            __body["source"] = source
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_validation is not None:
             __query["defer_validation"] = defer_validation
-        if description is not None:
-            __body["description"] = description
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if latest is not None:
-            __body["latest"] = latest
-        if meta is not None:
-            __body["_meta"] = meta
-        if pivot is not None:
-            __body["pivot"] = pivot
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if dest is not None:
+                __body["dest"] = dest
+            if source is not None:
+                __body["source"] = source
+            if description is not None:
+                __body["description"] = description
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if latest is not None:
+                __body["latest"] = latest
+            if meta is not None:
+                __body["_meta"] = meta
+            if pivot is not None:
+                __body["pivot"] = pivot
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if sync is not None:
+                __body["sync"] = sync
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="transform.put_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -404,15 +485,16 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Resets an existing transform.
+        Reset a transform. Resets a transform. Before you can reset it, you must stop
+        it; alternatively, use the `force` query parameter. If the destination index
+        was created by the transform, it is deleted.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/reset-transform.html>`_
 
@@ -422,10 +504,13 @@ class TransformClient(NamespacedClient):
         :param force: If this value is `true`, the transform is reset regardless of its
             current state. If it's `false`, the transform must be stopped before it can
             be reset.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_reset"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_reset'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -437,9 +522,16 @@ class TransformClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.reset_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -448,15 +540,17 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Schedules now a transform.
+        Schedule a transform to start now. Instantly runs a transform to process data.
+        If you _schedule_now a transform, it will process the new data instantly, without
+        waiting for the configured frequency interval. After _schedule_now API is called,
+        the transform will be processed again at now + frequency unless _schedule_now
+        API is called again in the meantime.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/schedule-now-transform.html>`_
 
@@ -465,7 +559,8 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_schedule_now"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_schedule_now'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -479,7 +574,12 @@ class TransformClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.schedule_now_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -490,16 +590,31 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts one or more transforms.
+        Start a transform. Starts a transform. When you start a transform, it creates
+        the destination index if it does not already exist. The `number_of_shards` is
+        set to `1` and the `auto_expand_replicas` is set to `0-1`. If it is a pivot transform,
+        it deduces the mapping definitions for the destination index from the source
+        indices and the transform aggregations. If fields in the destination index are
+        derived from scripts (as in the case of `scripted_metric` or `bucket_script`
+        aggregations), the transform uses dynamic mappings unless an index template exists.
+        If it is a latest transform, it does not deduce mapping definitions; it uses
+        dynamic mappings. To use explicit mappings, create the destination index before
+        you start the transform. Alternatively, you can create an index template, though
+        it does not affect the deduced mappings in a pivot transform. When the transform
+        starts, a series of validations occur to ensure its success. If you deferred
+        validation when you created the transform, they occur when you start the transform—​with
+        the exception of privilege checks. When Elasticsearch security features are enabled,
+        the transform remembers which roles the user that created it had at the time
+        of creation and uses those same roles. If those roles do not have the required
+        privileges on the source and destination indices, the transform fails when it
+        attempts unauthorized operations.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-transform.html>`_
 
@@ -512,7 +627,8 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_start"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -528,7 +644,12 @@ class TransformClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.start_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -538,18 +659,16 @@ class TransformClient(NamespacedClient):
         transform_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_checkpoint: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Stops one or more transforms.
+        Stop transforms. Stops one or more transforms.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-transform.html>`_
 
@@ -577,7 +696,8 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_stop"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
@@ -599,11 +719,25 @@ class TransformClient(NamespacedClient):
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.stop_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "description",
+            "dest",
+            "frequency",
+            "meta",
+            "retention_policy",
+            "settings",
+            "source",
+            "sync",
+        ),
         parameter_aliases={"_meta": "meta"},
     )
     async def update_transform(
@@ -614,10 +748,8 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -625,10 +757,18 @@ class TransformClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates certain properties of a transform.
+        Update a transform. Updates certain properties of a transform. All updated properties
+        except `description` do not take effect until after the transform starts the
+        next checkpoint, thus there is data consistency in each checkpoint. To use this
+        API, you must have `read` and `view_index_metadata` privileges for the source
+        indices. You must also have `index` and `read` privileges for the destination
+        index. When Elasticsearch security features are enabled, the transform remembers
+        which roles the user who updated it had at the time of update and runs with those
+        privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-transform.html>`_
 
@@ -653,40 +793,48 @@ class TransformClient(NamespacedClient):
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
-        __path = f"/_transform/{_quote(transform_id)}/_update"
+        __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
+        __path = f'/_transform/{__path_parts["transform_id"]}/_update'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if defer_validation is not None:
             __query["defer_validation"] = defer_validation
-        if description is not None:
-            __body["description"] = description
-        if dest is not None:
-            __body["dest"] = dest
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if frequency is not None:
-            __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
-        if meta is not None:
-            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
-        if retention_policy is not None:
-            __body["retention_policy"] = retention_policy
-        if settings is not None:
-            __body["settings"] = settings
-        if source is not None:
-            __body["source"] = source
-        if sync is not None:
-            __body["sync"] = sync
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if description is not None:
+                __body["description"] = description
+            if dest is not None:
+                __body["dest"] = dest
+            if frequency is not None:
+                __body["frequency"] = frequency
+            if meta is not None:
+                __body["_meta"] = meta
+            if retention_policy is not None:
+                __body["retention_policy"] = retention_policy
+            if settings is not None:
+                __body["settings"] = settings
+            if source is not None:
+                __body["source"] = source
+            if sync is not None:
+                __body["sync"] = sync
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="transform.update_transform",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -695,15 +843,26 @@ class TransformClient(NamespacedClient):
         *,
         dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Upgrades all transforms.
+        Upgrade all transforms. Transforms are compatible across minor versions and between
+        supported major versions. However, over time, the format of transform configuration
+        information may change. This API identifies transforms that have a legacy configuration
+        format and upgrades them to the latest version. It also cleans up the internal
+        data structures that store the transform state and checkpoints. The upgrade does
+        not affect the source and destination indices. The upgrade also does not affect
+        the roles that transforms use when Elasticsearch security features are enabled;
+        the role used to read source data and write to the destination index remains
+        unchanged. If a transform upgrade step fails, the upgrade stops and an error
+        is returned about the underlying issue. Resolve the issue then re-run the process
+        again. A summary is returned when the upgrade is finished. To ensure continuous
+        transforms remain running during a major version upgrade of the cluster – for
+        example, from 7.16 to 8.0 – it is recommended to upgrade transforms before upgrading
+        the cluster. You may want to perform a recent cluster backup prior to the upgrade.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/upgrade-transforms.html>`_
 
@@ -711,6 +870,7 @@ class TransformClient(NamespacedClient):
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_transform/_upgrade"
         __query: t.Dict[str, t.Any] = {}
         if dry_run is not None:
@@ -727,5 +887,10 @@ class TransformClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.upgrade_transforms",
+            path_parts=__path_parts,
         )

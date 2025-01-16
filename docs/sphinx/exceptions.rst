@@ -4,6 +4,7 @@ Exceptions & Warnings
 =====================
 
 .. py:module:: elasticsearch
+   :no-index:
 
 API Errors
 ----------

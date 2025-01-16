@@ -130,7 +130,9 @@ class AsyncYamlRunner(YamlRunner):
             headers.pop("Authorization")
 
         method, args = list(action.items())[0]
-        args["headers"] = headers
+
+        if headers:
+            args["headers"] = headers
 
         # locate api endpoint
         for m in method.split("."):
@@ -228,9 +230,9 @@ class AsyncYamlRunner(YamlRunner):
         if XPACK_FEATURES is None:
             try:
                 xinfo = await self.client.xpack.info()
-                XPACK_FEATURES = set(
+                XPACK_FEATURES = {
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-                )
+                }
                 IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()
@@ -239,15 +241,17 @@ class AsyncYamlRunner(YamlRunner):
 
 
 @pytest_asyncio.fixture(scope="function")
-def async_runner(async_client):
-    return AsyncYamlRunner(async_client)
+def async_runner(async_client_factory):
+    return AsyncYamlRunner(async_client_factory)
 
 
 if RUN_ASYNC_REST_API_TESTS:
 
     @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
     async def test_rest_api_spec(test_spec, async_runner):
-        if test_spec.get("skip", False):
-            pytest.skip("Manually skipped in 'SKIP_TESTS'")
+        if test_spec.get("fail", False):
+            pytest.xfail("Manually marked as failing in 'FAILING_TESTS'")
+        elif test_spec.get("skip", False):
+            pytest.xfail("Manually skipped")
         async_runner.use_spec(test_spec)
         await async_runner.run()

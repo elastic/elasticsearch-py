@@ -1,7 +1,0 @@
-// docs/get.asciidoc:73
-
-[source, python]
-----
-resp = client.get(index="twitter", id="0", _source=["*.id", "retweeted"])
-print(resp)
-----

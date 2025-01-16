@@ -8,7 +8,7 @@ operations with it.
 [discrete]
 === Requirements
 
-* https://www.python.org/[Python] 3.6 or newer
+* https://www.python.org/[Python] 3.8 or newer
 * https://pip.pypa.io/en/stable/[`pip`], installed by default alongside Python
 
 [discrete]
@@ -36,7 +36,7 @@ from elasticsearch import Elasticsearch
 
 client = Elasticsearch(
     "https://...",  # Elasticsearch endpoint
-    api_key=('api-key-id', 'api-key-secret'),  # API key ID and secret
+    api_key="api_key",
 )
 ----
 

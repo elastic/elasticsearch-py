@@ -24,22 +24,30 @@ from .utils import _rewrite_parameters
 
 
 class LicenseClient(NamespacedClient):
+
     @_rewrite_parameters()
     def delete(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes licensing information for the cluster
+        Delete the license. When the license expires, your subscription level reverts
+        to Basic. If the operator privileges feature is enabled, only operator users
+        can use this API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -48,11 +56,20 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.delete",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -61,15 +78,17 @@ class LicenseClient(NamespacedClient):
         *,
         accept_enterprise: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves licensing information for the cluster
+        Get license information. Get information about your Elastic license including
+        its type, its status, when it was issued, and when it expires. NOTE: If the master
+        node is generating a new cluster state, the get license API may return a `404
+        Not Found` response. If you receive an unexpected 404 response after cluster
+        startup, wait a short period and retry the request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
@@ -80,6 +99,7 @@ class LicenseClient(NamespacedClient):
         :param local: Specifies whether to retrieve local information. The default value
             is `false`, which means the information is retrieved from the master node.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
@@ -96,7 +116,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -104,17 +129,16 @@ class LicenseClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the status of the basic license.
+        Get the basic license status.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -127,7 +151,12 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_basic_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -135,17 +164,16 @@ class LicenseClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about the status of the trial license.
+        Get the trial status.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -158,29 +186,40 @@ class LicenseClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.get_trial_status",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("license", "licenses"),
     )
     def post(
         self,
         *,
         acknowledge: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         license: t.Optional[t.Mapping[str, t.Any]] = None,
-        licenses: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        licenses: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates the license for the cluster.
+        Update the license. You can update your license at runtime without shutting down
+        your nodes. License updates take effect immediately. If the license you are installing
+        does not support all of the features that were available with your previous license,
+        however, you are notified in the response. You must then re-submit the API request
+        with the acknowledge parameter set to true. NOTE: If Elasticsearch security features
+        are enabled and you are installing a gold or higher license, you must enable
+        TLS on the transport networking layer before you install the license. If the
+        operator privileges feature is enabled, only operator users can use this API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
 
@@ -188,10 +227,14 @@ class LicenseClient(NamespacedClient):
         :param license:
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -200,19 +243,30 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if license is not None:
-            __body["license"] = license
-        if licenses is not None:
-            __body["licenses"] = licenses
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if license is not None:
+                __body["license"] = license
+            if licenses is not None:
+                __body["licenses"] = licenses
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="license.post",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -221,20 +275,30 @@ class LicenseClient(NamespacedClient):
         *,
         acknowledge: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Starts an indefinite basic license.
+        Start a basic license. Start an indefinite basic license, which gives access
+        to all the basic features. NOTE: In order to start a basic license, you must
+        not currently have a basic license. If the basic license does not support all
+        of the features that are available with your current license, however, you are
+        notified in the response. You must then re-submit the API request with the `acknowledge`
+        parameter set to `true`. To check the status of your basic license, use the get
+        basic license API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_basic"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -245,11 +309,20 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_basic",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -258,22 +331,28 @@ class LicenseClient(NamespacedClient):
         *,
         acknowledge: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         type_query_string: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        starts a limited time trial license.
+        Start a trial. Start a 30-day trial, which gives access to all subscription features.
+        NOTE: You are allowed to start a trial only if your cluster has not already activated
+        a trial for the current major product version. For example, if you have already
+        activated a trial for v8.0, you cannot start a new trial until v9.0. You can,
+        however, request an extended trial at https://www.elastic.co/trialextension.
+        To check the status of your trial, use the get trial status API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
+        :param master_timeout: Period to wait for a connection to the master node.
         :param type_query_string:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_trial"
         __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
@@ -284,11 +363,18 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if type_query_string is not None:
             __query["type_query_string"] = type_query_string
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="license.post_start_trial",
+            path_parts=__path_parts,
         )

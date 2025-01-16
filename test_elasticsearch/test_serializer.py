@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -16,12 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import sys
 import uuid
 from datetime import datetime
 from decimal import Decimal
 
 import pytest
+
+try:
+    import pyarrow as pa
+
+    from elasticsearch.serializer import PyArrowSerializer
+except ImportError:
+    pa = None
 
 try:
     import numpy as np
@@ -33,41 +38,42 @@ import re
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import SerializationError
-from elasticsearch.serializer import JSONSerializer, TextSerializer
+from elasticsearch.serializer import JSONSerializer, OrjsonSerializer, TextSerializer
 
 requires_numpy_and_pandas = pytest.mark.skipif(
-    np is None or pd is None, reason="Test requires numpy or pandas to be available"
+    np is None or pd is None, reason="Test requires numpy and pandas to be available"
 )
 
 
-def test_datetime_serialization():
-    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+@pytest.fixture(params=[JSONSerializer, OrjsonSerializer])
+def json_serializer(request: pytest.FixtureRequest):
+    yield request.param()
+
+
+def test_datetime_serialization(json_serializer):
+    assert b'{"d":"2010-10-01T02:30:00"}' == json_serializer.dumps(
         {"d": datetime(2010, 10, 1, 2, 30)}
     )
 
 
-def test_decimal_serialization():
-    requires_numpy_and_pandas()
-
-    if sys.version_info[:2] == (2, 6):
-        pytest.skip("Float rounding is broken in 2.6.")
-    assert b'{"d":3.8}' == JSONSerializer().dumps({"d": Decimal("3.8")})
+@requires_numpy_and_pandas
+def test_decimal_serialization(json_serializer):
+    assert b'{"d":3.8}' == json_serializer.dumps({"d": Decimal("3.8")})
 
 
-def test_uuid_serialization():
-    assert b'{"d":"00000000-0000-0000-0000-000000000003"}' == JSONSerializer().dumps(
+def test_uuid_serialization(json_serializer):
+    assert b'{"d":"00000000-0000-0000-0000-000000000003"}' == json_serializer.dumps(
         {"d": uuid.UUID("00000000-0000-0000-0000-000000000003")}
     )
 
 
 @requires_numpy_and_pandas
-def test_serializes_numpy_bool():
-    assert b'{"d":true}' == JSONSerializer().dumps({"d": np.bool_(True)})
+def test_serializes_numpy_bool(json_serializer):
+    assert b'{"d":true}' == json_serializer.dumps({"d": np.bool_(True)})
 
 
 @requires_numpy_and_pandas
-def test_serializes_numpy_integers():
-    ser = JSONSerializer()
+def test_serializes_numpy_integers(json_serializer):
     for np_type in (
         np.int_,
         np.int8,
@@ -75,7 +81,7 @@ def test_serializes_numpy_integers():
         np.int32,
         np.int64,
     ):
-        assert ser.dumps({"d": np_type(-1)}) == b'{"d":-1}'
+        assert json_serializer.dumps({"d": np_type(-1)}) == b'{"d":-1}'
 
     for np_type in (
         np.uint8,
@@ -83,91 +89,113 @@ def test_serializes_numpy_integers():
         np.uint32,
         np.uint64,
     ):
-        assert ser.dumps({"d": np_type(1)}) == b'{"d":1}'
+        assert json_serializer.dumps({"d": np_type(1)}) == b'{"d":1}'
 
 
 @requires_numpy_and_pandas
-def test_serializes_numpy_floats():
-    ser = JSONSerializer()
+def test_serializes_numpy_floats(json_serializer):
     for np_type in (
-        np.float_,
         np.float32,
         np.float64,
     ):
-        assert re.search(rb'^{"d":1\.2[\d]*}$', ser.dumps({"d": np_type(1.2)}))
+        assert re.search(
+            rb'^{"d":1\.2[\d]*}$', json_serializer.dumps({"d": np_type(1.2)})
+        )
 
 
 @requires_numpy_and_pandas
-def test_serializes_numpy_datetime():
-    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+def test_serializes_numpy_datetime(json_serializer):
+    assert b'{"d":"2010-10-01T02:30:00"}' == json_serializer.dumps(
         {"d": np.datetime64("2010-10-01T02:30:00")}
     )
 
 
 @requires_numpy_and_pandas
-def test_serializes_numpy_ndarray():
-    assert b'{"d":[0,0,0,0,0]}' == JSONSerializer().dumps(
+def test_serializes_numpy_ndarray(json_serializer):
+    assert b'{"d":[0,0,0,0,0]}' == json_serializer.dumps(
         {"d": np.zeros((5,), dtype=np.uint8)}
     )
     # This isn't useful for Elasticsearch, just want to make sure it works.
-    assert b'{"d":[[0,0],[0,0]]}' == JSONSerializer().dumps(
+    assert b'{"d":[[0,0],[0,0]]}' == json_serializer.dumps(
         {"d": np.zeros((2, 2), dtype=np.uint8)}
     )
 
 
 @requires_numpy_and_pandas
 def test_serializes_numpy_nan_to_nan():
-    assert b'{"d":NaN}' == JSONSerializer().dumps({"d": np.nan})
+    assert b'{"d":NaN}' == JSONSerializer().dumps({"d": float("NaN")})
+    # NaN is invalid JSON, and orjson silently converts it to null
+    assert b'{"d":null}' == OrjsonSerializer().dumps({"d": float("NaN")})
 
 
 @requires_numpy_and_pandas
-def test_serializes_pandas_timestamp():
-    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+def test_serializes_pandas_timestamp(json_serializer):
+    assert b'{"d":"2010-10-01T02:30:00"}' == json_serializer.dumps(
         {"d": pd.Timestamp("2010-10-01T02:30:00")}
     )
 
 
 @requires_numpy_and_pandas
-def test_serializes_pandas_series():
-    assert b'{"d":["a","b","c","d"]}' == JSONSerializer().dumps(
+def test_serializes_pandas_series(json_serializer):
+    assert b'{"d":["a","b","c","d"]}' == json_serializer.dumps(
         {"d": pd.Series(["a", "b", "c", "d"])}
     )
 
 
 @requires_numpy_and_pandas
 @pytest.mark.skipif(not hasattr(pd, "NA"), reason="pandas.NA is required")
-def test_serializes_pandas_na():
-    assert b'{"d":null}' == JSONSerializer().dumps({"d": pd.NA})
+def test_serializes_pandas_na(json_serializer):
+    assert b'{"d":null}' == json_serializer.dumps({"d": pd.NA})
 
 
 @requires_numpy_and_pandas
 @pytest.mark.skipif(not hasattr(pd, "NaT"), reason="pandas.NaT required")
-def test_raises_serialization_error_pandas_nat():
+def test_raises_serialization_error_pandas_nat(json_serializer):
     with pytest.raises(SerializationError):
-        JSONSerializer().dumps({"d": pd.NaT})
+        json_serializer.dumps({"d": pd.NaT})
 
 
 @requires_numpy_and_pandas
-def test_serializes_pandas_category():
+def test_serializes_pandas_category(json_serializer):
     cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
-    assert b'{"d":["a","c","b","a"]}' == JSONSerializer().dumps({"d": cat})
+    assert b'{"d":["a","c","b","a"]}' == json_serializer.dumps({"d": cat})
 
     cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
-    assert b'{"d":[1,2,3]}' == JSONSerializer().dumps({"d": cat})
+    assert b'{"d":[1,2,3]}' == json_serializer.dumps({"d": cat})
 
 
-def test_json_raises_serialization_error_on_dump_error():
-    with pytest.raises(SerializationError):
-        JSONSerializer().dumps(object())
+@pytest.mark.skipif(pa is None, reason="Test requires pyarrow to be available")
+def test_pyarrow_loads():
+    data = [
+        pa.array([1, 2, 3, 4]),
+        pa.array(["foo", "bar", "baz", None]),
+        pa.array([True, None, False, True]),
+    ]
+    batch = pa.record_batch(data, names=["f0", "f1", "f2"])
+    sink = pa.BufferOutputStream()
+    with pa.ipc.new_stream(sink, batch.schema) as writer:
+        writer.write_batch(batch)
+
+    serializer = PyArrowSerializer()
+    assert serializer.loads(sink.getvalue()).to_pydict() == {
+        "f0": [1, 2, 3, 4],
+        "f1": ["foo", "bar", "baz", None],
+        "f2": [True, None, False, True],
+    }
 
 
-def test_raises_serialization_error_on_load_error():
+def test_json_raises_serialization_error_on_dump_error(json_serializer):
     with pytest.raises(SerializationError):
-        JSONSerializer().loads(object())
+        json_serializer.dumps(object())
+
+
+def test_raises_serialization_error_on_load_error(json_serializer):
     with pytest.raises(SerializationError):
-        JSONSerializer().loads("")
+        json_serializer.loads(object())
     with pytest.raises(SerializationError):
-        JSONSerializer().loads("{{")
+        json_serializer.loads("")
+    with pytest.raises(SerializationError):
+        json_serializer.loads("{{")
 
 
 def test_strings_are_left_untouched():

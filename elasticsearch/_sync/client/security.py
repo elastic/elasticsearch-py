@@ -24,57 +24,87 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SecurityClient(NamespacedClient):
+
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("grant_type", "access_token", "password", "username"),
     )
     def activate_user_profile(
         self,
         *,
-        grant_type: t.Union["t.Literal['access_token', 'password']", str],
+        grant_type: t.Optional[
+            t.Union[str, t.Literal["access_token", "password"]]
+        ] = None,
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         username: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates the user profile on behalf of another user.
+        Activate a user profile. Create or update a user profile on behalf of another
+        user. NOTE: The user profile feature is designed only for use by Kibana and Elastic's
+        Observability, Enterprise Search, and Elastic Security solutions. Individual
+        users and external applications should not call this API directly. The calling
+        application must have either an `access_token` or a combination of `username`
+        and `password` for the user that the profile document is intended for. Elastic
+        reserves the right to change or remove this feature in future releases without
+        prior notice. This API creates or updates a profile document for end users with
+        information that is extracted from the user's authentication object including
+        `username`, `full_name,` `roles`, and the authentication realm. For example,
+        in the JWT `access_token` case, the profile user's `username` is extracted from
+        the JWT token claim pointed to by the `claims.principal` setting of the JWT realm
+        that authenticated the token. When updating a profile document, the API enables
+        the document if it was disabled. Any updates do not change existing content for
+        either the `labels` or `data` fields.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-activate-user-profile.html>`_
 
-        :param grant_type:
-        :param access_token:
-        :param password:
-        :param username:
+        :param grant_type: The type of grant.
+        :param access_token: The user's Elasticsearch access token or JWT. Both `access`
+            and `id` JWT token types are supported and they depend on the underlying
+            JWT realm configuration. If you specify the `access_token` grant type, this
+            parameter is required. It is not valid with other grant types.
+        :param password: The user's password. If you specify the `password` grant type,
+            this parameter is required. It is not valid with other grant types.
+        :param username: The username that identifies the user. If you specify the `password`
+            grant type, this parameter is required. It is not valid with other grant
+            types.
         """
-        if grant_type is None:
+        if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_activate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if grant_type is not None:
-            __body["grant_type"] = grant_type
-        if access_token is not None:
-            __body["access_token"] = access_token
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if password is not None:
-            __body["password"] = password
         if pretty is not None:
             __query["pretty"] = pretty
-        if username is not None:
-            __body["username"] = username
+        if not __body:
+            if grant_type is not None:
+                __body["grant_type"] = grant_type
+            if access_token is not None:
+                __body["access_token"] = access_token
+            if password is not None:
+                __body["password"] = password
+            if username is not None:
+                __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.activate_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -82,18 +112,21 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables authentication as a user and retrieve information about the authenticated
-        user.
+        Authenticate a user. Authenticates a user and returns information about the authenticated
+        user. Include the user information in a [basic auth header](https://en.wikipedia.org/wiki/Basic_access_authentication).
+        A successful call returns a JSON structure that shows user information such as
+        their username, the roles that are assigned to the user, any assigned metadata,
+        and information about the realms that authenticated and authorized the user.
+        If the user cannot be authenticated, this API returns a 401 status code.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_authenticate"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -106,30 +139,239 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.authenticate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("names",),
+    )
+    def bulk_delete_role(
+        self,
+        *,
+        names: t.Optional[t.Sequence[str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Bulk delete roles. The role management APIs are generally the preferred way to
+        manage roles, rather than using file-based role management. The bulk delete roles
+        API cannot delete roles that are defined in roles files.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-bulk-delete-role.html>`_
+
+        :param names: An array of role names to delete
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if names is None and body is None:
+            raise ValueError("Empty value passed for parameter 'names'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/role"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if names is not None:
+                __body["names"] = names
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_delete_role",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("roles",),
+    )
+    def bulk_put_role(
+        self,
+        *,
+        roles: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Bulk create or update roles. The role management APIs are generally the preferred
+        way to manage roles, rather than using file-based role management. The bulk create
+        or update roles API cannot update roles that are defined in roles files.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-bulk-put-role.html>`_
+
+        :param roles: A dictionary of role name to RoleDescriptor objects to add or update
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if roles is None and body is None:
+            raise ValueError("Empty value passed for parameter 'roles'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/role"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if roles is not None:
+                __body["roles"] = roles
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_put_role",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("ids", "expiration", "metadata", "role_descriptors"),
+    )
+    def bulk_update_api_keys(
+        self,
+        *,
+        ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Bulk update API keys. Update the attributes for multiple API keys. IMPORTANT:
+        It is not possible to use an API key as the authentication credential for this
+        API. To update API keys, the owner user's credentials are required. This API
+        is similar to the update API key API but enables you to apply the same update
+        to multiple API keys in one API call. This operation can greatly improve performance
+        over making individual updates. It is not possible to update expired or invalidated
+        API keys. This API supports updates to API key access scope, metadata and expiration.
+        The access scope of each API key is derived from the `role_descriptors` you specify
+        in the request and a snapshot of the owner user's permissions at the time of
+        the request. The snapshot of the owner's permissions is updated automatically
+        on every call. IMPORTANT: If you don't specify `role_descriptors` in the request,
+        a call to this API might still change an API key's access scope. This change
+        can occur if the owner user's permissions have changed since the API key was
+        created or last modified. A successful request returns a JSON structure that
+        contains the IDs of all updated API keys, the IDs of API keys that already had
+        the requested changes and did not require an update, and error details for any
+        failed update.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-bulk-update-api-keys.html>`_
+
+        :param ids: The API key identifiers.
+        :param expiration: Expiration time for the API keys. By default, API keys never
+            expire. This property can be omitted to leave the value unchanged.
+        :param metadata: Arbitrary nested metadata to associate with the API keys. Within
+            the `metadata` object, top-level keys beginning with an underscore (`_`)
+            are reserved for system usage. Any information specified with this parameter
+            fully replaces metadata previously associated with the API key.
+        :param role_descriptors: The role descriptors to assign to the API keys. An API
+            key's effective permissions are an intersection of its assigned privileges
+            and the point-in-time snapshot of permissions of the owner user. You can
+            assign new privileges by specifying them in this parameter. To remove assigned
+            privileges, supply the `role_descriptors` parameter as an empty object `{}`.
+            If an API key has no assigned privileges, it inherits the owner user's full
+            permissions. The snapshot of the owner's permissions is always updated, whether
+            you supply the `role_descriptors` parameter. The structure of a role descriptor
+            is the same as the request for the create API keys API.
+        """
+        if ids is None and body is None:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/api_key/_bulk_update"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if ids is not None:
+                __body["ids"] = ids
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if role_descriptors is not None:
+                __body["role_descriptors"] = role_descriptors
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.bulk_update_api_keys",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("password", "password_hash"),
     )
     def change_password(
         self,
         *,
         username: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Changes the passwords of users in the native realm and built-in users.
+        Change passwords. Change the passwords of users in the native realm and built-in
+        users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-change-password.html>`_
 
@@ -145,45 +387,54 @@ class SecurityClient(NamespacedClient):
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
+        __path_parts: t.Dict[str, str]
         if username not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(username)}/_password"
+            __path_parts = {"username": _quote(username)}
+            __path = f'/_security/user/{__path_parts["username"]}/_password'
         else:
+            __path_parts = {}
             __path = "/_security/user/_password"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if password is not None:
-            __body["password"] = password
-        if password_hash is not None:
-            __body["password_hash"] = password_hash
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
+        if not __body:
+            if password is not None:
+                __body["password"] = password
+            if password_hash is not None:
+                __body["password_hash"] = password_hash
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.change_password",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def clear_api_key_cache(
         self,
         *,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        ids: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear a subset or all entries from the API key cache.
+        Clear the API key cache. Evict a subset of all entries from the API key cache.
+        The cache is also automatically cleared on state changes of the security index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
 
@@ -192,7 +443,8 @@ class SecurityClient(NamespacedClient):
         """
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ids'")
-        __path = f"/_security/api_key/{_quote(ids)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"ids": _quote(ids)}
+        __path = f'/_security/api_key/{__path_parts["ids"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -204,7 +456,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_api_key_cache",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -213,14 +470,14 @@ class SecurityClient(NamespacedClient):
         *,
         application: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts application privileges from the native application privileges cache.
+        Clear the privileges cache. Evict privileges from the native application privilege
+        cache. The cache is also automatically cleared for applications that have their
+        privileges updated.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
 
@@ -228,7 +485,8 @@ class SecurityClient(NamespacedClient):
         """
         if application in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'application'")
-        __path = f"/_security/privilege/{_quote(application)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"application": _quote(application)}
+        __path = f'/_security/privilege/{__path_parts["application"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -240,25 +498,28 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def clear_cached_realms(
         self,
         *,
-        realms: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        realms: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        usernames: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        usernames: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts users from the user cache. Can completely clear the cache or evict specific
-        users.
+        Clear the user cache. Evict users from the user cache. You can completely clear
+        the cache or evict specific users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-cache.html>`_
 
@@ -267,7 +528,8 @@ class SecurityClient(NamespacedClient):
         """
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realms'")
-        __path = f"/_security/realm/{_quote(realms)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"realms": _quote(realms)}
+        __path = f'/_security/realm/{__path_parts["realms"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -281,23 +543,26 @@ class SecurityClient(NamespacedClient):
             __query["usernames"] = usernames
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_realms",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def clear_cached_roles(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts roles from the native role cache.
+        Clear the roles cache. Evict roles from the native role cache.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-role-cache.html>`_
 
@@ -305,7 +570,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -317,7 +583,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_roles",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -326,16 +597,15 @@ class SecurityClient(NamespacedClient):
         *,
         namespace: str,
         service: str,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evicts tokens from the service account token caches.
+        Clear service account token caches. Evict a subset of all entries from the service
+        account token caches.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-service-token-caches.html>`_
 
@@ -349,7 +619,12 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}/_clear_cache"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+            "name": _quote(name),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}/_clear_cache'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -361,31 +636,39 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.clear_cached_service_tokens",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("expiration", "metadata", "name", "role_descriptors"),
     )
     def create_api_key(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        expiration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an API key for access without requiring basic authentication.
+        Create an API key. Create an API key for access without requiring basic authentication.
+        A successful request returns a JSON structure that contains the API key, its
+        unique id, and its name. If applicable, it also returns expiration information
+        for the API key in milliseconds. NOTE: By default, API keys never expire. You
+        can specify expiration information when you create the API keys.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-api-key.html>`_
 
@@ -407,30 +690,122 @@ class SecurityClient(NamespacedClient):
             is the same as the request for create role API. For more details, see create
             or update roles API.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if expiration is not None:
-            __body["expiration"] = expiration
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if metadata is not None:
-            __body["metadata"] = metadata
-        if name is not None:
-            __body["name"] = name
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        if role_descriptors is not None:
-            __body["role_descriptors"] = role_descriptors
+        if not __body:
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if name is not None:
+                __body["name"] = name
+            if role_descriptors is not None:
+                __body["role_descriptors"] = role_descriptors
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.create_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("access", "name", "expiration", "metadata"),
+    )
+    def create_cross_cluster_api_key(
+        self,
+        *,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Create a cross-cluster API key. Create an API key of the `cross_cluster` type
+        for the API key based remote cluster access. A `cross_cluster` API key cannot
+        be used to authenticate through the REST interface. IMPORTANT: To authenticate
+        this request you must use a credential that is not an API key. Even if you use
+        an API key that has the required privilege, the API returns an error. Cross-cluster
+        API keys are created by the Elasticsearch API key service, which is automatically
+        enabled. NOTE: Unlike REST API keys, a cross-cluster API key does not capture
+        permissions of the authenticated user. The API key’s effective permission is
+        exactly as specified with the `access` property. A successful request returns
+        a JSON structure that contains the API key, its unique ID, and its name. If applicable,
+        it also returns expiration information for the API key in milliseconds. By default,
+        API keys never expire. You can specify expiration information when you create
+        the API keys. Cross-cluster API keys can only be updated with the update cross-cluster
+        API key API. Attempting to update them with the update REST API key API or the
+        bulk update REST API keys API will result in an error.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-cross-cluster-api-key.html>`_
+
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross-cluster search and cross-cluster replication. At
+            least one of them must be specified. NOTE: No explicit privileges should
+            be specified for either search or replication access. The creation process
+            automatically converts the access specification to a role descriptor which
+            has relevant privileges assigned accordingly.
+        :param name: Specifies the name for this API key.
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage.
+        """
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        if name is None and body is None:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/cross_cluster/api_key"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if name is not None:
+                __body["name"] = name
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.create_cross_cluster_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -441,17 +816,16 @@ class SecurityClient(NamespacedClient):
         service: str,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a service account token for access without requiring basic authentication.
+        Create a service account token. Create a service accounts token for access without
+        requiring basic authentication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
 
@@ -466,15 +840,22 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
+        __path_parts: t.Dict[str, str]
         if (
             namespace not in SKIP_IN_PATH
             and service not in SKIP_IN_PATH
             and name not in SKIP_IN_PATH
         ):
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+            __path_parts = {
+                "namespace": _quote(namespace),
+                "service": _quote(service),
+                "name": _quote(name),
+            }
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}'
             __method = "PUT"
         elif namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token"
+            __path_parts = {"namespace": _quote(namespace), "service": _quote(service)}
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token'
             __method = "POST"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
@@ -491,7 +872,80 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            __method, __path, params=__query, headers=__headers
+            __method,
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.create_service_token",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("x509_certificate_chain",),
+    )
+    def delegate_pki(
+        self,
+        *,
+        x509_certificate_chain: t.Optional[t.Sequence[str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Delegate PKI authentication. This API implements the exchange of an X509Certificate
+        chain for an Elasticsearch access token. The certificate chain is validated,
+        according to RFC 5280, by sequentially considering the trust configuration of
+        every installed PKI realm that has `delegation.enabled` set to `true`. A successfully
+        trusted client certificate is also subject to the validation of the subject distinguished
+        name according to thw `username_pattern` of the respective realm. This API is
+        called by smart and trusted proxies, such as Kibana, which terminate the user's
+        TLS session but still want to authenticate the user by using a PKI realm—-​as
+        if the user connected directly to Elasticsearch. IMPORTANT: The association between
+        the subject public key in the target certificate and the corresponding private
+        key is not validated. This is part of the TLS authentication process and it is
+        delegated to the proxy that calls this API. The proxy is trusted to have performed
+        the TLS authentication and this API translates that authentication into an Elasticsearch
+        access token.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delegate-pki-authentication.html>`_
+
+        :param x509_certificate_chain: The X509Certificate chain, which is represented
+            as an ordered string array. Each string in the array is a base64-encoded
+            (Section 4 of RFC4648 - not base64url-encoded) of the certificate's DER encoding.
+            The first element is the target certificate that contains the subject distinguished
+            name that is requesting access. This may be followed by additional certificates;
+            each subsequent certificate is used to certify the previous one.
+        """
+        if x509_certificate_chain is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameter 'x509_certificate_chain'"
+            )
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/delegate_pki"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if x509_certificate_chain is not None:
+                __body["x509_certificate_chain"] = x509_certificate_chain
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.delegate_pki",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -499,19 +953,17 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         application: str,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes application privileges.
+        Delete application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-privilege.html>`_
 
@@ -525,7 +977,13 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'application'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {
+            "application": _quote(application),
+            "name": _quote(name),
+        }
+        __path = (
+            f'/_security/privilege/{__path_parts["application"]}/{__path_parts["name"]}'
+        )
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -539,7 +997,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -548,17 +1011,15 @@ class SecurityClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes roles in the native realm.
+        Delete roles. Delete roles in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role.html>`_
 
@@ -569,7 +1030,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -583,7 +1045,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -592,17 +1059,15 @@ class SecurityClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes role mappings.
+        Delete role mappings.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role-mapping.html>`_
 
@@ -613,7 +1078,8 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role_mapping/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -627,7 +1093,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -638,17 +1109,16 @@ class SecurityClient(NamespacedClient):
         service: str,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a service account token.
+        Delete service account tokens. Delete service account tokens for a service in
+        a specified namespace.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-service-token.html>`_
 
@@ -665,7 +1135,12 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'service'")
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+            "name": _quote(name),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential/token/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -679,7 +1154,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_service_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -688,17 +1168,15 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes users from the native realm.
+        Delete users. Delete users from the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-user.html>`_
 
@@ -709,7 +1187,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -723,7 +1202,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -732,17 +1216,15 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Disables users in the native realm.
+        Disable users. Disable users in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user.html>`_
 
@@ -753,7 +1235,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}/_disable"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -767,7 +1250,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.disable_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -776,28 +1264,35 @@ class SecurityClient(NamespacedClient):
         *,
         uid: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Disables a user profile so it's not visible in user profile searches.
+        Disable a user profile. Disable user profiles so that they are not visible in
+        user profile searches. NOTE: The user profile feature is designed only for use
+        by Kibana and Elastic's Observability, Enterprise Search, and Elastic Security
+        solutions. Individual users and external applications should not call this API
+        directly. Elastic reserves the right to change or remove this feature in future
+        releases without prior notice. When you activate a user profile, its automatically
+        enabled and visible in user profile searches. You can use the disable user profile
+        API to disable a user profile so it’s not visible in these searches. To re-enable
+        a disabled user profile, use the enable user profile API .
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user-profile.html>`_
 
         :param uid: Unique identifier for the user profile.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if 'wait_for' then wait for a refresh to
-            make this operation visible to search, if 'false' do nothing with refreshes.
+            this operation visible to search. If 'wait_for', it waits for a refresh to
+            make this operation visible to search. If 'false', it does nothing with refreshes.
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_disable"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_disable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -811,7 +1306,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.disable_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -820,17 +1320,15 @@ class SecurityClient(NamespacedClient):
         *,
         username: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables users in the native realm.
+        Enable users. Enable users in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user.html>`_
 
@@ -841,7 +1339,8 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}/_enable"
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -855,7 +1354,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enable_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -864,28 +1368,34 @@ class SecurityClient(NamespacedClient):
         *,
         uid: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Enables a user profile so it's visible in user profile searches.
+        Enable a user profile. Enable user profiles to make them visible in user profile
+        searches. NOTE: The user profile feature is designed only for use by Kibana and
+        Elastic's Observability, Enterprise Search, and Elastic Security solutions. Individual
+        users and external applications should not call this API directly. Elastic reserves
+        the right to change or remove this feature in future releases without prior notice.
+        When you activate a user profile, it's automatically enabled and visible in user
+        profile searches. If you later disable the user profile, you can use the enable
+        user profile API to make the profile visible in these searches again.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user-profile.html>`_
 
-        :param uid: Unique identifier for the user profile.
+        :param uid: A unique identifier for the user profile.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if 'wait_for' then wait for a refresh to
-            make this operation visible to search, if 'false' do nothing with refreshes.
+            this operation visible to search. If 'wait_for', it waits for a refresh to
+            make this operation visible to search. If 'false', nothing is done with refreshes.
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_enable"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_enable'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -899,7 +1409,12 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enable_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -907,18 +1422,17 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a kibana instance to configure itself to communicate with a secured elasticsearch
-        cluster.
+        Enroll Kibana. Enable a Kibana instance to configure itself for communication
+        with a secured Elasticsearch cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/kibana"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -931,7 +1445,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enroll_kibana",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -939,17 +1458,17 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Allows a new node to enroll to an existing cluster with security enabled.
+        Enroll a node. Enroll a new node to allow it to join an existing cluster with
+        security features enabled.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/enroll/node"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -962,17 +1481,21 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.enroll_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_api_key(
         self,
         *,
+        active_only: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         id: t.Optional[str] = None,
         name: t.Optional[str] = None,
@@ -981,12 +1504,22 @@ class SecurityClient(NamespacedClient):
         realm_name: t.Optional[str] = None,
         username: t.Optional[str] = None,
         with_limited_by: t.Optional[bool] = None,
+        with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information for one or more API keys.
+        Get API key information. Retrieves information for one or more API keys. NOTE:
+        If you have only the `manage_own_api_key` privilege, this API returns only the
+        API keys that you own. If you have `read_security`, `manage_api_key` or greater
+        privileges (including `manage_security`), this API returns all API keys regardless
+        of ownership.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
 
+        :param active_only: A boolean flag that can be used to query API keys that are
+            currently active. An API key is considered active if it is neither invalidated,
+            nor expired at query time. You can specify this together with other parameters
+            such as `owner` or `name`. If `active_only` is false, the response will include
+            both active and inactive (expired or invalidated) keys.
         :param id: An API key id. This parameter cannot be used with any of `name`, `realm_name`
             or `username`.
         :param name: An API key name. This parameter cannot be used with any of `id`,
@@ -1002,9 +1535,14 @@ class SecurityClient(NamespacedClient):
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
+        :param with_profile_uid: Determines whether to also retrieve the profile uid,
+            for the API key owner principal, if it exists.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
+        if active_only is not None:
+            __query["active_only"] = active_only
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1025,9 +1563,16 @@ class SecurityClient(NamespacedClient):
             __query["username"] = username
         if with_limited_by is not None:
             __query["with_limited_by"] = with_limited_by
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1035,18 +1580,17 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves the list of cluster privileges and index privileges that are available
-        in this version of Elasticsearch.
+        Get builtin privileges. Get the list of cluster privileges and index privileges
+        that are available in this version of Elasticsearch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege/_builtin"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1059,7 +1603,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_builtin_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1067,27 +1616,29 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         application: t.Optional[str] = None,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves application privileges.
+        Get application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
 
         :param application: Application name
         :param name: Privilege name
         """
+        __path_parts: t.Dict[str, str]
         if application not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
-            __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+            __path_parts = {"application": _quote(application), "name": _quote(name)}
+            __path = f'/_security/privilege/{__path_parts["application"]}/{__path_parts["name"]}'
         elif application not in SKIP_IN_PATH:
-            __path = f"/_security/privilege/{_quote(application)}"
+            __path_parts = {"application": _quote(application)}
+            __path = f'/_security/privilege/{__path_parts["application"]}'
         else:
+            __path_parts = {}
             __path = "/_security/privilege"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1100,23 +1651,26 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_role(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves roles in the native realm.
+        Get roles. Get roles in the native realm.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
 
@@ -1124,9 +1678,12 @@ class SecurityClient(NamespacedClient):
             list. If you do not specify this parameter, the API returns information about
             all roles.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_security/role/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_security/role/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_security/role"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1139,23 +1696,29 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_role_mapping(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves role mappings.
+        Get role mappings. Role mappings define which roles are assigned to each user.
+        The role mapping APIs are generally the preferred way to manage role mappings
+        rather than using role mapping files. The get role mappings API cannot retrieve
+        role mappings that are defined in role mapping files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
 
@@ -1165,9 +1728,12 @@ class SecurityClient(NamespacedClient):
             mapping names as a comma-separated list. If you do not specify this parameter,
             the API returns information about all role mappings.
         """
+        __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
-            __path = f"/_security/role_mapping/{_quote(name)}"
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_security/role_mapping/{__path_parts["name"]}'
         else:
+            __path_parts = {}
             __path = "/_security/role_mapping"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1180,7 +1746,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1190,14 +1761,13 @@ class SecurityClient(NamespacedClient):
         namespace: t.Optional[str] = None,
         service: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about service accounts.
+        Get service accounts. Get a list of service accounts that match the provided
+        path parameters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
 
@@ -1207,11 +1777,15 @@ class SecurityClient(NamespacedClient):
         :param service: Name of the service name. Omit this parameter to retrieve information
             about all service accounts that belong to the specified `namespace`.
         """
+        __path_parts: t.Dict[str, str]
         if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}"
+            __path_parts = {"namespace": _quote(namespace), "service": _quote(service)}
+            __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}'
         elif namespace not in SKIP_IN_PATH:
-            __path = f"/_security/service/{_quote(namespace)}"
+            __path_parts = {"namespace": _quote(namespace)}
+            __path = f'/_security/service/{__path_parts["namespace"]}'
         else:
+            __path_parts = {}
             __path = "/_security/service"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1224,7 +1798,12 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_service_accounts",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1234,14 +1813,12 @@ class SecurityClient(NamespacedClient):
         namespace: str,
         service: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information of all service credentials for a service account.
+        Get service account credentials.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-credentials.html>`_
 
@@ -1252,7 +1829,11 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
-        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential"
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+        }
+        __path = f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}/credential'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1264,23 +1845,78 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_service_credentials",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def get_settings(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Get security index settings. Get the user-configurable settings for the security
+        internal index (`.security` and associated indices).
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-settings.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/settings"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_settings",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "grant_type",
+            "kerberos_ticket",
+            "password",
+            "refresh_token",
+            "scope",
+            "username",
+        ),
     )
     def get_token(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         grant_type: t.Optional[
             t.Union[
-                "t.Literal['_kerberos', 'client_credentials', 'password', 'refresh_token']",
                 str,
+                t.Literal[
+                    "_kerberos", "client_credentials", "password", "refresh_token"
+                ],
             ]
         ] = None,
         human: t.Optional[bool] = None,
@@ -1290,9 +1926,10 @@ class SecurityClient(NamespacedClient):
         refresh_token: t.Optional[str] = None,
         scope: t.Optional[str] = None,
         username: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a bearer token for access without requiring basic authentication.
+        Get a token. Create a bearer token for access without requiring basic authentication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html>`_
 
@@ -1303,51 +1940,55 @@ class SecurityClient(NamespacedClient):
         :param scope:
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if grant_type is not None:
-            __body["grant_type"] = grant_type
         if human is not None:
             __query["human"] = human
-        if kerberos_ticket is not None:
-            __body["kerberos_ticket"] = kerberos_ticket
-        if password is not None:
-            __body["password"] = password
         if pretty is not None:
             __query["pretty"] = pretty
-        if refresh_token is not None:
-            __body["refresh_token"] = refresh_token
-        if scope is not None:
-            __body["scope"] = scope
-        if username is not None:
-            __body["username"] = username
+        if not __body:
+            if grant_type is not None:
+                __body["grant_type"] = grant_type
+            if kerberos_ticket is not None:
+                __body["kerberos_ticket"] = kerberos_ticket
+            if password is not None:
+                __body["password"] = password
+            if refresh_token is not None:
+                __body["refresh_token"] = refresh_token
+            if scope is not None:
+                __body["scope"] = scope
+            if username is not None:
+                __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.get_token",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_user(
         self,
         *,
-        username: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        username: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about users in the native realm and built-in users.
+        Get users. Get information about users in the native realm and built-in users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user.html>`_
 
@@ -1357,9 +1998,12 @@ class SecurityClient(NamespacedClient):
         :param with_profile_uid: If true will return the User Profile ID for a user,
             if any.
         """
+        __path_parts: t.Dict[str, str]
         if username not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(username)}"
+            __path_parts = {"username": _quote(username)}
+            __path = f'/_security/user/{__path_parts["username"]}'
         else:
+            __path_parts = {}
             __path = "/_security/user"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1374,7 +2018,12 @@ class SecurityClient(NamespacedClient):
             __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -1383,16 +2032,14 @@ class SecurityClient(NamespacedClient):
         *,
         application: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         priviledge: t.Optional[str] = None,
         username: t.Optional[t.Union[None, str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves security privileges for the logged in user.
+        Get user privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
 
@@ -1403,6 +2050,7 @@ class SecurityClient(NamespacedClient):
             the API returns information about all privileges for the requested application.
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/user/_privileges"
         __query: t.Dict[str, t.Any] = {}
         if application is not None:
@@ -1421,36 +2069,44 @@ class SecurityClient(NamespacedClient):
             __query["username"] = username
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     def get_user_profile(
         self,
         *,
-        uid: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        uid: t.Union[str, t.Sequence[str]],
+        data: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves user profiles for the given unique ID(s).
+        Get a user profile. Get a user's profile using the unique profile ID. NOTE: The
+        user profile feature is designed only for use by Kibana and Elastic's Observability,
+        Enterprise Search, and Elastic Security solutions. Individual users and external
+        applications should not call this API directly. Elastic reserves the right to
+        change or remove this feature in future releases without prior notice.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-profile.html>`_
 
         :param uid: A unique identifier for the user profile.
-        :param data: List of filters for the `data` field of the profile document. To
-            return all content use `data=*`. To return a subset of content use `data=<key>`
-            to retrieve content nested under the specified `<key>`. By default returns
-            no `data` content.
+        :param data: A comma-separated list of filters for the `data` field of the profile
+            document. To return all content use `data=*`. To return a subset of content
+            use `data=<key>` to retrieve content nested under the specified `<key>`.
+            By default returns no `data` content.
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}"
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}'
         __query: t.Dict[str, t.Any] = {}
         if data is not None:
             __query["data"] = data
@@ -1464,31 +2120,58 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "api_key",
+            "grant_type",
+            "access_token",
+            "password",
+            "run_as",
+            "username",
+        ),
         ignore_deprecated_options={"api_key"},
     )
     def grant_api_key(
         self,
         *,
-        api_key: t.Mapping[str, t.Any],
-        grant_type: t.Union["t.Literal['access_token', 'password']", str],
+        api_key: t.Optional[t.Mapping[str, t.Any]] = None,
+        grant_type: t.Optional[
+            t.Union[str, t.Literal["access_token", "password"]]
+        ] = None,
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         run_as: t.Optional[str] = None,
         username: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates an API key on behalf of another user.
+        Grant an API key. Create an API key on behalf of another user. This API is similar
+        to the create API keys API, however it creates the API key for a user that is
+        different than the user that runs the API. The caller must have authentication
+        credentials (either an access token, or a username and password) for the user
+        on whose behalf the API key will be created. It is not possible to use this API
+        to create an API key without that user’s credentials. The user, for whom the
+        authentication credentials is provided, can optionally "run as" (impersonate)
+        another user. In this case, the API key will be created on behalf of the impersonated
+        user. This API is intended be used by applications that need to create and manage
+        API keys for end users, but cannot guarantee that those users have permission
+        to create API keys on their own behalf. A successful grant API key API call returns
+        a JSON structure that contains the API key, its unique id, and its name. If applicable,
+        it also returns expiration information for the API key in milliseconds. By default,
+        API keys never expire. You can specify expiration information when you create
+        the API keys.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
 
@@ -1505,77 +2188,132 @@ class SecurityClient(NamespacedClient):
             grant type, this parameter is required. It is not valid with other grant
             types.
         """
-        if api_key is None:
+        if api_key is None and body is None:
             raise ValueError("Empty value passed for parameter 'api_key'")
-        if grant_type is None:
+        if grant_type is None and body is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key/grant"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if api_key is not None:
-            __body["api_key"] = api_key
-        if grant_type is not None:
-            __body["grant_type"] = grant_type
-        if access_token is not None:
-            __body["access_token"] = access_token
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if password is not None:
-            __body["password"] = password
         if pretty is not None:
             __query["pretty"] = pretty
-        if run_as is not None:
-            __body["run_as"] = run_as
-        if username is not None:
-            __body["username"] = username
+        if not __body:
+            if api_key is not None:
+                __body["api_key"] = api_key
+            if grant_type is not None:
+                __body["grant_type"] = grant_type
+            if access_token is not None:
+                __body["access_token"] = access_token
+            if password is not None:
+                __body["password"] = password
+            if run_as is not None:
+                __body["run_as"] = run_as
+            if username is not None:
+                __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.grant_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("application", "cluster", "index"),
     )
     def has_privileges(
         self,
         *,
         user: t.Optional[str] = None,
-        application: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        application: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         cluster: t.Optional[
-            t.Union[
-                t.List[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ]
-                ],
-                t.Tuple[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
+            t.Sequence[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "all",
+                        "cancel_task",
+                        "create_snapshot",
+                        "cross_cluster_replication",
+                        "cross_cluster_search",
+                        "delegate_pki",
+                        "grant_api_key",
+                        "manage",
+                        "manage_api_key",
+                        "manage_autoscaling",
+                        "manage_behavioral_analytics",
+                        "manage_ccr",
+                        "manage_data_frame_transforms",
+                        "manage_data_stream_global_retention",
+                        "manage_enrich",
+                        "manage_ilm",
+                        "manage_index_templates",
+                        "manage_inference",
+                        "manage_ingest_pipelines",
+                        "manage_logstash_pipelines",
+                        "manage_ml",
+                        "manage_oidc",
+                        "manage_own_api_key",
+                        "manage_pipeline",
+                        "manage_rollup",
+                        "manage_saml",
+                        "manage_search_application",
+                        "manage_search_query_rules",
+                        "manage_search_synonyms",
+                        "manage_security",
+                        "manage_service_account",
+                        "manage_slm",
+                        "manage_token",
+                        "manage_transform",
+                        "manage_user_profile",
+                        "manage_watcher",
+                        "monitor",
+                        "monitor_data_frame_transforms",
+                        "monitor_data_stream_global_retention",
+                        "monitor_enrich",
+                        "monitor_inference",
+                        "monitor_ml",
+                        "monitor_rollup",
+                        "monitor_snapshot",
+                        "monitor_stats",
+                        "monitor_text_structure",
+                        "monitor_transform",
+                        "monitor_watcher",
+                        "none",
+                        "post_behavioral_analytics_event",
+                        "read_ccr",
+                        "read_fleet_secrets",
+                        "read_ilm",
+                        "read_pipeline",
+                        "read_security",
+                        "read_slm",
+                        "transport_client",
+                        "write_connector_secrets",
+                        "write_fleet_secrets",
                     ],
-                    ...,
-                ],
+                ]
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        index: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        index: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Determines whether the specified user has a specified list of privileges.
+        Check user privileges. Determine whether the specified user has a specified list
+        of privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges.html>`_
 
@@ -1584,67 +2322,77 @@ class SecurityClient(NamespacedClient):
         :param cluster: A list of the cluster privileges that you want to check.
         :param index:
         """
+        __path_parts: t.Dict[str, str]
         if user not in SKIP_IN_PATH:
-            __path = f"/_security/user/{_quote(user)}/_has_privileges"
+            __path_parts = {"user": _quote(user)}
+            __path = f'/_security/user/{__path_parts["user"]}/_has_privileges'
         else:
+            __path_parts = {}
             __path = "/_security/user/_has_privileges"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if application is not None:
-            __body["application"] = application
-        if cluster is not None:
-            __body["cluster"] = cluster
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if index is not None:
-            __body["index"] = index
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if application is not None:
+                __body["application"] = application
+            if cluster is not None:
+                __body["cluster"] = cluster
+            if index is not None:
+                __body["index"] = index
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.has_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("privileges", "uids"),
     )
     def has_privileges_user_profile(
         self,
         *,
-        privileges: t.Mapping[str, t.Any],
-        uids: t.Union[t.List[str], t.Tuple[str, ...]],
+        privileges: t.Optional[t.Mapping[str, t.Any]] = None,
+        uids: t.Optional[t.Sequence[str]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Determines whether the users associated with the specified profile IDs have all
-        the requested privileges.
+        Check user profile privileges. Determine whether the users associated with the
+        specified user profile IDs have all the requested privileges. NOTE: The user
+        profile feature is designed only for use by Kibana and Elastic's Observability,
+        Enterprise Search, and Elastic Security solutions. Individual users and external
+        applications should not call this API directly. Elastic reserves the right to
+        change or remove this feature in future releases without prior notice.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges-user-profile.html>`_
 
-        :param privileges:
+        :param privileges: An object containing all the privileges to be checked.
         :param uids: A list of profile IDs. The privileges are checked for associated
             users of the profiles.
         """
-        if privileges is None:
+        if privileges is None and body is None:
             raise ValueError("Empty value passed for parameter 'privileges'")
-        if uids is None:
+        if uids is None and body is None:
             raise ValueError("Empty value passed for parameter 'uids'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_has_privileges"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if privileges is not None:
-            __body["privileges"] = privileges
-        if uids is not None:
-            __body["uids"] = uids
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1653,32 +2401,52 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if privileges is not None:
+                __body["privileges"] = privileges
+            if uids is not None:
+                __body["uids"] = uids
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.has_privileges_user_profile",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("id", "ids", "name", "owner", "realm_name", "username"),
     )
     def invalidate_api_key(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         id: t.Optional[str] = None,
-        ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        ids: t.Optional[t.Sequence[str]] = None,
         name: t.Optional[str] = None,
         owner: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm_name: t.Optional[str] = None,
         username: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates one or more API keys.
+        Invalidate API keys. This API invalidates API keys created by the create API
+        key or grant API key APIs. Invalidated API keys fail authentication, but they
+        can still be viewed using the get API key information and query API key information
+        APIs, for at least the configured retention period, until they are automatically
+        deleted. The `manage_api_key` privilege allows deleting any API keys. The `manage_own_api_key`
+        only allows deleting API keys that are owned by the user. In addition, with the
+        `manage_own_api_key` privilege, an invalidation request must be issued in one
+        of the three formats: - Set the parameter `owner=true`. - Or, set both `username`
+        and `realm_name` to match the user’s identity. - Or, if the request is issued
+        by an API key, that is to say an API key invalidates itself, specify its ID in
+        the `ids` field.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
 
@@ -1696,53 +2464,65 @@ class SecurityClient(NamespacedClient):
         :param username: The username of a user. This parameter cannot be used with either
             `ids` or `name`, or when `owner` flag is set to `true`.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if id is not None:
-            __body["id"] = id
-        if ids is not None:
-            __body["ids"] = ids
-        if name is not None:
-            __body["name"] = name
-        if owner is not None:
-            __body["owner"] = owner
         if pretty is not None:
             __query["pretty"] = pretty
-        if realm_name is not None:
-            __body["realm_name"] = realm_name
-        if username is not None:
-            __body["username"] = username
+        if not __body:
+            if id is not None:
+                __body["id"] = id
+            if ids is not None:
+                __body["ids"] = ids
+            if name is not None:
+                __body["name"] = name
+            if owner is not None:
+                __body["owner"] = owner
+            if realm_name is not None:
+                __body["realm_name"] = realm_name
+            if username is not None:
+                __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.invalidate_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("realm_name", "refresh_token", "token", "username"),
     )
     def invalidate_token(
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm_name: t.Optional[str] = None,
         refresh_token: t.Optional[str] = None,
         token: t.Optional[str] = None,
         username: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates one or more access tokens or refresh tokens.
+        Invalidate a token. The access tokens returned by the get token API have a finite
+        period of time for which they are valid. After that time period, they can no
+        longer be used. The time period is defined by the `xpack.security.authc.token.timeout`
+        setting. The refresh tokens returned by the get token API are only valid for
+        24 hours. They can also be used exactly once. If you want to invalidate one or
+        more access or refresh tokens immediately, use this invalidate token API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-token.html>`_
 
@@ -1751,9 +2531,10 @@ class SecurityClient(NamespacedClient):
         :param token:
         :param username:
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oauth2/token"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1762,17 +2543,248 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if realm_name is not None:
-            __body["realm_name"] = realm_name
-        if refresh_token is not None:
-            __body["refresh_token"] = refresh_token
-        if token is not None:
-            __body["token"] = token
-        if username is not None:
-            __body["username"] = username
+        if not __body:
+            if realm_name is not None:
+                __body["realm_name"] = realm_name
+            if refresh_token is not None:
+                __body["refresh_token"] = refresh_token
+            if token is not None:
+                __body["token"] = token
+            if username is not None:
+                __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers, body=__body
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.invalidate_token",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("nonce", "redirect_uri", "state", "realm"),
+    )
+    def oidc_authenticate(
+        self,
+        *,
+        nonce: t.Optional[str] = None,
+        redirect_uri: t.Optional[str] = None,
+        state: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Authenticate OpenID Connect. Exchange an OpenID Connect authentication response
+        message for an Elasticsearch internal access token and refresh token that can
+        be subsequently used for authentication. Elasticsearch exposes all the necessary
+        OpenID Connect related functionality with the OpenID Connect APIs. These APIs
+        are used internally by Kibana in order to provide OpenID Connect based authentication,
+        but can also be used by other, custom web applications or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-oidc-authenticate.html>`_
+
+        :param nonce: Associate a client session with an ID token and mitigate replay
+            attacks. This value needs to be the same as the one that was provided to
+            the `/_security/oidc/prepare` API or the one that was generated by Elasticsearch
+            and included in the response to that call.
+        :param redirect_uri: The URL to which the OpenID Connect Provider redirected
+            the User Agent in response to an authentication request after a successful
+            authentication. This URL must be provided as-is (URL encoded), taken from
+            the body of the response or as the value of a location header in the response
+            from the OpenID Connect Provider.
+        :param state: Maintain state between the authentication request and the response.
+            This value needs to be the same as the one that was provided to the `/_security/oidc/prepare`
+            API or the one that was generated by Elasticsearch and included in the response
+            to that call.
+        :param realm: The name of the OpenID Connect realm. This property is useful in
+            cases where multiple realms are defined.
+        """
+        if nonce is None and body is None:
+            raise ValueError("Empty value passed for parameter 'nonce'")
+        if redirect_uri is None and body is None:
+            raise ValueError("Empty value passed for parameter 'redirect_uri'")
+        if state is None and body is None:
+            raise ValueError("Empty value passed for parameter 'state'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/authenticate"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if nonce is not None:
+                __body["nonce"] = nonce
+            if redirect_uri is not None:
+                __body["redirect_uri"] = redirect_uri
+            if state is not None:
+                __body["state"] = state
+            if realm is not None:
+                __body["realm"] = realm
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_authenticate",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("access_token", "refresh_token"),
+    )
+    def oidc_logout(
+        self,
+        *,
+        access_token: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh_token: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Logout of OpenID Connect. Invalidate an access token and a refresh token that
+        were generated as a response to the `/_security/oidc/authenticate` API. If the
+        OpenID Connect authentication realm in Elasticsearch is accordingly configured,
+        the response to this call will contain a URI pointing to the end session endpoint
+        of the OpenID Connect Provider in order to perform single logout. Elasticsearch
+        exposes all the necessary OpenID Connect related functionality with the OpenID
+        Connect APIs. These APIs are used internally by Kibana in order to provide OpenID
+        Connect based authentication, but can also be used by other, custom web applications
+        or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-oidc-logout.html>`_
+
+        :param access_token: The access token to be invalidated.
+        :param refresh_token: The refresh token to be invalidated.
+        """
+        if access_token is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access_token'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/logout"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access_token is not None:
+                __body["access_token"] = access_token
+            if refresh_token is not None:
+                __body["refresh_token"] = refresh_token
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_logout",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("iss", "login_hint", "nonce", "realm", "state"),
+    )
+    def oidc_prepare_authentication(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        iss: t.Optional[str] = None,
+        login_hint: t.Optional[str] = None,
+        nonce: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        state: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Prepare OpenID connect authentication. Create an oAuth 2.0 authentication request
+        as a URL string based on the configuration of the OpenID Connect authentication
+        realm in Elasticsearch. The response of this API is a URL pointing to the Authorization
+        Endpoint of the configured OpenID Connect Provider, which can be used to redirect
+        the browser of the user in order to continue the authentication process. Elasticsearch
+        exposes all the necessary OpenID Connect related functionality with the OpenID
+        Connect APIs. These APIs are used internally by Kibana in order to provide OpenID
+        Connect based authentication, but can also be used by other, custom web applications
+        or other clients.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-oidc-prepare-authentication.html>`_
+
+        :param iss: In the case of a third party initiated single sign on, this is the
+            issuer identifier for the OP that the RP is to send the authentication request
+            to. It cannot be specified when *realm* is specified. One of *realm* or *iss*
+            is required.
+        :param login_hint: In the case of a third party initiated single sign on, it
+            is a string value that is included in the authentication request as the *login_hint*
+            parameter. This parameter is not valid when *realm* is specified.
+        :param nonce: The value used to associate a client session with an ID token and
+            to mitigate replay attacks. If the caller of the API does not provide a value,
+            Elasticsearch will generate one with sufficient entropy and return it in
+            the response.
+        :param realm: The name of the OpenID Connect realm in Elasticsearch the configuration
+            of which should be used in order to generate the authentication request.
+            It cannot be specified when *iss* is specified. One of *realm* or *iss* is
+            required.
+        :param state: The value used to maintain state between the authentication request
+            and the response, typically used as a Cross-Site Request Forgery mitigation.
+            If the caller of the API does not provide a value, Elasticsearch will generate
+            one with sufficient entropy and return it in the response.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/oidc/prepare"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if iss is not None:
+                __body["iss"] = iss
+            if login_hint is not None:
+                __body["login_hint"] = login_hint
+            if nonce is not None:
+                __body["nonce"] = nonce
+            if realm is not None:
+                __body["realm"] = realm
+            if state is not None:
+                __body["state"] = state
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.oidc_prepare_authentication",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
@@ -1781,19 +2793,20 @@ class SecurityClient(NamespacedClient):
     def put_privileges(
         self,
         *,
-        privileges: t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]],
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        privileges: t.Optional[
+            t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]
         ] = None,
+        body: t.Optional[t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds or updates application privileges.
+        Create or update application privileges.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-privileges.html>`_
 
@@ -1802,8 +2815,13 @@ class SecurityClient(NamespacedClient):
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        if privileges is None:
-            raise ValueError("Empty value passed for parameter 'privileges'")
+        if privileges is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'privileges' and 'body', one of them should be set."
+            )
+        elif privileges is not None and body is not None:
+            raise ValueError("Cannot set both 'privileges' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/privilege"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -1816,66 +2834,139 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        __body = privileges
+        __body = privileges if privileges is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_privileges",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "applications",
+            "cluster",
+            "description",
+            "global_",
+            "indices",
+            "metadata",
+            "remote_cluster",
+            "remote_indices",
+            "run_as",
+            "transient_metadata",
+        ),
         parameter_aliases={"global": "global_"},
     )
     def put_role(
         self,
         *,
         name: str,
-        applications: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        applications: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         cluster: t.Optional[
-            t.Union[
-                t.List[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
-                    ]
-                ],
-                t.Tuple[
-                    t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_user_profile', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
-                        str,
+            t.Sequence[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "all",
+                        "cancel_task",
+                        "create_snapshot",
+                        "cross_cluster_replication",
+                        "cross_cluster_search",
+                        "delegate_pki",
+                        "grant_api_key",
+                        "manage",
+                        "manage_api_key",
+                        "manage_autoscaling",
+                        "manage_behavioral_analytics",
+                        "manage_ccr",
+                        "manage_data_frame_transforms",
+                        "manage_data_stream_global_retention",
+                        "manage_enrich",
+                        "manage_ilm",
+                        "manage_index_templates",
+                        "manage_inference",
+                        "manage_ingest_pipelines",
+                        "manage_logstash_pipelines",
+                        "manage_ml",
+                        "manage_oidc",
+                        "manage_own_api_key",
+                        "manage_pipeline",
+                        "manage_rollup",
+                        "manage_saml",
+                        "manage_search_application",
+                        "manage_search_query_rules",
+                        "manage_search_synonyms",
+                        "manage_security",
+                        "manage_service_account",
+                        "manage_slm",
+                        "manage_token",
+                        "manage_transform",
+                        "manage_user_profile",
+                        "manage_watcher",
+                        "monitor",
+                        "monitor_data_frame_transforms",
+                        "monitor_data_stream_global_retention",
+                        "monitor_enrich",
+                        "monitor_inference",
+                        "monitor_ml",
+                        "monitor_rollup",
+                        "monitor_snapshot",
+                        "monitor_stats",
+                        "monitor_text_structure",
+                        "monitor_transform",
+                        "monitor_watcher",
+                        "none",
+                        "post_behavioral_analytics_event",
+                        "read_ccr",
+                        "read_fleet_secrets",
+                        "read_ilm",
+                        "read_pipeline",
+                        "read_security",
+                        "read_slm",
+                        "transport_client",
+                        "write_connector_secrets",
+                        "write_fleet_secrets",
                     ],
-                    ...,
-                ],
+                ]
             ]
         ] = None,
+        description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         global_: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
-        indices: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        remote_cluster: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        remote_indices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        run_as: t.Optional[t.Sequence[str]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates roles in the native realm.
+        Create or update roles. The role management APIs are generally the preferred
+        way to manage roles in the native realm, rather than using file-based role management.
+        The create or update roles API cannot update roles that are defined in roles
+        files. File-based role management is not available in Elastic Serverless.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
 
-        :param name: The name of the role.
+        :param name: The name of the role that is being created or updated. On Elasticsearch
+            Serverless, the role name must begin with a letter or digit and can only
+            contain letters, digits and the characters '_', '-', and '.'. Each role must
+            have a unique name, as this will serve as the identifier for that role.
         :param applications: A list of application privilege entries.
         :param cluster: A list of cluster privileges. These privileges define the cluster-level
             actions for users with this role.
+        :param description: Optional description of the role descriptor
         :param global_: An object defining global privileges. A global privilege is a
             form of cluster privilege that is request-aware. Support for global privileges
             is currently limited to the management of application privileges.
@@ -1885,7 +2976,12 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param remote_cluster: A list of remote cluster permissions entries.
+        :param remote_indices: A list of remote indices permissions entries.
         :param run_as: A list of users that the owners of this role can impersonate.
+            *Note*: in Serverless, the run-as feature is disabled. For API compatibility,
+            you can still specify an empty `run_as` field, but a non-empty list will
+            be rejected.
         :param transient_metadata: Indicates roles that might be incompatible with the
             current cluster license, specifically roles with document and field level
             security. When the cluster license doesn’t allow certain features for a given
@@ -1895,40 +2991,61 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
-        if applications is not None:
-            __body["applications"] = applications
-        if cluster is not None:
-            __body["cluster"] = cluster
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if global_ is not None:
-            __body["global"] = global_
         if human is not None:
             __query["human"] = human
-        if indices is not None:
-            __body["indices"] = indices
-        if metadata is not None:
-            __body["metadata"] = metadata
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        if run_as is not None:
-            __body["run_as"] = run_as
-        if transient_metadata is not None:
-            __body["transient_metadata"] = transient_metadata
+        if not __body:
+            if applications is not None:
+                __body["applications"] = applications
+            if cluster is not None:
+                __body["cluster"] = cluster
+            if description is not None:
+                __body["description"] = description
+            if global_ is not None:
+                __body["global"] = global_
+            if indices is not None:
+                __body["indices"] = indices
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if remote_cluster is not None:
+                __body["remote_cluster"] = remote_cluster
+            if remote_indices is not None:
+                __body["remote_indices"] = remote_indices
+            if run_as is not None:
+                __body["run_as"] = run_as
+            if transient_metadata is not None:
+                __body["transient_metadata"] = transient_metadata
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "enabled",
+            "metadata",
+            "role_templates",
+            "roles",
+            "rules",
+            "run_as",
+        ),
     )
     def put_role_mapping(
         self,
@@ -1936,21 +3053,28 @@ class SecurityClient(NamespacedClient):
         name: str,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        role_templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        roles: t.Optional[t.Sequence[str]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
-        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        run_as: t.Optional[t.Sequence[str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates and updates role mappings.
+        Create or update role mappings. Role mappings define which roles are assigned
+        to each user. Each mapping has rules that identify users and a list of roles
+        that are granted to those users. The role mapping APIs are generally the preferred
+        way to manage role mappings rather than using role mapping files. The create
+        or update role mappings API cannot update role mappings that are defined in role
+        mapping files. This API does not create roles. Rather, it maps users to existing
+        roles. Roles can be created by using the create or update roles API or roles
+        files.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
 
@@ -1960,42 +3084,61 @@ class SecurityClient(NamespacedClient):
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
+        :param role_templates:
         :param roles:
         :param rules:
         :param run_as:
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_security/role_mapping/{_quote(name)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_security/role_mapping/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
-        if enabled is not None:
-            __body["enabled"] = enabled
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if metadata is not None:
-            __body["metadata"] = metadata
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        if roles is not None:
-            __body["roles"] = roles
-        if rules is not None:
-            __body["rules"] = rules
-        if run_as is not None:
-            __body["run_as"] = run_as
+        if not __body:
+            if enabled is not None:
+                __body["enabled"] = enabled
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if role_templates is not None:
+                __body["role_templates"] = role_templates
+            if roles is not None:
+                __body["roles"] = roles
+            if rules is not None:
+                __body["rules"] = rules
+            if run_as is not None:
+                __body["run_as"] = run_as
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_role_mapping",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "email",
+            "enabled",
+            "full_name",
+            "metadata",
+            "password",
+            "password_hash",
+            "roles",
+        ),
     )
     def put_user(
         self,
@@ -2004,9 +3147,7 @@ class SecurityClient(NamespacedClient):
         email: t.Optional[t.Union[None, str]] = None,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         full_name: t.Optional[t.Union[None, str]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2014,13 +3155,15 @@ class SecurityClient(NamespacedClient):
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        roles: t.Optional[t.Sequence[str]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates users in the native realm. These users are commonly referred
-        to as native users.
+        Create or update users. A password is required for adding a new user but is optional
+        when updating an existing user. To change a user’s password without updating
+        any other fields, use the change password API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-user.html>`_
 
@@ -2038,83 +3181,112 @@ class SecurityClient(NamespacedClient):
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
-        __path = f"/_security/user/{_quote(username)}"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"username": _quote(username)}
+        __path = f'/_security/user/{__path_parts["username"]}'
         __query: t.Dict[str, t.Any] = {}
-        if email is not None:
-            __body["email"] = email
-        if enabled is not None:
-            __body["enabled"] = enabled
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if full_name is not None:
-            __body["full_name"] = full_name
         if human is not None:
             __query["human"] = human
-        if metadata is not None:
-            __body["metadata"] = metadata
-        if password is not None:
-            __body["password"] = password
-        if password_hash is not None:
-            __body["password_hash"] = password_hash
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        if roles is not None:
-            __body["roles"] = roles
+        if not __body:
+            if email is not None:
+                __body["email"] = email
+            if enabled is not None:
+                __body["enabled"] = enabled
+            if full_name is not None:
+                __body["full_name"] = full_name
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if password is not None:
+                __body["password"] = password
+            if password_hash is not None:
+                __body["password_hash"] = password_hash
+            if roles is not None:
+                __body["roles"] = roles
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_user",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=(
+            "aggregations",
+            "aggs",
+            "from_",
+            "query",
+            "search_after",
+            "size",
+            "sort",
+        ),
         parameter_aliases={"from": "from_"},
     )
     def query_api_keys(
         self,
         *,
+        aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
+        typed_keys: t.Optional[bool] = None,
         with_limited_by: t.Optional[bool] = None,
+        with_profile_uid: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information for API keys using a subset of query DSL
+        Find API keys with a query. Get a paginated list of API keys and their information.
+        You can optionally filter the results with a query.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
 
+        :param aggregations: Any aggregations to run over the corpus of returned API
+            keys. Aggregations and queries work together. Aggregations are computed only
+            on the API keys that match the query. This supports only a subset of aggregation
+            types, namely: `terms`, `range`, `date_range`, `missing`, `cardinality`,
+            `value_count`, `composite`, `filter`, and `filters`. Additionally, aggregations
+            only run over the same subset of fields that query works with.
+        :param aggs: Any aggregations to run over the corpus of returned API keys. Aggregations
+            and queries work together. Aggregations are computed only on the API keys
+            that match the query. This supports only a subset of aggregation types, namely:
+            `terms`, `range`, `date_range`, `missing`, `cardinality`, `value_count`,
+            `composite`, `filter`, and `filters`. Additionally, aggregations only run
+            over the same subset of fields that query works with.
         :param from_: Starting document offset. By default, you cannot page through more
             than 10,000 hits using the from and size parameters. To page through more
             hits, use the `search_after` parameter.
-        :param query: A query to filter which API keys to return. The query supports
-            a subset of query types, including `match_all`, `bool`, `term`, `terms`,
-            `ids`, `prefix`, `wildcard`, and `range`. You can query all public information
-            associated with an API key.
+        :param query: A query to filter which API keys to return. If the query parameter
+            is missing, it is equivalent to a `match_all` query. The query supports a
+            subset of query types, including `match_all`, `bool`, `term`, `terms`, `match`,
+            `ids`, `prefix`, `wildcard`, `exists`, `range`, and `simple_query_string`.
+            You can query the following public information associated with an API key:
+            `id`, `type`, `name`, `creation`, `expiration`, `invalidated`, `invalidation`,
+            `username`, `realm`, and `metadata`.
         :param search_after: Search after definition
         :param size: The number of hits to return. By default, you cannot page through
             more than 10,000 hits using the `from` and `size` parameters. To page through
@@ -2122,13 +3294,18 @@ class SecurityClient(NamespacedClient):
         :param sort: Other than `id`, all public fields of an API key are eligible for
             sorting. In addition, sort can also be applied to the `_doc` field to sort
             by index order.
+        :param typed_keys: Determines whether aggregation names are prefixed by their
+            respective types in the response.
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
+        :param with_profile_uid: Determines whether to also retrieve the profile uid,
+            for the API key owner principal, if it exists.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/_query/api_key"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
@@ -2144,71 +3321,97 @@ class SecurityClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if from_ is not None:
-            __body["from"] = from_
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if search_after is not None:
-            __body["search_after"] = search_after
-        if size is not None:
-            __body["size"] = size
-        if sort is not None:
-            __body["sort"] = sort
+        if typed_keys is not None:
+            __query["typed_keys"] = typed_keys
         if with_limited_by is not None:
             __query["with_limited_by"] = with_limited_by
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
+        if not __body:
+            if aggregations is not None:
+                __body["aggregations"] = aggregations
+            if aggs is not None:
+                __body["aggs"] = aggs
+            if from_ is not None:
+                __body["from"] = from_
+            if query is not None:
+                __body["query"] = query
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_api_keys",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("from_", "query", "search_after", "size", "sort"),
+        parameter_aliases={"from": "from_"},
     )
-    def saml_authenticate(
+    def query_role(
         self,
         *,
-        content: str,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        realm: t.Optional[str] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Union[str, t.Mapping[str, t.Any]],
+            ]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Exchanges a SAML Response message for an Elasticsearch access token and refresh
-        token pair
+        Find roles with a query. Get roles in a paginated manner. You can optionally
+        filter the results with a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-role.html>`_
 
-        :param content: The SAML response as it was sent by the user’s browser, usually
-            a Base64 encoded XML document.
-        :param ids: A json array with all the valid SAML Request Ids that the caller
-            of the API has for the current user.
-        :param realm: The name of the realm that should authenticate the SAML response.
-            Useful in cases where many SAML realms are defined.
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the `search_after` parameter.
+        :param query: A query to filter which roles to return. If the query parameter
+            is missing, it is equivalent to a `match_all` query. The query supports a
+            subset of query types, including `match_all`, `bool`, `term`, `terms`, `match`,
+            `ids`, `prefix`, `wildcard`, `exists`, `range`, and `simple_query_string`.
+            You can query the following information associated with roles: `name`, `description`,
+            `metadata`, `applications.application`, `applications.privileges`, `applications.resources`.
+        :param search_after: Search after definition
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param sort: All public fields of a role are eligible for sorting. In addition,
+            sort can also be applied to the `_doc` field to sort by index order.
         """
-        if content is None:
-            raise ValueError("Empty value passed for parameter 'content'")
-        if ids is None:
-            raise ValueError("Empty value passed for parameter 'ids'")
-        __path = "/_security/saml/authenticate"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/_query/role"
         __query: t.Dict[str, t.Any] = {}
-        if content is not None:
-            __body["content"] = content
-        if ids is not None:
-            __body["ids"] = ids
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2217,36 +3420,226 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if realm is not None:
-            __body["realm"] = realm
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            if from_ is not None:
+                __body["from"] = from_
+            if query is not None:
+                __body["query"] = query
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_role",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("from_", "query", "search_after", "size", "sort"),
+        parameter_aliases={"from": "from_"},
+    )
+    def query_user(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Union[str, t.Mapping[str, t.Any]],
+            ]
+        ] = None,
+        with_profile_uid: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Find users with a query. Get information for users in a paginated manner. You
+        can optionally filter the results with a query.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-user.html>`_
+
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the `search_after` parameter.
+        :param query: A query to filter which users to return. If the query parameter
+            is missing, it is equivalent to a `match_all` query. The query supports a
+            subset of query types, including `match_all`, `bool`, `term`, `terms`, `match`,
+            `ids`, `prefix`, `wildcard`, `exists`, `range`, and `simple_query_string`.
+            You can query the following information associated with user: `username`,
+            `roles`, `enabled`
+        :param search_after: Search after definition
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param sort: Fields eligible for sorting are: username, roles, enabled In addition,
+            sort can also be applied to the `_doc` field to sort by index order.
+        :param with_profile_uid: If true will return the User Profile ID for the users
+            in the query result, if any.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/_query/user"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
+        if not __body:
+            if from_ is not None:
+                __body["from"] = from_
+            if query is not None:
+                __body["query"] = query
+            if search_after is not None:
+                __body["search_after"] = search_after
+            if size is not None:
+                __body["size"] = size
+            if sort is not None:
+                __body["sort"] = sort
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.query_user",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("content", "ids", "realm"),
+    )
+    def saml_authenticate(
+        self,
+        *,
+        content: t.Optional[str] = None,
+        ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Authenticate SAML. Submit a SAML response message to Elasticsearch for consumption.
+        NOTE: This API is intended for use by custom web applications other than Kibana.
+        If you are using Kibana, refer to the documentation for configuring SAML single-sign-on
+        on the Elastic Stack. The SAML message that is submitted can be: * A response
+        to a SAML authentication request that was previously created using the SAML prepare
+        authentication API. * An unsolicited SAML message in the case of an IdP-initiated
+        single sign-on (SSO) flow. In either case, the SAML message needs to be a base64
+        encoded XML document with a root element of `<Response>`. After successful validation,
+        Elasticsearch responds with an Elasticsearch internal access token and refresh
+        token that can be subsequently used for authentication. This API endpoint essentially
+        exchanges SAML responses that indicate successful authentication in the IdP for
+        Elasticsearch access and refresh tokens, which can be used for authentication
+        against Elasticsearch.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
+
+        :param content: The SAML response as it was sent by the user's browser, usually
+            a Base64 encoded XML document.
+        :param ids: A JSON array with all the valid SAML Request Ids that the caller
+            of the API has for the current user.
+        :param realm: The name of the realm that should authenticate the SAML response.
+            Useful in cases where many SAML realms are defined.
+        """
+        if content is None and body is None:
+            raise ValueError("Empty value passed for parameter 'content'")
+        if ids is None and body is None:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/saml/authenticate"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if content is not None:
+                __body["content"] = content
+            if ids is not None:
+                __body["ids"] = ids
+            if realm is not None:
+                __body["realm"] = realm
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_authenticate",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("ids", "realm", "content", "query_string"),
     )
     def saml_complete_logout(
         self,
         *,
-        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        realm: str,
+        ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        realm: t.Optional[str] = None,
         content: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query_string: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Verifies the logout response sent from the SAML IdP
+        Logout of SAML completely. Verifies the logout response sent from the SAML IdP.
+        NOTE: This API is intended for use by custom web applications other than Kibana.
+        If you are using Kibana, refer to the documentation for configuring SAML single-sign-on
+        on the Elastic Stack. The SAML IdP may send a logout response back to the SP
+        after handling the SP-initiated SAML Single Logout. This API verifies the response
+        by ensuring the content is relevant and validating its signature. An empty response
+        is returned if the verification process is successful. The response can be sent
+        by the IdP with either the HTTP-Redirect or the HTTP-Post binding. The caller
+        of this API must prepare the request accordingly so that this API can handle
+        either of them.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
 
-        :param ids: A json array with all the valid SAML Request Ids that the caller
+        :param ids: A JSON array with all the valid SAML Request Ids that the caller
             of the API has for the current user.
         :param realm: The name of the SAML realm in Elasticsearch for which the configuration
             is used to verify the logout response.
@@ -2256,19 +3649,14 @@ class SecurityClient(NamespacedClient):
         :param query_string: If the SAML IdP sends the logout response with the HTTP-Redirect
             binding, this field must be set to the query string of the redirect URI.
         """
-        if ids is None:
+        if ids is None and body is None:
             raise ValueError("Empty value passed for parameter 'ids'")
-        if realm is None:
+        if realm is None and body is None:
             raise ValueError("Empty value passed for parameter 'realm'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/complete_logout"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if ids is not None:
-            __body["ids"] = ids
-        if realm is not None:
-            __body["realm"] = realm
-        if content is not None:
-            __body["content"] = content
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2277,59 +3665,76 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query_string is not None:
-            __body["query_string"] = query_string
+        if not __body:
+            if ids is not None:
+                __body["ids"] = ids
+            if realm is not None:
+                __body["realm"] = realm
+            if content is not None:
+                __body["content"] = content
+            if query_string is not None:
+                __body["query_string"] = query_string
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_complete_logout",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("query_string", "acs", "realm"),
     )
     def saml_invalidate(
         self,
         *,
-        query_string: str,
+        query_string: t.Optional[str] = None,
         acs: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Consumes a SAML LogoutRequest
+        Invalidate SAML. Submit a SAML LogoutRequest message to Elasticsearch for consumption.
+        NOTE: This API is intended for use by custom web applications other than Kibana.
+        If you are using Kibana, refer to the documentation for configuring SAML single-sign-on
+        on the Elastic Stack. The logout request comes from the SAML IdP during an IdP
+        initiated Single Logout. The custom web application can use this API to have
+        Elasticsearch process the `LogoutRequest`. After successful validation of the
+        request, Elasticsearch invalidates the access token and refresh token that corresponds
+        to that specific SAML principal and provides a URL that contains a SAML LogoutResponse
+        message. Thus the user can be redirected back to their IdP.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
 
         :param query_string: The query part of the URL that the user was redirected to
             by the SAML IdP to initiate the Single Logout. This query should include
-            a single parameter named SAMLRequest that contains a SAML logout request
+            a single parameter named `SAMLRequest` that contains a SAML logout request
             that is deflated and Base64 encoded. If the SAML IdP has signed the logout
-            request, the URL should include two extra parameters named SigAlg and Signature
+            request, the URL should include two extra parameters named `SigAlg` and `Signature`
             that contain the algorithm used for the signature and the signature value
-            itself. In order for Elasticsearch to be able to verify the IdP’s signature,
-            the value of the query_string field must be an exact match to the string
+            itself. In order for Elasticsearch to be able to verify the IdP's signature,
+            the value of the `query_string` field must be an exact match to the string
             provided by the browser. The client application must not attempt to parse
             or process the string in any way.
         :param acs: The Assertion Consumer Service URL that matches the one of the SAML
             realm in Elasticsearch that should be used. You must specify either this
-            parameter or the realm parameter.
+            parameter or the `realm` parameter.
         :param realm: The name of the SAML realm in Elasticsearch the configuration.
-            You must specify either this parameter or the acs parameter.
+            You must specify either this parameter or the `acs` parameter.
         """
-        if query_string is None:
+        if query_string is None and body is None:
             raise ValueError("Empty value passed for parameter 'query_string'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/invalidate"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if query_string is not None:
-            __body["query_string"] = query_string
-        if acs is not None:
-            __body["acs"] = acs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2338,48 +3743,63 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if realm is not None:
-            __body["realm"] = realm
+        if not __body:
+            if query_string is not None:
+                __body["query_string"] = query_string
+            if acs is not None:
+                __body["acs"] = acs
+            if realm is not None:
+                __body["realm"] = realm
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_invalidate",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("token", "refresh_token"),
     )
     def saml_logout(
         self,
         *,
-        token: str,
+        token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh_token: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Invalidates an access token and a refresh token that were generated via the SAML
-        Authenticate API
+        Logout of SAML. Submits a request to invalidate an access token and refresh token.
+        NOTE: This API is intended for use by custom web applications other than Kibana.
+        If you are using Kibana, refer to the documentation for configuring SAML single-sign-on
+        on the Elastic Stack. This API invalidates the tokens that were generated for
+        a user by the SAML authenticate API. If the SAML realm in Elasticsearch is configured
+        accordingly and the SAML IdP supports this, the Elasticsearch response contains
+        a URL to redirect the user to the IdP that contains a SAML logout request (starting
+        an SP-initiated SAML Single Logout).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
 
         :param token: The access token that was returned as a response to calling the
             SAML authenticate API. Alternatively, the most recent token that was received
-            after refreshing the original one by using a refresh_token.
+            after refreshing the original one by using a `refresh_token`.
         :param refresh_token: The refresh token that was returned as a response to calling
             the SAML authenticate API. Alternatively, the most recent refresh token that
             was received after refreshing the original access token.
         """
-        if token is None:
+        if token is None and body is None:
             raise ValueError("Empty value passed for parameter 'token'")
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/logout"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if token is not None:
-            __body["token"] = token
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2388,49 +3808,69 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if refresh_token is not None:
-            __body["refresh_token"] = refresh_token
+        if not __body:
+            if token is not None:
+                __body["token"] = token
+            if refresh_token is not None:
+                __body["refresh_token"] = refresh_token
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_logout",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("acs", "realm", "relay_state"),
     )
     def saml_prepare_authentication(
         self,
         *,
         acs: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         realm: t.Optional[str] = None,
         relay_state: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates a SAML authentication request
+        Prepare SAML authentication. Create a SAML authentication request (`<AuthnRequest>`)
+        as a URL string based on the configuration of the respective SAML realm in Elasticsearch.
+        NOTE: This API is intended for use by custom web applications other than Kibana.
+        If you are using Kibana, refer to the documentation for configuring SAML single-sign-on
+        on the Elastic Stack. This API returns a URL pointing to the SAML Identity Provider.
+        You can use the URL to redirect the browser of the user in order to continue
+        the authentication process. The URL includes a single parameter named `SAMLRequest`,
+        which contains a SAML Authentication request that is deflated and Base64 encoded.
+        If the configuration dictates that SAML authentication requests should be signed,
+        the URL has two extra parameters named `SigAlg` and `Signature`. These parameters
+        contain the algorithm used for the signature and the signature value itself.
+        It also returns a random string that uniquely identifies this SAML Authentication
+        request. The caller of this API needs to store this identifier as it needs to
+        be used in a following step of the authentication process.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
 
         :param acs: The Assertion Consumer Service URL that matches the one of the SAML
             realms in Elasticsearch. The realm is used to generate the authentication
-            request. You must specify either this parameter or the realm parameter.
+            request. You must specify either this parameter or the `realm` parameter.
         :param realm: The name of the SAML realm in Elasticsearch for which the configuration
             is used to generate the authentication request. You must specify either this
-            parameter or the acs parameter.
+            parameter or the `acs` parameter.
         :param relay_state: A string that will be included in the redirect URL that this
-            API returns as the RelayState query parameter. If the Authentication Request
+            API returns as the `RelayState` query parameter. If the Authentication Request
             is signed, this value is used as part of the signature computation.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/saml/prepare"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if acs is not None:
-            __body["acs"] = acs
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2439,13 +3879,22 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if realm is not None:
-            __body["realm"] = realm
-        if relay_state is not None:
-            __body["relay_state"] = relay_state
+        if not __body:
+            if acs is not None:
+                __body["acs"] = acs
+            if realm is not None:
+                __body["realm"] = realm
+            if relay_state is not None:
+                __body["relay_state"] = relay_state
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.saml_prepare_authentication",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
@@ -2454,14 +3903,16 @@ class SecurityClient(NamespacedClient):
         *,
         realm_name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
+        Create SAML service provider metadata. Generate SAML metadata for a SAML 2.0
+        Service Provider. The SAML 2.0 specification provides a mechanism for Service
+        Providers to describe their capabilities and configuration using a metadata file.
+        This API generates Service Provider metadata based on the configuration of a
+        SAML realm in Elasticsearch.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
 
@@ -2469,7 +3920,8 @@ class SecurityClient(NamespacedClient):
         """
         if realm_name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realm_name'")
-        __path = f"/_security/saml/metadata/{_quote(realm_name)}"
+        __path_parts: t.Dict[str, str] = {"realm_name": _quote(realm_name)}
+        __path = f'/_security/saml/metadata/{__path_parts["realm_name"]}'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2481,93 +3933,128 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.saml_service_provider_metadata",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("data", "hint", "name", "size"),
     )
     def suggest_user_profiles(
         self,
         *,
-        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        data: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         hint: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get suggestions for user profiles that match specified search criteria.
+        Suggest a user profile. Get suggestions for user profiles that match specified
+        search criteria. NOTE: The user profile feature is designed only for use by Kibana
+        and Elastic's Observability, Enterprise Search, and Elastic Security solutions.
+        Individual users and external applications should not call this API directly.
+        Elastic reserves the right to change or remove this feature in future releases
+        without prior notice.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-suggest-user-profile.html>`_
 
-        :param data: List of filters for the `data` field of the profile document. To
-            return all content use `data=*`. To return a subset of content use `data=<key>`
-            to retrieve content nested under the specified `<key>`. By default returns
-            no `data` content.
+        :param data: A comma-separated list of filters for the `data` field of the profile
+            document. To return all content use `data=*`. To return a subset of content,
+            use `data=<key>` to retrieve content nested under the specified `<key>`.
+            By default, the API returns no `data` content. It is an error to specify
+            `data` as both the query parameter and the request body field.
         :param hint: Extra search criteria to improve relevance of the suggestion result.
             Profiles matching the spcified hint are ranked higher in the response. Profiles
-            not matching the hint don't exclude the profile from the response as long
-            as the profile matches the `name` field query.
-        :param name: Query string used to match name-related fields in user profile documents.
-            Name-related fields are the user's `username`, `full_name`, and `email`.
-        :param size: Number of profiles to return.
+            not matching the hint aren't excluded from the response as long as the profile
+            matches the `name` field query.
+        :param name: A query string used to match name-related fields in user profile
+            documents. Name-related fields are the user's `username`, `full_name`, and
+            `email`.
+        :param size: The number of profiles to return.
         """
+        __path_parts: t.Dict[str, str] = {}
         __path = "/_security/profile/_suggest"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if data is not None:
-            __body["data"] = data
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if hint is not None:
-            __body["hint"] = hint
         if human is not None:
             __query["human"] = human
-        if name is not None:
-            __body["name"] = name
         if pretty is not None:
             __query["pretty"] = pretty
-        if size is not None:
-            __body["size"] = size
+        if not __body:
+            if data is not None:
+                __body["data"] = data
+            if hint is not None:
+                __body["hint"] = hint
+            if name is not None:
+                __body["name"] = name
+            if size is not None:
+                __body["size"] = size
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.suggest_user_profiles",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("expiration", "metadata", "role_descriptors"),
     )
     def update_api_key(
         self,
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Updates attributes of an existing API key.
+        Update an API key. Updates attributes of an existing API key. Users can only
+        update API keys that they created or that were granted to them. Use this API
+        to update API keys created by the create API Key or grant API Key APIs. If you
+        need to apply the same update to many API keys, you can use bulk update API Keys
+        to reduce overhead. It’s not possible to update expired API keys, or API keys
+        that have been invalidated by invalidate API Key. This API supports updates to
+        an API key’s access scope and metadata. The access scope of an API key is derived
+        from the `role_descriptors` you specify in the request, and a snapshot of the
+        owner user’s permissions at the time of the request. The snapshot of the owner’s
+        permissions is updated automatically on every call. If you don’t specify `role_descriptors`
+        in the request, a call to this API might still change the API key’s access scope.
+        This change can occur if the owner user’s permissions have changed since the
+        API key was created or last modified. To update another user’s API key, use the
+        `run_as` feature to submit a request on behalf of another user. IMPORTANT: It’s
+        not possible to use an API key as the authentication credential for this API.
+        To update an API key, the owner user’s credentials are required.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-api-key.html>`_
 
         :param id: The ID of the API key to update.
+        :param expiration: Expiration time for the API key.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
             It supports nested data structure. Within the metadata object, keys beginning
             with _ are reserved for system usage.
@@ -2582,32 +4069,196 @@ class SecurityClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_security/api_key/{_quote(id)}"
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_security/api_key/{__path_parts["id"]}'
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if metadata is not None:
-            __body["metadata"] = metadata
         if pretty is not None:
             __query["pretty"] = pretty
-        if role_descriptors is not None:
-            __body["role_descriptors"] = role_descriptors
+        if not __body:
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if role_descriptors is not None:
+                __body["role_descriptors"] = role_descriptors
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_api_key",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("access", "expiration", "metadata"),
+    )
+    def update_cross_cluster_api_key(
+        self,
+        *,
+        id: str,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update a cross-cluster API key. Update the attributes of an existing cross-cluster
+        API key, which is used for API key based remote cluster access. To use this API,
+        you must have at least the `manage_security` cluster privilege. Users can only
+        update API keys that they created. To update another user's API key, use the
+        `run_as` feature to submit a request on behalf of another user. IMPORTANT: It's
+        not possible to use an API key as the authentication credential for this API.
+        To update an API key, the owner user's credentials are required. It's not possible
+        to update expired API keys, or API keys that have been invalidated by the invalidate
+        API key API. This API supports updates to an API key's access scope, metadata,
+        and expiration. The owner user's information, such as the `username` and `realm`,
+        is also updated automatically on every call. NOTE: This API cannot update REST
+        API keys, which should be updated by either the update API key or bulk update
+        API keys API.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-cross-cluster-api-key.html>`_
+
+        :param id: The ID of the cross-cluster API key to update.
+        :param access: The access to be granted to this API key. The access is composed
+            of permissions for cross cluster search and cross cluster replication. At
+            least one of them must be specified. When specified, the new access assignment
+            fully replaces the previously assigned access.
+        :param expiration: The expiration time for the API key. By default, API keys
+            never expire. This property can be omitted to leave the value unchanged.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage. When specified, this information
+            fully replaces metadata previously associated with the API key.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if access is None and body is None:
+            raise ValueError("Empty value passed for parameter 'access'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_security/cross_cluster/api_key/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if access is not None:
+                __body["access"] = access
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_cross_cluster_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("security", "security_profile", "security_tokens"),
+        parameter_aliases={
+            "security-profile": "security_profile",
+            "security-tokens": "security_tokens",
+        },
+    )
+    def update_settings(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        security: t.Optional[t.Mapping[str, t.Any]] = None,
+        security_profile: t.Optional[t.Mapping[str, t.Any]] = None,
+        security_tokens: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update security index settings. Update the user-configurable settings for the
+        security internal index (`.security` and associated indices). Only a subset of
+        settings are allowed to be modified, for example `index.auto_expand_replicas`
+        and `index.number_of_replicas`. If a specific index is not in use on the system
+        and settings are provided for it, the request will be rejected. This API does
+        not yet support configuring the settings for indices before they are in use.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-settings.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param security: Settings for the index used for most security configuration,
+            including native realm users and roles configured with the API.
+        :param security_profile: Settings for the index used to store profile information.
+        :param security_tokens: Settings for the index used to store tokens.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/settings"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if security is not None:
+                __body["security"] = security
+            if security_profile is not None:
+                __body["security-profile"] = security_profile
+            if security_tokens is not None:
+                __body["security-tokens"] = security_tokens
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_settings",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("data", "labels"),
     )
     def update_user_profile_data(
         self,
@@ -2615,43 +4266,57 @@ class SecurityClient(NamespacedClient):
         uid: str,
         data: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
         labels: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Update application specific data for the user profile of the given unique ID.
+        Update user profile data. Update specific data for the user profile that is associated
+        with a unique ID. NOTE: The user profile feature is designed only for use by
+        Kibana and Elastic's Observability, Enterprise Search, and Elastic Security solutions.
+        Individual users and external applications should not call this API directly.
+        Elastic reserves the right to change or remove this feature in future releases
+        without prior notice. To use this API, you must have one of the following privileges:
+        * The `manage_user_profile` cluster privilege. * The `update_profile_data` global
+        privilege for the namespaces that are referenced in the request. This API updates
+        the `labels` and `data` fields of an existing user profile document with JSON
+        objects. New keys and their values are added to the profile document and conflicting
+        keys are replaced by data that's included in the request. For both labels and
+        data, content is namespaced by the top-level fields. The `update_profile_data`
+        global privilege grants privileges for updating only the allowed namespaces.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-user-profile-data.html>`_
 
         :param uid: A unique identifier for the user profile.
         :param data: Non-searchable data that you want to associate with the user profile.
-            This field supports a nested data structure.
+            This field supports a nested data structure. Within the `data` object, top-level
+            keys cannot begin with an underscore (`_`) or contain a period (`.`). The
+            data object is not searchable, but can be retrieved with the get user profile
+            API.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
             number.
         :param labels: Searchable data that you want to associate with the user profile.
-            This field supports a nested data structure.
+            This field supports a nested data structure. Within the labels object, top-level
+            keys cannot begin with an underscore (`_`) or contain a period (`.`).
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if 'wait_for' then wait for a refresh to
-            make this operation visible to search, if 'false' do nothing with refreshes.
+            this operation visible to search. If 'wait_for', it waits for a refresh to
+            make this operation visible to search. If 'false', nothing is done with refreshes.
         """
         if uid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'uid'")
-        __path = f"/_security/profile/{_quote(uid)}/_data"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"uid": _quote(uid)}
+        __path = f'/_security/profile/{__path_parts["uid"]}/_data'
         __query: t.Dict[str, t.Any] = {}
-        if data is not None:
-            __body["data"] = data
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2662,13 +4327,22 @@ class SecurityClient(NamespacedClient):
             __query["if_primary_term"] = if_primary_term
         if if_seq_no is not None:
             __query["if_seq_no"] = if_seq_no
-        if labels is not None:
-            __body["labels"] = labels
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
+        if not __body:
+            if data is not None:
+                __body["data"] = data
+            if labels is not None:
+                __body["labels"] = labels
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.update_user_profile_data",
+            path_parts=__path_parts,
         )

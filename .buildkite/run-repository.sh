@@ -18,6 +18,7 @@ echo -e "\033[34;1mINFO:\033[0m URL ${ELASTICSEARCH_URL}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m VERSION ${ELASTICSEARCH_VERSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m CONTAINER ${ELASTICSEARCH_CONTAINER}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m TEST_SUITE ${TEST_SUITE}\033[0m"
+echo -e "\033[34;1mINFO:\033[0m NOX_SESSION ${NOX_SESSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m PYTHON_VERSION ${PYTHON_VERSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m PYTHON_CONNECTION_CLASS ${PYTHON_CONNECTION_CLASS}\033[0m"
 
@@ -42,7 +43,8 @@ docker run \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
+  --env "FORCE_COLOR=1" \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  nox -s test-${PYTHON_VERSION}
+  nox -s ${NOX_SESSION}-${PYTHON_VERSION}

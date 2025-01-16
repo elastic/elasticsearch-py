@@ -24,29 +24,33 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class ShutdownClient(NamespacedClient):
+
     @_rewrite_parameters()
     async def delete_node(
         self,
         *,
         node_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and
-        ECK. Direct use is not supported.
+        Cancel node shutdown preparations. Remove a node from the shutdown list so it
+        can resume normal operations. You must explicitly clear the shutdown request
+        when a node rejoins the cluster or when a node has permanently left the cluster.
+        Shutdown requests are never removed automatically by Elasticsearch. NOTE: This
+        feature is designed for indirect use by Elastic Cloud, Elastic Cloud Enterprise,
+        and Elastic Cloud on Kubernetes. Direct use is not supported. If the operator
+        privileges feature is enabled, you must be an operator to use this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-shutdown.html>`_
 
         :param node_id: The node id of node to be removed from the shutdown state
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -57,7 +61,8 @@ class ShutdownClient(NamespacedClient):
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -73,45 +78,49 @@ class ShutdownClient(NamespacedClient):
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "DELETE", __path, params=__query, headers=__headers
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.delete_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
     async def get_node(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
-        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieve status of a node or nodes that are currently marked as shutting down.
-        Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
+        Get the shutdown status. Get information about nodes that are ready to be shut
+        down, have shut down preparations still in progress, or have stalled. The API
+        returns status information for each part of the shut down process. NOTE: This
+        feature is designed for indirect use by Elasticsearch Service, Elastic Cloud
+        Enterprise, and Elastic Cloud on Kubernetes. Direct use is not supported. If
+        the operator privileges feature is enabled, you must be an operator to use this
+        API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-shutdown.html>`_
 
         :param node_id: Which node for which to retrieve the shutdown status
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
         """
+        __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
-            __path = f"/_nodes/{_quote(node_id)}/shutdown"
+            __path_parts = {"node_id": _quote(node_id)}
+            __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         else:
+            __path_parts = {}
             __path = "/_nodes/shutdown"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
@@ -124,44 +133,61 @@ class ShutdownClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="shutdown.get_node",
+            path_parts=__path_parts,
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        body_fields=("reason", "type", "allocation_delay", "target_node_name"),
     )
     async def put_node(
         self,
         *,
         node_id: str,
-        reason: str,
-        type: t.Union["t.Literal['remove', 'replace', 'restart']", str],
+        reason: t.Optional[str] = None,
+        type: t.Optional[
+            t.Union[str, t.Literal["remove", "replace", "restart"]]
+        ] = None,
         allocation_delay: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
         target_node_name: t.Optional[str] = None,
         timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct
-        use is not supported.
+        Prepare a node to be shut down. NOTE: This feature is designed for indirect use
+        by Elastic Cloud, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
+        Direct use is not supported. If you specify a node that is offline, it will be
+        prepared for shut down when it rejoins the cluster. If the operator privileges
+        feature is enabled, you must be an operator to use this API. The API migrates
+        ongoing tasks and index shards to other nodes as needed to prepare a node to
+        be restarted or shut down and removed from the cluster. This ensures that Elasticsearch
+        can be stopped safely with minimal disruption to the cluster. You must specify
+        the type of shutdown: `restart`, `remove`, or `replace`. If a node is already
+        being prepared for shutdown, you can use this API to change the shutdown type.
+        IMPORTANT: This API does NOT terminate the Elasticsearch process. Monitor the
+        node shutdown status to determine when it is safe to stop Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-shutdown.html>`_
 
-        :param node_id: The node id of node to be shut down
+        :param node_id: The node identifier. This parameter is not validated against
+            the cluster's active nodes. This enables you to register a node for shut
+            down while it is offline. No error is thrown if you specify an invalid node
+            ID.
         :param reason: A human-readable reason that the node is being shut down. This
             field provides information for other cluster operators; it does not affect
             the shut down process.
@@ -182,33 +208,28 @@ class ShutdownClient(NamespacedClient):
             the index.unassigned.node_left.delayed_timeout setting. If you specify both
             a restart allocation delay and an index-level allocation delay, the longer
             of the two is used.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
         :param target_node_name: Only valid if type is replace. Specifies the name of
             the node that is replacing the node being shut down. Shards from the shut
             down node are only allowed to be allocated to the target node, and no other
             data will be allocated to the target node. During relocation of data certain
             allocation rules are ignored, such as disk watermarks or user attribute filtering
             rules.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
-        if reason is None:
+        if reason is None and body is None:
             raise ValueError("Empty value passed for parameter 'reason'")
-        if type is None:
+        if type is None and body is None:
             raise ValueError("Empty value passed for parameter 'type'")
-        __path = f"/_nodes/{_quote(node_id)}/shutdown"
-        __body: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {"node_id": _quote(node_id)}
+        __path = f'/_nodes/{__path_parts["node_id"]}/shutdown'
         __query: t.Dict[str, t.Any] = {}
-        if reason is not None:
-            __body["reason"] = reason
-        if type is not None:
-            __body["type"] = type
-        if allocation_delay is not None:
-            __body["allocation_delay"] = allocation_delay
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -219,11 +240,24 @@ class ShutdownClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if target_node_name is not None:
-            __body["target_node_name"] = target_node_name
         if timeout is not None:
             __query["timeout"] = timeout
+        if not __body:
+            if reason is not None:
+                __body["reason"] = reason
+            if type is not None:
+                __body["type"] = type
+            if allocation_delay is not None:
+                __body["allocation_delay"] = allocation_delay
+            if target_node_name is not None:
+                __body["target_node_name"] = target_node_name
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="shutdown.put_node",
+            path_parts=__path_parts,
         )

@@ -5,6 +5,11 @@ Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
+`Download the latest version of Elasticsearch <https://www.elastic.co/downloads/elasticsearch>`_
+or
+`sign-up <https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page>`_
+for a free trial of Elastic Cloud.
+
 
 Installation
 ------------
@@ -29,12 +34,27 @@ Read more about `how to use asyncio with this project <async.html>`_.
 Compatibility
 -------------
 
-Language clients are forward compatible; meaning that clients support communicating
-with greater or equal minor versions of Elasticsearch. Elasticsearch language clients
-are only backwards compatible with default distributions and without guarantees made.
+Language clients are forward compatible; meaning that the clients support
+communicating with greater or equal minor versions of Elasticsearch without
+breaking. It does not mean that the clients automatically support new features
+of newer Elasticsearch versions; it is only possible after a release of a new
+client version. For example, a 8.12 client version won't automatically support
+the new features of the 8.13 version of Elasticsearch, the 8.13 client version
+is required for that. Elasticsearch language clients are only backwards
+compatible with default distributions and without guarantees made.
 
-If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elasticsearch6``.
++-----------------------+-------------------------+-----------+
+| Elasticsearch version | elasticsearch-py branch | Supported |
++=======================+=========================+===========+
+| main                  | main                    |           |
++-----------------------+-------------------------+-----------+
+| 8.x                   | 8.x                     | 8.x       |
++-----------------------+-------------------------+-----------+
+| 7.x                   | 7.x                     | 7.17      |
++-----------------------+-------------------------+-----------+
+
+If you need multiple versions installed at the same time, versions are
+also released, such as ``elasticsearch7`` and ``elasticsearch8``.
 
 
 Example Usage
@@ -44,31 +64,29 @@ Example Usage
 
     from datetime import datetime
     from elasticsearch import Elasticsearch
-    es = Elasticsearch()
+
+    client = Elasticsearch("http://localhost:9200/", api_key="YOUR_API_KEY")
 
     doc = {
-        'author': 'kimchy',
-        'text': 'Elasticsearch: cool. bonsai cool.',
-        'timestamp': datetime.now(),
+        "author": "kimchy",
+        "text": "Elasticsearch: cool. bonsai cool.",
+        "timestamp": datetime.now(),
     }
-    resp = es.index(index="test-index", id=1, document=doc)
-    print(resp['result'])
+    resp = client.index(index="test-index", id=1, document=doc)
+    print(resp["result"])
 
-    resp = es.get(index="test-index", id=1)
-    print(resp['_source'])
+    resp = client.get(index="test-index", id=1)
+    print(resp["_source"])
 
-    es.indices.refresh(index="test-index")
+    client.indices.refresh(index="test-index")
 
-    resp = es.search(index="test-index", query={"match_all": {}})
-    print("Got %d Hits:" % resp['hits']['total']['value'])
-    for hit in resp['hits']['hits']:
-        print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+    resp = client.search(index="test-index", query={"match_all": {}})
+    print("Got {} hits:".format(resp["hits"]["total"]["value"]))
+    for hit in resp["hits"]["hits"]:
+        print("{timestamp} {author} {text}".format(**hit["_source"]))
 
+See more examples in the :ref:`quickstart` page.
 
-Interactive examples
---------------------
-
-The `elasticsearch-labs <https://github.com/elastic/elasticsearch-labs>`_ repo contains interactive and executable Python notebooks, sample apps, and resources for testing out Elasticsearch, using the Python client. These examples are mainly focused on vector search, hybrid search and generative AI use cases, but you'll also find examples of basic operations like creating index mappings and performing lexical search.
 
 
 Features
@@ -110,6 +128,8 @@ Contents
 .. toctree::
    :maxdepth: 3
 
+   quickstart
+   interactive
    api
    exceptions
    async

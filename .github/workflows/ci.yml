@@ -8,54 +8,48 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python 3.x
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: "3.x"
       - name: Install dependencies
         run: |
           python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
-  docs:
+  package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python 3.x
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: "3.11"
       - name: Install dependencies
         run: |
-          python3 -m pip install nox
-      - name: Build the docs
-        run: nox -s docs
+          python3 -m pip install build
+      - name: Build dists
+        run: python utils/build-dists.py
 
   test-linux:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
-        experimental: [false]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
         nox-session: [""]
         runs-on: ["ubuntu-latest"]
-        include:
-          - python-version: 3.11-dev
-            experimental: true
-            nox-session: test-3.11
-            runs-on: "ubuntu-latest"
 
     runs-on: ${{ matrix.runs-on }}
     name: test-${{ matrix.python-version }}
-    continue-on-error: ${{ matrix.experimental }}
+    continue-on-error: false
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set Up Python - ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
@@ -63,14 +57,7 @@ jobs:
           python -m pip install nox
       - name: Run Tests
         shell: bash
-        run: .ci/run-nox.sh
+        run: .buildkite/run-nox.sh
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
           NOX_SESSION: ${{ matrix.nox-session }}
-          # TEMPORARY for 3.11
-          # https://github.com/aio-libs/aiohttp/issues/6600
-          AIOHTTP_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/frozenlist/issues/285
-          FROZENLIST_NO_EXTENSIONS: 1
-          # https://github.com/aio-libs/yarl/issues/680
-          YARL_NO_EXTENSIONS: 1

@@ -27,16 +27,19 @@ from ._sync.client.autoscaling import (  # noqa: F401
 from ._sync.client.cat import CatClient as CatClient  # noqa: F401
 from ._sync.client.ccr import CcrClient as CcrClient  # noqa: F401
 from ._sync.client.cluster import ClusterClient as ClusterClient  # noqa: F401
+from ._sync.client.connector import ConnectorClient as ConnectorClient  # noqa: F401
 from ._sync.client.dangling_indices import (  # noqa: F401
     DanglingIndicesClient as DanglingIndicesClient,
 )
 from ._sync.client.enrich import EnrichClient as EnrichClient  # noqa: F401
 from ._sync.client.eql import EqlClient as EqlClient  # noqa: F401
+from ._sync.client.esql import EsqlClient as EsqlClient  # noqa: F401
 from ._sync.client.features import FeaturesClient as FeaturesClient  # noqa: F401
 from ._sync.client.fleet import FleetClient as FleetClient  # noqa: F401
 from ._sync.client.graph import GraphClient as GraphClient  # noqa: F401
 from ._sync.client.ilm import IlmClient as IlmClient  # noqa: F401
 from ._sync.client.indices import IndicesClient as IndicesClient  # noqa: F401
+from ._sync.client.inference import InferenceClient as InferenceClient  # noqa: F401
 from ._sync.client.ingest import IngestClient as IngestClient  # noqa: F401
 from ._sync.client.license import LicenseClient as LicenseClient  # noqa: F401
 from ._sync.client.logstash import LogstashClient as LogstashClient  # noqa: F401
@@ -44,9 +47,7 @@ from ._sync.client.migration import MigrationClient as MigrationClient  # noqa: 
 from ._sync.client.ml import MlClient as MlClient  # noqa: F401
 from ._sync.client.monitoring import MonitoringClient as MonitoringClient  # noqa: F401
 from ._sync.client.nodes import NodesClient as NodesClient  # noqa: F401
-from ._sync.client.query_ruleset import (  # noqa: F401
-    QueryRulesetClient as QueryRulesetClient,
-)
+from ._sync.client.query_rules import QueryRulesClient as QueryRulesClient  # noqa: F401
 from ._sync.client.rollup import RollupClient as RollupClient  # noqa: F401
 from ._sync.client.search_application import (  # noqa: F401
     SearchApplicationClient as SearchApplicationClient,
@@ -84,6 +85,7 @@ __all__ = [
     "CatClient",
     "CcrClient",
     "ClusterClient",
+    "ConnectorClient",
     "DanglingIndicesClient",
     "Elasticsearch",
     "EnrichClient",

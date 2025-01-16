@@ -21,6 +21,23 @@ import pytest
 
 from elasticsearch import Elasticsearch, JsonSerializer
 
+EXPECTED_SERIALIZERS = {
+    "application/vnd.mapbox-vector-tile",
+    "application/x-ndjson",
+    "application/json",
+    "text/*",
+    "application/vnd.elasticsearch+json",
+    "application/vnd.elasticsearch+x-ndjson",
+}
+
+
+try:
+    import pyarrow as pa
+
+    EXPECTED_SERIALIZERS.add("application/vnd.apache.arrow.stream")
+except ImportError:
+    pa = None
+
 
 def test_sniff_on_connection_fail():
     with warnings.catch_warnings(record=True) as w:
@@ -129,14 +146,7 @@ def test_serializer_and_serializers():
         client.transport.serializers.get_serializer("application/json"),
         CustomSerializer,
     )
-    assert set(client.transport.serializers.serializers.keys()) == {
-        "application/vnd.mapbox-vector-tile",
-        "application/x-ndjson",
-        "application/json",
-        "text/*",
-        "application/vnd.elasticsearch+json",
-        "application/vnd.elasticsearch+x-ndjson",
-    }
+    assert set(client.transport.serializers.serializers.keys()) == EXPECTED_SERIALIZERS
 
     client = Elasticsearch(
         "http://localhost:9200",
@@ -149,12 +159,5 @@ def test_serializer_and_serializers():
         client.transport.serializers.get_serializer("application/json"),
         CustomSerializer,
     )
-    assert set(client.transport.serializers.serializers.keys()) == {
-        "application/vnd.mapbox-vector-tile",
-        "application/x-ndjson",
-        "application/json",
-        "text/*",
-        "application/vnd.elasticsearch+json",
-        "application/vnd.elasticsearch+x-ndjson",
-        "application/cbor",
-    }
+    expected = EXPECTED_SERIALIZERS | {"application/cbor"}
+    assert set(client.transport.serializers.serializers.keys()) == expected

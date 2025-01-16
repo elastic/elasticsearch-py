@@ -1,6 +1,11 @@
 [[installation]]
 == Installation
 
+**https://www.elastic.co/downloads/elasticsearch[Download the latest version of Elasticsearch]**
+or
+**https://cloud.elastic.co/registration?elektra=en-ess-sign-up-page[sign-up]**
+**for a free trial of Elastic Cloud**.
+
 The Python client for {es} can be installed with pip:
 
 [source,sh]
@@ -17,4 +22,4 @@ $ python -m pip install elasticsearch[async]
 --------------------------------------------
 
 Read more about 
-https://elasticsearch-py.readthedocs.io/en/master/async.html[how to use Asyncio with this project].
+https://elasticsearch-py.readthedocs.io/en/master/async.html[how to use asyncio with this project].

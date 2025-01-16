@@ -34,6 +34,8 @@ from typing import (
     Union,
 )
 
+from elastic_transport import OpenTelemetrySpan
+
 from .. import Elasticsearch
 from ..compat import to_bytes
 from ..exceptions import ApiError, NotFoundError, TransportError
@@ -262,7 +264,7 @@ def _process_bulk_chunk_success(
         if not ok and raise_on_error and status_code not in ignore_status:
             # include original document source
             if len(data) > 1:
-                item["data"] = data[1]  # type: ignore[misc]
+                item["data"] = data[1]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -299,7 +301,7 @@ def _process_bulk_chunk_error(
         op_type, action = data[0].copy().popitem()
         info = {"error": err_message, "status": error.status_code, "exception": error}
         if op_type != "delete" and len(data) > 1:
-            info["data"] = data[1]  # type: ignore[misc]
+            info["data"] = data[1]
         info.update(action)
         exc_errors.append({op_type: info})
 
@@ -322,6 +324,7 @@ def _process_bulk_chunk(
             Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
         ]
     ],
+    otel_span: OpenTelemetrySpan,
     raise_on_exception: bool = True,
     raise_on_error: bool = True,
     ignore_status: Union[int, Collection[int]] = (),
@@ -331,28 +334,29 @@ def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    if isinstance(ignore_status, int):
-        ignore_status = (ignore_status,)
+    with client._otel.use_span(otel_span):
+        if isinstance(ignore_status, int):
+            ignore_status = (ignore_status,)
 
-    try:
-        # send the actual request
-        resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
-    except ApiError as e:
-        gen = _process_bulk_chunk_error(
-            error=e,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_exception=raise_on_exception,
-            raise_on_error=raise_on_error,
-        )
-    else:
-        gen = _process_bulk_chunk_success(
-            resp=resp.body,
-            bulk_data=bulk_data,
-            ignore_status=ignore_status,
-            raise_on_error=raise_on_error,
-        )
-    yield from gen
+        try:
+            # send the actual request
+            resp = client.bulk(*args, operations=bulk_actions, **kwargs)  # type: ignore[arg-type]
+        except ApiError as e:
+            gen = _process_bulk_chunk_error(
+                error=e,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_exception=raise_on_exception,
+                raise_on_error=raise_on_error,
+            )
+        else:
+            gen = _process_bulk_chunk_success(
+                resp=resp.body,
+                bulk_data=bulk_data,
+                ignore_status=ignore_status,
+                raise_on_error=raise_on_error,
+            )
+        yield from gen
 
 
 def streaming_bulk(
@@ -370,6 +374,8 @@ def streaming_bulk(
     max_backoff: float = 600,
     yield_ok: bool = True,
     ignore_status: Union[int, Collection[int]] = (),
+    retry_on_status: Union[int, Collection[int]] = (429,),
+    span_name: str = "helpers.streaming_bulk",
     *args: Any,
     **kwargs: Any,
 ) -> Iterable[Tuple[bool, Dict[str, Any]]]:
@@ -381,10 +387,11 @@ def streaming_bulk(
     entire input is consumed and sent.
 
     If you specify ``max_retries`` it will also retry any documents that were
-    rejected with a ``429`` status code. To do this it will wait (**by calling
-    time.sleep which will block**) for ``initial_backoff`` seconds and then,
-    every subsequent rejection for the same chunk, for double the time every
-    time up to ``max_backoff`` seconds.
+    rejected with a ``429`` status code. Use ``retry_on_status`` to
+    configure which status codes will be retried. To do this it will wait
+    (**by calling time.sleep which will block**) for ``initial_backoff`` seconds
+    and then, every subsequent rejection for the same chunk, for double the time
+    every time up to ``max_backoff`` seconds.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
@@ -397,8 +404,11 @@ def streaming_bulk(
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
+    :arg retry_on_status: HTTP status code that will trigger a retry.
+        (if `None` is specified only status 429 will retry).
     :arg max_retries: maximum number of times a document will be retried when
-        ``429`` is received, set to 0 (default) for no retries on ``429``
+        retry_on_status (defaulting to ``429``) is received,
+        set to 0 (default) for no retries
     :arg initial_backoff: number of seconds we should wait before the first
         retry. Any subsequent retries will be powers of ``initial_backoff *
         2**retry_number``
@@ -406,73 +416,82 @@ def streaming_bulk(
     :arg yield_ok: if set to False will skip successful documents in the output
     :arg ignore_status: list of HTTP status code that you want to ignore
     """
-    client = client.options()
-    client._client_meta = (("h", "bp"),)
+    with client._otel.helpers_span(span_name) as otel_span:
+        client = client.options()
+        client._client_meta = (("h", "bp"),)
 
-    serializer = client.transport.serializers.get_serializer("application/json")
+        if isinstance(retry_on_status, int):
+            retry_on_status = (retry_on_status,)
 
-    bulk_data: List[
-        Union[
-            Tuple[_TYPE_BULK_ACTION_HEADER],
-            Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+        serializer = client.transport.serializers.get_serializer("application/json")
+
+        bulk_data: List[
+            Union[
+                Tuple[_TYPE_BULK_ACTION_HEADER],
+                Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+            ]
         ]
-    ]
-    bulk_actions: List[bytes]
-    for bulk_data, bulk_actions in _chunk_actions(
-        map(expand_action_callback, actions), chunk_size, max_chunk_bytes, serializer
-    ):
-        for attempt in range(max_retries + 1):
-            to_retry: List[bytes] = []
-            to_retry_data: List[
-                Union[
-                    Tuple[_TYPE_BULK_ACTION_HEADER],
-                    Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
-                ]
-            ] = []
-            if attempt:
-                time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
+        bulk_actions: List[bytes]
+        for bulk_data, bulk_actions in _chunk_actions(
+            map(expand_action_callback, actions),
+            chunk_size,
+            max_chunk_bytes,
+            serializer,
+        ):
+            for attempt in range(max_retries + 1):
+                to_retry: List[bytes] = []
+                to_retry_data: List[
+                    Union[
+                        Tuple[_TYPE_BULK_ACTION_HEADER],
+                        Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+                    ]
+                ] = []
+                if attempt:
+                    time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
-            try:
-                for data, (ok, info) in zip(
-                    bulk_data,
-                    _process_bulk_chunk(
-                        client,
-                        bulk_actions,
+                try:
+                    for data, (ok, info) in zip(
                         bulk_data,
-                        raise_on_exception,
-                        raise_on_error,
-                        ignore_status,
-                        *args,
-                        **kwargs,
-                    ),
-                ):
-                    if not ok:
-                        action, info = info.popitem()
-                        # retry if retries enabled, we get 429, and we are not
-                        # in the last attempt
-                        if (
-                            max_retries
-                            and info["status"] == 429
-                            and (attempt + 1) <= max_retries
-                        ):
-                            # _process_bulk_chunk expects bytes so we need to
-                            # re-serialize the data
-                            to_retry.extend(map(serializer.dumps, data))
-                            to_retry_data.append(data)
-                        else:
-                            yield ok, {action: info}
-                    elif yield_ok:
-                        yield ok, info
+                        _process_bulk_chunk(
+                            client,
+                            bulk_actions,
+                            bulk_data,
+                            otel_span,
+                            raise_on_exception,
+                            raise_on_error,
+                            ignore_status,
+                            *args,
+                            **kwargs,
+                        ),
+                    ):
+                        if not ok:
+                            action, info = info.popitem()
+                            # retry if retries enabled, we are not in the last attempt,
+                            # and status in retry_on_status (defaulting to 429)
+                            if (
+                                max_retries
+                                and info["status"] in retry_on_status
+                                and (attempt + 1) <= max_retries
+                            ):
+                                # _process_bulk_chunk expects bytes so we need to
+                                # re-serialize the data
+                                to_retry.extend(map(serializer.dumps, data))
+                                to_retry_data.append(data)
+                            else:
+                                yield ok, {action: info}
+                        elif yield_ok:
+                            yield ok, info
 
-            except ApiError as e:
-                # suppress 429 errors since we will retry them
-                if attempt == max_retries or e.status_code != 429:
-                    raise
-            else:
-                if not to_retry:
-                    break
-                # retry only subset of documents that didn't succeed
-                bulk_actions, bulk_data = to_retry, to_retry_data
+                except ApiError as e:
+                    # suppress any status in retry_on_status (429 by default)
+                    # since we will retry them
+                    if attempt == max_retries or e.status_code not in retry_on_status:
+                        raise
+                else:
+                    if not to_retry:
+                        break
+                    # retry only subset of documents that didn't succeed
+                    bulk_actions, bulk_data = to_retry, to_retry_data
 
 
 def bulk(
@@ -519,7 +538,7 @@ def bulk(
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
     for ok, item in streaming_bulk(
-        client, actions, ignore_status=ignore_status, *args, **kwargs  # type: ignore[misc]
+        client, actions, ignore_status=ignore_status, span_name="helpers.bulk", *args, **kwargs  # type: ignore[misc]
     ):
         # go through request-response pairs and detect failures
         if not ok:
@@ -589,27 +608,31 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    pool = BlockingPool(thread_count)
+    with client._otel.helpers_span("helpers.parallel_bulk") as otel_span:
+        pool = BlockingPool(thread_count)
 
-    try:
-        for result in pool.imap(
-            lambda bulk_chunk: list(
-                _process_bulk_chunk(
-                    client,
-                    bulk_chunk[1],
-                    bulk_chunk[0],
-                    ignore_status=ignore_status,  # type: ignore[misc]
-                    *args,
-                    **kwargs,
-                )
-            ),
-            _chunk_actions(expanded_actions, chunk_size, max_chunk_bytes, serializer),
-        ):
-            yield from result
+        try:
+            for result in pool.imap(
+                lambda bulk_chunk: list(
+                    _process_bulk_chunk(
+                        client,
+                        bulk_chunk[1],
+                        bulk_chunk[0],
+                        otel_span=otel_span,
+                        ignore_status=ignore_status,  # type: ignore[misc]
+                        *args,
+                        **kwargs,
+                    )
+                ),
+                _chunk_actions(
+                    expanded_actions, chunk_size, max_chunk_bytes, serializer
+                ),
+            ):
+                yield from result
 
-    finally:
-        pool.close()
-        pool.join()
+        finally:
+            pool.close()
+            pool.join()
 
 
 def scan(
@@ -656,7 +679,7 @@ def scan(
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
 
-        scan(es,
+        scan(client,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*",
             doc_type="books"
@@ -714,7 +737,7 @@ def scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
+        resp = client.search(body=query, **search_kwargs)
 
     scroll_id = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -16,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from __future__ import unicode_literals
 
 import asyncio
 import re
@@ -24,7 +22,13 @@ import warnings
 from typing import Any, Dict, Optional, Union
 
 import pytest
-from elastic_transport import ApiResponseMeta, BaseAsyncNode, HttpHeaders, NodeConfig
+from elastic_transport import (
+    ApiResponseMeta,
+    BaseAsyncNode,
+    HttpHeaders,
+    NodeConfig,
+    NodePool,
+)
 from elastic_transport._node import NodeApiResponse
 from elastic_transport.client_utils import DEFAULT
 
@@ -71,6 +75,14 @@ class DummyNode(BaseAsyncNode):
         if self.closed:
             raise RuntimeError("This connection is already closed")
         self.closed = True
+
+
+class NoTimeoutConnectionPool(NodePool):
+    def mark_dead(self, connection):
+        pass
+
+    def mark_live(self, connection):
+        pass
 
 
 CLUSTER_NODES = """{
@@ -266,7 +278,7 @@ class TestTransport:
         )
         assert dt is client.transport.node_pool.dead_node_backoff_factor
 
-        class MyConnection(object):
+        class MyConnection:
             def __init__(self, *_, **__):
                 pass
 
@@ -344,6 +356,27 @@ class TestTransport:
 
         assert len(client.transport.node_pool._alive_nodes) == 1
         assert len(client.transport.node_pool._dead_consecutive_failures) == 1
+
+    async def test_override_mark_dead_mark_live(self):
+        client = AsyncElasticsearch(
+            [
+                NodeConfig("http", "localhost", 9200),
+                NodeConfig("http", "localhost", 9201),
+            ],
+            node_class=DummyNode,
+            node_pool_class=NoTimeoutConnectionPool,
+        )
+        node1 = client.transport.node_pool.get()
+        node2 = client.transport.node_pool.get()
+        assert node1 is not node2
+        client.transport.node_pool.mark_dead(node1)
+        client.transport.node_pool.mark_dead(node2)
+        assert len(client.transport.node_pool._alive_nodes) == 2
+
+        await client.info()
+
+        assert len(client.transport.node_pool._alive_nodes) == 2
+        assert len(client.transport.node_pool._dead_consecutive_failures) == 0
 
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],

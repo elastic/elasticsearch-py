@@ -20,6 +20,23 @@ import pytest
 from elasticsearch import Elasticsearch
 from test_elasticsearch.test_cases import DummyTransportTestCase
 
+EXPECTED_SERIALIZERS = {
+    "application/json",
+    "text/*",
+    "application/x-ndjson",
+    "application/vnd.mapbox-vector-tile",
+    "application/vnd.elasticsearch+json",
+    "application/vnd.elasticsearch+x-ndjson",
+}
+
+
+try:
+    import pyarrow as pa
+
+    EXPECTED_SERIALIZERS.add("application/vnd.apache.arrow.stream")
+except ImportError:
+    pa = None
+
 
 class TestSerializers(DummyTransportTestCase):
     def test_compat_mode_on_by_default(self):
@@ -90,15 +107,8 @@ class TestSerializers(DummyTransportTestCase):
             "https://localhost:9200", serializers={f"application/{mime_subtype}": ser}
         )
         serializers = client.transport.serializers.serializers
-        assert set(serializers.keys()) == {
-            "application/json",
-            "text/*",
-            "application/x-ndjson",
-            "application/vnd.mapbox-vector-tile",
-            "application/vnd.elasticsearch+json",
-            "application/vnd.elasticsearch+x-ndjson",
-        }
 
+        assert set(serializers.keys()) == EXPECTED_SERIALIZERS
         assert serializers[f"application/{mime_subtype}"] is ser
         assert serializers[f"application/vnd.elasticsearch+{mime_subtype}"] is ser
 
@@ -117,15 +127,7 @@ class TestSerializers(DummyTransportTestCase):
             },
         )
         serializers = client.transport.serializers.serializers
-        assert set(serializers.keys()) == {
-            "application/json",
-            "text/*",
-            "application/x-ndjson",
-            "application/vnd.mapbox-vector-tile",
-            "application/vnd.elasticsearch+json",
-            "application/vnd.elasticsearch+x-ndjson",
-        }
-
+        assert set(serializers.keys()) == EXPECTED_SERIALIZERS
         assert serializers[f"application/{mime_subtype}"] is ser1
         assert serializers[f"application/vnd.elasticsearch+{mime_subtype}"] is ser2
 
@@ -136,14 +138,6 @@ class TestSerializers(DummyTransportTestCase):
         ser = CustomSerializer()
         client = Elasticsearch("https://localhost:9200", serializer=ser)
         serializers = client.transport.serializers.serializers
-        assert set(serializers.keys()) == {
-            "application/json",
-            "text/*",
-            "application/x-ndjson",
-            "application/vnd.mapbox-vector-tile",
-            "application/vnd.elasticsearch+json",
-            "application/vnd.elasticsearch+x-ndjson",
-        }
-
+        assert set(serializers.keys()) == EXPECTED_SERIALIZERS
         assert serializers["application/json"] is ser
         assert serializers["application/vnd.elasticsearch+json"] is ser

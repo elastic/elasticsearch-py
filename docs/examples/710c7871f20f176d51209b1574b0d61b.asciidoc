@@ -1,9 +1,0 @@
-// docs/get.asciidoc:335
-
-[source, python]
-----
-resp = client.get(
-    index="twitter", id="1", stored_fields=["tags", "counter"],
-)
-print(resp)
-----

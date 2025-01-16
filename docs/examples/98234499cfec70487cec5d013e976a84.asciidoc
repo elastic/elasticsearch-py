@@ -1,7 +1,0 @@
-// docs/get.asciidoc:253
-
-[source, python]
-----
-resp = client.exists(index="twitter", id="0")
-print(resp)
-----
