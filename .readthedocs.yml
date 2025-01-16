@@ -13,3 +13,6 @@ python:
   install:
     - requirements: dev-requirements.txt
     - path: .
+
+sphinx:
+  configuration: docs/sphinx/conf.py
