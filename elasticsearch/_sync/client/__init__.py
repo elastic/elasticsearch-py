@@ -644,41 +644,125 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Bulk index or delete documents. Performs multiple indexing or delete operations
-        in a single API call. This reduces overhead and can greatly increase indexing
-        speed.
+        Bulk index or delete documents. Perform multiple `index`, `create`, `delete`,
+        and `update` actions in a single request. This reduces overhead and can greatly
+        increase indexing speed. If the Elasticsearch security features are enabled,
+        you must have the following index privileges for the target data stream, index,
+        or index alias: * To use the `create` action, you must have the `create_doc`,
+        `create`, `index`, or `write` index privilege. Data streams support only the
+        `create` action. * To use the `index` action, you must have the `create`, `index`,
+        or `write` index privilege. * To use the `delete` action, you must have the `delete`
+        or `write` index privilege. * To use the `update` action, you must have the `index`
+        or `write` index privilege. * To automatically create a data stream or index
+        with a bulk API request, you must have the `auto_configure`, `create_index`,
+        or `manage` index privilege. * To make the result of a bulk operation visible
+        to search using the `refresh` parameter, you must have the `maintenance` or `manage`
+        index privilege. Automatic data stream creation requires a matching index template
+        with data stream enabled. The actions are specified in the request body using
+        a newline delimited JSON (NDJSON) structure: ``` action_and_meta_data\\n optional_source\\n
+        action_and_meta_data\\n optional_source\\n .... action_and_meta_data\\n optional_source\\n
+        ``` The `index` and `create` actions expect a source on the next line and have
+        the same semantics as the `op_type` parameter in the standard index API. A `create`
+        action fails if a document with the same ID already exists in the target An `index`
+        action adds or replaces a document as necessary. NOTE: Data streams support only
+        the `create` action. To update or delete a document in a data stream, you must
+        target the backing index containing the document. An `update` action expects
+        that the partial doc, upsert, and script and its options are specified on the
+        next line. A `delete` action does not expect a source on the next line and has
+        the same semantics as the standard delete API. NOTE: The final line of data must
+        end with a newline character (`\\n`). Each newline character may be preceded
+        by a carriage return (`\\r`). When sending NDJSON data to the `_bulk` endpoint,
+        use a `Content-Type` header of `application/json` or `application/x-ndjson`.
+        Because this format uses literal newline characters (`\\n`) as delimiters, make
+        sure that the JSON actions and sources are not pretty printed. If you provide
+        a target in the request path, it is used for any actions that don't explicitly
+        specify an `_index` argument. A note on the format: the idea here is to make
+        processing as fast as possible. As some of the actions are redirected to other
+        shards on other nodes, only `action_meta_data` is parsed on the receiving node
+        side. Client libraries using this protocol should try and strive to do something
+        similar on the client side, and reduce buffering as much as possible. There is
+        no "correct" number of actions to perform in a single bulk request. Experiment
+        with different settings to find the optimal size for your particular workload.
+        Note that Elasticsearch limits the maximum size of a HTTP request to 100mb by
+        default so clients must ensure that no request exceeds this size. It is not possible
+        to index a single document that exceeds the size limit, so you must pre-process
+        any such documents into smaller pieces before sending them to Elasticsearch.
+        For instance, split documents into pages or chapters before indexing them, or
+        store raw binary data in a system outside Elasticsearch and replace the raw data
+        with a link to the external system in the documents that you send to Elasticsearch.
+        **Client suppport for bulk requests** Some of the officially supported clients
+        provide helpers to assist with bulk requests and reindexing: * Go: Check out
+        `esutil.BulkIndexer` * Perl: Check out `Search::Elasticsearch::Client::5_0::Bulk`
+        and `Search::Elasticsearch::Client::5_0::Scroll` * Python: Check out `elasticsearch.helpers.*`
+        * JavaScript: Check out `client.helpers.*` * .NET: Check out `BulkAllObservable`
+        * PHP: Check out bulk indexing. **Submitting bulk requests with cURL** If you're
+        providing text file input to `curl`, you must use the `--data-binary` flag instead
+        of plain `-d`. The latter doesn't preserve newlines. For example: ``` $ cat requests
+        { "index" : { "_index" : "test", "_id" : "1" } } { "field1" : "value1" } $ curl
+        -s -H "Content-Type: application/x-ndjson" -XPOST localhost:9200/_bulk --data-binary
+        "@requests"; echo {"took":7, "errors": false, "items":[{"index":{"_index":"test","_id":"1","_version":1,"result":"created","forced_refresh":false}}]}
+        ``` **Optimistic concurrency control** Each `index` and `delete` action within
+        a bulk API call may include the `if_seq_no` and `if_primary_term` parameters
+        in their respective action and meta data lines. The `if_seq_no` and `if_primary_term`
+        parameters control how operations are run, based on the last modification to
+        existing documents. See Optimistic concurrency control for more details. **Versioning**
+        Each bulk item can include the version value using the `version` field. It automatically
+        follows the behavior of the index or delete operation based on the `_version`
+        mapping. It also support the `version_type`. **Routing** Each bulk item can include
+        the routing value using the `routing` field. It automatically follows the behavior
+        of the index or delete operation based on the `_routing` mapping. NOTE: Data
+        streams do not support custom routing unless they were created with the `allow_custom_routing`
+        setting enabled in the template. **Wait for active shards** When making bulk
+        calls, you can set the `wait_for_active_shards` parameter to require a minimum
+        number of shard copies to be active before starting to process the bulk request.
+        **Refresh** Control when the changes made by this request are visible to search.
+        NOTE: Only the shards that receive the bulk request will be affected by refresh.
+        Imagine a `_bulk?refresh=wait_for` request with three documents in it that happen
+        to be routed to different shards in an index with five shards. The request will
+        only wait for those three shards to refresh. The other two shards that make up
+        the index do not participate in the `_bulk` request at all.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/docs-bulk.html>`_
 
         :param operations:
-        :param index: Name of the data stream, index, or index alias to perform bulk
+        :param index: The name of the data stream, index, or index alias to perform bulk
             actions on.
         :param list_executed_pipelines: If `true`, the response will include the ingest
-            pipelines that were executed for each index or create.
-        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
-            If the index has a default ingest pipeline specified, then setting the value
-            to `_none` disables the default ingest pipeline for this request. If a final
-            pipeline is configured it will always run, regardless of the value of this
+            pipelines that were run for each index or create.
+        :param pipeline: The pipeline identifier to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, setting the value to
+            `_none` turns off the default ingest pipeline for this request. If a final
+            pipeline is configured, it will always run regardless of the value of this
             parameter.
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh to
-            make this operation visible to search, if `false` do nothing with refreshes.
+            this operation visible to search. If `wait_for`, wait for a refresh to make
+            this operation visible to search. If `false`, do nothing with refreshes.
             Valid values: `true`, `false`, `wait_for`.
-        :param require_alias: If `true`, the request’s actions must target an index alias.
+        :param require_alias: If `true`, the request's actions must target an index alias.
         :param require_data_stream: If `true`, the request's actions must target a data
-            stream (existing or to-be-created).
-        :param routing: Custom value used to route operations to a specific shard.
-        :param source: `true` or `false` to return the `_source` field or not, or a list
-            of fields to return.
+            stream (existing or to be created).
+        :param routing: A custom value that is used to route operations to a specific
+            shard.
+        :param source: Indicates whether to return the `_source` field (`true` or `false`)
+            or contains a list of fields to return.
         :param source_excludes: A comma-separated list of source fields to exclude from
-            the response.
+            the response. You can also use this parameter to exclude fields from the
+            subset specified in `_source_includes` query parameter. If the `_source`
+            parameter is `false`, this parameter is ignored.
         :param source_includes: A comma-separated list of source fields to include in
-            the response.
-        :param timeout: Period each action waits for the following operations: automatic
-            index creation, dynamic mapping updates, waiting for active shards.
+            the response. If this parameter is specified, only these source fields are
+            returned. You can exclude fields from this subset using the `_source_excludes`
+            query parameter. If the `_source` parameter is `false`, this parameter is
+            ignored.
+        :param timeout: The period each action waits for the following operations: automatic
+            index creation, dynamic mapping updates, and waiting for active shards. The
+            default is `1m` (one minute), which guarantees Elasticsearch waits for at
+            least the timeout before failing. The actual wait time could be longer, particularly
+            when multiple waits occur.
         :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to all or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
+            before proceeding with the operation. Set to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`). The
+            default is `1`, which waits for each primary shard to be active.
         """
         if operations is None and body is None:
             raise ValueError(
@@ -758,7 +842,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clear-scroll-api.html>`_
 
-        :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
+        :param scroll_id: The scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_search/scroll"
@@ -882,46 +966,62 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Count search results. Get the number of documents matching a query.
+        Count search results. Get the number of documents matching a query. The query
+        can either be provided using a simple query string as a parameter or using the
+        Query DSL defined within the request body. The latter must be nested in a `query`
+        key, which is the same as the search API. The count API supports multi-target
+        syntax. You can run a single count API search across multiple data streams and
+        indices. The operation is broadcast across all shards. For each shard ID group,
+        a replica is chosen and the search is run against it. This means that replicas
+        increase the scalability of the count.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-count.html>`_
 
-        :param index: Comma-separated list of data streams, indices, and aliases to search.
-            Supports wildcards (`*`). To search all data streams and indices, omit this
-            parameter or use `*` or `_all`.
+        :param index: A comma-separated list of data streams, indices, and aliases to
+            search. It supports wildcards (`*`). To search all data streams and indices,
+            omit this parameter or use `*` or `_all`.
         :param allow_no_indices: If `false`, the request returns an error if any wildcard
             expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
-            This parameter can only be used when the `q` query string parameter is specified.
-        :param analyzer: Analyzer to use for the query string. This parameter can only
-            be used when the `q` query string parameter is specified.
+            This parameter can be used only when the `q` query string parameter is specified.
+        :param analyzer: The analyzer to use for the query string. This parameter can
+            be used only when the `q` query string parameter is specified.
         :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can only be used when the `q` query string parameter
+            `OR`. This parameter can be used only when the `q` query string parameter
             is specified.
-        :param df: Field to use as default where no field prefix is given in the query
-            string. This parameter can only be used when the `q` query string parameter
+        :param df: The field to use as a default when no field prefix is given in the
+            query string. This parameter can be used only when the `q` query string parameter
             is specified.
-        :param expand_wildcards: Type of index that wildcard patterns can match. If the
-            request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`.
-        :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
+        :param expand_wildcards: The type of index that wildcard patterns can match.
+            If the request can target data streams, this argument determines whether
+            wildcard expressions match hidden data streams. It supports comma-separated
+            values, such as `open,hidden`.
+        :param ignore_throttled: If `true`, concrete, expanded, or aliased indices are
             ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
-            to a numeric field) in the query string will be ignored.
-        :param min_score: Sets the minimum `_score` value that documents must have to
-            be included in the result.
-        :param preference: Specifies the node or shard the operation should be performed
-            on. Random by default.
-        :param q: Query in the Lucene query string syntax.
-        :param query: Defines the search definition using the Query DSL.
-        :param routing: Custom value used to route operations to a specific shard.
-        :param terminate_after: Maximum number of documents to collect for each shard.
+            to a numeric field) in the query string will be ignored. This parameter can
+            be used only when the `q` query string parameter is specified.
+        :param min_score: The minimum `_score` value that documents must have to be included
+            in the result.
+        :param preference: The node or shard the operation should be performed on. By
+            default, it is random.
+        :param q: The query in Lucene query string syntax.
+        :param query: Defines the search definition using the Query DSL. The query is
+            optional, and when not provided, it will use `match_all` to count all the
+            docs.
+        :param routing: A custom value used to route operations to a specific shard.
+        :param terminate_after: The maximum number of documents to collect for each shard.
             If a query reaches this limit, Elasticsearch terminates the query early.
-            Elasticsearch collects documents before sorting.
+            Elasticsearch collects documents before sorting. IMPORTANT: Use with caution.
+            Elasticsearch applies this parameter to each shard handling the request.
+            When possible, let Elasticsearch perform early termination automatically.
+            Avoid specifying this parameter for requests that target data streams with
+            backing indices across multiple data tiers.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -2489,9 +2589,9 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get cluster info. Returns basic information about the cluster.
+        Get cluster info. Get basic build, version, and cluster information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rest-api-root.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/"
@@ -4467,6 +4567,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -4494,6 +4595,7 @@ class Elasticsearch(BaseClient):
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
             only.
+        :param master_timeout: Period to wait for a connection to the master node.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
         :param routing: Custom value used to route operations to a specific shard.
@@ -4520,6 +4622,8 @@ class Elasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if local is not None:
             __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:

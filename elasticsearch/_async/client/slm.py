@@ -33,7 +33,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Delete a policy. Delete a snapshot lifecycle policy definition. This operation
@@ -43,6 +45,11 @@ class SlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-delete-policy.html>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to remove
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
@@ -55,8 +62,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -75,7 +86,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Run a policy. Immediately create a snapshot according to the snapshot lifecycle
@@ -86,6 +99,11 @@ class SlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-execute-lifecycle.html>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to be executed
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
@@ -98,8 +116,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -117,7 +139,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Run a retention policy. Manually apply the retention policy to force immediate
@@ -125,6 +149,12 @@ class SlmClient(NamespacedClient):
         retention rules. The retention policy is normally applied according to its schedule.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-execute-retention.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/_execute_retention"
@@ -135,8 +165,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -155,7 +189,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get policy information. Get snapshot lifecycle policy definitions and information
@@ -164,6 +200,11 @@ class SlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-policy.html>`_
 
         :param policy_id: Comma-separated list of snapshot lifecycle policies to retrieve
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str]
         if policy_id not in SKIP_IN_PATH:
@@ -179,8 +220,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -198,13 +243,21 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get snapshot lifecycle management statistics. Get global and policy-level statistics
         about actions taken by snapshot lifecycle management.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-stats.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stats"
@@ -215,8 +268,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -234,12 +291,22 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get the snapshot lifecycle management status.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-get-status.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. To indicate that the request should never timeout,
+            set it to `-1`.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/status"
@@ -250,8 +317,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -292,9 +363,10 @@ class SlmClient(NamespacedClient):
         :param policy_id: The identifier for the snapshot lifecycle policy you want to
             create or update.
         :param config: Configuration for each snapshot created by the policy.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. To indicate that the request should never timeout,
+            set it to `-1`.
         :param name: Name automatically assigned to each snapshot created by the policy.
             Date math is supported. To prevent conflicting snapshot names, a UUID is
             automatically appended to each snapshot name.
@@ -305,8 +377,9 @@ class SlmClient(NamespacedClient):
             by the policy.
         :param schedule: Periodic or absolute schedule at which the policy creates snapshots.
             SLM applies schedule changes immediately.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
@@ -359,7 +432,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Start snapshot lifecycle management. Snapshot lifecycle management (SLM) starts
@@ -367,6 +442,14 @@ class SlmClient(NamespacedClient):
         if it has been stopped using the stop SLM API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-start.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. To indicate that the request should never timeout,
+            set it to `-1`.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/start"
@@ -377,8 +460,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -396,7 +483,9 @@ class SlmClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Stop snapshot lifecycle management. Stop all snapshot lifecycle management (SLM)
@@ -410,6 +499,14 @@ class SlmClient(NamespacedClient):
         status API to see if SLM is running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/slm-api-stop.html>`_
+
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. To indicate that the request should never timeout,
+            set it to `-1`.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_slm/stop"
@@ -420,8 +517,12 @@ class SlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",

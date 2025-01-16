@@ -36,11 +36,25 @@ class SynonymsClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a synonym set.
+        Delete a synonym set. You can only delete a synonyms set that is not in use by
+        any index analyzer. Synonyms sets can be used in synonym graph token filters
+        and synonym token filters. These synonym filters can be used as part of search
+        analyzers. Analyzers need to be loaded when an index is restored (such as when
+        a node starts, or the index becomes open). Even if the analyzer is not used on
+        any field mapping, it still needs to be loaded on the index recovery phase. If
+        any analyzers cannot be loaded, the index becomes unavailable and the cluster
+        status becomes red or yellow as index shards are not available. To prevent that,
+        synonyms sets that are used in analyzers can't be deleted. A delete request in
+        this case will return a 400 response code. To remove a synonyms set, you must
+        first remove all indices that contain analyzers using it. You can migrate an
+        index by creating a new index that does not contain the token filter with the
+        synonyms set, and use the reindex API in order to copy over the index data. Once
+        finished, you can delete the index. When the synonyms set is not used in analyzers,
+        you will be able to delete it.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonyms-set.html>`_
 
-        :param id: The id of the synonyms set to be deleted
+        :param id: The synonyms set identifier to delete.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -81,8 +95,8 @@ class SynonymsClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonym-rule.html>`_
 
-        :param set_id: The id of the synonym set to be updated
-        :param rule_id: The id of the synonym rule to be deleted
+        :param set_id: The ID of the synonym set to update.
+        :param rule_id: The ID of the synonym rule to delete.
         """
         if set_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'set_id'")
@@ -131,9 +145,9 @@ class SynonymsClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonyms-set.html>`_
 
-        :param id: "The id of the synonyms set to be retrieved
-        :param from_: Starting offset for query rules to be retrieved
-        :param size: specifies a max number of query rules to retrieve
+        :param id: The synonyms set identifier to retrieve.
+        :param from_: The starting offset for query rules to retrieve.
+        :param size: The max number of query rules to retrieve.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -178,8 +192,8 @@ class SynonymsClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonym-rule.html>`_
 
-        :param set_id: The id of the synonym set to retrieve the synonym rule from
-        :param rule_id: The id of the synonym rule to retrieve
+        :param set_id: The ID of the synonym set to retrieve the synonym rule from.
+        :param rule_id: The ID of the synonym rule to retrieve.
         """
         if set_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'set_id'")
@@ -225,10 +239,10 @@ class SynonymsClient(NamespacedClient):
         """
         Get all synonym sets. Get a summary of all defined synonym sets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-synonyms-sets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonyms-set.html>`_
 
-        :param from_: Starting offset
-        :param size: specifies a max number of results to get
+        :param from_: The starting offset for synonyms sets to retrieve.
+        :param size: The maximum number of synonyms sets to retrieve.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_synonyms"
@@ -274,12 +288,15 @@ class SynonymsClient(NamespacedClient):
         """
         Create or update a synonym set. Synonyms sets are limited to a maximum of 10,000
         synonym rules per set. If you need to manage more synonym rules, you can create
-        multiple synonym sets.
+        multiple synonym sets. When an existing synonyms set is updated, the search analyzers
+        that use the synonyms set are reloaded automatically for all indices. This is
+        equivalent to invoking the reload search analyzers API for all indices that use
+        the synonyms set.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonyms-set.html>`_
 
-        :param id: The id of the synonyms set to be created or updated
-        :param synonyms_set: The synonym set information to update
+        :param id: The ID of the synonyms set to be created or updated.
+        :param synonyms_set: The synonym rules definitions for the synonyms set.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -328,13 +345,16 @@ class SynonymsClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Create or update a synonym rule. Create or update a synonym rule in a synonym
-        set.
+        set. If any of the synonym rules included is invalid, the API returns an error.
+        When you update a synonym rule, all analyzers using the synonyms set will be
+        reloaded automatically to reflect the new rule.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonym-rule.html>`_
 
-        :param set_id: The id of the synonym set to be updated with the synonym rule
-        :param rule_id: The id of the synonym rule to be updated or created
-        :param synonyms:
+        :param set_id: The ID of the synonym set.
+        :param rule_id: The ID of the synonym rule to be updated or created.
+        :param synonyms: The synonym rule information definition, which must be in Solr
+            format.
         """
         if set_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'set_id'")

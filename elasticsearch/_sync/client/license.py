@@ -32,7 +32,9 @@ class LicenseClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Delete the license. When the license expires, your subscription level reverts
@@ -40,6 +42,10 @@ class LicenseClient(NamespacedClient):
         can use this API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-license.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
@@ -50,8 +56,12 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -196,7 +206,9 @@ class LicenseClient(NamespacedClient):
         human: t.Optional[bool] = None,
         license: t.Optional[t.Mapping[str, t.Any]] = None,
         licenses: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -215,6 +227,9 @@ class LicenseClient(NamespacedClient):
         :param license:
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
@@ -228,8 +243,12 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if license is not None:
                 __body["license"] = license
@@ -258,7 +277,9 @@ class LicenseClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Start a basic license. Start an indefinite basic license, which gives access
@@ -273,6 +294,9 @@ class LicenseClient(NamespacedClient):
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_basic"
@@ -285,8 +309,12 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -305,6 +333,7 @@ class LicenseClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         type_query_string: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -320,6 +349,7 @@ class LicenseClient(NamespacedClient):
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
+        :param master_timeout: Period to wait for a connection to the master node.
         :param type_query_string:
         """
         __path_parts: t.Dict[str, str] = {}
@@ -333,6 +363,8 @@ class LicenseClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if type_query_string is not None:

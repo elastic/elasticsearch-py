@@ -47,27 +47,30 @@ class TasksClient(NamespacedClient):
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Cancel a task. A task may continue to run for some time after it has been cancelled
-        because it may not be able to safely stop its current activity straight away.
-        It is also possible that Elasticsearch must complete its work on other tasks
-        before it can process the cancellation. The get task information API will continue
-        to list these cancelled tasks until they complete. The cancelled flag in the
-        response indicates that the cancellation command has been processed and the task
-        will stop as soon as possible. To troubleshoot why a cancelled task does not
-        complete promptly, use the get task information API with the `?detailed` parameter
-        to identify the other tasks the system is running. You can also use the node
-        hot threads API to obtain detailed information about the work the system is doing
+        Cancel a task. WARNING: The task management API is new and should still be considered
+        a beta feature. The API may change in ways that are not backwards compatible.
+        A task may continue to run for some time after it has been cancelled because
+        it may not be able to safely stop its current activity straight away. It is also
+        possible that Elasticsearch must complete its work on other tasks before it can
+        process the cancellation. The get task information API will continue to list
+        these cancelled tasks until they complete. The cancelled flag in the response
+        indicates that the cancellation command has been processed and the task will
+        stop as soon as possible. To troubleshoot why a cancelled task does not complete
+        promptly, use the get task information API with the `?detailed` parameter to
+        identify the other tasks the system is running. You can also use the node hot
+        threads API to obtain detailed information about the work the system is doing
         instead of completing the cancelled task.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/tasks.html>`_
 
-        :param task_id: ID of the task.
-        :param actions: Comma-separated list or wildcard expression of actions used to
-            limit the request.
-        :param nodes: Comma-separated list of node IDs or names used to limit the request.
-        :param parent_task_id: Parent task ID used to limit the tasks.
-        :param wait_for_completion: Should the request block until the cancellation of
-            the task and its descendant tasks is completed. Defaults to false
+        :param task_id: The task identifier.
+        :param actions: A comma-separated list or wildcard expression of actions that
+            is used to limit the request.
+        :param nodes: A comma-separated list of node IDs or names that is used to limit
+            the request.
+        :param parent_task_id: A parent task ID that is used to limit the tasks.
+        :param wait_for_completion: If true, the request blocks until all found tasks
+            are complete.
         """
         __path_parts: t.Dict[str, str]
         if task_id not in SKIP_IN_PATH:
@@ -118,12 +121,16 @@ class TasksClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Get task information. Get information about a task currently running in the cluster.
+        WARNING: The task management API is new and should still be considered a beta
+        feature. The API may change in ways that are not backwards compatible. If the
+        task identifier is not found, a 404 response code indicates that there are no
+        resources that match the request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/tasks.html>`_
 
-        :param task_id: ID of the task.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param task_id: The task identifier.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         :param wait_for_completion: If `true`, the request blocks until the task has
             completed.
         """
@@ -167,7 +174,6 @@ class TasksClient(NamespacedClient):
             t.Union[str, t.Literal["nodes", "none", "parents"]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         nodes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -176,25 +182,45 @@ class TasksClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Get all tasks. Get information about the tasks currently running on one or more
-        nodes in the cluster.
+        nodes in the cluster. WARNING: The task management API is new and should still
+        be considered a beta feature. The API may change in ways that are not backwards
+        compatible. **Identifying running tasks** The `X-Opaque-Id header`, when provided
+        on the HTTP request header, is going to be returned as a header in the response
+        as well as in the headers field for in the task information. This enables you
+        to track certain calls or associate certain tasks with the client that started
+        them. For example: ``` curl -i -H "X-Opaque-Id: 123456" "http://localhost:9200/_tasks?group_by=parents"
+        ``` The API returns the following result: ``` HTTP/1.1 200 OK X-Opaque-Id: 123456
+        content-type: application/json; charset=UTF-8 content-length: 831 { "tasks" :
+        { "u5lcZHqcQhu-rUoFaqDphA:45" : { "node" : "u5lcZHqcQhu-rUoFaqDphA", "id" : 45,
+        "type" : "transport", "action" : "cluster:monitor/tasks/lists", "start_time_in_millis"
+        : 1513823752749, "running_time_in_nanos" : 293139, "cancellable" : false, "headers"
+        : { "X-Opaque-Id" : "123456" }, "children" : [ { "node" : "u5lcZHqcQhu-rUoFaqDphA",
+        "id" : 46, "type" : "direct", "action" : "cluster:monitor/tasks/lists[n]", "start_time_in_millis"
+        : 1513823752750, "running_time_in_nanos" : 92133, "cancellable" : false, "parent_task_id"
+        : "u5lcZHqcQhu-rUoFaqDphA:45", "headers" : { "X-Opaque-Id" : "123456" } } ] }
+        } } ``` In this example, `X-Opaque-Id: 123456` is the ID as a part of the response
+        header. The `X-Opaque-Id` in the task `headers` is the ID for the task that was
+        initiated by the REST request. The `X-Opaque-Id` in the children `headers` is
+        the child task of the task that was initiated by the REST request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/tasks.html>`_
 
-        :param actions: Comma-separated list or wildcard expression of actions used to
-            limit the request.
+        :param actions: A comma-separated list or wildcard expression of actions used
+            to limit the request. For example, you can use `cluser:*` to retrieve all
+            cluster-related tasks.
         :param detailed: If `true`, the response includes detailed information about
-            shard recoveries. This information is useful to distinguish tasks from each
+            the running tasks. This information is useful to distinguish tasks from each
             other but is more costly to run.
-        :param group_by: Key used to group tasks in the response.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param nodes: Comma-separated list of node IDs or names used to limit returned
-            information.
-        :param parent_task_id: Parent task ID used to limit returned information. To
-            return all tasks, omit this parameter or use a value of `-1`.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param group_by: A key that is used to group tasks in the response. The task
+            lists can be grouped either by nodes or by parent tasks.
+        :param nodes: A comma-separated list of node IDs or names that is used to limit
+            the returned information.
+        :param parent_task_id: A parent task identifier that is used to limit returned
+            information. To return all tasks, omit this parameter or use a value of `-1`.
+            If the parent task is not found, the API does not return a 404 response code.
+        :param timeout: The period to wait for each node to respond. If a node does not
+            respond before its timeout expires, the response does not include its information.
+            However, timed out nodes are included in the `node_failures` property.
         :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
@@ -213,8 +239,6 @@ class TasksClient(NamespacedClient):
             __query["group_by"] = group_by
         if human is not None:
             __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if nodes is not None:
             __query["nodes"] = nodes
         if parent_task_id is not None:
