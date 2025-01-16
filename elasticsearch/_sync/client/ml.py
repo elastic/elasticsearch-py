@@ -2702,7 +2702,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Return ML defaults and limits. Returns defaults and limits used by machine learning.
+        Get machine learning information. Get defaults and limits used by machine learning.
         This endpoint is designed to be used by a user interface that needs to fully
         understand machine learning configurations where some options are not specified,
         meaning that the defaults should be used. This endpoint may be used to find out
@@ -3205,7 +3205,11 @@ class MlClient(NamespacedClient):
         """
         Create a data frame analytics job. This API creates a data frame analytics job
         that performs an analysis on the source indices and stores the outcome in a destination
-        index.
+        index. By default, the query used in the source configuration is `{"match_all":
+        {}}`. If the destination index does not exist, it is created automatically when
+        you start the job. If you supply only a subset of the regression or classification
+        parameters, hyperparameter optimization occurs. It determines a value for each
+        of the undefined parameters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-dfanalytics.html>`_
 
@@ -3382,7 +3386,8 @@ class MlClient(NamespacedClient):
         an anomaly detection job. You can associate only one datafeed with each anomaly
         detection job. The datafeed contains a query that runs at a defined interval
         (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay')
-        at each interval. When Elasticsearch security features are enabled, your datafeed
+        at each interval. By default, the datafeed uses the following query: `{"match_all":
+        {"boost": 1}}`. When Elasticsearch security features are enabled, your datafeed
         remembers which roles the user who created it had at the time of creation and
         runs the query using those same roles. If you provide secondary authorization
         headers, those credentials are used instead. You must use Kibana, this API, or
@@ -3645,7 +3650,8 @@ class MlClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Create an anomaly detection job. If you include a `datafeed_config`, you must
-        have read index privileges on the source index.
+        have read index privileges on the source index. If you include a `datafeed_config`
+        but do not provide a query, the datafeed uses `{"match_all": {"boost": 1}}`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-job.html>`_
 
@@ -5451,7 +5457,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Validates an anomaly detection job.
+        Validate an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/machine-learning/8.17/ml-jobs.html>`_
 
@@ -5521,7 +5527,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Validates an anomaly detection detector.
+        Validate an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/machine-learning/8.17/ml-jobs.html>`_
 

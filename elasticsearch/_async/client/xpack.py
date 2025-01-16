@@ -96,9 +96,10 @@ class XPackClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/usage-api.html>`_
 
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. To indicate that the request should never timeout,
+            set it to `-1`.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_xpack/usage"
