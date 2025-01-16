@@ -378,7 +378,7 @@ class Boolean(Field):
             data = self.deserialize(data)
         if data is None and self._required:
             raise ValidationException("Value required for this field.")
-        return data  # type: ignore
+        return data  # type: ignore[no-any-return]
 
 
 class Float(Field):
@@ -515,12 +515,12 @@ class Percolator(Field):
     _coerce = True
 
     def _deserialize(self, data: Any) -> "Query":
-        return Q(data)  # type: ignore
+        return Q(data)  # type: ignore[no-any-return]
 
     def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
-        return data.to_dict()  # type: ignore
+        return data.to_dict()  # type: ignore[no-any-return]
 
 
 class RangeField(Field):
@@ -530,7 +530,7 @@ class RangeField(Field):
     def _deserialize(self, data: Any) -> Range["_SupportsComparison"]:
         if isinstance(data, Range):
             return data
-        data = {k: self._core_field.deserialize(v) for k, v in data.items()}  # type: ignore
+        data = {k: self._core_field.deserialize(v) for k, v in data.items()}  # type: ignore[union-attr]
         return Range(data)
 
     def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
@@ -538,7 +538,7 @@ class RangeField(Field):
             return None
         if not isinstance(data, collections.abc.Mapping):
             data = data.to_dict()
-        return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore
+        return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore[union-attr]
 
 
 class IntegerRange(RangeField):

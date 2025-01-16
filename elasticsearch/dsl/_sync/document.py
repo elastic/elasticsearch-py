@@ -235,11 +235,11 @@ class Document(DocumentBase, metaclass=IndexMeta):
             error_ids = [doc["_id"] for doc in error_docs]
             message = "Required routing not provided for documents %s."
             message %= ", ".join(error_ids)
-            raise RequestError(400, message, error_docs)  # type: ignore
+            raise RequestError(400, message, error_docs)  # type: ignore[arg-type]
         if missing_docs:
             missing_ids = [doc["_id"] for doc in missing_docs]
             message = f"Documents {', '.join(missing_ids)} not found."
-            raise NotFoundError(404, message, {"docs": missing_docs})  # type: ignore
+            raise NotFoundError(404, message, {"docs": missing_docs})  # type: ignore[arg-type]
         return objs
 
     def delete(

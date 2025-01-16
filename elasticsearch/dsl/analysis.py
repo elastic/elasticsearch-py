@@ -37,9 +37,9 @@ class AnalysisBase:
             return name_or_instance  # type: ignore[return-value]
 
         if not (type or kwargs):
-            return cls.get_dsl_class("builtin")(name_or_instance)  # type: ignore
+            return cls.get_dsl_class("builtin")(name_or_instance)  # type: ignore[no-any-return, attr-defined]
 
-        return cls.get_dsl_class(type, "custom")(  # type: ignore
+        return cls.get_dsl_class(type, "custom")(  # type: ignore[no-any-return, attr-defined]
             name_or_instance, type or "custom", **kwargs
         )
 
@@ -54,13 +54,13 @@ class CustomAnalysis:
 
     def to_dict(self) -> Dict[str, Any]:
         # only name to present in lists
-        return self._name  # type: ignore
+        return self._name  # type: ignore[return-value]
 
     def get_definition(self) -> Dict[str, Any]:
-        d = super().to_dict()  # type: ignore
+        d = super().to_dict()  # type: ignore[misc]
         d = d.pop(self.name)
         d["type"] = self._builtin_type
-        return d  # type: ignore
+        return d  # type: ignore[no-any-return]
 
 
 class CustomAnalysisDefinition(CustomAnalysis):
@@ -111,7 +111,7 @@ class BuiltinAnalysis:
 
     def to_dict(self) -> Dict[str, Any]:
         # only name to present in lists
-        return self._name  # type: ignore
+        return self._name  # type: ignore[return-value]
 
 
 class Analyzer(AnalysisBase, DslBase):

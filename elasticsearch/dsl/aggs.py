@@ -193,7 +193,7 @@ class AggBase(Generic[_R]):
         return cast("Pipeline[_R]", self._agg(False, name, agg_type, *args, **params))
 
     def result(self, search: "SearchBase[_R]", data: Any) -> AttrDict[Any]:
-        return BucketData(self, search, data)  # type: ignore
+        return BucketData(self, search, data)  # type: ignore[arg-type]
 
 
 class Bucket(AggBase[_R], Agg[_R]):

@@ -63,7 +63,7 @@ class BucketData(AggResponse[_R]):
         )
 
     def __iter__(self) -> Iterator["Agg"]:  # type: ignore[override]
-        return iter(self.buckets)  # type: ignore
+        return iter(self.buckets)  # type: ignore[arg-type]
 
     def __len__(self) -> int:
         return len(self.buckets)
@@ -83,7 +83,7 @@ class BucketData(AggResponse[_R]):
             if isinstance(bs, list):
                 ret = AttrList(bs, obj_wrapper=self._wrap_bucket)
             else:
-                ret = AttrDict[Any]({k: self._wrap_bucket(bs[k]) for k in bs})  # type: ignore
+                ret = AttrDict[Any]({k: self._wrap_bucket(bs[k]) for k in bs})  # type: ignore[assignment]
             super(AttrDict, self).__setattr__("_buckets", ret)
         return self._buckets
 

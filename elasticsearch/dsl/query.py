@@ -637,7 +637,7 @@ class FunctionScore(Query):
             functions = []
             for name in ScoreFunction._classes:
                 if name in kwargs:
-                    functions.append({name: kwargs.pop(name)})  # type: ignore
+                    functions.append({name: kwargs.pop(name)})  # type: ignore[arg-type]
         super().__init__(
             boost_mode=boost_mode,
             functions=functions,

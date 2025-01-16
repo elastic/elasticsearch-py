@@ -64,7 +64,7 @@ class Properties(DslBase):
 
     def _collect_fields(self) -> Iterator[Field]:
         """Iterate over all Field objects within, including multi fields."""
-        fields = cast(Dict[str, Field], self.properties.to_dict())  # type: ignore
+        fields = cast(Dict[str, Field], self.properties.to_dict())  # type: ignore[attr-defined]
         for f in fields.values():
             yield f
             # multi fields

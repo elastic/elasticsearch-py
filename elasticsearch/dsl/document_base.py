@@ -36,7 +36,7 @@ from typing import (
 try:
     from types import UnionType
 except ImportError:
-    UnionType = None  # type: ignore
+    UnionType = None  # type: ignore[assignment, misc]
 
 from typing_extensions import dataclass_transform
 
@@ -81,14 +81,14 @@ class InstrumentedField:
     def __getattr__(self, attr: str) -> "InstrumentedField":
         try:
             # first let's see if this is an attribute of this object
-            return super().__getattribute__(attr)  # type: ignore
+            return super().__getattribute__(attr)  # type: ignore[no-any-return]
         except AttributeError:
             try:
                 # next we see if we have a sub-field with this name
                 return InstrumentedField(f"{self._name}.{attr}", self._field[attr])
             except KeyError:
                 # lastly we let the wrapped field resolve this attribute
-                return getattr(self._field, attr)  # type: ignore
+                return getattr(self._field, attr)  # type: ignore[no-any-return]
 
     def __pos__(self) -> str:
         """Return the field name representation for ascending sort order"""
@@ -226,7 +226,7 @@ class DocumentOptions:
                     field_args = [type_]
                 elif type_ in self.type_annotation_map:
                     # use best field type for the type hint provided
-                    field, field_kwargs = self.type_annotation_map[type_]  # type: ignore
+                    field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]
 
                 if field:
                     field_kwargs = {

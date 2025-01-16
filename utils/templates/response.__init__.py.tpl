@@ -168,9 +168,9 @@ class Response(AttrDict[Any], Generic[_R]):
         """
         if len(self.hits) == 0:
             raise ValueError("Cannot use search_after when there are no search results")
-        if not hasattr(self.hits[-1].meta, "sort"):  # type: ignore
+        if not hasattr(self.hits[-1].meta, "sort"):  # type: ignore[attr-defined]
             raise ValueError("Cannot use search_after when results are not sorted")
-        return self._search.extra(search_after=self.hits[-1].meta.sort)  # type: ignore
+        return self._search.extra(search_after=self.hits[-1].meta.sort)  # type: ignore[attr-defined]
 
 
 AggregateResponseType = {{ response["aggregate_type"] }}
@@ -189,7 +189,7 @@ class AggResponse(AttrDict[Any], Generic[_R]):
             # don't do self._meta['aggs'][attr_name] to avoid copying
             agg = self._meta["aggs"].aggs[attr_name]
             return cast(AggregateResponseType, agg.result(self._meta["search"], self._d_[attr_name]))
-        return super().__getitem__(attr_name)  # type: ignore
+        return super().__getitem__(attr_name)  # type: ignore[no-any-return]
 
     def __iter__(self) -> Iterator[AggregateResponseType]:  # type: ignore[override]
         for name in self._meta["aggs"]:

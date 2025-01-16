@@ -664,7 +664,7 @@ def merge(
             and isinstance(data[key], (AttrDict, collections.abc.Mapping))
             and isinstance(value, (AttrDict, collections.abc.Mapping))
         ):
-            merge(data[key], value, raise_on_conflict)  # type: ignore
+            merge(data[key], value, raise_on_conflict)  # type: ignore[arg-type]
         elif key in data and data[key] != value and raise_on_conflict:
             raise ValueError(f"Incompatible data for key {key!r}, cannot be merged.")
         else:

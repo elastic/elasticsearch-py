@@ -93,7 +93,7 @@ class Facet(Generic[_R]):
             f |= self.get_value_filter(v)
         return f
 
-    def get_value_filter(self, filter_value: FilterValueType) -> Query:  # type: ignore
+    def get_value_filter(self, filter_value: FilterValueType) -> Query:  # type: ignore[empty-body]
         """
         Construct a filter for an individual value
         """

@@ -66,9 +66,7 @@ def test_otel(session):
 
 @nox.session()
 def format(session):
-    session.install(
-        "black~=24.0", "isort", "flynt", "unasync>=0.6.0", "jinja2", "elastic-transport"
-    )
+    session.install(".", "black~=24.0", "isort", "flynt", "unasync>=0.6.0", "jinja2")
 
     session.run("python", "utils/run-unasync.py")
     session.run("python", "utils/run-unasync-dsl.py")
@@ -114,6 +112,7 @@ def lint(session):
         "--implicit-reexport",
         "--explicit-package-bases",
         "--show-error-codes",
+        "--enable-error-code=ignore-without-code",
         "elasticsearch/",
     )
     session.run(
@@ -128,12 +127,15 @@ def lint(session):
         "--show-error-codes",
         "test_elasticsearch/test_types/async_types.py",
     )
+
+    # check typing on the DSL examples
     session.run(
         "mypy",
         "--strict",
         "--implicit-reexport",
         "--explicit-package-bases",
         "--show-error-codes",
+        "--enable-error-code=ignore-without-code",
         "examples/dsl/",
     )
 

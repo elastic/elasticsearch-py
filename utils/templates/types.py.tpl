@@ -98,7 +98,7 @@ class {{ k.name }}({{ k.parent if k.parent else "AttrDict[Any]" }}):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, {{ k.buckets_as_dict }}]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
         {% endif %}
     {% else %}
     pass

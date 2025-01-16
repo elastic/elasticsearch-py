@@ -3965,7 +3965,7 @@ class AdjacencyMatrixAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "AdjacencyMatrixBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class AdjacencyMatrixBucket(AttrDict[Any]):
@@ -4135,7 +4135,7 @@ class AutoDateHistogramAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "DateHistogramBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class AvgAggregate(AttrDict[Any]):
@@ -4352,7 +4352,7 @@ class CompositeAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "CompositeBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class CompositeBucket(AttrDict[Any]):
@@ -4390,7 +4390,7 @@ class DateHistogramAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "DateHistogramBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class DateHistogramBucket(AttrDict[Any]):
@@ -4420,7 +4420,7 @@ class DateRangeAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "RangeBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class DerivativeAggregate(AttrDict[Any]):
@@ -4525,7 +4525,7 @@ class DoubleTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "DoubleTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class DoubleTermsBucket(AttrDict[Any]):
@@ -4549,7 +4549,7 @@ class ErrorCause(AttrDict[Any]):
     provided, that depend on the error type.
 
     :arg type: (required) The type of error
-    :arg reason: A human-readable explanation of the error, in english
+    :arg reason: A human-readable explanation of the error, in English.
     :arg stack_trace: The server stack trace. Present only if the
         `error_trace=true` parameter was sent with the request.
     :arg caused_by:
@@ -4768,7 +4768,7 @@ class FiltersAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "FiltersBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class FiltersBucket(AttrDict[Any]):
@@ -4790,7 +4790,7 @@ class FrequentItemSetsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "FrequentItemSetsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class FrequentItemSetsBucket(AttrDict[Any]):
@@ -4846,7 +4846,7 @@ class GeoDistanceAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "RangeBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class GeoHashGridAggregate(AttrDict[Any]):
@@ -4860,7 +4860,7 @@ class GeoHashGridAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "GeoHashGridBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class GeoHashGridBucket(AttrDict[Any]):
@@ -4884,7 +4884,7 @@ class GeoHexGridAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "GeoHexGridBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class GeoHexGridBucket(AttrDict[Any]):
@@ -4934,7 +4934,7 @@ class GeoTileGridAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "GeoTileGridBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class GeoTileGridBucket(AttrDict[Any]):
@@ -4988,7 +4988,7 @@ class HistogramAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "HistogramBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class HistogramBucket(AttrDict[Any]):
@@ -5133,7 +5133,7 @@ class IpPrefixAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "IpPrefixBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class IpPrefixBucket(AttrDict[Any]):
@@ -5163,7 +5163,7 @@ class IpRangeAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "IpRangeBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class IpRangeBucket(AttrDict[Any]):
@@ -5276,7 +5276,7 @@ class LongRareTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "LongRareTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class LongRareTermsBucket(AttrDict[Any]):
@@ -5309,7 +5309,7 @@ class LongTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "LongTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class LongTermsBucket(AttrDict[Any]):
@@ -5427,7 +5427,7 @@ class MultiTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "MultiTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class MultiTermsBucket(AttrDict[Any]):
@@ -5595,7 +5595,7 @@ class RangeAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "RangeBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class RangeBucket(AttrDict[Any]):
@@ -5722,11 +5722,12 @@ class ShardProfile(AttrDict[Any]):
 
 class ShardStatistics(AttrDict[Any]):
     """
-    :arg failed: (required)
-    :arg successful: (required) Indicates how many shards have
-        successfully run the search.
-    :arg total: (required) Indicates how many shards the search will run
-        on overall.
+    :arg failed: (required) The number of shards the operation or search
+        attempted to run on but failed.
+    :arg successful: (required) The number of shards the operation or
+        search succeeded on.
+    :arg total: (required) The number of shards the operation or search
+        will run on overall.
     :arg failures:
     :arg skipped:
     """
@@ -5753,7 +5754,7 @@ class SignificantLongTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "SignificantLongTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class SignificantLongTermsBucket(AttrDict[Any]):
@@ -5787,7 +5788,7 @@ class SignificantStringTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "SignificantStringTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class SignificantStringTermsBucket(AttrDict[Any]):
@@ -5922,7 +5923,7 @@ class StringRareTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "StringRareTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class StringRareTermsBucket(AttrDict[Any]):
@@ -5978,7 +5979,7 @@ class StringTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "StringTermsBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class StringTermsBucket(AttrDict[Any]):
@@ -6083,7 +6084,7 @@ class TimeSeriesAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "TimeSeriesBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class TimeSeriesBucket(AttrDict[Any]):
@@ -6150,7 +6151,7 @@ class UnmappedRareTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, Any]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class UnmappedSamplerAggregate(AttrDict[Any]):
@@ -6181,7 +6182,7 @@ class UnmappedSignificantTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, Any]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class UnmappedTermsAggregate(AttrDict[Any]):
@@ -6202,7 +6203,7 @@ class UnmappedTermsAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, Any]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class ValueCountAggregate(AttrDict[Any]):
@@ -6232,7 +6233,7 @@ class VariableWidthHistogramAggregate(AttrDict[Any]):
 
     @property
     def buckets_as_dict(self) -> Mapping[str, "VariableWidthHistogramBucket"]:
-        return self.buckets  # type: ignore
+        return self.buckets  # type: ignore[return-value]
 
 
 class VariableWidthHistogramBucket(AttrDict[Any]):

@@ -116,16 +116,16 @@ class Connections(Generic[_T]):
             raise KeyError(f"There is no connection with alias {alias!r}.")
 
     def _with_user_agent(self, conn: _T) -> _T:
-        from . import __versionstr__  # this is here to avoid circular imports
+        from elasticsearch import (
+            __versionstr__,  # this is here to avoid circular imports
+        )
 
         # try to inject our user agent
         if hasattr(conn, "_headers"):
             is_frozen = conn._headers.frozen
             if is_frozen:
                 conn._headers = conn._headers.copy()
-            conn._headers.update(
-                {"user-agent": f"elasticsearch-dsl-py/{__versionstr__}"}
-            )
+            conn._headers.update({"user-agent": f"elasticsearch-py/{__versionstr__}"})
             if is_frozen:
                 conn._headers.freeze()
         return conn
