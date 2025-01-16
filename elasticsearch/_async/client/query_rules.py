@@ -37,7 +37,9 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a query rule. Delete a query rule within a query ruleset.
+        Delete a query rule. Delete a query rule within a query ruleset. This is a destructive
+        action that is only recoverable by re-adding the same rule with the create or
+        update query rule API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-rule.html>`_
 
@@ -85,7 +87,8 @@ class QueryRulesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a query ruleset.
+        Delete a query ruleset. Remove a query ruleset and its associated data. This
+        is a destructive action that is not recoverable.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-ruleset.html>`_
 
@@ -221,8 +224,8 @@ class QueryRulesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-query-rulesets.html>`_
 
-        :param from_: Starting offset (default: 0)
-        :param size: specifies a max number of results to get
+        :param from_: The offset from the first result to fetch.
+        :param size: The maximum number of results to retrieve.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_query_rules"
@@ -271,16 +274,25 @@ class QueryRulesClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Create or update a query rule. Create or update a query rule within a query ruleset.
+        IMPORTANT: Due to limitations within pinned queries, you can only pin documents
+        using ids or docs, but cannot use both in single rule. It is advised to use one
+        or the other in query rulesets, to avoid errors. Additionally, pinned queries
+        have a maximum limit of 100 pinned hits. If multiple matching rules pin more
+        than 100 documents, only the first 100 documents are pinned in the order they
+        are specified in the ruleset.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
-            rule to be created or updated
+            rule to be created or updated.
         :param rule_id: The unique identifier of the query rule within the specified
-            ruleset to be created or updated
-        :param actions:
-        :param criteria:
-        :param type:
+            ruleset to be created or updated.
+        :param actions: The actions to take when the rule is matched. The format of this
+            action depends on the rule type.
+        :param criteria: The criteria that must be met for the rule to be applied. If
+            multiple criteria are specified for a rule, all criteria must be met for
+            the rule to be applied.
+        :param type: The type of rule.
         :param priority:
         """
         if ruleset_id in SKIP_IN_PATH:
@@ -345,12 +357,19 @@ class QueryRulesClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update a query ruleset.
+        Create or update a query ruleset. There is a limit of 100 rules per ruleset.
+        This limit can be increased by using the `xpack.applications.rules.max_rules_per_ruleset`
+        cluster setting. IMPORTANT: Due to limitations within pinned queries, you can
+        only select documents using `ids` or `docs`, but cannot use both in single rule.
+        It is advised to use one or the other in query rulesets, to avoid errors. Additionally,
+        pinned queries have a maximum limit of 100 pinned hits. If multiple matching
+        rules pin more than 100 documents, only the first 100 documents are pinned in
+        the order they are specified in the ruleset.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
-            updated
+            updated.
         :param rules:
         """
         if ruleset_id in SKIP_IN_PATH:
@@ -405,7 +424,9 @@ class QueryRulesClient(NamespacedClient):
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated
-        :param match_criteria:
+        :param match_criteria: The match criteria to apply to rules in the given query
+            ruleset. Match criteria should match the keys defined in the `criteria.metadata`
+            field of the rule.
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")

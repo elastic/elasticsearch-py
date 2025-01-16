@@ -39,7 +39,7 @@ class MigrationClient(NamespacedClient):
         Get deprecation information. Get information about different cluster, node, and
         index level settings that use deprecated features that will be removed or changed
         in the next major version. TIP: This APIs is designed for indirect use by the
-        Upgrade Assistant. We strongly recommend you use the Upgrade Assistant.
+        Upgrade Assistant. You are strongly recommended to use the Upgrade Assistant.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/migration-api-deprecation.html>`_
 
@@ -86,9 +86,9 @@ class MigrationClient(NamespacedClient):
         to how features store configuration information and data in system indices. Check
         which features need to be migrated and the status of any migrations that are
         in progress. TIP: This API is designed for indirect use by the Upgrade Assistant.
-        We strongly recommend you use the Upgrade Assistant.
+        You are strongly recommended to use the Upgrade Assistant.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/feature-migration-api.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
@@ -127,7 +127,7 @@ class MigrationClient(NamespacedClient):
         unavailable during the migration process. TIP: The API is designed for indirect
         use by the Upgrade Assistant. We strongly recommend you use the Upgrade Assistant.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/feature-migration-api.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"

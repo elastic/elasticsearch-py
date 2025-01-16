@@ -226,7 +226,6 @@ class IngestClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -238,9 +237,6 @@ class IngestClient(NamespacedClient):
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
             this parameter or use `*`.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
         """
         __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
@@ -256,8 +252,6 @@ class IngestClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
