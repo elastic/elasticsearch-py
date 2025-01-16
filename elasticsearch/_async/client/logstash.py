@@ -37,7 +37,8 @@ class LogstashClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Delete a Logstash pipeline. Delete a pipeline that is used for Logstash Central
-        Management.
+        Management. If the request succeeds, you receive an empty response with an appropriate
+        status code.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/logstash-api-delete-pipeline.html>`_
 

@@ -44,7 +44,7 @@ class DanglingIndicesClient(NamespacedClient):
         For example, this can happen if you delete more than `cluster.indices.tombstones.size`
         indices while an Elasticsearch node is offline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/dangling-index-delete.html>`_
 
         :param index_uuid: The UUID of the index to delete. Use the get dangling indices
             API to find the UUID.
@@ -103,7 +103,7 @@ class DanglingIndicesClient(NamespacedClient):
         For example, this can happen if you delete more than `cluster.indices.tombstones.size`
         indices while an Elasticsearch node is offline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/dangling-index-import.html>`_
 
         :param index_uuid: The UUID of the index to import. Use the get dangling indices
             API to locate the UUID.
@@ -162,7 +162,7 @@ class DanglingIndicesClient(NamespacedClient):
         indices while an Elasticsearch node is offline. Use this API to list dangling
         indices, which you can then import or delete.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/dangling-indices-list.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_dangling"
