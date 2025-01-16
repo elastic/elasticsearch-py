@@ -397,14 +397,37 @@ class RollupClient(NamespacedClient):
         rolled-up documents utilize a different document structure than the original
         data. It rewrites standard Query DSL into a format that matches the rollup documents
         then takes the response and rewrites it back to what a client would expect given
-        the original query.
+        the original query. The request body supports a subset of features from the regular
+        search API. The following functionality is not available: `size`: Because rollups
+        work on pre-aggregated data, no search hits can be returned and so size must
+        be set to zero or omitted entirely. `highlighter`, `suggestors`, `post_filter`,
+        `profile`, `explain`: These are similarly disallowed. **Searching both historical
+        rollup and non-rollup data** The rollup search API has the capability to search
+        across both "live" non-rollup data and the aggregated rollup data. This is done
+        by simply adding the live indices to the URI. For example: ``` GET sensor-1,sensor_rollup/_rollup_search
+        { "size": 0, "aggregations": { "max_temperature": { "max": { "field": "temperature"
+        } } } } ``` The rollup search endpoint does two things when the search runs:
+        * The original request is sent to the non-rollup index unaltered. * A rewritten
+        version of the original request is sent to the rollup index. When the two responses
+        are received, the endpoint rewrites the rollup response and merges the two together.
+        During the merging process, if there is any overlap in buckets between the two
+        responses, the buckets from the non-rollup index are used.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 
-        :param index: Enables searching rolled-up data using the standard Query DSL.
+        :param index: A comma-separated list of data streams and indices used to limit
+            the request. This parameter has the following rules: * At least one data
+            stream, index, or wildcard expression must be specified. This target can
+            include a rollup or non-rollup index. For data streams, the stream's backing
+            indices can only serve as non-rollup indices. Omitting the parameter or using
+            `_all` are not permitted. * Multiple non-rollup indices may be specified.
+            * Only one rollup index may be specified. If more than one are supplied,
+            an exception occurs. * Wildcard expressions (`*`) may be used. If they match
+            more than one rollup index, an exception occurs. However, you can use an
+            expression to match multiple non-rollup indices or data streams.
         :param aggregations: Specifies aggregations.
         :param aggs: Specifies aggregations.
-        :param query: Specifies a DSL query.
+        :param query: Specifies a DSL query that is subject to some limitations.
         :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
             as an integer or an object in the rest search response
         :param size: Must be zero if set, as rollups work on pre-aggregated data.
@@ -506,14 +529,23 @@ class RollupClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Stop rollup jobs. If you try to stop a job that does not exist, an exception
-        occurs. If you try to stop a job that is already stopped, nothing happens.
+        occurs. If you try to stop a job that is already stopped, nothing happens. Since
+        only a stopped job can be deleted, it can be useful to block the API until the
+        indexer has fully stopped. This is accomplished with the `wait_for_completion`
+        query parameter, and optionally a timeout. For example: ``` POST _rollup/job/sensor/_stop?wait_for_completion=true&timeout=10s
+        ``` The parameter blocks the API call from returning until either the job has
+        moved to STOPPED or the specified time has elapsed. If the specified time elapses
+        without the job moving to STOPPED, a timeout exception occurs.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
 
         :param id: Identifier for the rollup job.
         :param timeout: If `wait_for_completion` is `true`, the API blocks for (at maximum)
             the specified duration while waiting for the job to stop. If more than `timeout`
-            time has passed, the API throws a timeout exception.
+            time has passed, the API throws a timeout exception. NOTE: Even if a timeout
+            occurs, the stop request is still processing and eventually moves the job
+            to STOPPED. The timeout simply means the API call itself timed out while
+            waiting for the status change.
         :param wait_for_completion: If set to `true`, causes the API to block until the
             indexer state completely stops. If set to `false`, the API returns immediately
             and the indexer is stopped asynchronously in the background.

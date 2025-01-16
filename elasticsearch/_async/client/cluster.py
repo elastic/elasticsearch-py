@@ -38,6 +38,7 @@ class ClusterClient(NamespacedClient):
         include_disk_info: t.Optional[bool] = None,
         include_yes_decisions: t.Optional[bool] = None,
         index: t.Optional[str] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         primary: t.Optional[bool] = None,
         shard: t.Optional[int] = None,
@@ -61,6 +62,7 @@ class ClusterClient(NamespacedClient):
         :param include_yes_decisions: If true, returns YES decisions in explanation.
         :param index: Specifies the name of the index that you would like an explanation
             for.
+        :param master_timeout: Period to wait for a connection to the master node.
         :param primary: If true, returns explanation for the primary shard for the given
             shard ID.
         :param shard: Specifies the ID of the shard that you would like an explanation
@@ -80,6 +82,8 @@ class ClusterClient(NamespacedClient):
             __query["include_disk_info"] = include_disk_info
         if include_yes_decisions is not None:
             __query["include_yes_decisions"] = include_yes_decisions
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -119,9 +123,8 @@ class ClusterClient(NamespacedClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete component templates. Deletes component templates. Component templates
-        are building blocks for constructing index templates that specify index mappings,
-        settings, and aliases.
+        Delete component templates. Component templates are building blocks for constructing
+        index templates that specify index mappings, settings, and aliases.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
@@ -167,6 +170,7 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         wait_for_removal: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -176,6 +180,7 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
 
+        :param master_timeout: Period to wait for a connection to the master node.
         :param wait_for_removal: Specifies whether to wait for all excluded nodes to
             be removed from the cluster before clearing the voting configuration exclusions
             list. Defaults to true, meaning that all excluded nodes must be removed from
@@ -192,6 +197,8 @@ class ClusterClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if wait_for_removal is not None:
@@ -275,7 +282,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get component templates. Retrieves information about component templates.
+        Get component templates. Get information about component templates.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
@@ -625,6 +632,7 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         node_ids: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         node_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
@@ -661,6 +669,7 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
 
+        :param master_timeout: Period to wait for a connection to the master node.
         :param node_ids: A comma-separated list of the persistent ids of the nodes to
             exclude from the voting configuration. If specified, you may not also specify
             node_names.
@@ -680,6 +689,8 @@ class ClusterClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if node_ids is not None:
             __query["node_ids"] = node_ids
         if node_names is not None:
@@ -719,20 +730,21 @@ class ClusterClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update a component template. Creates or updates a component template.
-        Component templates are building blocks for constructing index templates that
-        specify index mappings, settings, and aliases. An index template can be composed
-        of multiple component templates. To use a component template, specify it in an
-        index template’s `composed_of` list. Component templates are only applied to
-        new data streams and indices as part of a matching index template. Settings and
-        mappings specified directly in the index template or the create index request
-        override any settings or mappings specified in a component template. Component
-        templates are only used during index creation. For data streams, this includes
-        data stream creation and the creation of a stream’s backing indices. Changes
-        to component templates do not affect existing indices, including a stream’s backing
-        indices. You can use C-style `/* *\\/` block comments in component templates.
+        Create or update a component template. Component templates are building blocks
+        for constructing index templates that specify index mappings, settings, and aliases.
+        An index template can be composed of multiple component templates. To use a component
+        template, specify it in an index template’s `composed_of` list. Component templates
+        are only applied to new data streams and indices as part of a matching index
+        template. Settings and mappings specified directly in the index template or the
+        create index request override any settings or mappings specified in a component
+        template. Component templates are only used during index creation. For data streams,
+        this includes data stream creation and the creation of a stream’s backing indices.
+        Changes to component templates do not affect existing indices, including a stream’s
+        backing indices. You can use C-style `/* *\\/` block comments in component templates.
         You can include comments anywhere in the request body except before the opening
-        curly bracket.
+        curly bracket. **Applying component templates** You cannot directly apply a component
+        template to a data stream or index. To be applied, a component template must
+        be included in an index template's `composed_of` list.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
@@ -755,8 +767,8 @@ class ClusterClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param meta: Optional user metadata about the component template. May have any
-            contents. This map is not automatically generated by Elasticsearch. This
+        :param meta: Optional user metadata about the component template. It may have
+            any contents. This map is not automatically generated by Elasticsearch. This
             information is stored in the cluster state, so keeping it short is preferable.
             To unset `_meta`, replace the template without specifying this information.
         :param version: Version number used to manage component templates externally.

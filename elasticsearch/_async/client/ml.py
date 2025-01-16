@@ -686,6 +686,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Delete an unreferenced trained model. The request deletes a trained inference
@@ -696,6 +697,8 @@ class MlClient(NamespacedClient):
         :param model_id: The unique identifier of the trained model.
         :param force: Forcefully deletes a trained model that is referenced by ingest
             pipelines or has a started deployment.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
@@ -712,6 +715,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -3205,7 +3210,11 @@ class MlClient(NamespacedClient):
         """
         Create a data frame analytics job. This API creates a data frame analytics job
         that performs an analysis on the source indices and stores the outcome in a destination
-        index.
+        index. By default, the query used in the source configuration is `{"match_all":
+        {}}`. If the destination index does not exist, it is created automatically when
+        you start the job. If you supply only a subset of the regression or classification
+        parameters, hyperparameter optimization occurs. It determines a value for each
+        of the undefined parameters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-dfanalytics.html>`_
 
@@ -3381,8 +3390,9 @@ class MlClient(NamespacedClient):
         Create a datafeed. Datafeeds retrieve data from Elasticsearch for analysis by
         an anomaly detection job. You can associate only one datafeed with each anomaly
         detection job. The datafeed contains a query that runs at a defined interval
-        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay`)
-        at each interval. When Elasticsearch security features are enabled, your datafeed
+        (`frequency`). If you are concerned about delayed data, you can add a delay (`query_delay')
+        at each interval. By default, the datafeed uses the following query: `{"match_all":
+        {"boost": 1}}`. When Elasticsearch security features are enabled, your datafeed
         remembers which roles the user who created it had at the time of creation and
         runs the query using those same roles. If you provide secondary authorization
         headers, those credentials are used instead. You must use Kibana, this API, or
@@ -3645,7 +3655,8 @@ class MlClient(NamespacedClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Create an anomaly detection job. If you include a `datafeed_config`, you must
-        have read index privileges on the source index.
+        have read index privileges on the source index. If you include a `datafeed_config`
+        but do not provide a query, the datafeed uses `{"match_all": {"boost": 1}}`.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
 
@@ -5451,7 +5462,7 @@ class MlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Validates an anomaly detection job.
+        Validate an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/machine-learning/master/ml-jobs.html>`_
 

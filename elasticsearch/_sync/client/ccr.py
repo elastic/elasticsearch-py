@@ -33,6 +33,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -42,6 +43,7 @@ class CcrClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-delete-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -54,6 +56,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -94,6 +98,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
@@ -124,6 +129,7 @@ class CcrClient(NamespacedClient):
         :param remote_cluster: The remote cluster containing the leader index.
         :param data_stream_name: If the leader index is part of a data stream, the name
             to which the local data stream for the followed index should be renamed.
+        :param master_timeout: Period to wait for a connection to the master node.
         :param max_outstanding_read_requests: The maximum number of outstanding reads
             requests from the remote cluster.
         :param max_outstanding_write_requests: The maximum number of outstanding write
@@ -174,6 +180,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if wait_for_active_shards is not None:
@@ -232,6 +240,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -244,6 +253,7 @@ class CcrClient(NamespacedClient):
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -256,6 +266,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -277,6 +289,7 @@ class CcrClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get follower stats. Get cross-cluster replication follower stats. The API returns
@@ -287,6 +300,8 @@ class CcrClient(NamespacedClient):
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -301,6 +316,8 @@ class CcrClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -331,6 +348,7 @@ class CcrClient(NamespacedClient):
         human: t.Optional[bool] = None,
         leader_remote_cluster: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -360,6 +378,8 @@ class CcrClient(NamespacedClient):
         :param follower_index:
         :param follower_index_uuid:
         :param leader_remote_cluster:
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -375,6 +395,8 @@ class CcrClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if follower_cluster is not None:
                 __body["follower_cluster"] = follower_cluster
@@ -403,6 +425,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -412,6 +435,7 @@ class CcrClient(NamespacedClient):
 
         :param name: Specifies the auto-follow pattern collection that you want to retrieve.
             If you do not specify a name, the API returns information for all collections.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -427,6 +451,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -447,6 +473,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -463,6 +490,7 @@ class CcrClient(NamespacedClient):
 
         :param name: The name of the auto follow pattern that should pause discovering
             new indices to follow.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -475,6 +503,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -495,6 +525,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -507,6 +538,7 @@ class CcrClient(NamespacedClient):
 
         :param index: The name of the follower index that should pause following its
             leader index.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -519,6 +551,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -561,6 +595,7 @@ class CcrClient(NamespacedClient):
         human: t.Optional[bool] = None,
         leader_index_exclusion_patterns: t.Optional[t.Sequence[str]] = None,
         leader_index_patterns: t.Optional[t.Sequence[str]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
@@ -600,6 +635,7 @@ class CcrClient(NamespacedClient):
             or more leader_index_exclusion_patterns won’t be followed.
         :param leader_index_patterns: An array of simple index patterns to match against
             indices in the remote cluster specified by the remote_cluster field.
+        :param master_timeout: Period to wait for a connection to the master node.
         :param max_outstanding_read_requests: The maximum number of outstanding reads
             requests from the remote cluster.
         :param max_outstanding_write_requests: The maximum number of outstanding reads
@@ -644,6 +680,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -704,6 +742,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -717,6 +756,7 @@ class CcrClient(NamespacedClient):
 
         :param name: The name of the auto follow pattern to resume discovering new indices
             to follow.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -729,6 +769,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -762,6 +804,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
@@ -785,6 +828,7 @@ class CcrClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-post-resume-follow.html>`_
 
         :param index: The name of the follow index to resume following.
+        :param master_timeout: Period to wait for a connection to the master node.
         :param max_outstanding_read_requests:
         :param max_outstanding_write_requests:
         :param max_read_request_operation_count:
@@ -808,6 +852,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -859,13 +905,19 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get cross-cluster replication stats. This API returns stats about auto-following
         and the same shard-level stats as the get follower stats API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-stats.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ccr/stats"
@@ -876,8 +928,12 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -896,6 +952,7 @@ class CcrClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -911,6 +968,7 @@ class CcrClient(NamespacedClient):
 
         :param index: The name of the follower index that should be turned into a regular
             index.
+        :param master_timeout: Period to wait for a connection to the master node.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -923,6 +981,8 @@ class CcrClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}

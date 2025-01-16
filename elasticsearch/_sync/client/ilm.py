@@ -90,7 +90,6 @@ class IlmClient(NamespacedClient):
         only_errors: t.Optional[bool] = None,
         only_managed: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Explain the lifecycle state. Get the current lifecycle status for one or more
@@ -112,8 +111,6 @@ class IlmClient(NamespacedClient):
             while executing the policy, or attempting to use a policy that does not exist.
         :param only_managed: Filters the returned indices to only indices that are managed
             by ILM.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -134,8 +131,6 @@ class IlmClient(NamespacedClient):
             __query["only_managed"] = only_managed
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -341,8 +336,8 @@ class IlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-move-to-step.html>`_
 
         :param index: The name of the index whose lifecycle step is to change
-        :param current_step:
-        :param next_step:
+        :param current_step: The step that the index is expected to be in.
+        :param next_step: The step that you want to run.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -552,8 +547,11 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
 
-        :param master_timeout:
-        :param timeout:
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/start"
@@ -601,8 +599,11 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
 
-        :param master_timeout:
-        :param timeout:
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/stop"

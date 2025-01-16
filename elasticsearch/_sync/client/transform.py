@@ -489,6 +489,7 @@ class TransformClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Reset a transform. Resets a transform. Before you can reset it, you must stop
@@ -503,6 +504,8 @@ class TransformClient(NamespacedClient):
         :param force: If this value is `true`, the transform is reset regardless of its
             current state. If it's `false`, the transform must be stopped before it can
             be reset.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -519,6 +522,8 @@ class TransformClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",

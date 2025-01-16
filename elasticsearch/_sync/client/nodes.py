@@ -50,9 +50,9 @@ class NodesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
-            information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
-        :param max_archive_version: Specifies the maximum [archive_version](https://www.elastic.co/guide/en/elasticsearch/reference/current/get-repositories-metering-api.html#get-repositories-metering-api-response-body)
-            to be cleared from the archive.
+            information.
+        :param max_archive_version: Specifies the maximum `archive_version` to be cleared
+            from the archive.
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
@@ -138,7 +138,6 @@ class NodesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_idle_threads: t.Optional[bool] = None,
         interval: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         snapshots: t.Optional[int] = None,
         sort: t.Optional[
@@ -161,9 +160,6 @@ class NodesClient(NamespacedClient):
         :param ignore_idle_threads: If true, known idle threads (e.g. waiting in a socket
             select, or to get a task from an empty queue) are filtered out.
         :param interval: The interval to do the second sampling of threads.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
         :param snapshots: Number of samples of thread stacktrace.
         :param sort: The sort order for 'cpu' type (default: total)
         :param threads: Specifies the number of hot threads to provide information for.
@@ -189,8 +185,6 @@ class NodesClient(NamespacedClient):
             __query["ignore_idle_threads"] = ignore_idle_threads
         if interval is not None:
             __query["interval"] = interval
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if snapshots is not None:
@@ -223,7 +217,6 @@ class NodesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -238,9 +231,6 @@ class NodesClient(NamespacedClient):
         :param metric: Limits the information returned to the specific metrics. Supports
             a comma-separated list, such as http,ingest.
         :param flat_settings: If true, returns settings in flat format.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
@@ -266,8 +256,6 @@ class NodesClient(NamespacedClient):
             __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
@@ -374,7 +362,6 @@ class NodesClient(NamespacedClient):
         level: t.Optional[
             t.Union[str, t.Literal["cluster", "indices", "shards"]]
         ] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         types: t.Optional[t.Sequence[str]] = None,
@@ -406,9 +393,6 @@ class NodesClient(NamespacedClient):
             from segments that are not loaded into memory.
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         :param types: A comma-separated list of document types for the indexing index
@@ -467,8 +451,6 @@ class NodesClient(NamespacedClient):
             __query["include_unloaded_segments"] = include_unloaded_segments
         if level is not None:
             __query["level"] = level
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:

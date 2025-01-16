@@ -50,7 +50,7 @@ class ShutdownClient(NamespacedClient):
         and Elastic Cloud on Kubernetes. Direct use is not supported. If the operator
         privileges feature is enabled, you must be an operator to use this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-shutdown.html>`_
 
         :param node_id: The node id of node to be removed from the shutdown state
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -98,9 +98,6 @@ class ShutdownClient(NamespacedClient):
             t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[
-            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
-        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Get the shutdown status. Get information about nodes that are ready to be shut
@@ -111,14 +108,12 @@ class ShutdownClient(NamespacedClient):
         the operator privileges feature is enabled, you must be an operator to use this
         API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-shutdown.html>`_
 
         :param node_id: Which node for which to retrieve the shutdown status
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
         """
         __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
@@ -138,8 +133,6 @@ class ShutdownClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -178,19 +171,23 @@ class ShutdownClient(NamespacedClient):
         """
         Prepare a node to be shut down. NOTE: This feature is designed for indirect use
         by Elastic Cloud, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
-        Direct use is not supported. If the operator privileges feature is enabled, you
-        must be an operator to use this API. The API migrates ongoing tasks and index
-        shards to other nodes as needed to prepare a node to be restarted or shut down
-        and removed from the cluster. This ensures that Elasticsearch can be stopped
-        safely with minimal disruption to the cluster. You must specify the type of shutdown:
-        `restart`, `remove`, or `replace`. If a node is already being prepared for shutdown,
-        you can use this API to change the shutdown type. IMPORTANT: This API does NOT
-        terminate the Elasticsearch process. Monitor the node shutdown status to determine
-        when it is safe to stop Elasticsearch.
+        Direct use is not supported. If you specify a node that is offline, it will be
+        prepared for shut down when it rejoins the cluster. If the operator privileges
+        feature is enabled, you must be an operator to use this API. The API migrates
+        ongoing tasks and index shards to other nodes as needed to prepare a node to
+        be restarted or shut down and removed from the cluster. This ensures that Elasticsearch
+        can be stopped safely with minimal disruption to the cluster. You must specify
+        the type of shutdown: `restart`, `remove`, or `replace`. If a node is already
+        being prepared for shutdown, you can use this API to change the shutdown type.
+        IMPORTANT: This API does NOT terminate the Elasticsearch process. Monitor the
+        node shutdown status to determine when it is safe to stop Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-shutdown.html>`_
 
-        :param node_id: The node id of node to be shut down
+        :param node_id: The node identifier. This parameter is not validated against
+            the cluster's active nodes. This enables you to register a node for shut
+            down while it is offline. No error is thrown if you specify an invalid node
+            ID.
         :param reason: A human-readable reason that the node is being shut down. This
             field provides information for other cluster operators; it does not affect
             the shut down process.
@@ -211,17 +208,17 @@ class ShutdownClient(NamespacedClient):
             the index.unassigned.node_left.delayed_timeout setting. If you specify both
             a restart allocation delay and an index-level allocation delay, the longer
             of the two is used.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
         :param target_node_name: Only valid if type is replace. Specifies the name of
             the node that is replacing the node being shut down. Shards from the shut
             down node are only allowed to be allocated to the target node, and no other
             data will be allocated to the target node. During relocation of data certain
             allocation rules are ignored, such as disk watermarks or user attribute filtering
             rules.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
