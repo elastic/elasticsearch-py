@@ -232,7 +232,7 @@ def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConf
         )
         options["path_prefix"] = options.pop("url_prefix")
 
-    return NodeConfig(**options)  # type: ignore
+    return NodeConfig(**options)  # type: ignore[arg-type]
 
 
 def cloud_id_to_node_configs(cloud_id: str) -> List[NodeConfig]:
