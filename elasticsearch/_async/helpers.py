@@ -257,7 +257,7 @@ async def async_streaming_bulk(
                 ]
                 ok: bool
                 info: Dict[str, Any]
-                async for data, (ok, info) in azip(  # type: ignore
+                async for data, (ok, info) in azip(  # type: ignore[assignment, misc]
                     bulk_data,
                     _process_bulk_chunk(
                         client,
