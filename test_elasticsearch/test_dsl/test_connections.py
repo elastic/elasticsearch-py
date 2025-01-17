@@ -124,19 +124,19 @@ def test_connection_has_correct_user_agent() -> None:
     assert (
         c.get_connection("testing")
         ._headers["user-agent"]
-        .startswith("elasticsearch-py/")
+        .startswith("elasticsearch-dsl-py/")
     )
 
     my_client = Elasticsearch(hosts=["http://localhost:9200"])
     my_client = my_client.options(headers={"user-agent": "my-user-agent/1.0"})
     c.add_connection("default", my_client)
-    assert c.get_connection()._headers["user-agent"].startswith("elasticsearch-py/")
+    assert c.get_connection()._headers["user-agent"].startswith("elasticsearch-dsl-py/")
 
     my_client = Elasticsearch(hosts=["http://localhost:9200"])
     assert (
         c.get_connection(my_client)
         ._headers["user-agent"]
-        .startswith("elasticsearch-py/")
+        .startswith("elasticsearch-dsl-py/")
     )
 
     not_a_client = object()
