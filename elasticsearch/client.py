@@ -57,6 +57,7 @@ from ._sync.client.searchable_snapshots import (  # noqa: F401
 )
 from ._sync.client.security import SecurityClient as SecurityClient  # noqa: F401
 from ._sync.client.shutdown import ShutdownClient as ShutdownClient  # noqa: F401
+from ._sync.client.simulate import SimulateClient as SimulateClient  # noqa: F401
 from ._sync.client.slm import SlmClient as SlmClient  # noqa: F401
 from ._sync.client.snapshot import SnapshotClient as SnapshotClient  # noqa: F401
 from ._sync.client.sql import SqlClient as SqlClient  # noqa: F401
@@ -107,6 +108,7 @@ __all__ = [
     "SearchableSnapshotsClient",
     "SecurityClient",
     "ShutdownClient",
+    "SimulateClient",
     "SlmClient",
     "SnapshotClient",
     "SqlClient",
