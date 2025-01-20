@@ -161,4 +161,6 @@ def lint(session):
 @nox.session()
 def docs(session):
     session.install(".[docs]")
-    session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")
+    session.run(
+        "sphinx-build", "-W", "docs/sphinx/", "docs/sphinx/_build", "-b", "html"
+    )

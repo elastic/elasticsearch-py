@@ -1,4 +1,4 @@
-.. _snapshot-lifecycle-management:
+.. _simulate:
 
 Simulate
 --------
