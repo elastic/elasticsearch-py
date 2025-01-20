@@ -1,0 +1,16 @@
+/* Display GitHub Flavored Markdown code blocks correctly */
+
+.rst-content pre {
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.rst-content pre code {
+  background-color: #f5f5f5;
+  white-space: pre;
+  border: none;
+  padding: 0;
+}
