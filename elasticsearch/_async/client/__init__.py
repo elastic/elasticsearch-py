@@ -1117,38 +1117,119 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Index a document. Adds a JSON document to the specified data stream or index
-        and makes it searchable. If the target is an index and the document already exists,
-        the request updates the document and increments its version.
+        Create a new document in the index. You can index a new JSON document with the
+        `/<target>/_doc/` or `/<target>/_create/<_id>` APIs Using `_create` guarantees
+        that the document is indexed only if it does not already exist. It returns a
+        409 response when a document with a same ID already exists in the index. To update
+        an existing document, you must use the `/<target>/_doc/` API. If the Elasticsearch
+        security features are enabled, you must have the following index privileges for
+        the target data stream, index, or index alias: * To add a document using the
+        `PUT /<target>/_create/<_id>` or `POST /<target>/_create/<_id>` request formats,
+        you must have the `create_doc`, `create`, `index`, or `write` index privilege.
+        * To automatically create a data stream or index with this API request, you must
+        have the `auto_configure`, `create_index`, or `manage` index privilege. Automatic
+        data stream creation requires a matching index template with data stream enabled.
+        **Automatically create data streams and indices** If the request's target doesn't
+        exist and matches an index template with a `data_stream` definition, the index
+        operation automatically creates the data stream. If the target doesn't exist
+        and doesn't match a data stream template, the operation automatically creates
+        the index and applies any matching index templates. NOTE: Elasticsearch includes
+        several built-in index templates. To avoid naming collisions with these templates,
+        refer to index pattern documentation. If no mapping exists, the index operation
+        creates a dynamic mapping. By default, new fields and objects are automatically
+        added to the mapping if needed. Automatic index creation is controlled by the
+        `action.auto_create_index` setting. If it is `true`, any index can be created
+        automatically. You can modify this setting to explicitly allow or block automatic
+        creation of indices that match specified patterns or set it to `false` to turn
+        off automatic index creation entirely. Specify a comma-separated list of patterns
+        you want to allow or prefix each pattern with `+` or `-` to indicate whether
+        it should be allowed or blocked. When a list is specified, the default behaviour
+        is to disallow. NOTE: The `action.auto_create_index` setting affects the automatic
+        creation of indices only. It does not affect the creation of data streams. **Routing**
+        By default, shard placement — or routing — is controlled by using a hash of the
+        document's ID value. For more explicit control, the value fed into the hash function
+        used by the router can be directly specified on a per-operation basis using the
+        `routing` parameter. When setting up explicit mapping, you can also use the `_routing`
+        field to direct the index operation to extract the routing value from the document
+        itself. This does come at the (very minimal) cost of an additional document parsing
+        pass. If the `_routing` mapping is defined and set to be required, the index
+        operation will fail if no routing value is provided or extracted. NOTE: Data
+        streams do not support custom routing unless they were created with the `allow_custom_routing`
+        setting enabled in the template. **Distributed** The index operation is directed
+        to the primary shard based on its route and performed on the actual node containing
+        this shard. After the primary shard completes the operation, if needed, the update
+        is distributed to applicable replicas. **Active shards** To improve the resiliency
+        of writes to the system, indexing operations can be configured to wait for a
+        certain number of active shard copies before proceeding with the operation. If
+        the requisite number of active shard copies are not available, then the write
+        operation must wait and retry, until either the requisite shard copies have started
+        or a timeout occurs. By default, write operations only wait for the primary shards
+        to be active before proceeding (that is to say `wait_for_active_shards` is `1`).
+        This default can be overridden in the index settings dynamically by setting `index.write.wait_for_active_shards`.
+        To alter this behavior per operation, use the `wait_for_active_shards request`
+        parameter. Valid values are all or any positive integer up to the total number
+        of configured copies per shard in the index (which is `number_of_replicas`+1).
+        Specifying a negative value or a number greater than the number of shard copies
+        will throw an error. For example, suppose you have a cluster of three nodes,
+        A, B, and C and you create an index index with the number of replicas set to
+        3 (resulting in 4 shard copies, one more copy than there are nodes). If you attempt
+        an indexing operation, by default the operation will only ensure the primary
+        copy of each shard is available before proceeding. This means that even if B
+        and C went down and A hosted the primary shard copies, the indexing operation
+        would still proceed with only one copy of the data. If `wait_for_active_shards`
+        is set on the request to `3` (and all three nodes are up), the indexing operation
+        will require 3 active shard copies before proceeding. This requirement should
+        be met because there are 3 active nodes in the cluster, each one holding a copy
+        of the shard. However, if you set `wait_for_active_shards` to `all` (or to `4`,
+        which is the same in this situation), the indexing operation will not proceed
+        as you do not have all 4 copies of each shard active in the index. The operation
+        will timeout unless a new node is brought up in the cluster to host the fourth
+        copy of the shard. It is important to note that this setting greatly reduces
+        the chances of the write operation not writing to the requisite number of shard
+        copies, but it does not completely eliminate the possibility, because this check
+        occurs before the write operation starts. After the write operation is underway,
+        it is still possible for replication to fail on any number of shard copies but
+        still succeed on the primary. The `_shards` section of the API response reveals
+        the number of shard copies on which replication succeeded and failed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
-        :param index: Name of the data stream or index to target. If the target doesn’t
+        :param index: The name of the data stream or index to target. If the target doesn't
             exist and matches the name or wildcard (`*`) pattern of an index template
             with a `data_stream` definition, this request creates the data stream. If
-            the target doesn’t exist and doesn’t match a data stream template, this request
+            the target doesn't exist and doesn’t match a data stream template, this request
             creates the index.
-        :param id: Unique identifier for the document.
+        :param id: A unique identifier for the document. To automatically generate a
+            document ID, use the `POST /<target>/_doc/` request format.
         :param document:
-        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
-            If the index has a default ingest pipeline specified, then setting the value
-            to `_none` disables the default ingest pipeline for this request. If a final
-            pipeline is configured it will always run, regardless of the value of this
+        :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, setting the value to
+            `_none` turns off the default ingest pipeline for this request. If a final
+            pipeline is configured, it will always run regardless of the value of this
             parameter.
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh to
-            make this operation visible to search, if `false` do nothing with refreshes.
-            Valid values: `true`, `false`, `wait_for`.
-        :param routing: Custom value used to route operations to a specific shard.
-        :param timeout: Period the request waits for the following operations: automatic
-            index creation, dynamic mapping updates, waiting for active shards.
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: `external`, `external_gte`.
+            this operation visible to search. If `wait_for`, it waits for a refresh to
+            make this operation visible to search. If `false`, it does nothing with refreshes.
+        :param routing: A custom value that is used to route operations to a specific
+            shard.
+        :param timeout: The period the request waits for the following operations: automatic
+            index creation, dynamic mapping updates, waiting for active shards. Elasticsearch
+            waits for at least the specified timeout period before failing. The actual
+            wait time could be longer, particularly when multiple waits occur. This parameter
+            is useful for situations where the primary shard assigned to perform the
+            operation might not be available when the operation runs. Some reasons for
+            this might be that the primary shard is currently recovering from a gateway
+            or undergoing relocation. By default, the operation will wait on the primary
+            shard to become available for at least 1 minute before failing and responding
+            with an error. The actual wait time could be longer, particularly when multiple
+            waits occur.
+        :param version: The explicit version number for concurrency control. It must
+            be a non-negative long number.
+        :param version_type: The version type.
         :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to `all` or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
+            before proceeding with the operation. You can set it to `all` or any positive
+            integer up to the total number of shards in the index (`number_of_replicas+1`).
+            The default value of `1` means it waits for each primary shard to be active.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1223,29 +1304,57 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a document. Removes a JSON document from the specified index.
+        Delete a document. Remove a JSON document from the specified index. NOTE: You
+        cannot send deletion requests directly to a data stream. To delete a document
+        in a data stream, you must target the backing index containing the document.
+        **Optimistic concurrency control** Delete operations can be made conditional
+        and only be performed if the last modification to the document was assigned the
+        sequence number and primary term specified by the `if_seq_no` and `if_primary_term`
+        parameters. If a mismatch is detected, the operation will result in a `VersionConflictException`
+        and a status code of `409`. **Versioning** Each document indexed is versioned.
+        When deleting a document, the version can be specified to make sure the relevant
+        document you are trying to delete is actually being deleted and it has not changed
+        in the meantime. Every write operation run on a document, deletes included, causes
+        its version to be incremented. The version number of a deleted document remains
+        available for a short time after deletion to allow for control of concurrent
+        operations. The length of time for which a deleted document's version remains
+        available is determined by the `index.gc_deletes` index setting. **Routing**
+        If routing is used during indexing, the routing value also needs to be specified
+        to delete a document. If the `_routing` mapping is set to `required` and no routing
+        value is specified, the delete API throws a `RoutingMissingException` and rejects
+        the request. For example: ``` DELETE /my-index-000001/_doc/1?routing=shard-1
+        ``` This request deletes the document with ID 1, but it is routed based on the
+        user. The document is not deleted if the correct routing is not specified. **Distributed**
+        The delete operation gets hashed into a specific shard ID. It then gets redirected
+        into the primary shard within that ID group and replicated (if needed) to shard
+        replicas within that ID group.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
 
-        :param index: Name of the target index.
-        :param id: Unique identifier for the document.
+        :param index: The name of the target index.
+        :param id: A unique identifier for the document.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
             number.
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh to
-            make this operation visible to search, if `false` do nothing with refreshes.
-            Valid values: `true`, `false`, `wait_for`.
-        :param routing: Custom value used to route operations to a specific shard.
-        :param timeout: Period to wait for active shards.
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: `external`, `external_gte`.
-        :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to `all` or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
+            this operation visible to search. If `wait_for`, it waits for a refresh to
+            make this operation visible to search. If `false`, it does nothing with refreshes.
+        :param routing: A custom value used to route operations to a specific shard.
+        :param timeout: The period to wait for active shards. This parameter is useful
+            for situations where the primary shard assigned to perform the delete operation
+            might not be available when the delete operation runs. Some reasons for this
+            might be that the primary shard is currently recovering from a store or undergoing
+            relocation. By default, the delete operation will wait on the primary shard
+            to become available for up to 1 minute before failing and responding with
+            an error.
+        :param version: An explicit version number for concurrency control. It must match
+            the current version of the document for the request to succeed.
+        :param version_type: The version type.
+        :param wait_for_active_shards: The minimum number of shard copies that must be
+            active before proceeding with the operation. You can set it to `all` or any
+            positive integer up to the total number of shards in the index (`number_of_replicas+1`).
+            The default value of `1` means it waits for each primary shard to be active.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1640,32 +1749,54 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Check a document. Checks if a specified document exists.
+        Check a document. Verify that a document exists. For example, check to see if
+        a document with the `_id` 0 exists: ``` HEAD my-index-000001/_doc/0 ``` If the
+        document exists, the API returns a status code of `200 - OK`. If the document
+        doesn’t exist, the API returns `404 - Not Found`. **Versioning support** You
+        can use the `version` parameter to check the document only if its current version
+        is equal to the specified one. Internally, Elasticsearch has marked the old document
+        as deleted and added an entirely new document. The old version of the document
+        doesn't disappear immediately, although you won't be able to access it. Elasticsearch
+        cleans up deleted documents in the background as you continue to index more data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: Comma-separated list of data streams, indices, and aliases. Supports
-            wildcards (`*`).
-        :param id: Identifier of the document.
-        :param preference: Specifies the node or shard the operation should be performed
-            on. Random by default.
+        :param index: A comma-separated list of data streams, indices, and aliases. It
+            supports wildcards (`*`).
+        :param id: A unique document identifier.
+        :param preference: The node or shard the operation should be performed on. By
+            default, the operation is randomized between the shard replicas. If it is
+            set to `_local`, the operation will prefer to be run on a local allocated
+            shard when possible. If it is set to a custom value, the value is used to
+            guarantee that the same shards will be used for the same custom value. This
+            can help with "jumping values" when hitting different shards in different
+            refresh states. A sample value can be something like the web session ID or
+            the user name.
         :param realtime: If `true`, the request is real-time as opposed to near-real-time.
-        :param refresh: If `true`, Elasticsearch refreshes all shards involved in the
-            delete by query after the request completes.
-        :param routing: Target the specified primary shard.
-        :param source: `true` or `false` to return the `_source` field or not, or a list
-            of fields to return.
-        :param source_excludes: A comma-separated list of source fields to exclude in
-            the response.
+        :param refresh: If `true`, the request refreshes the relevant shards before retrieving
+            the document. Setting it to `true` should be done after careful thought and
+            verification that this does not cause a heavy load on the system (and slow
+            down indexing).
+        :param routing: A custom value used to route operations to a specific shard.
+        :param source: Indicates whether to return the `_source` field (`true` or `false`)
+            or lists the fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response. You can also use this parameter to exclude fields from the
+            subset specified in `_source_includes` query parameter. If the `_source`
+            parameter is `false`, this parameter is ignored.
         :param source_includes: A comma-separated list of source fields to include in
-            the response.
-        :param stored_fields: List of stored fields to return as part of a hit. If no
-            fields are specified, no stored fields are included in the response. If this
-            field is specified, the `_source` parameter defaults to false.
+            the response. If this parameter is specified, only these source fields are
+            returned. You can exclude fields from this subset using the `_source_excludes`
+            query parameter. If the `_source` parameter is `false`, this parameter is
+            ignored.
+        :param stored_fields: A comma-separated list of stored fields to return as part
+            of a hit. If no fields are specified, no stored fields are included in the
+            response. If this field is specified, the `_source` parameter defaults to
+            `false`.
         :param version: Explicit version number for concurrency control. The specified
             version must match the current version of the document for the request to
             succeed.
-        :param version_type: Specific version type: `external`, `external_gte`.
+        :param version_type: The version type.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1741,29 +1872,32 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Check for a document source. Checks if a document's `_source` is stored.
+        Check for a document source. Check whether a document source exists in an index.
+        For example: ``` HEAD my-index-000001/_source/1 ``` A document's source is not
+        available if it is disabled in the mapping.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: Comma-separated list of data streams, indices, and aliases. Supports
-            wildcards (`*`).
-        :param id: Identifier of the document.
-        :param preference: Specifies the node or shard the operation should be performed
-            on. Random by default.
-        :param realtime: If true, the request is real-time as opposed to near-real-time.
-        :param refresh: If `true`, Elasticsearch refreshes all shards involved in the
-            delete by query after the request completes.
-        :param routing: Target the specified primary shard.
-        :param source: `true` or `false` to return the `_source` field or not, or a list
-            of fields to return.
+        :param index: A comma-separated list of data streams, indices, and aliases. It
+            supports wildcards (`*`).
+        :param id: A unique identifier for the document.
+        :param preference: The node or shard the operation should be performed on. By
+            default, the operation is randomized between the shard replicas.
+        :param realtime: If `true`, the request is real-time as opposed to near-real-time.
+        :param refresh: If `true`, the request refreshes the relevant shards before retrieving
+            the document. Setting it to `true` should be done after careful thought and
+            verification that this does not cause a heavy load on the system (and slow
+            down indexing).
+        :param routing: A custom value used to route operations to a specific shard.
+        :param source: Indicates whether to return the `_source` field (`true` or `false`)
+            or lists the fields to return.
         :param source_excludes: A comma-separated list of source fields to exclude in
             the response.
         :param source_includes: A comma-separated list of source fields to include in
             the response.
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: `external`, `external_gte`.
+        :param version: The version number for concurrency control. It must match the
+            current version of the document for the request to succeed.
+        :param version_type: The version type.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2081,36 +2215,78 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get a document by its ID. Retrieves the document with the specified ID from an
-        index.
+        Get a document by its ID. Get a document and its source or stored fields from
+        an index. By default, this API is realtime and is not affected by the refresh
+        rate of the index (when data will become visible for search). In the case where
+        stored fields are requested with the `stored_fields` parameter and the document
+        has been updated but is not yet refreshed, the API will have to parse and analyze
+        the source to extract the stored fields. To turn off realtime behavior, set the
+        `realtime` parameter to false. **Source filtering** By default, the API returns
+        the contents of the `_source` field unless you have used the `stored_fields`
+        parameter or the `_source` field is turned off. You can turn off `_source` retrieval
+        by using the `_source` parameter: ``` GET my-index-000001/_doc/0?_source=false
+        ``` If you only need one or two fields from the `_source`, use the `_source_includes`
+        or `_source_excludes` parameters to include or filter out particular fields.
+        This can be helpful with large documents where partial retrieval can save on
+        network overhead Both parameters take a comma separated list of fields or wildcard
+        expressions. For example: ``` GET my-index-000001/_doc/0?_source_includes=*.id&_source_excludes=entities
+        ``` If you only want to specify includes, you can use a shorter notation: ```
+        GET my-index-000001/_doc/0?_source=*.id ``` **Routing** If routing is used during
+        indexing, the routing value also needs to be specified to retrieve a document.
+        For example: ``` GET my-index-000001/_doc/2?routing=user1 ``` This request gets
+        the document with ID 2, but it is routed based on the user. The document is not
+        fetched if the correct routing is not specified. **Distributed** The GET operation
+        is hashed into a specific shard ID. It is then redirected to one of the replicas
+        within that shard ID and returns the result. The replicas are the primary shard
+        and its replicas within that shard ID group. This means that the more replicas
+        you have, the better your GET scaling will be. **Versioning support** You can
+        use the `version` parameter to retrieve the document only if its current version
+        is equal to the specified one. Internally, Elasticsearch has marked the old document
+        as deleted and added an entirely new document. The old version of the document
+        doesn't disappear immediately, although you won't be able to access it. Elasticsearch
+        cleans up deleted documents in the background as you continue to index more data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: Name of the index that contains the document.
-        :param id: Unique identifier of the document.
-        :param force_synthetic_source: Should this request force synthetic _source? Use
-            this to test if the mapping supports synthetic _source and to get a sense
-            of the worst case performance. Fetches with this enabled will be slower the
-            enabling synthetic source natively in the index.
-        :param preference: Specifies the node or shard the operation should be performed
-            on. Random by default.
+        :param index: The name of the index that contains the document.
+        :param id: A unique document identifier.
+        :param force_synthetic_source: Indicates whether the request forces synthetic
+            `_source`. Use this paramater to test if the mapping supports synthetic `_source`
+            and to get a sense of the worst case performance. Fetches with this parameter
+            enabled will be slower than enabling synthetic source natively in the index.
+        :param preference: The node or shard the operation should be performed on. By
+            default, the operation is randomized between the shard replicas. If it is
+            set to `_local`, the operation will prefer to be run on a local allocated
+            shard when possible. If it is set to a custom value, the value is used to
+            guarantee that the same shards will be used for the same custom value. This
+            can help with "jumping values" when hitting different shards in different
+            refresh states. A sample value can be something like the web session ID or
+            the user name.
         :param realtime: If `true`, the request is real-time as opposed to near-real-time.
-        :param refresh: If true, Elasticsearch refreshes the affected shards to make
-            this operation visible to search. If false, do nothing with refreshes.
-        :param routing: Target the specified primary shard.
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return.
-        :param source_excludes: A comma-separated list of source fields to exclude in
-            the response.
+        :param refresh: If `true`, the request refreshes the relevant shards before retrieving
+            the document. Setting it to `true` should be done after careful thought and
+            verification that this does not cause a heavy load on the system (and slow
+            down indexing).
+        :param routing: A custom value used to route operations to a specific shard.
+        :param source: Indicates whether to return the `_source` field (`true` or `false`)
+            or lists the fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response. You can also use this parameter to exclude fields from the
+            subset specified in `_source_includes` query parameter. If the `_source`
+            parameter is `false`, this parameter is ignored.
         :param source_includes: A comma-separated list of source fields to include in
-            the response.
-        :param stored_fields: List of stored fields to return as part of a hit. If no
-            fields are specified, no stored fields are included in the response. If this
-            field is specified, the `_source` parameter defaults to false.
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: internal, external, external_gte.
+            the response. If this parameter is specified, only these source fields are
+            returned. You can exclude fields from this subset using the `_source_excludes`
+            query parameter. If the `_source` parameter is `false`, this parameter is
+            ignored.
+        :param stored_fields: A comma-separated list of stored fields to return as part
+            of a hit. If no fields are specified, no stored fields are included in the
+            response. If this field is specified, the `_source` parameter defaults to
+            `false`. Only leaf fields can be retrieved with the `stored_field` option.
+            Object fields can't be returned;​if specified, the request fails.
+        :param version: The version number for concurrency control. It must match the
+            current version of the document for the request to succeed.
+        :param version_type: The version type.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2303,29 +2479,34 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get a document's source. Returns the source of a document.
+        Get a document's source. Get the source of a document. For example: ``` GET my-index-000001/_source/1
+        ``` You can use the source filtering parameters to control which parts of the
+        `_source` are returned: ``` GET my-index-000001/_source/1/?_source_includes=*.id&_source_excludes=entities
+        ```
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: Name of the index that contains the document.
-        :param id: Unique identifier of the document.
-        :param preference: Specifies the node or shard the operation should be performed
-            on. Random by default.
-        :param realtime: Boolean) If true, the request is real-time as opposed to near-real-time.
-        :param refresh: If true, Elasticsearch refreshes the affected shards to make
-            this operation visible to search. If false, do nothing with refreshes.
-        :param routing: Target the specified primary shard.
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return.
+        :param index: The name of the index that contains the document.
+        :param id: A unique document identifier.
+        :param preference: The node or shard the operation should be performed on. By
+            default, the operation is randomized between the shard replicas.
+        :param realtime: If `true`, the request is real-time as opposed to near-real-time.
+        :param refresh: If `true`, the request refreshes the relevant shards before retrieving
+            the document. Setting it to `true` should be done after careful thought and
+            verification that this does not cause a heavy load on the system (and slow
+            down indexing).
+        :param routing: A custom value used to route operations to a specific shard.
+        :param source: Indicates whether to return the `_source` field (`true` or `false`)
+            or lists the fields to return.
         :param source_excludes: A comma-separated list of source fields to exclude in
             the response.
         :param source_includes: A comma-separated list of source fields to include in
             the response.
-        :param stored_fields:
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: internal, external, external_gte.
+        :param stored_fields: A comma-separated list of stored fields to return as part
+            of a hit.
+        :param version: The version number for concurrency control. It must match the
+            current version of the document for the request to succeed.
+        :param version_type: The version type.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2480,44 +2661,170 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Index a document. Adds a JSON document to the specified data stream or index
-        and makes it searchable. If the target is an index and the document already exists,
-        the request updates the document and increments its version.
+        Create or update a document in an index. Add a JSON document to the specified
+        data stream or index and make it searchable. If the target is an index and the
+        document already exists, the request updates the document and increments its
+        version. NOTE: You cannot use this API to send update requests for existing documents
+        in a data stream. If the Elasticsearch security features are enabled, you must
+        have the following index privileges for the target data stream, index, or index
+        alias: * To add or overwrite a document using the `PUT /<target>/_doc/<_id>`
+        request format, you must have the `create`, `index`, or `write` index privilege.
+        * To add a document using the `POST /<target>/_doc/` request format, you must
+        have the `create_doc`, `create`, `index`, or `write` index privilege. * To automatically
+        create a data stream or index with this API request, you must have the `auto_configure`,
+        `create_index`, or `manage` index privilege. Automatic data stream creation requires
+        a matching index template with data stream enabled. NOTE: Replica shards might
+        not all be started when an indexing operation returns successfully. By default,
+        only the primary is required. Set `wait_for_active_shards` to change this default
+        behavior. **Automatically create data streams and indices** If the request's
+        target doesn't exist and matches an index template with a `data_stream` definition,
+        the index operation automatically creates the data stream. If the target doesn't
+        exist and doesn't match a data stream template, the operation automatically creates
+        the index and applies any matching index templates. NOTE: Elasticsearch includes
+        several built-in index templates. To avoid naming collisions with these templates,
+        refer to index pattern documentation. If no mapping exists, the index operation
+        creates a dynamic mapping. By default, new fields and objects are automatically
+        added to the mapping if needed. Automatic index creation is controlled by the
+        `action.auto_create_index` setting. If it is `true`, any index can be created
+        automatically. You can modify this setting to explicitly allow or block automatic
+        creation of indices that match specified patterns or set it to `false` to turn
+        off automatic index creation entirely. Specify a comma-separated list of patterns
+        you want to allow or prefix each pattern with `+` or `-` to indicate whether
+        it should be allowed or blocked. When a list is specified, the default behaviour
+        is to disallow. NOTE: The `action.auto_create_index` setting affects the automatic
+        creation of indices only. It does not affect the creation of data streams. **Optimistic
+        concurrency control** Index operations can be made conditional and only be performed
+        if the last modification to the document was assigned the sequence number and
+        primary term specified by the `if_seq_no` and `if_primary_term` parameters. If
+        a mismatch is detected, the operation will result in a `VersionConflictException`
+        and a status code of `409`. **Routing** By default, shard placement — or routing
+        — is controlled by using a hash of the document's ID value. For more explicit
+        control, the value fed into the hash function used by the router can be directly
+        specified on a per-operation basis using the `routing` parameter. When setting
+        up explicit mapping, you can also use the `_routing` field to direct the index
+        operation to extract the routing value from the document itself. This does come
+        at the (very minimal) cost of an additional document parsing pass. If the `_routing`
+        mapping is defined and set to be required, the index operation will fail if no
+        routing value is provided or extracted. NOTE: Data streams do not support custom
+        routing unless they were created with the `allow_custom_routing` setting enabled
+        in the template. **Distributed** The index operation is directed to the primary
+        shard based on its route and performed on the actual node containing this shard.
+        After the primary shard completes the operation, if needed, the update is distributed
+        to applicable replicas. **Active shards** To improve the resiliency of writes
+        to the system, indexing operations can be configured to wait for a certain number
+        of active shard copies before proceeding with the operation. If the requisite
+        number of active shard copies are not available, then the write operation must
+        wait and retry, until either the requisite shard copies have started or a timeout
+        occurs. By default, write operations only wait for the primary shards to be active
+        before proceeding (that is to say `wait_for_active_shards` is `1`). This default
+        can be overridden in the index settings dynamically by setting `index.write.wait_for_active_shards`.
+        To alter this behavior per operation, use the `wait_for_active_shards request`
+        parameter. Valid values are all or any positive integer up to the total number
+        of configured copies per shard in the index (which is `number_of_replicas`+1).
+        Specifying a negative value or a number greater than the number of shard copies
+        will throw an error. For example, suppose you have a cluster of three nodes,
+        A, B, and C and you create an index index with the number of replicas set to
+        3 (resulting in 4 shard copies, one more copy than there are nodes). If you attempt
+        an indexing operation, by default the operation will only ensure the primary
+        copy of each shard is available before proceeding. This means that even if B
+        and C went down and A hosted the primary shard copies, the indexing operation
+        would still proceed with only one copy of the data. If `wait_for_active_shards`
+        is set on the request to `3` (and all three nodes are up), the indexing operation
+        will require 3 active shard copies before proceeding. This requirement should
+        be met because there are 3 active nodes in the cluster, each one holding a copy
+        of the shard. However, if you set `wait_for_active_shards` to `all` (or to `4`,
+        which is the same in this situation), the indexing operation will not proceed
+        as you do not have all 4 copies of each shard active in the index. The operation
+        will timeout unless a new node is brought up in the cluster to host the fourth
+        copy of the shard. It is important to note that this setting greatly reduces
+        the chances of the write operation not writing to the requisite number of shard
+        copies, but it does not completely eliminate the possibility, because this check
+        occurs before the write operation starts. After the write operation is underway,
+        it is still possible for replication to fail on any number of shard copies but
+        still succeed on the primary. The `_shards` section of the API response reveals
+        the number of shard copies on which replication succeeded and failed. **No operation
+        (noop) updates** When updating a document by using this API, a new version of
+        the document is always created even if the document hasn't changed. If this isn't
+        acceptable use the `_update` API with `detect_noop` set to `true`. The `detect_noop`
+        option isn't available on this API because it doesn’t fetch the old source and
+        isn't able to compare it against the new source. There isn't a definitive rule
+        for when noop updates aren't acceptable. It's a combination of lots of factors
+        like how frequently your data source sends updates that are actually noops and
+        how many queries per second Elasticsearch runs on the shard receiving the updates.
+        **Versioning** Each indexed document is given a version number. By default, internal
+        versioning is used that starts at 1 and increments with each update, deletes
+        included. Optionally, the version number can be set to an external value (for
+        example, if maintained in a database). To enable this functionality, `version_type`
+        should be set to `external`. The value provided must be a numeric, long value
+        greater than or equal to 0, and less than around `9.2e+18`. NOTE: Versioning
+        is completely real time, and is not affected by the near real time aspects of
+        search operations. If no version is provided, the operation runs without any
+        version checks. When using the external version type, the system checks to see
+        if the version number passed to the index request is greater than the version
+        of the currently stored document. If true, the document will be indexed and the
+        new version number used. If the value provided is less than or equal to the stored
+        document's version number, a version conflict will occur and the index operation
+        will fail. For example: ``` PUT my-index-000001/_doc/1?version=2&version_type=external
+        { "user": { "id": "elkbee" } } In this example, the operation will succeed since
+        the supplied version of 2 is higher than the current document version of 1. If
+        the document was already updated and its version was set to 2 or higher, the
+        indexing command will fail and result in a conflict (409 HTTP status code). A
+        nice side effect is that there is no need to maintain strict ordering of async
+        indexing operations run as a result of changes to a source database, as long
+        as version numbers from the source database are used. Even the simple case of
+        updating the Elasticsearch index using data from a database is simplified if
+        external versioning is used, as only the latest version will be used if the index
+        operations arrive out of order.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
-        :param index: Name of the data stream or index to target.
+        :param index: The name of the data stream or index to target. If the target doesn't
+            exist and matches the name or wildcard (`*`) pattern of an index template
+            with a `data_stream` definition, this request creates the data stream. If
+            the target doesn't exist and doesn't match a data stream template, this request
+            creates the index. You can check for existing targets with the resolve index
+            API.
         :param document:
-        :param id: Unique identifier for the document.
+        :param id: A unique identifier for the document. To automatically generate a
+            document ID, use the `POST /<target>/_doc/` request format and omit this
+            parameter.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
             number.
-        :param op_type: Set to create to only index the document if it does not already
+        :param op_type: Set to `create` to only index the document if it does not already
             exist (put if absent). If a document with the specified `_id` already exists,
-            the indexing operation will fail. Same as using the `<index>/_create` endpoint.
-            Valid values: `index`, `create`. If document id is specified, it defaults
-            to `index`. Otherwise, it defaults to `create`.
-        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
+            the indexing operation will fail. The behavior is the same as using the `<index>/_create`
+            endpoint. If a document ID is specified, this paramater defaults to `index`.
+            Otherwise, it defaults to `create`. If the request targets a data stream,
+            an `op_type` of `create` is required.
+        :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, then setting the value
             to `_none` disables the default ingest pipeline for this request. If a final
             pipeline is configured it will always run, regardless of the value of this
             parameter.
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh to
-            make this operation visible to search, if `false` do nothing with refreshes.
-            Valid values: `true`, `false`, `wait_for`.
+            this operation visible to search. If `wait_for`, it waits for a refresh to
+            make this operation visible to search. If `false`, it does nothing with refreshes.
         :param require_alias: If `true`, the destination must be an index alias.
-        :param routing: Custom value used to route operations to a specific shard.
-        :param timeout: Period the request waits for the following operations: automatic
-            index creation, dynamic mapping updates, waiting for active shards.
-        :param version: Explicit version number for concurrency control. The specified
-            version must match the current version of the document for the request to
-            succeed.
-        :param version_type: Specific version type: `external`, `external_gte`.
+        :param routing: A custom value that is used to route operations to a specific
+            shard.
+        :param timeout: The period the request waits for the following operations: automatic
+            index creation, dynamic mapping updates, waiting for active shards. This
+            parameter is useful for situations where the primary shard assigned to perform
+            the operation might not be available when the operation runs. Some reasons
+            for this might be that the primary shard is currently recovering from a gateway
+            or undergoing relocation. By default, the operation will wait on the primary
+            shard to become available for at least 1 minute before failing and responding
+            with an error. The actual wait time could be longer, particularly when multiple
+            waits occur.
+        :param version: An explicit version number for concurrency control. It must be
+            a non-negative long number.
+        :param version_type: The version type.
         :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to all or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
+            before proceeding with the operation. You can set it to `all` or any positive
+            integer up to the total number of shards in the index (`number_of_replicas+1`).
+            The default value of `1` means it waits for each primary shard to be active.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3506,33 +3813,191 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reindex documents. Copies documents from a source to a destination. The source
-        can be any existing index, alias, or data stream. The destination must differ
-        from the source. For example, you cannot reindex a data stream into itself.
+        Reindex documents. Copy documents from a source to a destination. You can copy
+        all documents to the destination index or reindex a subset of the documents.
+        The source can be any existing index, alias, or data stream. The destination
+        must differ from the source. For example, you cannot reindex a data stream into
+        itself. IMPORTANT: Reindex requires `_source` to be enabled for all documents
+        in the source. The destination should be configured as wanted before calling
+        the reindex API. Reindex does not copy the settings from the source or its associated
+        template. Mappings, shard counts, and replicas, for example, must be configured
+        ahead of time. If the Elasticsearch security features are enabled, you must have
+        the following security privileges: * The `read` index privilege for the source
+        data stream, index, or alias. * The `write` index privilege for the destination
+        data stream, index, or index alias. * To automatically create a data stream or
+        index with a reindex API request, you must have the `auto_configure`, `create_index`,
+        or `manage` index privilege for the destination data stream, index, or alias.
+        * If reindexing from a remote cluster, the `source.remote.user` must have the
+        `monitor` cluster privilege and the `read` index privilege for the source data
+        stream, index, or alias. If reindexing from a remote cluster, you must explicitly
+        allow the remote host in the `reindex.remote.whitelist` setting. Automatic data
+        stream creation requires a matching index template with data stream enabled.
+        The `dest` element can be configured like the index API to control optimistic
+        concurrency control. Omitting `version_type` or setting it to `internal` causes
+        Elasticsearch to blindly dump documents into the destination, overwriting any
+        that happen to have the same ID. Setting `version_type` to `external` causes
+        Elasticsearch to preserve the `version` from the source, create any documents
+        that are missing, and update any documents that have an older version in the
+        destination than they do in the source. Setting `op_type` to `create` causes
+        the reindex API to create only missing documents in the destination. All existing
+        documents will cause a version conflict. IMPORTANT: Because data streams are
+        append-only, any reindex request to a destination data stream must have an `op_type`
+        of `create`. A reindex can only add new documents to a destination data stream.
+        It cannot update existing documents in a destination data stream. By default,
+        version conflicts abort the reindex process. To continue reindexing if there
+        are conflicts, set the `conflicts` request body property to `proceed`. In this
+        case, the response includes a count of the version conflicts that were encountered.
+        Note that the handling of other error types is unaffected by the `conflicts`
+        property. Additionally, if you opt to count version conflicts, the operation
+        could attempt to reindex more documents from the source than `max_docs` until
+        it has successfully indexed `max_docs` documents into the target or it has gone
+        through every document in the source query. NOTE: The reindex API makes no effort
+        to handle ID collisions. The last document written will "win" but the order isn't
+        usually predictable so it is not a good idea to rely on this behavior. Instead,
+        make sure that IDs are unique by using a script. **Running reindex asynchronously**
+        If the request contains `wait_for_completion=false`, Elasticsearch performs some
+        preflight checks, launches the request, and returns a task you can use to cancel
+        or get the status of the task. Elasticsearch creates a record of this task as
+        a document at `_tasks/<task_id>`. **Reindex from multiple sources** If you have
+        many sources to reindex it is generally better to reindex them one at a time
+        rather than using a glob pattern to pick up multiple sources. That way you can
+        resume the process if there are any errors by removing the partially completed
+        source and starting over. It also makes parallelizing the process fairly simple:
+        split the list of sources to reindex and run each list in parallel. For example,
+        you can use a bash script like this: ``` for index in i1 i2 i3 i4 i5; do curl
+        -HContent-Type:application/json -XPOST localhost:9200/_reindex?pretty -d'{ "source":
+        { "index": "'$index'" }, "dest": { "index": "'$index'-reindexed" } }' done ```
+        **Throttling** Set `requests_per_second` to any positive decimal number (`1.4`,
+        `6`, `1000`, for example) to throttle the rate at which reindex issues batches
+        of index operations. Requests are throttled by padding each batch with a wait
+        time. To turn off throttling, set `requests_per_second` to `-1`. The throttling
+        is done by waiting between batches so that the scroll that reindex uses internally
+        can be given a timeout that takes into account the padding. The padding time
+        is the difference between the batch size divided by the `requests_per_second`
+        and the time spent writing. By default the batch size is `1000`, so if `requests_per_second`
+        is set to `500`: ``` target_time = 1000 / 500 per second = 2 seconds wait_time
+        = target_time - write_time = 2 seconds - .5 seconds = 1.5 seconds ``` Since the
+        batch is issued as a single bulk request, large batch sizes cause Elasticsearch
+        to create many requests and then wait for a while before starting the next set.
+        This is "bursty" instead of "smooth". **Slicing** Reindex supports sliced scroll
+        to parallelize the reindexing process. This parallelization can improve efficiency
+        and provide a convenient way to break the request down into smaller parts. NOTE:
+        Reindexing from remote clusters does not support manual or automatic slicing.
+        You can slice a reindex request manually by providing a slice ID and total number
+        of slices to each request. You can also let reindex automatically parallelize
+        by using sliced scroll to slice on `_id`. The `slices` parameter specifies the
+        number of slices to use. Adding `slices` to the reindex request just automates
+        the manual process, creating sub-requests which means it has some quirks: * You
+        can see these requests in the tasks API. These sub-requests are "child" tasks
+        of the task for the request with slices. * Fetching the status of the task for
+        the request with `slices` only contains the status of completed slices. * These
+        sub-requests are individually addressable for things like cancellation and rethrottling.
+        * Rethrottling the request with `slices` will rethrottle the unfinished sub-request
+        proportionally. * Canceling the request with `slices` will cancel each sub-request.
+        * Due to the nature of `slices`, each sub-request won't get a perfectly even
+        portion of the documents. All documents will be addressed, but some slices may
+        be larger than others. Expect larger slices to have a more even distribution.
+        * Parameters like `requests_per_second` and `max_docs` on a request with `slices`
+        are distributed proportionally to each sub-request. Combine that with the previous
+        point about distribution being uneven and you should conclude that using `max_docs`
+        with `slices` might not result in exactly `max_docs` documents being reindexed.
+        * Each sub-request gets a slightly different snapshot of the source, though these
+        are all taken at approximately the same time. If slicing automatically, setting
+        `slices` to `auto` will choose a reasonable number for most indices. If slicing
+        manually or otherwise tuning automatic slicing, use the following guidelines.
+        Query performance is most efficient when the number of slices is equal to the
+        number of shards in the index. If that number is large (for example, `500`),
+        choose a lower number as too many slices will hurt performance. Setting slices
+        higher than the number of shards generally does not improve efficiency and adds
+        overhead. Indexing performance scales linearly across available resources with
+        the number of slices. Whether query or indexing performance dominates the runtime
+        depends on the documents being reindexed and cluster resources. **Modify documents
+        during reindexing** Like `_update_by_query`, reindex operations support a script
+        that modifies the document. Unlike `_update_by_query`, the script is allowed
+        to modify the document's metadata. Just as in `_update_by_query`, you can set
+        `ctx.op` to change the operation that is run on the destination. For example,
+        set `ctx.op` to `noop` if your script decides that the document doesn’t have
+        to be indexed in the destination. This "no operation" will be reported in the
+        `noop` counter in the response body. Set `ctx.op` to `delete` if your script
+        decides that the document must be deleted from the destination. The deletion
+        will be reported in the `deleted` counter in the response body. Setting `ctx.op`
+        to anything else will return an error, as will setting any other field in `ctx`.
+        Think of the possibilities! Just be careful; you are able to change: * `_id`
+        * `_index` * `_version` * `_routing` Setting `_version` to `null` or clearing
+        it from the `ctx` map is just like not sending the version in an indexing request.
+        It will cause the document to be overwritten in the destination regardless of
+        the version on the target or the version type you use in the reindex API. **Reindex
+        from remote** Reindex supports reindexing from a remote Elasticsearch cluster.
+        The `host` parameter must contain a scheme, host, port, and optional path. The
+        `username` and `password` parameters are optional and when they are present the
+        reindex operation will connect to the remote Elasticsearch node using basic authentication.
+        Be sure to use HTTPS when using basic authentication or the password will be
+        sent in plain text. There are a range of settings available to configure the
+        behavior of the HTTPS connection. When using Elastic Cloud, it is also possible
+        to authenticate against the remote cluster through the use of a valid API key.
+        Remote hosts must be explicitly allowed with the `reindex.remote.whitelist` setting.
+        It can be set to a comma delimited list of allowed remote host and port combinations.
+        Scheme is ignored; only the host and port are used. For example: ``` reindex.remote.whitelist:
+        [otherhost:9200, another:9200, 127.0.10.*:9200, localhost:*"] ``` The list of
+        allowed hosts must be configured on any nodes that will coordinate the reindex.
+        This feature should work with remote clusters of any version of Elasticsearch.
+        This should enable you to upgrade from any version of Elasticsearch to the current
+        version by reindexing from a cluster of the old version. WARNING: Elasticsearch
+        does not support forward compatibility across major versions. For example, you
+        cannot reindex from a 7.x cluster into a 6.x cluster. To enable queries sent
+        to older versions of Elasticsearch, the `query` parameter is sent directly to
+        the remote host without validation or modification. NOTE: Reindexing from remote
+        clusters does not support manual or automatic slicing. Reindexing from a remote
+        server uses an on-heap buffer that defaults to a maximum size of 100mb. If the
+        remote index includes very large documents you'll need to use a smaller batch
+        size. It is also possible to set the socket read timeout on the remote connection
+        with the `socket_timeout` field and the connection timeout with the `connect_timeout`
+        field. Both default to 30 seconds. **Configuring SSL parameters** Reindex from
+        remote supports configurable SSL settings. These must be specified in the `elasticsearch.yml`
+        file, with the exception of the secure settings, which you add in the Elasticsearch
+        keystore. It is not possible to configure SSL in the body of the reindex request.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
         :param dest: The destination you are copying to.
         :param source: The source you are copying from.
-        :param conflicts: Set to proceed to continue reindexing even if there are conflicts.
-        :param max_docs: The maximum number of documents to reindex.
+        :param conflicts: Indicates whether to continue reindexing even when there are
+            conflicts.
+        :param max_docs: The maximum number of documents to reindex. By default, all
+            documents are reindexed. If it is a value less then or equal to `scroll_size`,
+            a scroll will not be used to retrieve the results for the operation. If `conflicts`
+            is set to `proceed`, the reindex operation could attempt to reindex more
+            documents from the source than `max_docs` until it has successfully indexed
+            `max_docs` documents into the target or it has gone through every document
+            in the source query.
         :param refresh: If `true`, the request refreshes affected shards to make this
             operation visible to search.
         :param requests_per_second: The throttle for this request in sub-requests per
-            second. Defaults to no throttle.
+            second. By default, there is no throttle.
         :param require_alias: If `true`, the destination must be an index alias.
         :param script: The script to run to update the document source or metadata when
             reindexing.
-        :param scroll: Specifies how long a consistent view of the index should be maintained
-            for scrolled search.
+        :param scroll: The period of time that a consistent view of the index should
+            be maintained for scrolled search.
         :param size:
-        :param slices: The number of slices this task should be divided into. Defaults
-            to 1 slice, meaning the task isn’t sliced into subtasks.
-        :param timeout: Period each indexing waits for automatic index creation, dynamic
-            mapping updates, and waiting for active shards.
+        :param slices: The number of slices this task should be divided into. It defaults
+            to one slice, which means the task isn't sliced into subtasks. Reindex supports
+            sliced scroll to parallelize the reindexing process. This parallelization
+            can improve efficiency and provide a convenient way to break the request
+            down into smaller parts. NOTE: Reindexing from remote clusters does not support
+            manual or automatic slicing. If set to `auto`, Elasticsearch chooses the
+            number of slices to use. This setting will use one slice per shard, up to
+            a certain limit. If there are multiple sources, it will choose the number
+            of slices based on the index or backing index with the smallest number of
+            shards.
+        :param timeout: The period each indexing waits for automatic index creation,
+            dynamic mapping updates, and waiting for active shards. By default, Elasticsearch
+            waits for at least one minute before failing. The actual wait time could
+            be longer, particularly when multiple waits occur.
         :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to `all` or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
+            before proceeding with the operation. Set it to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`). The
+            default value is one, which means it waits for each primary shard to be active.
         :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
@@ -3605,13 +4070,17 @@ class AsyncElasticsearch(BaseClient):
     ) -> ObjectApiResponse[t.Any]:
         """
         Throttle a reindex operation. Change the number of requests per second for a
-        particular reindex operation.
+        particular reindex operation. For example: ``` POST _reindex/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
+        ``` Rethrottling that speeds up the query takes effect immediately. Rethrottling
+        that slows down the query will take effect after completing the current batch.
+        This behavior prevents scroll timeouts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
-        :param task_id: Identifier for the task.
+        :param task_id: The task identifier, which can be found by using the tasks API.
         :param requests_per_second: The throttle for this request in sub-requests per
-            second.
+            second. It can be either `-1` to turn off throttling or any decimal number
+            like `1.7` or `12` to throttle to that level.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -5058,46 +5527,60 @@ class AsyncElasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Update a document. Updates a document by running a script or passing a partial
-        document.
+        Update a document. Update a document by running a script or passing a partial
+        document. If the Elasticsearch security features are enabled, you must have the
+        `index` or `write` index privilege for the target index or index alias. The script
+        can update, delete, or skip modifying the document. The API also supports passing
+        a partial document, which is merged into the existing document. To fully replace
+        an existing document, use the index API. This operation: * Gets the document
+        (collocated with the shard) from the index. * Runs the specified script. * Indexes
+        the result. The document must still be reindexed, but using this API removes
+        some network roundtrips and reduces chances of version conflicts between the
+        GET and the index operation. The `_source` field must be enabled to use this
+        API. In addition to `_source`, you can access the following variables through
+        the `ctx` map: `_index`, `_type`, `_id`, `_version`, `_routing`, and `_now` (the
+        current timestamp).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
 
-        :param index: The name of the index
-        :param id: Document ID
-        :param detect_noop: Set to false to disable setting 'result' in the response
-            to 'noop' if no change to the document occurred.
-        :param doc: A partial update to an existing document.
-        :param doc_as_upsert: Set to true to use the contents of 'doc' as the value of
-            'upsert'
+        :param index: The name of the target index. By default, the index is created
+            automatically if it doesn't exist.
+        :param id: A unique identifier for the document to be updated.
+        :param detect_noop: If `true`, the `result` in the response is set to `noop`
+            (no operation) when there are no changes to the document.
+        :param doc: A partial update to an existing document. If both `doc` and `script`
+            are specified, `doc` is ignored.
+        :param doc_as_upsert: If `true`, use the contents of 'doc' as the value of 'upsert'.
+            NOTE: Using ingest pipelines with `doc_as_upsert` is not supported.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
             number.
         :param lang: The script language.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
-            this operation visible to search, if 'wait_for' then wait for a refresh to
-            make this operation visible to search, if 'false' do nothing with refreshes.
-        :param require_alias: If true, the destination must be an index alias.
-        :param retry_on_conflict: Specify how many times should the operation be retried
+            this operation visible to search. If 'wait_for', it waits for a refresh to
+            make this operation visible to search. If 'false', it does nothing with refreshes.
+        :param require_alias: If `true`, the destination must be an index alias.
+        :param retry_on_conflict: The number of times the operation should be retried
             when a conflict occurs.
-        :param routing: Custom value used to route operations to a specific shard.
-        :param script: Script to execute to update the document.
-        :param scripted_upsert: Set to true to execute the script whether or not the
-            document exists.
-        :param source: Set to false to disable source retrieval. You can also specify
-            a comma-separated list of the fields you want to retrieve.
-        :param source_excludes: Specify the source fields you want to exclude.
-        :param source_includes: Specify the source fields you want to retrieve.
-        :param timeout: Period to wait for dynamic mapping updates and active shards.
-            This guarantees Elasticsearch waits for at least the timeout before failing.
-            The actual wait time could be longer, particularly when multiple waits occur.
+        :param routing: A custom value used to route operations to a specific shard.
+        :param script: The script to run to update the document.
+        :param scripted_upsert: If `true`, run the script whether or not the document
+            exists.
+        :param source: If `false`, turn off source retrieval. You can also specify a
+            comma-separated list of the fields you want to retrieve.
+        :param source_excludes: The source fields you want to exclude.
+        :param source_includes: The source fields you want to retrieve.
+        :param timeout: The period to wait for the following operations: dynamic mapping
+            updates and waiting for active shards. Elasticsearch waits for at least the
+            timeout period before failing. The actual wait time could be longer, particularly
+            when multiple waits occur.
         :param upsert: If the document does not already exist, the contents of 'upsert'
-            are inserted as a new document. If the document exists, the 'script' is executed.
-        :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operations. Set to 'all' or any positive integer
-            up to the total number of shards in the index (number_of_replicas+1). Defaults
-            to 1 meaning the primary shard.
+            are inserted as a new document. If the document exists, the 'script' is run.
+        :param wait_for_active_shards: The number of copies of each shard that must be
+            active before proceeding with the operation. Set to 'all' or any positive
+            integer up to the total number of shards in the index (`number_of_replicas`+1).
+            The default value of `1` means it waits for each primary shard to be active.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
