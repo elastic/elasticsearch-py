@@ -73,10 +73,12 @@ class EsqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run an async ES|QL query. Asynchronously run an ES|QL (Elasticsearch query language)
-        query, monitor its progress, and retrieve results when they become available.
-        The API accepts the same parameters and request body as the synchronous query
-        API, along with additional async related properties.
+        .. raw:: html
+
+          <p>Run an async ES|QL query.
+          Asynchronously run an ES|QL (Elasticsearch query language) query, monitor its progress, and retrieve results when they become available.</p>
+          <p>The API accepts the same parameters and request body as the synchronous query API, along with additional async related properties.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-async-query-api.html>`_
 
@@ -183,11 +185,17 @@ class EsqlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete an async ES|QL query. If the query is still running, it is cancelled.
-        Otherwise, the stored results are deleted. If the Elasticsearch security features
-        are enabled, only the following users can use this API to delete a query: * The
-        authenticated user that submitted the original query request * Users with the
-        `cancel_task` cluster privilege
+        .. raw:: html
+
+          <p>Delete an async ES|QL query.
+          If the query is still running, it is cancelled.
+          Otherwise, the stored results are deleted.</p>
+          <p>If the Elasticsearch security features are enabled, only the following users can use this API to delete a query:</p>
+          <ul>
+          <li>The authenticated user that submitted the original query request</li>
+          <li>Users with the <code>cancel_task</code> cluster privilege</li>
+          </ul>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-async-query-delete-api.html>`_
 
@@ -235,10 +243,12 @@ class EsqlClient(NamespacedClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get async ES|QL query results. Get the current status and available results or
-        stored results for an ES|QL asynchronous query. If the Elasticsearch security
-        features are enabled, only the user who first submitted the ES|QL query can retrieve
-        the results using this API.
+        .. raw:: html
+
+          <p>Get async ES|QL query results.
+          Get the current status and available results or stored results for an ES|QL asynchronous query.
+          If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can retrieve the results using this API.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-async-query-get-api.html>`_
 
@@ -331,8 +341,11 @@ class EsqlClient(NamespacedClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run an ES|QL query. Get search results for an ES|QL (Elasticsearch query language)
-        query.
+        .. raw:: html
+
+          <p>Run an ES|QL query.
+          Get search results for an ES|QL (Elasticsearch query language) query.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
 
