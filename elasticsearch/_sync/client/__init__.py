@@ -644,83 +644,89 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Bulk index or delete documents. Perform multiple `index`, `create`, `delete`,
-        and `update` actions in a single request. This reduces overhead and can greatly
-        increase indexing speed. If the Elasticsearch security features are enabled,
-        you must have the following index privileges for the target data stream, index,
-        or index alias: * To use the `create` action, you must have the `create_doc`,
-        `create`, `index`, or `write` index privilege. Data streams support only the
-        `create` action. * To use the `index` action, you must have the `create`, `index`,
-        or `write` index privilege. * To use the `delete` action, you must have the `delete`
-        or `write` index privilege. * To use the `update` action, you must have the `index`
-        or `write` index privilege. * To automatically create a data stream or index
-        with a bulk API request, you must have the `auto_configure`, `create_index`,
-        or `manage` index privilege. * To make the result of a bulk operation visible
-        to search using the `refresh` parameter, you must have the `maintenance` or `manage`
-        index privilege. Automatic data stream creation requires a matching index template
-        with data stream enabled. The actions are specified in the request body using
-        a newline delimited JSON (NDJSON) structure: ``` action_and_meta_data\\n optional_source\\n
-        action_and_meta_data\\n optional_source\\n .... action_and_meta_data\\n optional_source\\n
-        ``` The `index` and `create` actions expect a source on the next line and have
-        the same semantics as the `op_type` parameter in the standard index API. A `create`
-        action fails if a document with the same ID already exists in the target An `index`
-        action adds or replaces a document as necessary. NOTE: Data streams support only
-        the `create` action. To update or delete a document in a data stream, you must
-        target the backing index containing the document. An `update` action expects
-        that the partial doc, upsert, and script and its options are specified on the
-        next line. A `delete` action does not expect a source on the next line and has
-        the same semantics as the standard delete API. NOTE: The final line of data must
-        end with a newline character (`\\n`). Each newline character may be preceded
-        by a carriage return (`\\r`). When sending NDJSON data to the `_bulk` endpoint,
-        use a `Content-Type` header of `application/json` or `application/x-ndjson`.
-        Because this format uses literal newline characters (`\\n`) as delimiters, make
-        sure that the JSON actions and sources are not pretty printed. If you provide
-        a target in the request path, it is used for any actions that don't explicitly
-        specify an `_index` argument. A note on the format: the idea here is to make
-        processing as fast as possible. As some of the actions are redirected to other
-        shards on other nodes, only `action_meta_data` is parsed on the receiving node
-        side. Client libraries using this protocol should try and strive to do something
-        similar on the client side, and reduce buffering as much as possible. There is
-        no "correct" number of actions to perform in a single bulk request. Experiment
-        with different settings to find the optimal size for your particular workload.
-        Note that Elasticsearch limits the maximum size of a HTTP request to 100mb by
-        default so clients must ensure that no request exceeds this size. It is not possible
-        to index a single document that exceeds the size limit, so you must pre-process
-        any such documents into smaller pieces before sending them to Elasticsearch.
-        For instance, split documents into pages or chapters before indexing them, or
-        store raw binary data in a system outside Elasticsearch and replace the raw data
-        with a link to the external system in the documents that you send to Elasticsearch.
-        **Client suppport for bulk requests** Some of the officially supported clients
-        provide helpers to assist with bulk requests and reindexing: * Go: Check out
-        `esutil.BulkIndexer` * Perl: Check out `Search::Elasticsearch::Client::5_0::Bulk`
-        and `Search::Elasticsearch::Client::5_0::Scroll` * Python: Check out `elasticsearch.helpers.*`
-        * JavaScript: Check out `client.helpers.*` * .NET: Check out `BulkAllObservable`
-        * PHP: Check out bulk indexing. **Submitting bulk requests with cURL** If you're
-        providing text file input to `curl`, you must use the `--data-binary` flag instead
-        of plain `-d`. The latter doesn't preserve newlines. For example: ``` $ cat requests
-        { "index" : { "_index" : "test", "_id" : "1" } } { "field1" : "value1" } $ curl
-        -s -H "Content-Type: application/x-ndjson" -XPOST localhost:9200/_bulk --data-binary
-        "@requests"; echo {"took":7, "errors": false, "items":[{"index":{"_index":"test","_id":"1","_version":1,"result":"created","forced_refresh":false}}]}
-        ``` **Optimistic concurrency control** Each `index` and `delete` action within
-        a bulk API call may include the `if_seq_no` and `if_primary_term` parameters
-        in their respective action and meta data lines. The `if_seq_no` and `if_primary_term`
-        parameters control how operations are run, based on the last modification to
-        existing documents. See Optimistic concurrency control for more details. **Versioning**
-        Each bulk item can include the version value using the `version` field. It automatically
-        follows the behavior of the index or delete operation based on the `_version`
-        mapping. It also support the `version_type`. **Routing** Each bulk item can include
-        the routing value using the `routing` field. It automatically follows the behavior
-        of the index or delete operation based on the `_routing` mapping. NOTE: Data
-        streams do not support custom routing unless they were created with the `allow_custom_routing`
-        setting enabled in the template. **Wait for active shards** When making bulk
-        calls, you can set the `wait_for_active_shards` parameter to require a minimum
-        number of shard copies to be active before starting to process the bulk request.
-        **Refresh** Control when the changes made by this request are visible to search.
-        NOTE: Only the shards that receive the bulk request will be affected by refresh.
-        Imagine a `_bulk?refresh=wait_for` request with three documents in it that happen
-        to be routed to different shards in an index with five shards. The request will
-        only wait for those three shards to refresh. The other two shards that make up
-        the index do not participate in the `_bulk` request at all.
+        .. raw:: html
+
+          <p>Bulk index or delete documents.
+          Perform multiple <code>index</code>, <code>create</code>, <code>delete</code>, and <code>update</code> actions in a single request.
+          This reduces overhead and can greatly increase indexing speed.</p>
+          <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or index alias:</p>
+          <ul>
+          <li>To use the <code>create</code> action, you must have the <code>create_doc</code>, <code>create</code>, <code>index</code>, or <code>write</code> index privilege. Data streams support only the <code>create</code> action.</li>
+          <li>To use the <code>index</code> action, you must have the <code>create</code>, <code>index</code>, or <code>write</code> index privilege.</li>
+          <li>To use the <code>delete</code> action, you must have the <code>delete</code> or <code>write</code> index privilege.</li>
+          <li>To use the <code>update</code> action, you must have the <code>index</code> or <code>write</code> index privilege.</li>
+          <li>To automatically create a data stream or index with a bulk API request, you must have the <code>auto_configure</code>, <code>create_index</code>, or <code>manage</code> index privilege.</li>
+          <li>To make the result of a bulk operation visible to search using the <code>refresh</code> parameter, you must have the <code>maintenance</code> or <code>manage</code> index privilege.</li>
+          </ul>
+          <p>Automatic data stream creation requires a matching index template with data stream enabled.</p>
+          <p>The actions are specified in the request body using a newline delimited JSON (NDJSON) structure:</p>
+          <pre><code>action_and_meta_data\\n
+          optional_source\\n
+          action_and_meta_data\\n
+          optional_source\\n
+          ....
+          action_and_meta_data\\n
+          optional_source\\n
+          </code></pre>
+          <p>The <code>index</code> and <code>create</code> actions expect a source on the next line and have the same semantics as the <code>op_type</code> parameter in the standard index API.
+          A <code>create</code> action fails if a document with the same ID already exists in the target
+          An <code>index</code> action adds or replaces a document as necessary.</p>
+          <p>NOTE: Data streams support only the <code>create</code> action.
+          To update or delete a document in a data stream, you must target the backing index containing the document.</p>
+          <p>An <code>update</code> action expects that the partial doc, upsert, and script and its options are specified on the next line.</p>
+          <p>A <code>delete</code> action does not expect a source on the next line and has the same semantics as the standard delete API.</p>
+          <p>NOTE: The final line of data must end with a newline character (<code>\\n</code>).
+          Each newline character may be preceded by a carriage return (<code>\\r</code>).
+          When sending NDJSON data to the <code>_bulk</code> endpoint, use a <code>Content-Type</code> header of <code>application/json</code> or <code>application/x-ndjson</code>.
+          Because this format uses literal newline characters (<code>\\n</code>) as delimiters, make sure that the JSON actions and sources are not pretty printed.</p>
+          <p>If you provide a target in the request path, it is used for any actions that don't explicitly specify an <code>_index</code> argument.</p>
+          <p>A note on the format: the idea here is to make processing as fast as possible.
+          As some of the actions are redirected to other shards on other nodes, only <code>action_meta_data</code> is parsed on the receiving node side.</p>
+          <p>Client libraries using this protocol should try and strive to do something similar on the client side, and reduce buffering as much as possible.</p>
+          <p>There is no &quot;correct&quot; number of actions to perform in a single bulk request.
+          Experiment with different settings to find the optimal size for your particular workload.
+          Note that Elasticsearch limits the maximum size of a HTTP request to 100mb by default so clients must ensure that no request exceeds this size.
+          It is not possible to index a single document that exceeds the size limit, so you must pre-process any such documents into smaller pieces before sending them to Elasticsearch.
+          For instance, split documents into pages or chapters before indexing them, or store raw binary data in a system outside Elasticsearch and replace the raw data with a link to the external system in the documents that you send to Elasticsearch.</p>
+          <p><strong>Client suppport for bulk requests</strong></p>
+          <p>Some of the officially supported clients provide helpers to assist with bulk requests and reindexing:</p>
+          <ul>
+          <li>Go: Check out <code>esutil.BulkIndexer</code></li>
+          <li>Perl: Check out <code>Search::Elasticsearch::Client::5_0::Bulk</code> and <code>Search::Elasticsearch::Client::5_0::Scroll</code></li>
+          <li>Python: Check out <code>elasticsearch.helpers.*</code></li>
+          <li>JavaScript: Check out <code>client.helpers.*</code></li>
+          <li>.NET: Check out <code>BulkAllObservable</code></li>
+          <li>PHP: Check out bulk indexing.</li>
+          </ul>
+          <p><strong>Submitting bulk requests with cURL</strong></p>
+          <p>If you're providing text file input to <code>curl</code>, you must use the <code>--data-binary</code> flag instead of plain <code>-d</code>.
+          The latter doesn't preserve newlines. For example:</p>
+          <pre><code>$ cat requests
+          { &quot;index&quot; : { &quot;_index&quot; : &quot;test&quot;, &quot;_id&quot; : &quot;1&quot; } }
+          { &quot;field1&quot; : &quot;value1&quot; }
+          $ curl -s -H &quot;Content-Type: application/x-ndjson&quot; -XPOST localhost:9200/_bulk --data-binary &quot;@requests&quot;; echo
+          {&quot;took&quot;:7, &quot;errors&quot;: false, &quot;items&quot;:[{&quot;index&quot;:{&quot;_index&quot;:&quot;test&quot;,&quot;_id&quot;:&quot;1&quot;,&quot;_version&quot;:1,&quot;result&quot;:&quot;created&quot;,&quot;forced_refresh&quot;:false}}]}
+          </code></pre>
+          <p><strong>Optimistic concurrency control</strong></p>
+          <p>Each <code>index</code> and <code>delete</code> action within a bulk API call may include the <code>if_seq_no</code> and <code>if_primary_term</code> parameters in their respective action and meta data lines.
+          The <code>if_seq_no</code> and <code>if_primary_term</code> parameters control how operations are run, based on the last modification to existing documents. See Optimistic concurrency control for more details.</p>
+          <p><strong>Versioning</strong></p>
+          <p>Each bulk item can include the version value using the <code>version</code> field.
+          It automatically follows the behavior of the index or delete operation based on the <code>_version</code> mapping.
+          It also support the <code>version_type</code>.</p>
+          <p><strong>Routing</strong></p>
+          <p>Each bulk item can include the routing value using the <code>routing</code> field.
+          It automatically follows the behavior of the index or delete operation based on the <code>_routing</code> mapping.</p>
+          <p>NOTE: Data streams do not support custom routing unless they were created with the <code>allow_custom_routing</code> setting enabled in the template.</p>
+          <p><strong>Wait for active shards</strong></p>
+          <p>When making bulk calls, you can set the <code>wait_for_active_shards</code> parameter to require a minimum number of shard copies to be active before starting to process the bulk request.</p>
+          <p><strong>Refresh</strong></p>
+          <p>Control when the changes made by this request are visible to search.</p>
+          <p>NOTE: Only the shards that receive the bulk request will be affected by refresh.
+          Imagine a <code>_bulk?refresh=wait_for</code> request with three documents in it that happen to be routed to different shards in an index with five shards.
+          The request will only wait for those three shards to refresh.
+          The other two shards that make up the index do not participate in the <code>_bulk</code> request at all.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
 
@@ -837,8 +843,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Clear a scrolling search. Clear the search context and results for a scrolling
-        search.
+        .. raw:: html
+
+          <p>Clear a scrolling search.
+          Clear the search context and results for a scrolling search.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
@@ -888,11 +897,14 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Close a point in time. A point in time must be opened explicitly before being
-        used in search requests. The `keep_alive` parameter tells Elasticsearch how long
-        it should persist. A point in time is automatically closed when the `keep_alive`
-        period has elapsed. However, keeping points in time has a cost; close them as
-        soon as they are no longer required for search requests.
+        .. raw:: html
+
+          <p>Close a point in time.
+          A point in time must be opened explicitly before being used in search requests.
+          The <code>keep_alive</code> parameter tells Elasticsearch how long it should persist.
+          A point in time is automatically closed when the <code>keep_alive</code> period has elapsed.
+          However, keeping points in time has a cost; close them as soon as they are no longer required for search requests.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -966,14 +978,17 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Count search results. Get the number of documents matching a query. The query
-        can either be provided using a simple query string as a parameter or using the
-        Query DSL defined within the request body. The latter must be nested in a `query`
-        key, which is the same as the search API. The count API supports multi-target
-        syntax. You can run a single count API search across multiple data streams and
-        indices. The operation is broadcast across all shards. For each shard ID group,
-        a replica is chosen and the search is run against it. This means that replicas
-        increase the scalability of the count.
+        .. raw:: html
+
+          <p>Count search results.
+          Get the number of documents matching a query.</p>
+          <p>The query can either be provided using a simple query string as a parameter or using the Query DSL defined within the request body.
+          The latter must be nested in a <code>query</code> key, which is the same as the search API.</p>
+          <p>The count API supports multi-target syntax. You can run a single count API search across multiple data streams and indices.</p>
+          <p>The operation is broadcast across all shards.
+          For each shard ID group, a replica is chosen and the search is run against it.
+          This means that replicas increase the scalability of the count.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
 
@@ -1115,80 +1130,61 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create a new document in the index. You can index a new JSON document with the
-        `/<target>/_doc/` or `/<target>/_create/<_id>` APIs Using `_create` guarantees
-        that the document is indexed only if it does not already exist. It returns a
-        409 response when a document with a same ID already exists in the index. To update
-        an existing document, you must use the `/<target>/_doc/` API. If the Elasticsearch
-        security features are enabled, you must have the following index privileges for
-        the target data stream, index, or index alias: * To add a document using the
-        `PUT /<target>/_create/<_id>` or `POST /<target>/_create/<_id>` request formats,
-        you must have the `create_doc`, `create`, `index`, or `write` index privilege.
-        * To automatically create a data stream or index with this API request, you must
-        have the `auto_configure`, `create_index`, or `manage` index privilege. Automatic
-        data stream creation requires a matching index template with data stream enabled.
-        **Automatically create data streams and indices** If the request's target doesn't
-        exist and matches an index template with a `data_stream` definition, the index
-        operation automatically creates the data stream. If the target doesn't exist
-        and doesn't match a data stream template, the operation automatically creates
-        the index and applies any matching index templates. NOTE: Elasticsearch includes
-        several built-in index templates. To avoid naming collisions with these templates,
-        refer to index pattern documentation. If no mapping exists, the index operation
-        creates a dynamic mapping. By default, new fields and objects are automatically
-        added to the mapping if needed. Automatic index creation is controlled by the
-        `action.auto_create_index` setting. If it is `true`, any index can be created
-        automatically. You can modify this setting to explicitly allow or block automatic
-        creation of indices that match specified patterns or set it to `false` to turn
-        off automatic index creation entirely. Specify a comma-separated list of patterns
-        you want to allow or prefix each pattern with `+` or `-` to indicate whether
-        it should be allowed or blocked. When a list is specified, the default behaviour
-        is to disallow. NOTE: The `action.auto_create_index` setting affects the automatic
-        creation of indices only. It does not affect the creation of data streams. **Routing**
-        By default, shard placement — or routing — is controlled by using a hash of the
-        document's ID value. For more explicit control, the value fed into the hash function
-        used by the router can be directly specified on a per-operation basis using the
-        `routing` parameter. When setting up explicit mapping, you can also use the `_routing`
-        field to direct the index operation to extract the routing value from the document
-        itself. This does come at the (very minimal) cost of an additional document parsing
-        pass. If the `_routing` mapping is defined and set to be required, the index
-        operation will fail if no routing value is provided or extracted. NOTE: Data
-        streams do not support custom routing unless they were created with the `allow_custom_routing`
-        setting enabled in the template. **Distributed** The index operation is directed
-        to the primary shard based on its route and performed on the actual node containing
-        this shard. After the primary shard completes the operation, if needed, the update
-        is distributed to applicable replicas. **Active shards** To improve the resiliency
-        of writes to the system, indexing operations can be configured to wait for a
-        certain number of active shard copies before proceeding with the operation. If
-        the requisite number of active shard copies are not available, then the write
-        operation must wait and retry, until either the requisite shard copies have started
-        or a timeout occurs. By default, write operations only wait for the primary shards
-        to be active before proceeding (that is to say `wait_for_active_shards` is `1`).
-        This default can be overridden in the index settings dynamically by setting `index.write.wait_for_active_shards`.
-        To alter this behavior per operation, use the `wait_for_active_shards request`
-        parameter. Valid values are all or any positive integer up to the total number
-        of configured copies per shard in the index (which is `number_of_replicas`+1).
-        Specifying a negative value or a number greater than the number of shard copies
-        will throw an error. For example, suppose you have a cluster of three nodes,
-        A, B, and C and you create an index index with the number of replicas set to
-        3 (resulting in 4 shard copies, one more copy than there are nodes). If you attempt
-        an indexing operation, by default the operation will only ensure the primary
-        copy of each shard is available before proceeding. This means that even if B
-        and C went down and A hosted the primary shard copies, the indexing operation
-        would still proceed with only one copy of the data. If `wait_for_active_shards`
-        is set on the request to `3` (and all three nodes are up), the indexing operation
-        will require 3 active shard copies before proceeding. This requirement should
-        be met because there are 3 active nodes in the cluster, each one holding a copy
-        of the shard. However, if you set `wait_for_active_shards` to `all` (or to `4`,
-        which is the same in this situation), the indexing operation will not proceed
-        as you do not have all 4 copies of each shard active in the index. The operation
-        will timeout unless a new node is brought up in the cluster to host the fourth
-        copy of the shard. It is important to note that this setting greatly reduces
-        the chances of the write operation not writing to the requisite number of shard
-        copies, but it does not completely eliminate the possibility, because this check
-        occurs before the write operation starts. After the write operation is underway,
-        it is still possible for replication to fail on any number of shard copies but
-        still succeed on the primary. The `_shards` section of the API response reveals
-        the number of shard copies on which replication succeeded and failed.
+        .. raw:: html
+
+          <p>Create a new document in the index.</p>
+          <p>You can index a new JSON document with the <code>/&lt;target&gt;/_doc/</code> or <code>/&lt;target&gt;/_create/&lt;_id&gt;</code> APIs
+          Using <code>_create</code> guarantees that the document is indexed only if it does not already exist.
+          It returns a 409 response when a document with a same ID already exists in the index.
+          To update an existing document, you must use the <code>/&lt;target&gt;/_doc/</code> API.</p>
+          <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or index alias:</p>
+          <ul>
+          <li>To add a document using the <code>PUT /&lt;target&gt;/_create/&lt;_id&gt;</code> or <code>POST /&lt;target&gt;/_create/&lt;_id&gt;</code> request formats, you must have the <code>create_doc</code>, <code>create</code>, <code>index</code>, or <code>write</code> index privilege.</li>
+          <li>To automatically create a data stream or index with this API request, you must have the <code>auto_configure</code>, <code>create_index</code>, or <code>manage</code> index privilege.</li>
+          </ul>
+          <p>Automatic data stream creation requires a matching index template with data stream enabled.</p>
+          <p><strong>Automatically create data streams and indices</strong></p>
+          <p>If the request's target doesn't exist and matches an index template with a <code>data_stream</code> definition, the index operation automatically creates the data stream.</p>
+          <p>If the target doesn't exist and doesn't match a data stream template, the operation automatically creates the index and applies any matching index templates.</p>
+          <p>NOTE: Elasticsearch includes several built-in index templates. To avoid naming collisions with these templates, refer to index pattern documentation.</p>
+          <p>If no mapping exists, the index operation creates a dynamic mapping.
+          By default, new fields and objects are automatically added to the mapping if needed.</p>
+          <p>Automatic index creation is controlled by the <code>action.auto_create_index</code> setting.
+          If it is <code>true</code>, any index can be created automatically.
+          You can modify this setting to explicitly allow or block automatic creation of indices that match specified patterns or set it to <code>false</code> to turn off automatic index creation entirely.
+          Specify a comma-separated list of patterns you want to allow or prefix each pattern with <code>+</code> or <code>-</code> to indicate whether it should be allowed or blocked.
+          When a list is specified, the default behaviour is to disallow.</p>
+          <p>NOTE: The <code>action.auto_create_index</code> setting affects the automatic creation of indices only.
+          It does not affect the creation of data streams.</p>
+          <p><strong>Routing</strong></p>
+          <p>By default, shard placement — or routing — is controlled by using a hash of the document's ID value.
+          For more explicit control, the value fed into the hash function used by the router can be directly specified on a per-operation basis using the <code>routing</code> parameter.</p>
+          <p>When setting up explicit mapping, you can also use the <code>_routing</code> field to direct the index operation to extract the routing value from the document itself.
+          This does come at the (very minimal) cost of an additional document parsing pass.
+          If the <code>_routing</code> mapping is defined and set to be required, the index operation will fail if no routing value is provided or extracted.</p>
+          <p>NOTE: Data streams do not support custom routing unless they were created with the <code>allow_custom_routing</code> setting enabled in the template.</p>
+          <p><strong>Distributed</strong></p>
+          <p>The index operation is directed to the primary shard based on its route and performed on the actual node containing this shard.
+          After the primary shard completes the operation, if needed, the update is distributed to applicable replicas.</p>
+          <p><strong>Active shards</strong></p>
+          <p>To improve the resiliency of writes to the system, indexing operations can be configured to wait for a certain number of active shard copies before proceeding with the operation.
+          If the requisite number of active shard copies are not available, then the write operation must wait and retry, until either the requisite shard copies have started or a timeout occurs.
+          By default, write operations only wait for the primary shards to be active before proceeding (that is to say <code>wait_for_active_shards</code> is <code>1</code>).
+          This default can be overridden in the index settings dynamically by setting <code>index.write.wait_for_active_shards</code>.
+          To alter this behavior per operation, use the <code>wait_for_active_shards request</code> parameter.</p>
+          <p>Valid values are all or any positive integer up to the total number of configured copies per shard in the index (which is <code>number_of_replicas</code>+1).
+          Specifying a negative value or a number greater than the number of shard copies will throw an error.</p>
+          <p>For example, suppose you have a cluster of three nodes, A, B, and C and you create an index index with the number of replicas set to 3 (resulting in 4 shard copies, one more copy than there are nodes).
+          If you attempt an indexing operation, by default the operation will only ensure the primary copy of each shard is available before proceeding.
+          This means that even if B and C went down and A hosted the primary shard copies, the indexing operation would still proceed with only one copy of the data.
+          If <code>wait_for_active_shards</code> is set on the request to <code>3</code> (and all three nodes are up), the indexing operation will require 3 active shard copies before proceeding.
+          This requirement should be met because there are 3 active nodes in the cluster, each one holding a copy of the shard.
+          However, if you set <code>wait_for_active_shards</code> to <code>all</code> (or to <code>4</code>, which is the same in this situation), the indexing operation will not proceed as you do not have all 4 copies of each shard active in the index.
+          The operation will timeout unless a new node is brought up in the cluster to host the fourth copy of the shard.</p>
+          <p>It is important to note that this setting greatly reduces the chances of the write operation not writing to the requisite number of shard copies, but it does not completely eliminate the possibility, because this check occurs before the write operation starts.
+          After the write operation is underway, it is still possible for replication to fail on any number of shard copies but still succeed on the primary.
+          The <code>_shards</code> section of the API response reveals the number of shard copies on which replication succeeded and failed.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -1302,30 +1298,33 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a document. Remove a JSON document from the specified index. NOTE: You
-        cannot send deletion requests directly to a data stream. To delete a document
-        in a data stream, you must target the backing index containing the document.
-        **Optimistic concurrency control** Delete operations can be made conditional
-        and only be performed if the last modification to the document was assigned the
-        sequence number and primary term specified by the `if_seq_no` and `if_primary_term`
-        parameters. If a mismatch is detected, the operation will result in a `VersionConflictException`
-        and a status code of `409`. **Versioning** Each document indexed is versioned.
-        When deleting a document, the version can be specified to make sure the relevant
-        document you are trying to delete is actually being deleted and it has not changed
-        in the meantime. Every write operation run on a document, deletes included, causes
-        its version to be incremented. The version number of a deleted document remains
-        available for a short time after deletion to allow for control of concurrent
-        operations. The length of time for which a deleted document's version remains
-        available is determined by the `index.gc_deletes` index setting. **Routing**
-        If routing is used during indexing, the routing value also needs to be specified
-        to delete a document. If the `_routing` mapping is set to `required` and no routing
-        value is specified, the delete API throws a `RoutingMissingException` and rejects
-        the request. For example: ``` DELETE /my-index-000001/_doc/1?routing=shard-1
-        ``` This request deletes the document with ID 1, but it is routed based on the
-        user. The document is not deleted if the correct routing is not specified. **Distributed**
-        The delete operation gets hashed into a specific shard ID. It then gets redirected
-        into the primary shard within that ID group and replicated (if needed) to shard
-        replicas within that ID group.
+        .. raw:: html
+
+          <p>Delete a document.</p>
+          <p>Remove a JSON document from the specified index.</p>
+          <p>NOTE: You cannot send deletion requests directly to a data stream.
+          To delete a document in a data stream, you must target the backing index containing the document.</p>
+          <p><strong>Optimistic concurrency control</strong></p>
+          <p>Delete operations can be made conditional and only be performed if the last modification to the document was assigned the sequence number and primary term specified by the <code>if_seq_no</code> and <code>if_primary_term</code> parameters.
+          If a mismatch is detected, the operation will result in a <code>VersionConflictException</code> and a status code of <code>409</code>.</p>
+          <p><strong>Versioning</strong></p>
+          <p>Each document indexed is versioned.
+          When deleting a document, the version can be specified to make sure the relevant document you are trying to delete is actually being deleted and it has not changed in the meantime.
+          Every write operation run on a document, deletes included, causes its version to be incremented.
+          The version number of a deleted document remains available for a short time after deletion to allow for control of concurrent operations.
+          The length of time for which a deleted document's version remains available is determined by the <code>index.gc_deletes</code> index setting.</p>
+          <p><strong>Routing</strong></p>
+          <p>If routing is used during indexing, the routing value also needs to be specified to delete a document.</p>
+          <p>If the <code>_routing</code> mapping is set to <code>required</code> and no routing value is specified, the delete API throws a <code>RoutingMissingException</code> and rejects the request.</p>
+          <p>For example:</p>
+          <pre><code>DELETE /my-index-000001/_doc/1?routing=shard-1
+          </code></pre>
+          <p>This request deletes the document with ID 1, but it is routed based on the user.
+          The document is not deleted if the correct routing is not specified.</p>
+          <p><strong>Distributed</strong></p>
+          <p>The delete operation gets hashed into a specific shard ID.
+          It then gets redirected into the primary shard within that ID group and replicated (if needed) to shard replicas within that ID group.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
 
@@ -1452,7 +1451,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete documents. Deletes documents that match the specified query.
+        .. raw:: html
+
+          <p>Delete documents.
+          Deletes documents that match the specified query.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1630,10 +1633,12 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Throttle a delete by query operation. Change the number of requests per second
-        for a particular delete by query operation. Rethrottling that speeds up the query
-        takes effect immediately but rethrotting that slows down the query takes effect
-        after completing the current batch to prevent scroll timeouts.
+        .. raw:: html
+
+          <p>Throttle a delete by query operation.</p>
+          <p>Change the number of requests per second for a particular delete by query operation.
+          Rethrottling that speeds up the query takes effect immediately but rethrotting that slows down the query takes effect after completing the current batch to prevent scroll timeouts.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
@@ -1679,7 +1684,11 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a script or search template. Deletes a stored script or search template.
+        .. raw:: html
+
+          <p>Delete a script or search template.
+          Deletes a stored script or search template.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -1747,15 +1756,21 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Check a document. Verify that a document exists. For example, check to see if
-        a document with the `_id` 0 exists: ``` HEAD my-index-000001/_doc/0 ``` If the
-        document exists, the API returns a status code of `200 - OK`. If the document
-        doesn’t exist, the API returns `404 - Not Found`. **Versioning support** You
-        can use the `version` parameter to check the document only if its current version
-        is equal to the specified one. Internally, Elasticsearch has marked the old document
-        as deleted and added an entirely new document. The old version of the document
-        doesn't disappear immediately, although you won't be able to access it. Elasticsearch
-        cleans up deleted documents in the background as you continue to index more data.
+        .. raw:: html
+
+          <p>Check a document.</p>
+          <p>Verify that a document exists.
+          For example, check to see if a document with the <code>_id</code> 0 exists:</p>
+          <pre><code>HEAD my-index-000001/_doc/0
+          </code></pre>
+          <p>If the document exists, the API returns a status code of <code>200 - OK</code>.
+          If the document doesn’t exist, the API returns <code>404 - Not Found</code>.</p>
+          <p><strong>Versioning support</strong></p>
+          <p>You can use the <code>version</code> parameter to check the document only if its current version is equal to the specified one.</p>
+          <p>Internally, Elasticsearch has marked the old document as deleted and added an entirely new document.
+          The old version of the document doesn't disappear immediately, although you won't be able to access it.
+          Elasticsearch cleans up deleted documents in the background as you continue to index more data.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1870,9 +1885,15 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> HeadApiResponse:
         """
-        Check for a document source. Check whether a document source exists in an index.
-        For example: ``` HEAD my-index-000001/_source/1 ``` A document's source is not
-        available if it is disabled in the mapping.
+        .. raw:: html
+
+          <p>Check for a document source.</p>
+          <p>Check whether a document source exists in an index.
+          For example:</p>
+          <pre><code>HEAD my-index-000001/_source/1
+          </code></pre>
+          <p>A document's source is not available if it is disabled in the mapping.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -1973,8 +1994,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Explain a document match result. Returns information about why a specific document
-        matches, or doesn’t match, a query.
+        .. raw:: html
+
+          <p>Explain a document match result.
+          Returns information about why a specific document matches, or doesn’t match, a query.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
 
@@ -2093,11 +2117,14 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get the field capabilities. Get information about the capabilities of fields
-        among multiple indices. For data streams, the API returns field capabilities
-        among the stream’s backing indices. It returns runtime fields like any other
-        field. For example, a runtime field with a type of keyword is returned the same
-        as any other field that belongs to the `keyword` family.
+        .. raw:: html
+
+          <p>Get the field capabilities.</p>
+          <p>Get information about the capabilities of fields among multiple indices.</p>
+          <p>For data streams, the API returns field capabilities among the stream’s backing indices.
+          It returns runtime fields like any other field.
+          For example, a runtime field with a type of keyword is returned the same as any other field that belongs to the <code>keyword</code> family.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
@@ -2213,36 +2240,45 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get a document by its ID. Get a document and its source or stored fields from
-        an index. By default, this API is realtime and is not affected by the refresh
-        rate of the index (when data will become visible for search). In the case where
-        stored fields are requested with the `stored_fields` parameter and the document
-        has been updated but is not yet refreshed, the API will have to parse and analyze
-        the source to extract the stored fields. To turn off realtime behavior, set the
-        `realtime` parameter to false. **Source filtering** By default, the API returns
-        the contents of the `_source` field unless you have used the `stored_fields`
-        parameter or the `_source` field is turned off. You can turn off `_source` retrieval
-        by using the `_source` parameter: ``` GET my-index-000001/_doc/0?_source=false
-        ``` If you only need one or two fields from the `_source`, use the `_source_includes`
-        or `_source_excludes` parameters to include or filter out particular fields.
-        This can be helpful with large documents where partial retrieval can save on
-        network overhead Both parameters take a comma separated list of fields or wildcard
-        expressions. For example: ``` GET my-index-000001/_doc/0?_source_includes=*.id&_source_excludes=entities
-        ``` If you only want to specify includes, you can use a shorter notation: ```
-        GET my-index-000001/_doc/0?_source=*.id ``` **Routing** If routing is used during
-        indexing, the routing value also needs to be specified to retrieve a document.
-        For example: ``` GET my-index-000001/_doc/2?routing=user1 ``` This request gets
-        the document with ID 2, but it is routed based on the user. The document is not
-        fetched if the correct routing is not specified. **Distributed** The GET operation
-        is hashed into a specific shard ID. It is then redirected to one of the replicas
-        within that shard ID and returns the result. The replicas are the primary shard
-        and its replicas within that shard ID group. This means that the more replicas
-        you have, the better your GET scaling will be. **Versioning support** You can
-        use the `version` parameter to retrieve the document only if its current version
-        is equal to the specified one. Internally, Elasticsearch has marked the old document
-        as deleted and added an entirely new document. The old version of the document
-        doesn't disappear immediately, although you won't be able to access it. Elasticsearch
-        cleans up deleted documents in the background as you continue to index more data.
+        .. raw:: html
+
+          <p>Get a document by its ID.</p>
+          <p>Get a document and its source or stored fields from an index.</p>
+          <p>By default, this API is realtime and is not affected by the refresh rate of the index (when data will become visible for search).
+          In the case where stored fields are requested with the <code>stored_fields</code> parameter and the document has been updated but is not yet refreshed, the API will have to parse and analyze the source to extract the stored fields.
+          To turn off realtime behavior, set the <code>realtime</code> parameter to false.</p>
+          <p><strong>Source filtering</strong></p>
+          <p>By default, the API returns the contents of the <code>_source</code> field unless you have used the <code>stored_fields</code> parameter or the <code>_source</code> field is turned off.
+          You can turn off <code>_source</code> retrieval by using the <code>_source</code> parameter:</p>
+          <pre><code>GET my-index-000001/_doc/0?_source=false
+          </code></pre>
+          <p>If you only need one or two fields from the <code>_source</code>, use the <code>_source_includes</code> or <code>_source_excludes</code> parameters to include or filter out particular fields.
+          This can be helpful with large documents where partial retrieval can save on network overhead
+          Both parameters take a comma separated list of fields or wildcard expressions.
+          For example:</p>
+          <pre><code>GET my-index-000001/_doc/0?_source_includes=*.id&amp;_source_excludes=entities
+          </code></pre>
+          <p>If you only want to specify includes, you can use a shorter notation:</p>
+          <pre><code>GET my-index-000001/_doc/0?_source=*.id
+          </code></pre>
+          <p><strong>Routing</strong></p>
+          <p>If routing is used during indexing, the routing value also needs to be specified to retrieve a document.
+          For example:</p>
+          <pre><code>GET my-index-000001/_doc/2?routing=user1
+          </code></pre>
+          <p>This request gets the document with ID 2, but it is routed based on the user.
+          The document is not fetched if the correct routing is not specified.</p>
+          <p><strong>Distributed</strong></p>
+          <p>The GET operation is hashed into a specific shard ID.
+          It is then redirected to one of the replicas within that shard ID and returns the result.
+          The replicas are the primary shard and its replicas within that shard ID group.
+          This means that the more replicas you have, the better your GET scaling will be.</p>
+          <p><strong>Versioning support</strong></p>
+          <p>You can use the <code>version</code> parameter to retrieve the document only if its current version is equal to the specified one.</p>
+          <p>Internally, Elasticsearch has marked the old document as deleted and added an entirely new document.
+          The old version of the document doesn't disappear immediately, although you won't be able to access it.
+          Elasticsearch cleans up deleted documents in the background as you continue to index more data.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -2345,7 +2381,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get a script or search template. Retrieves a stored script or search template.
+        .. raw:: html
+
+          <p>Get a script or search template.
+          Retrieves a stored script or search template.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -2387,7 +2427,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get script contexts. Get a list of supported script contexts and their methods.
+        .. raw:: html
+
+          <p>Get script contexts.</p>
+          <p>Get a list of supported script contexts and their methods.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
@@ -2422,7 +2466,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get script languages. Get a list of available script types, languages, and contexts.
+        .. raw:: html
+
+          <p>Get script languages.</p>
+          <p>Get a list of available script types, languages, and contexts.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
@@ -2477,10 +2525,17 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get a document's source. Get the source of a document. For example: ``` GET my-index-000001/_source/1
-        ``` You can use the source filtering parameters to control which parts of the
-        `_source` are returned: ``` GET my-index-000001/_source/1/?_source_includes=*.id&_source_excludes=entities
-        ```
+        .. raw:: html
+
+          <p>Get a document's source.</p>
+          <p>Get the source of a document.
+          For example:</p>
+          <pre><code>GET my-index-000001/_source/1
+          </code></pre>
+          <p>You can use the source filtering parameters to control which parts of the <code>_source</code> are returned:</p>
+          <pre><code>GET my-index-000001/_source/1/?_source_includes=*.id&amp;_source_excludes=entities
+          </code></pre>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
@@ -2565,26 +2620,22 @@ class Elasticsearch(BaseClient):
         verbose: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get the cluster health. Get a report with the health status of an Elasticsearch
-        cluster. The report contains a list of indicators that compose Elasticsearch
-        functionality. Each indicator has a health status of: green, unknown, yellow
-        or red. The indicator will provide an explanation and metadata describing the
-        reason for its current health status. The cluster’s status is controlled by the
-        worst indicator status. In the event that an indicator’s status is non-green,
-        a list of impacts may be present in the indicator result which detail the functionalities
-        that are negatively affected by the health issue. Each impact carries with it
-        a severity level, an area of the system that is affected, and a simple description
-        of the impact on the system. Some health indicators can determine the root cause
-        of a health problem and prescribe a set of steps that can be performed in order
-        to improve the health of the system. The root cause and remediation steps are
-        encapsulated in a diagnosis. A diagnosis contains a cause detailing a root cause
-        analysis, an action containing a brief description of the steps to take to fix
-        the problem, the list of affected resources (if applicable), and a detailed step-by-step
-        troubleshooting guide to fix the diagnosed problem. NOTE: The health indicators
-        perform root cause analysis of non-green health statuses. This can be computationally
-        expensive when called frequently. When setting up automated polling of the API
-        for health status, set verbose to false to disable the more expensive analysis
-        logic.
+        .. raw:: html
+
+          <p>Get the cluster health.
+          Get a report with the health status of an Elasticsearch cluster.
+          The report contains a list of indicators that compose Elasticsearch functionality.</p>
+          <p>Each indicator has a health status of: green, unknown, yellow or red.
+          The indicator will provide an explanation and metadata describing the reason for its current health status.</p>
+          <p>The cluster’s status is controlled by the worst indicator status.</p>
+          <p>In the event that an indicator’s status is non-green, a list of impacts may be present in the indicator result which detail the functionalities that are negatively affected by the health issue.
+          Each impact carries with it a severity level, an area of the system that is affected, and a simple description of the impact on the system.</p>
+          <p>Some health indicators can determine the root cause of a health problem and prescribe a set of steps that can be performed in order to improve the health of the system.
+          The root cause and remediation steps are encapsulated in a diagnosis.
+          A diagnosis contains a cause detailing a root cause analysis, an action containing a brief description of the steps to take to fix the problem, the list of affected resources (if applicable), and a detailed step-by-step troubleshooting guide to fix the diagnosed problem.</p>
+          <p>NOTE: The health indicators perform root cause analysis of non-green health statuses. This can be computationally expensive when called frequently.
+          When setting up automated polling of the API for health status, set verbose to false to disable the more expensive analysis logic.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/health-api.html>`_
 
@@ -2659,120 +2710,96 @@ class Elasticsearch(BaseClient):
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update a document in an index. Add a JSON document to the specified
-        data stream or index and make it searchable. If the target is an index and the
-        document already exists, the request updates the document and increments its
-        version. NOTE: You cannot use this API to send update requests for existing documents
-        in a data stream. If the Elasticsearch security features are enabled, you must
-        have the following index privileges for the target data stream, index, or index
-        alias: * To add or overwrite a document using the `PUT /<target>/_doc/<_id>`
-        request format, you must have the `create`, `index`, or `write` index privilege.
-        * To add a document using the `POST /<target>/_doc/` request format, you must
-        have the `create_doc`, `create`, `index`, or `write` index privilege. * To automatically
-        create a data stream or index with this API request, you must have the `auto_configure`,
-        `create_index`, or `manage` index privilege. Automatic data stream creation requires
-        a matching index template with data stream enabled. NOTE: Replica shards might
-        not all be started when an indexing operation returns successfully. By default,
-        only the primary is required. Set `wait_for_active_shards` to change this default
-        behavior. **Automatically create data streams and indices** If the request's
-        target doesn't exist and matches an index template with a `data_stream` definition,
-        the index operation automatically creates the data stream. If the target doesn't
-        exist and doesn't match a data stream template, the operation automatically creates
-        the index and applies any matching index templates. NOTE: Elasticsearch includes
-        several built-in index templates. To avoid naming collisions with these templates,
-        refer to index pattern documentation. If no mapping exists, the index operation
-        creates a dynamic mapping. By default, new fields and objects are automatically
-        added to the mapping if needed. Automatic index creation is controlled by the
-        `action.auto_create_index` setting. If it is `true`, any index can be created
-        automatically. You can modify this setting to explicitly allow or block automatic
-        creation of indices that match specified patterns or set it to `false` to turn
-        off automatic index creation entirely. Specify a comma-separated list of patterns
-        you want to allow or prefix each pattern with `+` or `-` to indicate whether
-        it should be allowed or blocked. When a list is specified, the default behaviour
-        is to disallow. NOTE: The `action.auto_create_index` setting affects the automatic
-        creation of indices only. It does not affect the creation of data streams. **Optimistic
-        concurrency control** Index operations can be made conditional and only be performed
-        if the last modification to the document was assigned the sequence number and
-        primary term specified by the `if_seq_no` and `if_primary_term` parameters. If
-        a mismatch is detected, the operation will result in a `VersionConflictException`
-        and a status code of `409`. **Routing** By default, shard placement — or routing
-        — is controlled by using a hash of the document's ID value. For more explicit
-        control, the value fed into the hash function used by the router can be directly
-        specified on a per-operation basis using the `routing` parameter. When setting
-        up explicit mapping, you can also use the `_routing` field to direct the index
-        operation to extract the routing value from the document itself. This does come
-        at the (very minimal) cost of an additional document parsing pass. If the `_routing`
-        mapping is defined and set to be required, the index operation will fail if no
-        routing value is provided or extracted. NOTE: Data streams do not support custom
-        routing unless they were created with the `allow_custom_routing` setting enabled
-        in the template. **Distributed** The index operation is directed to the primary
-        shard based on its route and performed on the actual node containing this shard.
-        After the primary shard completes the operation, if needed, the update is distributed
-        to applicable replicas. **Active shards** To improve the resiliency of writes
-        to the system, indexing operations can be configured to wait for a certain number
-        of active shard copies before proceeding with the operation. If the requisite
-        number of active shard copies are not available, then the write operation must
-        wait and retry, until either the requisite shard copies have started or a timeout
-        occurs. By default, write operations only wait for the primary shards to be active
-        before proceeding (that is to say `wait_for_active_shards` is `1`). This default
-        can be overridden in the index settings dynamically by setting `index.write.wait_for_active_shards`.
-        To alter this behavior per operation, use the `wait_for_active_shards request`
-        parameter. Valid values are all or any positive integer up to the total number
-        of configured copies per shard in the index (which is `number_of_replicas`+1).
-        Specifying a negative value or a number greater than the number of shard copies
-        will throw an error. For example, suppose you have a cluster of three nodes,
-        A, B, and C and you create an index index with the number of replicas set to
-        3 (resulting in 4 shard copies, one more copy than there are nodes). If you attempt
-        an indexing operation, by default the operation will only ensure the primary
-        copy of each shard is available before proceeding. This means that even if B
-        and C went down and A hosted the primary shard copies, the indexing operation
-        would still proceed with only one copy of the data. If `wait_for_active_shards`
-        is set on the request to `3` (and all three nodes are up), the indexing operation
-        will require 3 active shard copies before proceeding. This requirement should
-        be met because there are 3 active nodes in the cluster, each one holding a copy
-        of the shard. However, if you set `wait_for_active_shards` to `all` (or to `4`,
-        which is the same in this situation), the indexing operation will not proceed
-        as you do not have all 4 copies of each shard active in the index. The operation
-        will timeout unless a new node is brought up in the cluster to host the fourth
-        copy of the shard. It is important to note that this setting greatly reduces
-        the chances of the write operation not writing to the requisite number of shard
-        copies, but it does not completely eliminate the possibility, because this check
-        occurs before the write operation starts. After the write operation is underway,
-        it is still possible for replication to fail on any number of shard copies but
-        still succeed on the primary. The `_shards` section of the API response reveals
-        the number of shard copies on which replication succeeded and failed. **No operation
-        (noop) updates** When updating a document by using this API, a new version of
-        the document is always created even if the document hasn't changed. If this isn't
-        acceptable use the `_update` API with `detect_noop` set to `true`. The `detect_noop`
-        option isn't available on this API because it doesn’t fetch the old source and
-        isn't able to compare it against the new source. There isn't a definitive rule
-        for when noop updates aren't acceptable. It's a combination of lots of factors
-        like how frequently your data source sends updates that are actually noops and
-        how many queries per second Elasticsearch runs on the shard receiving the updates.
-        **Versioning** Each indexed document is given a version number. By default, internal
-        versioning is used that starts at 1 and increments with each update, deletes
-        included. Optionally, the version number can be set to an external value (for
-        example, if maintained in a database). To enable this functionality, `version_type`
-        should be set to `external`. The value provided must be a numeric, long value
-        greater than or equal to 0, and less than around `9.2e+18`. NOTE: Versioning
-        is completely real time, and is not affected by the near real time aspects of
-        search operations. If no version is provided, the operation runs without any
-        version checks. When using the external version type, the system checks to see
-        if the version number passed to the index request is greater than the version
-        of the currently stored document. If true, the document will be indexed and the
-        new version number used. If the value provided is less than or equal to the stored
-        document's version number, a version conflict will occur and the index operation
-        will fail. For example: ``` PUT my-index-000001/_doc/1?version=2&version_type=external
-        { "user": { "id": "elkbee" } } In this example, the operation will succeed since
-        the supplied version of 2 is higher than the current document version of 1. If
-        the document was already updated and its version was set to 2 or higher, the
-        indexing command will fail and result in a conflict (409 HTTP status code). A
-        nice side effect is that there is no need to maintain strict ordering of async
-        indexing operations run as a result of changes to a source database, as long
-        as version numbers from the source database are used. Even the simple case of
-        updating the Elasticsearch index using data from a database is simplified if
-        external versioning is used, as only the latest version will be used if the index
-        operations arrive out of order.
+        .. raw:: html
+
+          <p>Create or update a document in an index.</p>
+          <p>Add a JSON document to the specified data stream or index and make it searchable.
+          If the target is an index and the document already exists, the request updates the document and increments its version.</p>
+          <p>NOTE: You cannot use this API to send update requests for existing documents in a data stream.</p>
+          <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or index alias:</p>
+          <ul>
+          <li>To add or overwrite a document using the <code>PUT /&lt;target&gt;/_doc/&lt;_id&gt;</code> request format, you must have the <code>create</code>, <code>index</code>, or <code>write</code> index privilege.</li>
+          <li>To add a document using the <code>POST /&lt;target&gt;/_doc/</code> request format, you must have the <code>create_doc</code>, <code>create</code>, <code>index</code>, or <code>write</code> index privilege.</li>
+          <li>To automatically create a data stream or index with this API request, you must have the <code>auto_configure</code>, <code>create_index</code>, or <code>manage</code> index privilege.</li>
+          </ul>
+          <p>Automatic data stream creation requires a matching index template with data stream enabled.</p>
+          <p>NOTE: Replica shards might not all be started when an indexing operation returns successfully.
+          By default, only the primary is required. Set <code>wait_for_active_shards</code> to change this default behavior.</p>
+          <p><strong>Automatically create data streams and indices</strong></p>
+          <p>If the request's target doesn't exist and matches an index template with a <code>data_stream</code> definition, the index operation automatically creates the data stream.</p>
+          <p>If the target doesn't exist and doesn't match a data stream template, the operation automatically creates the index and applies any matching index templates.</p>
+          <p>NOTE: Elasticsearch includes several built-in index templates. To avoid naming collisions with these templates, refer to index pattern documentation.</p>
+          <p>If no mapping exists, the index operation creates a dynamic mapping.
+          By default, new fields and objects are automatically added to the mapping if needed.</p>
+          <p>Automatic index creation is controlled by the <code>action.auto_create_index</code> setting.
+          If it is <code>true</code>, any index can be created automatically.
+          You can modify this setting to explicitly allow or block automatic creation of indices that match specified patterns or set it to <code>false</code> to turn off automatic index creation entirely.
+          Specify a comma-separated list of patterns you want to allow or prefix each pattern with <code>+</code> or <code>-</code> to indicate whether it should be allowed or blocked.
+          When a list is specified, the default behaviour is to disallow.</p>
+          <p>NOTE: The <code>action.auto_create_index</code> setting affects the automatic creation of indices only.
+          It does not affect the creation of data streams.</p>
+          <p><strong>Optimistic concurrency control</strong></p>
+          <p>Index operations can be made conditional and only be performed if the last modification to the document was assigned the sequence number and primary term specified by the <code>if_seq_no</code> and <code>if_primary_term</code> parameters.
+          If a mismatch is detected, the operation will result in a <code>VersionConflictException</code> and a status code of <code>409</code>.</p>
+          <p><strong>Routing</strong></p>
+          <p>By default, shard placement — or routing — is controlled by using a hash of the document's ID value.
+          For more explicit control, the value fed into the hash function used by the router can be directly specified on a per-operation basis using the <code>routing</code> parameter.</p>
+          <p>When setting up explicit mapping, you can also use the <code>_routing</code> field to direct the index operation to extract the routing value from the document itself.
+          This does come at the (very minimal) cost of an additional document parsing pass.
+          If the <code>_routing</code> mapping is defined and set to be required, the index operation will fail if no routing value is provided or extracted.</p>
+          <p>NOTE: Data streams do not support custom routing unless they were created with the <code>allow_custom_routing</code> setting enabled in the template.</p>
+          <p><strong>Distributed</strong></p>
+          <p>The index operation is directed to the primary shard based on its route and performed on the actual node containing this shard.
+          After the primary shard completes the operation, if needed, the update is distributed to applicable replicas.</p>
+          <p><strong>Active shards</strong></p>
+          <p>To improve the resiliency of writes to the system, indexing operations can be configured to wait for a certain number of active shard copies before proceeding with the operation.
+          If the requisite number of active shard copies are not available, then the write operation must wait and retry, until either the requisite shard copies have started or a timeout occurs.
+          By default, write operations only wait for the primary shards to be active before proceeding (that is to say <code>wait_for_active_shards</code> is <code>1</code>).
+          This default can be overridden in the index settings dynamically by setting <code>index.write.wait_for_active_shards</code>.
+          To alter this behavior per operation, use the <code>wait_for_active_shards request</code> parameter.</p>
+          <p>Valid values are all or any positive integer up to the total number of configured copies per shard in the index (which is <code>number_of_replicas</code>+1).
+          Specifying a negative value or a number greater than the number of shard copies will throw an error.</p>
+          <p>For example, suppose you have a cluster of three nodes, A, B, and C and you create an index index with the number of replicas set to 3 (resulting in 4 shard copies, one more copy than there are nodes).
+          If you attempt an indexing operation, by default the operation will only ensure the primary copy of each shard is available before proceeding.
+          This means that even if B and C went down and A hosted the primary shard copies, the indexing operation would still proceed with only one copy of the data.
+          If <code>wait_for_active_shards</code> is set on the request to <code>3</code> (and all three nodes are up), the indexing operation will require 3 active shard copies before proceeding.
+          This requirement should be met because there are 3 active nodes in the cluster, each one holding a copy of the shard.
+          However, if you set <code>wait_for_active_shards</code> to <code>all</code> (or to <code>4</code>, which is the same in this situation), the indexing operation will not proceed as you do not have all 4 copies of each shard active in the index.
+          The operation will timeout unless a new node is brought up in the cluster to host the fourth copy of the shard.</p>
+          <p>It is important to note that this setting greatly reduces the chances of the write operation not writing to the requisite number of shard copies, but it does not completely eliminate the possibility, because this check occurs before the write operation starts.
+          After the write operation is underway, it is still possible for replication to fail on any number of shard copies but still succeed on the primary.
+          The <code>_shards</code> section of the API response reveals the number of shard copies on which replication succeeded and failed.</p>
+          <p><strong>No operation (noop) updates</strong></p>
+          <p>When updating a document by using this API, a new version of the document is always created even if the document hasn't changed.
+          If this isn't acceptable use the <code>_update</code> API with <code>detect_noop</code> set to <code>true</code>.
+          The <code>detect_noop</code> option isn't available on this API because it doesn’t fetch the old source and isn't able to compare it against the new source.</p>
+          <p>There isn't a definitive rule for when noop updates aren't acceptable.
+          It's a combination of lots of factors like how frequently your data source sends updates that are actually noops and how many queries per second Elasticsearch runs on the shard receiving the updates.</p>
+          <p><strong>Versioning</strong></p>
+          <p>Each indexed document is given a version number.
+          By default, internal versioning is used that starts at 1 and increments with each update, deletes included.
+          Optionally, the version number can be set to an external value (for example, if maintained in a database).
+          To enable this functionality, <code>version_type</code> should be set to <code>external</code>.
+          The value provided must be a numeric, long value greater than or equal to 0, and less than around <code>9.2e+18</code>.</p>
+          <p>NOTE: Versioning is completely real time, and is not affected by the near real time aspects of search operations.
+          If no version is provided, the operation runs without any version checks.</p>
+          <p>When using the external version type, the system checks to see if the version number passed to the index request is greater than the version of the currently stored document.
+          If true, the document will be indexed and the new version number used.
+          If the value provided is less than or equal to the stored document's version number, a version conflict will occur and the index operation will fail. For example:</p>
+          <pre><code>PUT my-index-000001/_doc/1?version=2&amp;version_type=external
+          {
+            &quot;user&quot;: {
+              &quot;id&quot;: &quot;elkbee&quot;
+            }
+          }
+
+          In this example, the operation will succeed since the supplied version of 2 is higher than the current document version of 1.
+          If the document was already updated and its version was set to 2 or higher, the indexing command will fail and result in a conflict (409 HTTP status code).
+
+          A nice side effect is that there is no need to maintain strict ordering of async indexing operations run as a result of changes to a source database, as long as version numbers from the source database are used.
+          Even the simple case of updating the Elasticsearch index using data from a database is simplified if external versioning is used, as only the latest version will be used if the index operations arrive out of order.
+          </code></pre>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
@@ -2896,7 +2923,11 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get cluster info. Get basic build, version, and cluster information.
+        .. raw:: html
+
+          <p>Get cluster info.
+          Get basic build, version, and cluster information.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rest-api-root.html>`_
         """
@@ -2953,15 +2984,18 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run a knn search. NOTE: The kNN search API has been replaced by the `knn` option
-        in the search API. Perform a k-nearest neighbor (kNN) search on a dense_vector
-        field and return the matching documents. Given a query vector, the API finds
-        the k closest vectors and returns those documents as search hits. Elasticsearch
-        uses the HNSW algorithm to support efficient kNN search. Like most kNN algorithms,
-        HNSW is an approximate method that sacrifices result accuracy for improved search
-        speed. This means the results returned are not always the true k closest neighbors.
-        The kNN search API supports restricting the search using a filter. The search
-        will return the top k documents that also match the filter query.
+        .. raw:: html
+
+          <p>Run a knn search.</p>
+          <p>NOTE: The kNN search API has been replaced by the <code>knn</code> option in the search API.</p>
+          <p>Perform a k-nearest neighbor (kNN) search on a dense_vector field and return the matching documents.
+          Given a query vector, the API finds the k closest vectors and returns those documents as search hits.</p>
+          <p>Elasticsearch uses the HNSW algorithm to support efficient kNN search.
+          Like most kNN algorithms, HNSW is an approximate method that sacrifices result accuracy for improved search speed.
+          This means the results returned are not always the true k closest neighbors.</p>
+          <p>The kNN search API supports restricting the search using a filter.
+          The search will return the top k documents that also match the filter query.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -3062,10 +3096,13 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get multiple documents. Get multiple JSON documents by ID from one or more indices.
-        If you specify an index in the request URI, you only need to specify the document
-        IDs in the request body. To ensure fast responses, this multi get (mget) API
-        responds with partial results if one or more shards fail.
+        .. raw:: html
+
+          <p>Get multiple documents.</p>
+          <p>Get multiple JSON documents by ID from one or more indices.
+          If you specify an index in the request URI, you only need to specify the document IDs in the request body.
+          To ensure fast responses, this multi get (mget) API responds with partial results if one or more shards fail.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
 
@@ -3186,13 +3223,21 @@ class Elasticsearch(BaseClient):
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run multiple searches. The format of the request is similar to the bulk API format
-        and makes use of the newline delimited JSON (NDJSON) format. The structure is
-        as follows: ``` header\\n body\\n header\\n body\\n ``` This structure is specifically
-        optimized to reduce parsing if a specific search ends up redirected to another
-        node. IMPORTANT: The final line of data must end with a newline character `\\n`.
-        Each newline character may be preceded by a carriage return `\\r`. When sending
-        requests to this endpoint the `Content-Type` header should be set to `application/x-ndjson`.
+        .. raw:: html
+
+          <p>Run multiple searches.</p>
+          <p>The format of the request is similar to the bulk API format and makes use of the newline delimited JSON (NDJSON) format.
+          The structure is as follows:</p>
+          <pre><code>header\\n
+          body\\n
+          header\\n
+          body\\n
+          </code></pre>
+          <p>This structure is specifically optimized to reduce parsing if a specific search ends up redirected to another node.</p>
+          <p>IMPORTANT: The final line of data must end with a newline character <code>\\n</code>.
+          Each newline character may be preceded by a carriage return <code>\\r</code>.
+          When sending requests to this endpoint the <code>Content-Type</code> header should be set to <code>application/x-ndjson</code>.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -3324,7 +3369,10 @@ class Elasticsearch(BaseClient):
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run multiple templated searches.
+        .. raw:: html
+
+          <p>Run multiple templated searches.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
@@ -3419,11 +3467,14 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get multiple term vectors. You can specify existing documents by index and ID
-        or provide artificial documents in the body of the request. You can specify the
-        index in the request body or request URI. The response contains a `docs` array
-        with all the fetched termvectors. Each element has the structure provided by
-        the termvectors API.
+        .. raw:: html
+
+          <p>Get multiple term vectors.</p>
+          <p>You can specify existing documents by index and ID or provide artificial documents in the body of the request.
+          You can specify the index in the request body or request URI.
+          The response contains a <code>docs</code> array with all the fetched termvectors.
+          Each element has the structure provided by the termvectors API.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
 
@@ -3535,15 +3586,18 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Open a point in time. A search request by default runs against the most recent
-        visible data of the target indices, which is called point in time. Elasticsearch
-        pit (point in time) is a lightweight view into the state of the data as it existed
-        when initiated. In some cases, it’s preferred to perform multiple search requests
-        using the same point in time. For example, if refreshes happen between `search_after`
-        requests, then the results of those requests might not be consistent as changes
-        happening between searches are only visible to the more recent point in time.
-        A point in time must be opened explicitly before being used in search requests.
-        The `keep_alive` parameter tells Elasticsearch how long it should persist.
+        .. raw:: html
+
+          <p>Open a point in time.</p>
+          <p>A search request by default runs against the most recent visible data of the target indices,
+          which is called point in time. Elasticsearch pit (point in time) is a lightweight view into the
+          state of the data as it existed when initiated. In some cases, it’s preferred to perform multiple
+          search requests using the same point in time. For example, if refreshes happen between
+          <code>search_after</code> requests, then the results of those requests might not be consistent as changes happening
+          between searches are only visible to the more recent point in time.</p>
+          <p>A point in time must be opened explicitly before being used in search requests.
+          The <code>keep_alive</code> parameter tells Elasticsearch how long it should persist.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
@@ -3630,8 +3684,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Create or update a script or search template. Creates or updates a stored script
-        or search template.
+        .. raw:: html
+
+          <p>Create or update a script or search template.
+          Creates or updates a stored script or search template.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
@@ -3716,8 +3773,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Evaluate ranked search results. Evaluate the quality of ranked search results
-        over a set of typical search queries.
+        .. raw:: html
+
+          <p>Evaluate ranked search results.</p>
+          <p>Evaluate the quality of ranked search results over a set of typical search queries.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
@@ -3811,149 +3871,145 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Reindex documents. Copy documents from a source to a destination. You can copy
-        all documents to the destination index or reindex a subset of the documents.
-        The source can be any existing index, alias, or data stream. The destination
-        must differ from the source. For example, you cannot reindex a data stream into
-        itself. IMPORTANT: Reindex requires `_source` to be enabled for all documents
-        in the source. The destination should be configured as wanted before calling
-        the reindex API. Reindex does not copy the settings from the source or its associated
-        template. Mappings, shard counts, and replicas, for example, must be configured
-        ahead of time. If the Elasticsearch security features are enabled, you must have
-        the following security privileges: * The `read` index privilege for the source
-        data stream, index, or alias. * The `write` index privilege for the destination
-        data stream, index, or index alias. * To automatically create a data stream or
-        index with a reindex API request, you must have the `auto_configure`, `create_index`,
-        or `manage` index privilege for the destination data stream, index, or alias.
-        * If reindexing from a remote cluster, the `source.remote.user` must have the
-        `monitor` cluster privilege and the `read` index privilege for the source data
-        stream, index, or alias. If reindexing from a remote cluster, you must explicitly
-        allow the remote host in the `reindex.remote.whitelist` setting. Automatic data
-        stream creation requires a matching index template with data stream enabled.
-        The `dest` element can be configured like the index API to control optimistic
-        concurrency control. Omitting `version_type` or setting it to `internal` causes
-        Elasticsearch to blindly dump documents into the destination, overwriting any
-        that happen to have the same ID. Setting `version_type` to `external` causes
-        Elasticsearch to preserve the `version` from the source, create any documents
-        that are missing, and update any documents that have an older version in the
-        destination than they do in the source. Setting `op_type` to `create` causes
-        the reindex API to create only missing documents in the destination. All existing
-        documents will cause a version conflict. IMPORTANT: Because data streams are
-        append-only, any reindex request to a destination data stream must have an `op_type`
-        of `create`. A reindex can only add new documents to a destination data stream.
-        It cannot update existing documents in a destination data stream. By default,
-        version conflicts abort the reindex process. To continue reindexing if there
-        are conflicts, set the `conflicts` request body property to `proceed`. In this
-        case, the response includes a count of the version conflicts that were encountered.
-        Note that the handling of other error types is unaffected by the `conflicts`
-        property. Additionally, if you opt to count version conflicts, the operation
-        could attempt to reindex more documents from the source than `max_docs` until
-        it has successfully indexed `max_docs` documents into the target or it has gone
-        through every document in the source query. NOTE: The reindex API makes no effort
-        to handle ID collisions. The last document written will "win" but the order isn't
-        usually predictable so it is not a good idea to rely on this behavior. Instead,
-        make sure that IDs are unique by using a script. **Running reindex asynchronously**
-        If the request contains `wait_for_completion=false`, Elasticsearch performs some
-        preflight checks, launches the request, and returns a task you can use to cancel
-        or get the status of the task. Elasticsearch creates a record of this task as
-        a document at `_tasks/<task_id>`. **Reindex from multiple sources** If you have
-        many sources to reindex it is generally better to reindex them one at a time
-        rather than using a glob pattern to pick up multiple sources. That way you can
-        resume the process if there are any errors by removing the partially completed
-        source and starting over. It also makes parallelizing the process fairly simple:
-        split the list of sources to reindex and run each list in parallel. For example,
-        you can use a bash script like this: ``` for index in i1 i2 i3 i4 i5; do curl
-        -HContent-Type:application/json -XPOST localhost:9200/_reindex?pretty -d'{ "source":
-        { "index": "'$index'" }, "dest": { "index": "'$index'-reindexed" } }' done ```
-        **Throttling** Set `requests_per_second` to any positive decimal number (`1.4`,
-        `6`, `1000`, for example) to throttle the rate at which reindex issues batches
-        of index operations. Requests are throttled by padding each batch with a wait
-        time. To turn off throttling, set `requests_per_second` to `-1`. The throttling
-        is done by waiting between batches so that the scroll that reindex uses internally
-        can be given a timeout that takes into account the padding. The padding time
-        is the difference between the batch size divided by the `requests_per_second`
-        and the time spent writing. By default the batch size is `1000`, so if `requests_per_second`
-        is set to `500`: ``` target_time = 1000 / 500 per second = 2 seconds wait_time
-        = target_time - write_time = 2 seconds - .5 seconds = 1.5 seconds ``` Since the
-        batch is issued as a single bulk request, large batch sizes cause Elasticsearch
-        to create many requests and then wait for a while before starting the next set.
-        This is "bursty" instead of "smooth". **Slicing** Reindex supports sliced scroll
-        to parallelize the reindexing process. This parallelization can improve efficiency
-        and provide a convenient way to break the request down into smaller parts. NOTE:
-        Reindexing from remote clusters does not support manual or automatic slicing.
-        You can slice a reindex request manually by providing a slice ID and total number
-        of slices to each request. You can also let reindex automatically parallelize
-        by using sliced scroll to slice on `_id`. The `slices` parameter specifies the
-        number of slices to use. Adding `slices` to the reindex request just automates
-        the manual process, creating sub-requests which means it has some quirks: * You
-        can see these requests in the tasks API. These sub-requests are "child" tasks
-        of the task for the request with slices. * Fetching the status of the task for
-        the request with `slices` only contains the status of completed slices. * These
-        sub-requests are individually addressable for things like cancellation and rethrottling.
-        * Rethrottling the request with `slices` will rethrottle the unfinished sub-request
-        proportionally. * Canceling the request with `slices` will cancel each sub-request.
-        * Due to the nature of `slices`, each sub-request won't get a perfectly even
-        portion of the documents. All documents will be addressed, but some slices may
-        be larger than others. Expect larger slices to have a more even distribution.
-        * Parameters like `requests_per_second` and `max_docs` on a request with `slices`
-        are distributed proportionally to each sub-request. Combine that with the previous
-        point about distribution being uneven and you should conclude that using `max_docs`
-        with `slices` might not result in exactly `max_docs` documents being reindexed.
-        * Each sub-request gets a slightly different snapshot of the source, though these
-        are all taken at approximately the same time. If slicing automatically, setting
-        `slices` to `auto` will choose a reasonable number for most indices. If slicing
-        manually or otherwise tuning automatic slicing, use the following guidelines.
-        Query performance is most efficient when the number of slices is equal to the
-        number of shards in the index. If that number is large (for example, `500`),
-        choose a lower number as too many slices will hurt performance. Setting slices
-        higher than the number of shards generally does not improve efficiency and adds
-        overhead. Indexing performance scales linearly across available resources with
-        the number of slices. Whether query or indexing performance dominates the runtime
-        depends on the documents being reindexed and cluster resources. **Modify documents
-        during reindexing** Like `_update_by_query`, reindex operations support a script
-        that modifies the document. Unlike `_update_by_query`, the script is allowed
-        to modify the document's metadata. Just as in `_update_by_query`, you can set
-        `ctx.op` to change the operation that is run on the destination. For example,
-        set `ctx.op` to `noop` if your script decides that the document doesn’t have
-        to be indexed in the destination. This "no operation" will be reported in the
-        `noop` counter in the response body. Set `ctx.op` to `delete` if your script
-        decides that the document must be deleted from the destination. The deletion
-        will be reported in the `deleted` counter in the response body. Setting `ctx.op`
-        to anything else will return an error, as will setting any other field in `ctx`.
-        Think of the possibilities! Just be careful; you are able to change: * `_id`
-        * `_index` * `_version` * `_routing` Setting `_version` to `null` or clearing
-        it from the `ctx` map is just like not sending the version in an indexing request.
-        It will cause the document to be overwritten in the destination regardless of
-        the version on the target or the version type you use in the reindex API. **Reindex
-        from remote** Reindex supports reindexing from a remote Elasticsearch cluster.
-        The `host` parameter must contain a scheme, host, port, and optional path. The
-        `username` and `password` parameters are optional and when they are present the
-        reindex operation will connect to the remote Elasticsearch node using basic authentication.
-        Be sure to use HTTPS when using basic authentication or the password will be
-        sent in plain text. There are a range of settings available to configure the
-        behavior of the HTTPS connection. When using Elastic Cloud, it is also possible
-        to authenticate against the remote cluster through the use of a valid API key.
-        Remote hosts must be explicitly allowed with the `reindex.remote.whitelist` setting.
-        It can be set to a comma delimited list of allowed remote host and port combinations.
-        Scheme is ignored; only the host and port are used. For example: ``` reindex.remote.whitelist:
-        [otherhost:9200, another:9200, 127.0.10.*:9200, localhost:*"] ``` The list of
-        allowed hosts must be configured on any nodes that will coordinate the reindex.
-        This feature should work with remote clusters of any version of Elasticsearch.
-        This should enable you to upgrade from any version of Elasticsearch to the current
-        version by reindexing from a cluster of the old version. WARNING: Elasticsearch
-        does not support forward compatibility across major versions. For example, you
-        cannot reindex from a 7.x cluster into a 6.x cluster. To enable queries sent
-        to older versions of Elasticsearch, the `query` parameter is sent directly to
-        the remote host without validation or modification. NOTE: Reindexing from remote
-        clusters does not support manual or automatic slicing. Reindexing from a remote
-        server uses an on-heap buffer that defaults to a maximum size of 100mb. If the
-        remote index includes very large documents you'll need to use a smaller batch
-        size. It is also possible to set the socket read timeout on the remote connection
-        with the `socket_timeout` field and the connection timeout with the `connect_timeout`
-        field. Both default to 30 seconds. **Configuring SSL parameters** Reindex from
-        remote supports configurable SSL settings. These must be specified in the `elasticsearch.yml`
-        file, with the exception of the secure settings, which you add in the Elasticsearch
-        keystore. It is not possible to configure SSL in the body of the reindex request.
+        .. raw:: html
+
+          <p>Reindex documents.</p>
+          <p>Copy documents from a source to a destination.
+          You can copy all documents to the destination index or reindex a subset of the documents.
+          The source can be any existing index, alias, or data stream.
+          The destination must differ from the source.
+          For example, you cannot reindex a data stream into itself.</p>
+          <p>IMPORTANT: Reindex requires <code>_source</code> to be enabled for all documents in the source.
+          The destination should be configured as wanted before calling the reindex API.
+          Reindex does not copy the settings from the source or its associated template.
+          Mappings, shard counts, and replicas, for example, must be configured ahead of time.</p>
+          <p>If the Elasticsearch security features are enabled, you must have the following security privileges:</p>
+          <ul>
+          <li>The <code>read</code> index privilege for the source data stream, index, or alias.</li>
+          <li>The <code>write</code> index privilege for the destination data stream, index, or index alias.</li>
+          <li>To automatically create a data stream or index with a reindex API request, you must have the <code>auto_configure</code>, <code>create_index</code>, or <code>manage</code> index privilege for the destination data stream, index, or alias.</li>
+          <li>If reindexing from a remote cluster, the <code>source.remote.user</code> must have the <code>monitor</code> cluster privilege and the <code>read</code> index privilege for the source data stream, index, or alias.</li>
+          </ul>
+          <p>If reindexing from a remote cluster, you must explicitly allow the remote host in the <code>reindex.remote.whitelist</code> setting.
+          Automatic data stream creation requires a matching index template with data stream enabled.</p>
+          <p>The <code>dest</code> element can be configured like the index API to control optimistic concurrency control.
+          Omitting <code>version_type</code> or setting it to <code>internal</code> causes Elasticsearch to blindly dump documents into the destination, overwriting any that happen to have the same ID.</p>
+          <p>Setting <code>version_type</code> to <code>external</code> causes Elasticsearch to preserve the <code>version</code> from the source, create any documents that are missing, and update any documents that have an older version in the destination than they do in the source.</p>
+          <p>Setting <code>op_type</code> to <code>create</code> causes the reindex API to create only missing documents in the destination.
+          All existing documents will cause a version conflict.</p>
+          <p>IMPORTANT: Because data streams are append-only, any reindex request to a destination data stream must have an <code>op_type</code> of <code>create</code>.
+          A reindex can only add new documents to a destination data stream.
+          It cannot update existing documents in a destination data stream.</p>
+          <p>By default, version conflicts abort the reindex process.
+          To continue reindexing if there are conflicts, set the <code>conflicts</code> request body property to <code>proceed</code>.
+          In this case, the response includes a count of the version conflicts that were encountered.
+          Note that the handling of other error types is unaffected by the <code>conflicts</code> property.
+          Additionally, if you opt to count version conflicts, the operation could attempt to reindex more documents from the source than <code>max_docs</code> until it has successfully indexed <code>max_docs</code> documents into the target or it has gone through every document in the source query.</p>
+          <p>NOTE: The reindex API makes no effort to handle ID collisions.
+          The last document written will &quot;win&quot; but the order isn't usually predictable so it is not a good idea to rely on this behavior.
+          Instead, make sure that IDs are unique by using a script.</p>
+          <p><strong>Running reindex asynchronously</strong></p>
+          <p>If the request contains <code>wait_for_completion=false</code>, Elasticsearch performs some preflight checks, launches the request, and returns a task you can use to cancel or get the status of the task.
+          Elasticsearch creates a record of this task as a document at <code>_tasks/&lt;task_id&gt;</code>.</p>
+          <p><strong>Reindex from multiple sources</strong></p>
+          <p>If you have many sources to reindex it is generally better to reindex them one at a time rather than using a glob pattern to pick up multiple sources.
+          That way you can resume the process if there are any errors by removing the partially completed source and starting over.
+          It also makes parallelizing the process fairly simple: split the list of sources to reindex and run each list in parallel.</p>
+          <p>For example, you can use a bash script like this:</p>
+          <pre><code>for index in i1 i2 i3 i4 i5; do
+            curl -HContent-Type:application/json -XPOST localhost:9200/_reindex?pretty -d'{
+              &quot;source&quot;: {
+                &quot;index&quot;: &quot;'$index'&quot;
+              },
+              &quot;dest&quot;: {
+                &quot;index&quot;: &quot;'$index'-reindexed&quot;
+              }
+            }'
+          done
+          </code></pre>
+          <p><strong>Throttling</strong></p>
+          <p>Set <code>requests_per_second</code> to any positive decimal number (<code>1.4</code>, <code>6</code>, <code>1000</code>, for example) to throttle the rate at which reindex issues batches of index operations.
+          Requests are throttled by padding each batch with a wait time.
+          To turn off throttling, set <code>requests_per_second</code> to <code>-1</code>.</p>
+          <p>The throttling is done by waiting between batches so that the scroll that reindex uses internally can be given a timeout that takes into account the padding.
+          The padding time is the difference between the batch size divided by the <code>requests_per_second</code> and the time spent writing.
+          By default the batch size is <code>1000</code>, so if <code>requests_per_second</code> is set to <code>500</code>:</p>
+          <pre><code>target_time = 1000 / 500 per second = 2 seconds
+          wait_time = target_time - write_time = 2 seconds - .5 seconds = 1.5 seconds
+          </code></pre>
+          <p>Since the batch is issued as a single bulk request, large batch sizes cause Elasticsearch to create many requests and then wait for a while before starting the next set.
+          This is &quot;bursty&quot; instead of &quot;smooth&quot;.</p>
+          <p><strong>Slicing</strong></p>
+          <p>Reindex supports sliced scroll to parallelize the reindexing process.
+          This parallelization can improve efficiency and provide a convenient way to break the request down into smaller parts.</p>
+          <p>NOTE: Reindexing from remote clusters does not support manual or automatic slicing.</p>
+          <p>You can slice a reindex request manually by providing a slice ID and total number of slices to each request.
+          You can also let reindex automatically parallelize by using sliced scroll to slice on <code>_id</code>.
+          The <code>slices</code> parameter specifies the number of slices to use.</p>
+          <p>Adding <code>slices</code> to the reindex request just automates the manual process, creating sub-requests which means it has some quirks:</p>
+          <ul>
+          <li>You can see these requests in the tasks API. These sub-requests are &quot;child&quot; tasks of the task for the request with slices.</li>
+          <li>Fetching the status of the task for the request with <code>slices</code> only contains the status of completed slices.</li>
+          <li>These sub-requests are individually addressable for things like cancellation and rethrottling.</li>
+          <li>Rethrottling the request with <code>slices</code> will rethrottle the unfinished sub-request proportionally.</li>
+          <li>Canceling the request with <code>slices</code> will cancel each sub-request.</li>
+          <li>Due to the nature of <code>slices</code>, each sub-request won't get a perfectly even portion of the documents. All documents will be addressed, but some slices may be larger than others. Expect larger slices to have a more even distribution.</li>
+          <li>Parameters like <code>requests_per_second</code> and <code>max_docs</code> on a request with <code>slices</code> are distributed proportionally to each sub-request. Combine that with the previous point about distribution being uneven and you should conclude that using <code>max_docs</code> with <code>slices</code> might not result in exactly <code>max_docs</code> documents being reindexed.</li>
+          <li>Each sub-request gets a slightly different snapshot of the source, though these are all taken at approximately the same time.</li>
+          </ul>
+          <p>If slicing automatically, setting <code>slices</code> to <code>auto</code> will choose a reasonable number for most indices.
+          If slicing manually or otherwise tuning automatic slicing, use the following guidelines.</p>
+          <p>Query performance is most efficient when the number of slices is equal to the number of shards in the index.
+          If that number is large (for example, <code>500</code>), choose a lower number as too many slices will hurt performance.
+          Setting slices higher than the number of shards generally does not improve efficiency and adds overhead.</p>
+          <p>Indexing performance scales linearly across available resources with the number of slices.</p>
+          <p>Whether query or indexing performance dominates the runtime depends on the documents being reindexed and cluster resources.</p>
+          <p><strong>Modify documents during reindexing</strong></p>
+          <p>Like <code>_update_by_query</code>, reindex operations support a script that modifies the document.
+          Unlike <code>_update_by_query</code>, the script is allowed to modify the document's metadata.</p>
+          <p>Just as in <code>_update_by_query</code>, you can set <code>ctx.op</code> to change the operation that is run on the destination.
+          For example, set <code>ctx.op</code> to <code>noop</code> if your script decides that the document doesn’t have to be indexed in the destination. This &quot;no operation&quot; will be reported in the <code>noop</code> counter in the response body.
+          Set <code>ctx.op</code> to <code>delete</code> if your script decides that the document must be deleted from the destination.
+          The deletion will be reported in the <code>deleted</code> counter in the response body.
+          Setting <code>ctx.op</code> to anything else will return an error, as will setting any other field in <code>ctx</code>.</p>
+          <p>Think of the possibilities! Just be careful; you are able to change:</p>
+          <ul>
+          <li><code>_id</code></li>
+          <li><code>_index</code></li>
+          <li><code>_version</code></li>
+          <li><code>_routing</code></li>
+          </ul>
+          <p>Setting <code>_version</code> to <code>null</code> or clearing it from the <code>ctx</code> map is just like not sending the version in an indexing request.
+          It will cause the document to be overwritten in the destination regardless of the version on the target or the version type you use in the reindex API.</p>
+          <p><strong>Reindex from remote</strong></p>
+          <p>Reindex supports reindexing from a remote Elasticsearch cluster.
+          The <code>host</code> parameter must contain a scheme, host, port, and optional path.
+          The <code>username</code> and <code>password</code> parameters are optional and when they are present the reindex operation will connect to the remote Elasticsearch node using basic authentication.
+          Be sure to use HTTPS when using basic authentication or the password will be sent in plain text.
+          There are a range of settings available to configure the behavior of the HTTPS connection.</p>
+          <p>When using Elastic Cloud, it is also possible to authenticate against the remote cluster through the use of a valid API key.
+          Remote hosts must be explicitly allowed with the <code>reindex.remote.whitelist</code> setting.
+          It can be set to a comma delimited list of allowed remote host and port combinations.
+          Scheme is ignored; only the host and port are used.
+          For example:</p>
+          <pre><code>reindex.remote.whitelist: [otherhost:9200, another:9200, 127.0.10.*:9200, localhost:*&quot;]
+          </code></pre>
+          <p>The list of allowed hosts must be configured on any nodes that will coordinate the reindex.
+          This feature should work with remote clusters of any version of Elasticsearch.
+          This should enable you to upgrade from any version of Elasticsearch to the current version by reindexing from a cluster of the old version.</p>
+          <p>WARNING: Elasticsearch does not support forward compatibility across major versions.
+          For example, you cannot reindex from a 7.x cluster into a 6.x cluster.</p>
+          <p>To enable queries sent to older versions of Elasticsearch, the <code>query</code> parameter is sent directly to the remote host without validation or modification.</p>
+          <p>NOTE: Reindexing from remote clusters does not support manual or automatic slicing.</p>
+          <p>Reindexing from a remote server uses an on-heap buffer that defaults to a maximum size of 100mb.
+          If the remote index includes very large documents you'll need to use a smaller batch size.
+          It is also possible to set the socket read timeout on the remote connection with the <code>socket_timeout</code> field and the connection timeout with the <code>connect_timeout</code> field.
+          Both default to 30 seconds.</p>
+          <p><strong>Configuring SSL parameters</strong></p>
+          <p>Reindex from remote supports configurable SSL settings.
+          These must be specified in the <code>elasticsearch.yml</code> file, with the exception of the secure settings, which you add in the Elasticsearch keystore.
+          It is not possible to configure SSL in the body of the reindex request.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -4067,11 +4123,17 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Throttle a reindex operation. Change the number of requests per second for a
-        particular reindex operation. For example: ``` POST _reindex/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
-        ``` Rethrottling that speeds up the query takes effect immediately. Rethrottling
-        that slows down the query will take effect after completing the current batch.
-        This behavior prevents scroll timeouts.
+        .. raw:: html
+
+          <p>Throttle a reindex operation.</p>
+          <p>Change the number of requests per second for a particular reindex operation.
+          For example:</p>
+          <pre><code>POST _reindex/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
+          </code></pre>
+          <p>Rethrottling that speeds up the query takes effect immediately.
+          Rethrottling that slows down the query will take effect after completing the current batch.
+          This behavior prevents scroll timeouts.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
@@ -4123,7 +4185,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Render a search template. Render a search template as a search request body.
+        .. raw:: html
+
+          <p>Render a search template.</p>
+          <p>Render a search template as a search request body.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
@@ -4192,7 +4258,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run a script. Runs a script and returns a result.
+        .. raw:: html
+
+          <p>Run a script.
+          Runs a script and returns a result.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
 
@@ -4250,22 +4320,19 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run a scrolling search. IMPORTANT: The scroll API is no longer recommend for
-        deep pagination. If you need to preserve the index state while paging through
-        more than 10,000 hits, use the `search_after` parameter with a point in time
-        (PIT). The scroll API gets large sets of results from a single scrolling search
-        request. To get the necessary scroll ID, submit a search API request that includes
-        an argument for the `scroll` query parameter. The `scroll` parameter indicates
-        how long Elasticsearch should retain the search context for the request. The
-        search response returns a scroll ID in the `_scroll_id` response body parameter.
-        You can then use the scroll ID with the scroll API to retrieve the next batch
-        of results for the request. If the Elasticsearch security features are enabled,
-        the access to the results of a specific scroll ID is restricted to the user or
-        API key that submitted the search. You can also use the scroll API to specify
-        a new scroll parameter that extends or shortens the retention period for the
-        search context. IMPORTANT: Results from a scrolling search reflect the state
-        of the index at the time of the initial search request. Subsequent indexing or
-        document changes only affect later search and scroll requests.
+        .. raw:: html
+
+          <p>Run a scrolling search.</p>
+          <p>IMPORTANT: The scroll API is no longer recommend for deep pagination. If you need to preserve the index state while paging through more than 10,000 hits, use the <code>search_after</code> parameter with a point in time (PIT).</p>
+          <p>The scroll API gets large sets of results from a single scrolling search request.
+          To get the necessary scroll ID, submit a search API request that includes an argument for the <code>scroll</code> query parameter.
+          The <code>scroll</code> parameter indicates how long Elasticsearch should retain the search context for the request.
+          The search response returns a scroll ID in the <code>_scroll_id</code> response body parameter.
+          You can then use the scroll ID with the scroll API to retrieve the next batch of results for the request.
+          If the Elasticsearch security features are enabled, the access to the results of a specific scroll ID is restricted to the user or API key that submitted the search.</p>
+          <p>You can also use the scroll API to specify a new scroll parameter that extends or shortens the retention period for the search context.</p>
+          <p>IMPORTANT: Results from a scrolling search reflect the state of the index at the time of the initial search request. Subsequent indexing or document changes only affect later search and scroll requests.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
 
@@ -4454,9 +4521,13 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run a search. Get search hits that match the query defined in the request. You
-        can provide search queries using the `q` query string parameter or the request
-        body. If both are specified, only the query parameter is used.
+        .. raw:: html
+
+          <p>Run a search.</p>
+          <p>Get search hits that match the query defined in the request.
+          You can provide search queries using the <code>q</code> query string parameter or the request body.
+          If both are specified, only the query parameter is used.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
@@ -4882,7 +4953,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> BinaryApiResponse:
         """
-        Search a vector tile. Search a vector tile for geospatial values.
+        .. raw:: html
+
+          <p>Search a vector tile.</p>
+          <p>Search a vector tile for geospatial values.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-vector-tile-api.html>`_
 
@@ -5037,10 +5112,13 @@ class Elasticsearch(BaseClient):
         routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get the search shards. Get the indices and shards that a search request would
-        be run against. This information can be useful for working out issues or planning
-        optimizations with routing and shard preferences. When filtered aliases are used,
-        the filter is returned as part of the indices section.
+        .. raw:: html
+
+          <p>Get the search shards.</p>
+          <p>Get the indices and shards that a search request would be run against.
+          This information can be useful for working out issues or planning optimizations with routing and shard preferences.
+          When filtered aliases are used, the filter is returned as part of the indices section.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
 
@@ -5144,7 +5222,10 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Run a search with a search template.
+        .. raw:: html
+
+          <p>Run a search with a search template.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
@@ -5276,15 +5357,15 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get terms in an index. Discover terms that match a partial string in an index.
-        This "terms enum" API is designed for low-latency look-ups used in auto-complete
-        scenarios. If the `complete` property in the response is false, the returned
-        terms set may be incomplete and should be treated as approximate. This can occur
-        due to a few reasons, such as a request timeout or a node error. NOTE: The terms
-        enum API may return terms from deleted documents. Deleted documents are initially
-        only marked as deleted. It is not until their segments are merged that documents
-        are actually deleted. Until that happens, the terms enum API will return terms
-        from these documents.
+        .. raw:: html
+
+          <p>Get terms in an index.</p>
+          <p>Discover terms that match a partial string in an index.
+          This &quot;terms enum&quot; API is designed for low-latency look-ups used in auto-complete scenarios.</p>
+          <p>If the <code>complete</code> property in the response is false, the returned terms set may be incomplete and should be treated as approximate.
+          This can occur due to a few reasons, such as a request timeout or a node error.</p>
+          <p>NOTE: The terms enum API may return terms from deleted documents. Deleted documents are initially only marked as deleted. It is not until their segments are merged that documents are actually deleted. Until that happens, the terms enum API will return terms from these documents.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
 
@@ -5382,8 +5463,11 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Get term vector information. Get information and statistics about terms in the
-        fields of a particular document.
+        .. raw:: html
+
+          <p>Get term vector information.</p>
+          <p>Get information and statistics about terms in the fields of a particular document.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
 
@@ -5525,19 +5609,24 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Update a document. Update a document by running a script or passing a partial
-        document. If the Elasticsearch security features are enabled, you must have the
-        `index` or `write` index privilege for the target index or index alias. The script
-        can update, delete, or skip modifying the document. The API also supports passing
-        a partial document, which is merged into the existing document. To fully replace
-        an existing document, use the index API. This operation: * Gets the document
-        (collocated with the shard) from the index. * Runs the specified script. * Indexes
-        the result. The document must still be reindexed, but using this API removes
-        some network roundtrips and reduces chances of version conflicts between the
-        GET and the index operation. The `_source` field must be enabled to use this
-        API. In addition to `_source`, you can access the following variables through
-        the `ctx` map: `_index`, `_type`, `_id`, `_version`, `_routing`, and `_now` (the
-        current timestamp).
+        .. raw:: html
+
+          <p>Update a document.</p>
+          <p>Update a document by running a script or passing a partial document.</p>
+          <p>If the Elasticsearch security features are enabled, you must have the <code>index</code> or <code>write</code> index privilege for the target index or index alias.</p>
+          <p>The script can update, delete, or skip modifying the document.
+          The API also supports passing a partial document, which is merged into the existing document.
+          To fully replace an existing document, use the index API.
+          This operation:</p>
+          <ul>
+          <li>Gets the document (collocated with the shard) from the index.</li>
+          <li>Runs the specified script.</li>
+          <li>Indexes the result.</li>
+          </ul>
+          <p>The document must still be reindexed, but using this API removes some network roundtrips and reduces chances of version conflicts between the GET and the index operation.</p>
+          <p>The <code>_source</code> field must be enabled to use this API.
+          In addition to <code>_source</code>, you can access the following variables through the <code>ctx</code> map: <code>_index</code>, <code>_type</code>, <code>_id</code>, <code>_version</code>, <code>_routing</code>, and <code>_now</code> (the current timestamp).</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
 
@@ -5704,9 +5793,12 @@ class Elasticsearch(BaseClient):
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Update documents. Updates documents that match the specified query. If no query
-        is specified, performs an update on every document in the data stream or index
-        without modifying the source, which is useful for picking up mapping changes.
+        .. raw:: html
+
+          <p>Update documents.
+          Updates documents that match the specified query.
+          If no query is specified, performs an update on every document in the data stream or index without modifying the source, which is useful for picking up mapping changes.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
@@ -5902,10 +5994,12 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Throttle an update by query operation. Change the number of requests per second
-        for a particular update by query operation. Rethrottling that speeds up the query
-        takes effect immediately but rethrotting that slows down the query takes effect
-        after completing the current batch to prevent scroll timeouts.
+        .. raw:: html
+
+          <p>Throttle an update by query operation.</p>
+          <p>Change the number of requests per second for a particular update by query operation.
+          Rethrottling that speeds up the query takes effect immediately but rethrotting that slows down the query takes effect after completing the current batch to prevent scroll timeouts.</p>
+
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
