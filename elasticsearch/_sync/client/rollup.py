@@ -58,7 +58,7 @@ class RollupClient(NamespacedClient):
         index. For example: ``` POST my_rollup_index/_delete_by_query { "query": { "term":
         { "_rollup.id": "the_rollup_job_id" } } } ```
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-delete-job.html>`_
 
         :param id: Identifier for the job.
         """
@@ -103,7 +103,7 @@ class RollupClient(NamespacedClient):
         any details about it. For details about a historical rollup job, the rollup capabilities
         API may be more useful.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-get-job.html>`_
 
         :param id: Identifier for the rollup job. If it is `_all` or omitted, the API
             returns all rollup jobs.
@@ -156,7 +156,7 @@ class RollupClient(NamespacedClient):
         the first question, what fields were rolled up, what aggregations can be performed,
         and where does the data live?
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-get-rollup-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-get-rollup-caps.html>`_
 
         :param id: Index, indices or index-pattern to return rollup capabilities for.
             `_all` may be used to fetch rollup capabilities from all jobs.
@@ -206,7 +206,7 @@ class RollupClient(NamespacedClient):
         via a pattern)? * What target indices were rolled up, what fields were used in
         those rollups, and what aggregations can be performed on each job?
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-get-rollup-index-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-get-rollup-index-caps.html>`_
 
         :param index: Data stream or index to check for rollup capabilities. Wildcard
             (`*`) expressions are supported.
@@ -278,7 +278,7 @@ class RollupClient(NamespacedClient):
         and what metrics to collect for each group. Jobs are created in a `STOPPED` state.
         You can start them with the start rollup jobs API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-put-job.html>`_
 
         :param id: Identifier for the rollup job. This can be any alphanumeric string
             and uniquely identifies the data that is associated with the rollup job.
@@ -413,7 +413,7 @@ class RollupClient(NamespacedClient):
         During the merging process, if there is any overlap in buckets between the two
         responses, the buckets from the non-rollup index are used.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-search.html>`_
 
         :param index: A comma-separated list of data streams and indices used to limit
             the request. This parameter has the following rules: * At least one data
@@ -487,7 +487,7 @@ class RollupClient(NamespacedClient):
         Start rollup jobs. If you try to start a job that does not exist, an exception
         occurs. If you try to start a job that is already started, nothing happens.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-start-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-start-job.html>`_
 
         :param id: Identifier for the rollup job.
         """
@@ -537,7 +537,7 @@ class RollupClient(NamespacedClient):
         moved to STOPPED or the specified time has elapsed. If the specified time elapses
         without the job moving to STOPPED, a timeout exception occurs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/rollup-stop-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/rollup-stop-job.html>`_
 
         :param id: Identifier for the rollup job.
         :param timeout: If `wait_for_completion` is `true`, the API blocks for (at maximum)

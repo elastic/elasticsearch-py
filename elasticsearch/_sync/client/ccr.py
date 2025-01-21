@@ -40,7 +40,7 @@ class CcrClient(NamespacedClient):
         Delete auto-follow patterns. Delete a collection of cross-cluster replication
         auto-follow patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-delete-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-delete-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -122,7 +122,7 @@ class CcrClient(NamespacedClient):
         cross-cluster replication starts replicating operations from the leader index
         to the follower index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-put-follow.html>`_
 
         :param index: The name of the follower index.
         :param leader_index: The name of the index in the leader cluster to follow.
@@ -249,7 +249,7 @@ class CcrClient(NamespacedClient):
         index names, replication options, and whether the follower indices are active
         or paused.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-follow-info.html>`_
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
@@ -296,7 +296,7 @@ class CcrClient(NamespacedClient):
         shard-level stats about the "following tasks" associated with each shard for
         the specified indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-follow-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-follow-stats.html>`_
 
         :param index: A comma-separated list of index patterns; use `_all` to perform
             the operation on all indices
@@ -370,7 +370,7 @@ class CcrClient(NamespacedClient):
         API is to handle the case of failure to remove the following retention leases
         after the unfollow API is invoked.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-forget-follower.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-forget-follower.html>`_
 
         :param index: the name of the leader index for which specified follower retention
             leases should be removed
@@ -431,7 +431,7 @@ class CcrClient(NamespacedClient):
         """
         Get auto-follow patterns. Get cross-cluster replication auto-follow patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-auto-follow-pattern.html>`_
 
         :param name: Specifies the auto-follow pattern collection that you want to retrieve.
             If you do not specify a name, the API returns information for all collections.
@@ -486,7 +486,7 @@ class CcrClient(NamespacedClient):
         patterns. Remote indices that were created while the pattern was paused will
         also be followed, unless they have been deleted or closed in the interim.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-pause-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-pause-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern that should pause discovering
             new indices to follow.
@@ -534,7 +534,7 @@ class CcrClient(NamespacedClient):
         resume following with the resume follower API. You can pause and resume a follower
         index to change the configuration of the following task.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-pause-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-pause-follow.html>`_
 
         :param index: The name of the follower index that should pause following its
             leader index.
@@ -620,7 +620,7 @@ class CcrClient(NamespacedClient):
         that were configured automatically before updating an auto-follow pattern will
         remain unchanged even if they do not match against the new patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-put-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-put-auto-follow-pattern.html>`_
 
         :param name: The name of the collection of auto-follow patterns.
         :param remote_cluster: The remote cluster containing the leader indices to match
@@ -752,7 +752,7 @@ class CcrClient(NamespacedClient):
         Remote indices created while the pattern was paused will also be followed unless
         they have been deleted or closed in the interim.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-resume-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-resume-auto-follow-pattern.html>`_
 
         :param name: The name of the auto follow pattern to resume discovering new indices
             to follow.
@@ -825,7 +825,7 @@ class CcrClient(NamespacedClient):
         to failures during following tasks. When this API returns, the follower index
         will resume fetching operations from the leader index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-resume-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-resume-follow.html>`_
 
         :param index: The name of the follow index to resume following.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -913,7 +913,7 @@ class CcrClient(NamespacedClient):
         Get cross-cluster replication stats. This API returns stats about auto-following
         and the same shard-level stats as the get follower stats API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-get-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-get-stats.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         :param timeout: Period to wait for a response. If no response is received before
@@ -964,7 +964,7 @@ class CcrClient(NamespacedClient):
         regular index to a follower index. Converting a follower index to a regular index
         is an irreversible operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ccr-post-unfollow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ccr-post-unfollow.html>`_
 
         :param index: The name of the follower index that should be turned into a regular
             index.

@@ -42,7 +42,7 @@ class AsyncSearchClient(NamespacedClient):
         the authenticated user that submitted the original search request; users that
         have the `cancel_task` cluster privilege.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -90,7 +90,7 @@ class AsyncSearchClient(NamespacedClient):
         the results of a specific async search is restricted to the user or API key that
         submitted it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: Specifies how long the async search should be available in
@@ -154,7 +154,7 @@ class AsyncSearchClient(NamespacedClient):
         security features are enabled, use of this API is restricted to the `monitoring_user`
         role.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: Specifies how long the async search needs to be available.
@@ -336,7 +336,7 @@ class AsyncSearchClient(NamespacedClient):
         can be set by changing the `search.max_async_search_response_size` cluster level
         setting.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices

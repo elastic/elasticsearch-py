@@ -39,7 +39,7 @@ class EnrichClient(NamespacedClient):
         """
         Delete an enrich policy. Deletes an existing enrich policy and its enrich index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-enrich-policy-api.html>`_
 
         :param name: Enrich policy to delete.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -84,7 +84,7 @@ class EnrichClient(NamespacedClient):
         """
         Run an enrich policy. Create the enrich index for an existing enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/execute-enrich-policy-api.html>`_
 
         :param name: Enrich policy to execute.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -132,7 +132,7 @@ class EnrichClient(NamespacedClient):
         """
         Get an enrich policy. Returns information about an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-enrich-policy-api.html>`_
 
         :param name: Comma-separated list of enrich policy names used to limit the request.
             To return information for all enrich policies, omit this parameter.
@@ -186,7 +186,7 @@ class EnrichClient(NamespacedClient):
         """
         Create an enrich policy. Creates an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-enrich-policy-api.html>`_
 
         :param name: Name of the enrich policy to create or update.
         :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
@@ -244,7 +244,7 @@ class EnrichClient(NamespacedClient):
         Get enrich stats. Returns enrich coordinator statistics and information about
         enrich policies that are currently executing.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/enrich-stats-api.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         """

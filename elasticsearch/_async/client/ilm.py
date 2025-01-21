@@ -42,7 +42,7 @@ class IlmClient(NamespacedClient):
         If the policy is being used to manage any indices, the request fails and returns
         an error.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-delete-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -98,7 +98,7 @@ class IlmClient(NamespacedClient):
         lifecycle state, provides the definition of the running phase, and information
         about any failures.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-explain-lifecycle.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to target.
             Supports wildcards (`*`). To target all data streams and indices, use `*`
@@ -156,7 +156,7 @@ class IlmClient(NamespacedClient):
         """
         Get lifecycle policies.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-get-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -207,7 +207,7 @@ class IlmClient(NamespacedClient):
         """
         Get the ILM status. Get the current index lifecycle management status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-get-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/status"
@@ -259,7 +259,7 @@ class IlmClient(NamespacedClient):
         stop ILM and get ILM status APIs to wait until the reported operation mode is
         `STOPPED`.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-migrate-to-data-tiers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-migrate-to-data-tiers.html>`_
 
         :param dry_run: If true, simulates the migration from node attributes based allocation
             filters to data tiers, but does not perform the migration. This provides
@@ -333,7 +333,7 @@ class IlmClient(NamespacedClient):
         specified in the ILM policy are considered valid. An index cannot move to a step
         that is not part of its policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-move-to-step.html>`_
 
         :param index: The name of the index whose lifecycle step is to change
         :param current_step: The step that the index is expected to be in.
@@ -398,7 +398,7 @@ class IlmClient(NamespacedClient):
         and the policy version is incremented. NOTE: Only the latest version of the policy
         is stored, you cannot revert to previous versions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-put-lifecycle.html>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -458,7 +458,7 @@ class IlmClient(NamespacedClient):
         Remove policies from an index. Remove the assigned lifecycle policies from an
         index or a data stream's backing indices. It also stops managing the indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-remove-policy.html>`_
 
         :param index: The name of the index to remove policy on
         """
@@ -501,7 +501,7 @@ class IlmClient(NamespacedClient):
         and runs the step. Use the explain lifecycle state API to determine whether an
         index is in the ERROR step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-retry-policy.html>`_
 
         :param index: The name of the indices (comma-separated) whose failed lifecycle
             step is to be retry
@@ -545,7 +545,7 @@ class IlmClient(NamespacedClient):
         stopped. ILM is started automatically when the cluster is formed. Restarting
         ILM is necessary only when it has been stopped using the stop ILM API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-start.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -597,7 +597,7 @@ class IlmClient(NamespacedClient):
         might continue to run until in-progress operations complete and the plugin can
         be safely stopped. Use the get ILM status API to check whether ILM is running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ilm-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ilm-stop.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and

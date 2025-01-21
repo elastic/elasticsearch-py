@@ -70,7 +70,7 @@ class TextStructureClient(NamespacedClient):
         `explain` query parameter and an explanation will appear in the response. It
         helps determine why the returned structure was chosen.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/find-field-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-field-structure.html>`_
 
         :param field: The field that should be analyzed.
         :param index: The name of the index that contains the analyzed field.
@@ -255,7 +255,7 @@ class TextStructureClient(NamespacedClient):
         an explanation will appear in the response. It helps determine why the returned
         structure was chosen.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/find-message-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-message-structure.html>`_
 
         :param messages: The list of messages you want to analyze.
         :param column_names: If the format is `delimited`, you can specify the column
@@ -427,7 +427,7 @@ class TextStructureClient(NamespacedClient):
         However, you can optionally override some of the decisions about the text structure
         by specifying one or more query parameters.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/find-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-structure.html>`_
 
         :param text_files:
         :param charset: The text's character set. It must be a character set that is
@@ -611,7 +611,7 @@ class TextStructureClient(NamespacedClient):
         indicates whether the lines match the pattern together with the offsets and lengths
         of the matched substrings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/test-grok-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/test-grok-pattern.html>`_
 
         :param grok_pattern: The Grok pattern to run on the text.
         :param text: The lines of text to run the Grok pattern on.

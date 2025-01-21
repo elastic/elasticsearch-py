@@ -46,7 +46,7 @@ class ConnectorClient(NamespacedClient):
         Check in a connector. Update the `last_seen` field in the connector and set it
         to the current timestamp.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/check-in-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/check-in-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be checked in
         """
@@ -91,7 +91,7 @@ class ConnectorClient(NamespacedClient):
         ingest pipelines, or data indices associated with the connector. These need to
         be removed manually.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be deleted
         :param delete_sync_jobs: A flag indicating if associated sync jobs should be
@@ -136,7 +136,7 @@ class ConnectorClient(NamespacedClient):
         """
         Get a connector. Get the details about a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector
         """
@@ -232,7 +232,7 @@ class ConnectorClient(NamespacedClient):
         Update the connector last sync stats. Update the fields related to the last sync
         of a connector. This action is used for analytics and monitoring.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-last-sync-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-last-sync-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param last_access_control_sync_error:
@@ -327,7 +327,7 @@ class ConnectorClient(NamespacedClient):
         """
         Get all connectors. Get information about all connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-connector-api.html>`_
 
         :param connector_name: A comma-separated list of connector names to fetch connector
             documents for
@@ -406,7 +406,7 @@ class ConnectorClient(NamespacedClient):
         a managed service on Elastic Cloud. Self-managed connectors (Connector clients)
         are self-managed on your infrastructure.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/create-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/create-connector-api.html>`_
 
         :param description:
         :param index_name:
@@ -485,7 +485,7 @@ class ConnectorClient(NamespacedClient):
         """
         Create or update a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/create-connector-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/create-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be created or
             updated. ID is auto-generated if not provided.
@@ -558,7 +558,7 @@ class ConnectorClient(NamespacedClient):
         connector service is then responsible for setting the status of connector sync
         jobs to cancelled.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/cancel-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/cancel-connector-sync-job-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job
         """
@@ -607,7 +607,7 @@ class ConnectorClient(NamespacedClient):
         on your own infrastructure. This service runs automatically on Elastic Cloud
         for Elastic managed connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/check-in-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/check-in-connector-sync-job-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job
             to be checked in.
@@ -665,7 +665,7 @@ class ConnectorClient(NamespacedClient):
         service on your own infrastructure. This service runs automatically on Elastic
         Cloud for Elastic managed connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/claim-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/claim-connector-sync-job-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job.
         :param worker_hostname: The host name of the current system that will run the
@@ -723,7 +723,7 @@ class ConnectorClient(NamespacedClient):
         Delete a connector sync job. Remove a connector sync job and its associated data.
         This is a destructive action that is not recoverable.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-connector-sync-job-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job
             to be deleted
@@ -774,7 +774,7 @@ class ConnectorClient(NamespacedClient):
         you need to deploy the Elastic connector service on your own infrastructure.
         This service runs automatically on Elastic Cloud for Elastic managed connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/set-connector-sync-job-error-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/set-connector-sync-job-error-api.html>`_
 
         :param connector_sync_job_id: The unique identifier for the connector sync job.
         :param error: The error for the connector sync job error field.
@@ -825,7 +825,7 @@ class ConnectorClient(NamespacedClient):
         """
         Get a connector sync job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-connector-sync-job-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job
         """
@@ -895,7 +895,7 @@ class ConnectorClient(NamespacedClient):
         Get all connector sync jobs. Get information about all stored connector sync
         jobs listed by their creation date in ascending order.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-connector-sync-jobs-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-connector-sync-jobs-api.html>`_
 
         :param connector_id: A connector id to fetch connector sync jobs for
         :param from_: Starting offset (default: 0)
@@ -958,7 +958,7 @@ class ConnectorClient(NamespacedClient):
         Create a connector sync job. Create a connector sync job document in the internal
         index and initialize its counters and timestamps with default values.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/create-connector-sync-job-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/create-connector-sync-job-api.html>`_
 
         :param id: The id of the associated connector
         :param job_type:
@@ -1031,7 +1031,7 @@ class ConnectorClient(NamespacedClient):
         service on your own infrastructure. This service runs automatically on Elastic
         Cloud for Elastic managed connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/set-connector-sync-job-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/set-connector-sync-job-stats-api.html>`_
 
         :param connector_sync_job_id: The unique identifier of the connector sync job.
         :param deleted_document_count: The number of documents the sync job deleted.
@@ -1111,7 +1111,7 @@ class ConnectorClient(NamespacedClient):
         Activate the connector draft filter. Activates the valid draft filtering for
         a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-filtering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-filtering-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         """
@@ -1161,7 +1161,7 @@ class ConnectorClient(NamespacedClient):
         secret ID is required only for Elastic managed (native) connectors. Self-managed
         connectors (connector clients) do not use this field.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-api-key-id-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-api-key-id-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param api_key_id:
@@ -1217,7 +1217,7 @@ class ConnectorClient(NamespacedClient):
         Update the connector configuration. Update the configuration field in the connector
         document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-configuration-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-configuration-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param configuration:
@@ -1274,7 +1274,7 @@ class ConnectorClient(NamespacedClient):
         to error. Otherwise, if the error is reset to null, the connector status is updated
         to connected.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-error-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-error-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param error:
@@ -1334,7 +1334,7 @@ class ConnectorClient(NamespacedClient):
         on your own infrastructure. This service runs automatically on Elastic Cloud
         for Elastic managed connectors.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-features-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-features-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated.
         :param features:
@@ -1392,7 +1392,7 @@ class ConnectorClient(NamespacedClient):
         is activated once validated by the running Elastic connector service. The filtering
         property is used to configure sync rules (both basic and advanced) for a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-filtering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-filtering-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param advanced_snippet:
@@ -1450,7 +1450,7 @@ class ConnectorClient(NamespacedClient):
         Update the connector draft filtering validation. Update the draft filtering validation
         info for a connector.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-filtering-validation-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-filtering-validation-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param validation:
@@ -1504,7 +1504,7 @@ class ConnectorClient(NamespacedClient):
         Update the connector index name. Update the `index_name` field of a connector,
         specifying the index where the data ingested by the connector is stored.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-index-name-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-index-name-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param index_name:
@@ -1558,7 +1558,7 @@ class ConnectorClient(NamespacedClient):
         """
         Update the connector name and description.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-name-description-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-name-description-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param description:
@@ -1612,7 +1612,7 @@ class ConnectorClient(NamespacedClient):
         """
         Update the connector is_native flag.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-native-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-native-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param is_native:
@@ -1666,7 +1666,7 @@ class ConnectorClient(NamespacedClient):
         Update the connector pipeline. When you create a new connector, the configuration
         of an ingest pipeline is populated with default settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-pipeline-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param pipeline:
@@ -1719,7 +1719,7 @@ class ConnectorClient(NamespacedClient):
         """
         Update the connector scheduling.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-scheduling-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-scheduling-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param scheduling:
@@ -1772,7 +1772,7 @@ class ConnectorClient(NamespacedClient):
         """
         Update the connector service type.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-service-type-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-service-type-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param service_type:
@@ -1832,7 +1832,7 @@ class ConnectorClient(NamespacedClient):
         """
         Update the connector status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-connector-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-connector-status-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param status:

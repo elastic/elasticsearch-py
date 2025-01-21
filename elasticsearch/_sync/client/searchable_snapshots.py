@@ -47,7 +47,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         Get cache statistics. Get statistics about the shared cache for partially mounted
         indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/searchable-snapshots-api-cache-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-api-cache-stats.html>`_
 
         :param node_id: The names of the nodes in the cluster to target.
         :param master_timeout:
@@ -105,7 +105,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         Clear the cache. Clear indices and data streams from the shared cache for partially
         mounted indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/searchable-snapshots-api-clear-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-api-clear-cache.html>`_
 
         :param index: A comma-separated list of data streams, indices, and aliases to
             clear from the cache. It supports wildcards (`*`).
@@ -180,7 +180,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         this API for snapshots managed by index lifecycle management (ILM). Manually
         mounting ILM-managed snapshots can interfere with ILM processes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-api-mount-snapshot.html>`_
 
         :param repository: The name of the repository containing the snapshot of the
             index to mount.
@@ -265,7 +265,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Get searchable snapshot statistics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/searchable-snapshots-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/searchable-snapshots-api-stats.html>`_
 
         :param index: A comma-separated list of data streams and indices to retrieve
             statistics for.

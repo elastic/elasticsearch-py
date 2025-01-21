@@ -46,7 +46,7 @@ class WatcherClient(NamespacedClient):
         `ack.state` is reset to `awaits_successful_execution`. This happens when the
         condition of the watch is not met (the condition evaluates to false).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-ack-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-ack-watch.html>`_
 
         :param watch_id: The watch identifier.
         :param action_id: A comma-separated list of the action identifiers to acknowledge.
@@ -98,7 +98,7 @@ class WatcherClient(NamespacedClient):
         """
         Activate a watch. A watch can be either active or inactive.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-activate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-activate-watch.html>`_
 
         :param watch_id: The watch identifier.
         """
@@ -138,7 +138,7 @@ class WatcherClient(NamespacedClient):
         """
         Deactivate a watch. A watch can be either active or inactive.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-deactivate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-deactivate-watch.html>`_
 
         :param watch_id: The watch identifier.
         """
@@ -184,7 +184,7 @@ class WatcherClient(NamespacedClient):
         delete document API When Elasticsearch security features are enabled, make sure
         no write privileges are granted to anyone for the `.watches` index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-delete-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-delete-watch.html>`_
 
         :param id: The watch identifier.
         """
@@ -267,7 +267,7 @@ class WatcherClient(NamespacedClient):
         that called the API will be used as a base, instead of the information who stored
         the watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-execute-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-execute-watch.html>`_
 
         :param id: The watch identifier.
         :param action_modes: Determines how to handle the watch actions as part of the
@@ -352,7 +352,7 @@ class WatcherClient(NamespacedClient):
         Only a subset of settings are shown, for example `index.auto_expand_replicas`
         and `index.number_of_replicas`.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-get-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-get-settings.html>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
@@ -394,7 +394,7 @@ class WatcherClient(NamespacedClient):
         """
         Get a watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-get-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-get-watch.html>`_
 
         :param id: The watch identifier.
         """
@@ -468,7 +468,7 @@ class WatcherClient(NamespacedClient):
         for which the user that stored the watch has privileges. If the user is able
         to read index `a`, but not index `b`, the same will apply when the watch runs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-put-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-put-watch.html>`_
 
         :param id: The identifier for the watch.
         :param actions: The list of actions that will be run if the condition matches.
@@ -578,7 +578,7 @@ class WatcherClient(NamespacedClient):
         filter watches by a query. Note that only the `_id` and `metadata.*` fields are
         queryable or sortable.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-query-watches.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-query-watches.html>`_
 
         :param from_: The offset from the first result to fetch. It must be non-negative.
         :param query: A query that filters the watches to be returned.
@@ -649,7 +649,7 @@ class WatcherClient(NamespacedClient):
         """
         Start the watch service. Start the Watcher service if it is not already running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-start.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         """
@@ -711,7 +711,7 @@ class WatcherClient(NamespacedClient):
         Get Watcher statistics. This API always returns basic metrics. You retrieve more
         metrics by using the metric parameter.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-stats.html>`_
 
         :param metric: Defines which additional metrics are included in the response.
         :param emit_stacktraces: Defines whether stack traces are generated for each
@@ -758,7 +758,7 @@ class WatcherClient(NamespacedClient):
         """
         Stop the watch service. Stop the Watcher service if it is running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-stop.html>`_
 
         :param master_timeout: The period to wait for the master node. If the master
             node is not available before the timeout expires, the request fails and returns
@@ -812,7 +812,7 @@ class WatcherClient(NamespacedClient):
         (`.watches`). Only a subset of settings can be modified. This includes `index.auto_expand_replicas`
         and `index.number_of_replicas`.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/watcher-api-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/watcher-api-update-settings.html>`_
 
         :param index_auto_expand_replicas:
         :param index_number_of_replicas:

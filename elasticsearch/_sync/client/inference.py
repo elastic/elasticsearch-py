@@ -46,7 +46,7 @@ class InferenceClient(NamespacedClient):
         """
         Delete an inference endpoint
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param task_type: The task type
@@ -111,7 +111,7 @@ class InferenceClient(NamespacedClient):
         """
         Get an inference endpoint
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-inference-api.html>`_
 
         :param task_type: The task type
         :param inference_id: The inference Id
@@ -174,7 +174,7 @@ class InferenceClient(NamespacedClient):
         """
         Perform inference on the service
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/post-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/post-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
@@ -271,7 +271,7 @@ class InferenceClient(NamespacedClient):
         to use these models or if you want to use non-NLP models, use the machine learning
         trained model APIs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-inference-api.html>`_
 
         :param inference_id: The inference Id
         :param inference_config:
@@ -350,7 +350,7 @@ class InferenceClient(NamespacedClient):
         or if you want to use non-NLP models, use the machine learning trained model
         APIs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-inference-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-inference-api.html>`_
 
         :param inference_id: The unique identifier of the inference endpoint.
         :param inference_config:

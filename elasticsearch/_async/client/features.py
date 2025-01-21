@@ -48,7 +48,7 @@ class FeaturesClient(NamespacedClient):
         this API and recognized as a valid feature state by the create snapshot API,
         the plugin that defines that feature must be installed on the master node.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-features-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-features-api.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         """
@@ -102,7 +102,7 @@ class FeaturesClient(NamespacedClient):
         on the master node if you have any doubts about which plugins are installed on
         individual nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         """

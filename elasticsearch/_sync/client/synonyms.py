@@ -52,7 +52,7 @@ class SynonymsClient(NamespacedClient):
         finished, you can delete the index. When the synonyms set is not used in analyzers,
         you will be able to delete it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-synonyms-set.html>`_
 
         :param id: The synonyms set identifier to delete.
         """
@@ -93,7 +93,7 @@ class SynonymsClient(NamespacedClient):
         """
         Delete a synonym rule. Delete a synonym rule from a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-synonym-rule.html>`_
 
         :param set_id: The ID of the synonym set to update.
         :param rule_id: The ID of the synonym rule to delete.
@@ -143,7 +143,7 @@ class SynonymsClient(NamespacedClient):
         """
         Get a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-synonyms-set.html>`_
 
         :param id: The synonyms set identifier to retrieve.
         :param from_: The starting offset for query rules to retrieve.
@@ -190,7 +190,7 @@ class SynonymsClient(NamespacedClient):
         """
         Get a synonym rule. Get a synonym rule from a synonym set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-synonym-rule.html>`_
 
         :param set_id: The ID of the synonym set to retrieve the synonym rule from.
         :param rule_id: The ID of the synonym rule to retrieve.
@@ -239,7 +239,7 @@ class SynonymsClient(NamespacedClient):
         """
         Get all synonym sets. Get a summary of all defined synonym sets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-synonyms-set.html>`_
 
         :param from_: The starting offset for synonyms sets to retrieve.
         :param size: The maximum number of synonyms sets to retrieve.
@@ -293,7 +293,7 @@ class SynonymsClient(NamespacedClient):
         equivalent to invoking the reload search analyzers API for all indices that use
         the synonyms set.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonyms-set.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-synonyms-set.html>`_
 
         :param id: The ID of the synonyms set to be created or updated.
         :param synonyms_set: The synonym rules definitions for the synonyms set.
@@ -349,7 +349,7 @@ class SynonymsClient(NamespacedClient):
         When you update a synonym rule, all analyzers using the synonyms set will be
         reloaded automatically to reflect the new rule.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-synonym-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-synonym-rule.html>`_
 
         :param set_id: The ID of the synonym set.
         :param rule_id: The ID of the synonym rule to be updated or created.

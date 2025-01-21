@@ -41,7 +41,7 @@ class TransformClient(NamespacedClient):
         """
         Delete a transform. Deletes a transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-transform.html>`_
 
         :param transform_id: Identifier for the transform.
         :param delete_dest_index: If this value is true, the destination index is deleted
@@ -101,7 +101,7 @@ class TransformClient(NamespacedClient):
         """
         Get transforms. Retrieves configuration information for transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-transform.html>`_
 
         :param transform_id: Identifier for the transform. It can be a transform identifier
             or a wildcard expression. You can get information for all transforms by using
@@ -170,7 +170,7 @@ class TransformClient(NamespacedClient):
         """
         Get transform stats. Retrieves usage information for transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-transform-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-transform-stats.html>`_
 
         :param transform_id: Identifier for the transform. It can be a transform identifier
             or a wildcard expression. You can get information for all transforms by using
@@ -256,7 +256,7 @@ class TransformClient(NamespacedClient):
         These values are determined based on the field types of the source index and
         the transform aggregations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/preview-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/preview-transform.html>`_
 
         :param transform_id: Identifier for the transform to preview. If you specify
             this path parameter, you cannot provide transform configuration details in
@@ -393,7 +393,7 @@ class TransformClient(NamespacedClient):
         If you used transforms prior to 7.5, also do not give users any privileges on
         `.data-frame-internal*` indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-transform.html>`_
 
         :param transform_id: Identifier for the transform. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -496,7 +496,7 @@ class TransformClient(NamespacedClient):
         it; alternatively, use the `force` query parameter. If the destination index
         was created by the transform, it is deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/reset-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/reset-transform.html>`_
 
         :param transform_id: Identifier for the transform. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -552,7 +552,7 @@ class TransformClient(NamespacedClient):
         the transform will be processed again at now + frequency unless _schedule_now
         API is called again in the meantime.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/schedule-now-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/schedule-now-transform.html>`_
 
         :param transform_id: Identifier for the transform.
         :param timeout: Controls the time to wait for the scheduling to take place
@@ -616,7 +616,7 @@ class TransformClient(NamespacedClient):
         privileges on the source and destination indices, the transform fails when it
         attempts unauthorized operations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/start-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-transform.html>`_
 
         :param transform_id: Identifier for the transform.
         :param from_: Restricts the set of transformed entities to those changed after
@@ -670,7 +670,7 @@ class TransformClient(NamespacedClient):
         """
         Stop transforms. Stops one or more transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/stop-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/stop-transform.html>`_
 
         :param transform_id: Identifier for the transform. To stop multiple transforms,
             use a comma-separated list or a wildcard expression. To stop all transforms,
@@ -770,7 +770,7 @@ class TransformClient(NamespacedClient):
         which roles the user who updated it had at the time of update and runs with those
         privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-transform.html>`_
 
         :param transform_id: Identifier for the transform.
         :param defer_validation: When true, deferrable validations are not run. This
@@ -864,7 +864,7 @@ class TransformClient(NamespacedClient):
         example, from 7.16 to 8.0 – it is recommended to upgrade transforms before upgrading
         the cluster. You may want to perform a recent cluster backup prior to the upgrade.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/upgrade-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/upgrade-transforms.html>`_
 
         :param dry_run: When true, the request checks for updates but does not run them.
         :param timeout: Period to wait for a response. If no response is received before

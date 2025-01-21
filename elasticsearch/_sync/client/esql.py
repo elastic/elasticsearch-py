@@ -78,7 +78,7 @@ class EsqlClient(NamespacedClient):
         The API accepts the same parameters and request body as the synchronous query
         API, along with additional async related properties.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/esql-async-query-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-api.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
@@ -189,7 +189,7 @@ class EsqlClient(NamespacedClient):
         authenticated user that submitted the original query request * Users with the
         `cancel_task` cluster privilege
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/esql-async-query-delete-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-delete-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -240,7 +240,7 @@ class EsqlClient(NamespacedClient):
         features are enabled, only the user who first submitted the ES|QL query can retrieve
         the results using this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/esql-async-query-get-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-get-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -334,7 +334,7 @@ class EsqlClient(NamespacedClient):
         Run an ES|QL query. Get search results for an ES|QL (Elasticsearch query language)
         query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

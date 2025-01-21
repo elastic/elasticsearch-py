@@ -41,7 +41,7 @@ class LicenseClient(NamespacedClient):
         to Basic. If the operator privileges feature is enabled, only operator users
         can use this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-license.html>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         :param timeout: Period to wait for a response. If no response is received before
@@ -90,7 +90,7 @@ class LicenseClient(NamespacedClient):
         Not Found` response. If you receive an unexpected 404 response after cluster
         startup, wait a short period and retry the request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-license.html>`_
 
         :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
             license types. If `false`, this parameter returns platinum for both platinum
@@ -136,7 +136,7 @@ class LicenseClient(NamespacedClient):
         """
         Get the basic license status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-basic-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
@@ -171,7 +171,7 @@ class LicenseClient(NamespacedClient):
         """
         Get the trial status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-trial-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
@@ -221,7 +221,7 @@ class LicenseClient(NamespacedClient):
         TLS on the transport networking layer before you install the license. If the
         operator privileges feature is enabled, only operator users can use this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/update-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-license.html>`_
 
         :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:
@@ -290,7 +290,7 @@ class LicenseClient(NamespacedClient):
         parameter set to `true`. To check the status of your basic license, use the get
         basic license API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
@@ -345,7 +345,7 @@ class LicenseClient(NamespacedClient):
         however, request an extended trial at https://www.elastic.co/trialextension.
         To check the status of your trial, use the get trial status API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)

@@ -46,7 +46,7 @@ class SearchApplicationClient(NamespacedClient):
         Delete a search application. Remove a search application and its associated alias.
         Indices attached to the search application are not removed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-search-application.html>`_
 
         :param name: The name of the search application to delete
         """
@@ -88,7 +88,7 @@ class SearchApplicationClient(NamespacedClient):
         Delete a behavioral analytics collection. The associated data stream is also
         deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-analytics-collection.html>`_
 
         :param name: The name of the analytics collection to be deleted
         """
@@ -129,7 +129,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Get search application details.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-search-application.html>`_
 
         :param name: The name of the search application
         """
@@ -170,7 +170,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Get behavioral analytics collections.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-analytics-collection.html>`_
 
         :param name: A list of analytics collections to limit the returned information
         """
@@ -218,7 +218,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Get search applications. Get information about search applications.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-search-applications.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-search-applications.html>`_
 
         :param from_: Starting offset.
         :param q: Query in the Lucene query string syntax.
@@ -271,7 +271,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Create a behavioral analytics collection event.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/post-analytics-collection-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/post-analytics-collection-event.html>`_
 
         :param collection_name: The name of the behavioral analytics collection.
         :param event_type: The analytics event type.
@@ -335,7 +335,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Create or update a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-search-application.html>`_
 
         :param name: The name of the search application to be created or updated.
         :param search_application:
@@ -389,7 +389,7 @@ class SearchApplicationClient(NamespacedClient):
         """
         Create a behavioral analytics collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-analytics-collection.html>`_
 
         :param name: The name of the analytics collection to be created or updated.
         """
@@ -441,7 +441,7 @@ class SearchApplicationClient(NamespacedClient):
         generated and run by calling the search application search API. You must have
         `read` privileges on the backing alias of the search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-application-render-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-application-render-query.html>`_
 
         :param name: The name of the search application to render teh query for.
         :param params:
@@ -503,7 +503,7 @@ class SearchApplicationClient(NamespacedClient):
         the search application or default template. Unspecified template parameters are
         assigned their default values if applicable.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/search-application-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/search-application-search.html>`_
 
         :param name: The name of the search application to be searched.
         :param params: Query parameters specific to this request, which will override
