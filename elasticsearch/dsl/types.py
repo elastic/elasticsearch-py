@@ -5630,8 +5630,8 @@ class RateAggregate(AttrDict[Any]):
 
 class Retries(AttrDict[Any]):
     """
-    :arg bulk: (required)
-    :arg search: (required)
+    :arg bulk: (required) The number of bulk actions retried.
+    :arg search: (required) The number of search actions retried.
     """
 
     bulk: int
