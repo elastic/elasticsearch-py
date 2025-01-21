@@ -41,7 +41,7 @@ class QueryRulesClient(NamespacedClient):
         action that is only recoverable by re-adding the same rule with the create or
         update query rule API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to delete
@@ -90,7 +90,7 @@ class QueryRulesClient(NamespacedClient):
         Delete a query ruleset. Remove a query ruleset and its associated data. This
         is a destructive action that is not recoverable.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to delete
         """
@@ -131,7 +131,7 @@ class QueryRulesClient(NamespacedClient):
         """
         Get a query rule. Get details about a query rule within a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to retrieve
@@ -179,7 +179,7 @@ class QueryRulesClient(NamespacedClient):
         """
         Get a query ruleset. Get details about a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset
         """
@@ -222,7 +222,7 @@ class QueryRulesClient(NamespacedClient):
         """
         Get all query rulesets. Get summarized information about the query rulesets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/list-query-rulesets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/list-query-rulesets.html>`_
 
         :param from_: The offset from the first result to fetch.
         :param size: The maximum number of results to retrieve.
@@ -281,7 +281,7 @@ class QueryRulesClient(NamespacedClient):
         than 100 documents, only the first 100 documents are pinned in the order they
         are specified in the ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-rule.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-query-rule.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset containing the
             rule to be created or updated.
@@ -366,7 +366,7 @@ class QueryRulesClient(NamespacedClient):
         rules pin more than 100 documents, only the first 100 documents are pinned in
         the order they are specified in the ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated.
@@ -420,7 +420,7 @@ class QueryRulesClient(NamespacedClient):
         Test a query ruleset. Evaluate match criteria against a query ruleset to identify
         the rules that would match that criteria.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/test-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/test-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated

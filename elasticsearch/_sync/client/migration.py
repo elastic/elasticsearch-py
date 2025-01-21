@@ -41,7 +41,7 @@ class MigrationClient(NamespacedClient):
         in the next major version. TIP: This APIs is designed for indirect use by the
         Upgrade Assistant. You are strongly recommended to use the Upgrade Assistant.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/migration-api-deprecation.html>`_
 
         :param index: Comma-separate list of data streams or indices to check. Wildcard
             (*) expressions are supported.
@@ -88,7 +88,7 @@ class MigrationClient(NamespacedClient):
         in progress. TIP: This API is designed for indirect use by the Upgrade Assistant.
         You are strongly recommended to use the Upgrade Assistant.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/feature-migration-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/feature-migration-api.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"
@@ -127,7 +127,7 @@ class MigrationClient(NamespacedClient):
         unavailable during the migration process. TIP: The API is designed for indirect
         use by the Upgrade Assistant. We strongly recommend you use the Upgrade Assistant.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/feature-migration-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/feature-migration-api.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_migration/system_features"

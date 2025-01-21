@@ -54,7 +54,7 @@ class GraphClient(NamespacedClient):
         from one more vertices of interest. You can exclude vertices that have already
         been returned.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/graph-explore-api.html>`_
 
         :param index: Name of the index.
         :param connections: Specifies or more fields from which you want to extract terms

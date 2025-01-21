@@ -48,7 +48,7 @@ class XPackClient(NamespacedClient):
         installed license. * Feature information for the features that are currently
         enabled and available under the current license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
         :param categories: A comma-separated list of the information categories to include
@@ -94,7 +94,7 @@ class XPackClient(NamespacedClient):
         enabled and available under the current license. The API also provides some usage
         statistics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/usage-api.html>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails

@@ -53,7 +53,7 @@ class SslClient(NamespacedClient):
         the API output includes all certificates in that store, even though some of the
         certificates might not be in active use within the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/security-api-ssl.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-ssl.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ssl/certificates"

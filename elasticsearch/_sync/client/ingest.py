@@ -41,7 +41,7 @@ class IngestClient(NamespacedClient):
         Delete GeoIP database configurations. Delete one or more IP geolocation database
         configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-geoip-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-geoip-database-api.html>`_
 
         :param id: A comma-separated list of geoip database configurations to delete
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -92,7 +92,7 @@ class IngestClient(NamespacedClient):
         """
         Delete IP geolocation database configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-ip-location-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-ip-location-database-api.html>`_
 
         :param id: A comma-separated list of IP location database configurations.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -145,7 +145,7 @@ class IngestClient(NamespacedClient):
         """
         Delete pipelines. Delete one or more ingest pipelines.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-pipeline-api.html>`_
 
         :param id: Pipeline ID or wildcard expression of pipeline IDs used to limit the
             request. To delete all ingest pipelines in a cluster, use a value of `*`.
@@ -195,7 +195,7 @@ class IngestClient(NamespacedClient):
         Get GeoIP statistics. Get download statistics for GeoIP2 databases that are used
         with the GeoIP processor.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/geoip-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/geoip-processor.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/geoip/stats"
@@ -232,7 +232,7 @@ class IngestClient(NamespacedClient):
         Get GeoIP database configurations. Get information about one or more IP geolocation
         database configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-geoip-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-geoip-database-api.html>`_
 
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
@@ -278,7 +278,7 @@ class IngestClient(NamespacedClient):
         """
         Get IP geolocation database configurations.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-ip-location-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-ip-location-database-api.html>`_
 
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
@@ -332,7 +332,7 @@ class IngestClient(NamespacedClient):
         Get pipelines. Get information about one or more ingest pipelines. This API returns
         a local reference of the pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-pipeline-api.html>`_
 
         :param id: Comma-separated list of pipeline IDs to retrieve. Wildcard (`*`) expressions
             are supported. To get all ingest pipelines, omit this parameter or use `*`.
@@ -386,7 +386,7 @@ class IngestClient(NamespacedClient):
         as the grok pattern you expect will match. A grok pattern is like a regular expression
         that supports aliased expressions that can be reused.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/grok-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/grok-processor.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/processor/grok"
@@ -430,7 +430,7 @@ class IngestClient(NamespacedClient):
         Create or update a GeoIP database configuration. Refer to the create or update
         IP geolocation database configuration API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-geoip-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-geoip-database-api.html>`_
 
         :param id: ID of the database configuration to create or update.
         :param maxmind: The configuration necessary to identify which IP geolocation
@@ -502,7 +502,7 @@ class IngestClient(NamespacedClient):
         """
         Create or update an IP geolocation database configuration.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-ip-location-database-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-ip-location-database-api.html>`_
 
         :param id: The database configuration identifier.
         :param configuration:
@@ -584,7 +584,7 @@ class IngestClient(NamespacedClient):
         """
         Create or update a pipeline. Changes made using this API take effect immediately.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/ingest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ingest.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param deprecated: Marks this ingest pipeline as deprecated. When a deprecated
@@ -678,7 +678,7 @@ class IngestClient(NamespacedClient):
         You can either specify an existing pipeline to use with the provided documents
         or supply a pipeline definition in the body of the request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/simulate-pipeline-api.html>`_
 
         :param docs: Sample documents to test in the pipeline.
         :param id: Pipeline to test. If you don’t specify a `pipeline` in the request

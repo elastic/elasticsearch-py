@@ -50,7 +50,7 @@ class ShutdownClient(NamespacedClient):
         and Elastic Cloud on Kubernetes. Direct use is not supported. If the operator
         privileges feature is enabled, you must be an operator to use this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-shutdown.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-shutdown.html>`_
 
         :param node_id: The node id of node to be removed from the shutdown state
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -108,7 +108,7 @@ class ShutdownClient(NamespacedClient):
         the operator privileges feature is enabled, you must be an operator to use this
         API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-shutdown.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-shutdown.html>`_
 
         :param node_id: Which node for which to retrieve the shutdown status
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -182,7 +182,7 @@ class ShutdownClient(NamespacedClient):
         IMPORTANT: This API does NOT terminate the Elasticsearch process. Monitor the
         node shutdown status to determine when it is safe to stop Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/put-shutdown.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-shutdown.html>`_
 
         :param node_id: The node identifier. This parameter is not validated against
             the cluster's active nodes. This enables you to register a node for shut

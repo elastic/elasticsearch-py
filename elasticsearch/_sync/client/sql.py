@@ -41,7 +41,7 @@ class SqlClient(NamespacedClient):
         """
         Clear an SQL search cursor.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clear-sql-cursor-api.html>`_
 
         :param cursor: Cursor to clear.
         """
@@ -90,7 +90,7 @@ class SqlClient(NamespacedClient):
         a search: * Users with the `cancel_task` cluster privilege. * The user who first
         submitted the search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/delete-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-async-sql-search-api.html>`_
 
         :param id: The identifier for the search.
         """
@@ -139,7 +139,7 @@ class SqlClient(NamespacedClient):
         features are enabled, only the user who first submitted the SQL search can retrieve
         the search using this API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-sql-search-api.html>`_
 
         :param id: The identifier for the search.
         :param delimiter: The separator for CSV results. The API supports this parameter
@@ -198,7 +198,7 @@ class SqlClient(NamespacedClient):
         Get the async SQL search status. Get the current status of an async SQL search
         or a stored synchronous SQL search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/get-async-sql-search-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-sql-search-status-api.html>`_
 
         :param id: The identifier for the search.
         """
@@ -283,7 +283,7 @@ class SqlClient(NamespacedClient):
         """
         Get SQL search results. Run an SQL request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/sql-search-api.html>`_
 
         :param allow_partial_search_results: If `true`, the response has partial results
             when there are shard request timeouts or shard failures. If `false`, the
@@ -406,7 +406,7 @@ class SqlClient(NamespacedClient):
         API request containing Query DSL. It accepts the same request body parameters
         as the SQL search API, excluding `cursor`.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.16/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/sql-translate-api.html>`_
 
         :param query: The SQL query to run.
         :param fetch_size: The maximum number of rows (or entries) to return in one response.
