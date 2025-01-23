@@ -1,6 +1,8 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-17-1>>
+* <<rn-8-17-0>>
 * <<rn-8-16-0>>
 * <<rn-8-15-1>>
 * <<rn-8-15-0>>
@@ -41,6 +43,51 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-17-1]]
+=== 8.17.1 (2025-01-23)
+
+- Make pyarrow dependency optional for tests (https://github.com/elastic/elasticsearch-py/pull/2733[#2733], contributed by danigm)
+- Update APIs:
+  * Add Simulate ingest API
+  * Add Get data stream lifecycle stats API
+  * Add Update inference API
+  * Add Create or update, Get and Delete IP geolocation database configuration APIs
+  * Add Bulk update API keys
+  * Add Get and Update Security index settings APIs
+  * Add OpenID Connect prepare authentication, OpenID Connect authenticate and OpenID Connect logout APIs
+  * Add Delegate PKI authentication API
+  * Add Repository analysis API
+  * Add Render Search Application Query API
+  * Add Find field structure and Find messages structure APIs
+  * Add Get Watcher index settings and Update Watcher index settings APIs
+  * Add experimental Check in and Claim connector sync job APIs
+  * Add experimental Set connector sync job errors and Set connector sync job stats APIs
+  * Add experimental Update connector features APIs
+  * Add experimental Post Event to an Analytics Collection API
+  * Add `timeout` and `master_timeout` to Snapshot lifecycle management (SLM) APIs
+  * Add `allow_partial_search_results` to SQL search API
+  * Add `throttle_period_in_millis` to Create or update watch API
+  * Fix query parameters for CAT APIs
+
+[discrete]
+[[rn-8-17-0]]
+=== 8.17.0 (2024-12-13)
+
+- Allow simsimd again on Python 3.13 (https://github.com/elastic/elasticsearch-py/pull/2722[#2722])
+- Update APIs:
+  * Mark all Inference APIs as stable.
+  * Add `allow_partial_search_results` to the Open Point in Time API
+  * Add `keep_alive` to the Get async search status API
+  * Remove the `keep_alive`, `pre_filter_shard_size` and `scroll` parameters from the Submit async search API. They were never supported.
+  * Add `master_timeout` and `timeout` to all autoscaling policy APIs
+  * Add `master_timeout` to the Alias exists and Get alias APIs
+  * Add `list_executed_pipelines` and `require_data_stream` to Bulk API
+  * Add `include_model_definition` to Get trained models API
+  * Add `meta` to Create data frame analytics API
+  * Add `aggs` to Create datafeeds API
+  * Add `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_unavailable` to Create anomaly detection jobs API
 
 [discrete]
 [[rn-8-16-0]]
