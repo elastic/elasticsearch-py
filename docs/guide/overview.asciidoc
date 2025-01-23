@@ -84,18 +84,6 @@ some of the more engaging tasks like bulk indexing and reindexing.
 [discrete]
 === Elasticsearch DSL
 
-For a more high level client library with more limited scope, have a look at
-https://elasticsearch-dsl.readthedocs.org/[elasticsearch-dsl] - a more Pythonic library
-sitting on top of `elasticsearch-py`.
-
-It provides a more convenient and idiomatic way to write and manipulate
-https://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html[queries]. It
-stays close to the Elasticsearch JSON DSL, mirroring its terminology and
-structure while exposing the whole range of the DSL from Python either directly
-using defined classes or a queryset-like expressions.
-
-It also provides an optional
-https://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype[persistence
-layer] for working with documents as Python objects in an ORM-like fashion:
-defining mappings, retrieving and saving documents, wrapping the document data
-in user-defined classes.
+For a higher level access with more limited scope, have a look at the DSL module,
+which provides a more convenient and idiomatic way to write and manipulate
+queries.
