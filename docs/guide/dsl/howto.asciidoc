@@ -1,0 +1,7 @@
+=== How-To Guides
+
+include::search_dsl.asciidoc[]
+include::persistence.asciidoc[]
+include::faceted_search.asciidoc[]
+include::update_by_query.asciidoc[]
+include::asyncio.asciidoc[]
