@@ -1,0 +1,761 @@
+==== Persistence
+
+You can use the DSL module to define your mappings and a basic
+persistent layer for your application.
+
+For more comprehensive examples have a look at the
+https://github.com/elastic/elasticsearch-py/tree/main/examples/dsl[DSL examples]
+directory in the repository.
+
+[[doc_type]]
+===== Document
+
+If you want to create a model-like wrapper around your documents, use
+the `Document` class. It can also be used to create all the necessary
+mappings and settings in elasticsearch (see `life-cycle` for details).
+
+[source,python]
+----
+from datetime import datetime
+from elasticsearch.dsl import Document, Date, Nested, Boolean, \
+    analyzer, InnerDoc, Completion, Keyword, Text
+
+html_strip = analyzer('html_strip',
+    tokenizer="standard",
+    filter=["standard", "lowercase", "stop", "snowball"],
+    char_filter=["html_strip"]
+)
+
+class Comment(InnerDoc):
+    author = Text(fields={'raw': Keyword()})
+    content = Text(analyzer='snowball')
+    created_at = Date()
+
+    def age(self):
+        return datetime.now() - self.created_at
+
+class Post(Document):
+    title = Text()
+    title_suggest = Completion()
+    created_at = Date()
+    published = Boolean()
+    category = Text(
+        analyzer=html_strip,
+        fields={'raw': Keyword()}
+    )
+
+    comments = Nested(Comment)
+
+    class Index:
+        name = 'blog'
+
+    def add_comment(self, author, content):
+        self.comments.append(
+          Comment(author=author, content=content, created_at=datetime.now()))
+
+    def save(self, ** kwargs):
+        self.created_at = datetime.now()
+        return super().save(** kwargs)
+----
+
+====== Data types
+
+The `Document` instances use native python types like `str` and
+`datetime`. In case of `Object` or `Nested` fields an instance of the
+`InnerDoc` subclass is used, as in the `add_comment` method in the
+above example where we are creating an instance of the `Comment` class.
+
+There are some specific types that were created as part of this library
+to make working with some field types easier, for example the `Range`
+object used in any of the
+https://www.elastic.co/guide/en/elasticsearch/reference/current/range.html[range
+fields]:
+
+[source,python]
+----
+from elasticsearch.dsl import Document, DateRange, Keyword, Range
+
+class RoomBooking(Document):
+    room = Keyword()
+    dates = DateRange()
+
+
+rb = RoomBooking(
+  room='Conference Room II',
+  dates=Range(
+    gte=datetime(2018, 11, 17, 9, 0, 0),
+    lt=datetime(2018, 11, 17, 10, 0, 0)
+  )
+)
+
+# Range supports the in operator correctly:
+datetime(2018, 11, 17, 9, 30, 0) in rb.dates # True
+
+# you can also get the limits and whether they are inclusive or exclusive:
+rb.dates.lower # datetime(2018, 11, 17, 9, 0, 0), True
+rb.dates.upper # datetime(2018, 11, 17, 10, 0, 0), False
+
+# empty range is unbounded
+Range().lower # None, False
+----
+
+====== Python Type Hints
+
+Document fields can be defined using standard Python type hints if
+desired. Here are some simple examples:
+
+[source,python]
+----
+from typing import Optional
+
+class Post(Document):
+    title: str                      # same as title = Text(required=True)
+    created_at: Optional[datetime]  # same as created_at = Date(required=False)
+    published: bool                 # same as published = Boolean(required=True)    
+----
+
+It is important to note that when using `Field` subclasses such as
+`Text`, `Date` and `Boolean`, they must be given in the right-side of an
+assignment, as shown in examples above. Using these classes as type
+hints will result in errors.
+
+Python types are mapped to their corresponding field type according to
+the following table:
+
+.Python type to DSL field mappings
+[cols=",",options="header",]
+|===
+|Python type |DSL field
+|`str` |`Text(required=True)`
+|`bool` |`Boolean(required=True)`
+|`int` |`Integer(required=True)`
+|`float` |`Float(required=True)`
+|`bytes` |`Binary(required=True)`
+|`datetime` |`Date(required=True)`
+|`date` |`Date(format="yyyy-MM-dd", required=True)`
+|===
+
+To type a field as optional, the standard `Optional` modifier from the
+Python `typing` package can be used. When using Python 3.10 or newer,
+"pipe" syntax can also be used, by adding `| None` to a type. The
+`List` modifier can be added to a field to convert it to an array,
+similar to using the `multi=True` argument on the field object.
+
+[source,python]
+----
+from typing import Optional, List
+
+class MyDoc(Document):
+    pub_date: Optional[datetime]  # same as pub_date = Date()
+    middle_name: str | None       # same as middle_name = Text()
+    authors: List[str]            # same as authors = Text(multi=True, required=True)
+    comments: Optional[List[str]] # same as comments = Text(multi=True)
+----
+
+A field can also be given a type hint of an `InnerDoc` subclass, in
+which case it becomes an `Object` field of that class. When the
+`InnerDoc` subclass is wrapped with `List`, a `Nested` field is created
+instead.
+
+[source,python]
+----
+from typing import List
+
+class Address(InnerDoc):
+    ...
+
+class Comment(InnerDoc):
+    ...
+
+class Post(Document):
+    address: Address         # same as address = Object(Address, required=True)
+    comments: List[Comment]  # same as comments = Nested(Comment, required=True)
+----
+
+Unfortunately it is impossible to have Python type hints that uniquely
+identify every possible Elasticsearch field type. To choose a field type
+that is different than the ones in the table above, the field instance
+can be added explicitly as a right-side assignment in the field
+declaration. The next example creates a field that is typed as
+`Optional[str]`, but is mapped to `Keyword` instead of `Text`:
+
+[source,python]
+----
+class MyDocument(Document):
+    category: Optional[str] = Keyword()
+----
+
+This form can also be used when additional options need to be given to
+initialize the field, such as when using custom analyzer settings or
+changing the `required` default:
+
+[source,python]
+----
+class Comment(InnerDoc):
+    content: str = Text(analyzer='snowball', required=True)
+----
+
+When using type hints as above, subclasses of `Document` and `InnerDoc`
+inherit some of the behaviors associated with Python dataclasses, as
+defined by https://peps.python.org/pep-0681/[PEP 681] and the
+https://typing.readthedocs.io/en/latest/spec/dataclasses.html#dataclass-transform[dataclass_transform
+decorator]. To add per-field dataclass options such as `default` or
+`default_factory`, the `mapped_field()` wrapper can be used on
+the right side of a typed field declaration:
+
+[source,python]
+----
+class MyDocument(Document):
+    title: str = mapped_field(default="no title")
+    created_at: datetime = mapped_field(default_factory=datetime.now)
+    published: bool = mapped_field(default=False)
+    category: str = mapped_field(Keyword(required=True), default="general")
+----
+
+When using the `mapped_field()` wrapper function, an explicit field
+type instance can be passed as a first positional argument, as the
+`category` field does in the example above.
+
+Static type checkers such as https://mypy-lang.org/[mypy] and
+https://github.com/microsoft/pyright[pyright] can use the type hints and
+the dataclass-specific options added to the `mapped_field()`
+function to improve type inference and provide better real-time
+suggestions in IDEs.
+
+One situation in which type checkers can't infer the correct type is
+when using fields as class attributes. Consider the following example:
+
+[source,python]
+----
+class MyDocument(Document):
+    title: str
+
+doc = MyDocument()
+# doc.title is typed as "str" (correct)
+# MyDocument.title is also typed as "str" (incorrect)
+----
+
+To help type checkers correctly identify class attributes as such, the
+`M` generic must be used as a wrapper to the type hint, as shown in the
+next examples:
+
+[source,python]
+----
+from elasticsearch.dsl import M
+
+class MyDocument(Document):
+    title: M[str]
+    created_at: M[datetime] = mapped_field(default_factory=datetime.now)
+
+doc = MyDocument()
+# doc.title is typed as "str"
+# doc.created_at is typed as "datetime"
+# MyDocument.title is typed as "InstrumentedField"
+# MyDocument.created_at is typed as "InstrumentedField"
+----
+
+Note that the `M` type hint does not provide any runtime behavior and
+its use is not required, but it can be useful to eliminate spurious type
+errors in IDEs or type checking builds.
+
+The `InstrumentedField` objects returned when fields are accessed as
+class attributes are proxies for the field instances that can be used
+anywhere a field needs to be referenced, such as when specifying sort
+options in a `Search` object:
+
+[source,python]
+----
+# sort by creation date descending, and title ascending
+s = MyDocument.search().sort(-MyDocument.created_at, MyDocument.title)
+----
+
+When specifying sorting order, the `{plus}` and `-` unary operators can
+be used on the class field attributes to indicate ascending and
+descending order.
+
+Finally, the `ClassVar` annotation can be used to define a regular class
+attribute that should not be mapped to the Elasticsearch index:
+
+[source,python]
+----
+from typing import ClassVar
+
+class MyDoc(Document):
+  title: M[str] created_at: M[datetime] =
+  mapped_field(default_factory=datetime.now) my_var:
+  ClassVar[str] # regular class variable, ignored by Elasticsearch
+----
+
+====== Note on dates
+
+The DSL module will always respect the timezone information (or
+lack thereof) on the `datetime` objects passed in or stored in
+Elasticsearch. Elasticsearch itself interprets all datetimes with no
+timezone information as `UTC`. If you wish to reflect this in your
+python code, you can specify `default_timezone` when instantiating a
+`Date` field:
+
+[source,python]
+----
+class Post(Document):
+    created_at = Date(default_timezone='UTC')
+----
+
+In that case any `datetime` object passed in (or parsed from
+elasticsearch) will be treated as if it were in `UTC` timezone.
+
+[[life-cycle]]
+====== Document life cycle
+
+Before you first use the `Post` document type, you need to create the
+mappings in Elasticsearch. For that you can either use the `index`
+object or create the mappings directly by calling the `init` class
+method:
+
+[source,python]
+----
+# create the mappings in Elasticsearch
+Post.init()
+----
+
+This code will typically be run in the setup for your application during
+a code deploy, similar to running database migrations.
+
+To create a new `Post` document just instantiate the class and pass in
+any fields you wish to set, you can then use standard attribute setting
+to change/add more fields. Note that you are not limited to the fields
+defined explicitly:
+
+[source,python]
+----
+# instantiate the document
+first = Post(title='My First Blog Post, yay!', published=True)
+# assign some field values, can be values or lists of values
+first.category = ['everything', 'nothing']
+# every document has an id in meta
+first.meta.id = 47
+
+
+# save the document into the cluster
+first.save()
+----
+
+All the metadata fields (`id`, `routing`, `index` etc) can be accessed
+(and set) via a `meta` attribute or directly using the underscored
+variant:
+
+[source,python]
+----
+post = Post(meta={'id': 42})
+
+# prints 42
+print(post.meta.id)
+
+# override default index
+post.meta.index = 'my-blog'
+----
+
+[NOTE]
+====
+Having all metadata accessible through `meta` means that this name is
+reserved and you shouldn't have a field called `meta` on your document.
+If you, however, need it you can still access the data using the get
+item (as opposed to attribute) syntax: `post['meta']`.
+====
+
+To retrieve an existing document use the `get` class method:
+
+[source,python]
+----
+# retrieve the document
+first = Post.get(id=42)
+# now we can call methods, change fields, ...
+first.add_comment('me', 'This is nice!')
+# and save the changes into the cluster again
+first.save()
+----
+
+The
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html[Update
+API] can also be used via the `update` method. By default any keyword
+arguments, beyond the parameters of the API, will be considered fields
+with new values. Those fields will be updated on the local copy of the
+document and then sent over as partial document to be updated:
+
+[source,python]
+----
+# retrieve the document
+first = Post.get(id=42)
+# you can update just individual fields which will call the update API
+# and also update the document in place
+first.update(published=True, published_by='me')
+----
+
+In case you wish to use a `painless` script to perform the update you
+can pass in the script string as `script` or the `id` of a
+https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-using.html#script-stored-scripts[stored script]
+via `script_id`. All additional keyword arguments to the
+`update` method will then be passed in as parameters of the script. The
+document will not be updated in place.
+
+[source,python]
+----
+# retrieve the document
+first = Post.get(id=42)
+# we execute a script in elasticsearch with additional kwargs being passed
+# as params into the script
+first.update(script='ctx._source.category.add(params.new_category)',
+             new_category='testing')
+----
+
+If the document is not found in elasticsearch an exception
+(`elasticsearch.NotFoundError`) will be raised. If you wish to return
+`None` instead just pass in `ignore=404` to suppress the exception:
+
+[source,python]
+----
+p = Post.get(id='not-in-es', ignore=404)
+p is None
+----
+
+When you wish to retrieve multiple documents at the same time by their
+`id` you can use the `mget` method:
+
+[source,python]
+----
+posts = Post.mget([42, 47, 256])
+----
+
+`mget` will, by default, raise a `NotFoundError` if any of the documents
+wasn't found and `RequestError` if any of the document had resulted in
+error. You can control this behavior by setting parameters:
+
+- `raise_on_error`:
+  If `True` (default) then any error will cause an exception to be
+  raised. Otherwise all documents containing errors will be treated as
+  missing.
+- `missing`:
+  Can have three possible values: `'none'` (default), `'raise'` and
+  `'skip'`. If a document is missing or errored it will either be
+  replaced with `None`, an exception will be raised or the document will
+  be skipped in the output list entirely.
+
+The index associated with the `Document` is accessible via the
+`_index` class property which gives you access to the `index` class.
+
+The `_index` attribute is also home to the `load_mappings`
+method which will update the mapping on the `Index` from elasticsearch.
+This is very useful if you use dynamic mappings and want the class to be
+aware of those fields (for example if you wish the `Date` fields to be
+properly (de)serialized):
+
+[source,python]
+----
+Post._index.load_mappings()
+----
+
+To delete a document just call its `delete` method:
+
+[source,python]
+----
+first = Post.get(id=42)
+first.delete()
+----
+
+====== Analysis
+
+To specify `analyzer` values for `Text` fields you can just use the name
+of the analyzer (as a string) and either rely on the analyzer being
+defined (like built-in analyzers) or define the analyzer yourself
+manually.
+
+Alternatively you can create your own analyzer and have the persistence
+layer handle its creation, from our example earlier:
+
+[source,python]
+----
+from elasticsearch.dsl import analyzer, tokenizer
+
+my_analyzer = analyzer('my_analyzer',
+    tokenizer=tokenizer('trigram', 'nGram', min_gram=3, max_gram=3),
+    filter=['lowercase']
+)
+----
+
+Each analysis object needs to have a name (`my_analyzer` and
+`trigram` in our example) and tokenizers, token filters and char filters
+also need to specify type (`nGram` in our example).
+
+Once you have an instance of a custom `analyzer` you can also call the
+https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html[analyze
+API] on it by using the `simulate` method:
+
+[source,python]
+----
+response = my_analyzer.simulate('Hello World!')
+
+# ['hel', 'ell', 'llo', 'lo ', 'o w', ' wo', 'wor', 'orl', 'rld', 'ld!']
+tokens = [t.token for t in response.tokens]
+----
+
+[NOTE]
+====
+When creating a mapping which relies on a custom analyzer the index must
+either not exist or be closed. To create multiple `Document`-defined
+mappings you can use the `index` object.
+====
+
+====== Search
+
+To search for this document type, use the `search` class method:
+
+[source,python]
+----
+# by calling .search we get back a standard Search object
+s = Post.search()
+# the search is already limited to the index and doc_type of our document
+s = s.filter('term', published=True).query('match', title='first')
+
+
+results = s.execute()
+
+# when you execute the search the results are wrapped in your document class (Post)
+for post in results:
+    print(post.meta.score, post.title)
+----
+
+Alternatively you can just take a `Search` object and restrict it to
+return our document type, wrapped in correct class:
+
+[source,python]
+----
+s = Search()
+s = s.doc_type(Post)
+----
+
+You can also combine document classes with standard doc types (just
+strings), which will be treated as before. You can also pass in multiple
+`Document` subclasses and each document in the response will be wrapped
+in it's class.
+
+If you want to run suggestions, just use the `suggest` method on the
+`Search` object:
+
+[source,python]
+----
+s = Post.search()
+s = s.suggest('title_suggestions', 'pyth', completion={'field': 'title_suggest'})
+
+response = s.execute()
+
+for result in response.suggest.title_suggestions:
+    print('Suggestions for %s:' % result.text)
+    for option in result.options:
+        print('  %s (%r)' % (option.text, option.payload))
+----
+
+====== `class Meta` options
+
+In the `Meta` class inside your document definition you can define
+various metadata for your document:
+
+- `mapping`:
+  optional instance of `Mapping` class to use as base for the mappings
+  created from the fields on the document class itself.
+
+Any attributes on the `Meta` class that are instance of `MetaField` will
+be used to control the mapping of the meta fields (`_all`, `dynamic`
+etc). Just name the parameter (without the leading underscore) as the
+field you wish to map and pass any parameters to the `MetaField` class:
+
+[source,python]
+----
+class Post(Document):
+    title = Text()
+
+    class Meta:
+        all = MetaField(enabled=False)
+        dynamic = MetaField('strict')
+----
+
+====== `class Index` options
+
+This section of the `Document` definition can contain any information
+about the index, its name, settings and other attributes:
+
+- `name`:
+  name of the index to use, if it contains a wildcard (`*`) then it
+  cannot be used for any write operations and an `index` kwarg will have
+  to be passed explicitly when calling methods like `.save()`.
+- `using`:
+  default connection alias to use, defaults to `'default'`
+- `settings`:
+  dictionary containing any settings for the `Index` object like
+  `number_of_shards`.
+- `analyzers`:
+  additional list of analyzers that should be defined on an index (see
+  `analysis` for details).
+- `aliases`:
+  dictionary with any aliases definitions
+
+====== Document Inheritance
+
+You can use standard Python inheritance to extend models, this can be
+useful in a few scenarios. For example if you want to have a
+`BaseDocument` defining some common fields that several different
+`Document` classes should share:
+
+[source,python]
+----
+class User(InnerDoc):
+    username = Text(fields={'keyword': Keyword()})
+    email = Text()
+
+class BaseDocument(Document):
+    created_by = Object(User)
+    created_date = Date()
+    last_updated = Date()
+
+    def save(**kwargs):
+        if not self.created_date:
+            self.created_date = datetime.now()
+        self.last_updated = datetime.now()
+        return super(BaseDocument, self).save(**kwargs)
+
+class BlogPost(BaseDocument):
+    class Index:
+        name = 'blog'
+----
+
+Another use case would be using the
+https://www.elastic.co/guide/en/elasticsearch/reference/current/parent-join.html[join
+type] to have multiple different entities in a single index. You can see
+an
+https://github.com/elastic/elasticsearch-py/blob/master/examples/dsl/parent_child.py[example]
+of this approach. Note that in this case, if the subclasses don't define
+their own [.title-ref]#Index# classes, the mappings are merged and
+shared between all the subclasses.
+
+===== Index
+
+In typical scenario using `class Index` on a `Document` class is
+sufficient to perform any action. In a few cases though it can be useful
+to manipulate an `Index` object directly.
+
+`Index` is a class responsible for holding all the metadata related to
+an index in elasticsearch - mappings and settings. It is most useful
+when defining your mappings since it allows for easy creation of
+multiple mappings at the same time. This is especially useful when
+setting up your elasticsearch objects in a migration:
+
+[source,python]
+----
+from elasticsearch.dsl import Index, Document, Text, analyzer
+
+blogs = Index('blogs')
+
+# define custom settings
+blogs.settings(
+    number_of_shards=1,
+    number_of_replicas=0
+)
+
+# define aliases
+blogs.aliases(
+    old_blogs={}
+)
+
+# register a document with the index
+blogs.document(Post)
+
+# can also be used as class decorator when defining the Document
+@blogs.document
+class Post(Document):
+    title = Text()
+
+# You can attach custom analyzers to the index
+
+html_strip = analyzer('html_strip',
+    tokenizer="standard",
+    filter=["standard", "lowercase", "stop", "snowball"],
+    char_filter=["html_strip"]
+)
+
+blogs.analyzer(html_strip)
+
+# delete the index, ignore if it doesn't exist
+blogs.delete(ignore=404)
+
+# create the index in elasticsearch
+blogs.create()
+----
+
+You can also set up a template for your indices and use the `clone`
+method to create specific copies:
+
+[source,python]
+----
+blogs = Index('blogs', using='production')
+blogs.settings(number_of_shards=2)
+blogs.document(Post)
+
+# create a copy of the index with different name
+company_blogs = blogs.clone('company-blogs')
+
+# create a different copy on different cluster
+dev_blogs = blogs.clone('blogs', using='dev')
+# and change its settings
+dev_blogs.setting(number_of_shards=1)
+----
+
+[[index-template]]
+====== IndexTemplate
+
+The DSL module also exposes an option to manage
+https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-templates.html[index
+templates] in elasticsearch using the `IndexTemplate` class which has
+very similar API to `Index`.
+
+Once an index template is saved in elasticsearch it's contents will be
+automatically applied to new indices (existing indices are completely
+unaffected by templates) that match the template pattern (any index
+starting with `blogs-` in our example), even if the index is created
+automatically upon indexing a document into that index.
+
+Potential workflow for a set of time based indices governed by a single
+template:
+
+[source,python]
+----
+from datetime import datetime
+
+from elasticsearch.dsl import Document, Date, Text
+
+
+class Log(Document):
+    content = Text()
+    timestamp = Date()
+
+    class Index:
+        name = "logs-*"
+        settings = {
+          "number_of_shards": 2
+        }
+
+    def save(self, **kwargs):
+        # assign now if no timestamp given
+        if not self.timestamp:
+            self.timestamp = datetime.now()
+
+        # override the index to go to the proper timeslot
+        kwargs['index'] = self.timestamp.strftime('logs-%Y%m%d')
+        return super().save(**kwargs)
+
+# once, as part of application setup, during deploy/migrations:
+logs = Log._index.as_template('logs', order=0)
+logs.save()
+
+# to perform search across all logs:
+search = Log.search()
+----
+
