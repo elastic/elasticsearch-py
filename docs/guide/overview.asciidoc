@@ -82,7 +82,7 @@ some of the more engaging tasks like bulk indexing and reindexing.
 
 
 [discrete]
-=== Elasticsearch DSL
+=== Elasticsearch Python DSL
 
 For a higher level access with more limited scope, have a look at the DSL module,
 which provides a more convenient and idiomatic way to write and manipulate

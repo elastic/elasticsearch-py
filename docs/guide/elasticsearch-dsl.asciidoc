@@ -1,5 +1,5 @@
 [[elasticsearch-dsl]]
-== Elasticsearch DSL
+== Elasticsearch Python DSL
 
 Elasticsearch DSL is a module of the official Python client that aims to help
 with writing and running queries against Elasticsearch in a more convenient and

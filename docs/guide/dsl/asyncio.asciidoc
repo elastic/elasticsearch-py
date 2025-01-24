@@ -1,5 +1,5 @@
 [[asyncio]]
-==== Using asyncio with Elasticsearch DSL
+==== Using asyncio with Elasticsearch Python DSL
 
 The DSL module supports async/await with
 https://docs.python.org/3/library/asyncio.html[asyncio]. To ensure that
