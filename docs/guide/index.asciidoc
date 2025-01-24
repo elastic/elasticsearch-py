@@ -22,6 +22,8 @@ include::integrations.asciidoc[]
 
 include::examples.asciidoc[]
 
+include::elasticsearch-dsl.asciidoc[]
+
 include::helpers.asciidoc[]
 
 include::release-notes.asciidoc[]
