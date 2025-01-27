@@ -231,6 +231,51 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def cancel_migrate_reindex(
+        self,
+        *,
+        index: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Cancel a migration reindex operation.</p>
+          <p>Cancel a migration reindex attempt for a data stream or index.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/migrate-data-stream.html>`_
+
+        :param index: The index or data stream name
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/_migration/reindex/{__path_parts["index"]}/_cancel'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.cancel_migrate_reindex",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def clear_cache(
         self,
         *,
@@ -707,6 +752,71 @@ class IndicesClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="indices.create_data_stream",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="create_from",
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def create_from(
+        self,
+        *,
+        source: str,
+        dest: str,
+        create_from: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an index from a source index.</p>
+          <p>Copy the mappings and settings from the source index to a destination index while allowing request settings and mappings to override the source values.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/migrate-data-stream.html>`_
+
+        :param source: The source index or data stream name
+        :param dest: The destination index or data stream name
+        :param create_from:
+        """
+        if source in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'source'")
+        if dest in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'dest'")
+        if create_from is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'create_from' and 'body', one of them should be set."
+            )
+        elif create_from is not None and body is not None:
+            raise ValueError("Cannot set both 'create_from' and 'body'")
+        __path_parts: t.Dict[str, str] = {
+            "source": _quote(source),
+            "dest": _quote(dest),
+        }
+        __path = f'/_create_from/{__path_parts["source"]}/{__path_parts["dest"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = create_from if create_from is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.create_from",
             path_parts=__path_parts,
         )
 
@@ -2586,6 +2696,51 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def get_migrate_reindex_status(
+        self,
+        *,
+        index: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get the migration reindexing status.</p>
+          <p>Get the status of a migration reindex attempt for a data stream or index.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/migrate-data-stream.html>`_
+
+        :param index: The index or data stream name.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/_migration/reindex/{__path_parts["index"]}/_status'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_migrate_reindex_status",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def get_settings(
         self,
         *,
@@ -2751,6 +2906,62 @@ class IndicesClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="indices.get_template",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="reindex",
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def migrate_reindex(
+        self,
+        *,
+        reindex: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Reindex legacy backing indices.</p>
+          <p>Reindex all legacy backing indices for a data stream.
+          This operation occurs in a persistent task.
+          The persistent task ID is returned immediately and the reindexing work is completed in that task.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/migrate-data-stream.html>`_
+
+        :param reindex:
+        """
+        if reindex is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'reindex' and 'body', one of them should be set."
+            )
+        elif reindex is not None and body is not None:
+            raise ValueError("Cannot set both 'reindex' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_migration/reindex"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = reindex if reindex is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.migrate_reindex",
             path_parts=__path_parts,
         )
 
