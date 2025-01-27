@@ -85,6 +85,7 @@ class ConnectorClient(NamespacedClient):
         delete_sync_jobs: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        hard: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -103,6 +104,7 @@ class ConnectorClient(NamespacedClient):
         :param connector_id: The unique identifier of the connector to be deleted
         :param delete_sync_jobs: A flag indicating if associated sync jobs should be
             also removed. Defaults to false.
+        :param hard: A flag indicating if the connector should be hard deleted.
         """
         if connector_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'connector_id'")
@@ -115,6 +117,8 @@ class ConnectorClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if hard is not None:
+            __query["hard"] = hard
         if human is not None:
             __query["human"] = human
         if pretty is not None:
@@ -138,6 +142,7 @@ class ConnectorClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        include_deleted: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -150,6 +155,8 @@ class ConnectorClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-connector-api.html>`_
 
         :param connector_id: The unique identifier of the connector
+        :param include_deleted: A flag to indicate if the desired connector should be
+            fetched, even if it was soft-deleted.
         """
         if connector_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'connector_id'")
@@ -162,6 +169,8 @@ class ConnectorClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if include_deleted is not None:
+            __query["include_deleted"] = include_deleted
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -333,6 +342,7 @@ class ConnectorClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
+        include_deleted: t.Optional[bool] = None,
         index_name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
@@ -351,6 +361,8 @@ class ConnectorClient(NamespacedClient):
         :param connector_name: A comma-separated list of connector names to fetch connector
             documents for
         :param from_: Starting offset (default: 0)
+        :param include_deleted: A flag to indicate if the desired connector should be
+            fetched, even if it was soft-deleted.
         :param index_name: A comma-separated list of connector index names to fetch connector
             documents for
         :param query: A wildcard query string that filters connectors with matching name,
@@ -372,6 +384,8 @@ class ConnectorClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
+        if include_deleted is not None:
+            __query["include_deleted"] = include_deleted
         if index_name is not None:
             __query["index_name"] = index_name
         if pretty is not None:
