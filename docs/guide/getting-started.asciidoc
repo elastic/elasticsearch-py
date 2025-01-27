@@ -70,11 +70,33 @@ This is how you create the `my_index` index:
 client.indices.create(index="my_index")
 ----
 
+Optionally, you can first define the expected types of your features with a
+custom mapping.
+
+[source,py]
+----
+mappings = {
+    "properties": {
+        "foo": {"type": "text"},
+        "bar": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256,
+                }
+            },
+        },
+    }
+}
+
+client.indices.create(index="my_index", mappings=mappings)
+----
 
 [discrete]
 ==== Indexing documents
 
-This is a simple way of indexing a document:
+This indexes a document with the index API:
 
 [source,py]
 ----
@@ -87,6 +109,28 @@ client.index(
     }
 )
 ----
+
+You can also index multiple documents at once with the bulk helper function:
+
+[source,py]
+----
+from elasticsearch import helpers
+
+def generate_docs():
+    for i in range(10):
+        yield {
+            "_index": "my_index",
+            "foo": f"foo {i}",
+            "bar": "bar",
+        }
+
+helpers.bulk(client, generate_docs())
+----
+
+These helpers are the recommended way to perform bulk ingestion. While it is
+also possible to perform bulk ingestion using `client.bulk` directly, the
+helpers handle retries, ingesting chunk by chunk and more. See the
+<<client-helpers>> page for more details.
 
 
 [discrete]
@@ -122,10 +166,14 @@ This is how you can update a document, for example to add a new field:
 
 [source,py]
 ----
-client.update(index="my_index", id="my_document_id", doc={
-    "foo": "bar",
-    "new_field": "new value",
-})
+client.update(
+    index="my_index",
+    id="my_document_id",
+    doc={
+        "foo": "bar",
+        "new_field": "new value",
+    }
+)
 ----
 
 
