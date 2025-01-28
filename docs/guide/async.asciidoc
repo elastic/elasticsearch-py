@@ -15,11 +15,12 @@ $ python -m pip install elasticsearch aiohttp
 $ python -m pip install elasticsearch[async]
 ----
 
+[discrete]
 === Getting Started with Async
 
 After installation all async API endpoints are available via
 `~elasticsearch.AsyncElasticsearch` and are used in the same way as
-other APIs, just with an extra `await`:
+other APIs, with an extra `await`:
 
 [source,python]
 ----
@@ -43,10 +44,13 @@ loop.run_until_complete(main())
 All APIs that are available under the sync client are also available
 under the async client.
 
+https://elasticsearch-py.readthedocs.io/en/latest/async.html#api-reference[Reference documentation]
+
+[discrete]
 === ASGI Applications and Elastic APM
 
 https://asgi.readthedocs.io[ASGI] (Asynchronous Server Gateway
-Interface) is a new way to serve Python web applications making use of
+Interface) is a way to serve Python web applications making use of
 async I/O to achieve better performance. Some examples of ASGI
 frameworks include FastAPI, Django 3.0+, and Starlette. If you're
 using one of these frameworks along with Elasticsearch then you should
@@ -61,8 +65,12 @@ https://fastapi.tiangolo.com/[FastAPI] and APM tracing there is a
 https://github.com/elastic/elasticsearch-py/tree/master/examples/fastapi-apm[pre-built
 example] in the `examples/fastapi-apm` directory.
 
+See also the <<opentelemetry>> page.
+
+[discrete]
 === Frequently Asked Questions
 
+[discrete]
 ==== ValueError when initializing `AsyncElasticsearch`?
 
 If when trying to use `AsyncElasticsearch` you receive
@@ -71,6 +79,7 @@ you should ensure that you have `aiohttp` installed in your environment
 (check with `$ python -m pip freeze | grep aiohttp`). Otherwise,
 async support won't be available.
 
+[discrete]
 ==== What about the `elasticsearch-async` package?
 
 Previously asyncio was supported separately via the
@@ -79,6 +88,7 @@ package. The `elasticsearch-async` package has been deprecated in favor
 of `AsyncElasticsearch` provided by the `elasticsearch` package in v7.8
 and onwards.
 
+[discrete]
 ==== Receiving 'Unclosed client session / connector' warning?
 
 This warning is created by `aiohttp` when an open HTTP connection is
@@ -117,6 +127,7 @@ async def main():
 You can run this example by saving it to `main.py` and executing
 `ELASTICSEARCH_URL=http://localhost:9200 uvicorn main:app`.
 
+[discrete]
 === Async Helpers
 
 Async variants of all helpers are available in `elasticsearch.helpers`
@@ -125,3 +136,6 @@ are identical to the ones in the sync <<client-helpers>> documentation.
 
 All async helpers that accept an iterator or generator also accept async
 iterators and async generators.
+
+https://elasticsearch-py.readthedocs.io/en/latest/async.html#async-helpers[Reference documentation]
+
