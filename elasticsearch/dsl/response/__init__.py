@@ -53,9 +53,19 @@ __all__ = [
 class Response(AttrDict[Any], Generic[_R]):
     """An Elasticsearch search response.
 
-    :arg took: (required)
-    :arg timed_out: (required)
-    :arg _shards: (required)
+    :arg took: (required) The number of milliseconds it took Elasticsearch
+        to run the request. This value is calculated by measuring the time
+        elapsed between receipt of a request on the coordinating node and
+        the time at which the coordinating node is ready to send the
+        response. It includes:  * Communication time between the
+        coordinating node and data nodes * Time the request spends in the
+        search thread pool, queued for execution * Actual run time  It
+        does not include:  * Time needed to send the request to
+        Elasticsearch * Time needed to serialize the JSON response * Time
+        needed to send the response to a client
+    :arg timed_out: (required) If `true`, the request timed out before
+        completion; returned results may be partial or empty.
+    :arg _shards: (required) A count of shards used for the request.
     :arg hits: search results
     :arg aggregations: aggregation results
     :arg _clusters:
@@ -64,7 +74,11 @@ class Response(AttrDict[Any], Generic[_R]):
     :arg num_reduce_phases:
     :arg profile:
     :arg pit_id:
-    :arg _scroll_id:
+    :arg _scroll_id: The identifier for the search and its search context.
+        You can use this scroll ID with the scroll API to retrieve the
+        next batch of search results for the request. This property is
+        returned only if the `scroll` query parameter is specified in the
+        request.
     :arg suggest:
     :arg terminated_early:
     """
@@ -303,22 +317,42 @@ class AggResponse(AttrDict[Any], Generic[_R]):
 class UpdateByQueryResponse(AttrDict[Any], Generic[_R]):
     """An Elasticsearch update by query response.
 
-    :arg batches:
-    :arg failures:
-    :arg noops:
-    :arg deleted:
-    :arg requests_per_second:
-    :arg retries:
+    :arg batches: The number of scroll responses pulled back by the update
+        by query.
+    :arg failures: Array of failures if there were any unrecoverable
+        errors during the process. If this is non-empty then the request
+        ended because of those failures. Update by query is implemented
+        using batches. Any failure causes the entire process to end, but
+        all failures in the current batch are collected into the array.
+        You can use the `conflicts` option to prevent reindex from ending
+        when version conflicts occur.
+    :arg noops: The number of documents that were ignored because the
+        script used for the update by query returned a noop value for
+        `ctx.op`.
+    :arg deleted: The number of documents that were successfully deleted.
+    :arg requests_per_second: The number of requests per second
+        effectively run during the update by query.
+    :arg retries: The number of retries attempted by update by query.
+        `bulk` is the number of bulk actions retried. `search` is the
+        number of search actions retried.
     :arg task:
-    :arg timed_out:
-    :arg took:
-    :arg total:
-    :arg updated:
-    :arg version_conflicts:
+    :arg timed_out: If true, some requests timed out during the update by
+        query.
+    :arg took: The number of milliseconds from start to end of the whole
+        operation.
+    :arg total: The number of documents that were successfully processed.
+    :arg updated: The number of documents that were successfully updated.
+    :arg version_conflicts: The number of version conflicts that the
+        update by query hit.
     :arg throttled:
-    :arg throttled_millis:
+    :arg throttled_millis: The number of milliseconds the request slept to
+        conform to `requests_per_second`.
     :arg throttled_until:
-    :arg throttled_until_millis:
+    :arg throttled_until_millis: This field should always be equal to zero
+        in an _update_by_query response. It only has meaning when using
+        the task API, where it indicates the next time (in milliseconds
+        since epoch) a throttled request will be run again in order to
+        conform to `requests_per_second`.
     """
 
     _search: "UpdateByQueryBase[_R]"

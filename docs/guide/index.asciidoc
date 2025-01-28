@@ -16,6 +16,8 @@ include::connecting.asciidoc[]
 
 include::configuration.asciidoc[]
 
+include::async.asciidoc[]
+
 include::migration.asciidoc[]
 
 include::integrations.asciidoc[]
