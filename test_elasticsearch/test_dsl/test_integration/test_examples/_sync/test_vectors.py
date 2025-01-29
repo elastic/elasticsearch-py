@@ -22,7 +22,6 @@ from unittest import SkipTest
 import pytest
 
 from elasticsearch import Elasticsearch
-from test_elasticsearch.test_dsl.sleep import sleep
 
 from ..examples import vectors
 
@@ -48,9 +47,6 @@ def test_vector_search(
     mocker.patch.object(vectors, "SentenceTransformer", new=MockModel)
 
     vectors.create()
-    for i in range(10):
-        results = (vectors.search("Welcome to our team!")).execute()
-        if len(results.hits) > 0:
-            break
-        sleep(0.1)
+    vectors.WorkplaceDoc._index.refresh()
+    results = (vectors.search("Welcome to our team!")).execute()
     assert results[0].name == "New Employee Onboarding Guide"
