@@ -96,28 +96,25 @@ This client was designed as very thin wrapper around Elasticsearch's REST API to
 allow for maximum flexibility. This means that there are no opinions in this
 client; it also means that some of the APIs are a little cumbersome to use from
 Python. We have created some :ref:`helpers` to help with this issue as well as
-a more high level library (`elasticsearch-dsl`_) on top of this one to provide
-a more convenient way of working with Elasticsearch.
+a more high level `DSL module`_ to provide a more convenient way of working
+with Elasticsearch.
 
 
 
-Elasticsearch-DSL
+Elasticsearch DSL
 -----------------
 
-For a more high level client library with more limited scope, have a look at
-`elasticsearch-dsl`_ - a more pythonic library sitting on top of
-``elasticsearch-py``.
-
-`elasticsearch-dsl`_ provides a more convenient and idiomatic way to write and manipulate
-`queries`_ by mirroring the terminology and structure of Elasticsearch JSON DSL
-while exposing the whole range of the DSL from Python
+For a higher level access with more limited scope, have a look at the `DSL
+module`_, which provides a more convenient and idiomatic way to write and
+manipulate `queries`_ by mirroring the terminology and structure of
+Elasticsearch JSON DSL while exposing the whole range of the DSL from Python
 either directly using defined classes or a queryset-like expressions.
 
 It also provides an optional `persistence layer`_ for working with documents as
 Python objects in an ORM-like fashion: defining mappings, retrieving and saving
 documents, wrapping the document data in user-defined classes.
 
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+.. _DSL module: https://elasticsearch-dsl.readthedocs.io/
 .. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
 .. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
 
@@ -131,6 +128,7 @@ Contents
    quickstart
    interactive
    api
+   dsl
    exceptions
    async
    helpers
