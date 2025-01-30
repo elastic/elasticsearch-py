@@ -1,49 +1,49 @@
-.. _dsl:
+.. _async_dsl:
 
-DSL
-===
+Async DSL
+=========
 
 .. py:module:: elasticsearch.dsl
+   :no-index:
 
 Search
 ------
-.. autoclass:: Search
+.. autoclass:: AsyncSearch
    :inherited-members:
    :members:
 
 Multi-Search
 ------------
-.. autoclass:: MultiSearch
+.. autoclass:: AsyncMultiSearch
    :inherited-members:
    :members:
 
 Document
 --------
-.. autoclass:: Document
+.. autoclass:: AsyncDocument
    :inherited-members:
    :members:
 
 Index
 -----
-.. autoclass:: Index
+.. autoclass:: AsyncIndex
    :inherited-members:
    :members:
 
 Mapping
 -------
-.. autoclass:: Mapping
+.. autoclass:: AsyncMapping
    :inherited-members:
    :members:
 
 Faceted Search
 --------------
-.. autoclass:: FacetedSearch
+.. autoclass:: AsyncFacetedSearch
    :inherited-members:
    :members:
 
 Update by Query
 ---------------
-.. autoclass:: UpdateByQuery
+.. autoclass:: AsyncUpdateByQuery
    :inherited-members:
    :members:
-
