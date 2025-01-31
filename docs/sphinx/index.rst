@@ -4,18 +4,18 @@ Python Elasticsearch Client
 .. toctree::
    :maxdepth: 2 
 
-   api
+   es_api
    dsl
-   helpers
+   api_helpers
    exceptions
 
 .. toctree::
    :caption: Async
    :maxdepth: 2
 
-   async
+   async_es_api
    async_dsl
-   async_helpers
+   async_api_helpers
 
 
 License
