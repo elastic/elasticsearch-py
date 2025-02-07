@@ -22,14 +22,7 @@ from typing import Any, Dict
 import pytest
 from pytest import raises
 
-from elasticsearch.dsl import (
-    Date,
-    Document,
-    Index,
-    IndexTemplate,
-    Text,
-    analyzer,
-)
+from elasticsearch.dsl import Date, Document, Index, IndexTemplate, Text, analyzer
 
 
 class Post(Document):

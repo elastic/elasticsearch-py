@@ -16,15 +16,7 @@
 #  under the License.
 
 import contextlib
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    cast,
-)
+from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, cast
 
 from typing_extensions import Self
 

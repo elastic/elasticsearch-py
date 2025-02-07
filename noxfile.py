@@ -66,7 +66,7 @@ def test_otel(session):
 
 @nox.session()
 def format(session):
-    session.install(".", "black~=24.0", "isort", "flynt", "unasync>=0.6.0", "jinja2")
+    session.install(".", "black~=25.0", "isort", "flynt", "unasync>=0.6.0", "jinja2")
 
     session.run("python", "utils/run-unasync.py")
     session.run("python", "utils/run-unasync-dsl.py")
@@ -88,7 +88,7 @@ def lint(session):
 
     session.install(
         "flake8",
-        "black~=24.0",
+        "black~=25.0",
         "mypy",
         "isort",
         "types-requests",
