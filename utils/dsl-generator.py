@@ -31,6 +31,7 @@ jinja_env = Environment(
     trim_blocks=True,
     lstrip_blocks=True,
 )
+field_py = jinja_env.get_template("field.py.tpl")
 query_py = jinja_env.get_template("query.py.tpl")
 aggs_py = jinja_env.get_template("aggs.py.tpl")
 response_init_py = jinja_env.get_template("response.__init__.py.tpl")
@@ -738,6 +739,35 @@ class ElasticsearchSchema:
                         }
                     )
                     k["buckets_as_dict"] = generic_type
+                elif namespace == '_types.mapping':
+                    if arg['name'] in ['fields', 'properties']:
+                        # Python DSL provides a high level representation for the
+                        # "fields" and 'properties' properties that many types support
+                        k['args'].append({
+                            'name': arg['name'],
+                            "type": 'Union[Mapping[str, Field], "DefaultType"]',
+                            "doc": [f":arg {arg['name']}:"],
+                            "required": False,
+                        })
+                        if 'params' not in k:
+                            k['params'] = []
+                        k['params'].append({'name': arg['name'], 'param': {'type': 'field', 'hash': True}})
+    
+                    else:
+                        # also the Python DSL provides implementations of analyzers
+                        # and normalizers, so here we make sure these are noted as
+                        # params.
+                        self.add_attribute(
+                            k, arg, for_types_py=for_types_py, for_response=for_response
+                        )
+                        if arg['name'].endswith('analyzer'):
+                            if 'params' not in k:
+                                k['params'] = []
+                            k['params'].append({'name': arg['name'], 'param': {'type': 'analyzer'}})
+                        elif arg['name'].endswith('normalizer'):
+                            if 'params' not in k:
+                                k['params'] = []
+                            k['params'].append({'name': arg['name'], 'param': {'type': 'normalizer'}})
                 else:
                     if interface == "Hit" and arg["name"].startswith("_"):
                         # Python DSL removes the undersore prefix from all the
@@ -764,6 +794,77 @@ class ElasticsearchSchema:
                 type_["inherits"]["type"]["namespace"],
             )
         return k
+
+
+def generate_field_py(schema, filename):
+    """Generate field.py with all the Elasticsearch fields as Python classes.
+    """
+    float_fields = ['half_float', 'scaled_float', 'double', 'rank_feature']
+    integer_fields = ['byte', 'short', 'long']
+    range_fields = ['integer_range', 'float_range', 'long_range', 'double_range', 'date_range']
+    object_fields = ['nested']
+    coerced_fields = ['boolean', 'date', 'float', 'object', 'dense_vector', 'integer', 'ip', 'binary', 'percolator']
+
+    classes = []
+    property = schema.find_type("Property", "_types.mapping")
+    for type_ in property["type"]["items"]:
+        if type_["type"]["name"] == "DynamicProperty":
+            # no support for dynamic properties
+            continue
+        field = schema.find_type(type_["type"]["name"], type_["type"]["namespace"])
+        name = class_name = ''
+        for prop in field["properties"]:
+            if prop["name"] == "type":
+                if prop["type"]["kind"] != "literal_value":        
+                    raise RuntimeError(f"Unexpected property type {prop}")
+                name = prop["type"]["value"]
+                class_name = "".join([n.title() for n in name.split("_")])
+        k = schema.interface_to_python_class(
+            type_["type"]["name"], type_["type"]["namespace"], for_types_py=False, for_response=False
+        )
+        k['name'] = class_name
+        k['field'] = name
+        k['coerced'] = name in coerced_fields
+        if name in float_fields:
+            k['parent'] = 'Float'
+        elif name in integer_fields:
+            k['parent'] = 'Integer'
+        elif name in range_fields:
+            k['parent'] = 'RangeField'
+        elif name in object_fields:
+            k['parent'] = 'Object'
+        else:
+            k['parent'] = 'Field'
+        k['args'] = [prop for prop in k['args'] if prop['name'] != 'type']
+        if name == 'object':
+            # the DSL's object field has a doc_class argument
+            k['args'] = [
+                {
+                    "name": "doc_class",
+                    "type": "Union[Type[\"InnerDoc\"], \"DefaultType\"]",
+                    "doc": [":arg doc_class: base doc class that handles mapping.",
+                            "   If no `doc_class` is provided, new instance of `InnerDoc` will be created,",
+                            "   populated with `properties` and used. Can not be provided together with `properties`"],
+                    "required": False,
+               }
+            ] + k['args']
+        elif name == "date":
+            k['args'] = [
+                {
+                    "name": "default_timezone",
+                    "type": "Union[str, \"tzinfo\", \"DefaultType\"]",
+                    "doc": [":arg default_timezone: timezone that will be automatically used for tz-naive values",
+                            "   May be instance of `datetime.tzinfo` or string containing TZ offset"],
+                    "required": False,
+               }
+            ] + k['args']
+        classes.append(k)
+    # make sure parent classes appear first
+    classes = sorted(classes, key=lambda k: f'AA{k["name"]}' if k['name'] in ['Float', 'Integer', 'Object'] else k['name'])
+
+    with open(filename, "wt") as f:
+        f.write(field_py.render(classes=classes))
+    print(f"Generated {filename}.")
 
 
 def generate_query_py(schema, filename):
@@ -849,6 +950,7 @@ def generate_types_py(schema, filename):
 
 if __name__ == "__main__":
     schema = ElasticsearchSchema()
+    generate_field_py(schema, "elasticsearch/dsl/field.py")
     generate_query_py(schema, "elasticsearch/dsl/query.py")
     generate_aggs_py(schema, "elasticsearch/dsl/aggs.py")
     generate_response_init_py(schema, "elasticsearch/dsl/response/__init__.py")
