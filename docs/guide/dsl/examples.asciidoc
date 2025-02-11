@@ -1,0 +1,5 @@
+=== Examples
+
+Please see the
+https://github.com/elastic/elasticsearch-py/tree/master/examples/dsl[DSL examples]
+directory to see some complex examples using the DSL module.
