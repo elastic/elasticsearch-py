@@ -1,0 +1,48 @@
+[[elasticsearch-dsl]]
+== Elasticsearch Python DSL
+
+Elasticsearch DSL is a module of the official Python client that aims to help
+with writing and running queries against Elasticsearch in a more convenient and
+idiomatic way. It stays close to the Elasticsearch JSON DSL, mirroring its
+terminology and structure. It exposes the whole range of the DSL from
+Python either directly using defined classes or a queryset-like
+expressions. Here is an example:
+
+[source,python]
+....
+from elasticsearch.dsl import Search
+
+s = Search(index="my-index") \
+    .filter("term", category="search") \
+    .query("match", title="python")   \
+    .exclude("match", description="beta")
+for hit in s:
+    print(hit.title)
+....
+
+Or with asynchronous Python:
+
+[source,python]
+....
+from elasticsearch.dsl import AsyncSearch
+
+async def run_query():
+    s = AsyncSearch(index="my-index") \
+        .filter("term", category="search") \
+        .query("match", title="python")   \
+        .exclude("match", description="beta")
+    async for hit in s:
+        print(hit.title)
+....
+
+It also provides an optional wrapper for working with documents as
+Python objects: defining mappings, retrieving and saving documents,
+wrapping the document data in user-defined classes.
+
+To use the other Elasticsearch APIs (eg. cluster health) just use the
+regular client.
+
+include::dsl/configuration.asciidoc[]
+include::dsl/tutorials.asciidoc[]
+include::dsl/howto.asciidoc[]
+include::dsl/examples.asciidoc[]
