@@ -153,7 +153,8 @@ def test_multifield_supports_multiple_analyzers() -> None:
 
 def test_scaled_float() -> None:
     with pytest.raises(TypeError):
-        field.ScaledFloat()  # type: ignore
+        f = field.ScaledFloat()  # type: ignore
+        print(f.to_dict())
     f = field.ScaledFloat(123)
     assert f.to_dict() == {"scaling_factor": 123, "type": "scaled_float"}
 

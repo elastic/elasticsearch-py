@@ -233,7 +233,7 @@ class {{ k.name }}({{ k.parent }}):
         {{ arg.name }}: {{ arg.type }} = DEFAULT,
             {% endif %}
         {% endfor %}
-        *args,
+        *args: Any,
         {% for arg in k.args %}
             {% if not arg.positional %}
         {{ arg.name }}: {{ arg.type }} = DEFAULT,
@@ -253,21 +253,23 @@ class {{ k.name }}({{ k.parent }}):
         {% endfor %}
         {% if k.field == 'object' %}
 
-        if doc_class is not DEFAULT and (properties or dynamic is not None):
+        if doc_class is not DEFAULT and (properties is not DEFAULT or dynamic is not DEFAULT):
             raise ValidationException(
                 "doc_class and properties/dynamic should not be provided together"
             )
         if doc_class is not DEFAULT:
-            self._doc_class: Type["InnerDoc"] = doc_class  # type: ignore
+            self._doc_class: Type["InnerDoc"] = doc_class
         else:
             # FIXME import
             from .document import InnerDoc
 
             # no InnerDoc subclass, creating one instead...
             self._doc_class = type("InnerDoc", (InnerDoc,), {})
-            for name, field in (properties or {}).items():  # type: ignore
+            for name, field in (properties if properties is not DEFAULT else {}).items():
                 self._doc_class._doc_type.mapping.field(name, field)
-            if dynamic is not None:
+            if "properties" in kwargs:
+                del kwargs["properties"]
+            if dynamic is not DEFAULT:
                 self._doc_class._doc_type.mapping.meta("dynamic", dynamic)
 
         self._mapping: "MappingBase" = deepcopy(self._doc_class._doc_type.mapping)
@@ -347,7 +349,7 @@ class {{ k.name }}({{ k.parent }}):
         elif isinstance(default_timezone, str):
             self._default_timezone = tz.gettz(default_timezone)
         else:
-            self._default_timezone = default_timezone  # type: ignore
+            self._default_timezone = default_timezone
         super().__init__(*args, **kwargs)
 
     def _deserialize(self, data: Any) -> Union[datetime, date]:
@@ -405,7 +407,13 @@ class {{ k.name }}({{ k.parent }}):
             return int(data)
         return data
         {% elif k.field == "scaled_float" %}
-        super().__init__(scaling_factor=scaling_factor, *args, **kwargs)        
+        if 'scaling_factor' not in kwargs:
+            if len(args) > 0:
+                kwargs['scaling_factor'] = args[0]
+                args = args[1:]
+            else:
+                raise TypeError("missing required argument: 'scaling_factor'")
+        super().__init__(*args, **kwargs)
         {% elif k.field == "integer" %}
         super().__init__(*args, **kwargs)
 

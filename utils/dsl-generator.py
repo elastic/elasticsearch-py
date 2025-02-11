@@ -739,35 +739,48 @@ class ElasticsearchSchema:
                         }
                     )
                     k["buckets_as_dict"] = generic_type
-                elif namespace == '_types.mapping':
-                    if arg['name'] in ['fields', 'properties']:
+                elif namespace == "_types.mapping":
+                    if arg["name"] in ["fields", "properties"]:
                         # Python DSL provides a high level representation for the
                         # "fields" and 'properties' properties that many types support
-                        k['args'].append({
-                            'name': arg['name'],
-                            "type": 'Union[Mapping[str, Field], "DefaultType"]',
-                            "doc": [f":arg {arg['name']}:"],
-                            "required": False,
-                        })
-                        if 'params' not in k:
-                            k['params'] = []
-                        k['params'].append({'name': arg['name'], 'param': {'type': 'field', 'hash': True}})
-    
+                        k["args"].append(
+                            {
+                                "name": arg["name"],
+                                "type": 'Union[Mapping[str, Field], "DefaultType"]',
+                                "doc": [f":arg {arg['name']}:"],
+                                "required": False,
+                            }
+                        )
+                        if "params" not in k:
+                            k["params"] = []
+                        k["params"].append(
+                            {
+                                "name": arg["name"],
+                                "param": {"type": "field", "hash": True},
+                            }
+                        )
+
                     else:
                         # also the Python DSL provides implementations of analyzers
                         # and normalizers, so here we make sure these are noted as
-                        # params.
+                        # params and have an appropriate type hint.
                         self.add_attribute(
                             k, arg, for_types_py=for_types_py, for_response=for_response
                         )
-                        if arg['name'].endswith('analyzer'):
-                            if 'params' not in k:
-                                k['params'] = []
-                            k['params'].append({'name': arg['name'], 'param': {'type': 'analyzer'}})
-                        elif arg['name'].endswith('normalizer'):
-                            if 'params' not in k:
-                                k['params'] = []
-                            k['params'].append({'name': arg['name'], 'param': {'type': 'normalizer'}})
+                        if arg["name"].endswith("analyzer"):
+                            if "params" not in k:
+                                k["params"] = []
+                            k["params"].append(
+                                {"name": arg["name"], "param": {"type": "analyzer"}}
+                            )
+                            k["args"][-1]["type"] = 'Union[str, DslBase, "DefaultType"]'
+                        elif arg["name"].endswith("normalizer"):
+                            if "params" not in k:
+                                k["params"] = []
+                            k["params"].append(
+                                {"name": arg["name"], "param": {"type": "normalizer"}}
+                            )
+                            k["args"][-1]["type"] = 'Union[str, DslBase, "DefaultType"]'
                 else:
                     if interface == "Hit" and arg["name"].startswith("_"):
                         # Python DSL removes the undersore prefix from all the
@@ -797,13 +810,28 @@ class ElasticsearchSchema:
 
 
 def generate_field_py(schema, filename):
-    """Generate field.py with all the Elasticsearch fields as Python classes.
-    """
-    float_fields = ['half_float', 'scaled_float', 'double', 'rank_feature']
-    integer_fields = ['byte', 'short', 'long']
-    range_fields = ['integer_range', 'float_range', 'long_range', 'double_range', 'date_range']
-    object_fields = ['nested']
-    coerced_fields = ['boolean', 'date', 'float', 'object', 'dense_vector', 'integer', 'ip', 'binary', 'percolator']
+    """Generate field.py with all the Elasticsearch fields as Python classes."""
+    float_fields = ["half_float", "scaled_float", "double", "rank_feature"]
+    integer_fields = ["byte", "short", "long"]
+    range_fields = [
+        "integer_range",
+        "float_range",
+        "long_range",
+        "double_range",
+        "date_range",
+    ]
+    object_fields = ["nested"]
+    coerced_fields = [
+        "boolean",
+        "date",
+        "float",
+        "object",
+        "dense_vector",
+        "integer",
+        "ip",
+        "binary",
+        "percolator",
+    ]
 
     classes = []
     property = schema.find_type("Property", "_types.mapping")
@@ -812,55 +840,71 @@ def generate_field_py(schema, filename):
             # no support for dynamic properties
             continue
         field = schema.find_type(type_["type"]["name"], type_["type"]["namespace"])
-        name = class_name = ''
+        name = class_name = ""
         for prop in field["properties"]:
             if prop["name"] == "type":
-                if prop["type"]["kind"] != "literal_value":        
+                if prop["type"]["kind"] != "literal_value":
                     raise RuntimeError(f"Unexpected property type {prop}")
                 name = prop["type"]["value"]
                 class_name = "".join([n.title() for n in name.split("_")])
         k = schema.interface_to_python_class(
-            type_["type"]["name"], type_["type"]["namespace"], for_types_py=False, for_response=False
+            type_["type"]["name"],
+            type_["type"]["namespace"],
+            for_types_py=False,
+            for_response=False,
         )
-        k['name'] = class_name
-        k['field'] = name
-        k['coerced'] = name in coerced_fields
+        k["name"] = class_name
+        k["field"] = name
+        k["coerced"] = name in coerced_fields
         if name in float_fields:
-            k['parent'] = 'Float'
+            k["parent"] = "Float"
         elif name in integer_fields:
-            k['parent'] = 'Integer'
+            k["parent"] = "Integer"
         elif name in range_fields:
-            k['parent'] = 'RangeField'
+            k["parent"] = "RangeField"
         elif name in object_fields:
-            k['parent'] = 'Object'
+            k["parent"] = "Object"
         else:
-            k['parent'] = 'Field'
-        k['args'] = [prop for prop in k['args'] if prop['name'] != 'type']
-        if name == 'object':
+            k["parent"] = "Field"
+        k["args"] = [prop for prop in k["args"] if prop["name"] != "type"]
+        if name == "object":
             # the DSL's object field has a doc_class argument
-            k['args'] = [
+            k["args"] = [
                 {
                     "name": "doc_class",
-                    "type": "Union[Type[\"InnerDoc\"], \"DefaultType\"]",
-                    "doc": [":arg doc_class: base doc class that handles mapping.",
-                            "   If no `doc_class` is provided, new instance of `InnerDoc` will be created,",
-                            "   populated with `properties` and used. Can not be provided together with `properties`"],
+                    "type": 'Union[Type["InnerDoc"], "DefaultType"]',
+                    "doc": [
+                        ":arg doc_class: base doc class that handles mapping.",
+                        "   If no `doc_class` is provided, new instance of `InnerDoc` will be created,",
+                        "   populated with `properties` and used. Can not be provided together with `properties`",
+                    ],
+                    "positional": True,
                     "required": False,
-               }
-            ] + k['args']
+                }
+            ] + k["args"]
         elif name == "date":
-            k['args'] = [
+            k["args"] = [
                 {
                     "name": "default_timezone",
-                    "type": "Union[str, \"tzinfo\", \"DefaultType\"]",
-                    "doc": [":arg default_timezone: timezone that will be automatically used for tz-naive values",
-                            "   May be instance of `datetime.tzinfo` or string containing TZ offset"],
+                    "type": 'Union[str, "tzinfo", "DefaultType"]',
+                    "doc": [
+                        ":arg default_timezone: timezone that will be automatically used for tz-naive values",
+                        "   May be instance of `datetime.tzinfo` or string containing TZ offset",
+                    ],
+                    "positional": True,
                     "required": False,
-               }
-            ] + k['args']
+                }
+            ] + k["args"]
         classes.append(k)
     # make sure parent classes appear first
-    classes = sorted(classes, key=lambda k: f'AA{k["name"]}' if k['name'] in ['Float', 'Integer', 'Object'] else k['name'])
+    classes = sorted(
+        classes,
+        key=lambda k: (
+            f'AA{k["name"]}'
+            if k["name"] in ["Float", "Integer", "Object"]
+            else k["name"]
+        ),
+    )
 
     with open(filename, "wt") as f:
         f.write(field_py.render(classes=classes))
