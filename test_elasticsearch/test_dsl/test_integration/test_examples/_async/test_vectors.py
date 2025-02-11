@@ -22,7 +22,6 @@ from unittest import SkipTest
 import pytest
 
 from elasticsearch import AsyncElasticsearch
-from test_elasticsearch.test_dsl.async_sleep import sleep
 
 from ..async_examples import vectors
 
@@ -48,9 +47,6 @@ async def test_vector_search(
     mocker.patch.object(vectors, "SentenceTransformer", new=MockModel)
 
     await vectors.create()
-    for i in range(10):
-        results = await (await vectors.search("Welcome to our team!")).execute()
-        if len(results.hits) > 0:
-            break
-        await sleep(0.1)
+    await vectors.WorkplaceDoc._index.refresh()
+    results = await (await vectors.search("Welcome to our team!")).execute()
     assert results[0].name == "New Employee Onboarding Guide"
