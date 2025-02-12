@@ -698,12 +698,12 @@ class SearchBase(Request[_R]):
 
         @overload
         def ensure_strings(
-            fields: List[Union[str, "InstrumentedField"]]
+            fields: List[Union[str, "InstrumentedField"]],
         ) -> List[str]: ...
 
         @overload
         def ensure_strings(
-            fields: Dict[str, List[Union[str, "InstrumentedField"]]]
+            fields: Dict[str, List[Union[str, "InstrumentedField"]]],
         ) -> Dict[str, List[str]]: ...
 
         def ensure_strings(
@@ -712,7 +712,7 @@ class SearchBase(Request[_R]):
                 "InstrumentedField",
                 List[Union[str, "InstrumentedField"]],
                 Dict[str, List[Union[str, "InstrumentedField"]]],
-            ]
+            ],
         ) -> Union[str, List[str], Dict[str, List[str]]]:
             if isinstance(fields, dict):
                 return {k: ensure_strings(v) for k, v in fields.items()}

@@ -406,9 +406,9 @@ class FieldAndFormat(AttrDict[Any]):
     A reference to a field with formatting instructions on how to return
     the value
 
-    :arg field: (required) Wildcard pattern. The request returns values
+    :arg field: (required) A wildcard pattern. The request returns values
         for field names matching this pattern.
-    :arg format: Format in which the values are returned.
+    :arg format: The format in which the values are returned.
     :arg include_unmapped:
     """
 
@@ -5630,8 +5630,8 @@ class RateAggregate(AttrDict[Any]):
 
 class Retries(AttrDict[Any]):
     """
-    :arg bulk: (required)
-    :arg search: (required)
+    :arg bulk: (required) The number of bulk actions retried.
+    :arg search: (required) The number of search actions retried.
     """
 
     bulk: int
