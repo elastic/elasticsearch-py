@@ -130,7 +130,7 @@ def test_iterating_over_response_gives_you_hits(dummy_response: Dict[str, Any]) 
 
 
 def test_hits_get_wrapped_to_contain_additional_attrs(
-    dummy_response: Dict[str, Any]
+    dummy_response: Dict[str, Any],
 ) -> None:
     res = response.Response(Search(), dummy_response)
     hits = res.hits
@@ -140,7 +140,7 @@ def test_hits_get_wrapped_to_contain_additional_attrs(
 
 
 def test_hits_provide_dot_and_bracket_access_to_attrs(
-    dummy_response: Dict[str, Any]
+    dummy_response: Dict[str, Any],
 ) -> None:
     res = response.Response(Search(), dummy_response)
     h = res.hits[0]
