@@ -78,8 +78,6 @@ def format(session):
     session.run("black", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
-    lint(session)
-
 
 @nox.session()
 def lint(session):
@@ -106,8 +104,7 @@ def lint(session):
 
     session.install(".[async,requests,orjson,pyarrow,vectorstore_mmr]", env=INSTALL_ENV)
 
-    # Run mypy on the package and then the type examples separately for
-    # the two different mypy use-cases, ourselves and our users.
+    # Run mypy on the package, the type examples and the DSL examples
     session.run(
         "mypy",
         "--strict",
@@ -116,28 +113,7 @@ def lint(session):
         "--show-error-codes",
         "--enable-error-code=ignore-without-code",
         "elasticsearch/",
-    )
-    session.run(
-        "mypy",
-        "--strict",
-        "--show-error-codes",
-        "test_elasticsearch/test_types/sync_types.py",
-    )
-    session.run(
-        "mypy",
-        "--strict",
-        "--show-error-codes",
-        "test_elasticsearch/test_types/async_types.py",
-    )
-
-    # check typing on the DSL examples
-    session.run(
-        "mypy",
-        "--strict",
-        "--implicit-reexport",
-        "--explicit-package-bases",
-        "--show-error-codes",
-        "--enable-error-code=ignore-without-code",
+        "test_elasticsearch/test_types/",
         "examples/dsl/",
     )
 
@@ -151,11 +127,6 @@ def lint(session):
         "--explicit-package-bases",
         "--show-error-codes",
         "elasticsearch/",
-    )
-    session.run(
-        "mypy",
-        "--strict",
-        "--show-error-codes",
         "test_elasticsearch/test_types/sync_types.py",
     )
 
