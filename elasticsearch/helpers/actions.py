@@ -593,7 +593,7 @@ def parallel_bulk(
 
     class BlockingPool(ThreadPool):
         def _setup_queues(self) -> None:
-            super()._setup_queues()  # type: ignore
+            super()._setup_queues()  # type: ignore[misc]
             # The queue must be at least the size of the number of threads to
             # prevent hanging when inserting sentinel values during teardown.
             self._inqueue: Queue[
