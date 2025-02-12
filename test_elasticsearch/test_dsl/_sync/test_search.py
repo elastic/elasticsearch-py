@@ -21,7 +21,15 @@ from typing import Any
 import pytest
 from pytest import raises
 
-from elasticsearch.dsl import Document, EmptySearch, Q, Search, query, types, wrappers
+from elasticsearch.dsl import (
+    Document,
+    EmptySearch,
+    Q,
+    Search,
+    query,
+    types,
+    wrappers,
+)
 from elasticsearch.dsl.exceptions import IllegalOperation
 
 

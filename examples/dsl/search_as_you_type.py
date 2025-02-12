@@ -28,7 +28,12 @@ To custom analyzer with ascii folding allow search to work in different language
 import os
 from typing import TYPE_CHECKING, Optional
 
-from elasticsearch.dsl import Document, SearchAsYouType, connections, mapped_field
+from elasticsearch.dsl import (
+    Document,
+    SearchAsYouType,
+    connections,
+    mapped_field,
+)
 from elasticsearch.dsl.query import MultiMatch
 
 
