@@ -20,7 +20,15 @@ import pytest
 from pytest import raises
 
 from elasticsearch import ApiError, Elasticsearch
-from elasticsearch.dsl import Date, Document, Keyword, MultiSearch, Q, Search, Text
+from elasticsearch.dsl import (
+    Date,
+    Document,
+    Keyword,
+    MultiSearch,
+    Q,
+    Search,
+    Text,
+)
 from elasticsearch.dsl.response import aggs
 
 from ..test_data import FLAT_DATA
