@@ -75,8 +75,6 @@ def format(session):
     session.run("black", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
-    lint(session)
-
 
 @nox.session()
 def lint(session):
@@ -96,30 +94,28 @@ def lint(session):
 
     session.install(".[async,requests,orjson,pyarrow,vectorstore_mmr]", env=INSTALL_ENV)
 
-    # Run mypy on the package and then the type examples separately for
-    # the two different mypy use-cases, ourselves and our users.
-    session.run("mypy", "--strict", "--show-error-codes", "elasticsearch/")
+    # Run mypy on the package, the type examples and the DSL examples
     session.run(
         "mypy",
         "--strict",
+        "--implicit-reexport",
+        "--explicit-package-bases",
         "--show-error-codes",
-        "test_elasticsearch/test_types/sync_types.py",
-    )
-    session.run(
-        "mypy",
-        "--strict",
-        "--show-error-codes",
-        "test_elasticsearch/test_types/async_types.py",
+        "--enable-error-code=ignore-without-code",
+        "elasticsearch/",
+        "test_elasticsearch/test_types/",
     )
 
     # Make sure we don't require aiohttp to be installed for users to
     # receive type hint information from mypy.
     session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp")
-    session.run("mypy", "--strict", "--show-error-codes", "elasticsearch/")
     session.run(
         "mypy",
         "--strict",
+        "--implicit-reexport",
+        "--explicit-package-bases",
         "--show-error-codes",
+        "elasticsearch/",
         "test_elasticsearch/test_types/sync_types.py",
     )
 
