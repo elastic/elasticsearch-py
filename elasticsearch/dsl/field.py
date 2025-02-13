@@ -251,7 +251,7 @@ class Float(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -358,7 +358,7 @@ class Integer(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -448,7 +448,7 @@ class Object(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -601,7 +601,7 @@ class AggregateMetricDouble(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -655,7 +655,7 @@ class Alias(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -714,7 +714,7 @@ class Binary(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -800,7 +800,7 @@ class Boolean(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -905,7 +905,7 @@ class Byte(Integer):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1001,7 +1001,7 @@ class Completion(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1067,7 +1067,7 @@ class ConstantKeyword(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1147,7 +1147,7 @@ class Date(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1268,7 +1268,7 @@ class DateNanos(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1351,7 +1351,7 @@ class DateRange(RangeField):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1424,7 +1424,7 @@ class DenseVector(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1523,7 +1523,7 @@ class Double(Float):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1610,7 +1610,7 @@ class DoubleRange(RangeField):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1688,7 +1688,7 @@ class Flattened(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1769,7 +1769,7 @@ class FloatRange(RangeField):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1856,7 +1856,7 @@ class GeoPoint(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -1943,7 +1943,7 @@ class GeoShape(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2038,7 +2038,7 @@ class HalfFloat(Float):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2110,7 +2110,7 @@ class Histogram(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2207,7 +2207,7 @@ class IcuCollationKeyword(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2308,7 +2308,7 @@ class IntegerRange(RangeField):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2392,7 +2392,7 @@ class Ip(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2484,7 +2484,7 @@ class IpRange(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2548,7 +2548,7 @@ class Join(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2636,7 +2636,7 @@ class Keyword(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2745,7 +2745,7 @@ class Long(Integer):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2832,7 +2832,7 @@ class LongRange(RangeField):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -2943,7 +2943,7 @@ class Murmur3(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3009,7 +3009,7 @@ class Nested(Object):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3067,7 +3067,7 @@ class Percolator(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3137,7 +3137,7 @@ class Point(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3197,7 +3197,7 @@ class RankFeature(Float):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3247,7 +3247,7 @@ class RankFeatures(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3330,7 +3330,7 @@ class ScaledFloat(Float):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3450,7 +3450,7 @@ class SearchAsYouType(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3561,7 +3561,7 @@ class Shape(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3654,7 +3654,7 @@ class Short(Integer):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3724,7 +3724,7 @@ class SparseVector(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3828,7 +3828,7 @@ class Text(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -3929,7 +3929,7 @@ class TokenCount(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -4024,7 +4024,7 @@ class UnsignedLong(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -4104,7 +4104,7 @@ class Version(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[
@@ -4168,7 +4168,7 @@ class Wildcard(Field):
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
         dynamic: Union[
-            Literal["strict", "runtime", "true", "false"], "DefaultType"
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         synthetic_source_keep: Union[

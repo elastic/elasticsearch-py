@@ -304,14 +304,20 @@ class ElasticsearchSchema:
 
         elif schema_type["kind"] == "enum":
             # enums are mapped to Literal[member, ...]
-            return (
+            t = (
                 "Literal["
                 + ", ".join(
                     [f"\"{member['name']}\"" for member in schema_type["members"]]
                 )
-                + "]",
-                None,
+                + "]"
             )
+            if {"name": "true"} in schema_type["members"] and {
+                "name": "false"
+            } in schema_type["members"]:
+                # this is a boolean that was later upgraded to an enum, so we
+                # should also allow bools
+                t = f"Union[{t}, bool]"
+            return t, None
 
         elif schema_type["kind"] == "interface":
             if schema_type["name"]["namespace"] == "_types.query_dsl":
