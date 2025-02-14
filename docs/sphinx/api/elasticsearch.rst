@@ -3,7 +3,7 @@
 Elasticsearch
 -------------
 
-.. py:module:: elasticsearch.client
+.. py:module:: elasticsearch
 
 .. autoclass:: Elasticsearch
    :members:
