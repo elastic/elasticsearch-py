@@ -44,6 +44,8 @@ def add_client_usage_example(app, what, name, obj, options, lines):
             " :class:`~elasticsearch.Elasticsearch` client. For example::"
         )
         lines.append("")
+        lines.append("    from elasticsearch import Elasticsearch")
+        lines.append("")
         lines.append("    # Create the client instance")
         lines.append("    client = Elasticsearch(...)")
         lines.append(f"    # Use the {sub_client_name} client")
