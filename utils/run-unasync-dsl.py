@@ -98,10 +98,12 @@ def main(check=False):
                 filepaths.append(os.path.join(root, filename))
 
     unasync.unasync_files(filepaths, rules)
+    output_dirs = []
     for dir in source_dirs:
-        output_dir = f"{dir[0]}_sync_check/" if check else dir[1]
-        subprocess.check_call(["black", "--target-version=py38", output_dir])
-        subprocess.check_call(["isort", output_dir])
+        output_dirs.append(f"{dir[0]}_sync_check/" if check else dir[1])
+    subprocess.check_call(["black", "--target-version=py38", *output_dirs])
+    subprocess.check_call(["isort", *output_dirs])
+    for dir, output_dir in zip(source_dirs, output_dirs):
         for file in glob("*.py", root_dir=dir[0]):
             # remove asyncio from sync files
             subprocess.check_call(
