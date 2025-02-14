@@ -26,7 +26,10 @@ from typing import (
     Dict,
     Iterable,
     Iterator,
+    Literal,
+    Mapping,
     Optional,
+    Sequence,
     Tuple,
     Type,
     Union,
@@ -34,6 +37,7 @@ from typing import (
 )
 
 from dateutil import parser, tz
+from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from .exceptions import ValidationException
 from .query import Q
@@ -46,7 +50,9 @@ if TYPE_CHECKING:
 
     from _operator import _SupportsComparison
 
+    from . import types
     from .document import InnerDoc
+    from .document_base import InstrumentedField
     from .mapping_base import MappingBase
     from .query import Query
 
@@ -170,34 +176,314 @@ class CustomField(Field):
         return d
 
 
-class Object(Field):
-    name = "object"
+class RangeField(Field):
     _coerce = True
+    _core_field: Optional[Field] = None
+
+    def _deserialize(self, data: Any) -> Range["_SupportsComparison"]:
+        if isinstance(data, Range):
+            return data
+        data = {k: self._core_field.deserialize(v) for k, v in data.items()}  # type: ignore[union-attr]
+        return Range(data)
+
+    def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
+        if data is None:
+            return None
+        if not isinstance(data, collections.abc.Mapping):
+            data = data.to_dict()
+        return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore[union-attr]
+
+
+class Float(Field):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "float"
+    _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
     def __init__(
         self,
-        doc_class: Optional[Type["InnerDoc"]] = None,
-        dynamic: Optional[Union[bool, str]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
         **kwargs: Any,
     ):
-        """
-        :arg document.InnerDoc doc_class: base doc class that handles mapping.
-            If no `doc_class` is provided, new instance of `InnerDoc` will be created,
-            populated with `properties` and used. Can not be provided together with `properties`
-        :arg dynamic: whether new properties may be created dynamically.
-            Valid values are `True`, `False`, `'strict'`.
-            Can not be provided together with `doc_class`.
-            See https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic.html
-            for more details
-        :arg dict properties: used to construct underlying mapping if no `doc_class` is provided.
-            Can not be provided together with `doc_class`
-        """
-        if doc_class and (properties or dynamic is not None):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+    def _deserialize(self, data: Any) -> float:
+        return float(data)
+
+
+class Integer(Field):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "integer"
+    _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[int, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+    def _deserialize(self, data: Any) -> int:
+        return int(data)
+
+
+class Object(Field):
+    """
+    :arg doc_class: base doc class that handles mapping.
+       If no `doc_class` is provided, new instance of `InnerDoc` will be created,
+       populated with `properties` and used. Can not be provided together with `properties`
+    :arg enabled:
+    :arg subobjects:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "object"
+    _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        doc_class: Union[Type["InnerDoc"], "DefaultType"] = DEFAULT,
+        *args: Any,
+        enabled: Union[bool, "DefaultType"] = DEFAULT,
+        subobjects: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if enabled is not DEFAULT:
+            kwargs["enabled"] = enabled
+        if subobjects is not DEFAULT:
+            kwargs["subobjects"] = subobjects
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+
+        if doc_class is not DEFAULT and (
+            properties is not DEFAULT or dynamic is not DEFAULT
+        ):
             raise ValidationException(
                 "doc_class and properties/dynamic should not be provided together"
             )
-        if doc_class:
+        if doc_class is not DEFAULT:
             self._doc_class: Type["InnerDoc"] = doc_class
         else:
             # FIXME import
@@ -205,9 +491,13 @@ class Object(Field):
 
             # no InnerDoc subclass, creating one instead...
             self._doc_class = type("InnerDoc", (InnerDoc,), {})
-            for name, field in (properties or {}).items():
+            for name, field in (
+                properties if properties is not DEFAULT else {}
+            ).items():
                 self._doc_class._doc_type.mapping.field(name, field)
-            if dynamic is not None:
+            if "properties" in kwargs:
+                del kwargs["properties"]
+            if dynamic is not DEFAULT:
                 self._doc_class._doc_type.mapping.meta("dynamic", dynamic)
 
         self._mapping: "MappingBase" = deepcopy(self._doc_class._doc_type.mapping)
@@ -279,29 +569,630 @@ class Object(Field):
         self._mapping.update(other._mapping, update_only)
 
 
-class Nested(Object):
-    name = "nested"
+class AggregateMetricDouble(Field):
+    """
+    :arg default_metric: (required)
+    :arg metrics: (required)
+    :arg time_series_metric:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        kwargs.setdefault("multi", True)
+    name = "aggregate_metric_double"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        default_metric: Union[str, "DefaultType"] = DEFAULT,
+        metrics: Union[Sequence[str], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if default_metric is not DEFAULT:
+            kwargs["default_metric"] = default_metric
+        if metrics is not DEFAULT:
+            kwargs["metrics"] = metrics
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Alias(Field):
+    """
+    :arg path:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "alias"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        path: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if path is not DEFAULT:
+            kwargs["path"] = str(path)
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Binary(Field):
+    """
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "binary"
+    _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data: str) -> str:
+        # Binary fields are opaque, so there's not much cleaning
+        # that can be done.
+        return data
+
+    def _deserialize(self, data: Any) -> bytes:
+        return base64.b64decode(data)
+
+    def _serialize(self, data: Any) -> Optional[str]:
+        if data is None:
+            return None
+        return base64.b64encode(data).decode()
+
+
+class Boolean(Field):
+    """
+    :arg boost:
+    :arg fielddata:
+    :arg index:
+    :arg null_value:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "boolean"
+    _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        fielddata: Union[
+            "types.NumericFielddata", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if fielddata is not DEFAULT:
+            kwargs["fielddata"] = fielddata
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+    def _deserialize(self, data: Any) -> bool:
+        if data == "false":
+            return False
+        return bool(data)
+
+    def clean(self, data: Any) -> Optional[bool]:
+        if data is not None:
+            data = self.deserialize(data)
+        if data is None and self._required:
+            raise ValidationException("Value required for this field.")
+        return data  # type: ignore[no-any-return]
+
+
+class Byte(Integer):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "byte"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Completion(Field):
+    """
+    :arg analyzer:
+    :arg contexts:
+    :arg max_input_length:
+    :arg preserve_position_increments:
+    :arg preserve_separators:
+    :arg search_analyzer:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "completion"
+    _param_defs = {
+        "analyzer": {"type": "analyzer"},
+        "search_analyzer": {"type": "analyzer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        contexts: Union[
+            Sequence["types.SuggestContext"], Sequence[Dict[str, Any]], "DefaultType"
+        ] = DEFAULT,
+        max_input_length: Union[int, "DefaultType"] = DEFAULT,
+        preserve_position_increments: Union[bool, "DefaultType"] = DEFAULT,
+        preserve_separators: Union[bool, "DefaultType"] = DEFAULT,
+        search_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if contexts is not DEFAULT:
+            kwargs["contexts"] = contexts
+        if max_input_length is not DEFAULT:
+            kwargs["max_input_length"] = max_input_length
+        if preserve_position_increments is not DEFAULT:
+            kwargs["preserve_position_increments"] = preserve_position_increments
+        if preserve_separators is not DEFAULT:
+            kwargs["preserve_separators"] = preserve_separators
+        if search_analyzer is not DEFAULT:
+            kwargs["search_analyzer"] = search_analyzer
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class ConstantKeyword(Field):
+    """
+    :arg value:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "constant_keyword"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        value: Any = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if value is not DEFAULT:
+            kwargs["value"] = value
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
         super().__init__(*args, **kwargs)
 
 
 class Date(Field):
+    """
+    :arg default_timezone: timezone that will be automatically used for tz-naive values
+       May be instance of `datetime.tzinfo` or string containing TZ offset
+    :arg boost:
+    :arg fielddata:
+    :arg format:
+    :arg ignore_malformed:
+    :arg index:
+    :arg null_value:
+    :arg precision_step:
+    :arg locale:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
     name = "date"
     _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
     def __init__(
         self,
-        default_timezone: Optional[Union[str, "tzinfo"]] = None,
+        default_timezone: Union[str, "tzinfo", "DefaultType"] = DEFAULT,
         *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        fielddata: Union[
+            "types.NumericFielddata", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        format: Union[str, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Any = DEFAULT,
+        precision_step: Union[int, "DefaultType"] = DEFAULT,
+        locale: Union[str, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
         **kwargs: Any,
     ):
-        """
-        :arg default_timezone: timezone that will be automatically used for tz-naive values
-            May be instance of `datetime.tzinfo` or string containing TZ offset
-        """
-        if isinstance(default_timezone, str):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if fielddata is not DEFAULT:
+            kwargs["fielddata"] = fielddata
+        if format is not DEFAULT:
+            kwargs["format"] = format
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if precision_step is not DEFAULT:
+            kwargs["precision_step"] = precision_step
+        if locale is not DEFAULT:
+            kwargs["locale"] = locale
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+
+        if default_timezone is DEFAULT:
+            self._default_timezone = None
+        elif isinstance(default_timezone, str):
             self._default_timezone = tz.gettz(default_timezone)
         else:
             self._default_timezone = default_timezone
@@ -332,72 +1223,241 @@ class Date(Field):
         raise ValidationException(f"Could not parse date from the value ({data!r})")
 
 
-class Text(Field):
+class DateNanos(Field):
+    """
+    :arg boost:
+    :arg format:
+    :arg ignore_malformed:
+    :arg index:
+    :arg null_value:
+    :arg precision_step:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "date_nanos"
     _param_defs = {
+        "properties": {"type": "field", "hash": True},
         "fields": {"type": "field", "hash": True},
-        "analyzer": {"type": "analyzer"},
-        "search_analyzer": {"type": "analyzer"},
-        "search_quote_analyzer": {"type": "analyzer"},
     }
-    name = "text"
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        format: Union[str, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Any = DEFAULT,
+        precision_step: Union[int, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if format is not DEFAULT:
+            kwargs["format"] = format
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if precision_step is not DEFAULT:
+            kwargs["precision_step"] = precision_step
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class SearchAsYouType(Field):
+class DateRange(RangeField):
+    """
+    :arg format:
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "date_range"
+    _core_field = Date()
     _param_defs = {
-        "analyzer": {"type": "analyzer"},
-        "search_analyzer": {"type": "analyzer"},
-        "search_quote_analyzer": {"type": "analyzer"},
-    }
-    name = "search_as_you_type"
-
-
-class Keyword(Field):
-    _param_defs = {
+        "properties": {"type": "field", "hash": True},
         "fields": {"type": "field", "hash": True},
-        "search_analyzer": {"type": "analyzer"},
-        "normalizer": {"type": "normalizer"},
     }
-    name = "keyword"
 
-
-class ConstantKeyword(Keyword):
-    name = "constant_keyword"
-
-
-class Boolean(Field):
-    name = "boolean"
-    _coerce = True
-
-    def _deserialize(self, data: Any) -> bool:
-        if data == "false":
-            return False
-        return bool(data)
-
-    def clean(self, data: Any) -> Optional[bool]:
-        if data is not None:
-            data = self.deserialize(data)
-        if data is None and self._required:
-            raise ValidationException("Value required for this field.")
-        return data  # type: ignore[no-any-return]
-
-
-class Float(Field):
-    name = "float"
-    _coerce = True
-
-    def _deserialize(self, data: Any) -> float:
-        return float(data)
+    def __init__(
+        self,
+        *args: Any,
+        format: Union[str, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if format is not DEFAULT:
+            kwargs["format"] = format
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
 class DenseVector(Field):
+    """
+    :arg element_type:
+    :arg dims:
+    :arg similarity:
+    :arg index:
+    :arg index_options:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
     name = "dense_vector"
     _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
-    def __init__(self, **kwargs: Any):
+    def __init__(
+        self,
+        *args: Any,
+        element_type: Union[str, "DefaultType"] = DEFAULT,
+        dims: Union[int, "DefaultType"] = DEFAULT,
+        similarity: Union[str, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            "types.DenseVectorIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if element_type is not DEFAULT:
+            kwargs["element_type"] = element_type
+        if dims is not DEFAULT:
+            kwargs["dims"] = dims
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
         self._element_type = kwargs.get("element_type", "float")
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
-        super().__init__(**kwargs)
+        super().__init__(*args, **kwargs)
 
     def _deserialize(self, data: Any) -> Any:
         if self._element_type == "float":
@@ -407,56 +1467,972 @@ class DenseVector(Field):
         return data
 
 
-class SparseVector(Field):
-    name = "sparse_vector"
+class Double(Float):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "double"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class DoubleRange(RangeField):
+    """
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "double_range"
+    _core_field = Double()
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Flattened(Field):
+    """
+    :arg boost:
+    :arg depth_limit:
+    :arg doc_values:
+    :arg eager_global_ordinals:
+    :arg index:
+    :arg index_options:
+    :arg null_value:
+    :arg similarity:
+    :arg split_queries_on_whitespace:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "flattened"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        depth_limit: Union[int, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        eager_global_ordinals: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
+        ] = DEFAULT,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        similarity: Union[str, "DefaultType"] = DEFAULT,
+        split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if depth_limit is not DEFAULT:
+            kwargs["depth_limit"] = depth_limit
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if eager_global_ordinals is not DEFAULT:
+            kwargs["eager_global_ordinals"] = eager_global_ordinals
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
+        if split_queries_on_whitespace is not DEFAULT:
+            kwargs["split_queries_on_whitespace"] = split_queries_on_whitespace
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class FloatRange(RangeField):
+    """
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "float_range"
+    _core_field = Float()
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class GeoPoint(Field):
+    """
+    :arg ignore_malformed:
+    :arg ignore_z_value:
+    :arg null_value:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "geo_point"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[
+            "types.LatLonGeoLocation",
+            "types.GeoHashLocation",
+            Sequence[float],
+            str,
+            Dict[str, Any],
+            "DefaultType",
+        ] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if ignore_z_value is not DEFAULT:
+            kwargs["ignore_z_value"] = ignore_z_value
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class GeoShape(Field):
+    """
+    The `geo_shape` data type facilitates the indexing of and searching
+    with arbitrary geo shapes such as rectangles and polygons.
+
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg ignore_z_value:
+    :arg orientation:
+    :arg strategy:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "geo_shape"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
+        orientation: Union[Literal["right", "left"], "DefaultType"] = DEFAULT,
+        strategy: Union[Literal["recursive", "term"], "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if ignore_z_value is not DEFAULT:
+            kwargs["ignore_z_value"] = ignore_z_value
+        if orientation is not DEFAULT:
+            kwargs["orientation"] = orientation
+        if strategy is not DEFAULT:
+            kwargs["strategy"] = strategy
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
 class HalfFloat(Float):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
     name = "half_float"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class ScaledFloat(Float):
-    name = "scaled_float"
+class Histogram(Field):
+    """
+    :arg ignore_malformed:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
-    def __init__(self, scaling_factor: int, *args: Any, **kwargs: Any):
-        super().__init__(scaling_factor=scaling_factor, *args, **kwargs)
+    name = "histogram"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class Double(Float):
-    name = "double"
+class IcuCollationKeyword(Field):
+    """
+    :arg norms:
+    :arg index_options:
+    :arg index: Should the field be searchable?
+    :arg null_value: Accepts a string value which is substituted for any
+        explicit null values. Defaults to null, which means the field is
+        treated as missing.
+    :arg rules:
+    :arg language:
+    :arg country:
+    :arg variant:
+    :arg strength:
+    :arg decomposition:
+    :arg alternate:
+    :arg case_level:
+    :arg case_first:
+    :arg numeric:
+    :arg variable_top:
+    :arg hiragana_quaternary_mode:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "icu_collation_keyword"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        norms: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
+        ] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        rules: Union[str, "DefaultType"] = DEFAULT,
+        language: Union[str, "DefaultType"] = DEFAULT,
+        country: Union[str, "DefaultType"] = DEFAULT,
+        variant: Union[str, "DefaultType"] = DEFAULT,
+        strength: Union[
+            Literal["primary", "secondary", "tertiary", "quaternary", "identical"],
+            "DefaultType",
+        ] = DEFAULT,
+        decomposition: Union[Literal["no", "identical"], "DefaultType"] = DEFAULT,
+        alternate: Union[Literal["shifted", "non-ignorable"], "DefaultType"] = DEFAULT,
+        case_level: Union[bool, "DefaultType"] = DEFAULT,
+        case_first: Union[Literal["lower", "upper"], "DefaultType"] = DEFAULT,
+        numeric: Union[bool, "DefaultType"] = DEFAULT,
+        variable_top: Union[str, "DefaultType"] = DEFAULT,
+        hiragana_quaternary_mode: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if norms is not DEFAULT:
+            kwargs["norms"] = norms
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if rules is not DEFAULT:
+            kwargs["rules"] = rules
+        if language is not DEFAULT:
+            kwargs["language"] = language
+        if country is not DEFAULT:
+            kwargs["country"] = country
+        if variant is not DEFAULT:
+            kwargs["variant"] = variant
+        if strength is not DEFAULT:
+            kwargs["strength"] = strength
+        if decomposition is not DEFAULT:
+            kwargs["decomposition"] = decomposition
+        if alternate is not DEFAULT:
+            kwargs["alternate"] = alternate
+        if case_level is not DEFAULT:
+            kwargs["case_level"] = case_level
+        if case_first is not DEFAULT:
+            kwargs["case_first"] = case_first
+        if numeric is not DEFAULT:
+            kwargs["numeric"] = numeric
+        if variable_top is not DEFAULT:
+            kwargs["variable_top"] = variable_top
+        if hiragana_quaternary_mode is not DEFAULT:
+            kwargs["hiragana_quaternary_mode"] = hiragana_quaternary_mode
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class RankFeature(Float):
-    name = "rank_feature"
+class IntegerRange(RangeField):
+    """
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
+    name = "integer_range"
+    _core_field = Integer()
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
-class RankFeatures(Field):
-    name = "rank_features"
-
-
-class Integer(Field):
-    name = "integer"
-    _coerce = True
-
-    def _deserialize(self, data: Any) -> int:
-        return int(data)
-
-
-class Byte(Integer):
-    name = "byte"
-
-
-class Short(Integer):
-    name = "short"
-
-
-class Long(Integer):
-    name = "long"
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
 class Ip(Field):
+    """
+    :arg boost:
+    :arg index:
+    :arg ignore_malformed:
+    :arg null_value:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
     name = "ip"
     _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
     def _deserialize(self, data: Any) -> Union["IPv4Address", "IPv6Address"]:
         # the ipaddress library for pypy only accepts unicode.
@@ -468,51 +2444,650 @@ class Ip(Field):
         return str(data)
 
 
-class Binary(Field):
-    name = "binary"
-    _coerce = True
+class IpRange(Field):
+    """
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
-    def clean(self, data: str) -> str:
-        # Binary fields are opaque, so there's not much cleaning
-        # that can be done.
-        return data
-
-    def _deserialize(self, data: Any) -> bytes:
-        return base64.b64decode(data)
-
-    def _serialize(self, data: Any) -> Optional[str]:
-        if data is None:
-            return None
-        return base64.b64encode(data).decode()
-
-
-class Point(Field):
-    name = "point"
-
-
-class Shape(Field):
-    name = "shape"
-
-
-class GeoPoint(Field):
-    name = "geo_point"
-
-
-class GeoShape(Field):
-    name = "geo_shape"
-
-
-class Completion(Field):
+    name = "ip_range"
+    _core_field = Ip()
     _param_defs = {
-        "analyzer": {"type": "analyzer"},
-        "search_analyzer": {"type": "analyzer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
     }
-    name = "completion"
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Join(Field):
+    """
+    :arg relations:
+    :arg eager_global_ordinals:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "join"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        relations: Union[
+            Mapping[str, Union[str, Sequence[str]]], "DefaultType"
+        ] = DEFAULT,
+        eager_global_ordinals: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if relations is not DEFAULT:
+            kwargs["relations"] = relations
+        if eager_global_ordinals is not DEFAULT:
+            kwargs["eager_global_ordinals"] = eager_global_ordinals
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Keyword(Field):
+    """
+    :arg boost:
+    :arg eager_global_ordinals:
+    :arg index:
+    :arg index_options:
+    :arg script:
+    :arg on_script_error:
+    :arg normalizer:
+    :arg norms:
+    :arg null_value:
+    :arg similarity:
+    :arg split_queries_on_whitespace:
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "keyword"
+    _param_defs = {
+        "normalizer": {"type": "normalizer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        eager_global_ordinals: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
+        ] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        normalizer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        norms: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        similarity: Union[str, None, "DefaultType"] = DEFAULT,
+        split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if eager_global_ordinals is not DEFAULT:
+            kwargs["eager_global_ordinals"] = eager_global_ordinals
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if normalizer is not DEFAULT:
+            kwargs["normalizer"] = normalizer
+        if norms is not DEFAULT:
+            kwargs["norms"] = norms
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
+        if split_queries_on_whitespace is not DEFAULT:
+            kwargs["split_queries_on_whitespace"] = split_queries_on_whitespace
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Long(Integer):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "long"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[int, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class LongRange(RangeField):
+    """
+    :arg boost:
+    :arg coerce:
+    :arg index:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "long_range"
+    _core_field = Long()
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class MatchOnlyText(Field):
+    """
+    A variant of text that trades scoring and efficiency of positional
+    queries for space efficiency. This field effectively stores data the
+    same way as a text field that only indexes documents (index_options:
+    docs) and disables norms (norms: false). Term queries perform as fast
+    if not faster as on text fields, however queries that need positions
+    such as the match_phrase query perform slower as they need to look at
+    the _source document to verify whether a phrase matches. All queries
+    return constant scores that are equal to 1.0.
+
+    :arg fields:
+    :arg meta: Metadata about the field.
+    :arg copy_to: Allows you to copy the values of multiple fields into a
+        group field, which can then be queried as a single field.
+    """
+
+    name = "match_only_text"
+    _param_defs = {
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        super().__init__(*args, **kwargs)
+
+
+class Murmur3(Field):
+    """
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "murmur3"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Nested(Object):
+    """
+    :arg enabled:
+    :arg include_in_parent:
+    :arg include_in_root:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "nested"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        enabled: Union[bool, "DefaultType"] = DEFAULT,
+        include_in_parent: Union[bool, "DefaultType"] = DEFAULT,
+        include_in_root: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if enabled is not DEFAULT:
+            kwargs["enabled"] = enabled
+        if include_in_parent is not DEFAULT:
+            kwargs["include_in_parent"] = include_in_parent
+        if include_in_root is not DEFAULT:
+            kwargs["include_in_root"] = include_in_root
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        kwargs.setdefault("multi", True)
+        super().__init__(*args, **kwargs)
 
 
 class Percolator(Field):
+    """
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
     name = "percolator"
     _coerce = True
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
     def _deserialize(self, data: Any) -> "Query":
         return Q(data)  # type: ignore[no-any-return]
@@ -523,65 +3098,1102 @@ class Percolator(Field):
         return data.to_dict()  # type: ignore[no-any-return]
 
 
-class RangeField(Field):
-    _coerce = True
-    _core_field: Optional[Field] = None
+class Point(Field):
+    """
+    :arg ignore_malformed:
+    :arg ignore_z_value:
+    :arg null_value:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
-    def _deserialize(self, data: Any) -> Range["_SupportsComparison"]:
-        if isinstance(data, Range):
-            return data
-        data = {k: self._core_field.deserialize(v) for k, v in data.items()}  # type: ignore[union-attr]
-        return Range(data)
+    name = "point"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
-    def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
-        if data is None:
-            return None
-        if not isinstance(data, collections.abc.Mapping):
-            data = data.to_dict()
-        return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore[union-attr]
+    def __init__(
+        self,
+        *args: Any,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if ignore_z_value is not DEFAULT:
+            kwargs["ignore_z_value"] = ignore_z_value
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class IntegerRange(RangeField):
-    name = "integer_range"
-    _core_field = Integer()
+class RankFeature(Float):
+    """
+    :arg positive_score_impact:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "rank_feature"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        positive_score_impact: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if positive_score_impact is not DEFAULT:
+            kwargs["positive_score_impact"] = positive_score_impact
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class FloatRange(RangeField):
-    name = "float_range"
-    _core_field = Float()
+class RankFeatures(Field):
+    """
+    :arg positive_score_impact:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "rank_features"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        positive_score_impact: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if positive_score_impact is not DEFAULT:
+            kwargs["positive_score_impact"] = positive_score_impact
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
-class LongRange(RangeField):
-    name = "long_range"
-    _core_field = Long()
+class ScaledFloat(Float):
+    """
+    :arg null_value:
+    :arg scaling_factor:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "scaled_float"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        scaling_factor: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if scaling_factor is not DEFAULT:
+            kwargs["scaling_factor"] = scaling_factor
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        if "scaling_factor" not in kwargs:
+            if len(args) > 0:
+                kwargs["scaling_factor"] = args[0]
+                args = args[1:]
+            else:
+                raise TypeError("missing required argument: 'scaling_factor'")
+        super().__init__(*args, **kwargs)
 
 
-class DoubleRange(RangeField):
-    name = "double_range"
-    _core_field = Double()
+class SearchAsYouType(Field):
+    """
+    :arg analyzer:
+    :arg index:
+    :arg index_options:
+    :arg max_shingle_size:
+    :arg norms:
+    :arg search_analyzer:
+    :arg search_quote_analyzer:
+    :arg similarity:
+    :arg term_vector:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
 
+    name = "search_as_you_type"
+    _param_defs = {
+        "analyzer": {"type": "analyzer"},
+        "search_analyzer": {"type": "analyzer"},
+        "search_quote_analyzer": {"type": "analyzer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
 
-class DateRange(RangeField):
-    name = "date_range"
-    _core_field = Date()
-
-
-class IpRange(Field):
-    # not a RangeField since ip_range supports CIDR ranges
-    name = "ip_range"
-
-
-class Join(Field):
-    name = "join"
-
-
-class TokenCount(Field):
-    name = "token_count"
-
-
-class Murmur3(Field):
-    name = "murmur3"
+    def __init__(
+        self,
+        *args: Any,
+        analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
+        ] = DEFAULT,
+        max_shingle_size: Union[int, "DefaultType"] = DEFAULT,
+        norms: Union[bool, "DefaultType"] = DEFAULT,
+        search_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        search_quote_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        similarity: Union[str, None, "DefaultType"] = DEFAULT,
+        term_vector: Union[
+            Literal[
+                "no",
+                "yes",
+                "with_offsets",
+                "with_positions",
+                "with_positions_offsets",
+                "with_positions_offsets_payloads",
+                "with_positions_payloads",
+            ],
+            "DefaultType",
+        ] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if max_shingle_size is not DEFAULT:
+            kwargs["max_shingle_size"] = max_shingle_size
+        if norms is not DEFAULT:
+            kwargs["norms"] = norms
+        if search_analyzer is not DEFAULT:
+            kwargs["search_analyzer"] = search_analyzer
+        if search_quote_analyzer is not DEFAULT:
+            kwargs["search_quote_analyzer"] = search_quote_analyzer
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
+        if term_vector is not DEFAULT:
+            kwargs["term_vector"] = term_vector
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
 
 
 class SemanticText(Field):
+    """
+    :arg inference_id: (required)
+    :arg meta:
+    """
+
     name = "semantic_text"
+
+    def __init__(
+        self,
+        *args: Any,
+        inference_id: Union[str, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if inference_id is not DEFAULT:
+            kwargs["inference_id"] = inference_id
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        super().__init__(*args, **kwargs)
+
+
+class Shape(Field):
+    """
+    The `shape` data type facilitates the indexing of and searching with
+    arbitrary `x, y` cartesian shapes such as rectangles and polygons.
+
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg ignore_z_value:
+    :arg orientation:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "shape"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
+        orientation: Union[Literal["right", "left"], "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if ignore_z_value is not DEFAULT:
+            kwargs["ignore_z_value"] = ignore_z_value
+        if orientation is not DEFAULT:
+            kwargs["orientation"] = orientation
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Short(Integer):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "short"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class SparseVector(Field):
+    """
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "sparse_vector"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Text(Field):
+    """
+    :arg analyzer:
+    :arg boost:
+    :arg eager_global_ordinals:
+    :arg fielddata:
+    :arg fielddata_frequency_filter:
+    :arg index:
+    :arg index_options:
+    :arg index_phrases:
+    :arg index_prefixes:
+    :arg norms:
+    :arg position_increment_gap:
+    :arg search_analyzer:
+    :arg search_quote_analyzer:
+    :arg similarity:
+    :arg term_vector:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "text"
+    _param_defs = {
+        "analyzer": {"type": "analyzer"},
+        "search_analyzer": {"type": "analyzer"},
+        "search_quote_analyzer": {"type": "analyzer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        eager_global_ordinals: Union[bool, "DefaultType"] = DEFAULT,
+        fielddata: Union[bool, "DefaultType"] = DEFAULT,
+        fielddata_frequency_filter: Union[
+            "types.FielddataFrequencyFilter", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
+        ] = DEFAULT,
+        index_phrases: Union[bool, "DefaultType"] = DEFAULT,
+        index_prefixes: Union[
+            "types.TextIndexPrefixes", None, Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        norms: Union[bool, "DefaultType"] = DEFAULT,
+        position_increment_gap: Union[int, "DefaultType"] = DEFAULT,
+        search_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        search_quote_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        similarity: Union[str, None, "DefaultType"] = DEFAULT,
+        term_vector: Union[
+            Literal[
+                "no",
+                "yes",
+                "with_offsets",
+                "with_positions",
+                "with_positions_offsets",
+                "with_positions_offsets_payloads",
+                "with_positions_payloads",
+            ],
+            "DefaultType",
+        ] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if eager_global_ordinals is not DEFAULT:
+            kwargs["eager_global_ordinals"] = eager_global_ordinals
+        if fielddata is not DEFAULT:
+            kwargs["fielddata"] = fielddata
+        if fielddata_frequency_filter is not DEFAULT:
+            kwargs["fielddata_frequency_filter"] = fielddata_frequency_filter
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if index_phrases is not DEFAULT:
+            kwargs["index_phrases"] = index_phrases
+        if index_prefixes is not DEFAULT:
+            kwargs["index_prefixes"] = index_prefixes
+        if norms is not DEFAULT:
+            kwargs["norms"] = norms
+        if position_increment_gap is not DEFAULT:
+            kwargs["position_increment_gap"] = position_increment_gap
+        if search_analyzer is not DEFAULT:
+            kwargs["search_analyzer"] = search_analyzer
+        if search_quote_analyzer is not DEFAULT:
+            kwargs["search_quote_analyzer"] = search_quote_analyzer
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
+        if term_vector is not DEFAULT:
+            kwargs["term_vector"] = term_vector
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class TokenCount(Field):
+    """
+    :arg analyzer:
+    :arg boost:
+    :arg index:
+    :arg null_value:
+    :arg enable_position_increments:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "token_count"
+    _param_defs = {
+        "analyzer": {"type": "analyzer"},
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        null_value: Union[float, "DefaultType"] = DEFAULT,
+        enable_position_increments: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if enable_position_increments is not DEFAULT:
+            kwargs["enable_position_increments"] = enable_position_increments
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class UnsignedLong(Field):
+    """
+    :arg null_value:
+    :arg boost:
+    :arg coerce:
+    :arg ignore_malformed:
+    :arg index:
+    :arg on_script_error:
+    :arg script:
+    :arg time_series_metric: For internal use by Elastic only. Marks the
+        field as a time series dimension. Defaults to false.
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "unsigned_long"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[int, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        coerce: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if coerce is not DEFAULT:
+            kwargs["coerce"] = coerce
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Version(Field):
+    """
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "version"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
+class Wildcard(Field):
+    """
+    :arg null_value:
+    :arg doc_values:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "wildcard"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        null_value: Union[str, "DefaultType"] = DEFAULT,
+        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if null_value is not DEFAULT:
+            kwargs["null_value"] = null_value
+        if doc_values is not DEFAULT:
+            kwargs["doc_values"] = doc_values
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
