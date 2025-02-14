@@ -362,6 +362,39 @@ class DateRangeExpression(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class DenseVectorIndexOptions(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg m:
+    :arg ef_construction:
+    :arg confidence_interval:
+    """
+
+    type: Union[str, DefaultType]
+    m: Union[int, DefaultType]
+    ef_construction: Union[int, DefaultType]
+    confidence_interval: Union[float, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, DefaultType] = DEFAULT,
+        m: Union[int, DefaultType] = DEFAULT,
+        ef_construction: Union[int, DefaultType] = DEFAULT,
+        confidence_interval: Union[float, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if type is not DEFAULT:
+            kwargs["type"] = type
+        if m is not DEFAULT:
+            kwargs["m"] = m
+        if ef_construction is not DEFAULT:
+            kwargs["ef_construction"] = ef_construction
+        if confidence_interval is not DEFAULT:
+            kwargs["confidence_interval"] = confidence_interval
+        super().__init__(kwargs)
+
+
 class EmptyObject(AttrDict[Any]):
     """
     For empty Class assignments
@@ -653,6 +686,34 @@ class FieldSort(AttrDict[Any]):
             kwargs["numeric_type"] = numeric_type
         if format is not DEFAULT:
             kwargs["format"] = format
+        super().__init__(kwargs)
+
+
+class FielddataFrequencyFilter(AttrDict[Any]):
+    """
+    :arg max: (required)
+    :arg min: (required)
+    :arg min_segment_size: (required)
+    """
+
+    max: Union[float, DefaultType]
+    min: Union[float, DefaultType]
+    min_segment_size: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        max: Union[float, DefaultType] = DEFAULT,
+        min: Union[float, DefaultType] = DEFAULT,
+        min_segment_size: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if max is not DEFAULT:
+            kwargs["max"] = max
+        if min is not DEFAULT:
+            kwargs["min"] = min
+        if min_segment_size is not DEFAULT:
+            kwargs["min_segment_size"] = min_segment_size
         super().__init__(kwargs)
 
 
@@ -2474,6 +2535,24 @@ class NestedSortValue(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class NumericFielddata(AttrDict[Any]):
+    """
+    :arg format: (required)
+    """
+
+    format: Union[Literal["array", "disabled"], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        format: Union[Literal["array", "disabled"], DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if format is not DEFAULT:
+            kwargs["format"] = format
+        super().__init__(kwargs)
+
+
 class PercentageScoreHeuristic(AttrDict[Any]):
     pass
 
@@ -3404,6 +3483,39 @@ class SpanWithinQuery(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SuggestContext(AttrDict[Any]):
+    """
+    :arg name: (required)
+    :arg type: (required)
+    :arg path:
+    :arg precision:
+    """
+
+    name: Union[str, DefaultType]
+    type: Union[str, DefaultType]
+    path: Union[str, InstrumentedField, DefaultType]
+    precision: Union[int, str, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        name: Union[str, DefaultType] = DEFAULT,
+        type: Union[str, DefaultType] = DEFAULT,
+        path: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        precision: Union[int, str, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if name is not DEFAULT:
+            kwargs["name"] = name
+        if type is not DEFAULT:
+            kwargs["type"] = type
+        if path is not DEFAULT:
+            kwargs["path"] = str(path)
+        if precision is not DEFAULT:
+            kwargs["precision"] = precision
+        super().__init__(kwargs)
+
+
 class TDigest(AttrDict[Any]):
     """
     :arg compression: Limits the maximum number of nodes used by the
@@ -3665,6 +3777,29 @@ class TextExpansionQuery(AttrDict[Any]):
             kwargs["boost"] = boost
         if _name is not DEFAULT:
             kwargs["_name"] = _name
+        super().__init__(kwargs)
+
+
+class TextIndexPrefixes(AttrDict[Any]):
+    """
+    :arg max_chars: (required)
+    :arg min_chars: (required)
+    """
+
+    max_chars: Union[int, DefaultType]
+    min_chars: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        max_chars: Union[int, DefaultType] = DEFAULT,
+        min_chars: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if max_chars is not DEFAULT:
+            kwargs["max_chars"] = max_chars
+        if min_chars is not DEFAULT:
+            kwargs["min_chars"] = min_chars
         super().__init__(kwargs)
 
 
