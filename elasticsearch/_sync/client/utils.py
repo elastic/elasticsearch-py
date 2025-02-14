@@ -182,8 +182,6 @@ def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConf
         "host",
         "port",
         "path_prefix",
-        "url_prefix",
-        "use_ssl",
     }
     disallowed_keys = set(host.keys()).difference(allow_hosts_keys)
     if disallowed_keys:
@@ -196,41 +194,6 @@ def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConf
         )
 
     options = dict(host)
-
-    # Handle the deprecated option 'use_ssl'
-    if "use_ssl" in options:
-        use_ssl = options.pop("use_ssl")
-        if not isinstance(use_ssl, bool):
-            raise TypeError("'use_ssl' must be of type 'bool'")
-
-        # Ensure the user isn't specifying scheme=http use_ssl=True or vice-versa
-        if "scheme" in options and (options["scheme"] == "https") != use_ssl:
-            raise ValueError(
-                f"Cannot specify conflicting options 'scheme={options['scheme']}' "
-                f"and 'use_ssl={use_ssl}'. Use 'scheme' only instead"
-            )
-
-        warnings.warn(
-            "The 'use_ssl' option is no longer needed as specifying a 'scheme' is now required",
-            category=DeprecationWarning,
-            stacklevel=warn_stacklevel(),
-        )
-        options.setdefault("scheme", "https" if use_ssl else "http")
-
-    # Handle the deprecated option 'url_prefix'
-    if "url_prefix" in options:
-        if "path_prefix" in options:
-            raise ValueError(
-                "Cannot specify conflicting options 'url_prefix' and "
-                "'path_prefix'. Use 'path_prefix' only instead"
-            )
-
-        warnings.warn(
-            "The 'url_prefix' option is deprecated in favor of 'path_prefix'",
-            category=DeprecationWarning,
-            stacklevel=warn_stacklevel(),
-        )
-        options["path_prefix"] = options.pop("url_prefix")
 
     return NodeConfig(**options)  # type: ignore[arg-type]
 
