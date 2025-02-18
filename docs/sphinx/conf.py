@@ -21,9 +21,41 @@ import elasticsearch
 
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.doctest", "sphinx.ext.intersphinx"]
 
-autoclass_content = "both"
+autoclass_content = "class"
+autodoc_class_signature = "separated"
 
 autodoc_typehints = "description"
+
+
+def client_name(full_name):
+    # Get the class name, e.g. ['elasticsearch', 'client', 'TextStructureClient'] -> 'TextStructure'
+    class_name = full_name.split(".")[-1].removesuffix("Client")
+    # Convert to snake case, e.g. 'TextStructure' -> '_text_structure'
+    snake_case = "".join(["_" + c.lower() if c.isupper() else c for c in class_name])
+    # Remove the leading underscore
+    return snake_case.lstrip("_")
+
+
+def add_client_usage_example(app, what, name, obj, options, lines):
+    if what == "class" and "Client" in name:
+        sub_client_name = client_name(name)
+        lines.append(
+            f"To use this client, access ``client.{sub_client_name}`` from an "
+            " :class:`~elasticsearch.Elasticsearch` client. For example::"
+        )
+        lines.append("")
+        lines.append("    from elasticsearch import Elasticsearch")
+        lines.append("")
+        lines.append("    # Create the client instance")
+        lines.append("    client = Elasticsearch(...)")
+        lines.append(f"    # Use the {sub_client_name} client")
+        lines.append(f"    client.{sub_client_name}.<method>(...)")
+        lines.append("")
+
+
+def setup(app):
+    app.connect("autodoc-process-docstring", add_client_usage_example)
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
