@@ -73,6 +73,8 @@ from ._sync.client.xpack import XPackClient as XPackClient  # noqa: F401
 from ._utils import fixup_module_metadata
 
 # This file exists for backwards compatibility.
+# We can't remove it as we use it for the Sphinx docs which show the full page, and we'd
+# rather show `elasticsearch.client.FooClient` than `elasticsearch._sync.client.FooClient`.
 warnings.warn(
     "Importing from the 'elasticsearch.client' module is deprecated. "
     "Instead use 'elasticsearch' module for importing the client.",
