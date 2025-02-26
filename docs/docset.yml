@@ -1,6 +1,7 @@
 project: 'Python client'
 cross_links:
-  - apm-agent-php
+  - apm-agent-python
+  - docs-content
   - elasticsearch
 toc:
   - toc: reference
