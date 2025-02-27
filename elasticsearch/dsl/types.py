@@ -4345,14 +4345,12 @@ class BulkIndexByScrollFailure(AttrDict[Any]):
     :arg id: (required)
     :arg index: (required)
     :arg status: (required)
-    :arg type: (required)
     """
 
     cause: "ErrorCause"
     id: str
     index: str
     status: int
-    type: str
 
 
 class CardinalityAggregate(AttrDict[Any]):

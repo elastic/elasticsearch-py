@@ -5,7 +5,7 @@ steps:
     env:
       PYTHON_VERSION: "{{ matrix.python }}"
       TEST_SUITE: "platinum"
-      STACK_VERSION: "8.16.0-SNAPSHOT"
+      STACK_VERSION: "9.1.0-SNAPSHOT"
       PYTHON_CONNECTION_CLASS: "{{ matrix.connection }}"
       NOX_SESSION: "{{ matrix.nox_session }}"
     matrix:
