@@ -355,7 +355,7 @@ You can now analyze the data with Pandas or you can also continue transforming t
 
 ## Analyze the data with Pandas [analyze-data]
 
-In the next example, the [STATS …​ BY](elasticsearch://docs/reference/query-languages/esql/esql-commands.md#esql-stats-by) command is utilized to count how many employees are speaking a given language. The results are sorted with the `languages` column using [SORT](elasticsearch://docs/reference/query-languages/esql/esql-commands.md#esql-sort):
+In the next example, the [STATS …​ BY](elasticsearch://reference/query-languages/esql/esql-commands.md#esql-stats-by) command is utilized to count how many employees are speaking a given language. The results are sorted with the `languages` column using [SORT](elasticsearch://reference/query-languages/esql/esql-commands.md#esql-sort):
 
 ```python
 response = client.esql.query(

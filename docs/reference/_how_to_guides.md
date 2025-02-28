@@ -655,7 +655,7 @@ class Post(Document):
 
 The `Document` instances use native python types like `str` and `datetime`. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example where we are creating an instance of the `Comment` class.
 
-There are some specific types that were created as part of this library to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://docs/reference/elasticsearch/mapping-reference/range.md):
+There are some specific types that were created as part of this library to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
 
 ```python
 from elasticsearch.dsl import Document, DateRange, Keyword, Range
@@ -1069,7 +1069,7 @@ class BlogPost(BaseDocument):
         name = 'blog'
 ```
 
-Another use case would be using the [join type](elasticsearch://docs/reference/elasticsearch/mapping-reference/parent-join.md) to have multiple different entities in a single index. You can see an [example](https://github.com/elastic/elasticsearch-py/blob/master/examples/dsl/parent_child.py) of this approach. Note that in this case, if the subclasses don’t define their own Index classes, the mappings are merged and shared between all the subclasses.
+Another use case would be using the [join type](elasticsearch://reference/elasticsearch/mapping-reference/parent-join.md) to have multiple different entities in a single index. You can see an [example](https://github.com/elastic/elasticsearch-py/blob/master/examples/dsl/parent_child.py) of this approach. Note that in this case, if the subclasses don’t define their own Index classes, the mappings are merged and shared between all the subclasses.
 
 
 

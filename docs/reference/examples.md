@@ -145,7 +145,7 @@ In the [02-hybrid-search.ipynb](https://github.com/elastic/elasticsearch-labs/bl
 
 * Combine results of traditional text-based search with semantic search, for a hybrid search system.
 * Transform fields in the sample dataset into embeddings using the Sentence Transformer model and index them into Elasticsearch.
-* Use the [RRF API](elasticsearch://docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion.md#rrf-api) to combine the results of a `match` query and a `kNN` semantic search.
+* Use the [RRF API](elasticsearch://reference/elasticsearch/rest-apis/reciprocal-rank-fusion.md#rrf-api) to combine the results of a `match` query and a `kNN` semantic search.
 * Walk through a super simple toy example that demonstrates, step by step, how RRF ranking works.
 
 

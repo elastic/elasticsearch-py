@@ -25,7 +25,7 @@ The handling of connections, retries, and pooling is handled by the [Elastic Tra
 
 ## Tracking requests with Opaque ID [opaque-id]
 
-You can enrich your requests against Elasticsearch with an identifier string, that allows you to discover this identifier in [deprecation logs](docs-content://deploy-manage/monitor/logging-configuration/update-elasticsearch-logging-levels.md#deprecation-logging), to support you with [identifying search slow log origin](elasticsearch://docs/reference/elasticsearch/index-settings/slow-log.md) or to help with [identifying running tasks](https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks).
+You can enrich your requests against Elasticsearch with an identifier string, that allows you to discover this identifier in [deprecation logs](docs-content://deploy-manage/monitor/logging-configuration/update-elasticsearch-logging-levels.md#deprecation-logging), to support you with [identifying search slow log origin](elasticsearch://reference/elasticsearch/index-settings/slow-log.md) or to help with [identifying running tasks](https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks).
 
 The opaque ID can be set via the `opaque_id` parameter via the client `.options()` method:
 
