@@ -87,7 +87,7 @@ FAILING_TESTS = {
     "machine_learning/jobs_crud",
     "scroll/10_basic",
     "security/10_api_key_basic",
-    "security/130_user_profile.yml",
+    "security/130_user_profile",
     "transform/10_basic",
 }
 SKIPPED_TESTS = {
