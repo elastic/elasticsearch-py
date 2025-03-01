@@ -1,29 +1,21 @@
-[[esql-pandas]]
-=== ES|QL and Pandas
+---
+mapped_pages:
+  - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/esql-pandas.html
+---
 
-The {ref}/esql.html[Elasticsearch Query Language (ES|QL)] provides a powerful
-way to filter, transform, and analyze data stored in {es}. Designed to be easy
-to learn and use, it is a perfect fit for data scientists familiar with Pandas
-and other dataframe-based libraries. ES|QL queries produce tables with named
-columns, which is the definition of dataframes.
+# ES|QL and Pandas [esql-pandas]
 
-This page shows you an example of using ES|QL and Pandas together to work with
-dataframes.
+The [Elasticsearch Query Language (ES|QL)](docs-content://explore-analyze/query-filter/languages/esql.md) provides a powerful way to filter, transform, and analyze data stored in {{es}}. Designed to be easy to learn and use, it is a perfect fit for data scientists familiar with Pandas and other dataframe-based libraries. ES|QL queries produce tables with named columns, which is the definition of dataframes.
 
-[discrete]
-[[import-data]]
-==== Import data
+This page shows you an example of using ES|QL and Pandas together to work with dataframes.
 
-Use the 
-https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/esql/qa/testFixtures/src/main/resources/employees.csv[`employees` sample data] and 
-https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/esql/qa/testFixtures/src/main/resources/mapping-default.json[mapping].
-The easiest way to load this dataset is to run https://gist.github.com/pquentin/7cf29a5932cf52b293699dd994b1a276[two Elasticsearch API requests] in the Kibana Console.
 
-.Index mapping request
-[%collapsible]
-====
-[source,console]
---------------------------------------------------
+## Import data [import-data]
+
+Use the [`employees` sample data](https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/esql/qa/testFixtures/src/main/resources/employees.csv) and [mapping](https://github.com/elastic/elasticsearch/blob/main/x-pack/plugin/esql/qa/testFixtures/src/main/resources/mapping-default.json). The easiest way to load this dataset is to run [two Elasticsearch API requests](https://gist.github.com/pquentin/7cf29a5932cf52b293699dd994b1a276) in the Kibana Console.
+
+::::{dropdown} Index mapping request
+```console
 PUT employees
 {
   "mappings": {
@@ -107,15 +99,13 @@ PUT employees
     }
   }
 }
---------------------------------------------------
-// TEST[skip:TBD]
-====
+```
 
-.Bulk request to ingest data
-[%collapsible]
-====
-[source,console]
---------------------------------------------------
+::::
+
+
+::::{dropdown} Bulk request to ingest data
+```console
 PUT employees/_bulk
 { "index": {}}
 {"birth_date":"1953-09-02T00:00:00Z","emp_no":"10001","first_name":"Georgi","gender":"M","hire_date":"1986-06-26T00:00:00Z","languages":"2","last_name":"Facello","salary":"57305","height":"2.03","still_hired":"true","avg_worked_seconds":"268728049","job_positions":["Senior Python Developer","Accountant"],"is_rehired":["false","true"],"salary_change":"1.19"}
@@ -317,19 +307,17 @@ PUT employees/_bulk
 {"birth_date":"1956-05-25T00:00:00Z","emp_no":"10099","first_name":"Valter","gender":"F","hire_date":"1988-10-18T00:00:00Z","languages":"2","last_name":"Sullins","salary":"73578","height":"1.81","still_hired":"true","avg_worked_seconds":"377713748","is_rehired":["true","true"],"salary_change":["10.71","14.26","-8.78","-3.98"]}
 { "index": {}}
 {"birth_date":"1953-04-21T00:00:00Z","emp_no":"10100","first_name":"Hironobu","gender":"F","hire_date":"1987-09-21T00:00:00Z","languages":"4","last_name":"Haraldson","salary":"68431","height":"1.77","still_hired":"true","avg_worked_seconds":"223910853","job_positions":"Purchase Manager","is_rehired":["false","true","true","false"],"salary_change":["13.97","-7.49"]}
---------------------------------------------------
-// TEST[skip:TBD]
-====
+```
 
-[discrete]
-[[convert-dataset-pandas-dataframe]]
-==== Convert the dataset
+::::
 
-Use the ES|QL CSV import to convert the `employees` dataset to a Pandas
-dataframe object. 
 
-[source,python]
-------------------------------------
+
+## Convert the dataset [convert-dataset-pandas-dataframe]
+
+Use the ES|QL CSV import to convert the `employees` dataset to a Pandas dataframe object.
+
+```python
 from io import StringIO
 from elasticsearch import Elasticsearch
 import pandas as pd
@@ -343,14 +331,11 @@ response = client.esql.query(
 )
 df = pd.read_csv(StringIO(response.body))
 print(df)
-------------------------------------
+```
 
-Even though the dataset contains only 100 records, a LIMIT of 500 is specified to suppress
-ES|QL warnings about potentially missing records. This prints the
-following dataframe:
+Even though the dataset contains only 100 records, a LIMIT of 500 is specified to suppress ES|QL warnings about potentially missing records. This prints the following dataframe:
 
-[source,python]
-------------------------------------
+```python
     avg_worked_seconds  ...  salary_change.long still_hired
 0            268728049  ...                   1        True
 1            328922887  ...            [-7, 11]        True
@@ -363,23 +348,16 @@ following dataframe:
 97           272392146  ...          [-2, 4, 8]       False
 98           377713748  ...    [-8, -3, 10, 14]        True
 99           223910853  ...            [-7, 13]        True
-------------------------------------
+```
 
-You can now analyze the data with Pandas or you can also continue transforming
-the data using ES|QL.
+You can now analyze the data with Pandas or you can also continue transforming the data using ES|QL.
 
 
-[discrete]
-[[analyze-data]]
-==== Analyze the data with Pandas
+## Analyze the data with Pandas [analyze-data]
 
-In the next example, the {ref}/esql-commands.html#esql-stats-by[STATS ... BY]
-command is utilized to count how many employees are speaking a given language.
-The results are sorted with the `languages` column using
-{ref}/esql-commands.html#esql-sort[SORT]:
+In the next example, the [STATS …​ BY](elasticsearch://reference/query-languages/esql/esql-commands.md#esql-stats-by) command is utilized to count how many employees are speaking a given language. The results are sorted with the `languages` column using [SORT](elasticsearch://reference/query-languages/esql/esql-commands.md#esql-sort):
 
-[source,python]
-------------------------------------
+```python
 response = client.esql.query(
     query="""
     FROM employees
@@ -394,32 +372,25 @@ df = pd.read_csv(
     dtype={"count": "Int64", "languages": "Int64"},
 )
 print(df)
-------------------------------------
+```
 
-Note that the `dtype` parameter of `pd.read_csv()` is useful when the type
-inferred by Pandas is not enough. The code prints the following response:
+Note that the `dtype` parameter of `pd.read_csv()` is useful when the type inferred by Pandas is not enough. The code prints the following response:
 
-[source,python]
-------------------------------------
+```python
    count  languages
 0     15          1
 1     19          2
 2     17          3
 3     18          4
 4     21          5
-------------------------------------
+```
 
 
-[discrete]
-[[passing-params]]
-==== Pass parameters to a query with ES|QL
+## Pass parameters to a query with ES|QL [passing-params]
 
-Use the 
-{ref}/esql-rest.html#esql-rest-params[built-in parameters support of the ES|QL REST API]
-to pass parameters to a query:
+Use the [built-in parameters support of the ES|QL REST API](docs-content://explore-analyze/query-filter/languages/esql-rest.md#esql-rest-params) to pass parameters to a query:
 
-[source,python]
-------------------------------------
+```python
 response = client.esql.query(
     query="""
     FROM employees
@@ -436,18 +407,16 @@ df = pd.read_csv(
     dtype={"count": "Int64", "languages": "Int64"},
 )
 print(df)
-------------------------------------
+```
 
 The code above outputs the following:
 
-[source,python]
-------------------------------------
+```python
    count  languages
 0     17          3
 1     18          4
 2     21          5
-------------------------------------
+```
 
-If you want to learn more about ES|QL, refer to the
-{ref}/esql.html[ES|QL documentation]. You can also check out this other 
-https://github.com/elastic/elasticsearch-labs/blob/main/supporting-blog-content/Boston-Celtics-Demo/celtics-esql-demo.ipynb[Python example using Boston Celtics data].
+If you want to learn more about ES|QL, refer to the [ES|QL documentation](docs-content://explore-analyze/query-filter/languages/esql.md). You can also check out this other [Python example using Boston Celtics data](https://github.com/elastic/elasticsearch-labs/blob/main/supporting-blog-content/Boston-Celtics-Demo/celtics-esql-demo.ipynb).
+
