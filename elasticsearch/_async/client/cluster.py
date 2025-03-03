@@ -447,8 +447,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the cluster health status.
-          You can also use the API to get the health status of only specified data streams and indices.
+          <p>Get the cluster health status.</p>
+          <p>You can also use the API to get the health status of only specified data streams and indices.
           For data streams, the API retrieves the health status of the stream’s backing indices.</p>
           <p>The cluster health status is: green, yellow or red.
           On the shard level, a red status indicates that the specific shard is not allocated in the cluster. Yellow means that the primary shard is allocated but replicas are not. Green means that all shards are allocated.
@@ -850,8 +850,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update the cluster settings.
-          Configure and update dynamic settings on a running cluster.
+          <p>Update the cluster settings.</p>
+          <p>Configure and update dynamic settings on a running cluster.
           You can also configure dynamic settings locally on an unstarted or shut down node in <code>elasticsearch.yml</code>.</p>
           <p>Updates made with this API can be persistent, which apply across cluster restarts, or transient, which reset after a cluster restart.
           You can also reset transient or persistent settings by assigning them a null value.</p>
@@ -920,9 +920,16 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get remote cluster information.
-          Get all of the configured remote cluster information.
-          This API returns connection and endpoint information keyed by the configured remote cluster alias.</p>
+          <p>Get remote cluster information.</p>
+          <p>Get information about configured remote clusters.
+          The API returns connection and endpoint information keyed by the configured remote cluster alias.</p>
+          <blockquote>
+          <p>info
+          This API returns information that reflects current state on the local cluster.
+          The <code>connected</code> field does not necessarily reflect whether a remote cluster is down or unavailable, only whether there is currently an open connection to it.
+          Elasticsearch does not spontaneously try to reconnect to a disconnected remote cluster.
+          To trigger a reconnection, attempt a cross-cluster search, ES|QL cross-cluster search, or try the <a href="https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-resolve-cluster">resolve cluster endpoint</a>.</p>
+          </blockquote>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/cluster-remote-info.html>`_
