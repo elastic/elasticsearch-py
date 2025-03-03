@@ -97,8 +97,8 @@ class AsyncSearchClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
-        :param keep_alive: Specifies how long the async search should be available in
-            the cluster. When not specified, the `keep_alive` set with the corresponding
+        :param keep_alive: The length of time that the async search should be available
+            in the cluster. When not specified, the `keep_alive` set with the corresponding
             submit async request will be used. Otherwise, it is possible to override
             the value and extend the validity of the request. When this period expires,
             the search, if still running, is cancelled. If the search is completed, its
@@ -157,13 +157,17 @@ class AsyncSearchClient(NamespacedClient):
 
           <p>Get the async search status.</p>
           <p>Get the status of a previously submitted async search request given its identifier, without retrieving search results.
-          If the Elasticsearch security features are enabled, use of this API is restricted to the <code>monitoring_user</code> role.</p>
+          If the Elasticsearch security features are enabled, the access to the status of a specific async search is restricted to:</p>
+          <ul>
+          <li>The user or API key that submitted the original async search request.</li>
+          <li>Users that have the <code>monitor</code> cluster privilege or greater privileges.</li>
+          </ul>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
 
         :param id: A unique identifier for the async search.
-        :param keep_alive: Specifies how long the async search needs to be available.
+        :param keep_alive: The length of time that the async search needs to be available.
             Ongoing async searches and any saved search results are deleted after this
             period.
         """
@@ -270,6 +274,7 @@ class AsyncSearchClient(NamespacedClient):
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
+        keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         knn: t.Optional[
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
@@ -384,6 +389,9 @@ class AsyncSearchClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param indices_boost: Boosts the _score of documents from specified indices.
+        :param keep_alive: Specifies how long the async search needs to be available.
+            Ongoing async searches and any saved search results are deleted after this
+            period.
         :param keep_on_completion: If `true`, results are stored for later retrieval
             when the search completes within the `wait_for_completion_timeout`.
         :param knn: Defines the approximate kNN search to run.
@@ -510,6 +518,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if keep_alive is not None:
+            __query["keep_alive"] = keep_alive
         if keep_on_completion is not None:
             __query["keep_on_completion"] = keep_on_completion
         if lenient is not None:
