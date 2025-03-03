@@ -1,0 +1,19 @@
+toc:
+  - file: index.md
+  - file: getting-started.md
+  - file: installation.md
+  - file: connecting.md
+  - file: configuration.md
+  - file: async.md
+  - file: integrations.md
+    children:
+      - file: opentelemetry.md
+      - file: esql-pandas.md
+  - file: examples.md
+  - file: elasticsearch-dsl.md
+    children:
+      - file: _configuration.md
+      - file: _tutorials.md
+      - file: _how_to_guides.md
+      - file: _examples.md
+  - file: client-helpers.md

@@ -39,7 +39,7 @@ under **Cloud ID**.
 
 You can generate an API key on the **Management** page under Security.
 
-.. image:: ../guide/images/create-api-key.png
+.. image:: _static/images/create-api-key.png
 
 Confirm that the connection was successful.
 

@@ -1,11 +1,15 @@
-=== Tutorials
+---
+mapped_pages:
+  - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/_tutorials.html
+---
 
-==== Search
+# Tutorials [_tutorials]
 
-Let's have a typical search request written directly as a `dict`:
+## Search [_search]
 
-[source,python]
-----
+Let’s have a typical search request written directly as a `dict`:
+
+```python
 from elasticsearch import Elasticsearch
 client = Elasticsearch("https://localhost:9200")
 
@@ -35,16 +39,13 @@ for hit in response['hits']['hits']:
 
 for tag in response['aggregations']['per_tag']['buckets']:
     print(tag['key'], tag['max_lines']['value'])
-----
+```
 
-The problem with this approach is that it is very verbose, prone to
-syntax mistakes like incorrect nesting, hard to modify (eg. adding
-another filter) and definitely not fun to write.
+The problem with this approach is that it is very verbose, prone to syntax mistakes like incorrect nesting, hard to modify (eg. adding another filter) and definitely not fun to write.
 
-Let's rewrite the example using the DSL module:
+Let’s rewrite the example using the DSL module:
 
-[source,python]
-----
+```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search
 
@@ -65,7 +66,7 @@ for hit in response:
 
 for tag in response.aggregations.per_tag.buckets:
     print(tag.key, tag.max_lines.value)
-----
+```
 
 As you see, the library took care of:
 
@@ -75,13 +76,12 @@ As you see, the library took care of:
 * providing a convenient access to response data
 * no curly or square brackets everywhere
 
-==== Persistence
 
-Let's have a simple Python class representing an article in a blogging
-system:
+## Persistence [_persistence]
 
-[source,python]
-----
+Let’s have a simple Python class representing an article in a blogging system:
+
+```python
 from datetime import datetime
 from elasticsearch.dsl import Document, Date, Integer, Keyword, Text, connections
 
@@ -122,7 +122,7 @@ print(article.is_published())
 
 # Display cluster health
 print(connections.get_connection().cluster.health())
-----
+```
 
 In this example you can see:
 
@@ -130,25 +130,24 @@ In this example you can see:
 * defining fields with mapping configuration
 * setting index name
 * defining custom methods
-* overriding the built-in `.save()` method to hook into the persistence
-life cycle
+* overriding the built-in `.save()` method to hook into the persistence life cycle
 * retrieving and saving the object into Elasticsearch
 * accessing the underlying client for other APIs
 
 You can see more in the `persistence` chapter.
 
-==== Pre-built Faceted Search
 
-If you have your `Document`s defined you can very easily create a
-faceted search class to simplify searching and filtering.
+## Pre-built Faceted Search [_pre_built_faceted_search]
 
-[NOTE]
-====
+If you have your `Document`s defined you can very easily create a faceted search class to simplify searching and filtering.
+
+::::{note}
 This feature is experimental and may be subject to change.
-====
 
-[source,python]
-----
+::::
+
+
+```python
 from elasticsearch.dsl import FacetedSearch, TermsFacet, DateHistogramFacet
 
 class BlogSearch(FacetedSearch):
@@ -174,20 +173,16 @@ for (tag, count, selected) in response.facets.tags:
 
 for (month, count, selected) in response.facets.publishing_frequency:
     print(month.strftime('%B %Y'), ' (SELECTED):' if selected else ':', count)
-----
+```
 
 You can find more details in the `faceted_search` chapter.
 
-==== Update By Query
 
-Let's resume the simple example of articles on a blog, and let's assume
-that each article has a number of likes. For this example, imagine we
-want to increment the number of likes by 1 for all articles that match a
-certain tag and do not match a certain description. Writing this as a
-`dict`, we would have the following code:
+## Update By Query [_update_by_query]
 
-[source,python]
-----
+Let’s resume the simple example of articles on a blog, and let’s assume that each article has a number of likes. For this example, imagine we want to increment the number of likes by 1 for all articles that match a certain tag and do not match a certain description. Writing this as a `dict`, we would have the following code:
+
+```python
 from elasticsearch import Elasticsearch
 client = Elasticsearch()
 
@@ -206,12 +201,11 @@ response = client.update_by_query(
       }
     },
   )
-----
+```
 
 Using the DSL, we can now express this query as such:
 
-[source,python]
-----
+```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search, UpdateByQuery
 
@@ -222,22 +216,16 @@ ubq = UpdateByQuery(using=client, index="my-index") \
       .script(source="ctx._source.likes++", lang="painless")
 
 response = ubq.execute()
-----
+```
 
-As you can see, the `Update By Query` object provides many of the
-savings offered by the `Search` object, and additionally allows one to
-update the results of the search based on a script assigned in the same
-manner.
+As you can see, the `Update By Query` object provides many of the savings offered by the `Search` object, and additionally allows one to update the results of the search based on a script assigned in the same manner.
 
-==== Migration from the standard client
 
-You don't have to port your entire application to get the benefits of
-the DSL module, you can start gradually by creating a `Search` object
-from your existing `dict`, modifying it using the API and serializing it
-back to a `dict`:
+## Migration from the standard client [_migration_from_the_standard_client]
 
-[source,python]
-----
+You don’t have to port your entire application to get the benefits of the DSL module, you can start gradually by creating a `Search` object from your existing `dict`, modifying it using the API and serializing it back to a `dict`:
+
+```python
 body = {...} # insert complicated query here
 
 # Convert to Search object
@@ -248,4 +236,6 @@ s.filter("term", tags="python")
 
 # Convert back to dict to plug back into existing code
 body = s.to_dict()
-----
+```
+
+
