@@ -9,19 +9,6 @@ mapped_pages:
 This is the official low-level Python client for {{es}}. Its goal is to provide common ground for all {{es}}-related code in Python. For this reason, the client is designed to be unopinionated and extendable. An API reference is available on [Read the Docs](https://elasticsearch-py.readthedocs.io).
 
 
-## Compatibility [_compatibility]
-
-Language clients are forward compatible; meaning that the clients support communicating with greater or equal minor versions of {{es}} without breaking. It does not mean that the clients automatically support new features of newer {{es}} versions; it is only possible after a release of a new client version. For example, a 8.12 client version won’t automatically support the new features of the 8.13 version of {{es}}, the 8.13 client version is required for that. {{es}} language clients are only backwards compatible with default distributions and without guarantees made.
-
-| Elasticsearch version | elasticsearch-py branch | Supported |
-| --- | --- | --- |
-| main | main |  |
-| 8.x | 8.x | 8.x |
-| 7.x | 7.x | 7.17 |
-
-If you have a need to have multiple versions installed at the same time older versions are also released as `elasticsearch7` and `elasticsearch8`.
-
-
 ## Example use [_example_use]
 
 Simple use-case:
@@ -47,7 +34,6 @@ For an elaborate example of how to ingest data into Elastic Cloud, refer to [thi
 ::::
 
 
-
 ## Features [_features]
 
 The client’s features include:
@@ -67,3 +53,15 @@ The client also contains a convenient set of [helpers](https://elasticsearch-py.
 
 For a higher level access with more limited scope, have a look at the DSL module, which provides a more convenient and idiomatic way to write and manipulate queries.
 
+
+## Compatibility [_compatibility]
+
+Language clients are forward compatible; meaning that the clients support communicating with greater or equal minor versions of {{es}} without breaking. It does not mean that the clients automatically support new features of newer {{es}} versions; it is only possible after a release of a new client version. For example, a 8.12 client version won’t automatically support the new features of the 8.13 version of {{es}}, the 8.13 client version is required for that. {{es}} language clients are only backwards compatible with default distributions and without guarantees made.
+
+| Elasticsearch version | elasticsearch-py branch | Supported |
+| --- | --- | --- |
+| main | main |  |
+| 8.x | 8.x | 8.x |
+| 7.x | 7.x | 7.17 |
+
+If you have a need to have multiple versions installed at the same time older versions are also released as `elasticsearch7` and `elasticsearch8`.
