@@ -44,7 +44,7 @@ class IlmClient(NamespacedClient):
           You cannot delete policies that are currently in use. If the policy is being used to manage any indices, the request fails and returns an error.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-delete-lifecycle>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -102,7 +102,7 @@ class IlmClient(NamespacedClient):
           <p>The response indicates when the index entered each lifecycle state, provides the definition of the running phase, and information about any failures.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-explain-lifecycle>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to target.
             Supports wildcards (`*`). To target all data streams and indices, use `*`
@@ -163,7 +163,7 @@ class IlmClient(NamespacedClient):
           <p>Get lifecycle policies.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-get-lifecycle>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -214,11 +214,11 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the ILM status.
-          Get the current index lifecycle management status.</p>
+          <p>Get the ILM status.</p>
+          <p>Get the current index lifecycle management status.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-get-status>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ilm/status"
@@ -252,6 +252,7 @@ class IlmClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         legacy_template_to_delete: t.Optional[str] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         node_attribute: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -274,12 +275,16 @@ class IlmClient(NamespacedClient):
           Use the stop ILM and get ILM status APIs to wait until the reported operation mode is <code>STOPPED</code>.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-migrate-to-data-tiers>`_
 
         :param dry_run: If true, simulates the migration from node attributes based allocation
             filters to data tiers, but does not perform the migration. This provides
             a way to retrieve the indices and ILM policies that need to be migrated.
         :param legacy_template_to_delete:
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error. It can also be set to `-1` to indicate that the request
+            should never timeout.
         :param node_attribute:
         """
         __path_parts: t.Dict[str, str] = {}
@@ -294,6 +299,8 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -347,7 +354,7 @@ class IlmClient(NamespacedClient):
           An index cannot move to a step that is not part of its policy.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-move-to-step>`_
 
         :param index: The name of the index whose lifecycle step is to change
         :param current_step: The step that the index is expected to be in.
@@ -415,7 +422,7 @@ class IlmClient(NamespacedClient):
           <p>NOTE: Only the latest version of the policy is stored, you cannot revert to previous versions.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-put-lifecycle>`_
 
         :param name: Identifier for the policy.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -479,7 +486,7 @@ class IlmClient(NamespacedClient):
           It also stops managing the indices.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-remove-policy>`_
 
         :param index: The name of the index to remove policy on
         """
@@ -525,7 +532,7 @@ class IlmClient(NamespacedClient):
           Use the explain lifecycle state API to determine whether an index is in the ERROR step.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-retry>`_
 
         :param index: The name of the indices (comma-separated) whose failed lifecycle
             step is to be retry
@@ -573,7 +580,7 @@ class IlmClient(NamespacedClient):
           Restarting ILM is necessary only when it has been stopped using the stop ILM API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-start>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -627,7 +634,7 @@ class IlmClient(NamespacedClient):
           Use the get ILM status API to check whether ILM is running.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-stop>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
