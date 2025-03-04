@@ -3,11 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_ingest/ip_location/database/my-database-1",
-    headers={"Content-Type": "application/json"},
-    body={
+resp = client.ingest.put_ip_location_database(
+    id="my-database-1",
+    configuration={
         "name": "GeoIP2-Domain",
         "maxmind": {
             "account_id": "1234567"
