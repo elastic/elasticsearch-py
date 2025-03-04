@@ -6,6 +6,11 @@
 resp = client.ml.start_trained_model_deployment(
     model_id="my_model",
     deployment_id="my_model_for_search",
+    adaptive_allocations={
+        "enabled": True,
+        "min_number_of_allocations": 3,
+        "max_number_of_allocations": 10
+    },
 )
 print(resp)
 ----
