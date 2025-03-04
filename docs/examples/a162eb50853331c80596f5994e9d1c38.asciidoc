@@ -3,14 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_application/search_application/my_search_application/_render_query",
-    headers={"Content-Type": "application/json"},
-    body={
-        "params": {
-            "query_string": "rock climbing"
-        }
+resp = client.search_application.render_query(
+    name="my_search_application",
+    params={
+        "query_string": "rock climbing"
     },
 )
 print(resp)

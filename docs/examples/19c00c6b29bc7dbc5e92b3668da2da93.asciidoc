@@ -3,28 +3,23 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_ingest/_simulate",
-    headers={"Content-Type": "application/json"},
-    body={
-        "docs": [
-            {
-                "_index": "my-index",
-                "_id": "123",
-                "_source": {
-                    "foo": "bar"
-                }
-            },
-            {
-                "_index": "my-index",
-                "_id": "456",
-                "_source": {
-                    "foo": "rab"
-                }
+resp = client.simulate.ingest(
+    docs=[
+        {
+            "_index": "my-index",
+            "_id": "123",
+            "_source": {
+                "foo": "bar"
             }
-        ]
-    },
+        },
+        {
+            "_index": "my-index",
+            "_id": "456",
+            "_source": {
+                "foo": "rab"
+            }
+        }
+    ],
 )
 print(resp)
 ----

@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "DELETE",
-    "/_ingest/ip_location/database/my-database-id",
+resp = client.ingest.delete_ip_location_database(
+    id="my-database-id",
 )
 print(resp)
 ----

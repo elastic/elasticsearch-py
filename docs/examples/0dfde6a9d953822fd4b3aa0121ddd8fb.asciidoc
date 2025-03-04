@@ -3,24 +3,20 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_application/search_application/my-app/_render_query",
-    headers={"Content-Type": "application/json"},
-    body={
-        "params": {
-            "query_string": "my first query",
-            "text_fields": [
-                {
-                    "name": "title",
-                    "boost": 5
-                },
-                {
-                    "name": "description",
-                    "boost": 1
-                }
-            ]
-        }
+resp = client.search_application.render_query(
+    name="my-app",
+    params={
+        "query_string": "my first query",
+        "text_fields": [
+            {
+                "name": "title",
+                "boost": 5
+            },
+            {
+                "name": "description",
+                "boost": 1
+            }
+        ]
     },
 )
 print(resp)
