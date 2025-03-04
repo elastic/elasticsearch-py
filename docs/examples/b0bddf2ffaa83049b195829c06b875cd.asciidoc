@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_application/search_application/my_search_application/_render_query",
+resp = client.search_application.render_query(
+    name="my_search_application",
 )
 print(resp)
 ----
