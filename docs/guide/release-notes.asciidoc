@@ -50,6 +50,7 @@
 === 8.17.2 (2025-03-04)
 
 - Explain how to use sub clients in API docs (https://github.com/elastic/elasticsearch-py/pull/2798[#2798])
+- Render descriptions as Markdown in API docs
 - Update APIs
   * Add `keep_alive` to Submit async search API
   * Add `Run and Delete` an async ES|QL query APIs
