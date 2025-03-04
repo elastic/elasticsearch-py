@@ -27,6 +27,9 @@ resp = client.indices.create(
             },
             "topic": {
                 "type": "keyword"
+            },
+            "timestamp": {
+                "type": "date"
             }
         }
     },
@@ -48,7 +51,8 @@ resp1 = client.index(
             "llm",
             "ai",
             "information_retrieval"
-        ]
+        ],
+        "timestamp": "2021-01-01T12:10:30"
     },
 )
 print(resp1)
@@ -67,7 +71,8 @@ resp2 = client.index(
         "topic": [
             "ai",
             "medicine"
-        ]
+        ],
+        "timestamp": "2022-01-01T12:10:30"
     },
 )
 print(resp2)
@@ -86,7 +91,8 @@ resp3 = client.index(
         "topic": [
             "ai",
             "security"
-        ]
+        ],
+        "timestamp": "2023-01-01T12:10:30"
     },
 )
 print(resp3)
@@ -106,7 +112,8 @@ resp4 = client.index(
             "ai",
             "elastic",
             "assistant"
-        ]
+        ],
+        "timestamp": "2024-01-01T12:10:30"
     },
 )
 print(resp4)
@@ -126,7 +133,8 @@ resp5 = client.index(
             "documentation",
             "observability",
             "elastic"
-        ]
+        ],
+        "timestamp": "2025-01-01T12:10:30"
     },
 )
 print(resp5)
