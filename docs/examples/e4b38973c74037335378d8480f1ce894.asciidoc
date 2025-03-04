@@ -3,39 +3,34 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_ingest/_simulate",
-    headers={"Content-Type": "application/json"},
-    body={
-        "docs": [
-            {
-                "_index": "my-index",
-                "_id": "123",
-                "_source": {
-                    "foo": "foo"
-                }
-            },
-            {
-                "_index": "my-index",
-                "_id": "456",
-                "_source": {
-                    "bar": "rab"
-                }
+resp = client.simulate.ingest(
+    docs=[
+        {
+            "_index": "my-index",
+            "_id": "123",
+            "_source": {
+                "foo": "foo"
             }
-        ],
-        "component_template_substitutions": {
-            "my-mappings_template": {
-                "template": {
-                    "mappings": {
-                        "dynamic": "strict",
-                        "properties": {
-                            "foo": {
-                                "type": "keyword"
-                            },
-                            "bar": {
-                                "type": "keyword"
-                            }
+        },
+        {
+            "_index": "my-index",
+            "_id": "456",
+            "_source": {
+                "bar": "rab"
+            }
+        }
+    ],
+    component_template_substitutions={
+        "my-mappings_template": {
+            "template": {
+                "mappings": {
+                    "dynamic": "strict",
+                    "properties": {
+                        "foo": {
+                            "type": "keyword"
+                        },
+                        "bar": {
+                            "type": "keyword"
                         }
                     }
                 }

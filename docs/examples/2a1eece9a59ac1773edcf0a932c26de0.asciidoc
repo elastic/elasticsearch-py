@@ -3,14 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/oidc/logout",
-    headers={"Content-Type": "application/json"},
-    body={
-        "token": "dGhpcyBpcyBub3QgYSByZWFsIHRva2VuIGJ1dCBpdCBpcyBvbmx5IHRlc3QgZGF0YS4gZG8gbm90IHRyeSB0byByZWFkIHRva2VuIQ==",
-        "refresh_token": "vLBPvmAB6KvwvJZr27cS"
-    },
+resp = client.security.oidc_logout(
+    token="dGhpcyBpcyBub3QgYSByZWFsIHRva2VuIGJ1dCBpdCBpcyBvbmx5IHRlc3QgZGF0YS4gZG8gbm90IHRyeSB0byByZWFkIHRva2VuIQ==",
+    refresh_token="vLBPvmAB6KvwvJZr27cS",
 )
 print(resp)
 ----

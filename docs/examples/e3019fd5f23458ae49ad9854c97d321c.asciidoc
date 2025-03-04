@@ -3,13 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/oidc/prepare",
-    headers={"Content-Type": "application/json"},
-    body={
-        "realm": "oidc1"
-    },
+resp = client.security.oidc_prepare_authentication(
+    realm="oidc1",
 )
 print(resp)
 ----
