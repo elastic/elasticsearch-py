@@ -72,7 +72,7 @@ class TextStructureClient(NamespacedClient):
           It helps determine why the returned structure was chosen.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-field-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/find-field-structure.html>`_
 
         :param field: The field that should be analyzed.
         :param index: The name of the index that contains the analyzed field.
@@ -259,7 +259,7 @@ class TextStructureClient(NamespacedClient):
           It helps determine why the returned structure was chosen.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-message-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/find-message-structure.html>`_
 
         :param messages: The list of messages you want to analyze.
         :param column_names: If the format is `delimited`, you can specify the column
@@ -433,7 +433,7 @@ class TextStructureClient(NamespacedClient):
           However, you can optionally override some of the decisions about the text structure by specifying one or more query parameters.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/find-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/find-structure.html>`_
 
         :param text_files:
         :param charset: The text's character set. It must be a character set that is
@@ -620,7 +620,7 @@ class TextStructureClient(NamespacedClient):
           The API indicates whether the lines match the pattern together with the offsets and lengths of the matched substrings.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/test-grok-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/test-grok-pattern.html>`_
 
         :param grok_pattern: The Grok pattern to run on the text.
         :param text: The lines of text to run the Grok pattern on.
