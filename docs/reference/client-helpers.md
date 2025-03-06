@@ -5,7 +5,7 @@ mapped_pages:
 
 # Client helpers [client-helpers]
 
-You can find here a collection of simple helper functions that abstract some specifics of the raw API. For detailed examples, refer to [this page](https://elasticsearch-py.readthedocs.io/en/stable/helpers.md).
+You can find here a collection of simple helper functions that abstract some specifics of the raw API. For detailed examples, refer to [this page](https://elasticsearch-py.readthedocs.io/en/stable/helpers.html).
 
 
 ## Bulk helpers [bulk-helpers]
