@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://github.com/elastic/elasticsearch-py/raw/main/docs/logo-elastic-glyph-color.svg" width="20%" alt="Elastic logo" />
+    <img src="https://github.com/elastic/elasticsearch-py/raw/main/docs/images/logo-elastic-glyph-color.svg" width="20%" alt="Elastic logo" />
 </p>
 
 # Elasticsearch Python Client
