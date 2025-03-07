@@ -41,7 +41,7 @@ When using the [manual Python OpenTelemetry instrumentation](https://opentelemet
 
 ## Comparison with community instrumentation [_comparison_with_community_instrumentation]
 
-The [commmunity OpenTelemetry Elasticsearch instrumentation](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/elasticsearch/elasticsearch.md) also instruments the client and sends OpenTelemetry traces, but was developed before the OpenTelemetry Semantic Conventions for {{es}}, so the traces attributes are inconsistent with other OpenTelemetry Elasticsearch client instrumentations. To avoid tracing the same requests twice, make sure to use only one instrumentation, either by uninstalling the opentelemetry-instrumentation-elasticsearch Python package or by [disabling the native instrumentation](#opentelemetry-config-enable).
+The [commmunity OpenTelemetry Elasticsearch instrumentation](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/elasticsearch/elasticsearch.html) also instruments the client and sends OpenTelemetry traces, but was developed before the OpenTelemetry Semantic Conventions for {{es}}, so the traces attributes are inconsistent with other OpenTelemetry Elasticsearch client instrumentations. To avoid tracing the same requests twice, make sure to use only one instrumentation, either by uninstalling the opentelemetry-instrumentation-elasticsearch Python package or by [disabling the native instrumentation](#opentelemetry-config-enable).
 
 
 ### Configuring the OpenTelemetry instrumentation [_configuring_the_opentelemetry_instrumentation]
