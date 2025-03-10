@@ -208,7 +208,7 @@ class IngestClient(NamespacedClient):
           Get download statistics for GeoIP2 databases that are used with the GeoIP processor.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/geoip-processor.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/geoip/stats"
@@ -412,7 +412,7 @@ class IngestClient(NamespacedClient):
           A grok pattern is like a regular expression that supports aliased expressions that can be reused.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/grok-processor.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/processor/grok"
@@ -620,7 +620,7 @@ class IngestClient(NamespacedClient):
           Changes made using this API take effect immediately.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/ingest.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param deprecated: Marks this ingest pipeline as deprecated. When a deprecated
