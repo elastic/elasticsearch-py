@@ -35,7 +35,7 @@ class SimulateClient(NamespacedClient):
         body_fields=(
             "docs",
             "component_template_substitutions",
-            "index_template_subtitutions",
+            "index_template_substitutions",
             "mapping_addition",
             "pipeline_substitutions",
         ),
@@ -52,7 +52,7 @@ class SimulateClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        index_template_subtitutions: t.Optional[
+        index_template_substitutions: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Any]]
         ] = None,
         mapping_addition: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -90,7 +90,7 @@ class SimulateClient(NamespacedClient):
             an index argument.
         :param component_template_substitutions: A map of component template names to
             substitute component template definition objects.
-        :param index_template_subtitutions: A map of index template names to substitute
+        :param index_template_substitutions: A map of index template names to substitute
             index template definition objects.
         :param mapping_addition:
         :param pipeline: The pipeline to use as the default pipeline. This value can
@@ -127,8 +127,8 @@ class SimulateClient(NamespacedClient):
                 __body["component_template_substitutions"] = (
                     component_template_substitutions
                 )
-            if index_template_subtitutions is not None:
-                __body["index_template_subtitutions"] = index_template_subtitutions
+            if index_template_substitutions is not None:
+                __body["index_template_substitutions"] = index_template_substitutions
             if mapping_addition is not None:
                 __body["mapping_addition"] = mapping_addition
             if pipeline_substitutions is not None:
