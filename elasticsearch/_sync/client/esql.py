@@ -323,7 +323,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can stop it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-async-query-stop-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/esql-async-query-stop-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -408,7 +408,7 @@ class EsqlClient(NamespacedClient):
           Get search results for an ES|QL (Elasticsearch query language) query.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

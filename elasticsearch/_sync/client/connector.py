@@ -1539,7 +1539,7 @@ class ConnectorClient(NamespacedClient):
           <p>Update the draft filtering validation info for a connector.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-filtering-validation-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/update-connector-filtering-validation-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param validation:
@@ -1710,7 +1710,7 @@ class ConnectorClient(NamespacedClient):
           <p>Update the connector is_native flag.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-connector-native-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/update-connector-native-api.html>`_
 
         :param connector_id: The unique identifier of the connector to be updated
         :param is_native:
