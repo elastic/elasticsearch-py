@@ -795,6 +795,28 @@ class GeoDistance(Query):
         )
 
 
+class GeoGrid(Query):
+    """
+    Matches `geo_point` and `geo_shape` values that intersect a grid cell
+    from a GeoGrid aggregation.
+
+    :arg _field: The field to use in this query.
+    :arg _value: The query value for the field.
+    """
+
+    name = "geo_grid"
+
+    def __init__(
+        self,
+        _field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        _value: Union["types.GeoGridQuery", Dict[str, Any], "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if _field is not DEFAULT:
+            kwargs[str(_field)] = _value
+        super().__init__(**kwargs)
+
+
 class GeoPolygon(Query):
     """
     :arg _field: The field to use in this query.

@@ -880,6 +880,48 @@ class GeoDistanceSort(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class GeoGridQuery(AttrDict[Any]):
+    """
+    :arg geogrid:
+    :arg geohash:
+    :arg geohex:
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    geogrid: Union[str, DefaultType]
+    geohash: Union[str, DefaultType]
+    geohex: Union[str, DefaultType]
+    boost: Union[float, DefaultType]
+    _name: Union[str, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        geogrid: Union[str, DefaultType] = DEFAULT,
+        geohash: Union[str, DefaultType] = DEFAULT,
+        geohex: Union[str, DefaultType] = DEFAULT,
+        boost: Union[float, DefaultType] = DEFAULT,
+        _name: Union[str, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if geogrid is not DEFAULT:
+            kwargs["geogrid"] = geogrid
+        if geohash is not DEFAULT:
+            kwargs["geohash"] = geohash
+        if geohex is not DEFAULT:
+            kwargs["geohex"] = geohex
+        if boost is not DEFAULT:
+            kwargs["boost"] = boost
+        if _name is not DEFAULT:
+            kwargs["_name"] = _name
+        super().__init__(kwargs)
+
+
 class GeoHashLocation(AttrDict[Any]):
     """
     :arg geohash: (required)
