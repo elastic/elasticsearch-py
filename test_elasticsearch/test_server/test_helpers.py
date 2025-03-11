@@ -626,7 +626,6 @@ def test_no_scroll_id_fast_route(sync_client):
     "kwargs",
     [
         {"api_key": ("name", "value")},
-        {"http_auth": ("username", "password")},
         {"basic_auth": ("username", "password")},
         {"bearer_auth": "token"},
         {"headers": {"custom", "header"}},
@@ -634,8 +633,6 @@ def test_no_scroll_id_fast_route(sync_client):
 )
 @pytest.mark.usefixtures("scan_teardown")
 def test_scan_auth_kwargs_forwarded(sync_client, kwargs):
-    ((key, val),) = kwargs.items()
-
     with patch.object(
         sync_client, "options", return_value=sync_client
     ) as options, patch.object(
@@ -668,9 +665,7 @@ def test_scan_auth_kwargs_forwarded(sync_client, kwargs):
         assert data == [{"search_data": 1}]
 
     assert options.call_args_list == [
-        call(
-            request_timeout=None, **{key if key != "http_auth" else "basic_auth": val}
-        ),
+        call(request_timeout=None, **kwargs),
         call(ignore_status=404),
     ]
 
