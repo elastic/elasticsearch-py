@@ -19,7 +19,7 @@
 import asyncio
 import re
 import warnings
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 import pytest
 from elastic_transport import (
