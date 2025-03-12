@@ -19,13 +19,29 @@ import pytest
 from elastic_transport import OpenTelemetrySpan
 from elastic_transport.client_utils import DEFAULT
 
-from elasticsearch import AsyncElasticsearch, Elasticsearch
+from elasticsearch import AsyncElasticsearch, Elasticsearch, JsonSerializer
 from elasticsearch._sync.client.utils import USER_AGENT
 from test_elasticsearch.test_cases import (
     DummyAsyncTransport,
     DummyTransport,
     DummyTransportTestCase,
 )
+
+EXPECTED_SERIALIZERS = {
+    "application/vnd.mapbox-vector-tile",
+    "application/x-ndjson",
+    "application/json",
+    "text/*",
+    "application/vnd.elasticsearch+json",
+    "application/vnd.elasticsearch+x-ndjson",
+}
+
+try:
+    import pyarrow as pa
+
+    EXPECTED_SERIALIZERS.add("application/vnd.apache.arrow.stream")
+except ImportError:
+    pa = None
 
 
 class TestOptions(DummyTransportTestCase):
@@ -479,3 +495,41 @@ class TestOptions(DummyTransportTestCase):
             "retry_on_status": (404,),
             "retry_on_timeout": True,
         }
+
+    def test_serializer_and_serializers(self):
+        with pytest.raises(ValueError) as e:
+            Elasticsearch(
+                "http://localhost:9200",
+                serializer=JsonSerializer(),
+                serializers={"application/json": JsonSerializer()},
+            )
+        assert str(e.value) == (
+            "Can't specify both 'serializer' and 'serializers' parameters together. "
+            "Instead only specify one of the other."
+        )
+
+        class CustomSerializer(JsonSerializer):
+            pass
+
+        client = Elasticsearch("http://localhost:9200", serializer=CustomSerializer())
+        assert isinstance(
+            client.transport.serializers.get_serializer("application/json"),
+            CustomSerializer,
+        )
+        assert (
+            set(client.transport.serializers.serializers.keys()) == EXPECTED_SERIALIZERS
+        )
+
+        client = Elasticsearch(
+            "http://localhost:9200",
+            serializers={
+                "application/json": CustomSerializer(),
+                "application/cbor": CustomSerializer(),
+            },
+        )
+        assert isinstance(
+            client.transport.serializers.get_serializer("application/json"),
+            CustomSerializer,
+        )
+        expected = EXPECTED_SERIALIZERS | {"application/cbor"}
+        assert set(client.transport.serializers.serializers.keys()) == expected

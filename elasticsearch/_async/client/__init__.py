@@ -18,7 +18,6 @@
 
 import logging
 import typing as t
-import warnings
 
 from elastic_transport import (
     AsyncTransport,
@@ -179,35 +178,11 @@ class AsyncElasticsearch(BaseClient):
             t.Callable[[t.Dict[str, t.Any], NodeConfig], t.Optional[NodeConfig]]
         ] = None,
         meta_header: t.Union[DefaultType, bool] = DEFAULT,
-        timeout: t.Union[DefaultType, None, float] = DEFAULT,
-        randomize_hosts: t.Union[DefaultType, bool] = DEFAULT,
-        host_info_callback: t.Optional[
-            t.Callable[
-                [t.Dict[str, t.Any], t.Dict[str, t.Union[str, int]]],
-                t.Optional[t.Dict[str, t.Union[str, int]]],
-            ]
-        ] = None,
-        sniffer_timeout: t.Union[DefaultType, None, float] = DEFAULT,
-        sniff_on_connection_fail: t.Union[DefaultType, bool] = DEFAULT,
-        maxsize: t.Union[DefaultType, int] = DEFAULT,
         # Internal use only
         _transport: t.Optional[AsyncTransport] = None,
     ) -> None:
         if hosts is None and cloud_id is None and _transport is None:
             raise ValueError("Either 'hosts' or 'cloud_id' must be specified")
-
-        if timeout is not DEFAULT:
-            if request_timeout is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'timeout' and 'request_timeout', "
-                    "instead only specify 'request_timeout'"
-                )
-            warnings.warn(
-                "The 'timeout' parameter is deprecated in favor of 'request_timeout'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            request_timeout = timeout
 
         if serializer is not None:
             if serializers is not DEFAULT:
@@ -216,58 +191,6 @@ class AsyncElasticsearch(BaseClient):
                     "together. Instead only specify one of the other."
                 )
             serializers = {default_mimetype: serializer}
-
-        if randomize_hosts is not DEFAULT:
-            if randomize_nodes_in_pool is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'randomize_hosts' and 'randomize_nodes_in_pool', "
-                    "instead only specify 'randomize_nodes_in_pool'"
-                )
-            warnings.warn(
-                "The 'randomize_hosts' parameter is deprecated in favor of 'randomize_nodes_in_pool'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            randomize_nodes_in_pool = randomize_hosts
-
-        if sniffer_timeout is not DEFAULT:
-            if min_delay_between_sniffing is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'sniffer_timeout' and 'min_delay_between_sniffing', "
-                    "instead only specify 'min_delay_between_sniffing'"
-                )
-            warnings.warn(
-                "The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            min_delay_between_sniffing = sniffer_timeout
-
-        if sniff_on_connection_fail is not DEFAULT:
-            if sniff_on_node_failure is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'sniff_on_connection_fail' and 'sniff_on_node_failure', "
-                    "instead only specify 'sniff_on_node_failure'"
-                )
-            warnings.warn(
-                "The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            sniff_on_node_failure = sniff_on_connection_fail
-
-        if maxsize is not DEFAULT:
-            if connections_per_node is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'maxsize' and 'connections_per_node', "
-                    "instead only specify 'connections_per_node'"
-                )
-            warnings.warn(
-                "The 'maxsize' parameter is deprecated in favor of 'connections_per_node'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            connections_per_node = maxsize
 
         # Setting min_delay_between_sniffing=True implies sniff_before_requests=True
         if min_delay_between_sniffing is not DEFAULT:
@@ -290,22 +213,7 @@ class AsyncElasticsearch(BaseClient):
             )
 
         sniff_callback = None
-        if host_info_callback is not None:
-            if sniffed_node_callback is not None:
-                raise ValueError(
-                    "Can't specify both 'host_info_callback' and 'sniffed_node_callback', "
-                    "instead only specify 'sniffed_node_callback'"
-                )
-            warnings.warn(
-                "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-
-            sniff_callback = create_sniff_callback(
-                host_info_callback=host_info_callback
-            )
-        elif sniffed_node_callback is not None:
+        if sniffed_node_callback is not None:
             sniff_callback = create_sniff_callback(
                 sniffed_node_callback=sniffed_node_callback
             )
