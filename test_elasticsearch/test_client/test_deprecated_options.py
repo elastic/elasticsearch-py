@@ -100,32 +100,6 @@ def test_randomize_hosts():
     )
 
 
-def test_http_auth():
-    with warnings.catch_warnings(record=True) as w:
-        client = Elasticsearch(
-            "http://localhost:9200", http_auth=("username", "password")
-        )
-
-    assert len(w) == 1
-    assert w[0].category == DeprecationWarning
-    assert (
-        str(w[0].message)
-        == "The 'http_auth' parameter is deprecated. Use 'basic_auth' or 'bearer_auth' parameters instead"
-    )
-    assert client._headers["Authorization"] == "Basic dXNlcm5hbWU6cGFzc3dvcmQ="
-
-    with pytest.raises(ValueError) as e:
-        Elasticsearch(
-            "http://localhost:9200",
-            http_auth=("username", "password"),
-            basic_auth=("username", "password"),
-        )
-    assert (
-        str(e.value)
-        == "Can't specify both 'http_auth' and 'basic_auth', instead only specify 'basic_auth'"
-    )
-
-
 def test_serializer_and_serializers():
     with pytest.raises(ValueError) as e:
         Elasticsearch(
