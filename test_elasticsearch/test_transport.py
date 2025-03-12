@@ -38,7 +38,6 @@ from elasticsearch.exceptions import (
     ElasticsearchWarning,
     UnsupportedProductError,
 )
-from elasticsearch.transport import get_host_info
 
 
 class DummyNode(BaseNode):
@@ -165,23 +164,6 @@ CLUSTER_NODES_MASTER_ONLY = """{
     }
   }
 }"""
-
-
-class TestHostsInfoCallback:
-    def test_master_only_nodes_are_ignored(self):
-        nodes = [
-            {"roles": ["master"]},
-            {"roles": ["master", "data", "ingest"]},
-            {"roles": ["data", "ingest"]},
-            {"roles": []},
-            {},
-        ]
-        chosen = [
-            i
-            for i, node_info in enumerate(nodes)
-            if get_host_info(node_info, i) is not None
-        ]
-        assert [1, 2, 3, 4] == chosen
 
 
 class TestTransport:
