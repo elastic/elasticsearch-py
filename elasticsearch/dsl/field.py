@@ -3497,8 +3497,18 @@ class SearchAsYouType(Field):
 
 class SemanticText(Field):
     """
-    :arg inference_id: (required)
     :arg meta:
+    :arg inference_id: Inference endpoint that will be used to generate
+        embeddings for the field. This parameter cannot be updated. Use
+        the Create inference API to create the endpoint. If
+        `search_inference_id` is specified, the inference endpoint will
+        only be used at index time. Defaults to `.elser-2-elasticsearch`
+        if omitted.
+    :arg search_inference_id: Inference endpoint that will be used to
+        generate embeddings at query time. You can update this parameter
+        by using the Update mapping API. Use the Create inference API to
+        create the endpoint. If not specified, the inference endpoint
+        defined by inference_id will be used at both index and query time.
     """
 
     name = "semantic_text"
@@ -3506,14 +3516,17 @@ class SemanticText(Field):
     def __init__(
         self,
         *args: Any,
-        inference_id: Union[str, "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        inference_id: Union[str, "DefaultType"] = DEFAULT,
+        search_inference_id: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
-        if inference_id is not DEFAULT:
-            kwargs["inference_id"] = inference_id
         if meta is not DEFAULT:
             kwargs["meta"] = meta
+        if inference_id is not DEFAULT:
+            kwargs["inference_id"] = inference_id
+        if search_inference_id is not DEFAULT:
+            kwargs["search_inference_id"] = search_inference_id
         super().__init__(*args, **kwargs)
 
 
