@@ -22,9 +22,9 @@ As a result, when you know which namespace and function you need, you can call t
 How can you figure out the namespace?
 
 * The [Elasticsearch API docs](https://www.elastic.co/docs/api/doc/elasticsearch/) can help, even though the tags it uses do not fully map to namespaces.
-* You can also use the client docs, by:
-  * browing the [Elasticsearch API Reference](https://elasticsearch-py.readthedocs.io/en/stable/api.html) page, or
-  * search for your endpoint using [Read the Docs](https://elasticsearch-py.readthedocs.io/) search, which is powered by Elasticsearch!
+* You can also use the client documentation, by:
+  * browsing the [Elasticsearch API Reference](https://elasticsearch-py.readthedocs.io/en/stable/api.html) page, or
+  * searching for your endpoint using [Read the Docs](https://elasticsearch-py.readthedocs.io/) search, which is powered by Elasticsearch!
 * Finally, most examples in the [Elasticsearch guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) are also available in Python. In the example below, `client.ingest.put_pipeline(...)` is the function that calls the "Create or update a pipeline" API.
 
 
@@ -59,7 +59,7 @@ print(resp)
 
 In this case, the client will send to Elasticsearch the following JSON body:
 
-```json
+```console
 PUT /logs
 {
     "aliases": {"logs-alias": {}},
@@ -83,7 +83,7 @@ resp = client.indices.create(
 print(resp)
 ```
 
-In the event where an API is missing, you need to call the low-level `perform_request` function:
+In the event where an API is missing, you need to use the low-level `perform_request` function:
 
 ```python
 resp = client.perform_request(
