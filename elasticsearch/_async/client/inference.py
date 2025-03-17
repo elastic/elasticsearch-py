@@ -322,6 +322,104 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=(
+            "service",
+            "service_settings",
+            "chunking_settings",
+            "task_settings",
+        ),
+    )
+    async def put_openai(
+        self,
+        *,
+        task_type: t.Union[
+            str, t.Literal["chat_completion", "completion", "text_embedding"]
+        ],
+        openai_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["openai"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an OpenAI inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>openai</code> service.</p>
+          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
+          After creating the endpoint, wait for the model deployment to complete before using it.
+          To verify the deployment status, use the get trained model statistics API.
+          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
+          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/infer-service-openai.html>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+            NOTE: The `chat_completion` task type only supports streaming and only through
+            the _stream API.
+        :param openai_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `openai`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `openai` service.
+        :param chunking_settings: The chunking configuration object.
+        :param task_settings: Settings to configure the inference task. These settings
+            are specific to the task type you specified.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if openai_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'openai_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "openai_inference_id": _quote(openai_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["openai_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_openai",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=("service", "service_settings"),
     )
     async def put_watsonx(
@@ -341,7 +439,7 @@ class InferenceClient(NamespacedClient):
         .. raw:: html
 
           <p>Create a Watsonx inference endpoint.</p>
-          <p>Creates an inference endpoint to perform an inference task with the <code>watsonxai</code> service.
+          <p>Create an inference endpoint to perform an inference task with the <code>watsonxai</code> service.
           You need an IBM Cloud Databases for Elasticsearch deployment to use the <code>watsonxai</code> inference service.
           You can provision one through the IBM catalog, the Cloud Databases CLI plug-in, the Cloud Databases API, or Terraform.</p>
           <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
@@ -351,7 +449,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/infer-service-watsonx-ai.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-watsonx>`_
 
         :param task_type: The task type. The only valid task type for the model to perform
             is `text_embedding`.
