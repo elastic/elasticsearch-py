@@ -1,4 +1,4 @@
-# Sending queries to Elasticsearch
+# Querying
 
 The Python Elasticsearch client provides several ways to send queries to Elasticsearch. This document explains the details of how to construct and execute queries using the client. This document does not cover the DSL module.
 
