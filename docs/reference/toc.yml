@@ -4,6 +4,7 @@ toc:
   - file: installation.md
   - file: connecting.md
   - file: configuration.md
+  - file: querying.md
   - file: async.md
   - file: integrations.md
     children:
