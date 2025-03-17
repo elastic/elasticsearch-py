@@ -1,6 +1,6 @@
 # Sending queries to Elasticsearch
 
-The Python Elasticsearch client provides several ways to send queries to Elasticsearch. This document explains the details of how to construct and execute queries using the client. This document does not cover the DSL client.
+The Python Elasticsearch client provides several ways to send queries to Elasticsearch. This document explains the details of how to construct and execute queries using the client. This document does not cover the DSL module.
 
 ## From API URLs to function calls
 
@@ -54,8 +54,6 @@ resp = client.indices.create(
 )
 print(resp)
 ```
-
-(In a real query, don't use `...` but real mappings.)
 
 In this case, the client will send to Elasticsearch the following JSON body:
 
