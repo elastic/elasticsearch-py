@@ -1,14 +1,13 @@
 ---
-navigation_title: "Elasticsearch Python Client"
+navigation_title: "Deprecations"
 ---
 
 # Elasticsearch Python Client deprecations [elasticsearch-python-client-deprecations]
-Review the deprecated functionality for your Elasticsearch Python Client version. While deprecations have no immediate impact, we strongly encourage you update your implementation after you upgrade.
+Over time, certain Elastic functionality becomes outdated and is replaced or removed. To help with the transition, Elastic deprecates functionality for a period before removal, giving you time to update your applications.
 
-To learn how to upgrade, check out <uprade docs>.
+Review the deprecated functionality for Elasticsearch Python Client. While deprecations have no immediate impact, we strongly encourage you update your implementation after you upgrade. To learn how to upgrade, check out [Upgrade](docs-content://deploy-manage/upgrade.md).
 
 % ## Next version [elasticsearch-python-client-versionnext-deprecations]
-% **Release date:** Month day, year
 
 % ::::{dropdown} Deprecation title
 % Description of the deprecation.
@@ -18,7 +17,6 @@ To learn how to upgrade, check out <uprade docs>.
 % ::::
 
 % ## 9.0.0 [elasticsearch-python-client-900-deprecations]
-% **Release date:** March 25, 2025
 
 % ::::{dropdown} Deprecation title
 % Description of the deprecation.
