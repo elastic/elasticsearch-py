@@ -1,5 +1,5 @@
 ---
-navigation_title: "Elasticsearch Python Client"
+navigation_title: "Known issues"
 
 ---
 
