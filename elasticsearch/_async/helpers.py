@@ -216,7 +216,7 @@ async def async_streaming_bulk(
     """
 
     client = client.options()
-    client._client_meta = (("h", "bp"),)
+    client._base_client._client_meta = (("h", "bp"),)
 
     if isinstance(retry_on_status, int):
         retry_on_status = (retry_on_status,)
@@ -429,7 +429,7 @@ async def async_scan(
     client = client.options(
         request_timeout=request_timeout, **pop_transport_kwargs(kwargs)
     )
-    client._client_meta = (("h", "s"),)
+    client._base_client._client_meta = (("h", "s"),)
 
     # Setting query={"from": ...} would make 'from' be used
     # as a keyword argument instead of 'from_'. We handle that here.

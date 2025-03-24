@@ -218,6 +218,7 @@ class BaseClient:
         self._ignore_status: Union[DefaultType, Collection[int]] = DEFAULT
         self._max_retries: Union[DefaultType, int] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
+        self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._verified_elasticsearch = False
         self._otel = OpenTelemetry()
 

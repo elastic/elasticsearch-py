@@ -451,7 +451,7 @@ class AsyncElasticsearch:
             new_headers.update(resolved_headers)
             client._base_client._headers = new_headers
         else:
-            client._base_client._headers = self._headers.copy()
+            client._base_client._headers = self._base_client._headers.copy()
 
         if request_timeout is not DEFAULT:
             client._base_client._request_timeout = request_timeout
