@@ -20,10 +20,12 @@ import logging
 import typing as t
 
 from elastic_transport import (
+    ApiResponse,
     AsyncTransport,
     BaseNode,
     BinaryApiResponse,
     HeadApiResponse,
+    HttpHeaders,
     NodeConfig,
     NodePool,
     NodeSelector,
@@ -97,7 +99,7 @@ logger = logging.getLogger("elasticsearch")
 SelfType = t.TypeVar("SelfType", bound="AsyncElasticsearch")
 
 
-class AsyncElasticsearch(BaseClient):
+class AsyncElasticsearch:
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to Elasticsearch REST APIs.
@@ -224,6 +226,18 @@ class AsyncElasticsearch(BaseClient):
         ):
             sniff_callback = default_sniff_callback
 
+        headers = HttpHeaders()
+        if headers is not DEFAULT and headers is not None:
+            headers.update(headers)
+        if opaque_id is not DEFAULT and opaque_id is not None:  # type: ignore[comparison-overlap]
+            headers["x-opaque-id"] = opaque_id
+        headers = resolve_auth_headers(
+            headers,
+            api_key=api_key,
+            basic_auth=basic_auth,
+            bearer_auth=bearer_auth,
+        )
+
         if _transport is None:
             node_configs = client_node_configs(
                 hosts,
@@ -295,72 +309,92 @@ class AsyncElasticsearch(BaseClient):
                 **transport_kwargs,
             )
 
-            super().__init__(_transport)
+            self._base_client = BaseClient(_transport, headers=headers)
 
             # These are set per-request so are stored separately.
-            self._request_timeout = request_timeout
-            self._max_retries = max_retries
-            self._retry_on_timeout = retry_on_timeout
+            self._base_client._request_timeout = request_timeout
+            self._base_client._max_retries = max_retries
+            self._base_client._retry_on_timeout = retry_on_timeout
             if isinstance(retry_on_status, int):
                 retry_on_status = (retry_on_status,)
-            self._retry_on_status = retry_on_status
+            self._base_client._retry_on_status = retry_on_status
 
         else:
-            super().__init__(_transport)
-
-        if headers is not DEFAULT and headers is not None:
-            self._headers.update(headers)
-        if opaque_id is not DEFAULT and opaque_id is not None:  # type: ignore[comparison-overlap]
-            self._headers["x-opaque-id"] = opaque_id
-        self._headers = resolve_auth_headers(
-            self._headers,
-            api_key=api_key,
-            basic_auth=basic_auth,
-            bearer_auth=bearer_auth,
-        )
+            self._base_client = BaseClient(_transport, headers=headers)
 
         # namespaced clients for compatibility with API names
-        self.async_search = AsyncSearchClient(self)
-        self.autoscaling = AutoscalingClient(self)
-        self.cat = CatClient(self)
-        self.cluster = ClusterClient(self)
-        self.connector = ConnectorClient(self)
-        self.fleet = FleetClient(self)
-        self.features = FeaturesClient(self)
-        self.indices = IndicesClient(self)
-        self.inference = InferenceClient(self)
-        self.ingest = IngestClient(self)
-        self.nodes = NodesClient(self)
-        self.snapshot = SnapshotClient(self)
-        self.tasks = TasksClient(self)
+        self.async_search = AsyncSearchClient(self._base_client)
+        self.autoscaling = AutoscalingClient(self._base_client)
+        self.cat = CatClient(self._base_client)
+        self.cluster = ClusterClient(self._base_client)
+        self.connector = ConnectorClient(self._base_client)
+        self.fleet = FleetClient(self._base_client)
+        self.features = FeaturesClient(self._base_client)
+        self.indices = IndicesClient(self._base_client)
+        self.inference = InferenceClient(self._base_client)
+        self.ingest = IngestClient(self._base_client)
+        self.nodes = NodesClient(self._base_client)
+        self.snapshot = SnapshotClient(self._base_client)
+        self.tasks = TasksClient(self._base_client)
 
-        self.xpack = XPackClient(self)
-        self.ccr = CcrClient(self)
-        self.dangling_indices = DanglingIndicesClient(self)
-        self.enrich = EnrichClient(self)
-        self.eql = EqlClient(self)
-        self.esql = EsqlClient(self)
-        self.graph = GraphClient(self)
-        self.ilm = IlmClient(self)
-        self.license = LicenseClient(self)
-        self.logstash = LogstashClient(self)
-        self.migration = MigrationClient(self)
-        self.ml = MlClient(self)
-        self.monitoring = MonitoringClient(self)
-        self.query_rules = QueryRulesClient(self)
-        self.rollup = RollupClient(self)
-        self.search_application = SearchApplicationClient(self)
-        self.searchable_snapshots = SearchableSnapshotsClient(self)
-        self.security = SecurityClient(self)
-        self.slm = SlmClient(self)
-        self.simulate = SimulateClient(self)
-        self.shutdown = ShutdownClient(self)
-        self.sql = SqlClient(self)
-        self.ssl = SslClient(self)
-        self.synonyms = SynonymsClient(self)
-        self.text_structure = TextStructureClient(self)
-        self.transform = TransformClient(self)
-        self.watcher = WatcherClient(self)
+        self.xpack = XPackClient(self._base_client)
+        self.ccr = CcrClient(self._base_client)
+        self.dangling_indices = DanglingIndicesClient(self._base_client)
+        self.enrich = EnrichClient(self._base_client)
+        self.eql = EqlClient(self._base_client)
+        self.esql = EsqlClient(self._base_client)
+        self.graph = GraphClient(self._base_client)
+        self.ilm = IlmClient(self._base_client)
+        self.license = LicenseClient(self._base_client)
+        self.logstash = LogstashClient(self._base_client)
+        self.migration = MigrationClient(self._base_client)
+        self.ml = MlClient(self._base_client)
+        self.monitoring = MonitoringClient(self._base_client)
+        self.query_rules = QueryRulesClient(self._base_client)
+        self.rollup = RollupClient(self._base_client)
+        self.search_application = SearchApplicationClient(self._base_client)
+        self.searchable_snapshots = SearchableSnapshotsClient(self._base_client)
+        self.security = SecurityClient(self._base_client)
+        self.slm = SlmClient(self._base_client)
+        self.simulate = SimulateClient(self._base_client)
+        self.shutdown = ShutdownClient(self._base_client)
+        self.sql = SqlClient(self._base_client)
+        self.ssl = SslClient(self._base_client)
+        self.synonyms = SynonymsClient(self._base_client)
+        self.text_structure = TextStructureClient(self._base_client)
+        self.transform = TransformClient(self._base_client)
+        self.watcher = WatcherClient(self._base_client)
+
+    @property
+    def transport(self) -> AsyncTransport:
+        return self._base_client._transport
+
+    async def perform_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: t.Optional[t.Mapping[str, t.Any]] = None,
+        headers: t.Optional[t.Mapping[str, str]] = None,
+        body: t.Optional[t.Any] = None,
+        endpoint_id: t.Optional[str] = None,
+        path_parts: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ApiResponse[t.Any]:
+        with self._base_client._otel.span(
+            method,
+            endpoint_id=endpoint_id,
+            path_parts=path_parts or {},
+        ) as otel_span:
+            response = await self._base_client._perform_request(
+                method,
+                path,
+                params=params,
+                headers=headers,
+                body=body,
+                otel_span=otel_span,
+            )
+            otel_span.set_elastic_cloud_metadata(response.meta.headers)
+            return response
 
     def __repr__(self) -> str:
         try:
@@ -413,44 +447,44 @@ class AsyncElasticsearch(BaseClient):
             resolved_headers["x-opaque-id"] = resolved_opaque_id
 
         if resolved_headers:
-            new_headers = self._headers.copy()
+            new_headers = self._base_client._headers.copy()
             new_headers.update(resolved_headers)
-            client._headers = new_headers
+            client._base_client._headers = new_headers
         else:
-            client._headers = self._headers.copy()
+            client._base_client._headers = self._headers.copy()
 
         if request_timeout is not DEFAULT:
-            client._request_timeout = request_timeout
+            client._base_client._request_timeout = request_timeout
         else:
-            client._request_timeout = self._request_timeout
+            client._base_client._request_timeout = self._base_client._request_timeout
 
         if ignore_status is not DEFAULT:
             if isinstance(ignore_status, int):
                 ignore_status = (ignore_status,)
-            client._ignore_status = ignore_status
+            client._base_client._ignore_status = ignore_status
         else:
-            client._ignore_status = self._ignore_status
+            client._base_client._ignore_status = self._base_client._ignore_status
 
         if max_retries is not DEFAULT:
             if not isinstance(max_retries, int):
                 raise TypeError("'max_retries' must be of type 'int'")
-            client._max_retries = max_retries
+            client._base_client._max_retries = max_retries
         else:
-            client._max_retries = self._max_retries
+            client._base_client._max_retries = self._base_client._max_retries
 
         if retry_on_status is not DEFAULT:
             if isinstance(retry_on_status, int):
                 retry_on_status = (retry_on_status,)
-            client._retry_on_status = retry_on_status
+            client._base_client._retry_on_status = retry_on_status
         else:
-            client._retry_on_status = self._retry_on_status
+            client._base_client._retry_on_status = self._base_client._retry_on_status
 
         if retry_on_timeout is not DEFAULT:
             if not isinstance(retry_on_timeout, bool):
                 raise TypeError("'retry_on_timeout' must be of type 'bool'")
-            client._retry_on_timeout = retry_on_timeout
+            client._base_client._retry_on_timeout = retry_on_timeout
         else:
-            client._retry_on_timeout = self._retry_on_timeout
+            client._base_client._retry_on_timeout = self._base_client._retry_on_timeout
 
         return client
 

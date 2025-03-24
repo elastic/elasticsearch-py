@@ -210,48 +210,16 @@ default_sniff_callback = create_sniff_callback(
 
 
 class BaseClient:
-    def __init__(self, _transport: AsyncTransport) -> None:
+    def __init__(self, _transport: AsyncTransport, headers: HttpHeaders) -> None:
         self._transport = _transport
         self._client_meta: Union[DefaultType, Tuple[Tuple[str, str], ...]] = DEFAULT
-        self._headers = HttpHeaders()
+        self._headers = headers
         self._request_timeout: Union[DefaultType, Optional[float]] = DEFAULT
         self._ignore_status: Union[DefaultType, Collection[int]] = DEFAULT
         self._max_retries: Union[DefaultType, int] = DEFAULT
-        self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
         self._verified_elasticsearch = False
         self._otel = OpenTelemetry()
-
-    @property
-    def transport(self) -> AsyncTransport:
-        return self._transport
-
-    async def perform_request(
-        self,
-        method: str,
-        path: str,
-        *,
-        params: Optional[Mapping[str, Any]] = None,
-        headers: Optional[Mapping[str, str]] = None,
-        body: Optional[Any] = None,
-        endpoint_id: Optional[str] = None,
-        path_parts: Optional[Mapping[str, Any]] = None,
-    ) -> ApiResponse[Any]:
-        with self._otel.span(
-            method,
-            endpoint_id=endpoint_id,
-            path_parts=path_parts or {},
-        ) as otel_span:
-            response = await self._perform_request(
-                method,
-                path,
-                params=params,
-                headers=headers,
-                body=body,
-                otel_span=otel_span,
-            )
-            otel_span.set_elastic_cloud_metadata(response.meta.headers)
-            return response
 
     async def _perform_request(
         self,
@@ -287,7 +255,7 @@ class BaseClient:
         else:
             target = path
 
-        meta, resp_body = await self.transport.perform_request(
+        meta, resp_body = await self._transport.perform_request(
             method,
             target,
             headers=request_headers,
@@ -376,10 +344,9 @@ class BaseClient:
         return response
 
 
-class NamespacedClient(BaseClient):
-    def __init__(self, client: "BaseClient") -> None:
-        self._client = client
-        super().__init__(self._client.transport)
+class NamespacedClient:
+    def __init__(self, client: BaseClient) -> None:
+        self._base_client = client
 
     async def perform_request(
         self,
@@ -392,14 +359,18 @@ class NamespacedClient(BaseClient):
         endpoint_id: Optional[str] = None,
         path_parts: Optional[Mapping[str, Any]] = None,
     ) -> ApiResponse[Any]:
-        # Use the internal clients .perform_request() implementation
-        # so we take advantage of their transport options.
-        return await self._client.perform_request(
+        with self._base_client._otel.span(
             method,
-            path,
-            params=params,
-            headers=headers,
-            body=body,
             endpoint_id=endpoint_id,
-            path_parts=path_parts,
-        )
+            path_parts=path_parts or {},
+        ) as otel_span:
+            response = await self._base_client._perform_request(
+                method,
+                path,
+                params=params,
+                headers=headers,
+                body=body,
+                otel_span=otel_span,
+            )
+            otel_span.set_elastic_cloud_metadata(response.meta.headers)
+            return response
