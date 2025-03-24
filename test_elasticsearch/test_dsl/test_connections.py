@@ -123,7 +123,7 @@ def test_connection_has_correct_user_agent() -> None:
     c.create_connection("testing", hosts=["https://es.com:9200"])
     assert (
         c.get_connection("testing")
-        ._headers["user-agent"]
+        ._base_client._headers["user-agent"]
         .startswith("elasticsearch-dsl-py/")
     )
 

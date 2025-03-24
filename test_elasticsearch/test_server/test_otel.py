@@ -34,7 +34,7 @@ pytestmark = [
 
 def test_otel_end_to_end(sync_client):
     tracer, memory_exporter = setup_tracing()
-    sync_client._otel.tracer = tracer
+    sync_client._base_client._otel.tracer = tracer
 
     resp = sync_client.search(index="logs-*", query={"match_all": {}})
     assert resp.meta.status == 200
