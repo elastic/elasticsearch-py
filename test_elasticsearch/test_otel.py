@@ -112,11 +112,11 @@ def test_forward_otel_context_to_subthreads(
 ):
     tracer, memory_exporter = setup_tracing()
     es_client = Elasticsearch("http://localhost:9200")
-    es_client._otel = OpenTelemetry(enabled=True, tracer=tracer)
+    es_client._base_client._otel = OpenTelemetry(enabled=True, tracer=tracer)
 
     _call_bulk_mock.return_value = mock.Mock()
     actions = ({"x": i} for i in range(100))
     list(helpers.parallel_bulk(es_client, actions, chunk_size=4))
     # Ensures that the OTEL context has been forwarded to all chunks
-    assert es_client._otel.helpers_span.call_count == 1
-    assert es_client._otel.use_span.call_count == 25
+    assert es_client._base_client._otel.helpers_span.call_count == 1
+    assert es_client._base_client._otel.use_span.call_count == 25
