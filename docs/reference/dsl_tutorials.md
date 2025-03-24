@@ -47,17 +47,17 @@ Let’s rewrite the example using the DSL module:
 
 ```python
 from elasticsearch import Elasticsearch
-from elasticsearch.dsl import Search
+from elasticsearch.dsl import Search, query, aggs
 
 client = Elasticsearch("https://localhost:9200")
 
 s = Search(using=client, index="my-index") \
-    .filter("term", category="search") \
-    .query("match", title="python")   \
-    .exclude("match", description="beta")
+    .query(query.Match("title", "python"))   \
+    .filter(query.Term("category", "search")) \
+    .exclude(query.Match("description", "beta"))
 
-s.aggs.bucket('per_tag', 'terms', field='tags') \
-    .metric('max_lines', 'max', field='lines')
+s.aggs.bucket('per_tag', aggs.Terms(field="tags")) \
+    .metric('max_lines', aggs.Max(field='lines'))
 
 response = s.execute()
 
@@ -70,7 +70,7 @@ for tag in response.aggregations.per_tag.buckets:
 
 As you see, the library took care of:
 
-* creating appropriate `Query` objects by name (eq. "match")
+* creating appropriate `Query` objects from classes
 * composing queries into a compound `bool` query
 * putting the `term` query in a filter context of the `bool` query
 * providing a convenient access to response data
@@ -89,11 +89,11 @@ from elasticsearch.dsl import Document, Date, Integer, Keyword, Text, connection
 connections.create_connection(hosts="https://localhost:9200")
 
 class Article(Document):
-    title = Text(analyzer='snowball', fields={'raw': Keyword()})
-    body = Text(analyzer='snowball')
-    tags = Keyword()
-    published_from = Date()
-    lines = Integer()
+    title: str = mapped_field(Text(analyzer='snowball', fields={'raw': Keyword()}))
+    body: str = mapped_field(Text(analyzer='snowball'))
+    tags: str = mapped_field(Keyword())
+    published_from: datetime
+    lines: int
 
     class Index:
         name = 'blog'
@@ -232,7 +232,7 @@ body = {...} # insert complicated query here
 s = Search.from_dict(body)
 
 # Add some filters, aggregations, queries, ...
-s.filter("term", tags="python")
+s.filter(query.Term("tags", "python"))
 
 # Convert back to dict to plug back into existing code
 body = s.to_dict()
