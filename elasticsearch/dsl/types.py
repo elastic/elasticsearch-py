@@ -364,34 +364,57 @@ class DateRangeExpression(AttrDict[Any]):
 
 class DenseVectorIndexOptions(AttrDict[Any]):
     """
-    :arg type: (required)
-    :arg m:
-    :arg ef_construction:
-    :arg confidence_interval:
+    :arg type: (required) The type of kNN algorithm to use.
+    :arg confidence_interval: The confidence interval to use when
+        quantizing the vectors. Can be any value between and including
+        `0.90` and `1.0` or exactly `0`. When the value is `0`, this
+        indicates that dynamic quantiles should be calculated for
+        optimized quantization. When between `0.90` and `1.0`, this value
+        restricts the values used when calculating the quantization
+        thresholds.  For example, a value of `0.95` will only use the
+        middle `95%` of the values when calculating the quantization
+        thresholds (e.g. the highest and lowest `2.5%` of values will be
+        ignored).  Defaults to `1/(dims + 1)` for `int8` quantized vectors
+        and `0` for `int4` for dynamic quantile calculation.  Only
+        applicable to `int8_hnsw`, `int4_hnsw`, `int8_flat`, and
+        `int4_flat` index types.
+    :arg ef_construction: The number of candidates to track while
+        assembling the list of nearest neighbors for each new node.  Only
+        applicable to `hnsw`, `int8_hnsw`, and `int4_hnsw` index types.
+        Defaults to `100` if omitted.
+    :arg m: The number of neighbors each node will be connected to in the
+        HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, and
+        `int4_hnsw` index types. Defaults to `16` if omitted.
     """
 
-    type: Union[str, DefaultType]
-    m: Union[int, DefaultType]
-    ef_construction: Union[int, DefaultType]
+    type: Union[
+        Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+        DefaultType,
+    ]
     confidence_interval: Union[float, DefaultType]
+    ef_construction: Union[int, DefaultType]
+    m: Union[int, DefaultType]
 
     def __init__(
         self,
         *,
-        type: Union[str, DefaultType] = DEFAULT,
-        m: Union[int, DefaultType] = DEFAULT,
-        ef_construction: Union[int, DefaultType] = DEFAULT,
+        type: Union[
+            Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+            DefaultType,
+        ] = DEFAULT,
         confidence_interval: Union[float, DefaultType] = DEFAULT,
+        ef_construction: Union[int, DefaultType] = DEFAULT,
+        m: Union[int, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
             kwargs["type"] = type
-        if m is not DEFAULT:
-            kwargs["m"] = m
-        if ef_construction is not DEFAULT:
-            kwargs["ef_construction"] = ef_construction
         if confidence_interval is not DEFAULT:
             kwargs["confidence_interval"] = confidence_interval
+        if ef_construction is not DEFAULT:
+            kwargs["ef_construction"] = ef_construction
+        if m is not DEFAULT:
+            kwargs["m"] = m
         super().__init__(kwargs)
 
 
