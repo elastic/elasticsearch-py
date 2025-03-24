@@ -322,6 +322,83 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("service", "service_settings"),
+    )
+    def put_eis(
+        self,
+        *,
+        task_type: t.Union[str, t.Literal["chat_completion"]],
+        eis_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["elastic"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an Elastic Inference Service (EIS) inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task through the Elastic Inference Service (EIS).</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-service-eis.html>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+            NOTE: The `chat_completion` task type only supports streaming and only through
+            the _stream API.
+        :param eis_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `elastic`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `elastic` service.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if eis_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'eis_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "eis_inference_id": _quote(eis_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["eis_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_eis",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=(
             "service",
             "service_settings",
@@ -416,6 +493,96 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put_openai",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=(
+            "service",
+            "service_settings",
+            "chunking_settings",
+            "task_settings",
+        ),
+    )
+    def put_voyageai(
+        self,
+        *,
+        task_type: t.Union[str, t.Literal["rerank", "text_embedding"]],
+        voyageai_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["voyageai"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create a VoyageAI inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>voyageai</code> service.</p>
+          <p>Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-voyageai>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+        :param voyageai_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `voyageai`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `voyageai` service.
+        :param chunking_settings: The chunking configuration object.
+        :param task_settings: Settings to configure the inference task. These settings
+            are specific to the task type you specified.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if voyageai_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'voyageai_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "voyageai_inference_id": _quote(voyageai_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["voyageai_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_voyageai",
             path_parts=__path_parts,
         )
 

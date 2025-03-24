@@ -5884,7 +5884,20 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("doc", "filter", "per_field_analyzer"),
+        body_fields=(
+            "doc",
+            "field_statistics",
+            "fields",
+            "filter",
+            "offsets",
+            "payloads",
+            "per_field_analyzer",
+            "positions",
+            "routing",
+            "term_statistics",
+            "version",
+            "version_type",
+        ),
     )
     async def termvectors(
         self,
@@ -5961,9 +5974,9 @@ class AsyncElasticsearch(BaseClient):
             (the sum of document frequencies for all terms in this field). * The sum
             of total term frequencies (the sum of total term frequencies of each term
             in this field).
-        :param fields: A comma-separated list or wildcard expressions of fields to include
-            in the statistics. It is used as the default list unless a specific field
-            list is provided in the `completion_fields` or `fielddata_fields` parameters.
+        :param fields: A list of fields to include in the statistics. It is used as the
+            default list unless a specific field list is provided in the `completion_fields`
+            or `fielddata_fields` parameters.
         :param filter: Filter terms based on their tf-idf scores. This could be useful
             in order find out a good characteristic vector of a document. This feature
             works in a similar manner to the second phase of the More Like This Query.
@@ -6001,41 +6014,41 @@ class AsyncElasticsearch(BaseClient):
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if field_statistics is not None:
-            __query["field_statistics"] = field_statistics
-        if fields is not None:
-            __query["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if offsets is not None:
-            __query["offsets"] = offsets
-        if payloads is not None:
-            __query["payloads"] = payloads
-        if positions is not None:
-            __query["positions"] = positions
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
-        if routing is not None:
-            __query["routing"] = routing
-        if term_statistics is not None:
-            __query["term_statistics"] = term_statistics
-        if version is not None:
-            __query["version"] = version
-        if version_type is not None:
-            __query["version_type"] = version_type
         if not __body:
             if doc is not None:
                 __body["doc"] = doc
+            if field_statistics is not None:
+                __body["field_statistics"] = field_statistics
+            if fields is not None:
+                __body["fields"] = fields
             if filter is not None:
                 __body["filter"] = filter
+            if offsets is not None:
+                __body["offsets"] = offsets
+            if payloads is not None:
+                __body["payloads"] = payloads
             if per_field_analyzer is not None:
                 __body["per_field_analyzer"] = per_field_analyzer
+            if positions is not None:
+                __body["positions"] = positions
+            if routing is not None:
+                __body["routing"] = routing
+            if term_statistics is not None:
+                __body["term_statistics"] = term_statistics
+            if version is not None:
+                __body["version"] = version
+            if version_type is not None:
+                __body["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
