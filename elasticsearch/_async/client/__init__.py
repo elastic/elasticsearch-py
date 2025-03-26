@@ -25,7 +25,6 @@ from elastic_transport import (
     BaseNode,
     BinaryApiResponse,
     HeadApiResponse,
-    HttpHeaders,
     NodeConfig,
     NodePool,
     NodeSelector,
@@ -226,18 +225,6 @@ class AsyncElasticsearch:
         ):
             sniff_callback = default_sniff_callback
 
-        headers = HttpHeaders()
-        if headers is not DEFAULT and headers is not None:
-            headers.update(headers)
-        if opaque_id is not DEFAULT and opaque_id is not None:  # type: ignore[comparison-overlap]
-            headers["x-opaque-id"] = opaque_id
-        headers = resolve_auth_headers(
-            headers,
-            api_key=api_key,
-            basic_auth=basic_auth,
-            bearer_auth=bearer_auth,
-        )
-
         if _transport is None:
             node_configs = client_node_configs(
                 hosts,
@@ -309,7 +296,7 @@ class AsyncElasticsearch:
                 **transport_kwargs,
             )
 
-            self._base_client = BaseClient(_transport, headers=headers)
+            self._base_client = BaseClient(_transport)
 
             # These are set per-request so are stored separately.
             self._base_client._request_timeout = request_timeout
@@ -320,7 +307,18 @@ class AsyncElasticsearch:
             self._base_client._retry_on_status = retry_on_status
 
         else:
-            self._base_client = BaseClient(_transport, headers=headers)
+            self._base_client = BaseClient(_transport)
+
+        if headers is not DEFAULT and headers is not None:
+            self._base_client._headers.update(headers)
+        if opaque_id is not DEFAULT and opaque_id is not None:  # type: ignore[comparison-overlap]
+            self._base_client._headers["x-opaque-id"] = opaque_id
+        self._base_client._headers = resolve_auth_headers(
+            self._base_client._headers,
+            api_key=api_key,
+            basic_auth=basic_auth,
+            bearer_auth=bearer_auth,
+        )
 
         # namespaced clients for compatibility with API names
         self.async_search = AsyncSearchClient(self._base_client)
