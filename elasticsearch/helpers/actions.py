@@ -334,7 +334,7 @@ def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    with client._otel.use_span(otel_span):
+    with client._base_client._otel.use_span(otel_span):
         if isinstance(ignore_status, int):
             ignore_status = (ignore_status,)
 
@@ -416,9 +416,9 @@ def streaming_bulk(
     :arg yield_ok: if set to False will skip successful documents in the output
     :arg ignore_status: list of HTTP status code that you want to ignore
     """
-    with client._otel.helpers_span(span_name) as otel_span:
+    with client._base_client._otel.helpers_span(span_name) as otel_span:
         client = client.options()
-        client._client_meta = (("h", "bp"),)
+        client._base_client._client_meta = (("h", "bp"),)
 
         if isinstance(retry_on_status, int):
             retry_on_status = (retry_on_status,)
@@ -608,7 +608,7 @@ def parallel_bulk(
             ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
-    with client._otel.helpers_span("helpers.parallel_bulk") as otel_span:
+    with client._base_client._otel.helpers_span("helpers.parallel_bulk") as otel_span:
         pool = BlockingPool(thread_count)
 
         try:
@@ -711,7 +711,7 @@ def scan(
     client = client.options(
         request_timeout=request_timeout, **pop_transport_kwargs(kwargs)
     )
-    client._client_meta = (("h", "s"),)
+    client._base_client._client_meta = (("h", "s"),)
 
     # Setting query={"from": ...} would make 'from' be used
     # as a keyword argument instead of 'from_'. We handle that here.

@@ -290,7 +290,7 @@ class TestOptions(DummyTransportTestCase):
             headers={"key": "val"},
             basic_auth=("username", "password"),
         )
-        assert client._headers == {
+        assert client._base_client._headers == {
             "key": "val",
             "authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
         }
@@ -347,7 +347,7 @@ class TestOptions(DummyTransportTestCase):
             "authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
             "user-agent": USER_AGENT,
         }
-        assert client._headers == {"key": "val"}
+        assert client._base_client._headers == {"key": "val"}
 
     def test_user_agent_override(self):
         client = Elasticsearch(
