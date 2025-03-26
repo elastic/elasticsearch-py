@@ -68,7 +68,7 @@ for tag in response.aggregations.per_tag.buckets:
     print(tag.key, tag.max_lines.value)
 ```
 
-As you see, the library took care of:
+As you see, the DSL module took care of:
 
 * creating appropriate `Query` objects from classes
 * composing queries into a compound `bool` query
@@ -101,7 +101,7 @@ class Article(Document):
           "number_of_shards": 2,
         }
 
-    def save(self, ** kwargs):
+    def save(self, **kwargs):
         self.lines = len(self.body.split())
         return super(Article, self).save(** kwargs)
 
@@ -127,7 +127,7 @@ print(connections.get_connection().cluster.health())
 In this example you can see:
 
 * providing a default connection
-* defining fields with mapping configuration
+* defining fields with Python type hints and additional mapping configuration when necessary
 * setting index name
 * defining custom methods
 * overriding the built-in `.save()` method to hook into the persistence life cycle
@@ -140,12 +140,6 @@ You can see more in the `persistence` chapter.
 ## Pre-built Faceted Search [_pre_built_faceted_search]
 
 If you have your `Document`s defined you can very easily create a faceted search class to simplify searching and filtering.
-
-::::{note}
-This feature is experimental and may be subject to change.
-
-::::
-
 
 ```python
 from elasticsearch.dsl import FacetedSearch, TermsFacet, DateHistogramFacet
@@ -208,11 +202,12 @@ Using the DSL, we can now express this query as such:
 ```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search, UpdateByQuery
+from elasticsearch.dsl.query import Match
 
 client = Elasticsearch()
 ubq = UpdateByQuery(using=client, index="my-index") \
-      .query("match", title="python")   \
-      .exclude("match", description="beta") \
+      .query(Match("title", "python"))   \
+      .exclude(Match("description", "beta")) \
       .script(source="ctx._source.likes++", lang="painless")
 
 response = ubq.execute()
