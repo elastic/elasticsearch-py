@@ -84,6 +84,15 @@ s = Search(index='i').query(Match("title", "python"))
 response = s.delete()
 ```
 
+To pass [deletion parameters](https://elasticsearch-py.readthedocs.io/en/latest/api/elasticsearch.html#elasticsearch.Elasticsearch.delete_by_query)
+in your query, you can add them by calling ``params`` on the ``Search`` object before ``delete`` like this:
+
+```python
+s = Search(index='i').query("match", title="python")
+s = s.params(ignore_unavailable=False, wait_for_completion=True)
+response = s.delete()
+```
+
 
 #### Queries [_queries]
 
