@@ -23,7 +23,7 @@ The `Search` object represents the entire search request:
 * additional parameters
 * associated client
 
-The API is designed to be chainable. With the exception of the aggregations functionality this means that the `Search` object is immutable -all changes to the object will result in a shallow copy being created which contains the changes. This means you can safely pass the `Search` object to foreign code without fear of it modifying your objects as long as it sticks to the `Search` object APIs.
+The API is designed to be chainable. With the exception of the aggregations functionality this means that the `Search` object is immutable -all changes to the object will result in a shallow copy being created which contains the changes. You can safely pass the `Search` object to foreign code without fear of it modifying your objects as long as it sticks to the `Search` object APIs.
 
 You can pass an instance of the [elasticsearch client](https://elasticsearch-py.readthedocs.io/) when instantiating the `Search` object:
 
@@ -51,7 +51,7 @@ All methods return a *copy* of the object, making it safe to pass to outside cod
 The API is chainable, allowing you to combine multiple method calls in one statement:
 
 ```python
-s = Search().using(client).query("match", title="python")
+s = Search().using(client).query(Match("title", "python"))
 ```
 
 To send the request to Elasticsearch:
@@ -67,9 +67,9 @@ for hit in s:
     print(hit.title)
 ```
 
-Search results will be cached. Subsequent calls to `execute` or trying to iterate over an already executed `Search` object will not trigger additional requests being sent to Elasticsearch. To force a request specify `ignore_cache=True` when calling `execute`.
+Search results will be cached. Subsequent calls to `execute` or trying to iterate over an already executed `Search` object will not trigger additional requests being sent to Elasticsearch. To force a new request to be issued specify `ignore_cache=True` when calling `execute`.
 
-For debugging purposes you can serialize the `Search` object to a `dict` explicitly:
+For debugging purposes you can serialize the `Search` object to a `dict` with the raw Elasticsearch request:
 
 ```python
 print(s.to_dict())
@@ -80,32 +80,28 @@ print(s.to_dict())
 You can delete the documents matching a search by calling `delete` on the `Search` object instead of `execute` like this:
 
 ```python
-s = Search(index='i').query("match", title="python")
+s = Search(index='i').query(Match("title", "python"))
 response = s.delete()
 ```
 
 
 #### Queries [_queries]
 
-The library provides classes for all Elasticsearch query types. Pass all the parameters as keyword arguments. The classes accept any keyword arguments, the dsl then takes all arguments passed to the constructor and serializes them as top-level keys in the resulting dictionary (and thus the resulting json being sent to elasticsearch). This means that there is a clear one-to-one mapping between the raw query and its equivalent in the DSL:
+The `elasticsearch.dsl.query` module provides classes for all Elasticsearch query types. These classes accept keyword arguments in their constructors, which are serialized to the appropriate format to be sent to Elasticsearch. There is a clear one-to-one mapping between the raw query and its equivalent class-based version:
 
 ```python
-from elasticsearch.dsl.query import MultiMatch, Match
+>>> from elasticsearch.dsl.query import MultiMatch, Match
 
-# {"multi_match": {"query": "python django", "fields": ["title", "body"]}}
-MultiMatch(query='python django', fields=['title', 'body'])
+>>> q = MultiMatch(query='python django', fields=['title', 'body'])
+>>> q.to_dict()
+{'multi_match': {'query': 'python django', 'fields': ['title', 'body']}}
 
-# {"match": {"title": {"query": "web framework", "type": "phrase"}}}
-Match(title={"query": "web framework", "type": "phrase"})
+>>> q = Match("title", {"query": "web framework", "type": "phrase"})
+>>> q.to_dict()
+{'match': {'title': {'query': 'web framework', 'type': 'phrase'}}}
 ```
 
-::::{note}
-In some cases this approach is not possible due to python’s restriction on identifiers - for example if your field is called `@timestamp`. In that case you have to fall back to unpacking a dictionary: `Range(*+ {'@timestamp': {'lt': 'now'}})`
-
-::::
-
-
-You can use the `Q` shortcut to construct the instance using a name with parameters or the raw `dict`:
+An alternative to the class-based queries is to use the `Q` shortcut, passing a query name followed by its parameters, or the raw query as a `dict`:
 
 ```python
 from elasticsearch.dsl import Q
@@ -114,20 +110,20 @@ Q("multi_match", query='python django', fields=['title', 'body'])
 Q({"multi_match": {"query": "python django", "fields": ["title", "body"]}})
 ```
 
-To add the query to the `Search` object, use the `.query()` method:
+To add a query to the `Search` object, use the `.query()` method. This works with class-based or `Q` queries:
 
 ```python
 q = Q("multi_match", query='python django', fields=['title', 'body'])
 s = s.query(q)
 ```
 
-The method also accepts all the parameters as the `Q` shortcut:
+As a shortcut the `query()` method also accepts all the parameters of the `Q` shortcut directly:
 
 ```python
 s = s.query("multi_match", query='python django', fields=['title', 'body'])
 ```
 
-If you already have a query object, or a `dict` representing one, you can just override the query used in the `Search` object:
+If you already have a query object, or a `dict` representing one, you can assign it to the `query` attribute of a `Search` object to add it to it, replacing any previously configured queries:
 
 ```python
 s.query = Q('bool', must=[Q('match', title='python'), Q('match', body='best')])
@@ -136,7 +132,7 @@ s.query = Q('bool', must=[Q('match', title='python'), Q('match', body='best')])
 
 #### Dotted fields [_dotted_fields]
 
-Sometimes you want to refer to a field within another field, either as a multi-field (`title.keyword`) or in a structured `json` document like `address.city`. To make it easier, the `Q` shortcut (as well as the `query`, `filter`, and `exclude` methods on `Search` class) allows you to use `_+` (double underscore) in place of a dot in a keyword argument:
+Sometimes you want to refer to a field within another field, either as a multi-field (`title.keyword`) or in a structured `json` document like `address.city`. This is not a problem when using class-based queries, but when working without classes it is often required to pass field names as keyword arguments. To make this easier, you can use `__` (double underscore) in place of a dot in a keyword argument:
 
 ```python
 s = Search()
@@ -144,7 +140,7 @@ s = s.filter('term', category__keyword='Python')
 s = s.query('match', address__city='prague')
 ```
 
-Alternatively you can always fall back to python’s kwarg unpacking if you prefer:
+Alternatively you can use Python’s keyword argument unpacking:
 
 ```python
 s = Search()
@@ -155,20 +151,23 @@ s = s.query('match', **{'address.city': 'prague'})
 
 #### Query combination [_query_combination]
 
-Query objects can be combined using logical operators:
+Query objects can be combined using logical operators `|`, `&` and `~`:
 
 ```python
-Q("match", title='python') | Q("match", title='django')
-# {"bool": {"should": [...]}}
+>>> q = Match("title", "python") | Match("title", "django")
+>>> q.to_dict()
+{'bool': {'should': [{'match': {'title': 'python'}}, {'match': {'title': 'django'}}]}}
 
-Q("match", title='python') & Q("match", title='django')
-# {"bool": {"must": [...]}}
+>>> q = Match("title", "python") & Match("title", "django")
+>>> q.to_dict()
+{'bool': {'must': [{'match': {'title': 'python'}}, {'match': {'title': 'django'}}]}}
 
-~Q("match", title="python")
-# {"bool": {"must_not": [...]}}
+>>> q = ~Match("title", "python")
+>>> q.to_dict()
+{'bool': {'must_not': [{'match': {'title': 'python'}}]}}
 ```
 
-When you call the `.query()` method multiple times, the `&` operator will be used internally:
+When you call the `.query()` method multiple times, the `&` operator will be used internally to combine all the queries:
 
 ```python
 s = s.query().query()
@@ -193,48 +192,64 @@ s = Search().query(q)
 If you want to add a query in a [filter context](docs-content://explore-analyze/query-filter/languages/querydsl.md) you can use the `filter()` method to make things easier:
 
 ```python
+from elasticsearch.dsl.query import Terms
+
 s = Search()
-s = s.filter('terms', tags=['search', 'python'])
+s = s.filter(Terms("tags", ['search', 'python']))
 ```
 
 Behind the scenes this will produce a `Bool` query and place the specified `terms` query into its `filter` branch, making it equivalent to:
 
 ```python
+from elasticsearch.dsl.query import Terms, Bool
+
 s = Search()
-s = s.query('bool', filter=[Q('terms', tags=['search', 'python'])])
+s = s.query(Bool(filter=[Terms("tags", ["search", "python"])]))
 ```
 
-If you want to use the post_filter element for faceted navigation, use the `.post_filter()` method.
+If you want to use the `post_filter` element for faceted navigation, use the `.post_filter()` method.
 
-You can also `exclude()` items from your query like this:
+The `exclude()` method works like `filter()`, but it applies the query as negated:
 
 ```python
 s = Search()
-s = s.exclude('terms', tags=['search', 'python'])
+s = s.exclude(Terms("tags", ['search', 'python']))
 ```
 
-which is shorthand for: `s = s.query('bool', filter=[~Q('terms', tags=['search', 'python'])])`
+which is shorthand for:
+
+```python
+s = s.query(Bool(filter=[~Terms("tags", ["search", "python"])]))
+```
 
 
 #### Aggregations [_aggregations]
 
-To define an aggregation, you can use the `A` shortcut:
+As with queries, there are classes that represent each aggregation type, all accessible through the `elasticsearch.dsl.aggs` module:
+
+```python
+from elasticsearch.dsl import aggs
+
+a = aggs.Terms(field="tags")
+# {"terms": {"field": "tags"}}
+```
+
+It is also possible to define an aggregation using the `A` shortcut:
 
 ```python
 from elasticsearch.dsl import A
 
 A('terms', field='tags')
-# {"terms": {"field": "tags"}}
 ```
 
 To nest aggregations, you can use the `.bucket()`, `.metric()` and `.pipeline()` methods:
 
 ```python
-a = A('terms', field='category')
+a = aggs.Terms(field="category")
 # {'terms': {'field': 'category'}}
 
-a.metric('clicks_per_category', 'sum', field='clicks')\
-    .bucket('tags_per_category', 'terms', field='tags')
+a.metric("clicks_per_category", aggs.Sum(field="clicks")) \
+    .bucket("tags_per_category", aggs.Terms(field="tags"))
 # {
 #   'terms': {'field': 'category'},
 #   'aggs': {
@@ -248,8 +263,8 @@ To add aggregations to the `Search` object, use the `.aggs` property, which acts
 
 ```python
 s = Search()
-a = A('terms', field='category')
-s.aggs.bucket('category_terms', a)
+a = aggs.Terms(field="category")
+s.aggs.bucket("category_terms", a)
 # {
 #   'aggs': {
 #     'category_terms': {
@@ -265,10 +280,10 @@ or
 
 ```python
 s = Search()
-s.aggs.bucket('articles_per_day', 'date_histogram', field='publish_date', interval='day')\
-    .metric('clicks_per_day', 'sum', field='clicks')\
-    .pipeline('moving_click_average', 'moving_avg', buckets_path='clicks_per_day')\
-    .bucket('tags_per_day', 'terms', field='tags')
+s.aggs.bucket("articles_per_day", aggs.DateHistogram(field="publish_date", interval="day")) \
+    .metric("clicks_per_day", aggs.Sum(field="clicks")) \
+    .pipeline("moving_click_average", aggs.MovingAvg(buckets_path="clicks_per_day")) \
+    .bucket("tags_per_day", aggs.Terms(field="tags"))
 
 s.to_dict()
 # {
@@ -290,9 +305,9 @@ You can access an existing bucket by its name:
 ```python
 s = Search()
 
-s.aggs.bucket('per_category', 'terms', field='category')
-s.aggs['per_category'].metric('clicks_per_category', 'sum', field='clicks')
-s.aggs['per_category'].bucket('tags_per_category', 'terms', field='tags')
+s.aggs.bucket("per_category", aggs.Terms(field="category"))
+s.aggs["per_category"].metric("clicks_per_category", aggs.Sum(field="clicks"))
+s.aggs["per_category"].bucket("tags_per_category", aggs.Terms(field="tags"))
 ```
 
 ::::{note}
@@ -301,7 +316,7 @@ When chaining multiple aggregations, there is a difference between what `.bucket
 ::::
 
 
-As opposed to other methods on the `Search` objects, defining aggregations is done in-place (does not return a copy).
+As opposed to other methods on the `Search` objects, aggregations are defined in-place, without returning a new copy.
 
 
 #### K-Nearest Neighbor Searches [_k_nearest_neighbor_searches]
@@ -348,7 +363,7 @@ s = s.sort()
 
 #### Pagination [_pagination]
 
-To specify the from/size parameters, use the Python slicing API:
+To specify the from/size parameters, apply the standard Python slicing operator on the `Search` instance:
 
 ```python
 s = s[10:20]
@@ -417,7 +432,7 @@ The first argument is the name of the suggestions (name under which it will be r
 To collapse search results use the `collapse` method on your `Search` object:
 
 ```python
-s = Search().query("match", message="GET /search")
+s = Search().query(Match("message", "GET /search"))
 # collapse results by user_id
 s = s.collapse("user_id")
 ```
@@ -526,11 +541,11 @@ If you want to inspect the contents of the `response` objects, just use its `to_
 
 #### Hits [_hits]
 
-To access to the hits returned by the search, access the `hits` property or just iterate over the `Response` object:
+To access the hits returned by the search, use the `hits` property or just iterate over the `Response` object:
 
 ```python
 response = s.execute()
-print('Total %d hits found.' % response.hits.total)
+print(f"Total {response.hits.total} hits found.")
 for h in response:
     print(h.title, h.body)
 ```
@@ -549,8 +564,7 @@ The individual hits is wrapped in a convenience class that allows attribute acce
 ```python
 response = s.execute()
 h = response.hits[0]
-print('/%s/%s/%s returned with score %f' % (
-    h.meta.index, h.meta.doc_type, h.meta.id, h.meta.score))
+print(f"/{h.meta.index}/{h.meta.doc_type}/{h.meta.id} returned with score {h.meta.score}")
 ```
 
 ::::{note}
@@ -577,11 +591,12 @@ If you need to execute multiple searches at the same time you can use the `Multi
 
 ```python
 from elasticsearch.dsl import MultiSearch, Search
+from elasticsearch.dsl.query import Term
 
 ms = MultiSearch(index='blogs')
 
-ms = ms.add(Search().filter('term', tags='python'))
-ms = ms.add(Search().filter('term', tags='elasticsearch'))
+ms = ms.add(Search().filter(Term("tags", "python")))
+ms = ms.add(Search().filter(Term("tags", 'elasticsearch')))
 
 responses = ms.execute()
 
@@ -653,9 +668,9 @@ class Post(Document):
 
 #### Data types [_data_types]
 
-The `Document` instances use native python types like `str` and `datetime`. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example where we are creating an instance of the `Comment` class.
+The `Document` instances use native python types such as `str` and `datetime` for its attributes. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example, where we are creating an instance of the `Comment` class.
 
-There are some specific types that were created as part of this library to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
+There are some specific types that were created to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
 
 ```python
 from elasticsearch.dsl import Document, DateRange, Keyword, Range
@@ -663,7 +678,6 @@ from elasticsearch.dsl import Document, DateRange, Keyword, Range
 class RoomBooking(Document):
     room = Keyword()
     dates = DateRange()
-
 
 rb = RoomBooking(
   room='Conference Room II',
@@ -700,7 +714,7 @@ class Post(Document):
 
 It is important to note that when using `Field` subclasses such as `Text`, `Date` and `Boolean`, they must be given in the right-side of an assignment, as shown in examples above. Using these classes as type hints will result in errors.
 
-Python types are mapped to their corresponding field type according to the following table:
+Python types are mapped to their corresponding field types according to the following table:
 
 | Python type | DSL field |
 | --- | --- |
@@ -740,18 +754,18 @@ class Post(Document):
     comments: List[Comment]  # same as comments = Nested(Comment, required=True)
 ```
 
-Unfortunately it is impossible to have Python type hints that uniquely identify every possible Elasticsearch field type. To choose a field type that is different than the ones in the table above, the field instance can be added explicitly as a right-side assignment in the field declaration. The next example creates a field that is typed as `Optional[str]`, but is mapped to `Keyword` instead of `Text`:
+Unfortunately it is impossible to have Python type hints that uniquely identify every possible Elasticsearch field type. To choose a field type that is different than the one that is assigned according to the table above, the desired field instance can be added explicitly as a right-side assignment in the field declaration. The next example creates a field that is typed as `Optional[str]`, but is mapped to `Keyword` instead of `Text`:
 
 ```python
 class MyDocument(Document):
     category: Optional[str] = Keyword()
 ```
 
-This form can also be used when additional options need to be given to initialize the field, such as when using custom analyzer settings or changing the `required` default:
+This form can also be used when additional options need to be given to initialize the field, such as when using custom analyzer settings:
 
 ```python
 class Comment(InnerDoc):
-    content: str = Text(analyzer='snowball', required=True)
+    content: str = Text(analyzer='snowball')
 ```
 
 When using type hints as above, subclasses of `Document` and `InnerDoc` inherit some of the behaviors associated with Python dataclasses, as defined by [PEP 681](https://peps.python.org/pep-0681/) and the [dataclass_transform decorator](https://typing.readthedocs.io/en/latest/spec/dataclasses.html#dataclass-transform). To add per-field dataclass options such as `default` or `default_factory`, the `mapped_field()` wrapper can be used on the right side of a typed field declaration:
@@ -761,12 +775,12 @@ class MyDocument(Document):
     title: str = mapped_field(default="no title")
     created_at: datetime = mapped_field(default_factory=datetime.now)
     published: bool = mapped_field(default=False)
-    category: str = mapped_field(Keyword(required=True), default="general")
+    category: str = mapped_field(Keyword(), default="general")
 ```
 
 When using the `mapped_field()` wrapper function, an explicit field type instance can be passed as a first positional argument, as the `category` field does in the example above.
 
-Static type checkers such as [mypy](https://mypy-lang.org/) and [pyright](https://github.com/microsoft/pyright) can use the type hints and the dataclass-specific options added to the `mapped_field()` function to improve type inference and provide better real-time suggestions in IDEs.
+Static type checkers such as [mypy](https://mypy-lang.org/) and [pyright](https://github.com/microsoft/pyright) can use the type hints and the dataclass-specific options added to the `mapped_field()` function to improve type inference and provide better real-time code completion and suggestions in IDEs.
 
 One situation in which type checkers can’t infer the correct type is when using fields as class attributes. Consider the following example:
 
@@ -804,7 +818,7 @@ The `InstrumentedField` objects returned when fields are accessed as class attri
 s = MyDocument.search().sort(-MyDocument.created_at, MyDocument.title)
 ```
 
-When specifying sorting order, the `{{plus}}` and `-` unary operators can be used on the class field attributes to indicate ascending and descending order.
+When specifying sorting order, the `+` and `-` unary operators can be used on the class field attributes to indicate ascending and descending order.
 
 Finally, the `ClassVar` annotation can be used to define a regular class attribute that should not be mapped to the Elasticsearch index:
 
@@ -812,9 +826,8 @@ Finally, the `ClassVar` annotation can be used to define a regular class attribu
 from typing import ClassVar
 
 class MyDoc(Document):
-  title: M[str] created_at: M[datetime] =
-  mapped_field(default_factory=datetime.now) my_var:
-  ClassVar[str] # regular class variable, ignored by Elasticsearch
+    title: M[str] created_at: M[datetime] = mapped_field(default_factory=datetime.now)
+    my_var: ClassVar[str]  # regular class variable, ignored by Elasticsearch
 ```
 
 
@@ -1050,13 +1063,13 @@ You can use standard Python inheritance to extend models, this can be useful in 
 
 ```python
 class User(InnerDoc):
-    username = Text(fields={'keyword': Keyword()})
-    email = Text()
+    username: str = mapped_field(Text(fields={'keyword': Keyword()}))
+    email: str
 
 class BaseDocument(Document):
-    created_by = Object(User)
-    created_date = Date()
-    last_updated = Date()
+    created_by: User
+    created_date: datetime
+    last_updated: datetime
 
     def save(**kwargs):
         if not self.created_date:
@@ -1101,7 +1114,7 @@ blogs.document(Post)
 # can also be used as class decorator when defining the Document
 @blogs.document
 class Post(Document):
-    title = Text()
+    title: str
 
 # You can attach custom analyzers to the index
 
@@ -1138,9 +1151,15 @@ dev_blogs.setting(number_of_shards=1)
 
 #### IndexTemplate [index-template]
 
-The DSL module also exposes an option to manage [index templates](docs-content://manage-data/data-store/templates.md) in elasticsearch using the `IndexTemplate` class which has very similar API to `Index`.
+The DSL module also exposes an option to manage [index templates](docs-content://manage-data/data-store/templates.md) in elasticsearch using the `ComposableIndexTemplate` and `IndexTemplate` classes, which have very similar API to `Index`.
 
-Once an index template is saved in elasticsearch it’s contents will be automatically applied to new indices (existing indices are completely unaffected by templates) that match the template pattern (any index starting with `blogs-` in our example), even if the index is created automatically upon indexing a document into that index.
+::::{note}
+Composable index templates should be always be preferred over the legacy index templates, since the latter are deprecated.
+
+::::
+
+
+Once an index template is saved in Elasticsearch its contents will be automatically applied to new indices (existing indices are completely unaffected by templates) that match the template pattern (any index starting with `blogs-` in our example), even if the index is created automatically upon indexing a document into that index.
 
 Potential workflow for a set of time based indices governed by a single template:
 
@@ -1151,14 +1170,11 @@ from elasticsearch.dsl import Document, Date, Text
 
 
 class Log(Document):
-    content = Text()
-    timestamp = Date()
+    content: str
+    timestamp: datetime
 
     class Index:
         name = "logs-*"
-        settings = {
-          "number_of_shards": 2
-        }
 
     def save(self, **kwargs):
         # assign now if no timestamp given
@@ -1170,7 +1186,7 @@ class Log(Document):
         return super().save(**kwargs)
 
 # once, as part of application setup, during deploy/migrations:
-logs = Log._index.as_template('logs', order=0)
+logs = Log._index.as_composable_template('logs', priority=100)
 logs.save()
 
 # to perform search across all logs:
@@ -1183,12 +1199,6 @@ search = Log.search()
 ## Faceted Search [faceted_search]
 
 The library comes with a simple abstraction aimed at helping you develop faceted navigation for your data.
-
-::::{note}
-This API is experimental and will be subject to change. Any feedback is welcome.
-
-::::
-
 
 ### Configuration [_configuration_2]
 
@@ -1316,7 +1326,7 @@ All methods return a *copy* of the object, making it safe to pass to outside cod
 The API is chainable, allowing you to combine multiple method calls in one statement:
 
 ```python
-ubq = UpdateByQuery().using(client).query("match", title="python")
+ubq = UpdateByQuery().using(client).query(Match("title", python"))
 ```
 
 To send the request to Elasticsearch:
@@ -1444,8 +1454,9 @@ Use the `AsyncSearch` class to perform asynchronous searches.
 
 ```python
 from elasticsearch.dsl import AsyncSearch
+from elasticsearch.dsl.query import Match
 
-s = AsyncSearch().query("match", title="python")
+s = AsyncSearch().query(Match("title", "python"))
 async for hit in s:
     print(hit.title)
 ```
@@ -1453,7 +1464,7 @@ async for hit in s:
 Instead of using the `AsyncSearch` object as an asynchronous iterator, you can explicitly call the `execute()` method to get a `Response` object.
 
 ```python
-s = AsyncSearch().query("match", title="python")
+s = AsyncSearch().query(Match("title", "python"))
 response = await s.execute()
 for hit in response:
     print(hit.title)
@@ -1463,11 +1474,12 @@ An `AsyncMultiSearch` is available as well.
 
 ```python
 from elasticsearch.dsl import AsyncMultiSearch
+from elasticsearch.dsl.query import Term
 
 ms = AsyncMultiSearch(index='blogs')
 
-ms = ms.add(AsyncSearch().filter('term', tags='python'))
-ms = ms.add(AsyncSearch().filter('term', tags='elasticsearch'))
+ms = ms.add(AsyncSearch().filter(Term("tags", "python")))
+ms = ms.add(AsyncSearch().filter(Term("tags", "elasticsearch")))
 
 responses = await ms.execute()
 
