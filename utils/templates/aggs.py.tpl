@@ -38,6 +38,7 @@ from elastic_transport.client_utils import DEFAULT
 from .query import Query
 from .response.aggs import AggResponse, BucketData, FieldBucketData, TopHitsData
 from .utils import _R, AttrDict, DslBase
+from . import wrappers
 
 if TYPE_CHECKING:
     from elastic_transport.client_utils import DefaultType

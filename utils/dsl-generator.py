@@ -17,13 +17,12 @@
 
 import json
 import re
+import subprocess
 import textwrap
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
 from jinja2 import Environment, PackageLoader, select_autoescape
-
-from elasticsearch import VERSION
 
 jinja_env = Environment(
     loader=PackageLoader("utils"),
@@ -38,7 +37,7 @@ response_init_py = jinja_env.get_template("response.__init__.py.tpl")
 types_py = jinja_env.get_template("types.py.tpl")
 
 # map with name replacements for Elasticsearch attributes
-PROP_REPLACEMENTS = {"from": "from_"}
+PROP_REPLACEMENTS = {"from": "from_", "global": "global_"}
 
 # map with Elasticsearch type replacements
 # keys and values are in given in "{namespace}:{name}" format
@@ -115,9 +114,9 @@ def type_for_types_py(type_):
 class ElasticsearchSchema:
     """Operations related to the Elasticsearch schema."""
 
-    def __init__(self):
+    def __init__(self, version="main"):
         response = None
-        for branch in [f"{VERSION[0]}.{VERSION[1]}", "main"]:
+        for branch in [version, "main"]:
             url = f"https://raw.githubusercontent.com/elastic/elasticsearch-specification/{branch}/output/schema/schema.json"
             try:
                 response = urlopen(url)
@@ -202,6 +201,12 @@ class ElasticsearchSchema:
                 # QueryContainer maps to the DSL's Query class
                 return "Query", {"type": "query"}
             elif (
+                type_name["namespace"] == "_global.search._types"
+                and type_name["name"] == "SearchRequestBody"
+            ):
+                # we currently do not provide specific typing for this one
+                return "Dict[str, Any]", None
+            elif (
                 type_name["namespace"] == "_types.query_dsl"
                 and type_name["name"] == "FunctionScoreContainer"
             ):
@@ -219,7 +224,7 @@ class ElasticsearchSchema:
                 type_name["namespace"] == "_types.aggregations"
                 and type_name["name"] == "CompositeAggregationSource"
             ):
-                # QueryContainer maps to the DSL's Query class
+                # CompositeAggreagationSource maps to the DSL's Agg class
                 return "Agg[_R]", None
             else:
                 # for any other instances we get the type and recurse
@@ -300,6 +305,8 @@ class ElasticsearchSchema:
                         ]
                     )
                 )
+                if len(types) == 1:
+                    return types[0]
                 return "Union[" + ", ".join([type_ for type_, _ in types]) + "]", None
 
         elif schema_type["kind"] == "enum":
@@ -338,6 +345,12 @@ class ElasticsearchSchema:
             ]["name"].endswith("Analyzer"):
                 # not expanding analyzers at this time, maybe in the future
                 return "str, Dict[str, Any]", None
+            elif (
+                schema_type["name"]["namespace"] == "_types.aggregations"
+                and schema_type["name"]["name"].endswith("AggregationRange")
+                and schema_type["name"]["name"] != "IpRangeAggregationRange"
+            ):
+                return '"wrappers.AggregationRange"', None
 
             # to handle other interfaces we generate a type of the same name
             # and add the interface to the interfaces.py module
@@ -380,9 +393,12 @@ class ElasticsearchSchema:
             param = None
         if not for_response:
             if type_ != "Any":
-                if 'Sequence["types.' in type_:
+                if (
+                    'Sequence["types.' in type_
+                    or 'Sequence["wrappers.AggregationRange' in type_
+                ):
                     type_ = add_seq_dict_type(type_)  # interfaces can be given as dicts
-                elif "types." in type_:
+                elif "types." in type_ or "wrappers.AggregationRange" in type_:
                     type_ = add_dict_type(type_)  # interfaces can be given as dicts
                 type_ = add_not_set(type_)
         if for_types_py:
@@ -999,7 +1015,8 @@ def generate_types_py(schema, filename):
 
 
 if __name__ == "__main__":
-    schema = ElasticsearchSchema()
+    v = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
+    schema = ElasticsearchSchema(v)
     generate_field_py(schema, "elasticsearch/dsl/field.py")
     generate_query_py(schema, "elasticsearch/dsl/query.py")
     generate_aggs_py(schema, "elasticsearch/dsl/aggs.py")

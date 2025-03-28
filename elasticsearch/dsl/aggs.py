@@ -35,6 +35,7 @@ from typing import (
 
 from elastic_transport.client_utils import DEFAULT
 
+from . import wrappers
 from .query import Query
 from .response.aggs import AggResponse, BucketData, FieldBucketData, TopHitsData
 from .utils import _R, AttrDict, DslBase
@@ -761,7 +762,7 @@ class Composite(Bucket[_R]):
         *,
         after: Union[
             Mapping[
-                Union[str, "InstrumentedField"], Union[int, float, str, bool, None, Any]
+                Union[str, "InstrumentedField"], Union[int, float, str, bool, None]
             ],
             "DefaultType",
         ] = DEFAULT,
@@ -958,7 +959,7 @@ class DateRange(Bucket[_R]):
         format: Union[str, "DefaultType"] = DEFAULT,
         missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
         ranges: Union[
-            Sequence["types.DateRangeExpression"],
+            Sequence["wrappers.AggregationRange"],
             Sequence[Dict[str, Any]],
             "DefaultType",
         ] = DEFAULT,
@@ -1347,7 +1348,9 @@ class GeoDistance(Bucket[_R]):
             "DefaultType",
         ] = DEFAULT,
         ranges: Union[
-            Sequence["types.AggregationRange"], Sequence[Dict[str, Any]], "DefaultType"
+            Sequence["wrappers.AggregationRange"],
+            Sequence[Dict[str, Any]],
+            "DefaultType",
         ] = DEFAULT,
         unit: Union[
             Literal["in", "ft", "yd", "mi", "nmi", "km", "m", "cm", "mm"], "DefaultType"
@@ -2657,7 +2660,9 @@ class Range(Bucket[_R]):
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         missing: Union[int, "DefaultType"] = DEFAULT,
         ranges: Union[
-            Sequence["types.AggregationRange"], Sequence[Dict[str, Any]], "DefaultType"
+            Sequence["wrappers.AggregationRange"],
+            Sequence[Dict[str, Any]],
+            "DefaultType",
         ] = DEFAULT,
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
         keyed: Union[bool, "DefaultType"] = DEFAULT,

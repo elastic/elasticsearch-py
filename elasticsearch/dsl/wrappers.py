@@ -18,6 +18,7 @@
 import operator
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     ClassVar,
     Dict,
@@ -117,3 +118,27 @@ class Range(AttrDict[RangeValT]):
         if "gte" in self._d_:
             return self._d_["gte"], True
         return None, False
+
+
+class AggregationRange(AttrDict[Any]):
+    """
+    :arg from: Start of the range (inclusive).
+    :arg key: Custom key to return the range with.
+    :arg to: End of the range (exclusive).
+    """
+
+    def __init__(
+        self,
+        *,
+        from_: Any = None,
+        key: Optional[str] = None,
+        to: Any = None,
+        **kwargs: Any,
+    ):
+        if from_ is not None:
+            kwargs["from_"] = from_
+        if key is not None:
+            kwargs["key"] = key
+        if to is not None:
+            kwargs["to"] = to
+        super().__init__(kwargs)
