@@ -9,11 +9,12 @@ Elasticsearch DSL is a module of the official Python client that aims to help wi
 
 ```python
 from elasticsearch.dsl import Search
+from elasticsearch.dsl.query import Match, Term
 
 s = Search(index="my-index") \
-    .filter("term", category="search") \
-    .query("match", title="python")   \
-    .exclude("match", description="beta")
+    .query(Match("title", "python")) \
+    .filter(Term("category", "search")) \
+    .exclude(Match("description", "beta"))
 for hit in s:
     print(hit.title)
 ```
@@ -22,12 +23,13 @@ Or with asynchronous Python:
 
 ```python
 from elasticsearch.dsl import AsyncSearch
+from elasticsearch.dsl.query import Match, Term
 
 async def run_query():
     s = AsyncSearch(index="my-index") \
-        .filter("term", category="search") \
-        .query("match", title="python")   \
-        .exclude("match", description="beta")
+        .query(Match("title", "python")) \
+        .filter(Term("category", "search")) \
+        .exclude(Match("description", "beta"))
     async for hit in s:
         print(hit.title)
 ```
