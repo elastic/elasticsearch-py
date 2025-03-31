@@ -127,7 +127,7 @@ class AsyncSearch(SearchBase[_R]):
 
         Use the ``params`` method to specify any additional arguments you wish to
         pass to the underlying ``delete_by_query`` helper from ``elasticsearch-py`` -
-        https://elasticsearch-py.readthedocs.io/en/latest/async.html#elasticsearch.AsyncElasticsearch.delete_by_query
+        https://elasticsearch-py.readthedocs.io/en/latest/api/elasticsearch.html#elasticsearch.Elasticsearch.delete_by_query
         """
 
         es = get_connection(self._using)
