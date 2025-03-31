@@ -1621,7 +1621,9 @@ class IndicesClient(NamespacedClient):
         name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
@@ -1636,6 +1638,10 @@ class IndicesClient(NamespacedClient):
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
+        :param flat_settings: If true, returns settings in flat format.
+        :param local: If true, the request retrieves information from the local node
+            only. Defaults to false, which means information is retrieved from the master
+            node.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -1649,8 +1655,12 @@ class IndicesClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
+        if local is not None:
+            __query["local"] = local
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if pretty is not None:
@@ -1800,9 +1810,6 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
-        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -1832,9 +1839,6 @@ class IndicesClient(NamespacedClient):
             in the statistics.
         :param ignore_unavailable: If `true`, missing or closed indices are not included
             in the response.
-        :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to all or any positive integer
-            up to the total number of shards in the index (`number_of_replicas+1`).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1857,8 +1861,6 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
-        if wait_for_active_shards is not None:
-            __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -3838,6 +3840,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preserve_existing: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        reopen: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3880,6 +3883,9 @@ class IndicesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         :param preserve_existing: If `true`, existing index settings remain unchanged.
+        :param reopen: Whether to close and reopen the index to apply non-dynamic settings.
+            If set to `true` the indices to which the settings are being applied will
+            be closed temporarily and then reopened in order to apply the changes.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
@@ -3917,6 +3923,8 @@ class IndicesClient(NamespacedClient):
             __query["preserve_existing"] = preserve_existing
         if pretty is not None:
             __query["pretty"] = pretty
+        if reopen is not None:
+            __query["reopen"] = reopen
         if timeout is not None:
             __query["timeout"] = timeout
         __body = settings if settings is not None else body
@@ -3984,7 +3992,7 @@ class IndicesClient(NamespacedClient):
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
-        :param cause:
+        :param cause: User defined reason for creating/updating the index template
         :param create: If true, this request cannot replace or update existing index
             templates.
         :param index_patterns: Array of wildcard expressions used to match the names
@@ -4222,6 +4230,7 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        resource: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4249,6 +4258,7 @@ class IndicesClient(NamespacedClient):
             that are open, closed or both.
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
+        :param resource: Changed resource to reload analyzers from if applicable
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -4269,6 +4279,8 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
+        if resource is not None:
+            __query["resource"] = resource
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4505,6 +4517,7 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        lazy: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
@@ -4561,6 +4574,9 @@ class IndicesClient(NamespacedClient):
             conditions are satisfied.
         :param dry_run: If `true`, checks whether the current index satisfies the specified
             conditions but does not perform a rollover.
+        :param lazy: If set to true, the rollover action will only mark a data stream
+            to signal that it needs to be rolled over at the next write. Only allowed
+            on data streams.
         :param mappings: Mapping for fields in the index. If specified, this mapping
             can include field names, field data types, and mapping paramaters.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -4595,6 +4611,8 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if lazy is not None:
+            __query["lazy"] = lazy
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if pretty is not None:
@@ -4915,6 +4933,8 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: str,
+        cause: t.Optional[str] = None,
+        create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -4932,6 +4952,10 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/indices-simulate-index.html>`_
 
         :param name: Name of the index to simulate
+        :param cause: User defined reason for dry-run creating the new template for simulation
+            purposes
+        :param create: Whether the index template we optionally defined in the body should
+            only be dry-run added if new or can also replace an existing one
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -4943,6 +4967,10 @@ class IndicesClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
+        if cause is not None:
+            __query["cause"] = cause
+        if create is not None:
+            __query["create"] = create
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4985,6 +5013,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         allow_auto_create: t.Optional[bool] = None,
+        cause: t.Optional[str] = None,
         composed_of: t.Optional[t.Sequence[str]] = None,
         create: t.Optional[bool] = None,
         data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -5021,6 +5050,8 @@ class IndicesClient(NamespacedClient):
             via `actions.auto_create_index`. If set to `false`, then indices or data
             streams matching the template must always be explicitly created, and may
             never be automatically created.
+        :param cause: User defined reason for dry-run creating the new template for simulation
+            purposes
         :param composed_of: An ordered list of component template names. Component templates
             are merged in the order specified, meaning that the last component template
             specified has the highest precedence.
@@ -5065,6 +5096,8 @@ class IndicesClient(NamespacedClient):
             __path = "/_index_template/_simulate"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
