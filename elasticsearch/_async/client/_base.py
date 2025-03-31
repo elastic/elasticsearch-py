@@ -298,7 +298,6 @@ class BaseClient:
         def mimetype_header_to_compat(header: str) -> None:
             # Converts all parts of a Accept/Content-Type headers
             # from application/X -> application/vnd.elasticsearch+X
-            nonlocal request_headers
             mimetype = request_headers.get(header, None)
             if mimetype:
                 request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
