@@ -124,7 +124,6 @@ def client_node_configs(
 
     def apply_node_options(node_config: NodeConfig) -> NodeConfig:
         """Needs special handling of headers since .replace() wipes out existing headers"""
-        nonlocal node_options
         headers = node_config.headers.copy()  # type: ignore[attr-defined]
 
         headers_to_add = node_options.pop("headers", ())
@@ -296,8 +295,6 @@ def _rewrite_parameters(
     def wrapper(api: F) -> F:
         @wraps(api)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
-            nonlocal api, body_name, body_fields
-
             # Let's give a nicer error message when users pass positional arguments.
             if len(args) >= 2:
                 raise TypeError(
