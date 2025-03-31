@@ -762,6 +762,11 @@ class Boolean(Field):
     :arg fielddata:
     :arg index:
     :arg null_value:
+    :arg ignore_malformed:
+    :arg script:
+    :arg on_script_error:
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
     :arg doc_values:
     :arg copy_to:
     :arg store:
@@ -789,6 +794,10 @@ class Boolean(Field):
         ] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
         null_value: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
@@ -816,6 +825,14 @@ class Boolean(Field):
             kwargs["index"] = index
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
