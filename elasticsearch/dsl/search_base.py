@@ -72,6 +72,9 @@ class QueryProxy(Generic[_S]):
     __bool__ = __nonzero__
 
     def __call__(self, *args: Any, **kwargs: Any) -> _S:
+        """
+        Add a query.
+        """
         s = self._search._clone()
 
         # we cannot use self._proxied since we just cloned self._search and
@@ -354,18 +357,22 @@ class SearchBase(Request[_R]):
     post_filter = ProxyDescriptor[Self]("post_filter")
     _response: Response[_R]
 
-    def __init__(self, **kwargs: Any):
+    def __init__(
+        self,
+        using: AnyUsingType = "default",
+        index: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any,
+    ):
         """
         Search request to elasticsearch.
 
         :arg using: `Elasticsearch` instance to use
         :arg index: limit the search to index
-        :arg doc_type: only query this type.
 
         All the parameters supplied (or omitted) at creation type can be later
         overridden by methods (`using`, `index` and `doc_type` respectively).
         """
-        super().__init__(**kwargs)
+        super().__init__(using=using, index=index, **kwargs)
 
         self.aggs = AggsProxy[_R](self)
         self._sort: List[Union[str, Dict[str, Dict[str, str]]]] = []
@@ -383,9 +390,15 @@ class SearchBase(Request[_R]):
         self._post_filter_proxy = QueryProxy(self, "post_filter")
 
     def filter(self, *args: Any, **kwargs: Any) -> Self:
+        """
+        Add a query in filter context.
+        """
         return self.query(Bool(filter=[Q(*args, **kwargs)]))
 
     def exclude(self, *args: Any, **kwargs: Any) -> Self:
+        """
+        Add a negative query in filter context.
+        """
         return self.query(Bool(filter=[~Q(*args, **kwargs)]))
 
     def __getitem__(self, n: Union[int, slice]) -> Self:

@@ -16,4 +16,5 @@ toc:
       - file: dsl_tutorials.md
       - file: dsl_how_to_guides.md
       - file: dsl_examples.md
+      - file: dsl_migrating.md
   - file: client-helpers.md
