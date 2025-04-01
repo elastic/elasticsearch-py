@@ -117,15 +117,15 @@ class Connections(Generic[_T]):
 
     def _with_user_agent(self, conn: _T) -> _T:
         # try to inject our user agent
-        if hasattr(conn, "_headers"):
-            is_frozen = conn._headers.frozen
+        if hasattr(conn, "_base_client") and hasattr(conn._base_client, "_headers"):
+            is_frozen = conn._base_client._headers.frozen
             if is_frozen:
-                conn._headers = conn._headers.copy()
-            conn._headers.update(
+                conn._base_client._headers = conn._base_client._headers.copy()
+            conn._base_client._headers.update(
                 {"user-agent": f"elasticsearch-dsl-py/{__versionstr__}"}
             )
             if is_frozen:
-                conn._headers.freeze()
+                conn._base_client._headers.freeze()
         return conn
 
 

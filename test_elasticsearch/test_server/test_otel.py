@@ -34,7 +34,7 @@ pytestmark = [
 
 def test_otel_end_to_end(sync_client):
     tracer, memory_exporter = setup_tracing()
-    sync_client._otel.tracer = tracer
+    sync_client._base_client._otel.tracer = tracer
 
     resp = sync_client.search(index="logs-*", query={"match_all": {}})
     assert resp.meta.status == 200
@@ -61,7 +61,7 @@ def test_otel_bulk(sync_client, elasticsearch_url, bulk_helper_name):
 
     # Create a new client with our tracer
     sync_client = sync_client.options()
-    sync_client._otel.tracer = tracer
+    sync_client._base_client._otel.tracer = tracer
     # "Disable" options to keep our custom tracer
     sync_client.options = lambda: sync_client
 
