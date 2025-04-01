@@ -42,7 +42,6 @@ def set_tmp_dir():
 
 
 def run(*argv, expect_exit_code=0):
-    global tmp_dir
     try:
         prev_dir = os.getcwd()
         if tmp_dir is None:
