@@ -118,7 +118,7 @@ def wipe_cluster(client):
     except ImportError:
         pass
 
-    is_xpack = True
+    is_xpack = False
     if is_xpack:
         wipe_rollup_jobs(client)
         wait_for_pending_tasks(client, filter="xpack/rollup/job")
