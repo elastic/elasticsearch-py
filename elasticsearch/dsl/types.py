@@ -26,34 +26,6 @@ from .utils import AttrDict
 PipeSeparatedFlags = str
 
 
-class AggregationRange(AttrDict[Any]):
-    """
-    :arg from: Start of the range (inclusive).
-    :arg key: Custom key to return the range with.
-    :arg to: End of the range (exclusive).
-    """
-
-    from_: Union[float, None, DefaultType]
-    key: Union[str, DefaultType]
-    to: Union[float, None, DefaultType]
-
-    def __init__(
-        self,
-        *,
-        from_: Union[float, None, DefaultType] = DEFAULT,
-        key: Union[str, DefaultType] = DEFAULT,
-        to: Union[float, None, DefaultType] = DEFAULT,
-        **kwargs: Any,
-    ):
-        if from_ is not DEFAULT:
-            kwargs["from_"] = from_
-        if key is not DEFAULT:
-            kwargs["key"] = key
-        if to is not DEFAULT:
-            kwargs["to"] = to
-        super().__init__(kwargs)
-
-
 class BucketCorrelationFunction(AttrDict[Any]):
     """
     :arg count_correlation: (required) The configuration to calculate a
@@ -334,34 +306,6 @@ class CustomCategorizeTextAnalyzer(AttrDict[Any]):
         super().__init__(kwargs)
 
 
-class DateRangeExpression(AttrDict[Any]):
-    """
-    :arg from: Start of the range (inclusive).
-    :arg key: Custom key to return the range with.
-    :arg to: End of the range (exclusive).
-    """
-
-    from_: Union[str, float, DefaultType]
-    key: Union[str, DefaultType]
-    to: Union[str, float, DefaultType]
-
-    def __init__(
-        self,
-        *,
-        from_: Union[str, float, DefaultType] = DEFAULT,
-        key: Union[str, DefaultType] = DEFAULT,
-        to: Union[str, float, DefaultType] = DEFAULT,
-        **kwargs: Any,
-    ):
-        if from_ is not DEFAULT:
-            kwargs["from_"] = from_
-        if key is not DEFAULT:
-            kwargs["key"] = key
-        if to is not DEFAULT:
-            kwargs["to"] = to
-        super().__init__(kwargs)
-
-
 class DenseVectorIndexOptions(AttrDict[Any]):
     """
     :arg type: (required) The type of kNN algorithm to use.
@@ -591,6 +535,7 @@ class FieldSort(AttrDict[Any]):
             "completion",
             "nested",
             "object",
+            "passthrough",
             "version",
             "murmur3",
             "token_count",
@@ -617,6 +562,7 @@ class FieldSort(AttrDict[Any]):
             "shape",
             "histogram",
             "constant_keyword",
+            "counted_keyword",
             "aggregate_metric_double",
             "dense_vector",
             "semantic_text",
@@ -654,6 +600,7 @@ class FieldSort(AttrDict[Any]):
                 "completion",
                 "nested",
                 "object",
+                "passthrough",
                 "version",
                 "murmur3",
                 "token_count",
@@ -680,6 +627,7 @@ class FieldSort(AttrDict[Any]):
                 "shape",
                 "histogram",
                 "constant_keyword",
+                "counted_keyword",
                 "aggregate_metric_double",
                 "dense_vector",
                 "semantic_text",
@@ -2625,7 +2573,7 @@ class PercentageScoreHeuristic(AttrDict[Any]):
 class PinnedDoc(AttrDict[Any]):
     """
     :arg _id: (required) The unique document ID.
-    :arg _index: (required) The index that contains the document.
+    :arg _index: The index that contains the document.
     """
 
     _id: Union[str, DefaultType]
@@ -2850,6 +2798,22 @@ class RegressionInferenceOptions(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class RescoreVector(AttrDict[Any]):
+    """
+    :arg oversample: (required) Applies the specified oversample factor to
+        k on the approximate kNN search
+    """
+
+    oversample: Union[float, DefaultType]
+
+    def __init__(
+        self, *, oversample: Union[float, DefaultType] = DEFAULT, **kwargs: Any
+    ):
+        if oversample is not DEFAULT:
+            kwargs["oversample"] = oversample
+        super().__init__(kwargs)
+
+
 class ScoreSort(AttrDict[Any]):
     """
     :arg order:
@@ -2880,7 +2844,7 @@ class Script(AttrDict[Any]):
     :arg options:
     """
 
-    source: Union[str, DefaultType]
+    source: Union[str, Dict[str, Any], DefaultType]
     id: Union[str, DefaultType]
     params: Union[Mapping[str, Any], DefaultType]
     lang: Union[Literal["painless", "expression", "mustache", "java"], DefaultType]
@@ -2889,7 +2853,7 @@ class Script(AttrDict[Any]):
     def __init__(
         self,
         *,
-        source: Union[str, DefaultType] = DEFAULT,
+        source: Union[str, Dict[str, Any], DefaultType] = DEFAULT,
         id: Union[str, DefaultType] = DEFAULT,
         params: Union[Mapping[str, Any], DefaultType] = DEFAULT,
         lang: Union[
@@ -3488,14 +3452,14 @@ class SpanTermQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    value: Union[str, DefaultType]
+    value: Union[int, float, str, bool, None, DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
 
     def __init__(
         self,
         *,
-        value: Union[str, DefaultType] = DEFAULT,
+        value: Union[int, float, str, bool, None, DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
@@ -3613,7 +3577,7 @@ class TermQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    value: Union[int, float, str, bool, None, Any, DefaultType]
+    value: Union[int, float, str, bool, None, DefaultType]
     case_insensitive: Union[bool, DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
@@ -3621,7 +3585,7 @@ class TermQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        value: Union[int, float, str, bool, None, Any, DefaultType] = DEFAULT,
+        value: Union[int, float, str, bool, None, DefaultType] = DEFAULT,
         case_insensitive: Union[bool, DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
@@ -3712,7 +3676,7 @@ class TermsSetQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    terms: Union[Sequence[str], DefaultType]
+    terms: Union[Sequence[Union[int, float, str, bool, None]], DefaultType]
     minimum_should_match: Union[int, str, DefaultType]
     minimum_should_match_field: Union[str, InstrumentedField, DefaultType]
     minimum_should_match_script: Union["Script", Dict[str, Any], DefaultType]
@@ -3722,7 +3686,9 @@ class TermsSetQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        terms: Union[Sequence[str], DefaultType] = DEFAULT,
+        terms: Union[
+            Sequence[Union[int, float, str, bool, None]], DefaultType
+        ] = DEFAULT,
         minimum_should_match: Union[int, str, DefaultType] = DEFAULT,
         minimum_should_match_field: Union[
             str, InstrumentedField, DefaultType
@@ -4544,7 +4510,7 @@ class CompositeAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    after_key: Mapping[str, Union[int, float, str, bool, None, Any]]
+    after_key: Mapping[str, Union[int, float, str, bool, None]]
     buckets: Sequence["CompositeBucket"]
     meta: Mapping[str, Any]
 
@@ -4559,7 +4525,7 @@ class CompositeBucket(AttrDict[Any]):
     :arg doc_count: (required)
     """
 
-    key: Mapping[str, Union[int, float, str, bool, None, Any]]
+    key: Mapping[str, Union[int, float, str, bool, None]]
     doc_count: int
 
 
@@ -5235,9 +5201,7 @@ class Hit(AttrDict[Any]):
     matched_queries: Union[Sequence[str], Mapping[str, float]]
     nested: "NestedIdentity"
     ignored: Sequence[str]
-    ignored_field_values: Mapping[
-        str, Sequence[Union[int, float, str, bool, None, Any]]
-    ]
+    ignored_field_values: Mapping[str, Sequence[Any]]
     shard: str
     node: str
     routing: str
@@ -5246,7 +5210,7 @@ class Hit(AttrDict[Any]):
     seq_no: int
     primary_term: int
     version: int
-    sort: Sequence[Union[int, float, str, bool, None, Any]]
+    sort: Sequence[Union[int, float, str, bool, None]]
 
 
 class HitsMetadata(AttrDict[Any]):
@@ -5271,7 +5235,7 @@ class InferenceAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    value: Union[int, float, str, bool, None, Any]
+    value: Union[int, float, str, bool, None]
     feature_importance: Sequence["InferenceFeatureImportance"]
     top_classes: Sequence["InferenceTopClassEntry"]
     warning: str
@@ -5307,7 +5271,7 @@ class InferenceTopClassEntry(AttrDict[Any]):
     :arg class_score: (required)
     """
 
-    class_name: Union[int, float, str, bool, None, Any]
+    class_name: Union[int, float, str, bool, None]
     class_probability: float
     class_score: float
 
@@ -5636,7 +5600,7 @@ class MultiTermsBucket(AttrDict[Any]):
     :arg doc_count_error_upper_bound:
     """
 
-    key: Sequence[Union[int, float, str, bool, None, Any]]
+    key: Sequence[Union[int, float, str, bool, None]]
     doc_count: int
     key_as_string: str
     doc_count_error_upper_bound: int
@@ -6187,7 +6151,7 @@ class StringTermsBucket(AttrDict[Any]):
     :arg doc_count_error_upper_bound:
     """
 
-    key: Union[int, float, str, bool, None, Any]
+    key: Union[int, float, str, bool, None]
     doc_count: int
     doc_count_error_upper_bound: int
 
@@ -6291,7 +6255,7 @@ class TimeSeriesBucket(AttrDict[Any]):
     :arg doc_count: (required)
     """
 
-    key: Mapping[str, Union[int, float, str, bool, None, Any]]
+    key: Mapping[str, Union[int, float, str, bool, None]]
     doc_count: int
 
 
@@ -6311,8 +6275,8 @@ class TopMetrics(AttrDict[Any]):
     :arg metrics: (required)
     """
 
-    sort: Sequence[Union[Union[int, float, str, bool, None, Any], None]]
-    metrics: Mapping[str, Union[Union[int, float, str, bool, None, Any], None]]
+    sort: Sequence[Union[Union[int, float, str, bool, None], None]]
+    metrics: Mapping[str, Union[Union[int, float, str, bool, None], None]]
 
 
 class TopMetricsAggregate(AttrDict[Any]):
