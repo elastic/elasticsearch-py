@@ -3763,7 +3763,7 @@ class IndicesClient(NamespacedClient):
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
-        :param cause:
+        :param cause: User defined reason for creating/updating the index template
         :param create: If true, this request cannot replace or update existing index
             templates.
         :param index_patterns: Array of wildcard expressions used to match the names

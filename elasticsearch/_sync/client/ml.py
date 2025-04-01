@@ -3599,11 +3599,11 @@ class MlClient(NamespacedClient):
         :param ignore_unavailable: If true, unavailable indices (missing or closed) are
             ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices_options: Specifies index expansion options that are used during
             search
         :param job_id: Identifier for the anomaly detection job.
