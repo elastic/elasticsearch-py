@@ -208,7 +208,7 @@ class TestRewriteParameters:
                 body={"query": {"match_all": {}}},
                 params={"key": "value"},
                 param=1,
-                request_timeout=10,
+                http_auth=("key", "value"),
             )
 
         assert len(w) == 1
@@ -219,7 +219,7 @@ class TestRewriteParameters:
         )
 
         assert self.calls == [
-            ((), {"request_timeout": 10}),
+            ((), {"http_auth": ("key", "value")}),
             (
                 (),
                 {
