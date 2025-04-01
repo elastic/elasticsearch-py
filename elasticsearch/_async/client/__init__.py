@@ -1581,7 +1581,7 @@ class AsyncElasticsearch(BaseClient):
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3420,7 +3420,8 @@ class AsyncElasticsearch(BaseClient):
             computationally expensive named queries on a large number of hits may add
             significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
-            search API can execute.
+            search API can execute. Defaults to `max(1, (# of data nodes * min(search
+            thread pool size, 10)))`.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
             that each sub-search request executes per node.
         :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
@@ -3748,6 +3749,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        max_concurrent_shard_requests: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -3803,6 +3805,8 @@ class AsyncElasticsearch(BaseClient):
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
             on every shard.
+        :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
+            that each sub-search request executes per node.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
         :param routing: A custom value that is used to route operations to a specific
@@ -3830,6 +3834,8 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -4370,7 +4376,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -5774,7 +5780,7 @@ class AsyncElasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6512,7 +6518,7 @@ class AsyncElasticsearch(BaseClient):
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
             `hidden`, `none`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
