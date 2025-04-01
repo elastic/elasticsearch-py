@@ -3604,11 +3604,11 @@ class MlClient(NamespacedClient):
         :param ignore_unavailable: If true, unavailable indices (missing or closed) are
             ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices_options: Specifies index expansion options that are used during
             search
         :param job_id: Identifier for the anomaly detection job.
@@ -5004,7 +5004,7 @@ class MlClient(NamespacedClient):
           <p>Update a data frame analytics job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-dfanalytics.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-data-frame-analytics>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -5577,7 +5577,7 @@ class MlClient(NamespacedClient):
           <p>Update a trained model deployment.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/update-trained-model-deployment.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-trained-model-deployment>`_
 
         :param model_id: The unique identifier of the trained model. Currently, only
             PyTorch models are supported.
