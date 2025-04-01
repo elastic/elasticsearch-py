@@ -280,8 +280,6 @@ class YamlRunner:
         self.last_response = exception.body
 
     def run_skip(self, skip):
-        global IMPLEMENTED_FEATURES
-
         if "features" in skip:
             features = skip["features"]
             if not isinstance(features, (tuple, list)):
@@ -437,7 +435,7 @@ class YamlRunner:
         return value
 
     def _feature_enabled(self, name):
-        global XPACK_FEATURES, IMPLEMENTED_FEATURES
+        global XPACK_FEATURES
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
