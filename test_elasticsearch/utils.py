@@ -129,8 +129,7 @@ def wipe_cluster(client):
             wipe_searchable_snapshot_indices(client)
 
     wipe_snapshots(client)
-    if is_xpack:
-        wipe_data_streams(client)
+    wipe_data_streams(client)
     wipe_indices(client)
 
     if is_xpack:
