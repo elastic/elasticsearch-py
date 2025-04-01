@@ -107,9 +107,9 @@ class AsyncSearch(SearchBase[_R]):
         Turn the search into a scan search and return a generator that will
         iterate over all the documents matching the query.
 
-        Use ``params`` method to specify any additional arguments you with to
+        Use the ``params`` method to specify any additional arguments you wish to
         pass to the underlying ``scan`` helper from ``elasticsearch-py`` -
-        https://elasticsearch-py.readthedocs.io/en/master/helpers.html#elasticsearch.helpers.scan
+        https://elasticsearch-py.readthedocs.io/en/latest/helpers.html#scan
 
         The ``iterate()`` method should be preferred, as it provides similar
         functionality using an Elasticsearch point in time.
@@ -123,7 +123,11 @@ class AsyncSearch(SearchBase[_R]):
 
     async def delete(self) -> AttrDict[Any]:
         """
-        delete() executes the query by delegating to delete_by_query()
+        ``delete()`` executes the query by delegating to ``delete_by_query()``.
+
+        Use the ``params`` method to specify any additional arguments you wish to
+        pass to the underlying ``delete_by_query`` helper from ``elasticsearch-py`` -
+        https://elasticsearch-py.readthedocs.io/en/latest/api/elasticsearch.html#elasticsearch.Elasticsearch.delete_by_query
         """
 
         es = get_connection(self._using)
