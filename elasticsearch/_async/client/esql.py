@@ -35,6 +35,7 @@ class EsqlClient(NamespacedClient):
             "params",
             "profile",
             "tables",
+            "wait_for_completion_timeout",
         ),
         ignore_deprecated_options={"params"},
     )
@@ -152,8 +153,6 @@ class EsqlClient(NamespacedClient):
             __query["keep_on_completion"] = keep_on_completion
         if pretty is not None:
             __query["pretty"] = pretty
-        if wait_for_completion_timeout is not None:
-            __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         if not __body:
             if query is not None:
                 __body["query"] = query
@@ -171,6 +170,8 @@ class EsqlClient(NamespacedClient):
                 __body["profile"] = profile
             if tables is not None:
                 __body["tables"] = tables
+            if wait_for_completion_timeout is not None:
+                __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
