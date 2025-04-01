@@ -137,7 +137,6 @@ def wipe_cluster(client):
     else:
         client.indices.delete_template(name="*")
         client.indices.delete_index_template(name="*")
-        client.cluster.delete_component_template(name="*")
 
     wipe_cluster_settings(client)
 
