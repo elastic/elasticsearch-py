@@ -118,7 +118,7 @@ def wipe_cluster(client):
     except ImportError:
         pass
 
-    is_xpack = True
+    is_xpack = False
     if is_xpack:
         wipe_rollup_jobs(client)
         wait_for_pending_tasks(client, filter="xpack/rollup/job")
@@ -129,8 +129,7 @@ def wipe_cluster(client):
             wipe_searchable_snapshot_indices(client)
 
     wipe_snapshots(client)
-    if is_xpack:
-        wipe_data_streams(client)
+    wipe_data_streams(client)
     wipe_indices(client)
 
     if is_xpack:
@@ -138,7 +137,6 @@ def wipe_cluster(client):
     else:
         client.indices.delete_template(name="*")
         client.indices.delete_index_template(name="*")
-        client.cluster.delete_component_template(name="*")
 
     wipe_cluster_settings(client)
 
