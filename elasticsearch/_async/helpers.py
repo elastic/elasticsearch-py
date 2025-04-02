@@ -418,9 +418,12 @@ async def async_scan(
         # Grab options that should be propagated to every
         # API call within this helper instead of just 'search()'
         transport_kwargs = {}
-        for key in ("headers", "api_key", "basic_auth", "bearer_auth"):
+        for key in ("headers", "api_key", "http_auth", "basic_auth", "bearer_auth"):
             try:
-                transport_kwargs[key] = kw.pop(key)
+                value = kw.pop(key)
+                if key == "http_auth":
+                    key = "basic_auth"
+                transport_kwargs[key] = value
             except KeyError:
                 pass
         return transport_kwargs

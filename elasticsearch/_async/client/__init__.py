@@ -87,6 +87,8 @@ from .utils import (
     _rewrite_parameters,
     _stability_warning,
     client_node_configs,
+    is_requests_http_auth,
+    is_requests_node_class,
 )
 from .watcher import WatcherClient
 from .xpack import XPackClient
@@ -178,6 +180,7 @@ class AsyncElasticsearch(BaseClient):
             t.Callable[[t.Dict[str, t.Any], NodeConfig], t.Optional[NodeConfig]]
         ] = None,
         meta_header: t.Union[DefaultType, bool] = DEFAULT,
+        http_auth: t.Union[DefaultType, t.Any] = DEFAULT,
         # Internal use only
         _transport: t.Optional[AsyncTransport] = None,
     ) -> None:
@@ -225,9 +228,26 @@ class AsyncElasticsearch(BaseClient):
             sniff_callback = default_sniff_callback
 
         if _transport is None:
+            requests_session_auth = None
+            if http_auth is not None and http_auth is not DEFAULT:
+                if is_requests_http_auth(http_auth):
+                    # If we're using custom requests authentication
+                    # then we need to alert the user that they also
+                    # need to use 'node_class=requests'.
+                    if not is_requests_node_class(node_class):
+                        raise ValueError(
+                            "Using a custom 'requests.auth.AuthBase' class for "
+                            "'http_auth' must be used with node_class='requests'"
+                        )
+
+                    # Reset 'http_auth' to DEFAULT so it's not consumed below.
+                    requests_session_auth = http_auth
+                    http_auth = DEFAULT
+
             node_configs = client_node_configs(
                 hosts,
                 cloud_id=cloud_id,
+                requests_session_auth=requests_session_auth,
                 connections_per_node=connections_per_node,
                 http_compress=http_compress,
                 verify_certs=verify_certs,
@@ -314,6 +334,7 @@ class AsyncElasticsearch(BaseClient):
             self._headers["x-opaque-id"] = opaque_id
         self._headers = resolve_auth_headers(
             self._headers,
+            http_auth=http_auth,
             api_key=api_key,
             basic_auth=basic_auth,
             bearer_auth=bearer_auth,

@@ -68,6 +68,7 @@ _COMPAT_MIMETYPE_SUB = _COMPAT_MIMETYPE_TEMPLATE % (r"\g<1>",)
 
 def resolve_auth_headers(
     headers: Optional[Mapping[str, str]],
+    http_auth: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
     api_key: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
     basic_auth: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
     bearer_auth: Union[DefaultType, None, str] = DEFAULT,
@@ -77,7 +78,32 @@ def resolve_auth_headers(
     elif not isinstance(headers, HttpHeaders):
         headers = HttpHeaders(headers)
 
+    resolved_http_auth = http_auth if http_auth is not DEFAULT else None
     resolved_basic_auth = basic_auth if basic_auth is not DEFAULT else None
+    if resolved_http_auth is not None:
+        if resolved_basic_auth is not None:
+            raise ValueError(
+                "Can't specify both 'http_auth' and 'basic_auth', "
+                "instead only specify 'basic_auth'"
+            )
+        if isinstance(http_auth, str) or (
+            isinstance(resolved_http_auth, (list, tuple))
+            and all(isinstance(x, str) for x in resolved_http_auth)
+        ):
+            resolved_basic_auth = resolved_http_auth
+        else:
+            raise TypeError(
+                "The deprecated 'http_auth' parameter must be either 'Tuple[str, str]' or 'str'. "
+                "Use either the 'basic_auth' parameter instead"
+            )
+
+        warnings.warn(
+            "The 'http_auth' parameter is deprecated. "
+            "Use 'basic_auth' or 'bearer_auth' parameters instead",
+            category=DeprecationWarning,
+            stacklevel=warn_stacklevel(),
+        )
+
     resolved_api_key = api_key if api_key is not DEFAULT else None
     resolved_bearer_auth = bearer_auth if bearer_auth is not DEFAULT else None
     if resolved_api_key or resolved_basic_auth or resolved_bearer_auth:
