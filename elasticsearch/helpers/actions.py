@@ -698,16 +698,12 @@ def scan(
         for key in (
             "headers",
             "api_key",
-            "http_auth",
             "basic_auth",
             "bearer_auth",
             "opaque_id",
         ):
             try:
-                value = kw.pop(key)
-                if key == "http_auth":
-                    key = "basic_auth"
-                transport_kwargs[key] = value
+                transport_kwargs[key] = kw.pop(key)
             except KeyError:
                 pass
         return transport_kwargs
