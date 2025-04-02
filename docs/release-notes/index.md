@@ -1,26 +1,26 @@
 ---
 navigation_title: "Elasticsearch Python Client"
+mapped_pages:
+  - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/release-notes.html
 ---
 
 # Elasticsearch Python Client release notes [elasticsearch-python-client-release-notes]
 
-Review the changes, fixes, and more in each version of Elasticsearch Python Client. 
+Review the changes, fixes, and more in each version of Elasticsearch Python Client.
 
 To check for security updates, go to [Security announcements for the Elastic stack](https://discuss.elastic.co/c/announcements/security-announcements/31).
 
-% Release notes include only features, enhancements, and fixes. Add breaking changes, deprecations, and known issues to the applicable release notes sections. 
+% Release notes include only features, enhancements, and fixes. Add breaking changes, deprecations, and known issues to the applicable release notes sections.
 
 % ## version.next [felasticsearch-python-client-next-release-notes]
-% **Release date:** Month day, year
 
 % ### Features and enhancements [elasticsearch-python-client-next-features-enhancements]
-% * 
+% *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
-% * 
+% *
 
 ## 9.0.0 [elasticsearch-python-client-900-release-notes]
-**Release date:** March 25, 2025
 
 ### Features and enhancements [elasticsearch-python-client-900-features-enhancements]
 

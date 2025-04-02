@@ -437,7 +437,9 @@ class Object(Field):
         doc_class: Union[Type["InnerDoc"], "DefaultType"] = DEFAULT,
         *args: Any,
         enabled: Union[bool, "DefaultType"] = DEFAULT,
-        subobjects: Union[bool, "DefaultType"] = DEFAULT,
+        subobjects: Union[
+            Literal["true", "false", "auto"], bool, "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -762,6 +764,11 @@ class Boolean(Field):
     :arg fielddata:
     :arg index:
     :arg null_value:
+    :arg ignore_malformed:
+    :arg script:
+    :arg on_script_error:
+    :arg time_series_dimension: For internal use by Elastic only. Marks
+        the field as a time series dimension. Defaults to false.
     :arg doc_values:
     :arg copy_to:
     :arg store:
@@ -789,6 +796,10 @@ class Boolean(Field):
         ] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
         null_value: Union[bool, "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
@@ -816,6 +827,14 @@ class Boolean(Field):
             kwargs["index"] = index
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
@@ -1092,6 +1111,56 @@ class ConstantKeyword(Field):
         super().__init__(*args, **kwargs)
 
 
+class CountedKeyword(Field):
+    """
+    :arg index:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "counted_keyword"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        index: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
 class Date(Field):
     """
     :arg default_timezone: timezone that will be automatically used for tz-naive values
@@ -1101,6 +1170,8 @@ class Date(Field):
     :arg format:
     :arg ignore_malformed:
     :arg index:
+    :arg script:
+    :arg on_script_error:
     :arg null_value:
     :arg precision_step:
     :arg locale:
@@ -1133,6 +1204,8 @@ class Date(Field):
         format: Union[str, "DefaultType"] = DEFAULT,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         null_value: Any = DEFAULT,
         precision_step: Union[int, "DefaultType"] = DEFAULT,
         locale: Union[str, "DefaultType"] = DEFAULT,
@@ -1165,6 +1238,10 @@ class Date(Field):
             kwargs["ignore_malformed"] = ignore_malformed
         if index is not DEFAULT:
             kwargs["index"] = index
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
         if precision_step is not DEFAULT:
@@ -1229,6 +1306,8 @@ class DateNanos(Field):
     :arg format:
     :arg ignore_malformed:
     :arg index:
+    :arg script:
+    :arg on_script_error:
     :arg null_value:
     :arg precision_step:
     :arg doc_values:
@@ -1255,6 +1334,8 @@ class DateNanos(Field):
         format: Union[str, "DefaultType"] = DEFAULT,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         null_value: Any = DEFAULT,
         precision_step: Union[int, "DefaultType"] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
@@ -1284,6 +1365,10 @@ class DateNanos(Field):
             kwargs["ignore_malformed"] = ignore_malformed
         if index is not DEFAULT:
             kwargs["index"] = index
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        if on_script_error is not DEFAULT:
+            kwargs["on_script_error"] = on_script_error
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
         if precision_step is not DEFAULT:
@@ -1390,11 +1475,29 @@ class DateRange(RangeField):
 
 class DenseVector(Field):
     """
-    :arg element_type:
-    :arg dims:
-    :arg similarity:
-    :arg index:
-    :arg index_options:
+    :arg dims: Number of vector dimensions. Can't exceed `4096`. If `dims`
+        is not specified, it will be set to the length of the first vector
+        added to the field.
+    :arg element_type: The data type used to encode vectors. The supported
+        data types are `float` (default), `byte`, and `bit`. Defaults to
+        `float` if omitted.
+    :arg index: If `true`, you can search this field using the kNN search
+        API. Defaults to `True` if omitted.
+    :arg index_options: An optional section that configures the kNN
+        indexing algorithm. The HNSW algorithm has two internal parameters
+        that influence how the data structure is built. These can be
+        adjusted to improve the accuracy of results, at the expense of
+        slower indexing speed.  This parameter can only be specified when
+        `index` is `true`.
+    :arg similarity: The vector similarity metric to use in kNN search.
+        Documents are ranked by their vector field's similarity to the
+        query vector. The `_score` of each document will be derived from
+        the similarity, in a way that ensures scores are positive and that
+        a larger score corresponds to a higher ranking.  Defaults to
+        `l2_norm` when `element_type` is `bit` otherwise defaults to
+        `cosine`.  `bit` vectors only support `l2_norm` as their
+        similarity metric.  This parameter can only be specified when
+        `index` is `true`.
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -1413,12 +1516,15 @@ class DenseVector(Field):
     def __init__(
         self,
         *args: Any,
-        element_type: Union[str, "DefaultType"] = DEFAULT,
         dims: Union[int, "DefaultType"] = DEFAULT,
-        similarity: Union[str, "DefaultType"] = DEFAULT,
+        element_type: Union[Literal["bit", "byte", "float"], "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
         index_options: Union[
             "types.DenseVectorIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        similarity: Union[
+            Literal["cosine", "dot_product", "l2_norm", "max_inner_product"],
+            "DefaultType",
         ] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
@@ -1432,16 +1538,16 @@ class DenseVector(Field):
         ] = DEFAULT,
         **kwargs: Any,
     ):
-        if element_type is not DEFAULT:
-            kwargs["element_type"] = element_type
         if dims is not DEFAULT:
             kwargs["dims"] = dims
-        if similarity is not DEFAULT:
-            kwargs["similarity"] = similarity
+        if element_type is not DEFAULT:
+            kwargs["element_type"] = element_type
         if index is not DEFAULT:
             kwargs["index"] = index
         if index_options is not DEFAULT:
             kwargs["index_options"] = index_options
+        if similarity is not DEFAULT:
+            kwargs["similarity"] = similarity
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
@@ -1905,6 +2011,7 @@ class GeoShape(Field):
     :arg coerce:
     :arg ignore_malformed:
     :arg ignore_z_value:
+    :arg index:
     :arg orientation:
     :arg strategy:
     :arg doc_values:
@@ -1930,6 +2037,7 @@ class GeoShape(Field):
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
+        index: Union[bool, "DefaultType"] = DEFAULT,
         orientation: Union[Literal["right", "left"], "DefaultType"] = DEFAULT,
         strategy: Union[Literal["recursive", "term"], "DefaultType"] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
@@ -1957,6 +2065,8 @@ class GeoShape(Field):
             kwargs["ignore_malformed"] = ignore_malformed
         if ignore_z_value is not DEFAULT:
             kwargs["ignore_z_value"] = ignore_z_value
+        if index is not DEFAULT:
+            kwargs["index"] = index
         if orientation is not DEFAULT:
             kwargs["orientation"] = orientation
         if strategy is not DEFAULT:
@@ -3043,6 +3153,76 @@ class Nested(Object):
         super().__init__(*args, **kwargs)
 
 
+class Passthrough(Field):
+    """
+    :arg enabled:
+    :arg priority:
+    :arg time_series_dimension:
+    :arg copy_to:
+    :arg store:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "passthrough"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        enabled: Union[bool, "DefaultType"] = DEFAULT,
+        priority: Union[int, "DefaultType"] = DEFAULT,
+        time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
+        copy_to: Union[
+            Union[str, "InstrumentedField"],
+            Sequence[Union[str, "InstrumentedField"]],
+            "DefaultType",
+        ] = DEFAULT,
+        store: Union[bool, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if enabled is not DEFAULT:
+            kwargs["enabled"] = enabled
+        if priority is not DEFAULT:
+            kwargs["priority"] = priority
+        if time_series_dimension is not DEFAULT:
+            kwargs["time_series_dimension"] = time_series_dimension
+        if copy_to is not DEFAULT:
+            kwargs["copy_to"] = str(copy_to)
+        if store is not DEFAULT:
+            kwargs["store"] = store
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
 class Percolator(Field):
     """
     :arg meta: Metadata about the field.
@@ -3497,8 +3677,18 @@ class SearchAsYouType(Field):
 
 class SemanticText(Field):
     """
-    :arg inference_id: (required)
     :arg meta:
+    :arg inference_id: Inference endpoint that will be used to generate
+        embeddings for the field. This parameter cannot be updated. Use
+        the Create inference API to create the endpoint. If
+        `search_inference_id` is specified, the inference endpoint will
+        only be used at index time. Defaults to `.elser-2-elasticsearch`
+        if omitted.
+    :arg search_inference_id: Inference endpoint that will be used to
+        generate embeddings at query time. You can update this parameter
+        by using the Update mapping API. Use the Create inference API to
+        create the endpoint. If not specified, the inference endpoint
+        defined by inference_id will be used at both index and query time.
     """
 
     name = "semantic_text"
@@ -3506,14 +3696,17 @@ class SemanticText(Field):
     def __init__(
         self,
         *args: Any,
-        inference_id: Union[str, "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        inference_id: Union[str, "DefaultType"] = DEFAULT,
+        search_inference_id: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
-        if inference_id is not DEFAULT:
-            kwargs["inference_id"] = inference_id
         if meta is not DEFAULT:
             kwargs["meta"] = meta
+        if inference_id is not DEFAULT:
+            kwargs["inference_id"] = inference_id
+        if search_inference_id is not DEFAULT:
+            kwargs["search_inference_id"] = search_inference_id
         super().__init__(*args, **kwargs)
 
 

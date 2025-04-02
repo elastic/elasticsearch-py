@@ -1008,12 +1008,17 @@ class AsyncElasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        if_primary_term: t.Optional[int] = None,
+        if_seq_no: t.Optional[int] = None,
         include_source_on_error: t.Optional[bool] = None,
+        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        require_alias: t.Optional[bool] = None,
+        require_data_stream: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -1091,8 +1096,18 @@ class AsyncElasticsearch(BaseClient):
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format.
         :param document:
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
+        :param op_type: Set to `create` to only index the document if it does not already
+            exist (put if absent). If a document with the specified `_id` already exists,
+            the indexing operation will fail. The behavior is the same as using the `<index>/_create`
+            endpoint. If a document ID is specified, this paramater defaults to `index`.
+            Otherwise, it defaults to `create`. If the request targets a data stream,
+            an `op_type` of `create` is required.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, setting the value to
             `_none` turns off the default ingest pipeline for this request. If a final
@@ -1101,6 +1116,9 @@ class AsyncElasticsearch(BaseClient):
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
             this operation visible to search. If `wait_for`, it waits for a refresh to
             make this operation visible to search. If `false`, it does nothing with refreshes.
+        :param require_alias: If `true`, the destination must be an index alias.
+        :param require_data_stream: If `true`, the request's actions must target a data
+            stream (existing or to be created).
         :param routing: A custom value that is used to route operations to a specific
             shard.
         :param timeout: The period the request waits for the following operations: automatic
@@ -1141,14 +1159,24 @@ class AsyncElasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if if_primary_term is not None:
+            __query["if_primary_term"] = if_primary_term
+        if if_seq_no is not None:
+            __query["if_seq_no"] = if_seq_no
         if include_source_on_error is not None:
             __query["include_source_on_error"] = include_source_on_error
+        if op_type is not None:
+            __query["op_type"] = op_type
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
+        if require_alias is not None:
+            __query["require_alias"] = require_alias
+        if require_data_stream is not None:
+            __query["require_data_stream"] = require_data_stream
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -1440,7 +1468,7 @@ class AsyncElasticsearch(BaseClient):
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3279,7 +3307,8 @@ class AsyncElasticsearch(BaseClient):
             computationally expensive named queries on a large number of hits may add
             significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
-            search API can execute.
+            search API can execute. Defaults to `max(1, (# of data nodes * min(search
+            thread pool size, 10)))`.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
             that each sub-search request executes per node.
         :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
@@ -3607,6 +3636,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        max_concurrent_shard_requests: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -3662,6 +3692,8 @@ class AsyncElasticsearch(BaseClient):
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
             on every shard.
+        :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
+            that each sub-search request executes per node.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
         :param routing: A custom value that is used to route operations to a specific
@@ -3689,6 +3721,8 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -4229,7 +4263,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -5633,7 +5667,7 @@ class AsyncElasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -5856,7 +5890,20 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("doc", "filter", "per_field_analyzer"),
+        body_fields=(
+            "doc",
+            "field_statistics",
+            "fields",
+            "filter",
+            "offsets",
+            "payloads",
+            "per_field_analyzer",
+            "positions",
+            "routing",
+            "term_statistics",
+            "version",
+            "version_type",
+        ),
     )
     async def termvectors(
         self,
@@ -5933,9 +5980,9 @@ class AsyncElasticsearch(BaseClient):
             (the sum of document frequencies for all terms in this field). * The sum
             of total term frequencies (the sum of total term frequencies of each term
             in this field).
-        :param fields: A comma-separated list or wildcard expressions of fields to include
-            in the statistics. It is used as the default list unless a specific field
-            list is provided in the `completion_fields` or `fielddata_fields` parameters.
+        :param fields: A list of fields to include in the statistics. It is used as the
+            default list unless a specific field list is provided in the `completion_fields`
+            or `fielddata_fields` parameters.
         :param filter: Filter terms based on their tf-idf scores. This could be useful
             in order find out a good characteristic vector of a document. This feature
             works in a similar manner to the second phase of the More Like This Query.
@@ -5973,41 +6020,41 @@ class AsyncElasticsearch(BaseClient):
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if field_statistics is not None:
-            __query["field_statistics"] = field_statistics
-        if fields is not None:
-            __query["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if offsets is not None:
-            __query["offsets"] = offsets
-        if payloads is not None:
-            __query["payloads"] = payloads
-        if positions is not None:
-            __query["positions"] = positions
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
-        if routing is not None:
-            __query["routing"] = routing
-        if term_statistics is not None:
-            __query["term_statistics"] = term_statistics
-        if version is not None:
-            __query["version"] = version
-        if version_type is not None:
-            __query["version_type"] = version_type
         if not __body:
             if doc is not None:
                 __body["doc"] = doc
+            if field_statistics is not None:
+                __body["field_statistics"] = field_statistics
+            if fields is not None:
+                __body["fields"] = fields
             if filter is not None:
                 __body["filter"] = filter
+            if offsets is not None:
+                __body["offsets"] = offsets
+            if payloads is not None:
+                __body["payloads"] = payloads
             if per_field_analyzer is not None:
                 __body["per_field_analyzer"] = per_field_analyzer
+            if positions is not None:
+                __body["positions"] = positions
+            if routing is not None:
+                __body["routing"] = routing
+            if term_statistics is not None:
+                __body["term_statistics"] = term_statistics
+            if version is not None:
+                __body["version"] = version
+            if version_type is not None:
+                __body["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -6358,7 +6405,7 @@ class AsyncElasticsearch(BaseClient):
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
             `hidden`, `none`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text

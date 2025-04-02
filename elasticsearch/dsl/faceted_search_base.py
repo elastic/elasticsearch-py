@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from .response.aggs import BucketData
     from .search_base import SearchBase
 
-FilterValueType = Union[str, datetime, Sequence[str]]
+FilterValueType = Union[str, int, float, bool]
 
 __all__ = [
     "FacetedSearchBase",
@@ -396,10 +396,10 @@ class FacetedSearchBase(Generic[_R]):
             ]
 
         # remember the filter values for use in FacetedResponse
-        self.filter_values[name] = filter_values  # type: ignore[assignment]
+        self.filter_values[name] = filter_values
 
         # get the filter from the facet
-        f = self.facets[name].add_filter(filter_values)  # type: ignore[arg-type]
+        f = self.facets[name].add_filter(filter_values)
         if f is None:
             return
 
@@ -469,7 +469,7 @@ class FacetedSearchBase(Generic[_R]):
         """
         Specify query params to be used when executing the search. All the
         keyword arguments will override the current values. See
-        https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch.Elasticsearch.search
+        https://elasticsearch-py.readthedocs.io/en/latest/api/elasticsearch.html#elasticsearch.Elasticsearch.search
         for all available parameters.
         """
         self._s = self._s.params(**kwargs)
