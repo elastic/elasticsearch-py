@@ -27,6 +27,8 @@ from ..._sync.client.utils import (
     _rewrite_parameters,
     _stability_warning,
     client_node_configs,
+    is_requests_http_auth,
+    is_requests_node_class,
 )
 
 __all__ = [
@@ -41,4 +43,6 @@ __all__ = [
     "client_node_configs",
     "_rewrite_parameters",
     "_stability_warning",
+    "is_requests_http_auth",
+    "is_requests_node_class",
 ]
