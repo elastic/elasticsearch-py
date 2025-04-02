@@ -25,7 +25,7 @@ How can you figure out the namespace?
 * You can also use the client documentation, by:
   * browsing the [Elasticsearch API Reference](https://elasticsearch-py.readthedocs.io/en/stable/api.html) page, or
   * searching for your endpoint using [Read the Docs](https://elasticsearch-py.readthedocs.io/) search, which is powered by Elasticsearch!
-* Finally, most examples in the [Elasticsearch guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) are also available in Python. In the example below, `client.ingest.put_pipeline(...)` is the function that calls the "Create or update a pipeline" API.
+* Finally, for Elasticsearch 8.x, most examples in the [Elasticsearch guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) are also available in Python. (This is still a work in progress for Elasticsearch 9.x.) In the example below, `client.ingest.put_pipeline(...)` is the function that calls the "Create or update a pipeline" API.
 
 
 :::{image} ../images/python-example.png
