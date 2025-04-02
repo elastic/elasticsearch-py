@@ -75,6 +75,7 @@ class Stability(Enum):
     STABLE = auto()
     BETA = auto()
     EXPERIMENTAL = auto()
+    DEPRECATED = auto()
 
 
 _TYPE_HOSTS = Union[
@@ -431,6 +432,10 @@ def _stability_warning(
                     "Elastic will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.",
                     category=GeneralAvailabilityWarning,
                     stacklevel=warn_stacklevel(),
+                )
+            elif stability == Stability.DEPRECATED:
+                warnings.warn(
+                    message, category=DeprecationWarning, stacklevel=warn_stacklevel()
                 )
 
             return api(*args, **kwargs)
