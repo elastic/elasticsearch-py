@@ -433,9 +433,11 @@ def _stability_warning(
                     category=GeneralAvailabilityWarning,
                     stacklevel=warn_stacklevel(),
                 )
-            elif stability == Stability.DEPRECATED:
+            elif stability == Stability.DEPRECATED and message and version:
                 warnings.warn(
-                    message, category=DeprecationWarning, stacklevel=warn_stacklevel()
+                    f"In elasticsearch-py {version}, {message}.",
+                    category=DeprecationWarning,
+                    stacklevel=warn_stacklevel(),
                 )
 
             return api(*args, **kwargs)
