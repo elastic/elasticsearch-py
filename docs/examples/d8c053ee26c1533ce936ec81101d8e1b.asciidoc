@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_ingest/ip_location/database/my-database-id",
+resp = client.ingest.get_ip_location_database(
+    id="my-database-id",
 )
 print(resp)
 ----

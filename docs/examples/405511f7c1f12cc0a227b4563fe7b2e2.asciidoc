@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_query/async/FkpMRkJGS1gzVDRlM3g4ZzMyRGlLbkEaTXlJZHdNT09TU2VTZVBoNDM3cFZMUToxMDM&#x3D;",
+resp = client.esql.async_query_get(
+    id="FkpMRkJGS1gzVDRlM3g4ZzMyRGlLbkEaTXlJZHdNT09TU2VTZVBoNDM3cFZMUToxMDM=",
 )
 print(resp)
 ----

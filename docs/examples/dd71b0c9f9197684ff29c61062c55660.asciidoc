@@ -3,9 +3,6 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_security/settings",
-)
+resp = client.security.get_settings()
 print(resp)
 ----

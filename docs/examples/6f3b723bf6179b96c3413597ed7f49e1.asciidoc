@@ -3,16 +3,11 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/api_key/_bulk_update",
-    headers={"Content-Type": "application/json"},
-    body={
-        "ids": [
-            "VuaCfGcBCdbkQm-e5aOx",
-            "H3_AhoIBA9hmeQJdg7ij"
-        ]
-    },
+resp = client.security.bulk_update_api_keys(
+    ids=[
+        "VuaCfGcBCdbkQm-e5aOx",
+        "H3_AhoIBA9hmeQJdg7ij"
+    ],
 )
 print(resp)
 ----
