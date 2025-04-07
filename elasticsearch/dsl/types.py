@@ -324,15 +324,24 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         `int4_flat` index types.
     :arg ef_construction: The number of candidates to track while
         assembling the list of nearest neighbors for each new node.  Only
-        applicable to `hnsw`, `int8_hnsw`, and `int4_hnsw` index types.
-        Defaults to `100` if omitted.
+        applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`, and `int4_hnsw`
+        index types. Defaults to `100` if omitted.
     :arg m: The number of neighbors each node will be connected to in the
-        HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, and
-        `int4_hnsw` index types. Defaults to `16` if omitted.
+        HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`,
+        and `int4_hnsw` index types. Defaults to `16` if omitted.
     """
 
     type: Union[
-        Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+        Literal[
+            "bbq_flat",
+            "bbq_hnsw",
+            "flat",
+            "hnsw",
+            "int4_flat",
+            "int4_hnsw",
+            "int8_flat",
+            "int8_hnsw",
+        ],
         DefaultType,
     ]
     confidence_interval: Union[float, DefaultType]
@@ -343,7 +352,16 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         self,
         *,
         type: Union[
-            Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+            Literal[
+                "bbq_flat",
+                "bbq_hnsw",
+                "flat",
+                "hnsw",
+                "int4_flat",
+                "int4_hnsw",
+                "int8_flat",
+                "int8_hnsw",
+            ],
             DefaultType,
         ] = DEFAULT,
         confidence_interval: Union[float, DefaultType] = DEFAULT,
