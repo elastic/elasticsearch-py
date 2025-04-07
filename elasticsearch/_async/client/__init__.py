@@ -4745,7 +4745,8 @@ class AsyncElasticsearch(BaseClient):
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests.
         :param min_score: The minimum `_score` for matching documents. Documents with
-            a lower `_score` are not included in the search results.
+            a lower `_score` are not included in search results and results collected
+            by aggregations.
         :param pit: Limit the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an `<index>` in the request path.
         :param post_filter: Use the `post_filter` parameter to filter search results.

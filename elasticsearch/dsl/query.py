@@ -1084,7 +1084,7 @@ class Knn(Query):
     :arg similarity: The minimum similarity for a vector to be considered
         a match
     :arg rescore_vector: Apply oversampling and rescoring to quantized
-        vectors *
+        vectors
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
