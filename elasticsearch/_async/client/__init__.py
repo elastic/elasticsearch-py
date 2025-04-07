@@ -4839,7 +4839,8 @@ class AsyncElasticsearch(BaseClient):
         :param min_compatible_shard_node: The minimum version of the node that can handle
             the request Any handling node with a lower version will fail the request.
         :param min_score: The minimum `_score` for matching documents. Documents with
-            a lower `_score` are not included in the search results.
+            a lower `_score` are not included in search results and results collected
+            by aggregations.
         :param pit: Limit the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an `<index>` in the request path.
         :param post_filter: Use the `post_filter` parameter to filter search results.
