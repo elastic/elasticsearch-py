@@ -430,7 +430,7 @@ class FleetClient(NamespacedClient):
         :param lenient:
         :param max_concurrent_shard_requests:
         :param min_score: Minimum _score for matching documents. Documents with a lower
-            _score are not included in the search results.
+            _score are not included in search results and results collected by aggregations.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an <index> in the request path.
         :param post_filter:
