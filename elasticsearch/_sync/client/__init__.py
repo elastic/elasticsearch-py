@@ -87,6 +87,8 @@ from .utils import (
     _rewrite_parameters,
     _stability_warning,
     client_node_configs,
+    is_requests_http_auth,
+    is_requests_node_class,
 )
 from .watcher import WatcherClient
 from .xpack import XPackClient
@@ -178,6 +180,7 @@ class Elasticsearch(BaseClient):
             t.Callable[[t.Dict[str, t.Any], NodeConfig], t.Optional[NodeConfig]]
         ] = None,
         meta_header: t.Union[DefaultType, bool] = DEFAULT,
+        http_auth: t.Union[DefaultType, t.Any] = DEFAULT,
         # Internal use only
         _transport: t.Optional[Transport] = None,
     ) -> None:
@@ -225,9 +228,26 @@ class Elasticsearch(BaseClient):
             sniff_callback = default_sniff_callback
 
         if _transport is None:
+            requests_session_auth = None
+            if http_auth is not None and http_auth is not DEFAULT:
+                if is_requests_http_auth(http_auth):
+                    # If we're using custom requests authentication
+                    # then we need to alert the user that they also
+                    # need to use 'node_class=requests'.
+                    if not is_requests_node_class(node_class):
+                        raise ValueError(
+                            "Using a custom 'requests.auth.AuthBase' class for "
+                            "'http_auth' must be used with node_class='requests'"
+                        )
+
+                    # Reset 'http_auth' to DEFAULT so it's not consumed below.
+                    requests_session_auth = http_auth
+                    http_auth = DEFAULT
+
             node_configs = client_node_configs(
                 hosts,
                 cloud_id=cloud_id,
+                requests_session_auth=requests_session_auth,
                 connections_per_node=connections_per_node,
                 http_compress=http_compress,
                 verify_certs=verify_certs,
@@ -314,6 +334,7 @@ class Elasticsearch(BaseClient):
             self._headers["x-opaque-id"] = opaque_id
         self._headers = resolve_auth_headers(
             self._headers,
+            http_auth=http_auth,
             api_key=api_key,
             basic_auth=basic_auth,
             bearer_auth=bearer_auth,
@@ -1466,7 +1487,7 @@ class Elasticsearch(BaseClient):
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3305,7 +3326,8 @@ class Elasticsearch(BaseClient):
             computationally expensive named queries on a large number of hits may add
             significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
-            search API can execute.
+            search API can execute. Defaults to `max(1, (# of data nodes * min(search
+            thread pool size, 10)))`.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
             that each sub-search request executes per node.
         :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
@@ -3633,6 +3655,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        max_concurrent_shard_requests: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -3688,6 +3711,8 @@ class Elasticsearch(BaseClient):
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
             on every shard.
+        :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
+            that each sub-search request executes per node.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
         :param routing: A custom value that is used to route operations to a specific
@@ -3715,6 +3740,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -4255,7 +4282,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4716,7 +4743,8 @@ class Elasticsearch(BaseClient):
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests.
         :param min_score: The minimum `_score` for matching documents. Documents with
-            a lower `_score` are not included in the search results.
+            a lower `_score` are not included in search results and results collected
+            by aggregations.
         :param pit: Limit the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an `<index>` in the request path.
         :param post_filter: Use the `post_filter` parameter to filter search results.
@@ -5659,7 +5687,7 @@ class Elasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6397,7 +6425,7 @@ class Elasticsearch(BaseClient):
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
             `hidden`, `none`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
