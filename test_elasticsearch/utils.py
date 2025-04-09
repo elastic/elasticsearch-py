@@ -118,37 +118,14 @@ def wipe_cluster(client):
     except ImportError:
         pass
 
-    is_xpack = False
-    if is_xpack:
-        wipe_rollup_jobs(client)
-        wait_for_pending_tasks(client, filter="xpack/rollup/job")
-        wipe_slm_policies(client)
-
-        # Searchable snapshot indices start in 7.8+
-        if es_version(client) >= (7, 8):
-            wipe_searchable_snapshot_indices(client)
-
     wipe_snapshots(client)
     wipe_data_streams(client)
     wipe_indices(client)
 
-    if is_xpack:
-        wipe_xpack_templates(client)
-    else:
-        client.indices.delete_template(name="*")
-        client.indices.delete_index_template(name="*")
+    client.indices.delete_template(name="*")
+    client.indices.delete_index_template(name="*")
 
     wipe_cluster_settings(client)
-
-    if is_xpack:
-        wipe_ilm_policies(client)
-        wipe_auto_follow_patterns(client)
-        wipe_tasks(client)
-        wipe_node_shutdown_metadata(client)
-        wait_for_pending_datafeeds_and_jobs(client)
-        wipe_calendars(client)
-        wipe_filters(client)
-        wipe_transforms(client)
 
     wait_for_cluster_state_updates_to_finish(client)
     if close_after_wipe:
