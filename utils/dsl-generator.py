@@ -345,12 +345,12 @@ class ElasticsearchSchema:
             ]["name"].endswith("Analyzer"):
                 # not expanding analyzers at this time, maybe in the future
                 return "str, Dict[str, Any]", None
-            elif (
-                schema_type["name"]["namespace"] == "_types.aggregations"
-                and schema_type["name"]["name"].endswith("AggregationRange")
-                and schema_type["name"]["name"] != "IpRangeAggregationRange"
-            ):
-                return '"wrappers.AggregationRange"', None
+            elif schema_type["name"]["namespace"] == "_types.aggregations":
+                if (
+                    schema_type["name"]["name"].endswith("AggregationRange")
+                    or schema_type["name"]["name"] == "DateRangeExpression"
+                ) and schema_type["name"]["name"] != "IpRangeAggregationRange":
+                    return '"wrappers.AggregationRange"', None
 
             # to handle other interfaces we generate a type of the same name
             # and add the interface to the interfaces.py module
