@@ -22,10 +22,8 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 from elasticsearch import (
-    AuthorizationException,
     ConnectionError,
     Elasticsearch,
-    NotFoundError,
 )
 
 SOURCE_DIR = Path(__file__).absolute().parent.parent
