@@ -62,7 +62,7 @@ class IndicesClient(NamespacedClient):
           Index blocks limit the operations allowed on an index by blocking specific operation types.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-add-block>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-add-block>`_
 
         :param index: A comma-separated list or wildcard expression of index names used
             to limit the request. By default, you must explicitly name the indices you
@@ -173,7 +173,7 @@ class IndicesClient(NamespacedClient):
           The <code>_analyze</code> endpoint without a specified index will always use <code>10000</code> as its limit.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-analyze>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-analyze>`_
 
         :param index: Index used to derive the analyzer. If specified, the `analyzer`
             or field parameter overrides this value. If no index is specified or the
@@ -265,7 +265,7 @@ class IndicesClient(NamespacedClient):
           <p>Cancel a migration reindex attempt for a data stream or index.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/migrate-data-stream.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
 
         :param index: The index or data stream name
         """
@@ -327,7 +327,7 @@ class IndicesClient(NamespacedClient):
           To clear the cache only of specific fields, use the <code>fields</code> parameter.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-clear-cache>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-clear-cache>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -449,7 +449,7 @@ class IndicesClient(NamespacedClient):
           <p>Because the clone operation creates a new index to clone the shards to, the wait for active shards setting on index creation applies to the clone index action as well.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-clone>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-clone>`_
 
         :param index: Name of the source index to clone.
         :param target: Name of the target index to create.
@@ -553,7 +553,7 @@ class IndicesClient(NamespacedClient):
           Closing indices can be turned off with the cluster settings API by setting <code>cluster.indices.close.enable</code> to <code>false</code>.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-close>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-close>`_
 
         :param index: Comma-separated list or wildcard expression of index names used
             to limit the request.
@@ -654,7 +654,7 @@ class IndicesClient(NamespacedClient):
           Note that changing this setting will also affect the <code>wait_for_active_shards</code> value on all subsequent write operations.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-create>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-create>`_
 
         :param index: Name of the index you wish to create.
         :param aliases: Aliases for the index.
@@ -731,7 +731,7 @@ class IndicesClient(NamespacedClient):
           <p>You must have a matching index template with data stream enabled.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-create-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-create-data-stream>`_
 
         :param name: Name of the data stream, which must meet the following criteria:
             Lowercase only; Cannot include `\\`, `/`, `*`, `?`, `"`, `<`, `>`, `|`, `,`,
@@ -794,7 +794,7 @@ class IndicesClient(NamespacedClient):
           <p>Copy the mappings and settings from the source index to a destination index while allowing request settings and mappings to override the source values.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/migrate-data-stream.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
 
         :param source: The source index or data stream name
         :param dest: The destination index or data stream name
@@ -861,7 +861,7 @@ class IndicesClient(NamespacedClient):
           <p>Get statistics for one or more data streams.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-data-streams-stats-1>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-data-streams-stats-1>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Wildcard expressions (`*`) are supported. To target all data streams in a
@@ -930,7 +930,7 @@ class IndicesClient(NamespacedClient):
           You can then use the delete index API to delete the previous write index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete>`_
 
         :param index: Comma-separated list of indices to delete. You cannot specify index
             aliases. By default, this parameter does not support wildcards (`*`) or `_all`.
@@ -1004,7 +1004,7 @@ class IndicesClient(NamespacedClient):
           Removes a data stream or index from an alias.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-alias>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete-alias>`_
 
         :param index: Comma-separated list of data streams or indices used to limit the
             request. Supports wildcards (`*`).
@@ -1072,7 +1072,7 @@ class IndicesClient(NamespacedClient):
           Removes the data stream lifecycle from a data stream, rendering it not managed by the data stream lifecycle.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete-data-lifecycle>`_
 
         :param name: A comma-separated list of data streams of which the data stream
             lifecycle will be deleted; use `*` to get all data streams
@@ -1136,7 +1136,7 @@ class IndicesClient(NamespacedClient):
           Deletes one or more data streams and their backing indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete-data-stream>`_
 
         :param name: Comma-separated list of data streams to delete. Wildcard (`*`) expressions
             are supported.
@@ -1194,7 +1194,7 @@ class IndicesClient(NamespacedClient):
           existing templates.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-index-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete-index-template>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -1249,7 +1249,7 @@ class IndicesClient(NamespacedClient):
           <p>Delete a legacy index template.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-delete-template>`_
 
         :param name: The name of the legacy index template to delete. Wildcard (`*`)
             expressions are supported.
@@ -1321,7 +1321,7 @@ class IndicesClient(NamespacedClient):
           The stored size of the <code>_id</code> field is likely underestimated while the <code>_source</code> field is overestimated.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-disk-usage>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-disk-usage>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. It’s recommended to execute this API with a single
@@ -1404,7 +1404,7 @@ class IndicesClient(NamespacedClient):
           The source index must be read only (<code>index.blocks.write: true</code>).</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-downsample>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-downsample>`_
 
         :param index: Name of the time series index to downsample.
         :param target_index: Name of the index to create.
@@ -1476,7 +1476,7 @@ class IndicesClient(NamespacedClient):
           Check if one or more indices, index aliases, or data streams exist.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-exists>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-exists>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases. Supports
             wildcards (`*`).
@@ -1558,7 +1558,7 @@ class IndicesClient(NamespacedClient):
           <p>Check if one or more data stream or index aliases exist.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-exists-alias>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-exists-alias>`_
 
         :param name: Comma-separated list of aliases to check. Supports wildcards (`*`).
         :param index: Comma-separated list of data streams or indices used to limit the
@@ -1635,7 +1635,7 @@ class IndicesClient(NamespacedClient):
           <p>Check whether index templates exist.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-exists-index-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-exists-index-template>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -1698,7 +1698,7 @@ class IndicesClient(NamespacedClient):
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-exists-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-exists-template>`_
 
         :param name: A comma-separated list of index template names used to limit the
             request. Wildcard (`*`) expressions are supported.
@@ -1756,7 +1756,7 @@ class IndicesClient(NamespacedClient):
           Get information about an index or data stream's current data stream lifecycle status, such as time since index creation, time since rollover, the lifecycle configuration managing the index, or any errors encountered during lifecycle execution.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-explain-data-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-explain-data-lifecycle>`_
 
         :param index: The name of the index to explain
         :param include_defaults: indicates if the API should return the default values
@@ -1823,7 +1823,7 @@ class IndicesClient(NamespacedClient):
           A given request will increment each count by a maximum value of 1, even if the request accesses the same field multiple times.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-field-usage-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-field-usage-stats>`_
 
         :param index: Comma-separated list or wildcard expression of index names used
             to limit the request.
@@ -1908,7 +1908,7 @@ class IndicesClient(NamespacedClient):
           If you call the flush API after indexing some documents then a successful response indicates that Elasticsearch has flushed all the documents that were indexed before the flush API was called.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-flush>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-flush>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to flush.
             Supports wildcards (`*`). To flush all data streams and indices, omit this
@@ -2033,7 +2033,7 @@ class IndicesClient(NamespacedClient):
           </code></pre>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-forcemerge>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-forcemerge>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -2131,7 +2131,7 @@ class IndicesClient(NamespacedClient):
           stream’s backing indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard expressions (*) are supported.
@@ -2224,7 +2224,7 @@ class IndicesClient(NamespacedClient):
           Retrieves information for one or more data stream or index aliases.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-alias>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-alias>`_
 
         :param index: Comma-separated list of data streams or indices used to limit the
             request. Supports wildcards (`*`). To target all data streams and indices,
@@ -2311,7 +2311,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the data stream lifecycle configuration of one or more data streams.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-data-lifecycle>`_
 
         :param name: Comma-separated list of data streams to limit the request. Supports
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
@@ -2369,7 +2369,7 @@ class IndicesClient(NamespacedClient):
           Get statistics about the data streams that are managed by a data stream lifecycle.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-lifecycle-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-data-lifecycle-stats>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_lifecycle/stats"
@@ -2420,7 +2420,7 @@ class IndicesClient(NamespacedClient):
           <p>Get information about one or more data streams.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-data-stream>`_
 
         :param name: Comma-separated list of data stream names used to limit the request.
             Wildcard (`*`) expressions are supported. If omitted, all data streams are
@@ -2501,7 +2501,7 @@ class IndicesClient(NamespacedClient):
           <p>This API is useful if you don't need a complete mapping or if an index mapping contains a large number of fields.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-mapping>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-mapping>`_
 
         :param fields: Comma-separated list or wildcard expression of fields used to
             limit returned information. Supports wildcards (`*`).
@@ -2582,7 +2582,7 @@ class IndicesClient(NamespacedClient):
           Get information about one or more index templates.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-index-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-index-template>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -2659,7 +2659,7 @@ class IndicesClient(NamespacedClient):
           For data streams, the API retrieves mappings for the stream’s backing indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-mapping>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-mapping>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -2733,7 +2733,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the status of a migration reindex attempt for a data stream or index.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/migrate-data-stream.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
 
         :param index: The index or data stream name.
         """
@@ -2793,7 +2793,7 @@ class IndicesClient(NamespacedClient):
           For data streams, it returns setting information for the stream's backing indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-settings>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-settings>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -2885,7 +2885,7 @@ class IndicesClient(NamespacedClient):
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-get-template>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (`*`) expressions are supported. To return all index templates,
@@ -2952,7 +2952,7 @@ class IndicesClient(NamespacedClient):
           The persistent task ID is returned immediately and the reindexing work is completed in that task.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/migrate-data-stream.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
 
         :param reindex:
         """
@@ -3013,7 +3013,7 @@ class IndicesClient(NamespacedClient):
           The write index for the alias becomes the write index for the stream.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-migrate-to-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-migrate-to-data-stream>`_
 
         :param name: Name of the index alias to convert to a data stream.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -3069,7 +3069,7 @@ class IndicesClient(NamespacedClient):
           Performs one or more data stream modification actions in a single atomic operation.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-modify-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-modify-data-stream>`_
 
         :param actions: Actions to perform.
         """
@@ -3148,7 +3148,7 @@ class IndicesClient(NamespacedClient):
           <p>Because opening or closing an index allocates its shards, the <code>wait_for_active_shards</code> setting on index creation applies to the <code>_open</code> and <code>_close</code> index actions as well.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-open>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-open>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). By default, you must explicitly
@@ -3234,7 +3234,7 @@ class IndicesClient(NamespacedClient):
           This will affect the lifecycle management of the data stream and interfere with the data stream size and retention.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-promote-data-stream>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-promote-data-stream>`_
 
         :param name: The name of the data stream
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -3300,7 +3300,7 @@ class IndicesClient(NamespacedClient):
           Adds a data stream or index to an alias.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-alias>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-alias>`_
 
         :param index: Comma-separated list of data streams or indices to add. Supports
             wildcards (`*`). Wildcard patterns that match both data streams and indices
@@ -3407,7 +3407,7 @@ class IndicesClient(NamespacedClient):
           Update the data stream lifecycle of the specified data streams.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-data-lifecycle>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.
@@ -3535,7 +3535,7 @@ class IndicesClient(NamespacedClient):
           If an entry already exists with the same key, then it is overwritten by the new definition.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-index-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-index-template>`_
 
         :param name: Index or template name
         :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
@@ -3718,7 +3718,7 @@ class IndicesClient(NamespacedClient):
           Instead, add an alias field to create an alternate field name.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-mapping>`_
 
         :param index: A comma-separated list of index names the mapping should be added
             to (supports wildcards); use `_all` or omit to add the mapping on all indices.
@@ -3864,7 +3864,7 @@ class IndicesClient(NamespacedClient):
           To change the analyzer for existing backing indices, you must create a new data stream and reindex your data into it.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-settings>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-settings>`_
 
         :param settings:
         :param index: Comma-separated list of data streams, indices, and aliases used
@@ -3990,7 +3990,7 @@ class IndicesClient(NamespacedClient):
           NOTE: Multiple matching templates with the same order value will result in a non-deterministic merging order.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-template>`_
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
@@ -4092,7 +4092,7 @@ class IndicesClient(NamespacedClient):
           This means that if a shard copy completes a recovery and then Elasticsearch relocates it onto a different node then the information about the original recovery will not be shown in the recovery API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-recovery>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-recovery>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -4166,7 +4166,7 @@ class IndicesClient(NamespacedClient):
           This option ensures the indexing operation waits for a periodic refresh before running the search.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-refresh>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-refresh>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -4250,7 +4250,7 @@ class IndicesClient(NamespacedClient):
           This ensures the synonym file is updated everywhere in the cluster in case shards are relocated in the future.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-reload-search-analyzers>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-reload-search-analyzers>`_
 
         :param index: A comma-separated list of index names to reload analyzers for
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -4357,7 +4357,7 @@ class IndicesClient(NamespacedClient):
           If a connection was (re-)established, this will also cause the <code>remote/info</code> endpoint to now indicate a connected status.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-resolve-cluster>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-resolve-cluster>`_
 
         :param name: A comma-separated list of names or index patterns for the indices,
             aliases, and data streams to resolve. Resources on remote clusters can be
@@ -4459,7 +4459,7 @@ class IndicesClient(NamespacedClient):
           Multiple patterns and remote clusters are supported.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-resolve-index>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-resolve-index>`_
 
         :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
             and data streams to resolve. Resources on remote clusters can be specified
@@ -4561,7 +4561,7 @@ class IndicesClient(NamespacedClient):
           If you roll over the alias on May 7, 2099, the new index's name is <code>my-index-2099.05.07-000002</code>.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-rollover>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-rollover>`_
 
         :param alias: Name of the data stream or index alias to roll over.
         :param new_index: Name of the index to create. Supports date math. Data streams
@@ -4675,7 +4675,7 @@ class IndicesClient(NamespacedClient):
           For data streams, the API returns information about the stream's backing indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-segments>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-segments>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
@@ -4764,7 +4764,7 @@ class IndicesClient(NamespacedClient):
           <p>By default, the API returns store information only for primary shards that are unassigned or have one or more unassigned replica shards.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-shard-stores>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-shard-stores>`_
 
         :param index: List of data streams, indices, and aliases used to limit the request.
         :param allow_no_indices: If false, the request returns an error if any wildcard
@@ -4866,7 +4866,7 @@ class IndicesClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-shrink>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-shrink>`_
 
         :param index: Name of the source index to shrink.
         :param target: Name of the target index to create.
@@ -4947,7 +4947,7 @@ class IndicesClient(NamespacedClient):
           Get the index configuration that would be applied to the specified index from an existing index template.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-simulate-index-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-simulate-index-template>`_
 
         :param name: Name of the index to simulate
         :param cause: User defined reason for dry-run creating the new template for simulation
@@ -5037,7 +5037,7 @@ class IndicesClient(NamespacedClient):
           Get the index configuration that would be applied by a particular index template.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-simulate-template>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-simulate-template>`_
 
         :param name: Name of the index template to simulate. To test a template configuration
             before you add it to the cluster, omit this parameter and specify the template
@@ -5209,7 +5209,7 @@ class IndicesClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-split>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-split>`_
 
         :param index: Name of the source index to split.
         :param target: Name of the target index to create.
@@ -5311,7 +5311,7 @@ class IndicesClient(NamespacedClient):
           Although the shard is no longer part of the node, that node retains any node-level statistics to which the shard contributed.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-stats>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -5410,7 +5410,7 @@ class IndicesClient(NamespacedClient):
           Adds a data stream or index to an alias.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-update-aliases>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-update-aliases>`_
 
         :param actions: Actions to perform.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -5489,7 +5489,7 @@ class IndicesClient(NamespacedClient):
           Validates a query without running it.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-validate-query>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-validate-query>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (`*`). To search all data streams or indices, omit this

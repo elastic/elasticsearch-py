@@ -47,7 +47,7 @@ class InferenceClient(NamespacedClient):
           <p>Perform completion inference on the service</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
@@ -123,7 +123,7 @@ class InferenceClient(NamespacedClient):
           <p>Delete an inference endpoint</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-delete>`_
 
         :param inference_id: The inference identifier.
         :param task_type: The task type
@@ -197,7 +197,7 @@ class InferenceClient(NamespacedClient):
           <p>Get an inference endpoint</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-get>`_
 
         :param task_type: The task type
         :param inference_id: The inference Id
@@ -231,6 +231,113 @@ class InferenceClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="inference.get",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("input", "query", "task_settings"),
+    )
+    async def inference(
+        self,
+        *,
+        inference_id: str,
+        input: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        task_type: t.Optional[
+            t.Union[
+                str,
+                t.Literal[
+                    "chat_completion",
+                    "completion",
+                    "rerank",
+                    "sparse_embedding",
+                    "text_embedding",
+                ],
+            ]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[str] = None,
+        task_settings: t.Optional[t.Any] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Perform inference on the service.</p>
+          <p>This API enables you to use machine learning models to perform specific tasks on data that you provide as an input.
+          It returns a response with the results of the tasks.
+          The inference endpoint you use can perform one specific task that has been defined when the endpoint was created with the create inference API.</p>
+          <p>For details about using this API with a service, such as Amazon Bedrock, Anthropic, or HuggingFace, refer to the service-specific documentation.</p>
+          <blockquote>
+          <p>info
+          The inference APIs enable you to use certain services, such as built-in machine learning models (ELSER, E5), models uploaded through Eland, Cohere, OpenAI, Azure, Google AI Studio, Google Vertex AI, Anthropic, Watsonx.ai, or Hugging Face. For built-in models and models uploaded through Eland, the inference APIs offer an alternative way to use and manage trained models. However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
+          </blockquote>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
+
+        :param inference_id: The unique identifier for the inference endpoint.
+        :param input: The text on which you want to perform the inference task. It can
+            be a single string or an array. > info > Inference endpoints for the `completion`
+            task type currently only support a single string as input.
+        :param task_type: The type of inference task that the model performs.
+        :param query: The query input, which is required only for the `rerank` task.
+            It is not required for other tasks.
+        :param task_settings: Task settings for the individual inference request. These
+            settings are specific to the task type you specified and override the task
+            settings specified when initializing the service.
+        :param timeout: The amount of time to wait for the inference request to complete.
+        """
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if input is None and body is None:
+            raise ValueError("Empty value passed for parameter 'input'")
+        __path_parts: t.Dict[str, str]
+        if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
+            __path_parts = {
+                "task_type": _quote(task_type),
+                "inference_id": _quote(inference_id),
+            }
+            __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
+        elif inference_id not in SKIP_IN_PATH:
+            __path_parts = {"inference_id": _quote(inference_id)}
+            __path = f'/_inference/{__path_parts["inference_id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if input is not None:
+                __body["input"] = input
+            if query is not None:
+                __body["query"] = query
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.inference",
             path_parts=__path_parts,
         )
 
@@ -274,7 +381,7 @@ class InferenceClient(NamespacedClient):
           However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put>`_
 
         :param inference_id: The inference Id
         :param inference_config:
@@ -358,7 +465,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-alibabacloud>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-alibabacloud>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param alibabacloud_inference_id: The unique identifier of the inference endpoint.
@@ -458,7 +565,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-amazonbedrock>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-amazonbedrock>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param amazonbedrock_inference_id: The unique identifier of the inference endpoint.
@@ -554,7 +661,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-anthropic>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-anthropic>`_
 
         :param task_type: The task type. The only valid task type for the model to perform
             is `completion`.
@@ -651,7 +758,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-azureaistudio>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-azureaistudio>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param azureaistudio_inference_id: The unique identifier of the inference endpoint.
@@ -753,7 +860,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-azureopenai>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-azureopenai>`_
 
         :param task_type: The type of the inference task that the model will perform.
             NOTE: The `chat_completion` task type only supports streaming and only through
@@ -851,7 +958,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-cohere>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-cohere>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param cohere_inference_id: The unique identifier of the inference endpoint.
@@ -955,7 +1062,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-elasticsearch>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-elasticsearch>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param elasticsearch_inference_id: The unique identifier of the inference endpoint.
@@ -1055,7 +1162,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-elser>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-elser>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param elser_inference_id: The unique identifier of the inference endpoint.
@@ -1139,7 +1246,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-googleaistudio>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-googleaistudio>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param googleaistudio_inference_id: The unique identifier of the inference endpoint.
@@ -1231,7 +1338,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-googlevertexai>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-googlevertexai>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param googlevertexai_inference_id: The unique identifier of the inference endpoint.
@@ -1334,7 +1441,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-hugging-face>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-hugging-face>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param huggingface_inference_id: The unique identifier of the inference endpoint.
@@ -1428,7 +1535,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-jinaai>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-jinaai>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param jinaai_inference_id: The unique identifier of the inference endpoint.
@@ -1516,7 +1623,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-mistral>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-mistral>`_
 
         :param task_type: The task type. The only valid task type for the model to perform
             is `text_embedding`.
@@ -1609,7 +1716,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-openai>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-openai>`_
 
         :param task_type: The type of the inference task that the model will perform.
             NOTE: The `chat_completion` task type only supports streaming and only through
@@ -1701,7 +1808,7 @@ class InferenceClient(NamespacedClient):
           <p>Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-voyageai>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-voyageai>`_
 
         :param task_type: The type of the inference task that the model will perform.
         :param voyageai_inference_id: The unique identifier of the inference endpoint.
@@ -1790,7 +1897,7 @@ class InferenceClient(NamespacedClient):
           Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-watsonx>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-watsonx>`_
 
         :param task_type: The task type. The only valid task type for the model to perform
             is `text_embedding`.
@@ -1866,7 +1973,7 @@ class InferenceClient(NamespacedClient):
           <p>Perform rereanking inference on the service</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
 
         :param inference_id: The unique identifier for the inference endpoint.
         :param input: The text on which you want to perform the inference task. It can
@@ -1942,7 +2049,7 @@ class InferenceClient(NamespacedClient):
           <p>Perform sparse embedding inference on the service</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
@@ -2010,7 +2117,7 @@ class InferenceClient(NamespacedClient):
           <p>Perform text embedding inference on the service</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
@@ -2092,7 +2199,7 @@ class InferenceClient(NamespacedClient):
           However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-update>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-update>`_
 
         :param inference_id: The unique identifier of the inference endpoint.
         :param inference_config:

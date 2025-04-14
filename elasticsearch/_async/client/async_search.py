@@ -44,7 +44,7 @@ class AsyncSearchClient(NamespacedClient):
           If the Elasticsearch security features are enabled, the deletion of a specific async search is restricted to: the authenticated user that submitted the original search request; users that have the <code>cancel_task</code> cluster privilege.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-async-search-submit>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -94,7 +94,7 @@ class AsyncSearchClient(NamespacedClient):
           If the Elasticsearch security features are enabled, access to the results of a specific async search is restricted to the user or API key that submitted it.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-async-search-submit>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: The length of time that the async search should be available
@@ -164,7 +164,7 @@ class AsyncSearchClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-async-search-submit>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: The length of time that the async search needs to be available.
@@ -345,7 +345,7 @@ class AsyncSearchClient(NamespacedClient):
           The maximum allowed size for a stored async search response can be set by changing the <code>search.max_async_search_response_size</code> cluster level setting.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-async-search-submit>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-async-search-submit>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices

@@ -44,7 +44,7 @@ class IngestClient(NamespacedClient):
           <p>Delete one or more IP geolocation database configurations.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-geoip-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-delete-geoip-database>`_
 
         :param id: A comma-separated list of geoip database configurations to delete
         :param master_timeout: The period to wait for a connection to the master node.
@@ -98,7 +98,7 @@ class IngestClient(NamespacedClient):
           <p>Delete IP geolocation database configurations.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-ip-location-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-delete-ip-location-database>`_
 
         :param id: A comma-separated list of IP location database configurations.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -155,7 +155,7 @@ class IngestClient(NamespacedClient):
           Delete one or more ingest pipelines.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-pipeline>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-delete-pipeline>`_
 
         :param id: Pipeline ID or wildcard expression of pipeline IDs used to limit the
             request. To delete all ingest pipelines in a cluster, use a value of `*`.
@@ -208,7 +208,7 @@ class IngestClient(NamespacedClient):
           Get download statistics for GeoIP2 databases that are used with the GeoIP processor.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/geoip-processor.html>`_
+        `<https://www.elastic.co/docs/reference/enrich-processor/geoip-processor>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/geoip/stats"
@@ -248,7 +248,7 @@ class IngestClient(NamespacedClient):
           <p>Get information about one or more IP geolocation database configurations.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-geoip-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-get-geoip-database>`_
 
         :param id: A comma-separated list of database configuration IDs to retrieve.
             Wildcard (`*`) expressions are supported. To get all database configurations,
@@ -297,7 +297,7 @@ class IngestClient(NamespacedClient):
           <p>Get IP geolocation database configurations.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-ip-location-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-get-ip-location-database>`_
 
         :param id: Comma-separated list of database configuration IDs to retrieve. Wildcard
             (`*`) expressions are supported. To get all database configurations, omit
@@ -355,7 +355,7 @@ class IngestClient(NamespacedClient):
           This API returns a local reference of the pipeline.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-get-pipeline>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-get-pipeline>`_
 
         :param id: Comma-separated list of pipeline IDs to retrieve. Wildcard (`*`) expressions
             are supported. To get all ingest pipelines, omit this parameter or use `*`.
@@ -412,7 +412,7 @@ class IngestClient(NamespacedClient):
           A grok pattern is like a regular expression that supports aliased expressions that can be reused.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/grok-processor.html>`_
+        `<https://www.elastic.co/docs/reference/enrich-processor/grok-processor>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ingest/processor/grok"
@@ -459,7 +459,7 @@ class IngestClient(NamespacedClient):
           <p>Refer to the create or update IP geolocation database configuration API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-put-geoip-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-put-geoip-database>`_
 
         :param id: ID of the database configuration to create or update.
         :param maxmind: The configuration necessary to identify which IP geolocation
@@ -534,7 +534,7 @@ class IngestClient(NamespacedClient):
           <p>Create or update an IP geolocation database configuration.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-put-ip-location-database>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-put-ip-location-database>`_
 
         :param id: The database configuration identifier.
         :param configuration:
@@ -620,7 +620,7 @@ class IngestClient(NamespacedClient):
           Changes made using this API take effect immediately.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.0/ingest.html>`_
+        `<https://www.elastic.co/docs/manage-data/ingest/transform-enrich/ingest-pipelines>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param deprecated: Marks this ingest pipeline as deprecated. When a deprecated
@@ -717,7 +717,7 @@ class IngestClient(NamespacedClient):
           You can either specify an existing pipeline to use with the provided documents or supply a pipeline definition in the body of the request.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-simulate>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ingest-simulate>`_
 
         :param docs: Sample documents to test in the pipeline.
         :param id: The pipeline to test. If you don't specify a `pipeline` in the request
