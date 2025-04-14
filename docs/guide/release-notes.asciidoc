@@ -1,6 +1,37 @@
 [[release-notes]]
 == Release notes
 
+=== 8.18.0 (2025-04-15)
+
+- Merge `Elasticsearch-DSL <https://github.com/elastic/elasticsearch-dsl-py/>`_ package (https://github.com/elastic/elasticsearch-py/pull/2736[#2736])
+- Add Python DSL documentation (https://github.com/elastic/elasticsearch-py/pull/2761[#2761])
+- Autogenerate DSL field classes from schema (https://github.com/elastic/elasticsearch-py/pull/2780[#2780])
+- Document use of sub-clients (https://github.com/elastic/elasticsearch-py/pull/2798[#2798])
+- Update APIs
+  * Remove `wait_for_active_shards` from experimental Get field usage stats API
+  * Rename incorrect `access_token` to `token` in Logout of OpenID Connect API
+  * Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio, Azure OpenAI, Cohere, Elastic Inference Service (EIS), Elasticsearch, ELSER, Google AI Studio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
+  * Add Elastic Inference Service (EIS) chat completion API
+  * Add Reindex legacy backing indices APIs
+  * Add Create an index from a source index API
+  * Add `include_source_on_error` to Create, Index, Update and Bulk APIs
+  * Add Stop async ES|QL query API
+  * Add `timeout` to Resolve Cluster API
+  * Add `adaptive_allocations` body field to Start and Update a trained model deployment API
+  * Rename `index_template_subtitutions` to `index_template_substitutions` in Simulate data ingestion API* Add `if_primary_term`, `if_seq_no`, `op_type`, `require_alias` and `require_data_stream` to Create API
+  * Add `max_concurrent_shard_requests` to Open point in time API
+  * Add `local` and `flat_settings` to Check index templates API
+  * Add `reopen` to Update index settings API
+  * Add `resource` to Reload search analyzer API
+  * Add `lazy` to Roll over to a new index API
+  * Add `cause` and `create` to Simulate index template APIs
+  * Add Elastic Inference Service (EIS) chat completion
+  * Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio, Azure OpenAI, Cohere, Elastic Inference Service (EIS), Elasticsearch, ELSER, Google AI Studio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
+- Update DSL
+  * Add `ignore_malformed`, `script`,  `on_script_error` and `time_series_dimension` to Boolean field
+  * Add `index` to GeoShape field
+  * Add `search_inference_id` to SemanticText field
+
 [discrete]
 [[rn-8-17-2]]
 === 8.17.2 (2025-03-04)

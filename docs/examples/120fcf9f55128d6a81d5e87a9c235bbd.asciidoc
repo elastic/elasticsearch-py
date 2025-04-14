@@ -3,16 +3,17 @@
 
 [source, python]
 ----
-resp = client.inference.stream_inference(
-    task_type="chat_completion",
+resp = client.inference.chat_completion_unified(
     inference_id="openai-completion",
-    model="gpt-4o",
-    messages=[
-        {
-            "role": "user",
-            "content": "What is Elastic?"
-        }
-    ],
+    chat_completion_request={
+        "model": "gpt-4o",
+        "messages": [
+            {
+                "role": "user",
+                "content": "What is Elastic?"
+            }
+        ]
+    },
 )
 print(resp)
 ----
