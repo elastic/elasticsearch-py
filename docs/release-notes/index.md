@@ -33,6 +33,7 @@ To check for security updates, go to [Security announcements for the Elastic sta
 * Document how to making API calls ([#2843](https://github.com/elastic/elasticsearch-py/pull/2843))
 * Fix `simulate` sub-client documentation ([#2749](https://github.com/elastic/elasticsearch-py/pull/2749))
 * Update APIs
+  * Remove deprecated `/_knn_search` API
   * Remove Unfreeze an index API
   * Remove min_compatible_shard_node from Search and Async Search Submit APIs
   * Remove local parameter from cat alias, Alias exists, and Get alias APIs
