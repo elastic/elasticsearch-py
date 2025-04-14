@@ -3050,7 +3050,7 @@ class AsyncElasticsearch(BaseClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/knn-search-api.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-knn-search>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             to perform the operation on all indices.
@@ -4388,7 +4388,7 @@ class AsyncElasticsearch(BaseClient):
           <p>Each context requires a script, but additional parameters depend on the context you're using for that script.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+        `<https://www.elastic.co/docs/reference/scripting-languages/painless/painless-api-examples>`_
 
         :param context: The context that the script should run in. NOTE: Result ordering
             in the field contexts is not guaranteed.
