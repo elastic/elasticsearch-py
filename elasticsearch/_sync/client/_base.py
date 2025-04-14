@@ -174,7 +174,7 @@ def create_sniff_callback(
                     "GET",
                     "/_nodes/_all/http",
                     headers={
-                        "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                        "accept": "application/vnd.elasticsearch+json; compatible-with=9"
                     },
                     request_timeout=(
                         sniff_options.sniff_timeout
