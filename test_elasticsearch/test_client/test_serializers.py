@@ -46,22 +46,22 @@ class TestSerializers(DummyTransportTestCase):
         self.client.get(index="test0", id="1")
         assert len(calls) == 1
         assert calls[("GET", "/test0/_doc/1")][0]["headers"] == {
-            "Accept": "application/vnd.elasticsearch+json; compatible-with=8"
+            "Accept": "application/vnd.elasticsearch+json; compatible-with=9"
         }
 
         # Search with body
         self.client.search(index="test1", query={"match_all": {}})
         assert len(calls) == 2
         assert calls[("POST", "/test1/_search")][0]["headers"] == {
-            "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
-            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8",
+            "Accept": "application/vnd.elasticsearch+json; compatible-with=9",
+            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         # Search without body
         self.client.search(index="test2")
         assert len(calls) == 3
         assert calls[("POST", "/test2/_search")][0]["headers"] == {
-            "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "Accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         # Multiple mimetypes in Accept
@@ -69,15 +69,15 @@ class TestSerializers(DummyTransportTestCase):
         assert len(calls) == 4
         assert calls[("GET", "/_cat/nodes")][0]["headers"] == {
             # text/plain isn't modified.
-            "Accept": "text/plain,application/vnd.elasticsearch+json; compatible-with=8",
+            "Accept": "text/plain,application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         # Bulk uses x-ndjson
         self.client.bulk(operations=[])
         assert len(calls) == 5
         assert calls[("PUT", "/_bulk")][0]["headers"] == {
-            "Accept": "application/vnd.elasticsearch+json; compatible-with=8",
-            "Content-Type": "application/vnd.elasticsearch+x-ndjson; compatible-with=8",
+            "Accept": "application/vnd.elasticsearch+json; compatible-with=9",
+            "Content-Type": "application/vnd.elasticsearch+x-ndjson; compatible-with=9",
         }
 
         # Mapbox vector tiles
@@ -91,8 +91,8 @@ class TestSerializers(DummyTransportTestCase):
         )
         assert len(calls) == 6
         assert calls[("POST", "/test3/_mvt/field/z/x/y")][0]["headers"] == {
-            "Accept": "application/vnd.elasticsearch+vnd.mapbox-vector-tile; compatible-with=8",
-            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=8",
+            "Accept": "application/vnd.elasticsearch+vnd.mapbox-vector-tile; compatible-with=9",
+            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
     @pytest.mark.parametrize("mime_subtype", ["json", "x-ndjson"])

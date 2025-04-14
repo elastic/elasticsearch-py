@@ -156,7 +156,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
         }
@@ -175,7 +175,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
@@ -201,7 +201,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
@@ -229,7 +229,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
         }
@@ -248,7 +248,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
@@ -274,7 +274,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
@@ -316,7 +316,7 @@ class TestOptions(DummyTransportTestCase):
 
         assert call["headers"] == {
             "key": "val",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client.options(headers={"key1": "val"}).indices.get(index="2")
@@ -325,7 +325,7 @@ class TestOptions(DummyTransportTestCase):
         assert call["headers"] == {
             "key": "val",
             "key1": "val",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client.options(headers={"key": "val2"}).indices.get(index="3")
@@ -333,7 +333,7 @@ class TestOptions(DummyTransportTestCase):
 
         assert call["headers"] == {
             "key": "val2",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client = Elasticsearch(
@@ -360,14 +360,14 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/1")][0]
         assert call["headers"] == {
             "user-agent": "custom1",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client.indices.get(index="2", headers={"user-agent": "custom2"})
         call = calls[("GET", "/2")][0]
         assert call["headers"] == {
             "user-agent": "custom2",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client = Elasticsearch(
@@ -381,14 +381,14 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/1")][0]
         assert call["headers"] == {
             "user-agent": "custom3",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         client.indices.get(index="2", headers={"user-agent": "custom4"})
         call = calls[("GET", "/2")][0]
         assert call["headers"] == {
             "user-agent": "custom4",
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
     def test_options_timeout_parameters(self):
@@ -410,7 +410,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
@@ -440,7 +440,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 2,
@@ -465,7 +465,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
         }
@@ -487,7 +487,7 @@ class TestOptions(DummyTransportTestCase):
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "body": None,
             "request_timeout": 1,
