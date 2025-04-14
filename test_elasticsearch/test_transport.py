@@ -267,7 +267,7 @@ class TestTransport:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         assert calls[0][1]["headers"] == {
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
     def test_meta_header_type_error(self):
@@ -428,7 +428,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9"
                 },
                 "request_timeout": None,  # <-- Should be None instead of 12
             },
@@ -452,7 +452,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9"
                 },
                 "request_timeout": 12,
             },
@@ -462,7 +462,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9",
                 },
                 "request_timeout": DEFAULT,
             },
@@ -592,7 +592,7 @@ def test_unsupported_product_error(headers):
         {
             "body": None,
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "request_timeout": DEFAULT,
         },
