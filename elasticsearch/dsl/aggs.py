@@ -679,9 +679,8 @@ class CategorizeText(Bucket[_R]):
     :arg categorization_analyzer: The categorization analyzer specifies
         how the text is analyzed and tokenized before being categorized.
         The syntax is very similar to that used to define the analyzer in
-        the [Analyze endpoint](https://www.elastic.co/guide/en/elasticsear
-        ch/reference/8.0/indices-analyze.html). This property cannot be
-        used at the same time as categorization_filters.
+        the analyze API. This property cannot be used at the same time as
+        `categorization_filters`.
     :arg shard_size: The number of categorization buckets to return from
         each shard before merging all the results.
     :arg size: The number of buckets to return. Defaults to `10` if

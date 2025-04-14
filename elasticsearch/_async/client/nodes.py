@@ -50,7 +50,7 @@ class NodesClient(NamespacedClient):
           Clear the archived repositories metering information in the cluster.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-clear-repositories-metering-archive>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-clear-repositories-metering-archive>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -105,10 +105,10 @@ class NodesClient(NamespacedClient):
           Additionally, the information exposed by this API is volatile, meaning that it will not be present after node restarts.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-get-repositories-metering-info>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-get-repositories-metering-info>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
-            information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
+            information.
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
@@ -162,7 +162,7 @@ class NodesClient(NamespacedClient):
           The output is plain text with a breakdown of the top hot threads for each node.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-hot-threads>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-hot-threads>`_
 
         :param node_id: List of node IDs or names used to limit returned information.
         :param ignore_idle_threads: If true, known idle threads (e.g. waiting in a socket
@@ -235,7 +235,7 @@ class NodesClient(NamespacedClient):
           <p>By default, the API returns all attributes and core settings for cluster nodes.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-info>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-info>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -308,7 +308,7 @@ class NodesClient(NamespacedClient):
           Alternatively, you can reload the secure settings on each node by locally accessing the API and passing the node-specific Elasticsearch keystore password.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-reload-secure-settings>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-reload-secure-settings>`_
 
         :param node_id: The names of particular nodes in the cluster to target.
         :param secure_settings_password: The password for the Elasticsearch keystore.
@@ -383,7 +383,7 @@ class NodesClient(NamespacedClient):
           By default, all stats are returned. You can limit the returned information by using metrics.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-stats>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -498,7 +498,7 @@ class NodesClient(NamespacedClient):
           <p>Get feature usage information.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-usage>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-nodes-usage>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
