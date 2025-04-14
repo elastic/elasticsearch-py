@@ -416,7 +416,7 @@ class EsqlClient(NamespacedClient):
           Get search results for an ES|QL (Elasticsearch query language) query.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
+        `<https://www.elastic.co/docs/explore-analyze/query-filter/languages/esql-rest>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.

@@ -105,7 +105,6 @@ class SnapshotClient(NamespacedClient):
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -126,8 +125,6 @@ class SnapshotClient(NamespacedClient):
         :param master_timeout: The period to wait for the master node. If the master
             node is not available before the timeout expires, the request fails and returns
             an error. To indicate that the request should never timeout, set it to `-1`.
-        :param timeout: The period of time to wait for a response. If no response is
-            received before the timeout expires, the request fails and returns an error.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -155,8 +152,6 @@ class SnapshotClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
         if not __body:
             if indices is not None:
                 __body["indices"] = indices
