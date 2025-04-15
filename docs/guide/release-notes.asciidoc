@@ -7,11 +7,13 @@
 - Add Python DSL documentation (https://github.com/elastic/elasticsearch-py/pull/2761[#2761])
 - Autogenerate DSL field classes from schema (https://github.com/elastic/elasticsearch-py/pull/2780[#2780])
 - Document use of sub-clients (https://github.com/elastic/elasticsearch-py/pull/2798[#2798])
+- Improve DSL documentation examples with class-based queries and type hints (https://github.com/elastic/elasticsearch-py/pull/2857[#2857])
+- Document the use of `param()` in Python DSL methods (https://github.com/elastic/elasticsearch-py/pull/2861[#2861])
+- Fix `simulate` sub-client documentation (https://github.com/elastic/elasticsearch-py/pull/2749[#2749])[#2749])
 - Update APIs
   * Remove `wait_for_active_shards` from experimental Get field usage stats API
   * Rename incorrect `access_token` to `token` in Logout of OpenID Connect API
-  * Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio, Azure OpenAI, Cohere, Elastic Inference Service (EIS), Elasticsearch, ELSER, Google AI Studio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
-  * Add Elastic Inference Service (EIS) chat completion API
+  * Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio, Azure OpenAI, Cohere, Elasticsearch, ELSER, Google AI Studio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
   * Add Reindex legacy backing indices APIs
   * Add Create an index from a source index API
   * Add `include_source_on_error` to Create, Index, Update and Bulk APIs
