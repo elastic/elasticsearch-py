@@ -2616,7 +2616,6 @@ class MlClient(NamespacedClient):
                 ],
             ]
         ] = None,
-        include_model_definition: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         tags: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2646,8 +2645,6 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of models.
         :param include: A comma delimited string of optional fields to include in the
             response body.
-        :param include_model_definition: parameter is deprecated! Use [include=definition]
-            instead
         :param size: Specifies the maximum number of models to obtain.
         :param tags: A comma delimited string of tags. A trained model can have many
             tags, or none. When supplied, only trained models that contain all the supplied
@@ -2677,8 +2674,6 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if include is not None:
             __query["include"] = include
-        if include_model_definition is not None:
-            __query["include_model_definition"] = include_model_definition
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
@@ -3604,11 +3599,11 @@ class MlClient(NamespacedClient):
         :param ignore_unavailable: If true, unavailable indices (missing or closed) are
             ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices: An array of index names. Wildcards are supported. If any of the
-            indices are in remote clusters, the machine learning nodes must have the
-            `remote_cluster_client` role.
+            indices are in remote clusters, the master nodes and the machine learning
+            nodes must have the `remote_cluster_client` role.
         :param indices_options: Specifies index expansion options that are used during
             search
         :param job_id: Identifier for the anomaly detection job.

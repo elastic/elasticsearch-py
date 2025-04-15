@@ -35,6 +35,7 @@ class EsqlClient(NamespacedClient):
             "params",
             "profile",
             "tables",
+            "wait_for_completion_timeout",
         ),
         ignore_deprecated_options={"params"},
     )
@@ -42,6 +43,7 @@ class EsqlClient(NamespacedClient):
         self,
         *,
         query: t.Optional[str] = None,
+        allow_partial_results: t.Optional[bool] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -84,6 +86,9 @@ class EsqlClient(NamespacedClient):
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
+        :param allow_partial_results: If `true`, partial results will be returned if
+            there are shard failures, but the query can continue to execute on other
+            clusters and shards.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -132,6 +137,8 @@ class EsqlClient(NamespacedClient):
         __path = "/_query/async"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if allow_partial_results is not None:
+            __query["allow_partial_results"] = allow_partial_results
         if delimiter is not None:
             __query["delimiter"] = delimiter
         if drop_null_columns is not None:
@@ -150,8 +157,6 @@ class EsqlClient(NamespacedClient):
             __query["keep_on_completion"] = keep_on_completion
         if pretty is not None:
             __query["pretty"] = pretty
-        if wait_for_completion_timeout is not None:
-            __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         if not __body:
             if query is not None:
                 __body["query"] = query
@@ -169,6 +174,8 @@ class EsqlClient(NamespacedClient):
                 __body["profile"] = profile
             if tables is not None:
                 __body["tables"] = tables
+            if wait_for_completion_timeout is not None:
+                __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -323,7 +330,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can stop it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-async-query-stop-api.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-async-query-stop>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -376,6 +383,7 @@ class EsqlClient(NamespacedClient):
         self,
         *,
         query: t.Optional[str] = None,
+        allow_partial_results: t.Optional[bool] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -408,10 +416,13 @@ class EsqlClient(NamespacedClient):
           Get search results for an ES|QL (Elasticsearch query language) query.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/esql-rest.html>`_
+        `<https://www.elastic.co/docs/explore-analyze/query-filter/languages/esql-rest>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
+        :param allow_partial_results: If `true`, partial results will be returned if
+            there are shard failures, but the query can continue to execute on other
+            clusters and shards.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -446,6 +457,8 @@ class EsqlClient(NamespacedClient):
         __path = "/_query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if allow_partial_results is not None:
+            __query["allow_partial_results"] = allow_partial_results
         if delimiter is not None:
             __query["delimiter"] = delimiter
         if drop_null_columns is not None:

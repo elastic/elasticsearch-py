@@ -795,6 +795,28 @@ class GeoDistance(Query):
         )
 
 
+class GeoGrid(Query):
+    """
+    Matches `geo_point` and `geo_shape` values that intersect a grid cell
+    from a GeoGrid aggregation.
+
+    :arg _field: The field to use in this query.
+    :arg _value: The query value for the field.
+    """
+
+    name = "geo_grid"
+
+    def __init__(
+        self,
+        _field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        _value: Union["types.GeoGridQuery", Dict[str, Any], "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if _field is not DEFAULT:
+            kwargs[str(_field)] = _value
+        super().__init__(**kwargs)
+
+
 class GeoPolygon(Query):
     """
     :arg _field: The field to use in this query.
@@ -1061,6 +1083,8 @@ class Knn(Query):
     :arg filter: Filters for the kNN search query
     :arg similarity: The minimum similarity for a vector to be considered
         a match
+    :arg rescore_vector: Apply oversampling and rescoring to quantized
+        vectors
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1086,6 +1110,9 @@ class Knn(Query):
         k: Union[int, "DefaultType"] = DEFAULT,
         filter: Union[Query, Sequence[Query], "DefaultType"] = DEFAULT,
         similarity: Union[float, "DefaultType"] = DEFAULT,
+        rescore_vector: Union[
+            "types.RescoreVector", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
@@ -1098,6 +1125,7 @@ class Knn(Query):
             k=k,
             filter=filter,
             similarity=similarity,
+            rescore_vector=rescore_vector,
             boost=boost,
             _name=_name,
             **kwargs,
@@ -2628,7 +2656,7 @@ class Terms(Query):
         self,
         _field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         _value: Union[
-            Sequence[Union[int, float, str, bool, None, Any]],
+            Sequence[Union[int, float, str, bool, None]],
             "types.TermsLookup",
             Dict[str, Any],
             "DefaultType",

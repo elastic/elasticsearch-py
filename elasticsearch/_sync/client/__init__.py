@@ -18,7 +18,6 @@
 
 import logging
 import typing as t
-import warnings
 
 from elastic_transport import (
     BaseNode,
@@ -181,36 +180,12 @@ class Elasticsearch(BaseClient):
             t.Callable[[t.Dict[str, t.Any], NodeConfig], t.Optional[NodeConfig]]
         ] = None,
         meta_header: t.Union[DefaultType, bool] = DEFAULT,
-        timeout: t.Union[DefaultType, None, float] = DEFAULT,
-        randomize_hosts: t.Union[DefaultType, bool] = DEFAULT,
-        host_info_callback: t.Optional[
-            t.Callable[
-                [t.Dict[str, t.Any], t.Dict[str, t.Union[str, int]]],
-                t.Optional[t.Dict[str, t.Union[str, int]]],
-            ]
-        ] = None,
-        sniffer_timeout: t.Union[DefaultType, None, float] = DEFAULT,
-        sniff_on_connection_fail: t.Union[DefaultType, bool] = DEFAULT,
         http_auth: t.Union[DefaultType, t.Any] = DEFAULT,
-        maxsize: t.Union[DefaultType, int] = DEFAULT,
         # Internal use only
         _transport: t.Optional[Transport] = None,
     ) -> None:
         if hosts is None and cloud_id is None and _transport is None:
             raise ValueError("Either 'hosts' or 'cloud_id' must be specified")
-
-        if timeout is not DEFAULT:
-            if request_timeout is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'timeout' and 'request_timeout', "
-                    "instead only specify 'request_timeout'"
-                )
-            warnings.warn(
-                "The 'timeout' parameter is deprecated in favor of 'request_timeout'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            request_timeout = timeout
 
         if serializer is not None:
             if serializers is not DEFAULT:
@@ -219,58 +194,6 @@ class Elasticsearch(BaseClient):
                     "together. Instead only specify one of the other."
                 )
             serializers = {default_mimetype: serializer}
-
-        if randomize_hosts is not DEFAULT:
-            if randomize_nodes_in_pool is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'randomize_hosts' and 'randomize_nodes_in_pool', "
-                    "instead only specify 'randomize_nodes_in_pool'"
-                )
-            warnings.warn(
-                "The 'randomize_hosts' parameter is deprecated in favor of 'randomize_nodes_in_pool'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            randomize_nodes_in_pool = randomize_hosts
-
-        if sniffer_timeout is not DEFAULT:
-            if min_delay_between_sniffing is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'sniffer_timeout' and 'min_delay_between_sniffing', "
-                    "instead only specify 'min_delay_between_sniffing'"
-                )
-            warnings.warn(
-                "The 'sniffer_timeout' parameter is deprecated in favor of 'min_delay_between_sniffing'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            min_delay_between_sniffing = sniffer_timeout
-
-        if sniff_on_connection_fail is not DEFAULT:
-            if sniff_on_node_failure is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'sniff_on_connection_fail' and 'sniff_on_node_failure', "
-                    "instead only specify 'sniff_on_node_failure'"
-                )
-            warnings.warn(
-                "The 'sniff_on_connection_fail' parameter is deprecated in favor of 'sniff_on_node_failure'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            sniff_on_node_failure = sniff_on_connection_fail
-
-        if maxsize is not DEFAULT:
-            if connections_per_node is not DEFAULT:
-                raise ValueError(
-                    "Can't specify both 'maxsize' and 'connections_per_node', "
-                    "instead only specify 'connections_per_node'"
-                )
-            warnings.warn(
-                "The 'maxsize' parameter is deprecated in favor of 'connections_per_node'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-            connections_per_node = maxsize
 
         # Setting min_delay_between_sniffing=True implies sniff_before_requests=True
         if min_delay_between_sniffing is not DEFAULT:
@@ -293,22 +216,7 @@ class Elasticsearch(BaseClient):
             )
 
         sniff_callback = None
-        if host_info_callback is not None:
-            if sniffed_node_callback is not None:
-                raise ValueError(
-                    "Can't specify both 'host_info_callback' and 'sniffed_node_callback', "
-                    "instead only specify 'sniffed_node_callback'"
-                )
-            warnings.warn(
-                "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-
-            sniff_callback = create_sniff_callback(
-                host_info_callback=host_info_callback
-            )
-        elif sniffed_node_callback is not None:
+        if sniffed_node_callback is not None:
             sniff_callback = create_sniff_callback(
                 sniffed_node_callback=sniffed_node_callback
             )
@@ -1119,12 +1027,17 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        if_primary_term: t.Optional[int] = None,
+        if_seq_no: t.Optional[int] = None,
         include_source_on_error: t.Optional[bool] = None,
+        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
+        require_alias: t.Optional[bool] = None,
+        require_data_stream: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -1202,8 +1115,18 @@ class Elasticsearch(BaseClient):
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format.
         :param document:
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
+        :param op_type: Set to `create` to only index the document if it does not already
+            exist (put if absent). If a document with the specified `_id` already exists,
+            the indexing operation will fail. The behavior is the same as using the `<index>/_create`
+            endpoint. If a document ID is specified, this paramater defaults to `index`.
+            Otherwise, it defaults to `create`. If the request targets a data stream,
+            an `op_type` of `create` is required.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, setting the value to
             `_none` turns off the default ingest pipeline for this request. If a final
@@ -1212,6 +1135,9 @@ class Elasticsearch(BaseClient):
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
             this operation visible to search. If `wait_for`, it waits for a refresh to
             make this operation visible to search. If `false`, it does nothing with refreshes.
+        :param require_alias: If `true`, the destination must be an index alias.
+        :param require_data_stream: If `true`, the request's actions must target a data
+            stream (existing or to be created).
         :param routing: A custom value that is used to route operations to a specific
             shard.
         :param timeout: The period the request waits for the following operations: automatic
@@ -1252,14 +1178,24 @@ class Elasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if if_primary_term is not None:
+            __query["if_primary_term"] = if_primary_term
+        if if_seq_no is not None:
+            __query["if_seq_no"] = if_seq_no
         if include_source_on_error is not None:
             __query["include_source_on_error"] = include_source_on_error
+        if op_type is not None:
+            __query["op_type"] = op_type
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
+        if require_alias is not None:
+            __query["require_alias"] = require_alias
+        if require_data_stream is not None:
+            __query["require_data_stream"] = require_data_stream
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -1551,7 +1487,7 @@ class Elasticsearch(BaseClient):
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text
@@ -3062,127 +2998,6 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=(
-            "knn",
-            "docvalue_fields",
-            "fields",
-            "filter",
-            "source",
-            "stored_fields",
-        ),
-        parameter_aliases={"_source": "source"},
-    )
-    @_stability_warning(Stability.EXPERIMENTAL)
-    def knn_search(
-        self,
-        *,
-        index: t.Union[str, t.Sequence[str]],
-        knn: t.Optional[t.Mapping[str, t.Any]] = None,
-        docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
-        error_trace: t.Optional[bool] = None,
-        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        filter: t.Optional[
-            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
-        ] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
-        source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
-        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Run a knn search.</p>
-          <p>NOTE: The kNN search API has been replaced by the <code>knn</code> option in the search API.</p>
-          <p>Perform a k-nearest neighbor (kNN) search on a dense_vector field and return the matching documents.
-          Given a query vector, the API finds the k closest vectors and returns those documents as search hits.</p>
-          <p>Elasticsearch uses the HNSW algorithm to support efficient kNN search.
-          Like most kNN algorithms, HNSW is an approximate method that sacrifices result accuracy for improved search speed.
-          This means the results returned are not always the true k closest neighbors.</p>
-          <p>The kNN search API supports restricting the search using a filter.
-          The search will return the top k documents that also match the filter query.</p>
-          <p>A kNN search response has the exact same structure as a search API response.
-          However, certain sections have a meaning specific to kNN search:</p>
-          <ul>
-          <li>The document <code>_score</code> is determined by the similarity between the query and document vector.</li>
-          <li>The <code>hits.total</code> object contains the total number of nearest neighbor candidates considered, which is <code>num_candidates * num_shards</code>. The <code>hits.total.relation</code> will always be <code>eq</code>, indicating an exact value.</li>
-          </ul>
-
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/knn-search-api.html>`_
-
-        :param index: A comma-separated list of index names to search; use `_all` or
-            to perform the operation on all indices.
-        :param knn: The kNN query to run.
-        :param docvalue_fields: The request returns doc values for field names matching
-            these patterns in the `hits.fields` property of the response. It accepts
-            wildcard (`*`) patterns.
-        :param fields: The request returns values for field names matching these patterns
-            in the `hits.fields` property of the response. It accepts wildcard (`*`)
-            patterns.
-        :param filter: A query to filter the documents that can match. The kNN search
-            will return the top `k` documents that also match this filter. The value
-            can be a single query or a list of queries. If `filter` isn't provided, all
-            documents are allowed to match.
-        :param routing: A comma-separated list of specific routing values.
-        :param source: Indicates which source fields are returned for matching documents.
-            These fields are returned in the `hits._source` property of the search response.
-        :param stored_fields: A list of stored fields to return as part of a hit. If
-            no fields are specified, no stored fields are included in the response. If
-            this field is specified, the `_source` parameter defaults to `false`. You
-            can pass `_source: true` to return both source fields and stored fields in
-            the search response.
-        """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'index'")
-        if knn is None and body is None:
-            raise ValueError("Empty value passed for parameter 'knn'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
-        __path = f'/{__path_parts["index"]}/_knn_search'
-        __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if routing is not None:
-            __query["routing"] = routing
-        if not __body:
-            if knn is not None:
-                __body["knn"] = knn
-            if docvalue_fields is not None:
-                __body["docvalue_fields"] = docvalue_fields
-            if fields is not None:
-                __body["fields"] = fields
-            if filter is not None:
-                __body["filter"] = filter
-            if source is not None:
-                __body["_source"] = source
-            if stored_fields is not None:
-                __body["stored_fields"] = stored_fields
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
-        return self.perform_request(  # type: ignore[return-value]
-            "POST",
-            __path,
-            params=__query,
-            headers=__headers,
-            body=__body,
-            endpoint_id="knn_search",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters(
         body_fields=("docs", "ids"),
         parameter_aliases={
             "_source": "source",
@@ -3390,7 +3205,8 @@ class Elasticsearch(BaseClient):
             computationally expensive named queries on a large number of hits may add
             significant overhead.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
-            search API can execute.
+            search API can execute. Defaults to `max(1, (# of data nodes * min(search
+            thread pool size, 10)))`.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
             that each sub-search request executes per node.
         :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
@@ -3718,6 +3534,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        max_concurrent_shard_requests: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -3773,6 +3590,8 @@ class Elasticsearch(BaseClient):
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
             on every shard.
+        :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
+            that each sub-search request executes per node.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
         :param routing: A custom value that is used to route operations to a specific
@@ -3800,6 +3619,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
@@ -4340,7 +4161,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4444,7 +4265,7 @@ class Elasticsearch(BaseClient):
           <p>Each context requires a script, but additional parameters depend on the context you're using for that script.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+        `<https://www.elastic.co/docs/reference/scripting-languages/painless/painless-api-examples>`_
 
         :param context: The context that the script should run in. NOTE: Result ordering
             in the field contexts is not guaranteed.
@@ -4801,7 +4622,8 @@ class Elasticsearch(BaseClient):
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests.
         :param min_score: The minimum `_score` for matching documents. Documents with
-            a lower `_score` are not included in the search results.
+            a lower `_score` are not included in search results and results collected
+            by aggregations.
         :param pit: Limit the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an `<index>` in the request path.
         :param post_filter: Use the `post_filter` parameter to filter search results.
@@ -5744,7 +5566,7 @@ class Elasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
-        source: t.Optional[str] = None,
+        source: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         typed_keys: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -5967,7 +5789,20 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("doc", "filter", "per_field_analyzer"),
+        body_fields=(
+            "doc",
+            "field_statistics",
+            "fields",
+            "filter",
+            "offsets",
+            "payloads",
+            "per_field_analyzer",
+            "positions",
+            "routing",
+            "term_statistics",
+            "version",
+            "version_type",
+        ),
     )
     def termvectors(
         self,
@@ -6044,9 +5879,9 @@ class Elasticsearch(BaseClient):
             (the sum of document frequencies for all terms in this field). * The sum
             of total term frequencies (the sum of total term frequencies of each term
             in this field).
-        :param fields: A comma-separated list or wildcard expressions of fields to include
-            in the statistics. It is used as the default list unless a specific field
-            list is provided in the `completion_fields` or `fielddata_fields` parameters.
+        :param fields: A list of fields to include in the statistics. It is used as the
+            default list unless a specific field list is provided in the `completion_fields`
+            or `fielddata_fields` parameters.
         :param filter: Filter terms based on their tf-idf scores. This could be useful
             in order find out a good characteristic vector of a document. This feature
             works in a similar manner to the second phase of the More Like This Query.
@@ -6084,41 +5919,41 @@ class Elasticsearch(BaseClient):
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
-        if field_statistics is not None:
-            __query["field_statistics"] = field_statistics
-        if fields is not None:
-            __query["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if offsets is not None:
-            __query["offsets"] = offsets
-        if payloads is not None:
-            __query["payloads"] = payloads
-        if positions is not None:
-            __query["positions"] = positions
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
-        if routing is not None:
-            __query["routing"] = routing
-        if term_statistics is not None:
-            __query["term_statistics"] = term_statistics
-        if version is not None:
-            __query["version"] = version
-        if version_type is not None:
-            __query["version_type"] = version_type
         if not __body:
             if doc is not None:
                 __body["doc"] = doc
+            if field_statistics is not None:
+                __body["field_statistics"] = field_statistics
+            if fields is not None:
+                __body["fields"] = fields
             if filter is not None:
                 __body["filter"] = filter
+            if offsets is not None:
+                __body["offsets"] = offsets
+            if payloads is not None:
+                __body["payloads"] = payloads
             if per_field_analyzer is not None:
                 __body["per_field_analyzer"] = per_field_analyzer
+            if positions is not None:
+                __body["positions"] = positions
+            if routing is not None:
+                __body["routing"] = routing
+            if term_statistics is not None:
+                __body["term_statistics"] = term_statistics
+            if version is not None:
+                __body["version"] = version
+            if version_type is not None:
+                __body["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -6469,7 +6304,7 @@ class Elasticsearch(BaseClient):
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
             `hidden`, `none`.
-        :param from_: Starting offset (default: 0)
+        :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param lenient: If `true`, format-based query failures (such as providing text

@@ -2867,12 +2867,12 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("access_token", "refresh_token"),
+        body_fields=("token", "refresh_token"),
     )
     async def oidc_logout(
         self,
         *,
-        access_token: t.Optional[str] = None,
+        token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -2892,11 +2892,11 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-oidc-logout>`_
 
-        :param access_token: The access token to be invalidated.
+        :param token: The access token to be invalidated.
         :param refresh_token: The refresh token to be invalidated.
         """
-        if access_token is None and body is None:
-            raise ValueError("Empty value passed for parameter 'access_token'")
+        if token is None and body is None:
+            raise ValueError("Empty value passed for parameter 'token'")
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/oidc/logout"
         __query: t.Dict[str, t.Any] = {}
@@ -2910,8 +2910,8 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
-            if access_token is not None:
-                __body["access_token"] = access_token
+            if token is not None:
+                __body["token"] = token
             if refresh_token is not None:
                 __body["refresh_token"] = refresh_token
         __headers = {"accept": "application/json", "content-type": "application/json"}

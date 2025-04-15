@@ -19,7 +19,7 @@
 import asyncio
 import re
 import warnings
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 import pytest
 from elastic_transport import (
@@ -256,7 +256,7 @@ class TestTransport:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         assert calls[0][1]["headers"] == {
-            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
     async def test_body_surrogates_replaced_encoded_into_bytes(self):
@@ -426,7 +426,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9"
                 },
                 "request_timeout": None,  # <-- Should be None instead of 12
             },
@@ -454,7 +454,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9",
                 },
                 "request_timeout": DEFAULT,
             },
@@ -464,7 +464,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=9"
                 },
                 "request_timeout": 12,
             },
@@ -562,10 +562,8 @@ class TestTransport:
         "kwargs",
         [
             {"sniff_on_start": True},
-            {"sniff_on_connection_fail": True},
             {"sniff_on_node_failure": True},
             {"sniff_before_requests": True},
-            {"sniffer_timeout": 1},
             {"sniff_timeout": 1},
         ],
     )
@@ -660,42 +658,6 @@ class TestTransport:
         ports = {node.config.port for node in client.transport.node_pool.all()}
         assert ports == {9200, 124}
 
-    async def test_sniffing_deprecated_host_info_callback(self):
-        def host_info_callback(
-            node_info: Dict[str, Any], host: Dict[str, Union[int, str]]
-        ) -> Dict[str, Any]:
-            return (
-                host if node_info["http"]["publish_address"].endswith(":124") else None
-            )
-
-        with warnings.catch_warnings(record=True) as w:
-            client = AsyncElasticsearch(  # noqa: F821
-                [
-                    NodeConfig(
-                        "http",
-                        "localhost",
-                        9200,
-                        _extras={"data": CLUSTER_NODES_MASTER_ONLY},
-                    )
-                ],
-                node_class=DummyNode,
-                sniff_on_start=True,
-                host_info_callback=host_info_callback,
-            )
-            await client.transport._async_call()
-
-        assert len(w) == 1
-        assert w[0].category == DeprecationWarning
-        assert (
-            str(w[0].message)
-            == "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'"
-        )
-
-        assert len(client.transport.node_pool) == 2
-
-        ports = {node.config.port for node in client.transport.node_pool.all()}
-        assert ports == {9200, 124}
-
 
 @pytest.mark.parametrize("headers", [{}, {"X-elastic-product": "BAD HEADER"}])
 async def test_unsupported_product_error(headers):
@@ -719,7 +681,7 @@ async def test_unsupported_product_error(headers):
         {
             "body": None,
             "headers": {
-                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=9",
             },
             "request_timeout": DEFAULT,
         },

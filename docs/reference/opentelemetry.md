@@ -5,25 +5,25 @@ mapped_pages:
 
 # Using OpenTelemetry [opentelemetry]
 
-You can use [OpenTelemetry](https://opentelemetry.io/) to monitor the performance and behavior of your {{es}} requests through the Elasticsearch Python client. The Python client comes with built-in OpenTelemetry instrumentation that emits [distributed tracing spans](docs-content://solutions/observability/apps/traces-2.md) by default. With that, applications using [manual OpenTelemetry instrumentation](https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry) or [automatic OpenTelemetry instrumentation](https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry) are enriched with additional spans that contain insightful information about the execution of the {{es}} requests.
+You can use [OpenTelemetry](https://opentelemetry.io/) to monitor the performance and behavior of your {{es}} requests through the Elasticsearch Python client. The Python client comes with built-in OpenTelemetry instrumentation that emits [distributed tracing spans](docs-content://solutions/observability/apm/traces-ui.md) by default. With that, applications using [manual OpenTelemetry instrumentation](https://www.elastic.co/blog/manual-instrumentation-of-python-applications-opentelemetry) or [automatic OpenTelemetry instrumentation](https://www.elastic.co/blog/auto-instrumentation-of-python-applications-opentelemetry) are enriched with additional spans that contain insightful information about the execution of the {{es}} requests.
 
 The native instrumentation in the Python client follows the [OpenTelemetry Semantic Conventions for {{es}}](https://opentelemetry.io/docs/specs/semconv/database/elasticsearch/). In particular, the instrumentation in the client covers the logical layer of {{es}} requests. A single span per request is created that is processed by the service through the Python client. The following image shows a trace that records the handling of two different {{es}} requests: an `info` request and a `search` request.
 
-:::{image} ../images/otel-waterfall-without-http.png
+:::{image} images/otel-waterfall-without-http.png
 :alt: Distributed trace with Elasticsearch spans
 :class: screenshot
 :::
 
 Usually, OpenTelemetry auto-instrumentation modules come with instrumentation support for HTTP-level communication. In this case, in addition to the logical {{es}} client requests, spans will be captured for the physical HTTP requests emitted by the client. The following image shows a trace with both, {{es}} spans (in blue) and the corresponding HTTP-level spans (in red) after having installed the ``opentelemetry-instrumentation-urllib3`` package:
 
-:::{image} ../images/otel-waterfall-with-http.png
+:::{image} images/otel-waterfall-with-http.png
 :alt: Distributed trace with Elasticsearch spans
 :class: screenshot
 :::
 
 Advanced Python client behavior such as nodes round-robin and request retries are revealed through the combination of logical {{es}} spans and the physical HTTP spans. The following example shows a `search` request in a scenario with two nodes:
 
-:::{image} ../images/otel-waterfall-retry.png
+:::{image} images/otel-waterfall-retry.png
 :alt: Distributed trace with Elasticsearch spans
 :class: screenshot
 :::
@@ -41,7 +41,7 @@ When using the [manual Python OpenTelemetry instrumentation](https://opentelemet
 
 ## Comparison with community instrumentation [_comparison_with_community_instrumentation]
 
-The [commmunity OpenTelemetry Elasticsearch instrumentation](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/elasticsearch/elasticsearch.md) also instruments the client and sends OpenTelemetry traces, but was developed before the OpenTelemetry Semantic Conventions for {{es}}, so the traces attributes are inconsistent with other OpenTelemetry Elasticsearch client instrumentations. To avoid tracing the same requests twice, make sure to use only one instrumentation, either by uninstalling the opentelemetry-instrumentation-elasticsearch Python package or by [disabling the native instrumentation](#opentelemetry-config-enable).
+The [commmunity OpenTelemetry Elasticsearch instrumentation](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/elasticsearch/elasticsearch.html) also instruments the client and sends OpenTelemetry traces, but was developed before the OpenTelemetry Semantic Conventions for {{es}}, so the traces attributes are inconsistent with other OpenTelemetry Elasticsearch client instrumentations. To avoid tracing the same requests twice, make sure to use only one instrumentation, either by uninstalling the opentelemetry-instrumentation-elasticsearch Python package or by [disabling the native instrumentation](#opentelemetry-config-enable).
 
 
 ### Configuring the OpenTelemetry instrumentation [_configuring_the_opentelemetry_instrumentation]

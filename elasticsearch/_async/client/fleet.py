@@ -155,9 +155,9 @@ class FleetClient(NamespacedClient):
             example, a request targeting foo*,bar* returns an error if an index starts
             with foo but no index starts with bar.
         :param allow_partial_search_results: If true, returns partial results if there
-            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
-            If false, returns an error with no partial results. Defaults to the configured
-            cluster setting `search.default_allow_partial_results` which is true by default.
+            are shard request timeouts or shard failures. If false, returns an error
+            with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`,
+            which is true by default.
         :param ccs_minimize_roundtrips: If true, network roundtrips between the coordinating
             node and remote clusters are minimized for cross-cluster search requests.
         :param expand_wildcards: Type of index that wildcard expressions can match. If
@@ -401,9 +401,9 @@ class FleetClient(NamespacedClient):
         :param aggs:
         :param allow_no_indices:
         :param allow_partial_search_results: If true, returns partial results if there
-            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
-            If false, returns an error with no partial results. Defaults to the configured
-            cluster setting `search.default_allow_partial_results` which is true by default.
+            are shard request timeouts or shard failures. If false, returns an error
+            with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`,
+            which is true by default.
         :param analyze_wildcard:
         :param analyzer:
         :param batched_reduce_size:
@@ -430,7 +430,7 @@ class FleetClient(NamespacedClient):
         :param lenient:
         :param max_concurrent_shard_requests:
         :param min_score: Minimum _score for matching documents. Documents with a lower
-            _score are not included in the search results.
+            _score are not included in search results and results collected by aggregations.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an <index> in the request path.
         :param post_filter:
