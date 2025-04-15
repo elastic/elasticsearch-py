@@ -3,8 +3,7 @@
 
 [source, python]
 ----
-resp = client.inference.inference(
-    task_type="text_embedding",
+resp = client.inference.text_embedding(
     inference_id="my-cohere-endpoint",
     input="The sky above the port was the color of television tuned to a dead channel.",
     task_settings={

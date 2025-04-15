@@ -3,8 +3,7 @@
 
 [source, python]
 ----
-resp = client.inference.stream_inference(
-    task_type="completion",
+resp = client.inference.stream_completion(
     inference_id="openai-completion",
     input="What is Elastic?",
 )
