@@ -61,6 +61,7 @@ Language clients are forward compatible; meaning that the clients support commun
 | Elasticsearch version | elasticsearch-py branch | Supported |
 | --- | --- | --- |
 | main | main |  |
+| 9.x | 9.x | 9.x |
 | 8.x | 8.x | 8.x |
 | 7.x | 7.x | 7.17 |
 
