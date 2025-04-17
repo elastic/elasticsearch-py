@@ -63,7 +63,9 @@ of the getting started documentation.
 
 ## Compatibility
 
-Language clients are forward compatible; meaning that the clients support communicating with greater or equal minor versions of {{es}} without breaking. It does not mean that the clients automatically support new features of newer {{es}} versions; it is only possible after a release of a new client version. For example, a 8.12 client version won’t automatically support the new features of the 8.13 version of {{es}}, the 8.13 client version is required for that. {{es}} language clients are only backwards compatible across minor versions with default distributions and without guarantees made. To upgrade to a new major version, you first need to upgrade Elasticsearch, then the Python Elasticsearch client.
+Language clients are _forward compatible:_ each client version works with equivalent and later minor versions of Elasticsearch without breaking.
+
+Compatibility does not imply full feature parity. New Elasticsearch features are supported only in equivalent client versions. For example, an 8.12 client fully supports Elasticsearch 8.12 features and works with 8.13 without breaking; however, it does not support new Elasticsearch 8.13 features. An 8.13 client fully supports Elasticsearch 8.13 features.
 
 | Elasticsearch version | elasticsearch-py branch |
 | --- | --- |
@@ -72,8 +74,12 @@ Language clients are forward compatible; meaning that the clients support commun
 | 9.x | 8.x |
 | 8.x | 8.x |
 
-If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch7`` and ``elasticsearch8``.
+Elasticsearch language clients are also _backward compatible_ across minor versions &mdash; with default distributions and without guarantees.
+
+> [!NOTE]
+> To upgrade to a new major version, first upgrade Elasticsearch, then upgrade the Python Elasticsearch client.
+
+If you need to work with multiple client versions, note that older versions are also released as `elasticsearch7` and `elasticsearch8`.
 
 
 ## Documentation
