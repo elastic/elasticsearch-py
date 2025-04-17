@@ -76,7 +76,7 @@ Compatibility does not imply full feature parity. New Elasticsearch features are
 
 Elasticsearch language clients are also _backward compatible_ across minor versions &mdash; with default distributions and without guarantees.
 
-> [!NOTE]
+> [!TIP]
 > To upgrade to a new major version, first upgrade Elasticsearch, then upgrade the Python Elasticsearch client.
 
 If you need to work with multiple client versions, note that older versions are also released as `elasticsearch7` and `elasticsearch8`.
