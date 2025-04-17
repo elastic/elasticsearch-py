@@ -89,6 +89,8 @@ from .utils import (
     client_node_configs,
     is_requests_http_auth,
     is_requests_node_class,
+    is_httpx_http_auth,
+    is_httpx_node_class,
 )
 from .watcher import WatcherClient
 from .xpack import XPackClient
@@ -238,6 +240,20 @@ class AsyncElasticsearch(BaseClient):
                         raise ValueError(
                             "Using a custom 'requests.auth.AuthBase' class for "
                             "'http_auth' must be used with node_class='requests'"
+                        )
+
+                    # Reset 'http_auth' to DEFAULT so it's not consumed below.
+                    requests_session_auth = http_auth
+                    http_auth = DEFAULT
+
+                if is_httpx_http_auth(http_auth):
+                    # If we're using custom httpx authentication
+                    # then we need to alert the user that they also
+                    # need to use 'node_class=httpxasync'.
+                    if not is_httpx_node_class(node_class):
+                        raise ValueError(
+                            "Using a custom 'httpx.Auth' class for "
+                            "'http_auth' must be used with node_class='httpxasync'"
                         )
 
                     # Reset 'http_auth' to DEFAULT so it's not consumed below.
