@@ -9,24 +9,18 @@ You can use [OpenTelemetry](https://opentelemetry.io/) to monitor the performanc
 
 The native instrumentation in the Python client follows the [OpenTelemetry Semantic Conventions for {{es}}](https://opentelemetry.io/docs/specs/semconv/database/elasticsearch/). In particular, the instrumentation in the client covers the logical layer of {{es}} requests. A single span per request is created that is processed by the service through the Python client. The following image shows a trace that records the handling of two different {{es}} requests: an `info` request and a `search` request.
 
-:::{image} images/otel-waterfall-without-http.png
-:alt: Distributed trace with Elasticsearch spans
-:class: screenshot
-:::
+% TO DO: Use `:class: screenshot`
+![Distributed trace with Elasticsearch spans](images/otel-waterfall-without-http.png)
 
 Usually, OpenTelemetry auto-instrumentation modules come with instrumentation support for HTTP-level communication. In this case, in addition to the logical {{es}} client requests, spans will be captured for the physical HTTP requests emitted by the client. The following image shows a trace with both, {{es}} spans (in blue) and the corresponding HTTP-level spans (in red) after having installed the ``opentelemetry-instrumentation-urllib3`` package:
 
-:::{image} images/otel-waterfall-with-http.png
-:alt: Distributed trace with Elasticsearch spans
-:class: screenshot
-:::
+% TO DO: Use `:class: screenshot`
+![Distributed trace with Elasticsearch spans](images/otel-waterfall-with-http.png)
 
 Advanced Python client behavior such as nodes round-robin and request retries are revealed through the combination of logical {{es}} spans and the physical HTTP spans. The following example shows a `search` request in a scenario with two nodes:
 
-:::{image} images/otel-waterfall-retry.png
-:alt: Distributed trace with Elasticsearch spans
-:class: screenshot
-:::
+% TO DO: Use `:class: screenshot`
+![Distributed trace with Elasticsearch spans](images/otel-waterfall-retry.png)
 
 The first node is unavailable and results in an HTTP error, while the retry to the second node succeeds. Both HTTP requests are subsumed by the logical {{es}} request span (in blue).
 
