@@ -32,14 +32,19 @@ For more information, check [PR #2840](https://github.com/elastic/elasticsearch-
 ::::{dropdown} Remove deprecated `url_prefix` and `use_ssl` host keys
 When instantiating a new client, `hosts` can be specified as a dictionary. The `url_prefix` and `use_ssl` keys are no longer allowed.
 For more information, check [PR #2797](https://github.com/elastic/elasticsearch-py/pull/2797).
-**Impact**<br> Using any of those parameters will prevent instantiating the Elasticsearch client.
-**Action**<br> The parameters can be replaced as follows:
+
+**Impact**<br>
+Using any of those parameters will prevent instantiating the Elasticsearch client.
+
+**Action**<br>
+The parameters can be replaced as follows:
  * `use_ssl` isn't needed as a scheme is required since elasticsearch-py 8.0 (`http` or `https`)
  * `url_prefix` should be replaced with `path_prefix`, which is more descriptive. Indeed, this functionality allows deploying Elasticsearch under a specific path, such as `http://host:port/path/to/elasticsearch`, instead of the default root path (`http://host:port/`)
 ::::
 
 ::::{dropdown} Removed APIs
 Elasticsearch 9 removed the kNN search and Unfreeze index APIs.
+
 **Action**<br>
  * The kNN search API has been replaced by the `knn` option in the search API since Elasticsearch 8.4.
  * The Unfreeze index API was deprecated in Elasticsearch 7.14, and has been removed in Elasticsearch 9 since it is not possible to freeze an index since Elasticsearch 8.0.
