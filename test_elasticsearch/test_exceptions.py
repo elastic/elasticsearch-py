@@ -46,3 +46,33 @@ class TestTransformError:
         assert (
             str(e) == "ApiError(500, 'InternalServerError', 'something error message')"
         )
+
+    def test_transform_invalid_media_type_error(self):
+        e = ApiError(
+            message="InvalidMediaType",
+            meta=error_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "media_type_header_exception",
+                            "reason": "Invalid media-type value on headers [Accept, Content-Type]",
+                        }
+                    ],
+                    "type": "media_type_header_exception",
+                    "reason": "Invalid media-type value on headers [Accept, Content-Type]",
+                    "caused_by": {
+                        "type": "status_exception",
+                        "reason": "Accept version must be either version 8 or 7, but found 9. Accept=application/vnd.elasticsearch+json; compatible-with=9",
+                    },
+                },
+                "status": 400,
+            },
+        )
+
+        assert str(e) == (
+            "ApiError(500, 'InvalidMediaType', "
+            "'Invalid media-type value on headers [Accept, Content-Type]', "
+            "Accept version must be either version 8 or 7, but found 9. "
+            "Accept=application/vnd.elasticsearch+json; compatible-with=9)"
+        )
