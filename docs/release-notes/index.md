@@ -23,7 +23,7 @@ To check for security updates, go to [Security announcements for the Elastic sta
 
 :::{tip}
 Upgrade to Elasticsearch 9 before using elasticsearch-py 9.0.0 or later. Using elasticsearch-py 9.0.0 on an Elasticsearch 8 server will fail.
-Since language clients are forward-compatible, you should first upgrade Elasticsearch, then the Elasticsearch client. See the [compatibility documentation](https://www.elastic.co/docs/reference/elasticsearch/clients/python#_compatibility) for more details.
+Since language clients are forward-compatible, you should first upgrade Elasticsearch, then the Elasticsearch client. See the [compatibility documentation](/reference/index.md#_compatibility) for more details.
 :::
 
 ### Breaking changes
@@ -31,7 +31,7 @@ Since language clients are forward-compatible, you should first upgrade Elastics
 * Remove deprecated `Elasticsearch()` options ([#2840](https://github.com/elastic/elasticsearch-py/pull/2840))
 * Remove deprecated `url_prefix` and `use_ssl` options ([#2797](https://github.com/elastic/elasticsearch-py/pull/2797))
 
-See the breaking changes page for more details.
+See the [breaking changes page](breaking-changes.md) for more details.
 
 ### Enhancements
 
