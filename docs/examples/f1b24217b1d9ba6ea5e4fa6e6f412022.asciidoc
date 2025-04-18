@@ -3,8 +3,7 @@
 
 [source, python]
 ----
-resp = client.inference.inference(
-    task_type="rerank",
+resp = client.inference.rerank(
     inference_id="cohere_rerank",
     input=[
         "luke",

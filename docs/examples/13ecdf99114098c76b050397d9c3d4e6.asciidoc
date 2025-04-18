@@ -3,8 +3,7 @@
 
 [source, python]
 ----
-resp = client.inference.inference(
-    task_type="sparse_embedding",
+resp = client.inference.sparse_embedding(
     inference_id="my-elser-model",
     input="The sky above the port was the color of television tuned to a dead channel.",
 )
