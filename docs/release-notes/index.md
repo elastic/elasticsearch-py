@@ -76,7 +76,7 @@ See the breaking changes page for more details.
 * Add `resource` to Reload search analyzer API
 * Add `lazy` to Roll over to a new index API
 * Add `cause` and `create` to Simulate index template APIs
-* Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio,Azure OpenAI, Cohere, Elasticsearch, ELSER, Google AIStudio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
+* Add inference APIs: Alibaba Cloud AI Search, Amazon Bedrock, Anthropic, Azure AI Studio, Azure OpenAI, Cohere, Elasticsearch, ELSER, Google AI Studio, Google Vertex AI, Hugging Face, Jina AI, Mistral, OpenAI, and Voyage AI
 
 ### DSL
  * Add `ignore_malformed`, `script`,  `on_script_error` and `time_series_dimension` to Boolean field
