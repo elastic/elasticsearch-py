@@ -265,7 +265,7 @@ class IndicesClient(NamespacedClient):
           <p>Cancel a migration reindex attempt for a data stream or index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-cancel-migrate-reindex>`_
 
         :param index: The index or data stream name
         """
@@ -794,7 +794,7 @@ class IndicesClient(NamespacedClient):
           <p>Copy the mappings and settings from the source index to a destination index while allowing request settings and mappings to override the source values.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-create-from>`_
 
         :param source: The source index or data stream name
         :param dest: The destination index or data stream name
@@ -2952,7 +2952,7 @@ class IndicesClient(NamespacedClient):
           The persistent task ID is returned immediately and the reindexing work is completed in that task.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-migrate-reindex>`_
 
         :param reindex:
         """
