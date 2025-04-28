@@ -18,6 +18,12 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.0.1 (2025-04-28)
+
+* Surface caused_by in ApiError ([#2932](https://github.com/elastic/elasticsearch-py/pull/2932))
+* Clarify Elasticsearch 9.x compatibility ([#2928](https://github.com/elastic/elasticsearch-py/pull/2928))
+* Reorganize Sphinx docs to only include reference pages ([#2776](https://github.com/elastic/elasticsearch-py/pull/2776))
+
 
 ## 9.0.0 (2025-04-15) [elasticsearch-python-client-900-release-notes]
 
