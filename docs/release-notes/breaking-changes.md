@@ -16,7 +16,7 @@ Breaking changes can impact your Elastic applications, potentially disrupting no
 
 ## 9.0.0 [elasticsearch-python-client-900-breaking-changes]
 
-::::{dropdown} Remove deprecated `Elasticsearch()` options
+::::{dropdown} Remove deprecated Elasticsearch() options
 The `timeout`, `randomize_hosts`, `host_info_callback`, `sniffer_timeout`, `sniff_on_connection_fail` and `maxsize` parameters were deprecated in elasticsearch-py 8.0 and are now removed from `Elasticsearch.__init__()`.
 For more information, check [PR #2840](https://github.com/elastic/elasticsearch-py/pull/2840).
 
