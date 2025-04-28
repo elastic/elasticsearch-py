@@ -1676,7 +1676,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get data frame analytics jobs usage info.</p>
+          <p>Get data frame analytics job stats.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ml-get-data-frame-analytics-stats>`_
@@ -1744,7 +1744,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get datafeeds usage info.
+          <p>Get datafeed stats.
           You can get statistics for multiple datafeeds in a single API request by
           using a comma-separated list of datafeeds or a wildcard expression. You can
           get statistics for all datafeeds by using <code>_all</code>, by specifying <code>*</code> as the
@@ -2033,7 +2033,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection jobs usage info.</p>
+          <p>Get anomaly detection job stats.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ml-get-job-stats>`_
