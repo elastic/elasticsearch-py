@@ -83,7 +83,3 @@ See the [breaking changes page](breaking-changes.md) for more details.
  * Add `ignore_malformed`, `script`,  `on_script_error` and `time_series_dimension` to Boolean field
  * Add `index` to GeoShape field
  * Add `search_inference_id` to SemanticText field
-
-### Features and enhancements [elasticsearch-python-client-900-features-enhancements]
-
-### Fixes [elasticsearch-python-client-900-fixes]
