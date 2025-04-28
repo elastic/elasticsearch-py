@@ -6,7 +6,7 @@ The Python Elasticsearch client provides several ways to send queries to Elastic
 
 Elasticsearch APIs are grouped by namespaces.
 
- * There's the global namespace, with APIs like the Search API (`GET _search`) or the Index API (`PUT /<target>/_doc/<_id>` and related endpoints). 
+ * There's the global namespace, with APIs like the Search API (`GET _search`) or the Index API (`PUT /<target>/_doc/<_id>` and related endpoints).
  * Then there are all the other namespaces, such as:
    * Indices with APIs like the Create index API (`PUT /my-index`),
    * ES|QL with the Run an ES|QL query API (`POST /_async`),
@@ -28,10 +28,8 @@ How can you figure out the namespace?
 * Finally, for Elasticsearch 8.x, most examples in the [Elasticsearch guide](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html) are also available in Python. (This is still a work in progress for Elasticsearch 9.x.) In the example below, `client.ingest.put_pipeline(...)` is the function that calls the "Create or update a pipeline" API.
 
 
-:::{image} ../images/python-example.png
-:alt: Python code example in the Elasticsearch guide
-:::
- 
+![Python code example in the Elasticsearch guide](images/python-example.png)
+
 ## Parameters
 
 Now that you know which functions to call, the next step is parameters. To avoid ambiguity, the Python Elasticsearch client mandates keyword arguments. To give an example, let's look at the ["Create an index" API](https://elasticsearch-py.readthedocs.io/en/stable/api/indices.html#elasticsearch.client.IndicesClient.create). There's only one required parameter, `index`, so the minimal form looks like this:
