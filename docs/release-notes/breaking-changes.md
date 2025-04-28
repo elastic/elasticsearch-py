@@ -19,8 +19,10 @@ Breaking changes can impact your Elastic applications, potentially disrupting no
 ::::{dropdown} Remove deprecated `Elasticsearch()` options
 The `timeout`, `randomize_hosts`, `host_info_callback`, `sniffer_timeout`, `sniff_on_connection_fail` and `maxsize` parameters were deprecated in elasticsearch-py 8.0 and are now removed from `Elasticsearch.__init__()`.
 For more information, check [PR #2840](https://github.com/elastic/elasticsearch-py/pull/2840).
-**Impact**<br> These parameters were removed in favor of more descriptive versions. Using any of those parameters will prevent instantiating the Elasticsearch client.
-**Action**<br> Those parameters can be replaced as follows:
+
+**Impact**<br> These parameters were removed in favor of more descriptive versions. Using any of these parameters will prevent instantiating the Elasticsearch client.
+
+**Action**<br> These parameters can be replaced as follows:
  * `timeout` is now `request_timeout`
  * `randomize_hosts` is now `randomize_nodes_in_pool`
  * `host_info_callback` is now `sniffed_node_callback`
