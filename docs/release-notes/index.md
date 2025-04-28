@@ -12,13 +12,16 @@ To check for security updates, go to [Security announcements for the Elastic sta
 
 % Release notes include only features, enhancements, and fixes. Add breaking changes, deprecations, and known issues to the applicable release notes sections.
 
-% ## version.next [felasticsearch-python-client-next-release-notes]
+% ## version.next [elasticsearch-python-client-next-release-notes]
 
 % ### Features and enhancements [elasticsearch-python-client-next-features-enhancements]
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
-## 9.0.1 (2025-04-28)
+
+## 9.0.1 (2025-04-28) [elasticsearch-python-client-901-release-notes]
+
+### Features and enhancements [elasticsearch-python-client-901-features-enhancements]
 
 * Surface caused_by in ApiError ([#2932](https://github.com/elastic/elasticsearch-py/pull/2932))
 * Clarify Elasticsearch 9.x compatibility ([#2928](https://github.com/elastic/elasticsearch-py/pull/2928))
