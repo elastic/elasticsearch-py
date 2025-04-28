@@ -380,15 +380,24 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         `int4_flat` index types.
     :arg ef_construction: The number of candidates to track while
         assembling the list of nearest neighbors for each new node.  Only
-        applicable to `hnsw`, `int8_hnsw`, and `int4_hnsw` index types.
-        Defaults to `100` if omitted.
+        applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`, and `int4_hnsw`
+        index types. Defaults to `100` if omitted.
     :arg m: The number of neighbors each node will be connected to in the
-        HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, and
-        `int4_hnsw` index types. Defaults to `16` if omitted.
+        HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`,
+        and `int4_hnsw` index types. Defaults to `16` if omitted.
     """
 
     type: Union[
-        Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+        Literal[
+            "bbq_flat",
+            "bbq_hnsw",
+            "flat",
+            "hnsw",
+            "int4_flat",
+            "int4_hnsw",
+            "int8_flat",
+            "int8_hnsw",
+        ],
         DefaultType,
     ]
     confidence_interval: Union[float, DefaultType]
@@ -399,7 +408,16 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         self,
         *,
         type: Union[
-            Literal["flat", "hnsw", "int4_flat", "int4_hnsw", "int8_flat", "int8_hnsw"],
+            Literal[
+                "bbq_flat",
+                "bbq_hnsw",
+                "flat",
+                "hnsw",
+                "int4_flat",
+                "int4_hnsw",
+                "int8_flat",
+                "int8_hnsw",
+            ],
             DefaultType,
         ] = DEFAULT,
         confidence_interval: Union[float, DefaultType] = DEFAULT,
@@ -591,6 +609,7 @@ class FieldSort(AttrDict[Any]):
             "completion",
             "nested",
             "object",
+            "passthrough",
             "version",
             "murmur3",
             "token_count",
@@ -617,6 +636,7 @@ class FieldSort(AttrDict[Any]):
             "shape",
             "histogram",
             "constant_keyword",
+            "counted_keyword",
             "aggregate_metric_double",
             "dense_vector",
             "semantic_text",
@@ -654,6 +674,7 @@ class FieldSort(AttrDict[Any]):
                 "completion",
                 "nested",
                 "object",
+                "passthrough",
                 "version",
                 "murmur3",
                 "token_count",
@@ -680,6 +701,7 @@ class FieldSort(AttrDict[Any]):
                 "shape",
                 "histogram",
                 "constant_keyword",
+                "counted_keyword",
                 "aggregate_metric_double",
                 "dense_vector",
                 "semantic_text",
@@ -2847,6 +2869,22 @@ class RegressionInferenceOptions(AttrDict[Any]):
             kwargs["num_top_feature_importance_values"] = (
                 num_top_feature_importance_values
             )
+        super().__init__(kwargs)
+
+
+class RescoreVector(AttrDict[Any]):
+    """
+    :arg oversample: (required) Applies the specified oversample factor to
+        k on the approximate kNN search
+    """
+
+    oversample: Union[float, DefaultType]
+
+    def __init__(
+        self, *, oversample: Union[float, DefaultType] = DEFAULT, **kwargs: Any
+    ):
+        if oversample is not DEFAULT:
+            kwargs["oversample"] = oversample
         super().__init__(kwargs)
 
 
