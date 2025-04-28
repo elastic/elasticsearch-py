@@ -795,7 +795,7 @@ class TransformClient(NamespacedClient):
           time of update and runs with those privileges.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/update-transform.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-transform-update-transform>`_
 
         :param transform_id: Identifier for the transform.
         :param defer_validation: When true, deferrable validations are not run. This
@@ -890,7 +890,7 @@ class TransformClient(NamespacedClient):
           You may want to perform a recent cluster backup prior to the upgrade.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/upgrade-transforms.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-transform-upgrade-transforms>`_
 
         :param dry_run: When true, the request checks for updates but does not run them.
         :param timeout: Period to wait for a response. If no response is received before

@@ -185,7 +185,7 @@ class ClusterClient(NamespacedClient):
           Remove master-eligible nodes from the voting configuration exclusion list.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/voting-config-exclusions.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-cluster-post-voting-config-exclusions>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         :param wait_for_removal: Specifies whether to wait for all excluded nodes to
@@ -680,7 +680,7 @@ class ClusterClient(NamespacedClient):
           They are not required when removing master-ineligible nodes or when removing fewer than half of the master-eligible nodes.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/voting-config-exclusions.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-cluster-post-voting-config-exclusions>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         :param node_ids: A comma-separated list of the persistent ids of the nodes to
