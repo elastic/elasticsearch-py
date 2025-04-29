@@ -237,7 +237,7 @@ class LicenseClient(NamespacedClient):
           If the operator privileges feature is enabled, only operator users can use this API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-license-post>`_
 
         :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:

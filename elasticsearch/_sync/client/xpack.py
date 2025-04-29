@@ -103,7 +103,7 @@ class XPackClient(NamespacedClient):
           The API also provides some usage statistics.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-xpack>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/group/endpoint-xpack>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
