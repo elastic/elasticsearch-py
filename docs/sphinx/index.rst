@@ -1,6 +1,12 @@
 Python Elasticsearch Client
 ===========================
 
+Welcome to the API documentation of the official Python client for Elasticsearch!
+The goal of this client is to provide common ground for all Elasticsearch-related
+code in Python; because of this it tries to be opinion-free and very extendable.
+
+High-level documentation for this client is `also available <https://www.elastic.co/docs/reference/elasticsearch/clients/python>`_.
+
 .. toctree::
    :maxdepth: 2 
 
