@@ -1676,7 +1676,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get data frame analytics jobs usage info.</p>
+          <p>Get data frame analytics job stats.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/get-dfanalytics-stats.html>`_
@@ -1744,7 +1744,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get datafeeds usage info.
+          <p>Get datafeed stats.
           You can get statistics for multiple datafeeds in a single API request by
           using a comma-separated list of datafeeds or a wildcard expression. You can
           get statistics for all datafeeds by using <code>_all</code>, by specifying <code>*</code> as the
@@ -2033,7 +2033,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection jobs usage info.</p>
+          <p>Get anomaly detection job stats.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/ml-get-job-stats.html>`_
@@ -5004,7 +5004,7 @@ class MlClient(NamespacedClient):
           <p>Update a data frame analytics job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/update-dfanalytics.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-ml-update-data-frame-analytics>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -5577,7 +5577,7 @@ class MlClient(NamespacedClient):
           <p>Update a trained model deployment.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/update-trained-model-deployment.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-ml-update-trained-model-deployment>`_
 
         :param model_id: The unique identifier of the trained model. Currently, only
             PyTorch models are supported.
