@@ -1,6 +1,16 @@
 [[release-notes]]
 == Release notes
 
+=== 8.18.1 (2025-04-29)
+
+- Update APIs
+  * Add back `inference.inference` APIs that were removed by mistake
+- Update DSL
+  * Add `CountedKeyword` and `Passthrough` fields
+  * Add `rescore_vector` to Knn query
+  * Add `bbq_flat` and `bbq_hnsw` vector index types
+  * Add `script` and `on_script_error` to `Date` and `DateNanos` fields
+
 === 8.18.0 (2025-04-15)
 
 - Merge `Elasticsearch-DSL <https://github.com/elastic/elasticsearch-dsl-py/>`_ package (https://github.com/elastic/elasticsearch-py/pull/2736[#2736])
