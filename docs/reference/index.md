@@ -6,7 +6,7 @@ mapped_pages:
 
 # Python [overview]
 
-This is the official low-level Python client for {{es}}. Its goal is to provide common ground for all {{es}}-related code in Python. For this reason, the client is designed to be unopinionated and extendable. An API reference is available on [Read the Docs](https://elasticsearch-py.readthedocs.io).
+This is the official Python client for {{es}}. Its goal is to provide common ground for all {{es}}-related code in Python. For this reason, the client is designed to be unopinionated and extendable. API reference documentation for this client is available on [Read the Docs](https://elasticsearch-py.readthedocs.io).
 
 
 ## Example use [_example_use]
