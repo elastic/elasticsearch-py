@@ -656,7 +656,15 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-create>`_
 
-        :param index: Name of the index you wish to create.
+        :param index: Name of the index you wish to create. Index names must meet the
+            following criteria: * Lowercase only * Cannot include `\\`, `/`, `*`, `?`,
+            `"`, `<`, `>`, `|`, ` ` (space character), `,`, or `#` * Indices prior to
+            7.0 could contain a colon (`:`), but that has been deprecated and will not
+            be supported in later versions * Cannot start with `-`, `_`, or `+` * Cannot
+            be `.` or `..` * Cannot be longer than 255 bytes (note thtat it is bytes,
+            so multi-byte characters will reach the limit faster) * Names starting with
+            `.` are deprecated, except for hidden indices and internal indices managed
+            by plugins
         :param aliases: Aliases for the index.
         :param mappings: Mapping for fields in the index. If specified, this mapping
             can include: - Field names - Field data types - Mapping parameters
