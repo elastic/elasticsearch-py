@@ -93,7 +93,7 @@ class EqlClient(NamespacedClient):
           Get the current status and available results for an async EQL search or a stored synchronous EQL search.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-async-eql-search-api.html>`_
 
         :param id: Identifier for the search.
         :param keep_alive: Period for which the search and its results are stored on
@@ -147,7 +147,7 @@ class EqlClient(NamespacedClient):
           Get the current status for an async EQL search or a stored synchronous EQL search without returning results.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-async-eql-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-async-eql-status-api.html>`_
 
         :param id: Identifier for the search.
         """
@@ -246,7 +246,7 @@ class EqlClient(NamespacedClient):
           EQL assumes each document in a data stream or index corresponds to an event.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/eql-search-api.html>`_
 
         :param index: The name of the index to scope the operation
         :param query: EQL query you wish to run.
