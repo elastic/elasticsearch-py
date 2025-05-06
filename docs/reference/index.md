@@ -46,7 +46,7 @@ The client’s features include:
 * Thread safety
 * Pluggable architecture
 
-The client also contains a convenient set of [helpers](https://elasticsearch-py.readthedocs.org/en/master/helpers.md) for some of the more engaging tasks like bulk indexing and reindexing.
+The client also contains a convenient set of [helpers](https://elasticsearch-py.readthedocs.io/en/stable/api_helpers.html) for some of the more engaging tasks like bulk indexing and reindexing.
 
 
 ## Elasticsearch Python DSL [_elasticsearch_python_dsl]
