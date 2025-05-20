@@ -207,7 +207,7 @@ class MultiSearch(MultiSearchBase[_R]):
                         raise ApiError("N/A", meta=responses.meta, body=r)
                     r = None
                 else:
-                    r = Response(s, r)
+                    r = s._response_class(s, r, s._doc_type)
                 out.append(r)
 
             self._response = out

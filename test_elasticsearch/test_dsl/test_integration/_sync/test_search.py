@@ -26,6 +26,7 @@ from elasticsearch.dsl import (
     Keyword,
     MultiSearch,
     Q,
+    Response,
     Search,
     Text,
 )
@@ -248,7 +249,10 @@ def test_response_is_cached(data_client: Elasticsearch) -> None:
 
 @pytest.mark.sync
 def test_multi_search(data_client: Elasticsearch) -> None:
-    s1 = Repository.search()
+    class AlternativeResponseClass(Response):
+        pass 
+
+    s1 = Repository().search().response_class(AlternativeResponseClass)
     s2 = Search[Repository](index="flat-git")
 
     ms = MultiSearch[Repository]()
@@ -259,9 +263,11 @@ def test_multi_search(data_client: Elasticsearch) -> None:
     assert 1 == len(r1)
     assert isinstance(r1[0], Repository)
     assert r1._search is s1
+    assert isinstance(r1, AlternativeResponseClass)
 
     assert 52 == r2.hits.total.value  # type: ignore[attr-defined]
     assert r2._search is s2
+    assert isinstance(r2, Response)
 
 
 @pytest.mark.sync
