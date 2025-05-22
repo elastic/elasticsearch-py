@@ -370,12 +370,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create an inference endpoint.
-          When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
+          <p>Create an inference endpoint.</p>
           <p>IMPORTANT: The inference APIs enable you to use certain services, such as built-in machine learning models (ELSER, E5), models uploaded through Eland, Cohere, OpenAI, Mistral, Azure OpenAI, Google AI Studio, Google Vertex AI, Anthropic, Watsonx.ai, or Hugging Face.
           For built-in models and models uploaded through Eland, the inference APIs offer an alternative way to use and manage trained models.
           However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
@@ -458,11 +453,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create an AlibabaCloud AI Search inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>alibabacloud-ai-search</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-alibabacloud>`_
@@ -558,11 +548,6 @@ class InferenceClient(NamespacedClient):
           <p>info
           You need to provide the access and secret keys only once, during the inference model creation. The get inference API does not retrieve your access or secret keys. After creating the inference model, you cannot change the associated key pairs. If you want to use a different access and secret key pair, delete the inference model and recreate it with the same name and the updated keys.</p>
           </blockquote>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-amazonbedrock>`_
@@ -654,11 +639,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create an Anthropic inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>anthropic</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-anthropic>`_
@@ -751,11 +731,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create an Azure AI studio inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>azureaistudio</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-azureaistudio>`_
@@ -853,11 +828,6 @@ class InferenceClient(NamespacedClient):
           <li><a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#gpt-35">GPT-3.5</a></li>
           </ul>
           <p>The list of embeddings models that you can choose from in your deployment can be found in the <a href="https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=global-standard%2Cstandard-chat-completions#embeddings">Azure models documentation</a>.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-azureopenai>`_
@@ -951,11 +921,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create a Cohere inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>cohere</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-cohere>`_
@@ -1239,11 +1204,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create an Google AI Studio inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>googleaistudio</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-googleaistudio>`_
@@ -1331,11 +1291,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create a Google Vertex AI inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>googlevertexai</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-googlevertexai>`_
@@ -1434,11 +1389,6 @@ class InferenceClient(NamespacedClient):
           <li><code>multilingual-e5-base</code></li>
           <li><code>multilingual-e5-small</code></li>
           </ul>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-hugging-face>`_
@@ -1528,11 +1478,6 @@ class InferenceClient(NamespacedClient):
           <p>Create an inference endpoint to perform an inference task with the <code>jinaai</code> service.</p>
           <p>To review the available <code>rerank</code> models, refer to <a href="https://jina.ai/reranker">https://jina.ai/reranker</a>.
           To review the available <code>text_embedding</code> models, refer to the <a href="https://jina.ai/embeddings/">https://jina.ai/embeddings/</a>.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-jinaai>`_
@@ -1616,11 +1561,6 @@ class InferenceClient(NamespacedClient):
 
           <p>Create a Mistral inference endpoint.</p>
           <p>Creates an inference endpoint to perform an inference task with the <code>mistral</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-mistral>`_
@@ -1708,12 +1648,7 @@ class InferenceClient(NamespacedClient):
         .. raw:: html
 
           <p>Create an OpenAI inference endpoint.</p>
-          <p>Create an inference endpoint to perform an inference task with the <code>openai</code> service.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>openai</code> service or <code>openai</code> compatible APIs.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-openai>`_
@@ -1890,11 +1825,6 @@ class InferenceClient(NamespacedClient):
           <p>Create an inference endpoint to perform an inference task with the <code>watsonxai</code> service.
           You need an IBM Cloud Databases for Elasticsearch deployment to use the <code>watsonxai</code> inference service.
           You can provision one through the IBM catalog, the Cloud Databases CLI plug-in, the Cloud Databases API, or Terraform.</p>
-          <p>When you create an inference endpoint, the associated machine learning model is automatically deployed if it is not already running.
-          After creating the endpoint, wait for the model deployment to complete before using it.
-          To verify the deployment status, use the get trained model statistics API.
-          Look for <code>&quot;state&quot;: &quot;fully_allocated&quot;</code> in the response and ensure that the <code>&quot;allocation_count&quot;</code> matches the <code>&quot;target_allocation_count&quot;</code>.
-          Avoid creating multiple endpoints for the same model unless required, as each endpoint consumes significant resources.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put-watsonx>`_
