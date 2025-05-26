@@ -1617,11 +1617,7 @@ class InnerHits(AttrDict[Any]):
         DefaultType,
     ]
     seq_no_primary_term: Union[bool, DefaultType]
-    fields: Union[
-        Union[str, InstrumentedField],
-        Sequence[Union[str, InstrumentedField]],
-        DefaultType,
-    ]
+    fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
     sort: Union[
         Union[Union[str, InstrumentedField], "SortOptions"],
         Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1656,11 +1652,7 @@ class InnerHits(AttrDict[Any]):
             DefaultType,
         ] = DEFAULT,
         seq_no_primary_term: Union[bool, DefaultType] = DEFAULT,
-        fields: Union[
-            Union[str, InstrumentedField],
-            Sequence[Union[str, InstrumentedField]],
-            DefaultType,
-        ] = DEFAULT,
+        fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
         sort: Union[
             Union[Union[str, InstrumentedField], "SortOptions"],
             Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],

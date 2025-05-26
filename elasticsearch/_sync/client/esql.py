@@ -84,13 +84,15 @@ class EsqlClient(NamespacedClient):
           <p>The API accepts the same parameters and request body as the synchronous query API, along with additional async related properties.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-api.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -212,7 +214,7 @@ class EsqlClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-delete-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-delete-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -265,7 +267,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can retrieve the results using this API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-get-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-get-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -332,7 +334,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can stop it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-stop-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-stop-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -420,13 +422,15 @@ class EsqlClient(NamespacedClient):
           Get search results for an ES|QL (Elasticsearch query language) query.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
