@@ -1246,7 +1246,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a legacy index template.</p>
+          <p>Delete a legacy index template.
+          IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/indices-delete-template-v1.html>`_
@@ -2878,7 +2879,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index templates.
+          <p>Get legacy index templates.
           Get information about one or more index templates.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
@@ -3971,7 +3972,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an index template.
+          <p>Create or update a legacy index template.
           Index templates define settings, mappings, and aliases that can be applied automatically to new indices.
           Elasticsearch applies templates to new indices based on an index pattern that matches the index name.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
