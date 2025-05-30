@@ -170,6 +170,48 @@ class ChiSquareHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class ChunkingSettings(AttrDict[Any]):
+    """
+    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
+        Defaults to `sentence` if omitted.
+    :arg max_chunk_size: (required) The maximum size of a chunk in words.
+        This value cannot be higher than `300` or lower than `20` (for
+        `sentence` strategy) or `10` (for `word` strategy). Defaults to
+        `250` if omitted.
+    :arg overlap: The number of overlapping words for chunks. It is
+        applicable only to a `word` chunking strategy. This value cannot
+        be higher than half the `max_chunk_size` value. Defaults to `100`
+        if omitted.
+    :arg sentence_overlap: The number of overlapping sentences for chunks.
+        It is applicable only for a `sentence` chunking strategy. It can
+        be either `1` or `0`. Defaults to `1` if omitted.
+    """
+
+    strategy: Union[str, DefaultType]
+    max_chunk_size: Union[int, DefaultType]
+    overlap: Union[int, DefaultType]
+    sentence_overlap: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        strategy: Union[str, DefaultType] = DEFAULT,
+        max_chunk_size: Union[int, DefaultType] = DEFAULT,
+        overlap: Union[int, DefaultType] = DEFAULT,
+        sentence_overlap: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if strategy is not DEFAULT:
+            kwargs["strategy"] = strategy
+        if max_chunk_size is not DEFAULT:
+            kwargs["max_chunk_size"] = max_chunk_size
+        if overlap is not DEFAULT:
+            kwargs["overlap"] = overlap
+        if sentence_overlap is not DEFAULT:
+            kwargs["sentence_overlap"] = sentence_overlap
+        super().__init__(kwargs)
+
+
 class ClassificationInferenceOptions(AttrDict[Any]):
     """
     :arg num_top_classes: Specifies the number of top class predictions to
@@ -1617,11 +1659,7 @@ class InnerHits(AttrDict[Any]):
         DefaultType,
     ]
     seq_no_primary_term: Union[bool, DefaultType]
-    fields: Union[
-        Union[str, InstrumentedField],
-        Sequence[Union[str, InstrumentedField]],
-        DefaultType,
-    ]
+    fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
     sort: Union[
         Union[Union[str, InstrumentedField], "SortOptions"],
         Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1656,11 +1694,7 @@ class InnerHits(AttrDict[Any]):
             DefaultType,
         ] = DEFAULT,
         seq_no_primary_term: Union[bool, DefaultType] = DEFAULT,
-        fields: Union[
-            Union[str, InstrumentedField],
-            Sequence[Union[str, InstrumentedField]],
-            DefaultType,
-        ] = DEFAULT,
+        fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
         sort: Union[
             Union[Union[str, InstrumentedField], "SortOptions"],
             Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
