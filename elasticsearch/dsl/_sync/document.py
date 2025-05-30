@@ -92,7 +92,7 @@ class Document(DocumentBase, metaclass=IndexMeta):
 
     @classmethod
     def _get_using(cls, using: Optional[UsingType] = None) -> UsingType:
-        return cast(UsingType, using or cls._index._using)
+        return using or cls._index._using
 
     @classmethod
     def _get_connection(cls, using: Optional[UsingType] = None) -> "Elasticsearch":
