@@ -37,8 +37,7 @@ async def main():
     )
     print(resp)
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
+asyncio.run(main())
 ----
 
 All APIs that are available under the sync client are also available
