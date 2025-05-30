@@ -96,7 +96,7 @@ class AsyncDocument(DocumentBase, metaclass=AsyncIndexMeta):
 
     @classmethod
     def _get_using(cls, using: Optional[AsyncUsingType] = None) -> AsyncUsingType:
-        return cast(AsyncUsingType, using or cls._index._using)
+        return using or cls._index._using
 
     @classmethod
     def _get_connection(
