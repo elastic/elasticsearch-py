@@ -4650,11 +4650,11 @@ class Elasticsearch(BaseClient):
             of the specified nodes are available, select shards from any available node
             using the default method. * `_prefer_nodes:<node-id>,<node-id>` to if possible,
             run the search on the specified nodes IDs. If not, select shards using the
-            default method. `_shards:<shard>,<shard>` to run the search only on the specified
-            shards. You can combine this value with other `preference` values. However,
-            the `_shards` value must come first. For example: `_shards:2,3|_local`. `<custom-string>`
-            (any string that does not start with `_`) to route searches with the same
-            `<custom-string>` to the same shards in the same order.
+            default method. * `_shards:<shard>,<shard>` to run the search only on the
+            specified shards. You can combine this value with other `preference` values.
+            However, the `_shards` value must come first. For example: `_shards:2,3|_local`.
+            * `<custom-string>` (any string that does not start with `_`) to route searches
+            with the same `<custom-string>` to the same shards in the same order.
         :param profile: Set to `true` to return detailed timing information about the
             execution of individual components in a search request. NOTE: This is a debugging
             tool and adds significant overhead to search execution.
