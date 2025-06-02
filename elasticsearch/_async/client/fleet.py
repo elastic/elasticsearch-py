@@ -53,7 +53,7 @@ class FleetClient(NamespacedClient):
           This API is designed for internal use by the Fleet server project.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-global-checkpoints.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-global-checkpoints.html>`_
 
         :param index: A single index or index alias that resolves to a single index.
         :param checkpoints: A comma separated list of previous global checkpoints. When
@@ -143,7 +143,7 @@ class FleetClient(NamespacedClient):
           supports the wait_for_checkpoints parameter.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/fleet-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/fleet-multi-search.html>`_
 
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
@@ -392,7 +392,7 @@ class FleetClient(NamespacedClient):
           after provided checkpoint has been processed and is visible for searches inside of Elasticsearch.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/fleet-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/fleet-search.html>`_
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
