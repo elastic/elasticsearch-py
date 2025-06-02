@@ -44,7 +44,7 @@ class LicenseClient(NamespacedClient):
           <p>If the operator privileges feature is enabled, only operator users can use this API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-license.html>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
         :param timeout: The period to wait for a response. If no response is received
@@ -98,7 +98,7 @@ class LicenseClient(NamespacedClient):
           </blockquote>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-license.html>`_
 
         :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
             license types. If `false`, this parameter returns platinum for both platinum
@@ -147,7 +147,7 @@ class LicenseClient(NamespacedClient):
           <p>Get the basic license status.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-basic-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/basic_status"
@@ -185,7 +185,7 @@ class LicenseClient(NamespacedClient):
           <p>Get the trial status.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-trial-status.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/trial_status"
@@ -308,7 +308,7 @@ class LicenseClient(NamespacedClient):
           <p>To check the status of your basic license, use the get basic license API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
@@ -365,7 +365,7 @@ class LicenseClient(NamespacedClient):
           <p>To check the status of your trial, use the get trial status API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)

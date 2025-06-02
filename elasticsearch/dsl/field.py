@@ -1290,7 +1290,7 @@ class Date(Field):
         if isinstance(data, datetime):
             if self._default_timezone and data.tzinfo is None:
                 data = data.replace(tzinfo=self._default_timezone)
-            return cast(datetime, data)
+            return data
         if isinstance(data, date):
             return data
         if isinstance(data, int):
@@ -3689,11 +3689,6 @@ class SemanticText(Field):
         by using the Update mapping API. Use the Create inference API to
         create the endpoint. If not specified, the inference endpoint
         defined by inference_id will be used at both index and query time.
-    :arg chunking_settings: Settings for chunking text into smaller
-        passages. If specified, these will override the chunking settings
-        sent in the inference endpoint associated with inference_id. If
-        chunking settings are updated, they will not be applied to
-        existing documents until they are reindexed.
     """
 
     name = "semantic_text"
@@ -3704,9 +3699,6 @@ class SemanticText(Field):
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         inference_id: Union[str, "DefaultType"] = DEFAULT,
         search_inference_id: Union[str, "DefaultType"] = DEFAULT,
-        chunking_settings: Union[
-            "types.ChunkingSettings", Dict[str, Any], "DefaultType"
-        ] = DEFAULT,
         **kwargs: Any,
     ):
         if meta is not DEFAULT:
@@ -3715,8 +3707,6 @@ class SemanticText(Field):
             kwargs["inference_id"] = inference_id
         if search_inference_id is not DEFAULT:
             kwargs["search_inference_id"] = search_inference_id
-        if chunking_settings is not DEFAULT:
-            kwargs["chunking_settings"] = chunking_settings
         super().__init__(*args, **kwargs)
 
 
