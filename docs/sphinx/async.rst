@@ -37,8 +37,7 @@ and are used in the same way as other APIs, just with an extra ``await``:
         )
         print(resp)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
 
 All APIs that are available under the sync client are also available under the async client.
 
@@ -153,8 +152,7 @@ Bulk and Streaming Bulk
     async def main():
         await async_bulk(client, gendata())
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
 
  .. autofunction:: async_streaming_bulk
 
@@ -180,8 +178,7 @@ Bulk and Streaming Bulk
             if not ok:
                 print("failed to %s document %s" % ())
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
 
 Scan
 ~~~~
@@ -204,8 +201,7 @@ Scan
         ):
             print(doc)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())
 
 Reindex
 ~~~~~~~

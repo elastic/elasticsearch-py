@@ -527,7 +527,8 @@ class TestTransport:
         assert request_failed_in_error
         assert len(client.transport.node_pool) == 3
 
-    async def test_sniff_after_n_seconds(self, event_loop):
+    async def test_sniff_after_n_seconds(self):
+        event_loop = asyncio.get_running_loop()
         client = AsyncElasticsearch(  # noqa: F821
             [NodeConfig("http", "localhost", 9200, _extras={"data": CLUSTER_NODES})],
             node_class=DummyNode,
@@ -581,7 +582,8 @@ class TestTransport:
             == "Sniffing should not be enabled when connecting to Elastic Cloud"
         )
 
-    async def test_sniff_on_start_close_unlocks_async_calls(self, event_loop):
+    async def test_sniff_on_start_close_unlocks_async_calls(self):
+        event_loop = asyncio.get_running_loop()
         client = AsyncElasticsearch(  # noqa: F821
             [
                 NodeConfig(
