@@ -367,7 +367,7 @@ class {{ k.name }}({{ k.parent }}):
         if isinstance(data, datetime):
             if self._default_timezone and data.tzinfo is None:
                 data = data.replace(tzinfo=self._default_timezone)
-            return data
+            return cast(datetime, data)
         if isinstance(data, date):
             return data
         if isinstance(data, int):
