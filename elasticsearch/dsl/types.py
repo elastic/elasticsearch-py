@@ -142,6 +142,48 @@ class ChiSquareHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class ChunkingSettings(AttrDict[Any]):
+    """
+    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
+        Defaults to `sentence` if omitted.
+    :arg max_chunk_size: (required) The maximum size of a chunk in words.
+        This value cannot be higher than `300` or lower than `20` (for
+        `sentence` strategy) or `10` (for `word` strategy). Defaults to
+        `250` if omitted.
+    :arg overlap: The number of overlapping words for chunks. It is
+        applicable only to a `word` chunking strategy. This value cannot
+        be higher than half the `max_chunk_size` value. Defaults to `100`
+        if omitted.
+    :arg sentence_overlap: The number of overlapping sentences for chunks.
+        It is applicable only for a `sentence` chunking strategy. It can
+        be either `1` or `0`. Defaults to `1` if omitted.
+    """
+
+    strategy: Union[str, DefaultType]
+    max_chunk_size: Union[int, DefaultType]
+    overlap: Union[int, DefaultType]
+    sentence_overlap: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        strategy: Union[str, DefaultType] = DEFAULT,
+        max_chunk_size: Union[int, DefaultType] = DEFAULT,
+        overlap: Union[int, DefaultType] = DEFAULT,
+        sentence_overlap: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if strategy is not DEFAULT:
+            kwargs["strategy"] = strategy
+        if max_chunk_size is not DEFAULT:
+            kwargs["max_chunk_size"] = max_chunk_size
+        if overlap is not DEFAULT:
+            kwargs["overlap"] = overlap
+        if sentence_overlap is not DEFAULT:
+            kwargs["sentence_overlap"] = sentence_overlap
+        super().__init__(kwargs)
+
+
 class ClassificationInferenceOptions(AttrDict[Any]):
     """
     :arg num_top_classes: Specifies the number of top class predictions to
@@ -329,6 +371,9 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg m: The number of neighbors each node will be connected to in the
         HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`,
         and `int4_hnsw` index types. Defaults to `16` if omitted.
+    :arg rescore_vector: The rescore vector options. This is only
+        applicable to `bbq_hnsw`, `int4_hnsw`, `int8_hnsw`, `bbq_flat`,
+        `int4_flat`, and `int8_flat` index types.
     """
 
     type: Union[
@@ -347,6 +392,9 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     confidence_interval: Union[float, DefaultType]
     ef_construction: Union[int, DefaultType]
     m: Union[int, DefaultType]
+    rescore_vector: Union[
+        "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
+    ]
 
     def __init__(
         self,
@@ -367,6 +415,9 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         confidence_interval: Union[float, DefaultType] = DEFAULT,
         ef_construction: Union[int, DefaultType] = DEFAULT,
         m: Union[int, DefaultType] = DEFAULT,
+        rescore_vector: Union[
+            "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
+        ] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -377,6 +428,29 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["ef_construction"] = ef_construction
         if m is not DEFAULT:
             kwargs["m"] = m
+        if rescore_vector is not DEFAULT:
+            kwargs["rescore_vector"] = rescore_vector
+        super().__init__(kwargs)
+
+
+class DenseVectorIndexOptionsRescoreVector(AttrDict[Any]):
+    """
+    :arg oversample: (required) The oversampling factor to use when
+        searching for the nearest neighbor. This is only applicable to the
+        quantized formats: `bbq_*`, `int4_*`, and `int8_*`. When provided,
+        `oversample * k` vectors will be gathered and then their scores
+        will be re-computed with the original vectors.  valid values are
+        between `1.0` and `10.0` (inclusive), or `0` exactly to disable
+        oversampling.
+    """
+
+    oversample: Union[float, DefaultType]
+
+    def __init__(
+        self, *, oversample: Union[float, DefaultType] = DEFAULT, **kwargs: Any
+    ):
+        if oversample is not DEFAULT:
+            kwargs["oversample"] = oversample
         super().__init__(kwargs)
 
 
