@@ -19,6 +19,13 @@ To check for security updates, go to [Security announcements for the Elastic sta
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
 
+## 9.0.2 (2025-06-05) [elasticsearch-python-client-902-release-notes]
+
+### DSL
+
+* Add `rescore_vector` to `DenseVectorIndexOptions`
+
+
 ## 9.0.1 (2025-04-28) [elasticsearch-python-client-901-release-notes]
 
 ### Features and enhancements [elasticsearch-python-client-901-features-enhancements]
