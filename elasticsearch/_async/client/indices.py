@@ -3861,8 +3861,34 @@ class IndicesClient(NamespacedClient):
           Changes dynamic index settings in real time.
           For data streams, index setting changes are applied to all backing indices by default.</p>
           <p>To revert a setting to the default value, use a null value.
-          The list of per-index settings that can be updated dynamically on live indices can be found in index module documentation.
+          The list of per-index settings that can be updated dynamically on live indices can be found in index settings documentation.
           To preserve existing settings from being updated, set the <code>preserve_existing</code> parameter to <code>true</code>.</p>
+          <p>There are multiple valid ways to represent index settings in the request body. You can specify only the setting, for example:</p>
+          <pre><code>{
+            &quot;number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can use an <code>index</code> setting object:</p>
+          <pre><code>{
+            &quot;index&quot;: {
+              &quot;number_of_replicas&quot;: 1
+            }
+          }
+          </code></pre>
+          <p>Or you can use dot annotation:</p>
+          <pre><code>{
+            &quot;index.number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can embed any of the aforementioned options in a <code>settings</code> object. For example:</p>
+          <pre><code>{
+            &quot;settings&quot;: {
+              &quot;index&quot;: {
+                &quot;number_of_replicas&quot;: 1
+              }
+            }
+          }
+          </code></pre>
           <p>NOTE: You can only define new analyzers on closed indices.
           To add an analyzer, you must close the index, define the analyzer, and reopen the index.
           You cannot close the write index of a data stream.
