@@ -170,48 +170,6 @@ class ChiSquareHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
-class ChunkingSettings(AttrDict[Any]):
-    """
-    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
-        Defaults to `sentence` if omitted.
-    :arg max_chunk_size: (required) The maximum size of a chunk in words.
-        This value cannot be higher than `300` or lower than `20` (for
-        `sentence` strategy) or `10` (for `word` strategy). Defaults to
-        `250` if omitted.
-    :arg overlap: The number of overlapping words for chunks. It is
-        applicable only to a `word` chunking strategy. This value cannot
-        be higher than half the `max_chunk_size` value. Defaults to `100`
-        if omitted.
-    :arg sentence_overlap: The number of overlapping sentences for chunks.
-        It is applicable only for a `sentence` chunking strategy. It can
-        be either `1` or `0`. Defaults to `1` if omitted.
-    """
-
-    strategy: Union[str, DefaultType]
-    max_chunk_size: Union[int, DefaultType]
-    overlap: Union[int, DefaultType]
-    sentence_overlap: Union[int, DefaultType]
-
-    def __init__(
-        self,
-        *,
-        strategy: Union[str, DefaultType] = DEFAULT,
-        max_chunk_size: Union[int, DefaultType] = DEFAULT,
-        overlap: Union[int, DefaultType] = DEFAULT,
-        sentence_overlap: Union[int, DefaultType] = DEFAULT,
-        **kwargs: Any,
-    ):
-        if strategy is not DEFAULT:
-            kwargs["strategy"] = strategy
-        if max_chunk_size is not DEFAULT:
-            kwargs["max_chunk_size"] = max_chunk_size
-        if overlap is not DEFAULT:
-            kwargs["overlap"] = overlap
-        if sentence_overlap is not DEFAULT:
-            kwargs["sentence_overlap"] = sentence_overlap
-        super().__init__(kwargs)
-
-
 class ClassificationInferenceOptions(AttrDict[Any]):
     """
     :arg num_top_classes: Specifies the number of top class predictions to
@@ -969,7 +927,7 @@ class GeoDistanceSort(AttrDict[Any]):
 
 class GeoGridQuery(AttrDict[Any]):
     """
-    :arg geogrid:
+    :arg geotile:
     :arg geohash:
     :arg geohex:
     :arg boost: Floating point number used to decrease or increase the
@@ -980,7 +938,7 @@ class GeoGridQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    geogrid: Union[str, DefaultType]
+    geotile: Union[str, DefaultType]
     geohash: Union[str, DefaultType]
     geohex: Union[str, DefaultType]
     boost: Union[float, DefaultType]
@@ -989,15 +947,15 @@ class GeoGridQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        geogrid: Union[str, DefaultType] = DEFAULT,
+        geotile: Union[str, DefaultType] = DEFAULT,
         geohash: Union[str, DefaultType] = DEFAULT,
         geohex: Union[str, DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
-        if geogrid is not DEFAULT:
-            kwargs["geogrid"] = geogrid
+        if geotile is not DEFAULT:
+            kwargs["geotile"] = geotile
         if geohash is not DEFAULT:
             kwargs["geohash"] = geohash
         if geohex is not DEFAULT:
@@ -1823,6 +1781,8 @@ class IntervalsContainer(AttrDict[Any]):
     :arg match: Matches analyzed text.
     :arg prefix: Matches terms that start with a specified set of
         characters.
+    :arg range:
+    :arg regexp:
     :arg wildcard: Matches terms using a wildcard pattern.
     """
 
@@ -1831,6 +1791,8 @@ class IntervalsContainer(AttrDict[Any]):
     fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType]
     match: Union["IntervalsMatch", Dict[str, Any], DefaultType]
     prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType]
+    range: Union["IntervalsRange", Dict[str, Any], DefaultType]
+    regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType]
     wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType]
 
     def __init__(
@@ -1841,6 +1803,8 @@ class IntervalsContainer(AttrDict[Any]):
         fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType] = DEFAULT,
         match: Union["IntervalsMatch", Dict[str, Any], DefaultType] = DEFAULT,
         prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType] = DEFAULT,
+        range: Union["IntervalsRange", Dict[str, Any], DefaultType] = DEFAULT,
+        regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType] = DEFAULT,
         wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
@@ -1854,6 +1818,10 @@ class IntervalsContainer(AttrDict[Any]):
             kwargs["match"] = match
         if prefix is not DEFAULT:
             kwargs["prefix"] = prefix
+        if range is not DEFAULT:
+            kwargs["range"] = range
+        if regexp is not DEFAULT:
+            kwargs["regexp"] = regexp
         if wildcard is not DEFAULT:
             kwargs["wildcard"] = wildcard
         super().__init__(kwargs)
@@ -2074,6 +2042,8 @@ class IntervalsQuery(AttrDict[Any]):
     :arg match: Matches analyzed text.
     :arg prefix: Matches terms that start with a specified set of
         characters.
+    :arg range:
+    :arg regexp:
     :arg wildcard: Matches terms using a wildcard pattern.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
@@ -2088,6 +2058,8 @@ class IntervalsQuery(AttrDict[Any]):
     fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType]
     match: Union["IntervalsMatch", Dict[str, Any], DefaultType]
     prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType]
+    range: Union["IntervalsRange", Dict[str, Any], DefaultType]
+    regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType]
     wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
@@ -2100,6 +2072,8 @@ class IntervalsQuery(AttrDict[Any]):
         fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType] = DEFAULT,
         match: Union["IntervalsMatch", Dict[str, Any], DefaultType] = DEFAULT,
         prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType] = DEFAULT,
+        range: Union["IntervalsRange", Dict[str, Any], DefaultType] = DEFAULT,
+        regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType] = DEFAULT,
         wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
@@ -2115,12 +2089,93 @@ class IntervalsQuery(AttrDict[Any]):
             kwargs["match"] = match
         if prefix is not DEFAULT:
             kwargs["prefix"] = prefix
+        if range is not DEFAULT:
+            kwargs["range"] = range
+        if regexp is not DEFAULT:
+            kwargs["regexp"] = regexp
         if wildcard is not DEFAULT:
             kwargs["wildcard"] = wildcard
         if boost is not DEFAULT:
             kwargs["boost"] = boost
         if _name is not DEFAULT:
             kwargs["_name"] = _name
+        super().__init__(kwargs)
+
+
+class IntervalsRange(AttrDict[Any]):
+    """
+    :arg analyzer: Analyzer used to analyze the `prefix`.
+    :arg gte: Lower term, either gte or gt must be provided.
+    :arg gt: Lower term, either gte or gt must be provided.
+    :arg lte: Upper term, either lte or lt must be provided.
+    :arg lt: Upper term, either lte or lt must be provided.
+    :arg use_field: If specified, match intervals from this field rather
+        than the top-level field. The `prefix` is normalized using the
+        search analyzer from this field, unless `analyzer` is specified
+        separately.
+    """
+
+    analyzer: Union[str, DefaultType]
+    gte: Union[str, DefaultType]
+    gt: Union[str, DefaultType]
+    lte: Union[str, DefaultType]
+    lt: Union[str, DefaultType]
+    use_field: Union[str, InstrumentedField, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        analyzer: Union[str, DefaultType] = DEFAULT,
+        gte: Union[str, DefaultType] = DEFAULT,
+        gt: Union[str, DefaultType] = DEFAULT,
+        lte: Union[str, DefaultType] = DEFAULT,
+        lt: Union[str, DefaultType] = DEFAULT,
+        use_field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if gte is not DEFAULT:
+            kwargs["gte"] = gte
+        if gt is not DEFAULT:
+            kwargs["gt"] = gt
+        if lte is not DEFAULT:
+            kwargs["lte"] = lte
+        if lt is not DEFAULT:
+            kwargs["lt"] = lt
+        if use_field is not DEFAULT:
+            kwargs["use_field"] = str(use_field)
+        super().__init__(kwargs)
+
+
+class IntervalsRegexp(AttrDict[Any]):
+    """
+    :arg pattern: (required) Regex pattern.
+    :arg analyzer: Analyzer used to analyze the `prefix`.
+    :arg use_field: If specified, match intervals from this field rather
+        than the top-level field. The `prefix` is normalized using the
+        search analyzer from this field, unless `analyzer` is specified
+        separately.
+    """
+
+    pattern: Union[str, DefaultType]
+    analyzer: Union[str, DefaultType]
+    use_field: Union[str, InstrumentedField, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        pattern: Union[str, DefaultType] = DEFAULT,
+        analyzer: Union[str, DefaultType] = DEFAULT,
+        use_field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if pattern is not DEFAULT:
+            kwargs["pattern"] = pattern
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if use_field is not DEFAULT:
+            kwargs["use_field"] = str(use_field)
         super().__init__(kwargs)
 
 
@@ -4828,7 +4883,7 @@ class ErrorCause(AttrDict[Any]):
     """
 
     type: str
-    reason: str
+    reason: Union[str, None]
     stack_trace: str
     caused_by: "ErrorCause"
     root_cause: Sequence["ErrorCause"]

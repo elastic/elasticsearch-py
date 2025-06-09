@@ -54,7 +54,7 @@ class XPackClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
         :param categories: A comma-separated list of the information categories to include
