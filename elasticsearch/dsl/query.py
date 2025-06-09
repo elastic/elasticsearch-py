@@ -2034,8 +2034,9 @@ class Regexp(Query):
 class Rule(Query):
     """
     :arg organic: (required)
-    :arg ruleset_ids: (required)
     :arg match_criteria: (required)
+    :arg ruleset_ids:
+    :arg ruleset_id:
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -2053,16 +2054,18 @@ class Rule(Query):
         self,
         *,
         organic: Union[Query, "DefaultType"] = DEFAULT,
-        ruleset_ids: Union[Sequence[str], "DefaultType"] = DEFAULT,
         match_criteria: Any = DEFAULT,
+        ruleset_ids: Union[str, Sequence[str], "DefaultType"] = DEFAULT,
+        ruleset_id: Union[str, "DefaultType"] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
         super().__init__(
             organic=organic,
-            ruleset_ids=ruleset_ids,
             match_criteria=match_criteria,
+            ruleset_ids=ruleset_ids,
+            ruleset_id=ruleset_id,
             boost=boost,
             _name=_name,
             **kwargs,
