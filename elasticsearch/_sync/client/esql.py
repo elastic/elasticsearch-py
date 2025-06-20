@@ -248,6 +248,14 @@ class EsqlClient(NamespacedClient):
         drop_null_columns: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        format: t.Optional[
+            t.Union[
+                str,
+                t.Literal[
+                    "arrow", "cbor", "csv", "json", "smile", "tsv", "txt", "yaml"
+                ],
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
@@ -273,6 +281,7 @@ class EsqlClient(NamespacedClient):
             will be removed from the `columns` and `values` portion of the results. If
             `true`, the response will include an extra section under the name `all_columns`
             which has the name of all the columns.
+        :param format: A short version of the Accept header, for example `json` or `yaml`.
         :param keep_alive: The period for which the query and its results are stored
             in the cluster. When this period expires, the query and its results are deleted,
             even if the query is still ongoing.
@@ -295,6 +304,8 @@ class EsqlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if format is not None:
+            __query["format"] = format
         if keep_alive is not None:
             __query["keep_alive"] = keep_alive
         if pretty is not None:
