@@ -280,7 +280,10 @@ class Float(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -387,7 +390,10 @@ class Integer(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -463,7 +469,10 @@ class Object(Field):
         if subobjects is not DEFAULT:
             kwargs["subobjects"] = subobjects
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -575,6 +584,7 @@ class AggregateMetricDouble(Field):
     """
     :arg default_metric: (required)
     :arg metrics: (required)
+    :arg ignore_malformed:
     :arg time_series_metric:
     :arg meta: Metadata about the field.
     :arg properties:
@@ -595,6 +605,7 @@ class AggregateMetricDouble(Field):
         *args: Any,
         default_metric: Union[str, "DefaultType"] = DEFAULT,
         metrics: Union[Sequence[str], "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         time_series_metric: Union[
             Literal["gauge", "counter", "summary", "histogram", "position"],
             "DefaultType",
@@ -615,6 +626,8 @@ class AggregateMetricDouble(Field):
             kwargs["default_metric"] = default_metric
         if metrics is not DEFAULT:
             kwargs["metrics"] = metrics
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
         if time_series_metric is not DEFAULT:
             kwargs["time_series_metric"] = time_series_metric
         if meta is not DEFAULT:
@@ -727,7 +740,10 @@ class Binary(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -838,7 +854,10 @@ class Boolean(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -953,7 +972,10 @@ class Byte(Integer):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1043,7 +1065,10 @@ class Completion(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1251,7 +1276,10 @@ class Date(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1376,7 +1404,10 @@ class DateNanos(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1455,7 +1486,10 @@ class DateRange(RangeField):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1658,7 +1692,10 @@ class Double(Float):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1733,7 +1770,10 @@ class DoubleRange(RangeField):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1762,6 +1802,7 @@ class Flattened(Field):
     :arg null_value:
     :arg similarity:
     :arg split_queries_on_whitespace:
+    :arg time_series_dimensions:
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -1790,6 +1831,7 @@ class Flattened(Field):
         null_value: Union[str, "DefaultType"] = DEFAULT,
         similarity: Union[str, "DefaultType"] = DEFAULT,
         split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
+        time_series_dimensions: Union[Sequence[str], "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -1820,6 +1862,8 @@ class Flattened(Field):
             kwargs["similarity"] = similarity
         if split_queries_on_whitespace is not DEFAULT:
             kwargs["split_queries_on_whitespace"] = split_queries_on_whitespace
+        if time_series_dimensions is not DEFAULT:
+            kwargs["time_series_dimensions"] = time_series_dimensions
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
@@ -1892,7 +1936,10 @@ class FloatRange(RangeField):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -1918,6 +1965,7 @@ class GeoPoint(Field):
     :arg index:
     :arg on_script_error:
     :arg script:
+    :arg time_series_metric:
     :arg doc_values:
     :arg copy_to:
     :arg store:
@@ -1951,6 +1999,9 @@ class GeoPoint(Field):
         index: Union[bool, "DefaultType"] = DEFAULT,
         on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "position"], "DefaultType"
+        ] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
@@ -1982,10 +2033,15 @@ class GeoPoint(Field):
             kwargs["on_script_error"] = on_script_error
         if script is not DEFAULT:
             kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2074,7 +2130,10 @@ class GeoShape(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2177,7 +2236,10 @@ class HalfFloat(Float):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2360,7 +2422,10 @@ class IcuCollationKeyword(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2435,7 +2500,10 @@ class IntegerRange(RangeField):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2527,7 +2595,10 @@ class Ip(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2611,7 +2682,10 @@ class IpRange(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2781,7 +2855,10 @@ class Keyword(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2884,7 +2961,10 @@ class Long(Integer):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -2959,7 +3039,10 @@ class LongRange(RangeField):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3016,7 +3099,10 @@ class MatchOnlyText(Field):
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         super().__init__(*args, **kwargs)
 
 
@@ -3064,7 +3150,10 @@ class Murmur3(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3134,7 +3223,10 @@ class Nested(Object):
         if include_in_root is not DEFAULT:
             kwargs["include_in_root"] = include_in_root
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3205,7 +3297,10 @@ class Passthrough(Field):
         if time_series_dimension is not DEFAULT:
             kwargs["time_series_dimension"] = time_series_dimension
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3334,7 +3429,10 @@ class Point(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3452,6 +3550,62 @@ class RankFeatures(Field):
         super().__init__(*args, **kwargs)
 
 
+class RankVectors(Field):
+    """
+    Technical preview
+
+    :arg element_type:
+    :arg dims:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "rank_vectors"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        element_type: Union[Literal["byte", "float", "bit"], "DefaultType"] = DEFAULT,
+        dims: Union[int, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if element_type is not DEFAULT:
+            kwargs["element_type"] = element_type
+        if dims is not DEFAULT:
+            kwargs["dims"] = dims
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
 class ScaledFloat(Float):
     """
     :arg null_value:
@@ -3541,7 +3695,10 @@ class ScaledFloat(Float):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3657,7 +3814,10 @@ class SearchAsYouType(Field):
         if term_vector is not DEFAULT:
             kwargs["term_vector"] = term_vector
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3689,6 +3849,9 @@ class SemanticText(Field):
         by using the Update mapping API. Use the Create inference API to
         create the endpoint. If not specified, the inference endpoint
         defined by inference_id will be used at both index and query time.
+    :arg index_options: Settings for index_options that override any
+        defaults used by semantic_text, for example specific quantization
+        settings.
     :arg chunking_settings: Settings for chunking text into smaller
         passages. If specified, these will override the chunking settings
         sent in the inference endpoint associated with inference_id. If
@@ -3704,6 +3867,9 @@ class SemanticText(Field):
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         inference_id: Union[str, "DefaultType"] = DEFAULT,
         search_inference_id: Union[str, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            "types.SemanticTextIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         chunking_settings: Union[
             "types.ChunkingSettings", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
@@ -3715,6 +3881,8 @@ class SemanticText(Field):
             kwargs["inference_id"] = inference_id
         if search_inference_id is not DEFAULT:
             kwargs["search_inference_id"] = search_inference_id
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
         if chunking_settings is not DEFAULT:
             kwargs["chunking_settings"] = chunking_settings
         super().__init__(*args, **kwargs)
@@ -3783,7 +3951,10 @@ class Shape(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3886,7 +4057,10 @@ class Short(Integer):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -3906,6 +4080,7 @@ class Short(Integer):
 
 class SparseVector(Field):
     """
+    :arg store:
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -3923,6 +4098,7 @@ class SparseVector(Field):
     def __init__(
         self,
         *args: Any,
+        store: Union[bool, "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -3935,6 +4111,8 @@ class SparseVector(Field):
         ] = DEFAULT,
         **kwargs: Any,
     ):
+        if store is not DEFAULT:
+            kwargs["store"] = store
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
@@ -4070,7 +4248,10 @@ class Text(Field):
         if term_vector is not DEFAULT:
             kwargs["term_vector"] = term_vector
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -4153,7 +4334,10 @@ class TokenCount(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -4256,7 +4440,10 @@ class UnsignedLong(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -4318,7 +4505,10 @@ class Version(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
@@ -4384,7 +4574,10 @@ class Wildcard(Field):
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
-            kwargs["copy_to"] = str(copy_to)
+            if isinstance(copy_to, list):
+                kwargs["copy_to"] = [str(field) for field in copy_to]
+            else:
+                kwargs["copy_to"] = str(copy_to)
         if store is not DEFAULT:
             kwargs["store"] = store
         if meta is not DEFAULT:
