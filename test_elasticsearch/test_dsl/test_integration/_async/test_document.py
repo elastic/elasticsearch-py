@@ -23,7 +23,7 @@
 
 from datetime import datetime
 from ipaddress import ip_address
-from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Tuple, Union
+from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Optional, Tuple, Union
 
 import pytest
 from pytest import raises
@@ -42,6 +42,7 @@ from elasticsearch.dsl import (
     Ip,
     Keyword,
     Long,
+    M,
     Mapping,
     MetaField,
     Nested,
@@ -52,6 +53,8 @@ from elasticsearch.dsl import (
     analyzer,
     mapped_field,
 )
+from elasticsearch.dsl.query import Match
+from elasticsearch.dsl.types import MatchQuery
 from elasticsearch.dsl.utils import AttrList
 from elasticsearch.helpers.errors import BulkIndexError
 
@@ -850,3 +853,51 @@ async def test_dense_vector(
     assert docs[0].float_vector == doc.float_vector
     assert docs[0].byte_vector == doc.byte_vector
     assert docs[0].bit_vector == doc.bit_vector
+
+
+@pytest.mark.asyncio
+async def test_copy_to(async_client: AsyncElasticsearch) -> None:
+    class Person(AsyncDocument):
+        first_name: M[str] = mapped_field(Text(copy_to=["full_name", "all"]))
+        last_name: M[str] = mapped_field(Text(copy_to=["full_name", "all"]))
+        birth_place: M[str] = mapped_field(Text(copy_to="all"))
+        full_name: M[Optional[str]] = mapped_field(init=False)
+        all: M[Optional[str]] = mapped_field(init=False)
+
+        class Index:
+            name = "people"
+
+    await Person._index.delete(ignore_unavailable=True)
+    await Person.init()
+
+    person = Person(first_name="Jane", last_name="Doe", birth_place="Springfield")
+    await person.save()
+    await Person._index.refresh()
+
+    match = (
+        await Person.search()
+        .query(Match(Person.full_name, MatchQuery(query="Jane")))
+        .execute()
+    )
+    assert len(match) == 1
+
+    match = (
+        await Person.search()
+        .query(Match(Person.all, MatchQuery(query="Doe")))
+        .execute()
+    )
+    assert len(match) == 1
+
+    match = (
+        await Person.search()
+        .query(Match(Person.full_name, MatchQuery(query="Springfield")))
+        .execute()
+    )
+    assert len(match) == 0
+
+    match = (
+        await Person.search()
+        .query(Match(Person.all, MatchQuery(query="Springfield")))
+        .execute()
+    )
+    assert len(match) == 1

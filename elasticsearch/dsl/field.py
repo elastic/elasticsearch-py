@@ -584,6 +584,7 @@ class AggregateMetricDouble(Field):
     """
     :arg default_metric: (required)
     :arg metrics: (required)
+    :arg ignore_malformed:
     :arg time_series_metric:
     :arg meta: Metadata about the field.
     :arg properties:
@@ -604,6 +605,7 @@ class AggregateMetricDouble(Field):
         *args: Any,
         default_metric: Union[str, "DefaultType"] = DEFAULT,
         metrics: Union[Sequence[str], "DefaultType"] = DEFAULT,
+        ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         time_series_metric: Union[
             Literal["gauge", "counter", "summary", "histogram", "position"],
             "DefaultType",
@@ -624,6 +626,8 @@ class AggregateMetricDouble(Field):
             kwargs["default_metric"] = default_metric
         if metrics is not DEFAULT:
             kwargs["metrics"] = metrics
+        if ignore_malformed is not DEFAULT:
+            kwargs["ignore_malformed"] = ignore_malformed
         if time_series_metric is not DEFAULT:
             kwargs["time_series_metric"] = time_series_metric
         if meta is not DEFAULT:
@@ -1798,6 +1802,7 @@ class Flattened(Field):
     :arg null_value:
     :arg similarity:
     :arg split_queries_on_whitespace:
+    :arg time_series_dimensions:
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -1826,6 +1831,7 @@ class Flattened(Field):
         null_value: Union[str, "DefaultType"] = DEFAULT,
         similarity: Union[str, "DefaultType"] = DEFAULT,
         split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
+        time_series_dimensions: Union[Sequence[str], "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -1856,6 +1862,8 @@ class Flattened(Field):
             kwargs["similarity"] = similarity
         if split_queries_on_whitespace is not DEFAULT:
             kwargs["split_queries_on_whitespace"] = split_queries_on_whitespace
+        if time_series_dimensions is not DEFAULT:
+            kwargs["time_series_dimensions"] = time_series_dimensions
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
@@ -1957,6 +1965,7 @@ class GeoPoint(Field):
     :arg index:
     :arg on_script_error:
     :arg script:
+    :arg time_series_metric:
     :arg doc_values:
     :arg copy_to:
     :arg store:
@@ -1990,6 +1999,9 @@ class GeoPoint(Field):
         index: Union[bool, "DefaultType"] = DEFAULT,
         on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "position"], "DefaultType"
+        ] = DEFAULT,
         doc_values: Union[bool, "DefaultType"] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
@@ -2021,6 +2033,8 @@ class GeoPoint(Field):
             kwargs["on_script_error"] = on_script_error
         if script is not DEFAULT:
             kwargs["script"] = script
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
         if doc_values is not DEFAULT:
             kwargs["doc_values"] = doc_values
         if copy_to is not DEFAULT:
@@ -3536,6 +3550,62 @@ class RankFeatures(Field):
         super().__init__(*args, **kwargs)
 
 
+class RankVectors(Field):
+    """
+    Technical preview
+
+    :arg element_type:
+    :arg dims:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "rank_vectors"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        element_type: Union[Literal["byte", "float", "bit"], "DefaultType"] = DEFAULT,
+        dims: Union[int, "DefaultType"] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if element_type is not DEFAULT:
+            kwargs["element_type"] = element_type
+        if dims is not DEFAULT:
+            kwargs["dims"] = dims
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
 class ScaledFloat(Float):
     """
     :arg null_value:
@@ -4010,6 +4080,7 @@ class Short(Integer):
 
 class SparseVector(Field):
     """
+    :arg store:
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -4027,6 +4098,7 @@ class SparseVector(Field):
     def __init__(
         self,
         *args: Any,
+        store: Union[bool, "DefaultType"] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -4039,6 +4111,8 @@ class SparseVector(Field):
         ] = DEFAULT,
         **kwargs: Any,
     ):
+        if store is not DEFAULT:
+            kwargs["store"] = store
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
