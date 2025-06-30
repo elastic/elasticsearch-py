@@ -363,7 +363,7 @@ class UpdateByQueryResponse(AttrDict[Any], Generic[_R]):
     deleted: int
     requests_per_second: float
     retries: "types.Retries"
-    task: str
+    task: Union[str, int]
     timed_out: bool
     took: Any
     total: int
