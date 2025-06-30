@@ -945,7 +945,7 @@ class GeoDistanceSort(AttrDict[Any]):
 
 class GeoGridQuery(AttrDict[Any]):
     """
-    :arg geogrid:
+    :arg geotile:
     :arg geohash:
     :arg geohex:
     :arg boost: Floating point number used to decrease or increase the
@@ -956,7 +956,7 @@ class GeoGridQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    geogrid: Union[str, DefaultType]
+    geotile: Union[str, DefaultType]
     geohash: Union[str, DefaultType]
     geohex: Union[str, DefaultType]
     boost: Union[float, DefaultType]
@@ -965,15 +965,15 @@ class GeoGridQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        geogrid: Union[str, DefaultType] = DEFAULT,
+        geotile: Union[str, DefaultType] = DEFAULT,
         geohash: Union[str, DefaultType] = DEFAULT,
         geohex: Union[str, DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
-        if geogrid is not DEFAULT:
-            kwargs["geogrid"] = geogrid
+        if geotile is not DEFAULT:
+            kwargs["geotile"] = geotile
         if geohash is not DEFAULT:
             kwargs["geohash"] = geohash
         if geohex is not DEFAULT:
@@ -1211,6 +1211,7 @@ class Highlight(AttrDict[Any]):
 
     fields: Union[
         Mapping[Union[str, InstrumentedField], "HighlightField"],
+        Sequence[Mapping[Union[str, InstrumentedField], "HighlightField"]],
         Dict[str, Any],
         DefaultType,
     ]
@@ -1242,6 +1243,7 @@ class Highlight(AttrDict[Any]):
         *,
         fields: Union[
             Mapping[Union[str, InstrumentedField], "HighlightField"],
+            Sequence[Mapping[Union[str, InstrumentedField], "HighlightField"]],
             Dict[str, Any],
             DefaultType,
         ] = DEFAULT,
@@ -1799,6 +1801,8 @@ class IntervalsContainer(AttrDict[Any]):
     :arg match: Matches analyzed text.
     :arg prefix: Matches terms that start with a specified set of
         characters.
+    :arg range:
+    :arg regexp:
     :arg wildcard: Matches terms using a wildcard pattern.
     """
 
@@ -1807,6 +1811,8 @@ class IntervalsContainer(AttrDict[Any]):
     fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType]
     match: Union["IntervalsMatch", Dict[str, Any], DefaultType]
     prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType]
+    range: Union["IntervalsRange", Dict[str, Any], DefaultType]
+    regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType]
     wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType]
 
     def __init__(
@@ -1817,6 +1823,8 @@ class IntervalsContainer(AttrDict[Any]):
         fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType] = DEFAULT,
         match: Union["IntervalsMatch", Dict[str, Any], DefaultType] = DEFAULT,
         prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType] = DEFAULT,
+        range: Union["IntervalsRange", Dict[str, Any], DefaultType] = DEFAULT,
+        regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType] = DEFAULT,
         wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
@@ -1830,6 +1838,10 @@ class IntervalsContainer(AttrDict[Any]):
             kwargs["match"] = match
         if prefix is not DEFAULT:
             kwargs["prefix"] = prefix
+        if range is not DEFAULT:
+            kwargs["range"] = range
+        if regexp is not DEFAULT:
+            kwargs["regexp"] = regexp
         if wildcard is not DEFAULT:
             kwargs["wildcard"] = wildcard
         super().__init__(kwargs)
@@ -2050,6 +2062,8 @@ class IntervalsQuery(AttrDict[Any]):
     :arg match: Matches analyzed text.
     :arg prefix: Matches terms that start with a specified set of
         characters.
+    :arg range:
+    :arg regexp:
     :arg wildcard: Matches terms using a wildcard pattern.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
@@ -2064,6 +2078,8 @@ class IntervalsQuery(AttrDict[Any]):
     fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType]
     match: Union["IntervalsMatch", Dict[str, Any], DefaultType]
     prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType]
+    range: Union["IntervalsRange", Dict[str, Any], DefaultType]
+    regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType]
     wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
@@ -2076,6 +2092,8 @@ class IntervalsQuery(AttrDict[Any]):
         fuzzy: Union["IntervalsFuzzy", Dict[str, Any], DefaultType] = DEFAULT,
         match: Union["IntervalsMatch", Dict[str, Any], DefaultType] = DEFAULT,
         prefix: Union["IntervalsPrefix", Dict[str, Any], DefaultType] = DEFAULT,
+        range: Union["IntervalsRange", Dict[str, Any], DefaultType] = DEFAULT,
+        regexp: Union["IntervalsRegexp", Dict[str, Any], DefaultType] = DEFAULT,
         wildcard: Union["IntervalsWildcard", Dict[str, Any], DefaultType] = DEFAULT,
         boost: Union[float, DefaultType] = DEFAULT,
         _name: Union[str, DefaultType] = DEFAULT,
@@ -2091,12 +2109,93 @@ class IntervalsQuery(AttrDict[Any]):
             kwargs["match"] = match
         if prefix is not DEFAULT:
             kwargs["prefix"] = prefix
+        if range is not DEFAULT:
+            kwargs["range"] = range
+        if regexp is not DEFAULT:
+            kwargs["regexp"] = regexp
         if wildcard is not DEFAULT:
             kwargs["wildcard"] = wildcard
         if boost is not DEFAULT:
             kwargs["boost"] = boost
         if _name is not DEFAULT:
             kwargs["_name"] = _name
+        super().__init__(kwargs)
+
+
+class IntervalsRange(AttrDict[Any]):
+    """
+    :arg analyzer: Analyzer used to analyze the `prefix`.
+    :arg gte: Lower term, either gte or gt must be provided.
+    :arg gt: Lower term, either gte or gt must be provided.
+    :arg lte: Upper term, either lte or lt must be provided.
+    :arg lt: Upper term, either lte or lt must be provided.
+    :arg use_field: If specified, match intervals from this field rather
+        than the top-level field. The `prefix` is normalized using the
+        search analyzer from this field, unless `analyzer` is specified
+        separately.
+    """
+
+    analyzer: Union[str, DefaultType]
+    gte: Union[str, DefaultType]
+    gt: Union[str, DefaultType]
+    lte: Union[str, DefaultType]
+    lt: Union[str, DefaultType]
+    use_field: Union[str, InstrumentedField, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        analyzer: Union[str, DefaultType] = DEFAULT,
+        gte: Union[str, DefaultType] = DEFAULT,
+        gt: Union[str, DefaultType] = DEFAULT,
+        lte: Union[str, DefaultType] = DEFAULT,
+        lt: Union[str, DefaultType] = DEFAULT,
+        use_field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if gte is not DEFAULT:
+            kwargs["gte"] = gte
+        if gt is not DEFAULT:
+            kwargs["gt"] = gt
+        if lte is not DEFAULT:
+            kwargs["lte"] = lte
+        if lt is not DEFAULT:
+            kwargs["lt"] = lt
+        if use_field is not DEFAULT:
+            kwargs["use_field"] = str(use_field)
+        super().__init__(kwargs)
+
+
+class IntervalsRegexp(AttrDict[Any]):
+    """
+    :arg pattern: (required) Regex pattern.
+    :arg analyzer: Analyzer used to analyze the `prefix`.
+    :arg use_field: If specified, match intervals from this field rather
+        than the top-level field. The `prefix` is normalized using the
+        search analyzer from this field, unless `analyzer` is specified
+        separately.
+    """
+
+    pattern: Union[str, DefaultType]
+    analyzer: Union[str, DefaultType]
+    use_field: Union[str, InstrumentedField, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        pattern: Union[str, DefaultType] = DEFAULT,
+        analyzer: Union[str, DefaultType] = DEFAULT,
+        use_field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if pattern is not DEFAULT:
+            kwargs["pattern"] = pattern
+        if analyzer is not DEFAULT:
+            kwargs["analyzer"] = analyzer
+        if use_field is not DEFAULT:
+            kwargs["use_field"] = str(use_field)
         super().__init__(kwargs)
 
 
@@ -3040,6 +3139,26 @@ class ScriptedHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SemanticTextIndexOptions(AttrDict[Any]):
+    """
+    :arg dense_vector:
+    """
+
+    dense_vector: Union["DenseVectorIndexOptions", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        dense_vector: Union[
+            "DenseVectorIndexOptions", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if dense_vector is not DEFAULT:
+            kwargs["dense_vector"] = dense_vector
+        super().__init__(kwargs)
+
+
 class ShapeFieldQuery(AttrDict[Any]):
     """
     :arg indexed_shape: Queries using a pre-indexed shape.
@@ -3117,10 +3236,15 @@ class SortOptions(AttrDict[Any]):
 
 class SourceFilter(AttrDict[Any]):
     """
-    :arg excludes:
-    :arg includes:
+    :arg exclude_vectors: If `true`, vector fields are excluded from the
+        returned source.  This option takes precedence over `includes`:
+        any vector field will remain excluded even if it matches an
+        `includes` rule.
+    :arg excludes: A list of fields to exclude from the returned source.
+    :arg includes: A list of fields to include in the returned source.
     """
 
+    exclude_vectors: Union[bool, DefaultType]
     excludes: Union[
         Union[str, InstrumentedField],
         Sequence[Union[str, InstrumentedField]],
@@ -3135,6 +3259,7 @@ class SourceFilter(AttrDict[Any]):
     def __init__(
         self,
         *,
+        exclude_vectors: Union[bool, DefaultType] = DEFAULT,
         excludes: Union[
             Union[str, InstrumentedField],
             Sequence[Union[str, InstrumentedField]],
@@ -3147,6 +3272,8 @@ class SourceFilter(AttrDict[Any]):
         ] = DEFAULT,
         **kwargs: Any,
     ):
+        if exclude_vectors is not DEFAULT:
+            kwargs["exclude_vectors"] = exclude_vectors
         if excludes is not DEFAULT:
             kwargs["excludes"] = str(excludes)
         if includes is not DEFAULT:
@@ -3634,15 +3761,30 @@ class TDigest(AttrDict[Any]):
     :arg compression: Limits the maximum number of nodes used by the
         underlying TDigest algorithm to `20 * compression`, enabling
         control of memory usage and approximation error.
+    :arg execution_hint: The default implementation of TDigest is
+        optimized for performance, scaling to millions or even billions of
+        sample values while maintaining acceptable accuracy levels (close
+        to 1% relative error for millions of samples in some cases). To
+        use an implementation optimized for accuracy, set this parameter
+        to high_accuracy instead. Defaults to `default` if omitted.
     """
 
     compression: Union[int, DefaultType]
+    execution_hint: Union[Literal["default", "high_accuracy"], DefaultType]
 
     def __init__(
-        self, *, compression: Union[int, DefaultType] = DEFAULT, **kwargs: Any
+        self,
+        *,
+        compression: Union[int, DefaultType] = DEFAULT,
+        execution_hint: Union[
+            Literal["default", "high_accuracy"], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
     ):
         if compression is not DEFAULT:
             kwargs["compression"] = compression
+        if execution_hint is not DEFAULT:
+            kwargs["execution_hint"] = execution_hint
         super().__init__(kwargs)
 
 
@@ -4112,7 +4254,7 @@ class WeightedTokensQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    tokens: Union[Mapping[str, float], DefaultType]
+    tokens: Union[Mapping[str, float], Sequence[Mapping[str, float]], DefaultType]
     pruning_config: Union["TokenPruningConfig", Dict[str, Any], DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
@@ -4120,7 +4262,9 @@ class WeightedTokensQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        tokens: Union[Mapping[str, float], DefaultType] = DEFAULT,
+        tokens: Union[
+            Mapping[str, float], Sequence[Mapping[str, float]], DefaultType
+        ] = DEFAULT,
         pruning_config: Union[
             "TokenPruningConfig", Dict[str, Any], DefaultType
         ] = DEFAULT,
@@ -4806,7 +4950,7 @@ class ErrorCause(AttrDict[Any]):
     """
 
     type: str
-    reason: str
+    reason: Union[str, None]
     stack_trace: str
     caused_by: "ErrorCause"
     root_cause: Sequence["ErrorCause"]
