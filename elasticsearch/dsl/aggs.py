@@ -373,6 +373,12 @@ class Boxplot(Agg[_R]):
     :arg compression: Limits the maximum number of nodes used by the
         underlying TDigest algorithm to `20 * compression`, enabling
         control of memory usage and approximation error.
+    :arg execution_hint: The default implementation of TDigest is
+        optimized for performance, scaling to millions or even billions of
+        sample values while maintaining acceptable accuracy levels (close
+        to 1% relative error for millions of samples in some cases). To
+        use an implementation optimized for accuracy, set this parameter
+        to high_accuracy instead. Defaults to `default` if omitted.
     :arg field: The field on which to run the aggregation.
     :arg missing: The value to apply to documents that do not have a
         value. By default, documents without a value are ignored.
@@ -385,6 +391,9 @@ class Boxplot(Agg[_R]):
         self,
         *,
         compression: Union[float, "DefaultType"] = DEFAULT,
+        execution_hint: Union[
+            Literal["default", "high_accuracy"], "DefaultType"
+        ] = DEFAULT,
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
@@ -392,6 +401,7 @@ class Boxplot(Agg[_R]):
     ):
         super().__init__(
             compression=compression,
+            execution_hint=execution_hint,
             field=field,
             missing=missing,
             script=script,
@@ -1900,6 +1910,12 @@ class MedianAbsoluteDeviation(Agg[_R]):
         underlying TDigest algorithm to `20 * compression`, enabling
         control of memory usage and approximation error. Defaults to
         `1000` if omitted.
+    :arg execution_hint: The default implementation of TDigest is
+        optimized for performance, scaling to millions or even billions of
+        sample values while maintaining acceptable accuracy levels (close
+        to 1% relative error for millions of samples in some cases). To
+        use an implementation optimized for accuracy, set this parameter
+        to high_accuracy instead. Defaults to `default` if omitted.
     :arg format:
     :arg field: The field on which to run the aggregation.
     :arg missing: The value to apply to documents that do not have a
@@ -1913,6 +1929,9 @@ class MedianAbsoluteDeviation(Agg[_R]):
         self,
         *,
         compression: Union[float, "DefaultType"] = DEFAULT,
+        execution_hint: Union[
+            Literal["default", "high_accuracy"], "DefaultType"
+        ] = DEFAULT,
         format: Union[str, "DefaultType"] = DEFAULT,
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
@@ -1921,6 +1940,7 @@ class MedianAbsoluteDeviation(Agg[_R]):
     ):
         super().__init__(
             compression=compression,
+            execution_hint=execution_hint,
             format=format,
             field=field,
             missing=missing,

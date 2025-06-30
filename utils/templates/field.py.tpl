@@ -245,7 +245,14 @@ class {{ k.name }}({{ k.parent }}):
             {% if not arg.positional %}
         if {{ arg.name }} is not DEFAULT:
                 {% if "InstrumentedField" in arg.type %}
+                    {% if "Sequence" in arg.type %}
+            if isinstance({{ arg.name }}, list):
+                kwargs["{{ arg.name }}"] = [str(field) for field in {{ arg.name }}]
+            else:
+                kwargs["{{ arg.name }}"] = str({{ arg.name }})
+                    {% else %}
             kwargs["{{ arg.name }}"] = str({{ arg.name }})
+                    {% endif %}
                 {% else %}
             kwargs["{{ arg.name }}"] = {{ arg.name }}
                 {% endif %}
