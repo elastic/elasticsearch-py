@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import json
 from datetime import date, datetime
 from fnmatch import fnmatch
 from typing import (
@@ -56,7 +57,59 @@ class MetaField:
         self.args, self.kwargs = args, kwargs
 
 
-class InstrumentedField:
+class InstrumentedExpression:
+    """Proxy object for a ES|QL expression."""
+
+    def __init__(self, expr: str):
+        self._expr = expr
+
+    def __str__(self) -> str:
+        return self._expr
+
+    def __repr__(self) -> str:
+        return f"InstrumentedExpression[{self._expr}]"
+
+    def __pos__(self) -> "InstrumentedExpression":
+        return self
+
+    def __neg__(self) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"-({self._expr})")
+
+    def __eq__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
+        return InstrumentedExpression(f"{self._expr} == {json.dumps(value)}")
+
+    def __ne__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
+        return InstrumentedExpression(f"{self._expr} != {json.dumps(value)}")
+
+    def __lt__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} < {json.dumps(value)}")
+
+    def __gt__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} > {json.dumps(value)}")
+
+    def __le__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} <= {json.dumps(value)}")
+
+    def __ge__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} >= {json.dumps(value)}")
+
+    def __add__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} + {json.dumps(value)}")
+
+    def __sub__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} - {json.dumps(value)}")
+
+    def __mul__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} * {json.dumps(value)}")
+
+    def __truediv__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} / {json.dumps(value)}")
+
+    def __mod__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} % {json.dumps(value)}")
+
+
+class InstrumentedField(InstrumentedExpression):
     """Proxy object for a mapped document field.
 
     An object of this instance is returned when a field is accessed as a class
@@ -71,8 +124,8 @@ class InstrumentedField:
         s = s.sort(-MyDocument.name)  # sort by name in descending order
     """
 
-    def __init__(self, name: str, field: Field):
-        self._name = name
+    def __init__(self, name: str, field: Optional[Field]):
+        super().__init__(name)
         self._field = field
 
     # note that the return value type here assumes classes will only be used to
@@ -83,26 +136,41 @@ class InstrumentedField:
             # first let's see if this is an attribute of this object
             return super().__getattribute__(attr)  # type: ignore[no-any-return]
         except AttributeError:
-            try:
-                # next we see if we have a sub-field with this name
-                return InstrumentedField(f"{self._name}.{attr}", self._field[attr])
-            except KeyError:
-                # lastly we let the wrapped field resolve this attribute
-                return getattr(self._field, attr)  # type: ignore[no-any-return]
+            if self._field:
+                try:
+                    # next we see if we have a sub-field with this name
+                    return InstrumentedField(f"{self._expr}.{attr}", self._field[attr])
+                except KeyError:
+                    # lastly we let the wrapped field resolve this attribute
+                    return getattr(self._field, attr)  # type: ignore[no-any-return]
+            else:
+                raise
 
-    def __pos__(self) -> str:
+    def __pos__(self) -> str:  # type: ignore[override]
         """Return the field name representation for ascending sort order"""
-        return f"{self._name}"
+        return f"{self._expr}"
 
-    def __neg__(self) -> str:
+    def __neg__(self) -> str:  # type: ignore[override]
         """Return the field name representation for descending sort order"""
-        return f"-{self._name}"
+        return f"-{self._expr}"
+
+    def asc(self) -> "InstrumentedField":
+        return InstrumentedField(f"{self._expr} ASC", None)
+
+    def desc(self) -> "InstrumentedField":
+        return InstrumentedField(f"{self._expr} DESC", None)
+
+    def nulls_first(self) -> "InstrumentedField":
+        return InstrumentedField(f"{self._expr} NULLS FIRST", None)
+
+    def nulls_last(self) -> "InstrumentedField":
+        return InstrumentedField(f"{self._expr} NULLS LAST", None)
 
     def __str__(self) -> str:
-        return self._name
+        return self._expr
 
     def __repr__(self) -> str:
-        return f"InstrumentedField[{self._name}]"
+        return f"InstrumentedField[{self._expr}]"
 
 
 class DocumentMeta(type):
