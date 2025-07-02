@@ -38,6 +38,10 @@ ES|QL Query Builder
    :members:
    :exclude-members: __init__
 
+.. autoclass:: elasticsearch.esql.esql.Fork
+   :members:
+   :exclude-members: __init__
+
 .. autoclass:: elasticsearch.esql.esql.Grok
    :members:
    :exclude-members: __init__

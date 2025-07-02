@@ -77,41 +77,61 @@ class ESQL(ABC):
         """
         return Show(item)
 
+    @staticmethod
+    def branch() -> "Branch":
+        """This method can only be used inside a ``FORK`` command to create each branch.
+
+        Examples::
+
+            ESQL.from_("employees").fork(
+                ESQL.branch().where("emp_no == 10001"),
+                ESQL.branch().where("emp_no == 10002"),
+            )
+        """
+        return Branch()
+
 
 class ESQLBase(ABC):
     """ """
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
-        self.parent = parent
+        self._parent = parent
 
     def __repr__(self) -> str:
         return self.render()
 
     def render(self) -> str:
         return (
-            self.parent.render() + "\n| " if self.parent else ""
+            self._parent.render() + "\n| " if self._parent else ""
         ) + self._render_internal()
 
     @abstractmethod
     def _render_internal(self) -> str:
         pass
 
-    # def change_point(self, value: FieldType) -> "ChangePoint":
-    #     """`CHANGE_POINT` detects spikes, dips, and change points in a metric.
-    #
-    #     :param value: The column with the metric in which you want to detect a change point.
-    #
-    #     Examples::
-    #
-    #         (
-    #             ESQL.row(key=list(range(1, 26)))
-    #             .mv_expand("key")
-    #             .eval(value="CASE(key<13, 0, 42)")
-    #             .change_point("value").on("key")
-    #             .where("type IS NOT NULL")
-    #         )
-    #     """
-    #     return ChangePoint(self, value)
+    def _is_forked(self) -> bool:
+        if self.__class__.__name__ == "Fork":
+            return True
+        if self._parent:
+            return self._parent._is_forked()
+        return False
+
+    def change_point(self, value: FieldType) -> "ChangePoint":
+        """`CHANGE_POINT` detects spikes, dips, and change points in a metric.
+
+        :param value: The column with the metric in which you want to detect a change point.
+
+        Examples::
+
+            (
+                ESQL.row(key=list(range(1, 26)))
+                .mv_expand("key")
+                .eval(value="CASE(key<13, 0, 42)")
+                .change_point("value").on("key")
+                .where("type IS NOT NULL")
+            )
+        """
+        return ChangePoint(self, value)
 
     def dissect(self, input: FieldType, pattern: str) -> "Dissect":
         """``DISSECT`` enables you to extract structured data out of a string.
@@ -190,6 +210,38 @@ class ESQLBase(ABC):
             )
         """
         return Eval(self, *columns, **named_columns)
+
+    def fork(
+        self,
+        fork1: "ESQLBase",
+        fork2: Optional["ESQLBase"] = None,
+        fork3: Optional["ESQLBase"] = None,
+        fork4: Optional["ESQLBase"] = None,
+        fork5: Optional["ESQLBase"] = None,
+        fork6: Optional["ESQLBase"] = None,
+        fork7: Optional["ESQLBase"] = None,
+        fork8: Optional["ESQLBase"] = None,
+    ) -> "Fork":
+        """The ``FORK`` processing command creates multiple execution branches to operate on the
+        same input data and combines the results in a single output table.
+
+        :param fork<n>: Up to 8 execution branches, created with the ``ESQL.branch()`` method.
+
+        Examples::
+
+            (
+                ESQL.from_("employees")
+                .fork(
+                    ESQL.branch().where("emp_no == 10001"),
+                    ESQL.branch().where("emp_no == 10002"),
+                )
+                .keep("emp_no", "_fork")
+                .sort("emp_no")
+            )
+        """
+        if self._is_forked():
+            raise ValueError("a query can only have one fork")
+        return Fork(self, fork1, fork2, fork3, fork4, fork5, fork6, fork7, fork8)
 
     def grok(self, input: FieldType, pattern: str) -> "Grok":
         """``GROK`` enables you to extract structured data out of a string.
@@ -509,49 +561,62 @@ class Show(ESQLBase):
         return f"SHOW {self._item}"
 
 
-# class ChangePoint(ESQLBase):
-#     """Implementation of the ``CHANGE POINT`` processing command.
-#
-#     This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
-#     to make it possible to chain all the commands that belong to an ES|QL query
-#     in a single expression.
-#     """
-#     def __init__(self, parent: ESQLBase, value: FieldType):
-#         super().__init__(parent)
-#         self._value = value
-#         self._key: Optional[FieldType] = None
-#         self._type_name: Optional[str] = None
-#         self._pvalue_name: Optional[str] = None
-#
-#     def on(self, key: FieldType) -> "ChangePoint":
-#         """Continuation of the `CHANGE_POINT` command.
-#
-#         :param key: The column with the key to order the values by. If not specified,
-#                     `@timestamp` is used.
-#         """
-#         self._key = key
-#         return self
-#
-#     def as_(self, type_name: str, pvalue_name: str) -> "ChangePoint":
-#         """Continuation of the `CHANGE_POINT` command.
-#
-#         :param type_name: The name of the output column with the change point type.
-#                           If not specified, `type` is used.
-#         :param pvalue_name: The name of the output column with the p-value that indicates
-#                             how extreme the change point is. If not specified, `pvalue` is used.
-#         """
-#         self._type_name = type_name
-#         self._pvalue_name = pvalue_name
-#         return self
-#
-#     def _render_internal(self) -> str:
-#         key = "" if not self._key else f" ON {self._key}"
-#         names = (
-#             ""
-#             if not self._type_name and not self._pvalue_name
-#             else f' AS {self._type_name or "type"}, {self._pvalue_name or "pvalue"}'
-#         )
-#         return f"CHANGE_POINT {self._value}{key}{names}"
+class Branch(ESQLBase):
+    """Implementation of a branch inside a ``FORK`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    which makes it possible to chain all the commands that belong to the branch
+    in a single expression.
+    """
+
+    def _render_internal(self) -> str:
+        return ""
+
+
+class ChangePoint(ESQLBase):
+    """Implementation of the ``CHANGE POINT`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase, value: FieldType):
+        super().__init__(parent)
+        self._value = value
+        self._key: Optional[FieldType] = None
+        self._type_name: Optional[str] = None
+        self._pvalue_name: Optional[str] = None
+
+    def on(self, key: FieldType) -> "ChangePoint":
+        """Continuation of the `CHANGE_POINT` command.
+
+        :param key: The column with the key to order the values by. If not specified,
+                    `@timestamp` is used.
+        """
+        self._key = key
+        return self
+
+    def as_(self, type_name: str, pvalue_name: str) -> "ChangePoint":
+        """Continuation of the `CHANGE_POINT` command.
+
+        :param type_name: The name of the output column with the change point type.
+                          If not specified, `type` is used.
+        :param pvalue_name: The name of the output column with the p-value that indicates
+                            how extreme the change point is. If not specified, `pvalue` is used.
+        """
+        self._type_name = type_name
+        self._pvalue_name = pvalue_name
+        return self
+
+    def _render_internal(self) -> str:
+        key = "" if not self._key else f" ON {self._key}"
+        names = (
+            ""
+            if not self._type_name and not self._pvalue_name
+            else f' AS {self._type_name or "type"}, {self._pvalue_name or "pvalue"}'
+        )
+        return f"CHANGE_POINT {self._value}{key}{names}"
 
 
 class Dissect(ESQLBase):
@@ -686,6 +751,41 @@ class Eval(ESQLBase):
         else:
             cols = ", ".join([f"{col}" for col in self._columns])
         return f"EVAL {cols}"
+
+
+class Fork(ESQLBase):
+    """Implementation of the ``FORK`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(
+        self,
+        parent: ESQLBase,
+        fork1: ESQLBase,
+        fork2: Optional[ESQLBase] = None,
+        fork3: Optional[ESQLBase] = None,
+        fork4: Optional[ESQLBase] = None,
+        fork5: Optional[ESQLBase] = None,
+        fork6: Optional[ESQLBase] = None,
+        fork7: Optional[ESQLBase] = None,
+        fork8: Optional[ESQLBase] = None,
+    ):
+        super().__init__(parent)
+        self._branches = [fork1, fork2, fork3, fork4, fork5, fork6, fork7, fork8]
+
+    def _render_internal(self) -> str:
+        cmds = ""
+        for branch in self._branches:
+            if branch:
+                cmd = branch.render()[3:].replace("\n", " ")
+                if cmds == "":
+                    cmds = f"( {cmd} )"
+                else:
+                    cmds += f"\n       ( {cmd} )"
+        return f"FORK {cmds}"
 
 
 class Grok(ESQLBase):
