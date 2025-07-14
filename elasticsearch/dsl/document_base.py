@@ -96,17 +96,32 @@ class InstrumentedExpression:
     def __add__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{self._expr} + {json.dumps(value)}")
 
+    def __radd__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{json.dumps(value)} + {self._expr}")
+
     def __sub__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{self._expr} - {json.dumps(value)}")
+
+    def __rsub__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{json.dumps(value)} - {self._expr}")
 
     def __mul__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{self._expr} * {json.dumps(value)}")
 
+    def __rmul__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{json.dumps(value)} * {self._expr}")
+
     def __truediv__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{self._expr} / {json.dumps(value)}")
 
+    def __rtruediv__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{json.dumps(value)} / {self._expr}")
+
     def __mod__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{self._expr} % {json.dumps(value)}")
+
+    def __rmod__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{json.dumps(value)} % {self._expr}")
 
 
 class InstrumentedField(InstrumentedExpression):
