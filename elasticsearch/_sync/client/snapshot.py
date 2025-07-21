@@ -403,6 +403,7 @@ class SnapshotClient(NamespacedClient):
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -418,6 +419,9 @@ class SnapshotClient(NamespacedClient):
         :param master_timeout: The period to wait for the master node. If the master
             node is not available before the timeout expires, the request fails and returns
             an error. To indicate that the request should never timeout, set it to `-1`.
+        :param wait_for_completion: If `true`, the request returns a response when the
+            matching snapshots are all deleted. If `false`, the request returns a response
+            as soon as the deletes are scheduled.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -439,6 +443,8 @@ class SnapshotClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",

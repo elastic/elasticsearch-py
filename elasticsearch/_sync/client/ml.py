@@ -3549,7 +3549,8 @@ class MlClient(NamespacedClient):
           Datafeeds retrieve data from Elasticsearch for analysis by an anomaly detection job.
           You can associate only one datafeed with each anomaly detection job.
           The datafeed contains a query that runs at a defined interval (<code>frequency</code>).
-          If you are concerned about delayed data, you can add a delay (<code>query_delay') at each interval. By default, the datafeed uses the following query: </code>{&quot;match_all&quot;: {&quot;boost&quot;: 1}}`.</p>
+          If you are concerned about delayed data, you can add a delay (<code>query_delay</code>) at each interval.
+          By default, the datafeed uses the following query: <code>{&quot;match_all&quot;: {&quot;boost&quot;: 1}}</code>.</p>
           <p>When Elasticsearch security features are enabled, your datafeed remembers which roles the user who created it had
           at the time of creation and runs the query using those same roles. If you provide secondary authorization headers,
           those credentials are used instead.
@@ -3871,13 +3872,7 @@ class MlClient(NamespacedClient):
         :param description: A description of the job.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
             ignored when frozen.
@@ -4999,7 +4994,7 @@ class MlClient(NamespacedClient):
           <p>Update a data frame analytics job.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ml-update-data-frame-analytics>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-data-frame-analytics>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -5140,13 +5135,7 @@ class MlClient(NamespacedClient):
             check runs only on real-time datafeeds.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param frequency: The interval at which scheduled queries are made while the
             datafeed runs in real time. The default value is either the bucket span for
             short bucket spans, or, for longer bucket spans, a sensible fraction of the
@@ -5801,7 +5790,7 @@ class MlClient(NamespacedClient):
           <p>Validate an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch>`_
 
         :param detector:
         """
