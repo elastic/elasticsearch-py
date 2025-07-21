@@ -2213,13 +2213,10 @@ class SecurityClient(NamespacedClient):
     def get_user_privileges(
         self,
         *,
-        application: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        priviledge: t.Optional[str] = None,
-        username: t.Optional[t.Union[None, str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -2232,19 +2229,10 @@ class SecurityClient(NamespacedClient):
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-get-user-privileges>`_
-
-        :param application: The name of the application. Application privileges are always
-            associated with exactly one application. If you do not specify this parameter,
-            the API returns information about all privileges for all applications.
-        :param priviledge: The name of the privilege. If you do not specify this parameter,
-            the API returns information about all privileges for the requested application.
-        :param username:
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/user/_privileges"
         __query: t.Dict[str, t.Any] = {}
-        if application is not None:
-            __query["application"] = application
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2253,10 +2241,6 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if priviledge is not None:
-            __query["priviledge"] = priviledge
-        if username is not None:
-            __query["username"] = username
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -2345,6 +2329,9 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
         run_as: t.Optional[str] = None,
         username: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -2382,6 +2369,9 @@ class SecurityClient(NamespacedClient):
             types.
         :param password: The user's password. If you specify the `password` grant type,
             this parameter is required. It is not valid with other grant types.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search. If 'wait_for', it waits for a refresh to
+            make this operation visible to search. If 'false', nothing is done with refreshes.
         :param run_as: The name of the user to be impersonated.
         :param username: The user name that identifies the user. If you specify the `password`
             grant type, this parameter is required. It is not valid with other grant
@@ -2403,6 +2393,8 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
         if not __body:
             if api_key is not None:
                 __body["api_key"] = api_key
@@ -2455,6 +2447,7 @@ class SecurityClient(NamespacedClient):
                         "manage_data_frame_transforms",
                         "manage_data_stream_global_retention",
                         "manage_enrich",
+                        "manage_esql",
                         "manage_ilm",
                         "manage_index_templates",
                         "manage_inference",
@@ -2480,6 +2473,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_data_frame_transforms",
                         "monitor_data_stream_global_retention",
                         "monitor_enrich",
+                        "monitor_esql",
                         "monitor_inference",
                         "monitor_ml",
                         "monitor_rollup",
@@ -3126,6 +3120,7 @@ class SecurityClient(NamespacedClient):
                         "manage_data_frame_transforms",
                         "manage_data_stream_global_retention",
                         "manage_enrich",
+                        "manage_esql",
                         "manage_ilm",
                         "manage_index_templates",
                         "manage_inference",
@@ -3151,6 +3146,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_data_frame_transforms",
                         "monitor_data_stream_global_retention",
                         "monitor_enrich",
+                        "monitor_esql",
                         "monitor_inference",
                         "monitor_ml",
                         "monitor_rollup",
@@ -3553,7 +3549,8 @@ class SecurityClient(NamespacedClient):
           You can optionally filter the results with a query.</p>
           <p>To use this API, you must have at least the <code>manage_own_api_key</code> or the <code>read_security</code> cluster privileges.
           If you have only the <code>manage_own_api_key</code> privilege, this API returns only the API keys that you own.
-          If you have the <code>read_security</code>, <code>manage_api_key</code>, or greater privileges (including <code>manage_security</code>), this API returns all API keys regardless of ownership.</p>
+          If you have the <code>read_security</code>, <code>manage_api_key</code>, or greater privileges (including <code>manage_security</code>), this API returns all API keys regardless of ownership.
+          Refer to the linked documentation for examples of how to find API keys:</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-query-api-keys>`_
@@ -4466,6 +4463,7 @@ class SecurityClient(NamespacedClient):
           <p>This API supports updates to an API key's access scope, metadata, and expiration.
           The owner user's information, such as the <code>username</code> and <code>realm</code>, is also updated automatically on every call.</p>
           <p>NOTE: This API cannot update REST API keys, which should be updated by either the update API key or bulk update API keys API.</p>
+          <p>To learn more about how to use this API, refer to the <a href="https://www.elastic.co/docs/reference/elasticsearch/rest-apis/update-cc-api-key-examples">Update cross cluter API key API examples page</a>.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-update-cross-cluster-api-key>`_

@@ -90,6 +90,7 @@ class SynonymsClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        refresh: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -102,6 +103,9 @@ class SynonymsClient(NamespacedClient):
 
         :param set_id: The ID of the synonym set to update.
         :param rule_id: The ID of the synonym rule to delete.
+        :param refresh: If `true`, the request will refresh the analyzers with the deleted
+            synonym rule and wait for the new synonyms to be available before returning.
+            If `false`, analyzers will not be reloaded with the deleted synonym rule
         """
         if set_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'set_id'")
@@ -121,6 +125,8 @@ class SynonymsClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -299,6 +305,7 @@ class SynonymsClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        refresh: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -309,12 +316,16 @@ class SynonymsClient(NamespacedClient):
           If you need to manage more synonym rules, you can create multiple synonym sets.</p>
           <p>When an existing synonyms set is updated, the search analyzers that use the synonyms set are reloaded automatically for all indices.
           This is equivalent to invoking the reload search analyzers API for all indices that use the synonyms set.</p>
+          <p>For practical examples of how to create or update a synonyms set, refer to the External documentation.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-synonyms-put-synonym>`_
 
         :param id: The ID of the synonyms set to be created or updated.
         :param synonyms_set: The synonym rules definitions for the synonyms set.
+        :param refresh: If `true`, the request will refresh the analyzers with the new
+            synonyms set and wait for the new synonyms to be available before returning.
+            If `false`, analyzers will not be reloaded with the new synonym set
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -332,6 +343,8 @@ class SynonymsClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
         if not __body:
             if synonyms_set is not None:
                 __body["synonyms_set"] = synonyms_set
@@ -359,6 +372,7 @@ class SynonymsClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        refresh: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -376,6 +390,9 @@ class SynonymsClient(NamespacedClient):
         :param rule_id: The ID of the synonym rule to be updated or created.
         :param synonyms: The synonym rule information definition, which must be in Solr
             format.
+        :param refresh: If `true`, the request will refresh the analyzers with the new
+            synonym rule and wait for the new synonyms to be available before returning.
+            If `false`, analyzers will not be reloaded with the new synonym rule
         """
         if set_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'set_id'")
@@ -398,6 +415,8 @@ class SynonymsClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
         if not __body:
             if synonyms is not None:
                 __body["synonyms"] = synonyms

@@ -3723,6 +3723,38 @@ class SpanWithinQuery(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SparseVectorIndexOptions(AttrDict[Any]):
+    """
+    :arg prune: Whether to perform pruning, omitting the non-significant
+        tokens from the query to improve query performance. If prune is
+        true but the pruning_config is not specified, pruning will occur
+        but default values will be used. Default: false
+    :arg pruning_config: Optional pruning configuration. If enabled, this
+        will omit non-significant tokens from the query in order to
+        improve query performance. This is only used if prune is set to
+        true. If prune is set to true but pruning_config is not specified,
+        default values will be used.
+    """
+
+    prune: Union[bool, DefaultType]
+    pruning_config: Union["TokenPruningConfig", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        prune: Union[bool, DefaultType] = DEFAULT,
+        pruning_config: Union[
+            "TokenPruningConfig", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if prune is not DEFAULT:
+            kwargs["prune"] = prune
+        if pruning_config is not DEFAULT:
+            kwargs["pruning_config"] = pruning_config
+        super().__init__(kwargs)
+
+
 class SuggestContext(AttrDict[Any]):
     """
     :arg name: (required)

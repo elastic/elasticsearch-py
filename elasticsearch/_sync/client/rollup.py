@@ -419,28 +419,7 @@ class RollupClient(NamespacedClient):
           The following functionality is not available:</p>
           <p><code>size</code>: Because rollups work on pre-aggregated data, no search hits can be returned and so size must be set to zero or omitted entirely.
           <code>highlighter</code>, <code>suggestors</code>, <code>post_filter</code>, <code>profile</code>, <code>explain</code>: These are similarly disallowed.</p>
-          <p><strong>Searching both historical rollup and non-rollup data</strong></p>
-          <p>The rollup search API has the capability to search across both &quot;live&quot; non-rollup data and the aggregated rollup data.
-          This is done by simply adding the live indices to the URI. For example:</p>
-          <pre><code>GET sensor-1,sensor_rollup/_rollup_search
-          {
-            &quot;size&quot;: 0,
-            &quot;aggregations&quot;: {
-               &quot;max_temperature&quot;: {
-                &quot;max&quot;: {
-                  &quot;field&quot;: &quot;temperature&quot;
-                }
-              }
-            }
-          }
-          </code></pre>
-          <p>The rollup search endpoint does two things when the search runs:</p>
-          <ul>
-          <li>The original request is sent to the non-rollup index unaltered.</li>
-          <li>A rewritten version of the original request is sent to the rollup index.</li>
-          </ul>
-          <p>When the two responses are received, the endpoint rewrites the rollup response and merges the two together.
-          During the merging process, if there is any overlap in buckets between the two responses, the buckets from the non-rollup index are used.</p>
+          <p>For more detailed examples of using the rollup search API, including querying rolled-up data only or combining rolled-up and live data, refer to the External documentation.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-rollup-rollup-search>`_
