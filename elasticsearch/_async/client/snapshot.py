@@ -50,7 +50,7 @@ class SnapshotClient(NamespacedClient):
           Trigger the review of the contents of a snapshot repository and delete any stale data not referenced by existing snapshots.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clean-up-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/clean-up-snapshot-repo-api.html>`_
 
         :param name: Snapshot repository to clean up.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -107,7 +107,7 @@ class SnapshotClient(NamespacedClient):
           Clone part of all of a snapshot into another snapshot in the same repository.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clone-snapshot-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/clone-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: The name of the snapshot to clone from
@@ -191,7 +191,7 @@ class SnapshotClient(NamespacedClient):
           Take a snapshot of a cluster or of data streams and indices.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/create-snapshot-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/create-snapshot-api.html>`_
 
         :param repository: Repository for the snapshot.
         :param snapshot: Name of the snapshot. Must be unique in the repository.
@@ -301,7 +301,7 @@ class SnapshotClient(NamespacedClient):
           Ensure there are no cluster blocks (for example, <code>cluster.blocks.read_only</code> and <code>clsuter.blocks.read_only_allow_delete</code> settings) that prevent write access.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/modules-snapshots.html>`_
 
         :param name: A repository name
         :param repository:
@@ -357,6 +357,7 @@ class SnapshotClient(NamespacedClient):
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -364,11 +365,14 @@ class SnapshotClient(NamespacedClient):
           <p>Delete snapshots.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-snapshot-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
         :param master_timeout: Explicit operation timeout for connection to master node
+        :param wait_for_completion: If `true`, the request returns a response when the
+            matching snapshots are all deleted. If `false`, the request returns a response
+            as soon as the deletes are scheduled.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -390,6 +394,8 @@ class SnapshotClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
@@ -420,7 +426,7 @@ class SnapshotClient(NamespacedClient):
           The snapshots themselves are left untouched and in place.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-snapshot-repo-api.html>`_
 
         :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
             are supported.
@@ -497,7 +503,7 @@ class SnapshotClient(NamespacedClient):
           <p>Get snapshot information.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-api.html>`_
 
         :param repository: Comma-separated list of snapshot repository names used to
             limit the request. Wildcard (*) expressions are supported.
@@ -612,7 +618,7 @@ class SnapshotClient(NamespacedClient):
           <p>Get snapshot repository information.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-repo-api.html>`_
 
         :param name: A comma-separated list of repository names
         :param local: Return local information, do not retrieve the state from master
@@ -750,7 +756,7 @@ class SnapshotClient(NamespacedClient):
           Some operations also verify the behavior on small blobs with sizes other than 8 bytes.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/repo-analysis-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/repo-analysis-api.html>`_
 
         :param name: The name of the repository.
         :param blob_count: The total number of blobs to write to the repository during
@@ -877,7 +883,7 @@ class SnapshotClient(NamespacedClient):
           <p>NOTE: This API may not work correctly in a mixed-version cluster.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/verify-repo-integrity-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/verify-repo-integrity-api.html>`_
 
         :param name: A repository name
         :param blob_thread_pool_concurrency: Number of threads to use for reading blob
@@ -987,7 +993,7 @@ class SnapshotClient(NamespacedClient):
           <p>If your snapshot contains data from App Search or Workplace Search, you must restore the Enterprise Search encryption key before you restore the snapshot.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/restore-snapshot-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/restore-snapshot-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A snapshot name
@@ -1091,7 +1097,7 @@ class SnapshotClient(NamespacedClient):
           These requests can also tax machine resources and, when using cloud storage, incur high processing costs.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-snapshot-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-status-api.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -1154,7 +1160,7 @@ class SnapshotClient(NamespacedClient):
           Check for common misconfigurations in a snapshot repository.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/verify-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/verify-snapshot-repo-api.html>`_
 
         :param name: A repository name
         :param master_timeout: Explicit operation timeout for connection to master node

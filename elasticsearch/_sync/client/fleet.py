@@ -53,7 +53,7 @@ class FleetClient(NamespacedClient):
           This API is designed for internal use by the Fleet server project.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-global-checkpoints.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-global-checkpoints.html>`_
 
         :param index: A single index or index alias that resolves to a single index.
         :param checkpoints: A comma separated list of previous global checkpoints. When
@@ -138,12 +138,12 @@ class FleetClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Executes several <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/fleet-search.html">fleet searches</a> with a single API request.
-          The API follows the same structure as the <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html">multi search</a> API. However, similar to the fleet search API, it
-          supports the wait_for_checkpoints parameter.</p>
+          <p>Executes several fleet searches with a single API request.</p>
+          <p>The API follows the same structure as the multi search (<code>_msearch</code>) API.
+          However, similar to the fleet search API, it supports the <code>wait_for_checkpoints</code> parameter.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/fleet-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/fleet-multi-search.html>`_
 
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
@@ -154,9 +154,9 @@ class FleetClient(NamespacedClient):
             example, a request targeting foo*,bar* returns an error if an index starts
             with foo but no index starts with bar.
         :param allow_partial_search_results: If true, returns partial results if there
-            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
-            If false, returns an error with no partial results. Defaults to the configured
-            cluster setting `search.default_allow_partial_results` which is true by default.
+            are shard request timeouts or shard failures. If false, returns an error
+            with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`
+            which is true by default.
         :param ccs_minimize_roundtrips: If true, network roundtrips between the coordinating
             node and remote clusters are minimized for cross-cluster search requests.
         :param expand_wildcards: Type of index that wildcard expressions can match. If
@@ -392,7 +392,7 @@ class FleetClient(NamespacedClient):
           after provided checkpoint has been processed and is visible for searches inside of Elasticsearch.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/fleet-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/fleet-search.html>`_
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
@@ -400,9 +400,9 @@ class FleetClient(NamespacedClient):
         :param aggs:
         :param allow_no_indices:
         :param allow_partial_search_results: If true, returns partial results if there
-            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
-            If false, returns an error with no partial results. Defaults to the configured
-            cluster setting `search.default_allow_partial_results` which is true by default.
+            are shard request timeouts or shard failures. If false, returns an error
+            with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`
+            which is true by default.
         :param analyze_wildcard:
         :param analyzer:
         :param batched_reduce_size:
