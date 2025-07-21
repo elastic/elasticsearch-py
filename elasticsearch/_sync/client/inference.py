@@ -366,6 +366,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -374,13 +375,35 @@ class InferenceClient(NamespacedClient):
           <p>IMPORTANT: The inference APIs enable you to use certain services, such as built-in machine learning models (ELSER, E5), models uploaded through Eland, Cohere, OpenAI, Mistral, Azure OpenAI, Google AI Studio, Google Vertex AI, Anthropic, Watsonx.ai, or Hugging Face.
           For built-in models and models uploaded through Eland, the inference APIs offer an alternative way to use and manage trained models.
           However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
+          <p>The following integrations are available through the inference API. You can find the available task types next to the integration name:</p>
+          <ul>
+          <li>AlibabaCloud AI Search (<code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
+          <li>Amazon Bedrock (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Anthropic (<code>completion</code>)</li>
+          <li>Azure AI Studio (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Azure OpenAI (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Cohere (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>Elasticsearch (<code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code> - this service is for built-in models and models uploaded through Eland)</li>
+          <li>ELSER (<code>sparse_embedding</code>)</li>
+          <li>Google AI Studio (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Google Vertex AI (<code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>Hugging Face (<code>text_embedding</code>)</li>
+          <li>Mistral (<code>text_embedding</code>)</li>
+          <li>OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
+          <li>VoyageAI (<code>text_embedding</code>, <code>rerank</code>)</li>
+          <li>Watsonx inference integration (<code>text_embedding</code>)</li>
+          <li>JinaAI (<code>text_embedding</code>, <code>rerank</code>)</li>
+          </ul>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-put>`_
 
         :param inference_id: The inference Id
         :param inference_config:
-        :param task_type: The task type
+        :param task_type: The task type. Refer to the integration list in the API description
+            for the available task types.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -411,6 +434,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __body = inference_config if inference_config is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
@@ -446,6 +471,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -466,6 +492,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -492,6 +520,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -537,13 +567,14 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
           <p>Create an Amazon Bedrock inference endpoint.</p>
-          <p>Creates an inference endpoint to perform an inference task with the <code>amazonbedrock</code> service.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>amazonbedrock</code> service.</p>
           <blockquote>
           <p>info
           You need to provide the access and secret keys only once, during the inference model creation. The get inference API does not retrieve your access or secret keys. After creating the inference model, you cannot change the associated key pairs. If you want to use a different access and secret key pair, delete the inference model and recreate it with the same name and the updated keys.</p>
@@ -561,6 +592,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -587,6 +620,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -632,6 +667,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -653,6 +689,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -679,6 +717,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -724,6 +764,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -744,6 +785,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -770,6 +813,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -815,6 +860,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -843,6 +889,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -869,6 +917,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -914,6 +964,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -934,6 +985,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -958,6 +1011,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1005,6 +1060,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1039,6 +1095,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1065,6 +1123,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1104,6 +1164,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1136,6 +1197,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `elser` service.
         :param chunking_settings: The chunking configuration object.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1160,6 +1223,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1197,6 +1262,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1215,6 +1281,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `googleaistudio` service.
         :param chunking_settings: The chunking configuration object.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1241,6 +1309,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1284,6 +1354,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1304,6 +1375,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1330,6 +1403,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1369,6 +1444,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1400,6 +1476,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `hugging_face` service.
         :param chunking_settings: The chunking configuration object.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1426,6 +1504,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1469,6 +1549,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1491,6 +1572,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1515,6 +1598,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1554,6 +1639,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1573,6 +1659,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `mistral` service.
         :param chunking_settings: The chunking configuration object.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1597,6 +1685,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1642,6 +1732,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1664,6 +1755,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1688,6 +1781,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1733,6 +1828,7 @@ class InferenceClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1754,6 +1850,8 @@ class InferenceClient(NamespacedClient):
         :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1778,6 +1876,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1816,6 +1916,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1836,6 +1937,8 @@ class InferenceClient(NamespacedClient):
             this case, `watsonxai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `watsonxai` service.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
         """
         if task_type in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_type'")
@@ -1860,6 +1963,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             if service is not None:
                 __body["service"] = service
@@ -1900,7 +2005,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform rereanking inference on the service</p>
+          <p>Perform reranking inference on the service</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-inference-inference>`_
