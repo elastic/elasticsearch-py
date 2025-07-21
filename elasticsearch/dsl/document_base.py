@@ -123,6 +123,15 @@ class InstrumentedExpression:
     def __rmod__(self, value: Any) -> "InstrumentedExpression":
         return InstrumentedExpression(f"{json.dumps(value)} % {self._expr}")
 
+    def where(
+        self, expr: Union[str, "InstrumentedExpression"]
+    ) -> "InstrumentedExpression":
+        """Add a condition to be met for the row to be included.
+
+        Use only in expressions given in the ``STATS`` command.
+        """
+        return InstrumentedExpression(f"{self._expr} WHERE {expr}")
+
 
 class InstrumentedField(InstrumentedExpression):
     """Proxy object for a mapped document field.
@@ -170,15 +179,31 @@ class InstrumentedField(InstrumentedExpression):
         return f"-{self._expr}"
 
     def asc(self) -> "InstrumentedField":
+        """Return the field name representation for ascending sort order.
+
+        For use in ES|QL queries only.
+        """
         return InstrumentedField(f"{self._expr} ASC", None)
 
     def desc(self) -> "InstrumentedField":
+        """Return the field name representation for descending sort order.
+
+        For use in ES|QL queries only.
+        """
         return InstrumentedField(f"{self._expr} DESC", None)
 
     def nulls_first(self) -> "InstrumentedField":
+        """Return the field name representation for nulls first sort order.
+
+        For use in ES|QL queries only.
+        """
         return InstrumentedField(f"{self._expr} NULLS FIRST", None)
 
     def nulls_last(self) -> "InstrumentedField":
+        """Return the field name representation for nulls last sort order.
+
+        For use in ES|QL queries only.
+        """
         return InstrumentedField(f"{self._expr} NULLS LAST", None)
 
     def __str__(self) -> str:

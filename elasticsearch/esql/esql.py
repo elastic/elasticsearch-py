@@ -17,12 +17,12 @@
 
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple, Type
+from typing import Any, Dict, Optional, Tuple, Type, Union
 
-from ..dsl.document_base import DocumentBase, InstrumentedField
+from ..dsl.document_base import DocumentBase, InstrumentedExpression, InstrumentedField
 
-FieldType = InstrumentedField | str
-IndexType = Type[DocumentBase] | str
+FieldType = Union[InstrumentedField, str]
+IndexType = Union[Type[DocumentBase], str]
 ExpressionType = Any
 
 
@@ -42,11 +42,11 @@ class ESQL(ABC):
 
         Examples::
 
-            ESQL.from_("employees")
-            ESQL.from_("<logs-{now/d}>")
-            ESQL.from_("employees-00001", "other-employees-*")
-            ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
-            ESQL.from_("employees").metadata("_id")
+            query1 = ESQL.from_("employees")
+            query2 = ESQL.from_("<logs-{now/d}>")
+            query3 = ESQL.from_("employees-00001", "other-employees-*")
+            query4 = ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
+            query5 = ESQL.from_("employees").metadata("_id")
         """
         return From(*indices)
 
@@ -59,9 +59,9 @@ class ESQL(ABC):
 
         Examples::
 
-            ESQL.row(a=1, b="two", c=None)
-            ESQL.row(a=[1, 2])
-            ESQL.row(a="ROUND(1.23, 0)")
+            query1 = ESQL.row(a=1, b="two", c=None)
+            query2 = ESQL.row(a=[1, 2])
+            query3 = ESQL.row(a="ROUND(1.23, 0)")
         """
         return Row(**params)
 
@@ -73,7 +73,7 @@ class ESQL(ABC):
 
         Examples::
 
-            ESQL.show("INFO")
+            query = ESQL.show("INFO")
         """
         return Show(item)
 
@@ -83,7 +83,7 @@ class ESQL(ABC):
 
         Examples::
 
-            ESQL.from_("employees").fork(
+            query = ESQL.from_("employees").fork(
                 ESQL.branch().where("emp_no == 10001"),
                 ESQL.branch().where("emp_no == 10002"),
             )
@@ -123,7 +123,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query = (
                 ESQL.row(key=list(range(1, 26)))
                 .mv_expand("key")
                 .eval(value="CASE(key<13, 0, 42)")
@@ -144,7 +144,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query = (
                 ESQL.row(a="2023-01-23T12:15:00.000Z - some text - 127.0.0.1")
                 .dissect("a", "%{date} - %{msg} - %{ip}")
                 .keep("date", "msg", "ip")
@@ -160,8 +160,8 @@ class ESQLBase(ABC):
 
         Examples::
 
-            ESQL.from_("employees").drop("height")
-            ESQL.from_("employees").drop("height*")
+            query1 = ESQL.from_("employees").drop("height")
+            query2 = ESQL.from_("employees").drop("height*")
         """
         return Drop(self, *columns)
 
@@ -174,11 +174,11 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.row(a="1")
                 .enrich("languages_policy").on("a").with_("language_name")
             )
-            (
+            query2 = (
                 ESQL.row(a="1")
                 .enrich("languages_policy").on("a").with_(name="language_name")
             )
@@ -197,13 +197,13 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.from_("employees")
                 .sort("emp_no")
                 .keep("first_name", "last_name", "height")
                 .eval(height_feet="height * 3.281", height_cm="height * 100")
             )
-            (
+            query2 = (
                 ESQL.from_("employees")
                 .eval("height * 3.281")
                 .stats(avg_height_feet="AVG(`height * 3.281`)")
@@ -229,7 +229,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query = (
                 ESQL.from_("employees")
                 .fork(
                     ESQL.branch().where("emp_no == 10001"),
@@ -255,12 +255,12 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.row(a="2023-01-23T12:15:00.000Z 127.0.0.1 some.email@foo.com 42")
                 .grok("a", "%{TIMESTAMP_ISO8601:date} %{IP:ip} %{EMAILADDRESS:email} %{NUMBER:num}")
                 .keep("date", "ip", "email", "num")
             )
-            (
+            query2 = (
                 ESQL.from_("addresses")
                 .keep("city.name", "zip_code")
                 .grok("zip_code", "%{WORD:zip_parts} %{WORD:zip_parts}")
@@ -277,9 +277,9 @@ class ESQLBase(ABC):
 
         Examples::
 
-            ESQL.from_("employees").keep("emp_no", "first_name", "last_name", "height")
-            ESQL.from_("employees").keep("h*")
-            ESQL.from_("employees").keep("h*", "*")
+            query1 = ESQL.from_("employees").keep("emp_no", "first_name", "last_name", "height")
+            query2 = ESQL.from_("employees").keep("h*")
+            query3 = ESQL.from_("employees").keep("h*", "*")
         """
         return Keep(self, *columns)
 
@@ -291,7 +291,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            ESQL.from_("employees").sort("emp_no ASC").limit(5)
+            query = ESQL.from_("employees").sort("emp_no ASC").limit(5)
         """
         return Limit(self, max_number_of_rows)
 
@@ -310,25 +310,25 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.from_("firewall_logs")
-                .lookup_join("threat_list").on("source.IP")
+                .lookup_join("threat_list", "source.IP")
                 .where("threat_level IS NOT NULL")
             )
-            (
+            query2 = (
                 ESQL.from_("system_metrics")
-                .lookup_join("host_inventory").on("host.name")
-                .lookup_join("ownerships").on("host.name")
+                .lookup_join("host_inventory", "host.name")
+                .lookup_join("ownerships", "host.name")
             )
-            (
+            query3 = (
                 ESQL.from_("app_logs")
-                .lookup_join("service_owners").on("service_id")
+                .lookup_join("service_owners", "service_id")
             )
-            (
+            query4 = (
                 ESQL.from_("employees")
                 .eval(language_code="languages")
-                .where("emp_no >= 10991 AND emp_no < 10094")
-                .lookup_join("languages_lookup").on("language_code")
+                .where("emp_no >= 10091 AND emp_no < 10094")
+                .lookup_join("languages_lookup", "language_code")
             )
         """
         return LookupJoin(self, lookup_index, field)
@@ -341,7 +341,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            ESQL.row(a=[1, 2, 3], b="b", j=["a", "b"]).mv_expand("a")
+            query = ESQL.row(a=[1, 2, 3], b="b", j=["a", "b"]).mv_expand("a")
         """
         return MvExpand(self, column)
 
@@ -355,9 +355,9 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query = (
                 ESQL.from_("employees")
-                .keep("first_name", "last_name", "height")
+                .keep("first_name", "last_name", "still_hired")
                 .rename(still_hired="employed")
             )
         """
@@ -371,7 +371,7 @@ class ESQLBase(ABC):
 
         Examples::
 
-            ESQL.from_("employees").keep("emp_no").sample(0.05)
+            query = ESQL.from_("employees").keep("emp_no").sample(0.05)
         """
         return Sample(self, probability)
 
@@ -382,22 +382,22 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "height")
                 .sort("height")
             )
-            (
+            query2 =  (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "height")
                 .sort("height DESC")
             )
-            (
+            query3 = (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "height")
                 .sort("height DESC", "first_name ASC")
             )
-            (
+            query4 = (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "height")
                 .sort("first_name ASC NULLS FIRST")
@@ -419,48 +419,52 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.from_("employees")
-                .stats(count="COUNT(emp_no)").by("languages")
+                .stats(count=functions.count("emp_no")).by("languages")
                 .sort("languages")
             )
-            (
+            query2 = (
                 ESQL.from_("employees")
-                .stats(avg_lang="AVG(languages)")
-                .sort("languages")
+                .stats(avg_lang=functions.avg("languages"))
             )
-            (
-                ESQL.from_("employees")
-                .stats(avg_lang="AVG(languages)", max_lang="MAX(languages)")
-            )
-            (
+            query3 = (
                 ESQL.from_("employees")
                 .stats(
-                    avg50s='AVG(salary)::LONG WHERE birth_date < "1960-01-01"',
-                    avg60s='AVG(salary)::LONG WHERE birth_date >= "1960-01-01"',
+                    avg_lang=functions.avg("languages"),
+                    max_lang=functions.max("languages")
+                )
+            )
+            query4 = (
+                ESQL.from_("employees")
+                .stats(
+                    avg50s=functions.avg("salary").where('birth_date < "1960-01-01"'),
+                    avg60s=functions.avg("salary").where('birth_date >= "1960-01-01"'),
                 ).by("gender")
                 .sort("gender")
             )
-            (
+            query5 = (
                 ESQL.from_("employees")
+                .eval(Ks="salary / 1000")
                 .stats(
-                    under_40K="COUNT(*) WHERE Ks < 40",
-                    inbetween="COUNT(*) WHERE 50 <= Ks AND Ks < 60",
-                    over_60K="COUNT(*) WHERE 60 <= Ks",
-                    total=COUNT(*)
+                    under_40K=functions.count("*").where("Ks < 40"),
+                    inbetween=functions.count("*").where("40 <= Ks AND Ks < 60"),
+                    over_60K=functions.count("*").where("60 <= Ks"),
+                    total=f.count("*")
                 )
             )
-            (
+            query6 = (
                 ESQL.row(i=1, a=["a", "b"])
-                .stats("MIN(i)").by("a")
+                .stats(functions.min("i")).by("a")
                 .sort("a ASC")
             )
-            (
+            query7 = (
                 ESQL.from_("employees")
-                .eval(hired='DATE_FORMAT("yyyy", hire_date)')
-                .stats(avg_salary="AVG(salary)").by("hired", "languages.long")
-                .eval(avg_salary="ROUND(avg_salary)")
+                .eval(hired=functions.date_format("hire_date", "yyyy"))
+                .stats(avg_salary=functions.avg("salary")).by("hired", "languages.long")
+                .eval(avg_salary=functions.round("avg_salary"))
                 .sort("hired", "languages.long")
+
             )
         """
         return Stats(self, *expressions, **named_expressions)
@@ -474,16 +478,16 @@ class ESQLBase(ABC):
 
         Examples::
 
-            (
+            query1 = (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "still_hired")
                 .where("still_hired == true")
             )
-            (
+            query2 = (
                 ESQL.from_("sample_data")
                 .where("@timestamp > NOW() - 1 hour")
             )
-            (
+            query3 = (
                 ESQL.from_("employees")
                 .keep("first_name", "last_name", "height")
                 .where("LENGTH(first_name) < 4")
@@ -537,12 +541,13 @@ class Row(ESQLBase):
 
     def __init__(self, **params: ExpressionType):
         super().__init__()
-        self._params = params
+        self._params = {
+            k: json.dumps(v) if not isinstance(v, InstrumentedExpression) else v
+            for k, v in params.items()
+        }
 
     def _render_internal(self) -> str:
-        return "ROW " + ", ".join(
-            [f"{k} = {json.dumps(v)}" for k, v in self._params.items()]
-        )
+        return "ROW " + ", ".join([f"{k} = {v}" for k, v in self._params.items()])
 
 
 class Show(ESQLBase):
@@ -954,12 +959,13 @@ class Stats(ESQLBase):
             exprs = [f"{key} = {value}" for key, value in self._expressions.items()]
         else:
             exprs = [f"{expr}" for expr in self._expressions]
+        expression_separator = ",\n        "
         by = (
             ""
             if self._grouping_expressions is None
-            else f'BY {", ".join([f"{expr}" for expr in self._grouping_expressions])}'
+            else f'\n        BY {", ".join([f"{expr}" for expr in self._grouping_expressions])}'
         )
-        return f'STATS {", ".join([f"{expr}" for expr in exprs])}{by}'
+        return f'STATS {expression_separator.join([f"{expr}" for expr in exprs])}{by}'
 
 
 class Where(ESQLBase):
