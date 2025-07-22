@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch.esql import ESQL
-from elasticsearch.esql import functions as f
+from elasticsearch.dsl import E
+from elasticsearch.esql import ESQL, and_, functions, not_, or_
 
 
 def test_from():
@@ -46,7 +46,7 @@ def test_row():
     query = ESQL.row(a=[2, 1])
     assert query.render() == "ROW a = [2, 1]"
 
-    query = ESQL.row(a=f.round(1.23, 0))
+    query = ESQL.row(a=functions.round(1.23, 0))
     assert query.render() == "ROW a = ROUND(1.23, 0)"
 
 
@@ -59,7 +59,7 @@ def test_change_point():
     query = (
         ESQL.row(key=list(range(1, 26)))
         .mv_expand("key")
-        .eval(value=f.case("key<13", 0, 42))
+        .eval(value=functions.case(E("key") < 13, 0, 42))
         .change_point("value")
         .on("key")
         .where("type IS NOT NULL")
@@ -68,7 +68,7 @@ def test_change_point():
         query.render()
         == """ROW key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 | MV_EXPAND key
-| EVAL value = CASE(key<13, 0, 42)
+| EVAL value = CASE(key < 13, 0, 42)
 | CHANGE_POINT value ON key
 | WHERE type IS NOT NULL"""
     )
@@ -128,7 +128,7 @@ def test_eval():
         ESQL.from_("employees")
         .sort("emp_no")
         .keep("first_name", "last_name", "height")
-        .eval(height_feet="height * 3.281", height_cm="height * 100")
+        .eval(height_feet=E("height") * 3.281, height_cm=E("height") * 100)
     )
     assert (
         query.render()
@@ -142,7 +142,7 @@ def test_eval():
         ESQL.from_("employees")
         .sort("emp_no")
         .keep("first_name", "last_name", "height")
-        .eval("height * 3.281")
+        .eval(E("height") * 3.281)
     )
     assert (
         query.render()
@@ -155,7 +155,7 @@ def test_eval():
     query = (
         ESQL.from_("employees")
         .eval("height * 3.281")
-        .stats(avg_height_feet=f.avg("`height * 3.281`"))
+        .stats(avg_height_feet=functions.avg("`height * 3.281`"))
     )
     assert (
         query.render()
@@ -169,7 +169,7 @@ def test_fork():
     query = (
         ESQL.from_("employees")
         .fork(
-            ESQL.branch().where("emp_no == 10001"),
+            ESQL.branch().where(E("emp_no") == 10001),
             ESQL.branch().where("emp_no == 10002"),
         )
         .keep("emp_no", "_fork")
@@ -208,7 +208,7 @@ def test_grok():
             "%{TIMESTAMP_ISO8601:date} %{IP:ip} %{EMAILADDRESS:email} %{NUMBER:num:int}",
         )
         .keep("date", "ip", "email", "num")
-        .eval(date=f.to_datetime("date"))
+        .eval(date=functions.to_datetime("date"))
     )
     assert (
         query.render()
@@ -216,6 +216,18 @@ def test_grok():
 | GROK a "%{TIMESTAMP_ISO8601:date} %{IP:ip} %{EMAILADDRESS:email} %{NUMBER:num:int}"
 | KEEP date, ip, email, num
 | EVAL date = TO_DATETIME(date)"""
+    )
+
+    query = (
+        ESQL.from_("addresses")
+        .keep("city.name", "zip_code")
+        .grok("zip_code", "%{WORD:zip_parts} %{WORD:zip_parts}")
+    )
+    assert (
+        query.render()
+        == """FROM addresses
+| KEEP city.name, zip_code
+| GROK zip_code "%{WORD:zip_parts} %{WORD:zip_parts}\""""
     )
 
 
@@ -233,9 +245,10 @@ def test_keep():
 
 
 def test_limit():
-    query = ESQL.from_("index").where('field = "value"').limit(1000)
-    assert query.render() == 'FROM index\n| WHERE field = "value"\n| LIMIT 1000'
-    query = ESQL.from_("index").stats(f.avg("field1")).by("field2").limit(20000)
+    query = ESQL.from_("index").where(E("field") == "value").limit(1000)
+    assert query.render() == 'FROM index\n| WHERE field == "value"\n| LIMIT 1000'
+
+    query = ESQL.from_("index").stats(functions.avg("field1")).by("field2").limit(20000)
     assert (
         query.render()
         == "FROM index\n| STATS AVG(field1)\n        BY field2\n| LIMIT 20000"
@@ -277,7 +290,7 @@ def test_lookup_join():
     query = (
         ESQL.from_("employees")
         .eval(language_code="languages")
-        .where("emp_no >= 10091 AND emp_no < 10094")
+        .where(E("emp_no") >= 10091, E("emp_no") < 10094)
         .lookup_join("languages_lookup", "language_code")
     )
     assert (
@@ -373,7 +386,7 @@ def test_sort():
 def test_stats():
     query = (
         ESQL.from_("employees")
-        .stats(count=f.count("emp_no"))
+        .stats(count=functions.count("emp_no"))
         .by("languages")
         .sort("languages")
     )
@@ -385,7 +398,7 @@ def test_stats():
 | SORT languages"""
     )
 
-    query = ESQL.from_("employees").stats(avg_lang=f.avg("languages"))
+    query = ESQL.from_("employees").stats(avg_lang=functions.avg("languages"))
     assert (
         query.render()
         == """FROM employees
@@ -393,7 +406,7 @@ def test_stats():
     )
 
     query = ESQL.from_("employees").stats(
-        avg_lang=f.avg("languages"), max_lang=f.max("languages")
+        avg_lang=functions.avg("languages"), max_lang=functions.max("languages")
     )
     assert (
         query.render()
@@ -405,8 +418,8 @@ def test_stats():
     query = (
         ESQL.from_("employees")
         .stats(
-            avg50s=f.avg("salary").where('birth_date < "1960-01-01"'),
-            avg60s=f.avg("salary").where('birth_date >= "1960-01-01"'),
+            avg50s=functions.avg("salary").where('birth_date < "1960-01-01"'),
+            avg60s=functions.avg("salary").where('birth_date >= "1960-01-01"'),
         )
         .by("gender")
         .sort("gender")
@@ -424,10 +437,10 @@ def test_stats():
         ESQL.from_("employees")
         .eval(Ks="salary / 1000")
         .stats(
-            under_40K=f.count("*").where("Ks < 40"),
-            inbetween=f.count("*").where("40 <= Ks AND Ks < 60"),
-            over_60K=f.count("*").where("60 <= Ks"),
-            total=f.count("*"),
+            under_40K=functions.count("*").where("Ks < 40"),
+            inbetween=functions.count("*").where("40 <= Ks", "Ks < 60"),
+            over_60K=functions.count("*").where("60 <= Ks"),
+            total=functions.count("*"),
         )
     )
     assert (
@@ -435,12 +448,12 @@ def test_stats():
         == """FROM employees
 | EVAL Ks = salary / 1000
 | STATS under_40K = COUNT(*) WHERE Ks < 40,
-        inbetween = COUNT(*) WHERE 40 <= Ks AND Ks < 60,
+        inbetween = COUNT(*) WHERE (40 <= Ks) AND (Ks < 60),
         over_60K = COUNT(*) WHERE 60 <= Ks,
         total = COUNT(*)"""
     )
 
-    query = ESQL.row(i=1, a=["a", "b"]).stats(f.min("i")).by("a").sort("a ASC")
+    query = ESQL.row(i=1, a=["a", "b"]).stats(functions.min("i")).by("a").sort("a ASC")
     assert (
         query.render()
         == 'ROW i = 1, a = ["a", "b"]\n| STATS MIN(i)\n        BY a\n| SORT a ASC'
@@ -448,10 +461,10 @@ def test_stats():
 
     query = (
         ESQL.from_("employees")
-        .eval(hired=f.date_format("hire_date", "yyyy"))
-        .stats(avg_salary=f.avg("salary"))
+        .eval(hired=functions.date_format("hire_date", "yyyy"))
+        .stats(avg_salary=functions.avg("salary"))
         .by("hired", "languages.long")
-        .eval(avg_salary=f.round("avg_salary"))
+        .eval(avg_salary=functions.round("avg_salary"))
         .sort("hired", "languages.long")
     )
     assert (
@@ -495,4 +508,109 @@ def test_where():
         == """FROM employees
 | KEEP first_name, last_name, height
 | WHERE LENGTH(first_name) < 4"""
+    )
+
+
+def test_and_operator():
+    query = ESQL.from_("index").where(
+        and_(E("age") > 30, E("age") < 40, E("name").is_not_null())
+    )
+    assert (
+        query.render()
+        == """FROM index
+| WHERE (age > 30) AND (age < 40) AND (name IS NOT NULL)"""
+    )
+
+
+def test_or_operator():
+    query = ESQL.from_("index").where(
+        or_(E("age") < 30, E("age") > 40, E("name").is_null())
+    )
+    assert (
+        query.render()
+        == """FROM index
+| WHERE (age < 30) OR (age > 40) OR (name IS NULL)"""
+    )
+
+
+def test_not_operator():
+    query = ESQL.from_("index").where(not_(E("age") > 40))
+    assert (
+        query.render()
+        == """FROM index
+| WHERE NOT (age > 40)"""
+    )
+
+
+def test_in_operator():
+    query = ESQL.row(a=1, b=4, c=3).where((E("c") - E("a")).in_(3, E("b") / 2, "a"))
+    assert (
+        query.render()
+        == """ROW a = 1, b = 4, c = 3
+| WHERE c - a IN (3, b / 2, a)"""
+    )
+
+
+def test_like_operator():
+    query = (
+        ESQL.from_("employees")
+        .where(E("first_name").like("?b*"))
+        .keep("first_name", "last_name")
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| WHERE first_name LIKE "?b*"
+| KEEP first_name, last_name"""
+    )
+
+    query = ESQL.row(message="foo * bar").where(E("message").like("foo \\* bar"))
+    assert (
+        query.render()
+        == """ROW message = "foo * bar"
+| WHERE message LIKE "foo \\\\* bar\""""
+    )
+
+    query = ESQL.row(message="foobar").where(E("message").like("foo*", "bar?"))
+    assert (
+        query.render()
+        == """ROW message = "foobar"
+| WHERE message LIKE ("foo*", "bar?")"""
+    )
+
+
+def test_rlike_operator():
+    query = (
+        ESQL.from_("employees")
+        .where(E("first_name").rlike(".leja*"))
+        .keep("first_name", "last_name")
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| WHERE first_name RLIKE ".leja*"
+| KEEP first_name, last_name"""
+    )
+
+    query = ESQL.row(message="foo ( bar").where(E("message").rlike("foo \\( bar"))
+    assert (
+        query.render()
+        == """ROW message = "foo ( bar"
+| WHERE message RLIKE "foo \\\\( bar\""""
+    )
+
+    query = ESQL.row(message="foobar").where(E("message").rlike("foo.*", "bar."))
+    assert (
+        query.render()
+        == """ROW message = "foobar"
+| WHERE message RLIKE ("foo.*", "bar.")"""
+    )
+
+
+def test_match_operator():
+    query = ESQL.from_("books").where(E("author").match("Faulkner"))
+    assert (
+        query.render()
+        == """FROM books
+| WHERE author:"Faulkner\""""
     )

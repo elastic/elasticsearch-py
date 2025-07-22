@@ -61,7 +61,7 @@ class ESQL(ABC):
 
             query1 = ESQL.row(a=1, b="two", c=None)
             query2 = ESQL.row(a=[1, 2])
-            query3 = ESQL.row(a="ROUND(1.23, 0)")
+            query3 = ESQL.row(a=functions.round(1.23, 0))
         """
         return Row(**params)
 
@@ -126,8 +126,9 @@ class ESQLBase(ABC):
             query = (
                 ESQL.row(key=list(range(1, 26)))
                 .mv_expand("key")
-                .eval(value="CASE(key<13, 0, 42)")
-                .change_point("value").on("key")
+                .eval(value=functions.case("key<13", 0, 42))
+                .change_point("value")
+                .on("key")
                 .where("type IS NOT NULL")
             )
         """
@@ -206,7 +207,7 @@ class ESQLBase(ABC):
             query2 = (
                 ESQL.from_("employees")
                 .eval("height * 3.281")
-                .stats(avg_height_feet="AVG(`height * 3.281`)")
+                .stats(avg_height_feet=functions.avg("`height * 3.281`"))
             )
         """
         return Eval(self, *columns, **named_columns)
@@ -261,6 +262,15 @@ class ESQLBase(ABC):
                 .keep("date", "ip", "email", "num")
             )
             query2 = (
+                ESQL.row(a="2023-01-23T12:15:00.000Z 127.0.0.1 some.email@foo.com 42")
+                .grok(
+                    "a",
+                    "%{TIMESTAMP_ISO8601:date} %{IP:ip} %{EMAILADDRESS:email} %{NUMBER:num:int}",
+                )
+                .keep("date", "ip", "email", "num")
+                .eval(date=functions.to_datetime("date"))
+            )
+            query3 = (
                 ESQL.from_("addresses")
                 .keep("city.name", "zip_code")
                 .grok("zip_code", "%{WORD:zip_parts} %{WORD:zip_parts}")
@@ -291,7 +301,8 @@ class ESQLBase(ABC):
 
         Examples::
 
-            query = ESQL.from_("employees").sort("emp_no ASC").limit(5)
+            query1 = ESQL.from_("employees").sort("emp_no ASC").limit(5)
+            query2 = ESQL.from_("index").stats(functions.avg("field1")).by("field2").limit(20000)
         """
         return Limit(self, max_number_of_rows)
 
@@ -982,3 +993,18 @@ class Where(ESQLBase):
 
     def _render_internal(self) -> str:
         return f'WHERE {" AND ".join([f"{expr}" for expr in self._expressions])}'
+
+
+def and_(*expressions: InstrumentedExpression) -> "InstrumentedExpression":
+    """Combine two or more expressions with the AND operator."""
+    return InstrumentedExpression(" AND ".join([f"({expr})" for expr in expressions]))
+
+
+def or_(*expressions: InstrumentedExpression) -> "InstrumentedExpression":
+    """Combine two or more expressions with the OR operator."""
+    return InstrumentedExpression(" OR ".join([f"({expr})" for expr in expressions]))
+
+
+def not_(expression: InstrumentedExpression) -> "InstrumentedExpression":
+    """Negate an expression."""
+    return InstrumentedExpression(f"NOT ({expression})")

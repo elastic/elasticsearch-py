@@ -63,6 +63,11 @@ class InstrumentedExpression:
     def __init__(self, expr: str):
         self._expr = expr
 
+    def _render_value(self, value: Any) -> str:
+        if isinstance(value, InstrumentedExpression):
+            return str(value)
+        return json.dumps(value)
+
     def __str__(self) -> str:
         return self._expr
 
@@ -76,61 +81,136 @@ class InstrumentedExpression:
         return InstrumentedExpression(f"-({self._expr})")
 
     def __eq__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
-        return InstrumentedExpression(f"{self._expr} == {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} == {self._render_value(value)}")
 
     def __ne__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
-        return InstrumentedExpression(f"{self._expr} != {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} != {self._render_value(value)}")
 
     def __lt__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} < {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} < {self._render_value(value)}")
 
     def __gt__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} > {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} > {self._render_value(value)}")
 
     def __le__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} <= {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} <= {self._render_value(value)}")
 
     def __ge__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} >= {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} >= {self._render_value(value)}")
 
     def __add__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} + {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} + {self._render_value(value)}")
 
     def __radd__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{json.dumps(value)} + {self._expr}")
+        return InstrumentedExpression(f"{self._render_value(value)} + {self._expr}")
 
     def __sub__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} - {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} - {self._render_value(value)}")
 
     def __rsub__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{json.dumps(value)} - {self._expr}")
+        return InstrumentedExpression(f"{self._render_value(value)} - {self._expr}")
 
     def __mul__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} * {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} * {self._render_value(value)}")
 
     def __rmul__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{json.dumps(value)} * {self._expr}")
+        return InstrumentedExpression(f"{self._render_value(value)} * {self._expr}")
 
     def __truediv__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} / {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} / {self._render_value(value)}")
 
     def __rtruediv__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{json.dumps(value)} / {self._expr}")
+        return InstrumentedExpression(f"{self._render_value(value)} / {self._expr}")
 
     def __mod__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{self._expr} % {json.dumps(value)}")
+        return InstrumentedExpression(f"{self._expr} % {self._render_value(value)}")
 
     def __rmod__(self, value: Any) -> "InstrumentedExpression":
-        return InstrumentedExpression(f"{json.dumps(value)} % {self._expr}")
+        return InstrumentedExpression(f"{self._render_value(value)} % {self._expr}")
+
+    def is_null(self) -> "InstrumentedExpression":
+        """Compare the expression against NULL."""
+        return InstrumentedExpression(f"{self._expr} IS NULL")
+
+    def is_not_null(self) -> "InstrumentedExpression":
+        """Compare the expression against NOT NULL."""
+        return InstrumentedExpression(f"{self._expr} IS NOT NULL")
+
+    def in_(self, *values: Any) -> "InstrumentedExpression":
+        """Test if the expression equals one of the given values."""
+        rendered_values = ", ".join([f"{value}" for value in values])
+        return InstrumentedExpression(f"{self._expr} IN ({rendered_values})")
+
+    def like(self, *patterns: str) -> "InstrumentedExpression":
+        """Filter the expression using a string pattern."""
+        if len(patterns) == 1:
+            return InstrumentedExpression(
+                f"{self._expr} LIKE {self._render_value(patterns[0])}"
+            )
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} LIKE ({", ".join([self._render_value(p) for p in patterns])})'
+            )
+
+    def rlike(self, *patterns: str) -> "InstrumentedExpression":
+        """Filter the expression using a regular expression."""
+        if len(patterns) == 1:
+            return InstrumentedExpression(
+                f"{self._expr} RLIKE {self._render_value(patterns[0])}"
+            )
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} RLIKE ({", ".join([self._render_value(p) for p in patterns])})'
+            )
+
+    def match(self, query: str) -> "InstrumentedExpression":
+        """Perform a match query on the field."""
+        return InstrumentedExpression(f"{self._expr}:{self._render_value(query)}")
+
+    def asc(self) -> "InstrumentedExpression":
+        """Return the field name representation for ascending sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} ASC")
+
+    def desc(self) -> "InstrumentedExpression":
+        """Return the field name representation for descending sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} DESC")
+
+    def nulls_first(self) -> "InstrumentedExpression":
+        """Return the field name representation for nulls first sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} NULLS FIRST")
+
+    def nulls_last(self) -> "InstrumentedExpression":
+        """Return the field name representation for nulls last sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} NULLS LAST")
 
     def where(
-        self, expr: Union[str, "InstrumentedExpression"]
+        self, *expressions: Union[str, "InstrumentedExpression"]
     ) -> "InstrumentedExpression":
         """Add a condition to be met for the row to be included.
 
         Use only in expressions given in the ``STATS`` command.
         """
-        return InstrumentedExpression(f"{self._expr} WHERE {expr}")
+        if len(expressions) == 1:
+            return InstrumentedExpression(f"{self._expr} WHERE {expressions[0]}")
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} WHERE {" AND ".join([f"({expr})" for expr in expressions])}'
+            )
+
+
+E = InstrumentedExpression
 
 
 class InstrumentedField(InstrumentedExpression):
@@ -177,34 +257,6 @@ class InstrumentedField(InstrumentedExpression):
     def __neg__(self) -> str:  # type: ignore[override]
         """Return the field name representation for descending sort order"""
         return f"-{self._expr}"
-
-    def asc(self) -> "InstrumentedField":
-        """Return the field name representation for ascending sort order.
-
-        For use in ES|QL queries only.
-        """
-        return InstrumentedField(f"{self._expr} ASC", None)
-
-    def desc(self) -> "InstrumentedField":
-        """Return the field name representation for descending sort order.
-
-        For use in ES|QL queries only.
-        """
-        return InstrumentedField(f"{self._expr} DESC", None)
-
-    def nulls_first(self) -> "InstrumentedField":
-        """Return the field name representation for nulls first sort order.
-
-        For use in ES|QL queries only.
-        """
-        return InstrumentedField(f"{self._expr} NULLS FIRST", None)
-
-    def nulls_last(self) -> "InstrumentedField":
-        """Return the field name representation for nulls last sort order.
-
-        For use in ES|QL queries only.
-        """
-        return InstrumentedField(f"{self._expr} NULLS LAST", None)
 
     def __str__(self) -> str:
         return self._expr
