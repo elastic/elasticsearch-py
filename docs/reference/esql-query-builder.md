@@ -1,0 +1,210 @@
+# ES|QL Query Builder
+
+The ES|QL Query Builder allows you to construct ES|QL queries using Python syntax. Consider the following example:
+
+```python
+>>> from elasticsearch.esql import ESQL
+>>> query = (
+    ESQL.from_("employees")
+    .sort("emp_no")
+    .keep("first_name", "last_name", "height")
+    .eval(height_feet="height * 3.281", height_cm="height * 100")
+    .limit(3)
+)
+```
+
+You can then see the assembled ES|QL query by printing the resulting query object:
+
+```python
+>>> query
+FROM employees
+| SORT emp_no
+| KEEP first_name, last_name, height
+| EVAL height_feet = height * 3.281, height_cm = height * 100
+| LIMIT 3
+```
+
+To execute this query, you can cast it to a string and pass the string to the `client.esql.query()` endpoint:
+
+```python
+>>> from elasticsearch import Elasticsearch
+>>> client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
+>>> response = client.esql.query(query=str(query))
+```
+
+The response body contains a `columns` attribute with the list of columns included in the results, and a `values` attribute with the list of results for the query, each given as a list of column values. Here is a possible response body returned by the example query given above:
+
+```python
+>>> from pprint import pprint
+>>> pprint(response.body)
+{'columns': [{'name': 'first_name', 'type': 'text'},
+             {'name': 'last_name', 'type': 'text'},
+             {'name': 'height', 'type': 'double'},
+             {'name': 'height_feet', 'type': 'double'},
+             {'name': 'height_cm', 'type': 'double'}],
+ 'is_partial': False,
+ 'took': 11,
+ 'values': [['Adrian',
+             'Wells',
+             2.424,
+             7.953144,
+             242.4],
+            ['Aaron',
+             'Gonzalez',
+             1.584,
+             5.1971,
+             158.4],
+            ['Miranda',
+             'Kramer',
+             1.55,
+             5.08555,
+             155]]}
+```
+
+## Creating an ES|QL query
+
+To construct an ES|QL query you start from one of the ES|QL source commands:
+
+### `ESQL.from_`
+
+The `FROM` command selects the indices, data streams or aliases to be queried.
+
+Examples:
+
+```python
+from elasticsearch.esql import ESQL
+
+query1 = ESQL.from_("employees")
+query2 = ESQL.from_("<logs-{now/d}>")
+query3 = ESQL.from_("employees-00001", "other-employees-*")
+query4 = ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
+query5 = ESQL.from_("employees").metadata("_id")
+```
+
+Note how in the last example the optional `METADATA` clause of the `FROM` command is added as a chained method.
+
+### `ESQL.row`
+
+The `ROW` command produces a row with one or more columns, with the values that you specify.
+
+Examples:
+
+```python
+from elasticsearch.esql import ESQL, functions
+
+query1 = ESQL.row(a=1, b="two", c=None)
+query2 = ESQL.row(a=[1, 2])
+query3 = ESQL.row(a=functions.round(1.23, 0))
+```
+
+### `ESQL.show`
+
+The `SHOW` command returns information about the deployment and its capabilities.
+
+Example:
+
+```python
+from elasticsearch.esql import ESQL
+
+query = ESQL.show("INFO")
+```
+
+## Adding processing commands
+
+Once you have a query object, you can add one or more processing commands to it. The following
+example shows how to create a query that uses the `WHERE` and `LIMIT` commands to filter the
+results:
+
+```python
+from elasticsearch.esql import ESQL
+
+query = ESQL.from_("employees").where("still_hired == true").limit(10)
+```
+
+For a complete list of available commands, review the methods of the [`ESQLBase` class](https://elasticsearch-py.readthedocs.io/en/stable/esql.html) in the Elasticsearch Python API documentation.
+
+## Creating ES|QL Expressions and Conditions
+
+The ES|QL query builder for Python provides two ways to create expressions and conditions in ES|QL queries.
+
+The simplest option is to provide all ES|QL expressions and conditionals as strings. The following example uses this approach to add two calculated columns to the results using the `EVAL` command:
+
+```python
+from elasticsearch.esql import ESQL
+
+query = (
+    ESQL.from_("employees")
+    .sort("emp_no")
+    .keep("first_name", "last_name", "height")
+    .eval(height_feet="height * 3.281", height_cm="height * 100")
+)
+```
+
+A more advanced alternative is to replace the strings with Python expressions, which are automatically translated to ES|QL when the query object is rendered to a string. The following example is functionally equivalent to the one above:
+
+```python
+from elasticsearch.esql import ESQL, E
+
+query = (
+    ESQL.from_("employees")
+    .sort("emp_no")
+    .keep("first_name", "last_name", "height")
+    .eval(height_feet=E("height") * 3.281, height_cm=E("height") * 100)
+)
+```
+
+Here the `E()` helper function is used as a wrapper to the column name that initiates an ES|QL expression. The `E()` function transforms the given column into an ES|QL expression that can be modified with Python operators.
+
+Here is a second example, which uses a conditional expression in the `WHERE` command:
+
+```python
+from elasticsearch.esql import ESQL, E
+
+query = (
+    ESQL.from_("employees")
+    .keep("first_name", "last_name", "height")
+    .where('first_name == "Larry"')
+)
+```
+
+Using Python syntax, the condition can be rewritten as follows:
+
+```python
+from elasticsearch.esql import ESQL, E
+
+query = (
+    ESQL.from_("employees")
+    .keep("first_name", "last_name", "height")
+    .where(E("first_name") == "Larry")
+)
+```
+
+## Using ES|QL functions
+
+The ES|QL language includes a rich set of functions that can be used in expressions and conditionals, and these can be included in expressions that are given as strings, as shown in the example below:
+
+```python
+from elasticsearch.esql import ESQL
+
+query = (
+    ESQL.from_("employees")
+    .keep("first_name", "last_name", "height")
+    .where("LENGTH(first_name) < 4")
+)
+```
+
+All available ES|QL functions have Python wrappers in the `elasticsearch.esql.functions` module, which can be used when building expressions using Python syntax. Below is the same example coded using Python syntax:
+
+```python
+from elasticsearch.esql import ESQL, functions
+
+query = (
+    ESQL.from_("employees")
+    .keep("first_name", "last_name", "height")
+    .where(functions.length(E("first_name")) < 4)
+)
+```
+
+Note that arguments passed to functions are assumed to be literals. When passing field names, it is necessary to wrap them with the `E()` helper function so that they are interpreted correctly.
+
+You can find the complete list of available functions in the [ES|QL API reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html#module-elasticsearch.esql.functions).

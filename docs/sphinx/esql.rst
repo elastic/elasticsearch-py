@@ -1,6 +1,9 @@
 ES|QL Query Builder
 ===================
 
+Commands
+--------
+
 .. autoclass:: elasticsearch.esql.ESQL
    :inherited-members:
    :members:
@@ -81,3 +84,9 @@ ES|QL Query Builder
 .. autoclass:: elasticsearch.esql.esql.Where
    :members:
    :exclude-members: __init__
+
+Functions
+---------
+
+.. automodule:: elasticsearch.esql.functions
+   :members:
