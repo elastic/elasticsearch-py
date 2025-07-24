@@ -25,6 +25,14 @@ Commands
    :members:
    :exclude-members: __init__
 
+.. autoclass:: elasticsearch.esql.esql.ChangePoint
+   :members:
+   :exclude-members: __init__
+
+.. autoclass:: elasticsearch.esql.esql.Completion
+   :members:
+   :exclude-members: __init__
+
 .. autoclass:: elasticsearch.esql.esql.Dissect
    :members:
    :exclude-members: __init__

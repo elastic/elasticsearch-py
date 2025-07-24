@@ -134,6 +134,49 @@ class ESQLBase(ABC):
         """
         return ChangePoint(self, value)
 
+    def completion(
+        self, *prompt: ExpressionType, **named_prompt: ExpressionType
+    ) -> "Completion":
+        """The `COMPLETION` command allows you to send prompts and context to a Large
+        Language Model (LLM) directly within your ES|QL queries, to perform text
+        generation tasks.
+
+        :param prompt: The input text or expression used to prompt the LLM. This can
+                       be a string literal or a reference to a column containing text.
+        :param named_prompt: The input text or expresion, given as a keyword argument.
+                             The argument name is used for the column name. If not
+                             specified, the results will be stored in a column named
+                             `completion`. If the specified column already exists, it
+                             will be overwritten with the new results.
+
+        Examples::
+
+            query1 = (
+                ESQL.row(question="What is Elasticsearch?")
+                .completion("question").with_("test_completion_model")
+                .keep("question", "completion")
+            )
+            query2 = (
+                ESQL.row(question="What is Elasticsearch?")
+                .completion(answer="question").with_("test_completion_model")
+                .keep("question", "answer")
+            )
+            query3 = (
+                ESQL.from_("movies")
+                .sort("rating DESC")
+                .limit(10)
+                .eval(prompt=\"\"\"CONCAT(
+                    "Summarize this movie using the following information: \\n",
+                    "Title: ", title, "\\n",
+                    "Synopsis: ", synopsis, "\\n",
+                    "Actors: ", MV_CONCAT(actors, ", "), "\\n",
+                )\"\"\")
+                .completion(summary="prompt").with_("test_completion_model")
+                .keep("title", "summary", "rating")
+            )
+        """
+        return Completion(self, *prompt, **named_prompt)
+
     def dissect(self, input: FieldType, pattern: str) -> "Dissect":
         """``DISSECT`` enables you to extract structured data out of a string.
 
@@ -306,7 +349,7 @@ class ESQLBase(ABC):
         """
         return Limit(self, max_number_of_rows)
 
-    def lookup_join(self, lookup_index: IndexType, field: FieldType) -> "LookupJoin":
+    def lookup_join(self, lookup_index: IndexType) -> "LookupJoin":
         """`LOOKUP JOIN` enables you to add data from another index, AKA a 'lookup' index,
         to your ES|QL query results, simplifying data enrichment and analysis workflows.
 
@@ -314,35 +357,31 @@ class ESQLBase(ABC):
                              name - wildcards, aliases, and remote cluster references are
                              not supported. Indices used for lookups must be configured
                              with the lookup index mode.
-        :param field: The field to join on. This field must exist in both your current query
-                      results and in the lookup index. If the field contains multi-valued
-                      entries, those entries will not match anything (the added fields will
-                      contain null for those rows).
 
         Examples::
 
             query1 = (
                 ESQL.from_("firewall_logs")
-                .lookup_join("threat_list", "source.IP")
+                .lookup_join("threat_list").on("source.IP")
                 .where("threat_level IS NOT NULL")
             )
             query2 = (
                 ESQL.from_("system_metrics")
-                .lookup_join("host_inventory", "host.name")
-                .lookup_join("ownerships", "host.name")
+                .lookup_join("host_inventory").on("host.name")
+                .lookup_join("ownerships").on("host.name")
             )
             query3 = (
                 ESQL.from_("app_logs")
-                .lookup_join("service_owners", "service_id")
+                .lookup_join("service_owners").on("service_id")
             )
             query4 = (
                 ESQL.from_("employees")
                 .eval(language_code="languages")
                 .where("emp_no >= 10091 AND emp_no < 10094")
-                .lookup_join("languages_lookup", "language_code")
+                .lookup_join("languages_lookup").on("language_code")
             )
         """
-        return LookupJoin(self, lookup_index, field)
+        return LookupJoin(self, lookup_index)
 
     def mv_expand(self, column: FieldType) -> "MvExpand":
         """The `MV_EXPAND` processing command expands multivalued columns into one row per
@@ -635,6 +674,47 @@ class ChangePoint(ESQLBase):
         return f"CHANGE_POINT {self._value}{key}{names}"
 
 
+class Completion(ESQLBase):
+    """Implementation of the ``COMPLETION`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(
+        self, parent: ESQLBase, *prompt: ExpressionType, **named_prompt: ExpressionType
+    ):
+        if len(prompt) + len(named_prompt) > 1:
+            raise ValueError(
+                "this method requires either one positional or one keyword argument only"
+            )
+        super().__init__(parent)
+        self._prompt = prompt
+        self._named_prompt = named_prompt
+        self._inference_id: Optional[str] = None
+
+    def with_(self, inference_id: str) -> "Completion":
+        """Continuation of the `COMPLETION` command.
+
+        :param inference_id: The ID of the inference endpoint to use for the task. The
+                             inference endpoint must be configured with the completion
+                             task type.
+        """
+        self._inference_id = inference_id
+        return self
+
+    def _render_internal(self) -> str:
+        if self._inference_id is None:
+            raise ValueError("The completion command requires an inference ID")
+        if self._named_prompt:
+            column = list(self._named_prompt.keys())[0]
+            prompt = list(self._named_prompt.values())[0]
+            return f"COMPLETION {column} = {prompt} WITH {self._inference_id}"
+        else:
+            return f"COMPLETION {self._prompt[0]} WITH {self._inference_id}"
+
+
 class Dissect(ESQLBase):
     """Implementation of the ``DISSECT`` processing command.
 
@@ -861,12 +941,25 @@ class LookupJoin(ESQLBase):
     in a single expression.
     """
 
-    def __init__(self, parent: ESQLBase, lookup_index: IndexType, field: FieldType):
+    def __init__(self, parent: ESQLBase, lookup_index: IndexType):
         super().__init__(parent)
         self._lookup_index = lookup_index
+        self._field: Optional[FieldType] = None
+
+    def on(self, field: FieldType) -> "LookupJoin":
+        """Continuation of the `LOOKUP_JOIN` command.
+
+        :param field: The field to join on. This field must exist in both your current query
+                      results and in the lookup index. If the field contains multi-valued
+                      entries, those entries will not match anything (the added fields will
+                      contain null for those rows).
+        """
         self._field = field
+        return self
 
     def _render_internal(self) -> str:
+        if self._field is None:
+            raise ValueError("Joins require a field to join on.")
         index = (
             self._lookup_index
             if isinstance(self._lookup_index, str)

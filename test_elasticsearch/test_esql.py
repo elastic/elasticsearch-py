@@ -74,6 +74,97 @@ def test_change_point():
     )
 
 
+def test_completion():
+    query = (
+        ESQL.row(question="What is Elasticsearch?")
+        .completion("question")
+        .with_("test_completion_model")
+        .keep("question", "completion")
+    )
+    assert (
+        query.render()
+        == """ROW question = "What is Elasticsearch?"
+| COMPLETION question WITH test_completion_model
+| KEEP question, completion"""
+    )
+
+    query = (
+        ESQL.row(question="What is Elasticsearch?")
+        .completion(answer=E("question"))
+        .with_("test_completion_model")
+        .keep("question", "answer")
+    )
+    assert (
+        query.render()
+        == """ROW question = "What is Elasticsearch?"
+| COMPLETION answer = question WITH test_completion_model
+| KEEP question, answer"""
+    )
+
+    query = (
+        ESQL.from_("movies")
+        .sort("rating DESC")
+        .limit(10)
+        .eval(
+            prompt="""CONCAT(
+      "Summarize this movie using the following information: \\n",
+      "Title: ", title, "\\n",
+      "Synopsis: ", synopsis, "\\n",
+      "Actors: ", MV_CONCAT(actors, ", "), "\\n",
+  )"""
+        )
+        .completion(summary="prompt")
+        .with_("test_completion_model")
+        .keep("title", "summary", "rating")
+    )
+    assert (
+        query.render()
+        == """FROM movies
+| SORT rating DESC
+| LIMIT 10
+| EVAL prompt = CONCAT(
+      "Summarize this movie using the following information: \\n",
+      "Title: ", title, "\\n",
+      "Synopsis: ", synopsis, "\\n",
+      "Actors: ", MV_CONCAT(actors, ", "), "\\n",
+  )
+| COMPLETION summary = prompt WITH test_completion_model
+| KEEP title, summary, rating"""
+    )
+
+    query = (
+        ESQL.from_("movies")
+        .sort("rating DESC")
+        .limit(10)
+        .eval(
+            prompt=functions.concat(
+                "Summarize this movie using the following information: \n",
+                "Title: ",
+                E("title"),
+                "\n",
+                "Synopsis: ",
+                E("synopsis"),
+                "\n",
+                "Actors: ",
+                functions.mv_concat(E("actors"), ", "),
+                "\n",
+            )
+        )
+        .completion(summary="prompt")
+        .with_("test_completion_model")
+        .keep("title", "summary", "rating")
+    )
+    assert (
+        query.render()
+        == """FROM movies
+| SORT rating DESC
+| LIMIT 10
+| EVAL prompt = CONCAT("Summarize this movie using the following information: \\n", "Title: ", title, "\\n", "Synopsis: ", synopsis, "\\n", "Actors: ", MV_CONCAT(actors, ", "), "\\n")
+| COMPLETION summary = prompt WITH test_completion_model
+| KEEP title, summary, rating"""
+    )
+
+
 def test_dissect():
     query = (
         ESQL.row(a="2023-01-23T12:15:00.000Z - some text - 127.0.0.1")
@@ -260,7 +351,8 @@ def test_limit():
 def test_lookup_join():
     query = (
         ESQL.from_("firewall_logs")
-        .lookup_join("threat_list", "source.IP")
+        .lookup_join("threat_list")
+        .on("source.IP")
         .where("threat_level IS NOT NULL")
     )
     assert (
@@ -272,8 +364,10 @@ def test_lookup_join():
 
     query = (
         ESQL.from_("system_metrics")
-        .lookup_join("host_inventory", "host.name")
-        .lookup_join("ownerships", "host.name")
+        .lookup_join("host_inventory")
+        .on("host.name")
+        .lookup_join("ownerships")
+        .on("host.name")
     )
     assert (
         query.render()
@@ -282,7 +376,7 @@ def test_lookup_join():
 | LOOKUP JOIN ownerships ON host.name"""
     )
 
-    query = ESQL.from_("app_logs").lookup_join("service_owners", "service_id")
+    query = ESQL.from_("app_logs").lookup_join("service_owners").on("service_id")
     assert (
         query.render()
         == """FROM app_logs
@@ -293,7 +387,8 @@ def test_lookup_join():
         ESQL.from_("employees")
         .eval(language_code="languages")
         .where(E("emp_no") >= 10091, E("emp_no") < 10094)
-        .lookup_join("languages_lookup", "language_code")
+        .lookup_join("languages_lookup")
+        .on("language_code")
     )
     assert (
         query.render()
