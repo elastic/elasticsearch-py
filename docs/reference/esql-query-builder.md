@@ -181,7 +181,7 @@ query = (
 
 ## Using ES|QL functions
 
-The ES|QL language includes a rich set of functions that can be used in expressions and conditionals, and these can be included in expressions that are given as strings, as shown in the example below:
+The ES|QL language includes a rich set of functions that can be used in expressions and conditionals. These can be included in expressions given as strings, as shown in the example below:
 
 ```python
 from elasticsearch.esql import ESQL
@@ -193,7 +193,7 @@ query = (
 )
 ```
 
-All available ES|QL functions have Python wrappers in the `elasticsearch.esql.functions` module, which can be used when building expressions using Python syntax. Below is the same example coded using Python syntax:
+All available ES|QL functions have Python wrappers in the `elasticsearch.esql.functions` module, which can be used when building expressions using Python syntax. Below is the example above coded using Python syntax:
 
 ```python
 from elasticsearch.esql import ESQL, functions

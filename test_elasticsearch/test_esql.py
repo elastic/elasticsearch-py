@@ -155,7 +155,7 @@ def test_eval():
     query = (
         ESQL.from_("employees")
         .eval("height * 3.281")
-        .stats(avg_height_feet=functions.avg("`height * 3.281`"))
+        .stats(avg_height_feet=functions.avg(E("`height * 3.281`")))
     )
     assert (
         query.render()
@@ -208,7 +208,7 @@ def test_grok():
             "%{TIMESTAMP_ISO8601:date} %{IP:ip} %{EMAILADDRESS:email} %{NUMBER:num:int}",
         )
         .keep("date", "ip", "email", "num")
-        .eval(date=functions.to_datetime("date"))
+        .eval(date=functions.to_datetime(E("date")))
     )
     assert (
         query.render()
@@ -248,7 +248,9 @@ def test_limit():
     query = ESQL.from_("index").where(E("field") == "value").limit(1000)
     assert query.render() == 'FROM index\n| WHERE field == "value"\n| LIMIT 1000'
 
-    query = ESQL.from_("index").stats(functions.avg("field1")).by("field2").limit(20000)
+    query = (
+        ESQL.from_("index").stats(functions.avg(E("field1"))).by("field2").limit(20000)
+    )
     assert (
         query.render()
         == "FROM index\n| STATS AVG(field1)\n        BY field2\n| LIMIT 20000"
@@ -386,7 +388,7 @@ def test_sort():
 def test_stats():
     query = (
         ESQL.from_("employees")
-        .stats(count=functions.count("emp_no"))
+        .stats(count=functions.count(E("emp_no")))
         .by("languages")
         .sort("languages")
     )
@@ -398,7 +400,7 @@ def test_stats():
 | SORT languages"""
     )
 
-    query = ESQL.from_("employees").stats(avg_lang=functions.avg("languages"))
+    query = ESQL.from_("employees").stats(avg_lang=functions.avg(E("languages")))
     assert (
         query.render()
         == """FROM employees
@@ -406,7 +408,7 @@ def test_stats():
     )
 
     query = ESQL.from_("employees").stats(
-        avg_lang=functions.avg("languages"), max_lang=functions.max("languages")
+        avg_lang=functions.avg(E("languages")), max_lang=functions.max(E("languages"))
     )
     assert (
         query.render()
@@ -418,8 +420,8 @@ def test_stats():
     query = (
         ESQL.from_("employees")
         .stats(
-            avg50s=functions.avg("salary").where('birth_date < "1960-01-01"'),
-            avg60s=functions.avg("salary").where('birth_date >= "1960-01-01"'),
+            avg50s=functions.avg(E("salary")).where('birth_date < "1960-01-01"'),
+            avg60s=functions.avg(E("salary")).where('birth_date >= "1960-01-01"'),
         )
         .by("gender")
         .sort("gender")
@@ -437,10 +439,10 @@ def test_stats():
         ESQL.from_("employees")
         .eval(Ks="salary / 1000")
         .stats(
-            under_40K=functions.count("*").where("Ks < 40"),
-            inbetween=functions.count("*").where("40 <= Ks", "Ks < 60"),
-            over_60K=functions.count("*").where("60 <= Ks"),
-            total=functions.count("*"),
+            under_40K=functions.count(E("*")).where("Ks < 40"),
+            inbetween=functions.count(E("*")).where("40 <= Ks", "Ks < 60"),
+            over_60K=functions.count(E("*")).where("60 <= Ks"),
+            total=functions.count(E("*")),
         )
     )
     assert (
@@ -453,7 +455,9 @@ def test_stats():
         total = COUNT(*)"""
     )
 
-    query = ESQL.row(i=1, a=["a", "b"]).stats(functions.min("i")).by("a").sort("a ASC")
+    query = (
+        ESQL.row(i=1, a=["a", "b"]).stats(functions.min(E("i"))).by("a").sort("a ASC")
+    )
     assert (
         query.render()
         == 'ROW i = 1, a = ["a", "b"]\n| STATS MIN(i)\n        BY a\n| SORT a ASC'
@@ -461,10 +465,10 @@ def test_stats():
 
     query = (
         ESQL.from_("employees")
-        .eval(hired=functions.date_format("hire_date", "yyyy"))
-        .stats(avg_salary=functions.avg("salary"))
+        .eval(hired=functions.date_format(E("hire_date"), "yyyy"))
+        .stats(avg_salary=functions.avg(E("salary")))
         .by("hired", "languages.long")
-        .eval(avg_salary=functions.round("avg_salary"))
+        .eval(avg_salary=functions.round(E("avg_salary")))
         .sort("hired", "languages.long")
     )
     assert (
