@@ -4081,6 +4081,9 @@ class Short(Integer):
 class SparseVector(Field):
     """
     :arg store:
+    :arg index_options: Additional index options for the sparse vector
+        field that controls the token pruning behavior of the sparse
+        vector field.
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -4099,6 +4102,9 @@ class SparseVector(Field):
         self,
         *args: Any,
         store: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            "types.SparseVectorIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -4113,6 +4119,8 @@ class SparseVector(Field):
     ):
         if store is not DEFAULT:
             kwargs["store"] = store
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
