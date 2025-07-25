@@ -92,7 +92,9 @@ class ESQL(ABC):
 
 
 class ESQLBase(ABC):
-    """ """
+    """The methods of the ``ESQLBase`` class provide access to the ES|QL processing
+    commands, used to build ES|QL queries.
+    """
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
         self._parent = parent

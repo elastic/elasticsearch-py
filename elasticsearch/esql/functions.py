@@ -544,7 +544,7 @@ def match(
 
     :param field: Field that the query will target.
     :param query: Value to find in the provided field.
-    :param options: (Optional) Match additional options as [function named parameters](/reference/query-languages/esql/esql-syntax.md#esql-function-named-params).
+    :param options: (Optional) Match additional options as function named parameters.
     """
     if options is not None:
         return InstrumentedExpression(
@@ -1188,8 +1188,8 @@ def st_geohash(
     :param precision: Expression of type `integer`. If `null`, the function
                       returns `null`. Valid values are between 1 and 12.
     :param bounds: Optional bounds to filter the grid tiles, a `geo_shape` of
-                   type `BBOX`. Use [`ST_ENVELOPE`](#esql-st_envelope) if the
-                   `geo_shape` is of any other type.
+                   type `BBOX`. Use `ST_ENVELOPE` if the `geo_shape` is of any
+                   other type.
     """
     if bounds is not None:
         return InstrumentedExpression(
@@ -1234,7 +1234,7 @@ def st_geohex(
     :param precision: Expression of type `integer`. If `null`, the function
                       returns `null`. Valid values are between 0 and 15.
     :param bounds: Optional bounds to filter the grid tiles, a `geo_shape` of
-                   type `BBOX`. Use [`ST_ENVELOPE`](#esql-st_envelope) if the `geo_shape`
+                   type `BBOX`. Use `ST_ENVELOPE` if the `geo_shape`
                    is of any other type.
     """
     if bounds is not None:
@@ -1280,8 +1280,8 @@ def st_geotile(
     :param precision: Expression of type `integer`. If `null`, the function
                       returns `null`. Valid values are between 0 and 29.
     :param bounds: Optional bounds to filter the grid tiles, a `geo_shape` of
-                   type `BBOX`. Use [`ST_ENVELOPE`](#esql-st_envelope) if the
-                   `geo_shape` is of any other type.
+                   type `BBOX`. Use `ST_ENVELOPE` if the `geo_shape` is of any
+                   other type.
     """
     if bounds is not None:
         return InstrumentedExpression(
