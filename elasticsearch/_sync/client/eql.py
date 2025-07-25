@@ -204,6 +204,7 @@ class EqlClient(NamespacedClient):
         allow_partial_search_results: t.Optional[bool] = None,
         allow_partial_sequence_results: t.Optional[bool] = None,
         case_sensitive: t.Optional[bool] = None,
+        ccs_minimize_roundtrips: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         event_category_field: t.Optional[str] = None,
         expand_wildcards: t.Optional[
@@ -250,7 +251,9 @@ class EqlClient(NamespacedClient):
 
         :param index: The name of the index to scope the operation
         :param query: EQL query you wish to run.
-        :param allow_no_indices:
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
         :param allow_partial_search_results: Allow query execution also in case of shard
             failures. If true, the query will keep running and will return results based
             on the available shards. For sequences, the behavior can be further refined
@@ -261,9 +264,12 @@ class EqlClient(NamespacedClient):
             If false, the sequence query will return successfully, but will always have
             empty results.
         :param case_sensitive:
+        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
+            be minimized as part of cross-cluster search requests execution
         :param event_category_field: Field containing the event classification, such
             as process, file, or network.
-        :param expand_wildcards:
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
         :param fetch_size: Maximum number of events to search at a time for sequence
             queries.
         :param fields: Array of wildcard (*) patterns. The response returns values for
@@ -298,6 +304,8 @@ class EqlClient(NamespacedClient):
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
+        if ccs_minimize_roundtrips is not None:
+            __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:

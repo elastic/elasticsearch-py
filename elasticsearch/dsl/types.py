@@ -144,8 +144,26 @@ class ChiSquareHeuristic(AttrDict[Any]):
 
 class ChunkingSettings(AttrDict[Any]):
     """
-    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
-        Defaults to `sentence` if omitted.
+    :arg strategy: (required) The chunking strategy: `sentence`, `word`,
+        `none` or `recursive`.   * If `strategy` is set to `recursive`,
+        you must also specify:  - `max_chunk_size` - either `separators`
+        or`separator_group`  Learn more about different chunking
+        strategies in the linked documentation. Defaults to `sentence` if
+        omitted.
+    :arg separator_group: (required) This parameter is only applicable
+        when using the `recursive` chunking strategy.  Sets a predefined
+        list of separators in the saved chunking settings based on the
+        selected text type. Values can be `markdown` or `plaintext`.
+        Using this parameter is an alternative to manually specifying a
+        custom `separators` list.
+    :arg separators: (required) A list of strings used as possible split
+        points when chunking text with the `recursive` strategy.  Each
+        string can be a plain string or a regular expression (regex)
+        pattern. The system tries each separator in order to split the
+        text, starting from the first item in the list.  After splitting,
+        it attempts to recombine smaller pieces into larger chunks that
+        stay within the `max_chunk_size` limit, to reduce the total number
+        of chunks generated.
     :arg max_chunk_size: (required) The maximum size of a chunk in words.
         This value cannot be higher than `300` or lower than `20` (for
         `sentence` strategy) or `10` (for `word` strategy). Defaults to
@@ -160,6 +178,8 @@ class ChunkingSettings(AttrDict[Any]):
     """
 
     strategy: Union[str, DefaultType]
+    separator_group: Union[str, DefaultType]
+    separators: Union[Sequence[str], DefaultType]
     max_chunk_size: Union[int, DefaultType]
     overlap: Union[int, DefaultType]
     sentence_overlap: Union[int, DefaultType]
@@ -168,6 +188,8 @@ class ChunkingSettings(AttrDict[Any]):
         self,
         *,
         strategy: Union[str, DefaultType] = DEFAULT,
+        separator_group: Union[str, DefaultType] = DEFAULT,
+        separators: Union[Sequence[str], DefaultType] = DEFAULT,
         max_chunk_size: Union[int, DefaultType] = DEFAULT,
         overlap: Union[int, DefaultType] = DEFAULT,
         sentence_overlap: Union[int, DefaultType] = DEFAULT,
@@ -175,6 +197,10 @@ class ChunkingSettings(AttrDict[Any]):
     ):
         if strategy is not DEFAULT:
             kwargs["strategy"] = strategy
+        if separator_group is not DEFAULT:
+            kwargs["separator_group"] = separator_group
+        if separators is not DEFAULT:
+            kwargs["separators"] = separators
         if max_chunk_size is not DEFAULT:
             kwargs["max_chunk_size"] = max_chunk_size
         if overlap is not DEFAULT:
@@ -3723,6 +3749,38 @@ class SpanWithinQuery(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SparseVectorIndexOptions(AttrDict[Any]):
+    """
+    :arg prune: Whether to perform pruning, omitting the non-significant
+        tokens from the query to improve query performance. If prune is
+        true but the pruning_config is not specified, pruning will occur
+        but default values will be used. Default: false
+    :arg pruning_config: Optional pruning configuration. If enabled, this
+        will omit non-significant tokens from the query in order to
+        improve query performance. This is only used if prune is set to
+        true. If prune is set to true but pruning_config is not specified,
+        default values will be used.
+    """
+
+    prune: Union[bool, DefaultType]
+    pruning_config: Union["TokenPruningConfig", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        prune: Union[bool, DefaultType] = DEFAULT,
+        pruning_config: Union[
+            "TokenPruningConfig", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if prune is not DEFAULT:
+            kwargs["prune"] = prune
+        if pruning_config is not DEFAULT:
+            kwargs["pruning_config"] = pruning_config
+        super().__init__(kwargs)
+
+
 class SuggestContext(AttrDict[Any]):
     """
     :arg name: (required)
@@ -5166,9 +5224,11 @@ class FiltersAggregate(AttrDict[Any]):
 class FiltersBucket(AttrDict[Any]):
     """
     :arg doc_count: (required)
+    :arg key:
     """
 
     doc_count: int
+    key: str
 
 
 class FrequentItemSetsAggregate(AttrDict[Any]):
