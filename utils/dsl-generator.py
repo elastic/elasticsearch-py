@@ -333,8 +333,7 @@ class ElasticsearchSchema:
                 if schema_type["name"]["name"].endswith("RangeQuery"):
                     return '"wrappers.Range[Any]"', None
                 elif schema_type["name"]["name"].endswith("ScoreFunction"):
-                    # When dropping Python 3.8, use `removesuffix("Function")` instead
-                    name = schema_type["name"]["name"][:-8]
+                    name = schema_type["name"]["name"].removesuffix("Function")
                     return f'"function.{name}"', None
                 elif schema_type["name"]["name"].endswith("DecayFunction"):
                     return '"function.DecayFunction"', None
