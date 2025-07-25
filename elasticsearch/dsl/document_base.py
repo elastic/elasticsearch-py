@@ -331,7 +331,7 @@ class DocumentOptions:
         #     # ignore attributes
         #     field10: ClassVar[string] = "a regular class variable"
         annotations = attrs.get("__annotations__", {})
-        fields = set([n for n in attrs if isinstance(attrs[n], Field)])
+        fields = {n for n in attrs if isinstance(attrs[n], Field)}
         fields.update(annotations.keys())
         field_defaults = {}
         for name in fields:
