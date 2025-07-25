@@ -31,8 +31,8 @@ _version_groups = tuple(int(x) for x in re.search(r"^(\d+)\.(\d+)\.(\d+)", _elas
 if _version_groups < (9, 1, 0) or _version_groups > (10, 0, 0):
     raise ImportError(
         "An incompatible version of elastic-transport is installed. Must be between "
-        "v8.0.0 and v9.0.0. Install the correct version with the following command: "
-        "$ python -m pip install 'elastic-transport>=8, <9'"
+        "v9.1.0 and v10.0.0. Install the correct version with the following command: "
+        "$ python -m pip install 'elastic-transport>=9.1, <10'"
     )
 
 _version_groups = re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()  # type: ignore[assignment, union-attr]
