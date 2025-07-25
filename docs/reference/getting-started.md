@@ -11,7 +11,7 @@ This page guides you through the installation process of the Python client, show
 
 ### Requirements [_requirements]
 
-* [Python](https://www.python.org/) 3.8 or newer
+* [Python](https://www.python.org/) 3.9 or newer
 * [`pip`](https://pip.pypa.io/en/stable/), installed by default alongside Python
 
 
