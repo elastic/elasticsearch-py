@@ -67,7 +67,7 @@ class OpenTelemetry:
         *,
         endpoint_id: str | None,
         path_parts: Mapping[str, str],
-    ) -> Generator[OpenTelemetrySpan, None, None]:
+    ) -> Generator[OpenTelemetrySpan]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
             return
@@ -75,11 +75,11 @@ class OpenTelemetry:
         span_name = endpoint_id or method
         with self.tracer.start_as_current_span(span_name) as otel_span:
             otel_span.set_attribute("http.request.method", method)
-            otel_span.set_attribute("db.system", "elasticsearch")
+            otel_span.set_attribute("db.system.name", "elasticsearch")
             if endpoint_id is not None:
-                otel_span.set_attribute("db.operation", endpoint_id)
+                otel_span.set_attribute("db.operation.name", endpoint_id)
             for key, value in path_parts.items():
-                otel_span.set_attribute(f"db.elasticsearch.path_parts.{key}", value)
+                otel_span.set_attribute(f"db.operation.parameter.{key}", value)
 
             yield OpenTelemetrySpan(
                 otel_span,
@@ -88,20 +88,20 @@ class OpenTelemetry:
             )
 
     @contextlib.contextmanager
-    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan, None, None]:
+    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
             return
 
         with self.tracer.start_as_current_span(span_name) as otel_span:
-            otel_span.set_attribute("db.system", "elasticsearch")
-            otel_span.set_attribute("db.operation", span_name)
+            otel_span.set_attribute("db.system.name", "elasticsearch")
+            otel_span.set_attribute("db.operation.name", span_name)
             # Without a request method, Elastic APM does not display the traces
             otel_span.set_attribute("http.request.method", "null")
             yield OpenTelemetrySpan(otel_span)
 
     @contextlib.contextmanager
-    def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
+    def use_span(self, span: OpenTelemetrySpan) -> Generator[None]:
         if not self.enabled or self.tracer is None or span.otel_span is None:
             yield
             return

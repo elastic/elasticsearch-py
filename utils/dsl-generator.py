@@ -333,8 +333,7 @@ class ElasticsearchSchema:
                 if schema_type["name"]["name"].endswith("RangeQuery"):
                     return '"wrappers.Range[Any]"', None
                 elif schema_type["name"]["name"].endswith("ScoreFunction"):
-                    # When dropping Python 3.8, use `removesuffix("Function")` instead
-                    name = schema_type["name"]["name"][:-8]
+                    name = schema_type["name"]["name"].removesuffix("Function")
                     return f'"function.{name}"', None
                 elif schema_type["name"]["name"].endswith("DecayFunction"):
                     return '"function.DecayFunction"', None
@@ -928,7 +927,7 @@ def generate_field_py(schema, filename):
         ),
     )
 
-    with open(filename, "wt") as f:
+    with open(filename, "w") as f:
         f.write(field_py.render(classes=classes))
     print(f"Generated {filename}.")
 
@@ -942,7 +941,7 @@ def generate_query_py(schema, filename):
     for p in query_container["properties"]:
         classes += schema.property_to_python_class(p)
 
-    with open(filename, "wt") as f:
+    with open(filename, "w") as f:
         f.write(query_py.render(classes=classes, parent="Query"))
     print(f"Generated {filename}.")
 
@@ -957,7 +956,7 @@ def generate_aggs_py(schema, filename):
         if "containerProperty" not in p or not p["containerProperty"]:
             classes += schema.property_to_python_class(p)
 
-    with open(filename, "wt") as f:
+    with open(filename, "w") as f:
         f.write(aggs_py.render(classes=classes, parent="Agg"))
     print(f"Generated {filename}.")
 
@@ -978,7 +977,7 @@ def generate_response_init_py(schema, filename):
         for_types_py=False,
         for_response=True,
     )
-    with open(filename, "wt") as f:
+    with open(filename, "w") as f:
         f.write(
             response_init_py.render(response=search_response, ubq_response=ubq_response)
         )
@@ -1009,7 +1008,7 @@ def generate_types_py(schema, filename):
             continue
         classes_list.append(k)
 
-    with open(filename, "wt") as f:
+    with open(filename, "w") as f:
         f.write(types_py.render(classes=classes_list))
     print(f"Generated {filename}.")
 

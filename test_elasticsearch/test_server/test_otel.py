@@ -44,9 +44,9 @@ def test_otel_end_to_end(sync_client):
     assert spans[0].name == "search"
     expected_attributes = {
         "http.request.method": "POST",
-        "db.system": "elasticsearch",
-        "db.operation": "search",
-        "db.elasticsearch.path_parts.index": "logs-*",
+        "db.system.name": "elasticsearch",
+        "db.operation.name": "search",
+        "db.operation.parameter.index": "logs-*",
     }
     # Assert expected atttributes are here, but allow other attributes too
     # to make this test robust to elastic-transport changes
@@ -89,8 +89,8 @@ def test_otel_bulk(sync_client, elasticsearch_url, bulk_helper_name):
     parent_span = spans.pop()
     assert parent_span.name == f"helpers.{bulk_helper_name}"
     assert parent_span.attributes == {
-        "db.system": "elasticsearch",
-        "db.operation": f"helpers.{bulk_helper_name}",
+        "db.system.name": "elasticsearch",
+        "db.operation.name": f"helpers.{bulk_helper_name}",
         "http.request.method": "null",
     }
 
@@ -99,9 +99,9 @@ def test_otel_bulk(sync_client, elasticsearch_url, bulk_helper_name):
         assert span.name == "bulk"
         expected_attributes = {
             "http.request.method": "PUT",
-            "db.system": "elasticsearch",
-            "db.operation": "bulk",
-            "db.elasticsearch.path_parts.index": "test-index",
+            "db.system.name": "elasticsearch",
+            "db.operation.name": "bulk",
+            "db.operation.parameter.index": "test-index",
         }
         # Assert expected atttributes are here, but allow other attributes too
         # to make this test robust to elastic-transport changes

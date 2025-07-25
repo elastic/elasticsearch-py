@@ -68,7 +68,7 @@ def test_minimal_span():
     assert spans[0].name == "GET"
     assert spans[0].attributes == {
         "http.request.method": "GET",
-        "db.system": "elasticsearch",
+        "db.system.name": "elasticsearch",
     }
 
 
@@ -92,11 +92,11 @@ def test_detailed_span():
     assert spans[0].name == "ml.open_job"
     assert spans[0].attributes == {
         "http.request.method": "GET",
-        "db.system": "elasticsearch",
-        "db.operation": "ml.open_job",
-        "db.elasticsearch.path_parts.job_id": "my-job",
-        "db.elasticsearch.cluster.name": "e9106fc68e3044f0b1475b04bf4ffd5f",
-        "db.elasticsearch.node.name": "instance-0000000001",
+        "db.system.name": "elasticsearch",
+        "db.operation.name": "ml.open_job",
+        "db.operation.parameter.job_id": "my-job",
+        "db.namespace": "e9106fc68e3044f0b1475b04bf4ffd5f",
+        "elasticsearch.node.name": "instance-0000000001",
     }
 
 

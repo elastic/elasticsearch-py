@@ -11,7 +11,6 @@ steps:
     matrix:
       setup:
         python:
-          - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
@@ -24,7 +23,7 @@ steps:
           - "test"
       adjustments:
         - with:
-            python: "3.8"
+            python: "3.9"
             connection: "urllib3"
             nox_session: "test_otel"
         - with:
