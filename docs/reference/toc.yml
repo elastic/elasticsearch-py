@@ -5,6 +5,7 @@ toc:
   - file: connecting.md
   - file: configuration.md
   - file: querying.md
+  - file: esql-query-builder.md
   - file: async.md
   - file: integrations.md
     children:
