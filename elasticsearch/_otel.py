@@ -67,7 +67,7 @@ class OpenTelemetry:
         *,
         endpoint_id: str | None,
         path_parts: Mapping[str, str],
-    ) -> Generator[OpenTelemetrySpan, None, None]:
+    ) -> Generator[OpenTelemetrySpan]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
             return
@@ -88,7 +88,7 @@ class OpenTelemetry:
             )
 
     @contextlib.contextmanager
-    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan, None, None]:
+    def helpers_span(self, span_name: str) -> Generator[OpenTelemetrySpan]:
         if not self.enabled or self.tracer is None:
             yield OpenTelemetrySpan(None)
             return
@@ -101,7 +101,7 @@ class OpenTelemetry:
             yield OpenTelemetrySpan(otel_span)
 
     @contextlib.contextmanager
-    def use_span(self, span: OpenTelemetrySpan) -> Generator[None, None, None]:
+    def use_span(self, span: OpenTelemetrySpan) -> Generator[None]:
         if not self.enabled or self.tracer is None or span.otel_span is None:
             yield
             return
