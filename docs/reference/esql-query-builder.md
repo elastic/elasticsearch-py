@@ -44,21 +44,9 @@ The response body contains a `columns` attribute with the list of columns includ
              {'name': 'height_cm', 'type': 'double'}],
  'is_partial': False,
  'took': 11,
- 'values': [['Adrian',
-             'Wells',
-             2.424,
-             7.953144,
-             242.4],
-            ['Aaron',
-             'Gonzalez',
-             1.584,
-             5.1971,
-             158.4],
-            ['Miranda',
-             'Kramer',
-             1.55,
-             5.08555,
-             155]]}
+ 'values': [['Adrian', 'Wells', 2.424, 7.953144, 242.4],
+            ['Aaron', 'Gonzalez', 1.584, 5.1971, 158.4],
+            ['Miranda', 'Kramer', 1.55, 5.08555, 155]]}
 ```
 
 ## Creating an ES|QL query
@@ -74,10 +62,19 @@ Examples:
 ```python
 from elasticsearch.esql import ESQL
 
+# FROM employees
 query1 = ESQL.from_("employees")
+
+# FROM <logs-{now/d}>
 query2 = ESQL.from_("<logs-{now/d}>")
+
+# FROM employees-00001, other-employees-*
 query3 = ESQL.from_("employees-00001", "other-employees-*")
+
+# FROM cluster_one:employees-00001, cluster_two:other-employees-*
 query4 = ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
+
+# FROM employees METADATA _id
 query5 = ESQL.from_("employees").metadata("_id")
 ```
 
@@ -92,8 +89,13 @@ Examples:
 ```python
 from elasticsearch.esql import ESQL, functions
 
+# ROW a = 1, b = "two", c = null
 query1 = ESQL.row(a=1, b="two", c=None)
+
+# ROW a = [1, 2]
 query2 = ESQL.row(a=[1, 2])
+
+# ROW a = ROUND(1.23, 0)
 query3 = ESQL.row(a=functions.round(1.23, 0))
 ```
 
@@ -106,6 +108,7 @@ Example:
 ```python
 from elasticsearch.esql import ESQL
 
+# SHOW INFO
 query = ESQL.show("INFO")
 ```
 
@@ -118,6 +121,9 @@ results:
 ```python
 from elasticsearch.esql import ESQL
 
+# FROM employees
+# | WHERE still_hired == true
+# | LIMIT 10
 query = ESQL.from_("employees").where("still_hired == true").limit(10)
 ```
 
@@ -132,6 +138,10 @@ The simplest option is to provide all ES|QL expressions and conditionals as stri
 ```python
 from elasticsearch.esql import ESQL
 
+# FROM employees
+# | SORT emp_no
+# | KEEP first_name, last_name, height
+# | EVAL height_feet = height * 3.281, height_cm = height * 100
 query = (
     ESQL.from_("employees")
     .sort("emp_no")
@@ -145,6 +155,10 @@ A more advanced alternative is to replace the strings with Python expressions, w
 ```python
 from elasticsearch.esql import ESQL, E
 
+# FROM employees
+# | SORT emp_no
+# | KEEP first_name, last_name, height
+# | EVAL height_feet = height * 3.281, height_cm = height * 100
 query = (
     ESQL.from_("employees")
     .sort("emp_no")
@@ -158,8 +172,11 @@ Here the `E()` helper function is used as a wrapper to the column name that init
 Here is a second example, which uses a conditional expression in the `WHERE` command:
 
 ```python
-from elasticsearch.esql import ESQL, E
+from elasticsearch.esql import ESQL
 
+# FROM employees
+# | KEEP first_name, last_name, height
+# | WHERE first_name == "Larry"
 query = (
     ESQL.from_("employees")
     .keep("first_name", "last_name", "height")
@@ -172,6 +189,9 @@ Using Python syntax, the condition can be rewritten as follows:
 ```python
 from elasticsearch.esql import ESQL, E
 
+# FROM employees
+# | KEEP first_name, last_name, height
+# | WHERE first_name == "Larry"
 query = (
     ESQL.from_("employees")
     .keep("first_name", "last_name", "height")
@@ -186,6 +206,9 @@ The ES|QL language includes a rich set of functions that can be used in expressi
 ```python
 from elasticsearch.esql import ESQL
 
+# FROM employees
+# | KEEP first_name, last_name, height
+# | WHERE LENGTH(first_name) < 4"
 query = (
     ESQL.from_("employees")
     .keep("first_name", "last_name", "height")
@@ -198,6 +221,9 @@ All available ES|QL functions have Python wrappers in the `elasticsearch.esql.fu
 ```python
 from elasticsearch.esql import ESQL, functions
 
+# FROM employees
+# | KEEP first_name, last_name, height
+# | WHERE LENGTH(first_name) < 4"
 query = (
     ESQL.from_("employees")
     .keep("first_name", "last_name", "height")
