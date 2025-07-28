@@ -5099,9 +5099,11 @@ class FiltersAggregate(AttrDict[Any]):
 class FiltersBucket(AttrDict[Any]):
     """
     :arg doc_count: (required)
+    :arg key:
     """
 
     doc_count: int
+    key: str
 
 
 class FrequentItemSetsAggregate(AttrDict[Any]):

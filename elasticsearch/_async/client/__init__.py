@@ -1121,10 +1121,7 @@ class AsyncElasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        if_primary_term: t.Optional[int] = None,
-        if_seq_no: t.Optional[int] = None,
         include_source_on_error: t.Optional[bool] = None,
-        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -1209,18 +1206,8 @@ class AsyncElasticsearch(BaseClient):
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format.
         :param document:
-        :param if_primary_term: Only perform the operation if the document has this primary
-            term.
-        :param if_seq_no: Only perform the operation if the document has this sequence
-            number.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
-        :param op_type: Set to `create` to only index the document if it does not already
-            exist (put if absent). If a document with the specified `_id` already exists,
-            the indexing operation will fail. The behavior is the same as using the `<index>/_create`
-            endpoint. If a document ID is specified, this paramater defaults to `index`.
-            Otherwise, it defaults to `create`. If the request targets a data stream,
-            an `op_type` of `create` is required.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, setting the value to
             `_none` turns off the default ingest pipeline for this request. If a final
@@ -1272,14 +1259,8 @@ class AsyncElasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if if_primary_term is not None:
-            __query["if_primary_term"] = if_primary_term
-        if if_seq_no is not None:
-            __query["if_seq_no"] = if_seq_no
         if include_source_on_error is not None:
             __query["include_source_on_error"] = include_source_on_error
-        if op_type is not None:
-            __query["op_type"] = op_type
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
@@ -2652,7 +2633,6 @@ class AsyncElasticsearch(BaseClient):
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
@@ -2689,8 +2669,6 @@ class AsyncElasticsearch(BaseClient):
             the response.
         :param source_includes: A comma-separated list of source fields to include in
             the response.
-        :param stored_fields: A comma-separated list of stored fields to return as part
-            of a hit.
         :param version: The version number for concurrency control. It must match the
             current version of the document for the request to succeed.
         :param version_type: The version type.
@@ -2724,8 +2702,6 @@ class AsyncElasticsearch(BaseClient):
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
-        if stored_fields is not None:
-            __query["stored_fields"] = stored_fields
         if version is not None:
             __query["version"] = version
         if version_type is not None:
@@ -2834,6 +2810,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
+        require_data_stream: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -2969,6 +2946,8 @@ class AsyncElasticsearch(BaseClient):
             this operation visible to search. If `wait_for`, it waits for a refresh to
             make this operation visible to search. If `false`, it does nothing with refreshes.
         :param require_alias: If `true`, the destination must be an index alias.
+        :param require_data_stream: If `true`, the request's actions must target a data
+            stream (existing or to be created).
         :param routing: A custom value that is used to route operations to a specific
             shard.
         :param timeout: The period the request waits for the following operations: automatic
@@ -3030,6 +3009,8 @@ class AsyncElasticsearch(BaseClient):
             __query["refresh"] = refresh
         if require_alias is not None:
             __query["require_alias"] = require_alias
+        if require_data_stream is not None:
+            __query["require_data_stream"] = require_data_stream
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -3065,7 +3046,8 @@ class AsyncElasticsearch(BaseClient):
         .. raw:: html
 
           <p>Get cluster info.
-          Get basic build, version, and cluster information.</p>
+          Get basic build, version, and cluster information.
+          ::: In Serverless, this API is retained for backward compatibility only. Some response fields, such as the version number, should be ignored.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/rest-api-root.html>`_
@@ -3798,8 +3780,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
@@ -5695,7 +5676,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
@@ -5807,8 +5788,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. Supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param explain: If `true`, returns detailed information about score calculation
             as part of each hit. If you specify both this and the `explain` query parameter,
             the API uses only the query parameter.
@@ -6519,8 +6499,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.

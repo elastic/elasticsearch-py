@@ -173,7 +173,7 @@ class IndicesClient(NamespacedClient):
           The <code>_analyze</code> endpoint without a specified index will always use <code>10000</code> as its limit.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/indices-analyze.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v8/operation/operation-indices-analyze>`_
 
         :param index: Index used to derive the analyzer. If specified, the `analyzer`
             or field parameter overrides this value. If no index is specified or the
@@ -338,7 +338,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param fielddata: If `true`, clears the fields cache. Use the `fields` parameter
             to clear the cache of specific fields only.
         :param fields: Comma-separated list of field names used to limit the `fielddata`
@@ -563,7 +563,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -942,7 +942,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -1246,7 +1246,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a legacy index template.</p>
+          <p>Delete a legacy index template.
+          IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/indices-delete-template-v1.html>`_
@@ -1486,7 +1487,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param flat_settings: If `true`, returns settings in flat format.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
@@ -1570,7 +1571,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, requests that include a missing data stream
             or index in the target indices or data streams return an error.
         :param local: If `true`, the request retrieves information from the local node
@@ -1918,7 +1919,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param force: If `true`, the request forces a flush even if there are no changes
             to commit to the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
@@ -2236,7 +2237,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
@@ -2315,8 +2316,7 @@ class IndicesClient(NamespacedClient):
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
             or `_all`.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
-            Supports comma-separated values, such as `open,hidden`. Valid values are:
-            `all`, `open`, `closed`, `hidden`, `none`.
+            Supports comma-separated values, such as `open,hidden`.
         :param include_defaults: If `true`, return all default settings in the response.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -2512,7 +2512,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param include_defaults: If `true`, return all default settings in the response.
@@ -2668,7 +2668,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
@@ -2878,7 +2878,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index templates.
+          <p>Get legacy index templates.
           Get information about one or more index templates.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
@@ -3160,7 +3160,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -3419,8 +3419,7 @@ class IndicesClient(NamespacedClient):
             for this data stream. A data stream lifecycle that's disabled (enabled: `false`)
             will have no effect on the data stream.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
-            Supports comma-separated values, such as `open,hidden`. Valid values are:
-            `all`, `hidden`, `open`, `closed`, `none`.
+            Supports comma-separated values, such as `open,hidden`.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -3732,7 +3731,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param field_names: Control whether field names are enabled for the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
@@ -3850,8 +3849,34 @@ class IndicesClient(NamespacedClient):
           Changes dynamic index settings in real time.
           For data streams, index setting changes are applied to all backing indices by default.</p>
           <p>To revert a setting to the default value, use a null value.
-          The list of per-index settings that can be updated dynamically on live indices can be found in index module documentation.
+          The list of per-index settings that can be updated dynamically on live indices can be found in index settings documentation.
           To preserve existing settings from being updated, set the <code>preserve_existing</code> parameter to <code>true</code>.</p>
+          <p>There are multiple valid ways to represent index settings in the request body. You can specify only the setting, for example:</p>
+          <pre><code>{
+            &quot;number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can use an <code>index</code> setting object:</p>
+          <pre><code>{
+            &quot;index&quot;: {
+              &quot;number_of_replicas&quot;: 1
+            }
+          }
+          </code></pre>
+          <p>Or you can use dot annotation:</p>
+          <pre><code>{
+            &quot;index.number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can embed any of the aforementioned options in a <code>settings</code> object. For example:</p>
+          <pre><code>{
+            &quot;settings&quot;: {
+              &quot;index&quot;: {
+                &quot;number_of_replicas&quot;: 1
+              }
+            }
+          }
+          </code></pre>
           <p>NOTE: You can only define new analyzers on closed indices.
           To add an analyzer, you must close the index, define the analyzer, and reopen the index.
           You cannot close the write index of a data stream.
@@ -3971,7 +3996,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an index template.
+          <p>Create or update a legacy index template.
           Index templates define settings, mappings, and aliases that can be applied automatically to new indices.
           Elasticsearch applies templates to new indices based on an index pattern that matches the index name.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
@@ -4060,10 +4085,20 @@ class IndicesClient(NamespacedClient):
         *,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         active_only: t.Optional[bool] = None,
+        allow_no_indices: t.Optional[bool] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4096,8 +4131,17 @@ class IndicesClient(NamespacedClient):
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
         :param active_only: If `true`, the response only includes ongoing shard recoveries.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices.
         :param detailed: If `true`, the response includes detailed information about
             shard recoveries.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -4109,14 +4153,20 @@ class IndicesClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
             __query["active_only"] = active_only
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
         if detailed is not None:
             __query["detailed"] = detailed
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -4175,7 +4225,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
@@ -4374,10 +4424,9 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
-            NOTE: This option is only supported when specifying an index expression.
-            You will get an error if you specify index options to the `_resolve/cluster`
-            API endpoint that takes no index expression.
+            as `open,hidden`. NOTE: This option is only supported when specifying an
+            index expression. You will get an error if you specify index options to the
+            `_resolve/cluster` API endpoint that takes no index expression.
         :param ignore_throttled: If true, concrete, expanded, or aliased indices are
             ignored when frozen. NOTE: This option is only supported when specifying
             an index expression. You will get an error if you specify index options to
@@ -4470,7 +4519,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
@@ -4685,7 +4734,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param verbose: If `true`, the request returns a verbose response.
@@ -5598,7 +5647,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param explain: If `true`, the response returns detailed information if an error
             has occurred.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
