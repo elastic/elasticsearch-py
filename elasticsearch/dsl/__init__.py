@@ -19,7 +19,7 @@ from . import async_connections, connections
 from .aggs import A, Agg
 from .analysis import analyzer, char_filter, normalizer, token_filter, tokenizer
 from .document import AsyncDocument, Document
-from .document_base import InnerDoc, M, MetaField, mapped_field
+from .document_base import E, InnerDoc, M, MetaField, mapped_field
 from .exceptions import (
     ElasticsearchDslException,
     IllegalOperation,
@@ -135,6 +135,7 @@ __all__ = [
     "Double",
     "DoubleRange",
     "DslBase",
+    "E",
     "ElasticsearchDslException",
     "EmptySearch",
     "Facet",
