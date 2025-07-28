@@ -31,6 +31,8 @@ class EsqlClient(NamespacedClient):
             "columnar",
             "filter",
             "include_ccs_metadata",
+            "keep_alive",
+            "keep_on_completion",
             "locale",
             "params",
             "profile",
@@ -84,13 +86,15 @@ class EsqlClient(NamespacedClient):
           <p>The API accepts the same parameters and request body as the synchronous query API, along with additional async related properties.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-api.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -153,10 +157,6 @@ class EsqlClient(NamespacedClient):
             __query["format"] = format
         if human is not None:
             __query["human"] = human
-        if keep_alive is not None:
-            __query["keep_alive"] = keep_alive
-        if keep_on_completion is not None:
-            __query["keep_on_completion"] = keep_on_completion
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -168,6 +168,10 @@ class EsqlClient(NamespacedClient):
                 __body["filter"] = filter
             if include_ccs_metadata is not None:
                 __body["include_ccs_metadata"] = include_ccs_metadata
+            if keep_alive is not None:
+                __body["keep_alive"] = keep_alive
+            if keep_on_completion is not None:
+                __body["keep_on_completion"] = keep_on_completion
             if locale is not None:
                 __body["locale"] = locale
             if params is not None:
@@ -212,7 +216,7 @@ class EsqlClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-delete-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-delete-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -250,6 +254,14 @@ class EsqlClient(NamespacedClient):
         drop_null_columns: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        format: t.Optional[
+            t.Union[
+                str,
+                t.Literal[
+                    "arrow", "cbor", "csv", "json", "smile", "tsv", "txt", "yaml"
+                ],
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
@@ -265,7 +277,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can retrieve the results using this API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-get-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-get-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -275,6 +287,7 @@ class EsqlClient(NamespacedClient):
             will be removed from the `columns` and `values` portion of the results. If
             `true`, the response will include an extra section under the name `all_columns`
             which has the name of all the columns.
+        :param format: A short version of the Accept header, for example `json` or `yaml`.
         :param keep_alive: The period for which the query and its results are stored
             in the cluster. When this period expires, the query and its results are deleted,
             even if the query is still ongoing.
@@ -295,6 +308,8 @@ class EsqlClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
         if human is not None:
             __query["human"] = human
         if keep_alive is not None:
@@ -332,7 +347,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can stop it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-async-query-stop-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-async-query-stop-api.html>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -420,13 +435,15 @@ class EsqlClient(NamespacedClient):
           Get search results for an ES|QL (Elasticsearch query language) query.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/esql-rest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/esql-rest.html>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one

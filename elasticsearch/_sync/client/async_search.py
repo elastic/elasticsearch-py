@@ -44,7 +44,7 @@ class AsyncSearchClient(NamespacedClient):
           If the Elasticsearch security features are enabled, the deletion of a specific async search is restricted to: the authenticated user that submitted the original search request; users that have the <code>cancel_task</code> cluster privilege.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         """
@@ -94,7 +94,7 @@ class AsyncSearchClient(NamespacedClient):
           If the Elasticsearch security features are enabled, access to the results of a specific async search is restricted to the user or API key that submitted it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: The length of time that the async search should be available
@@ -164,7 +164,7 @@ class AsyncSearchClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/async-search.html>`_
 
         :param id: A unique identifier for the async search.
         :param keep_alive: The length of time that the async search needs to be available.
@@ -281,7 +281,6 @@ class AsyncSearchClient(NamespacedClient):
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -346,7 +345,7 @@ class AsyncSearchClient(NamespacedClient):
           The maximum allowed size for a stored async search response can be set by changing the <code>search.max_async_search_response_size</code> cluster level setting.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -401,7 +400,6 @@ class AsyncSearchClient(NamespacedClient):
             per node this search executes concurrently. This value should be used to
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests
-        :param min_compatible_shard_node:
         :param min_score: Minimum _score for matching documents. Documents with a lower
             _score are not included in search results and results collected by aggregations.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
@@ -526,8 +524,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:
