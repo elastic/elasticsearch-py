@@ -353,7 +353,7 @@ class LicenseClient(NamespacedClient):
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        type_query_string: t.Optional[str] = None,
+        type: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -370,7 +370,7 @@ class LicenseClient(NamespacedClient):
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
         :param master_timeout: Period to wait for a connection to the master node.
-        :param type_query_string:
+        :param type: The type of trial license to generate (default: "trial")
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_trial"
@@ -387,8 +387,8 @@ class LicenseClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if type_query_string is not None:
-            __query["type_query_string"] = type_query_string
+        if type is not None:
+            __query["type"] = type
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",

@@ -142,48 +142,6 @@ class ChiSquareHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
-class ChunkingSettings(AttrDict[Any]):
-    """
-    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
-        Defaults to `sentence` if omitted.
-    :arg max_chunk_size: (required) The maximum size of a chunk in words.
-        This value cannot be higher than `300` or lower than `20` (for
-        `sentence` strategy) or `10` (for `word` strategy). Defaults to
-        `250` if omitted.
-    :arg overlap: The number of overlapping words for chunks. It is
-        applicable only to a `word` chunking strategy. This value cannot
-        be higher than half the `max_chunk_size` value. Defaults to `100`
-        if omitted.
-    :arg sentence_overlap: The number of overlapping sentences for chunks.
-        It is applicable only for a `sentence` chunking strategy. It can
-        be either `1` or `0`. Defaults to `1` if omitted.
-    """
-
-    strategy: Union[str, DefaultType]
-    max_chunk_size: Union[int, DefaultType]
-    overlap: Union[int, DefaultType]
-    sentence_overlap: Union[int, DefaultType]
-
-    def __init__(
-        self,
-        *,
-        strategy: Union[str, DefaultType] = DEFAULT,
-        max_chunk_size: Union[int, DefaultType] = DEFAULT,
-        overlap: Union[int, DefaultType] = DEFAULT,
-        sentence_overlap: Union[int, DefaultType] = DEFAULT,
-        **kwargs: Any,
-    ):
-        if strategy is not DEFAULT:
-            kwargs["strategy"] = strategy
-        if max_chunk_size is not DEFAULT:
-            kwargs["max_chunk_size"] = max_chunk_size
-        if overlap is not DEFAULT:
-            kwargs["overlap"] = overlap
-        if sentence_overlap is not DEFAULT:
-            kwargs["sentence_overlap"] = sentence_overlap
-        super().__init__(kwargs)
-
-
 class ClassificationInferenceOptions(AttrDict[Any]):
     """
     :arg num_top_classes: Specifies the number of top class predictions to
@@ -371,9 +329,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg m: The number of neighbors each node will be connected to in the
         HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`,
         and `int4_hnsw` index types. Defaults to `16` if omitted.
-    :arg rescore_vector: The rescore vector options. This is only
-        applicable to `bbq_hnsw`, `int4_hnsw`, `int8_hnsw`, `bbq_flat`,
-        `int4_flat`, and `int8_flat` index types.
     """
 
     type: Union[
@@ -392,9 +347,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     confidence_interval: Union[float, DefaultType]
     ef_construction: Union[int, DefaultType]
     m: Union[int, DefaultType]
-    rescore_vector: Union[
-        "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
-    ]
 
     def __init__(
         self,
@@ -415,9 +367,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         confidence_interval: Union[float, DefaultType] = DEFAULT,
         ef_construction: Union[int, DefaultType] = DEFAULT,
         m: Union[int, DefaultType] = DEFAULT,
-        rescore_vector: Union[
-            "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
-        ] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -428,29 +377,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["ef_construction"] = ef_construction
         if m is not DEFAULT:
             kwargs["m"] = m
-        if rescore_vector is not DEFAULT:
-            kwargs["rescore_vector"] = rescore_vector
-        super().__init__(kwargs)
-
-
-class DenseVectorIndexOptionsRescoreVector(AttrDict[Any]):
-    """
-    :arg oversample: (required) The oversampling factor to use when
-        searching for the nearest neighbor. This is only applicable to the
-        quantized formats: `bbq_*`, `int4_*`, and `int8_*`. When provided,
-        `oversample * k` vectors will be gathered and then their scores
-        will be re-computed with the original vectors.  valid values are
-        between `1.0` and `10.0` (inclusive), or `0` exactly to disable
-        oversampling.
-    """
-
-    oversample: Union[float, DefaultType]
-
-    def __init__(
-        self, *, oversample: Union[float, DefaultType] = DEFAULT, **kwargs: Any
-    ):
-        if oversample is not DEFAULT:
-            kwargs["oversample"] = oversample
         super().__init__(kwargs)
 
 
@@ -1211,7 +1137,6 @@ class Highlight(AttrDict[Any]):
 
     fields: Union[
         Mapping[Union[str, InstrumentedField], "HighlightField"],
-        Sequence[Mapping[Union[str, InstrumentedField], "HighlightField"]],
         Dict[str, Any],
         DefaultType,
     ]
@@ -1243,7 +1168,6 @@ class Highlight(AttrDict[Any]):
         *,
         fields: Union[
             Mapping[Union[str, InstrumentedField], "HighlightField"],
-            Sequence[Mapping[Union[str, InstrumentedField], "HighlightField"]],
             Dict[str, Any],
             DefaultType,
         ] = DEFAULT,
@@ -3139,26 +3063,6 @@ class ScriptedHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
-class SemanticTextIndexOptions(AttrDict[Any]):
-    """
-    :arg dense_vector:
-    """
-
-    dense_vector: Union["DenseVectorIndexOptions", Dict[str, Any], DefaultType]
-
-    def __init__(
-        self,
-        *,
-        dense_vector: Union[
-            "DenseVectorIndexOptions", Dict[str, Any], DefaultType
-        ] = DEFAULT,
-        **kwargs: Any,
-    ):
-        if dense_vector is not DEFAULT:
-            kwargs["dense_vector"] = dense_vector
-        super().__init__(kwargs)
-
-
 class ShapeFieldQuery(AttrDict[Any]):
     """
     :arg indexed_shape: Queries using a pre-indexed shape.
@@ -3236,15 +3140,10 @@ class SortOptions(AttrDict[Any]):
 
 class SourceFilter(AttrDict[Any]):
     """
-    :arg exclude_vectors: If `true`, vector fields are excluded from the
-        returned source.  This option takes precedence over `includes`:
-        any vector field will remain excluded even if it matches an
-        `includes` rule.
-    :arg excludes: A list of fields to exclude from the returned source.
-    :arg includes: A list of fields to include in the returned source.
+    :arg excludes:
+    :arg includes:
     """
 
-    exclude_vectors: Union[bool, DefaultType]
     excludes: Union[
         Union[str, InstrumentedField],
         Sequence[Union[str, InstrumentedField]],
@@ -3259,7 +3158,6 @@ class SourceFilter(AttrDict[Any]):
     def __init__(
         self,
         *,
-        exclude_vectors: Union[bool, DefaultType] = DEFAULT,
         excludes: Union[
             Union[str, InstrumentedField],
             Sequence[Union[str, InstrumentedField]],
@@ -3272,8 +3170,6 @@ class SourceFilter(AttrDict[Any]):
         ] = DEFAULT,
         **kwargs: Any,
     ):
-        if exclude_vectors is not DEFAULT:
-            kwargs["exclude_vectors"] = exclude_vectors
         if excludes is not DEFAULT:
             kwargs["excludes"] = str(excludes)
         if includes is not DEFAULT:
@@ -3761,30 +3657,15 @@ class TDigest(AttrDict[Any]):
     :arg compression: Limits the maximum number of nodes used by the
         underlying TDigest algorithm to `20 * compression`, enabling
         control of memory usage and approximation error.
-    :arg execution_hint: The default implementation of TDigest is
-        optimized for performance, scaling to millions or even billions of
-        sample values while maintaining acceptable accuracy levels (close
-        to 1% relative error for millions of samples in some cases). To
-        use an implementation optimized for accuracy, set this parameter
-        to high_accuracy instead. Defaults to `default` if omitted.
     """
 
     compression: Union[int, DefaultType]
-    execution_hint: Union[Literal["default", "high_accuracy"], DefaultType]
 
     def __init__(
-        self,
-        *,
-        compression: Union[int, DefaultType] = DEFAULT,
-        execution_hint: Union[
-            Literal["default", "high_accuracy"], DefaultType
-        ] = DEFAULT,
-        **kwargs: Any,
+        self, *, compression: Union[int, DefaultType] = DEFAULT, **kwargs: Any
     ):
         if compression is not DEFAULT:
             kwargs["compression"] = compression
-        if execution_hint is not DEFAULT:
-            kwargs["execution_hint"] = execution_hint
         super().__init__(kwargs)
 
 
@@ -4254,7 +4135,7 @@ class WeightedTokensQuery(AttrDict[Any]):
     :arg _name:
     """
 
-    tokens: Union[Mapping[str, float], Sequence[Mapping[str, float]], DefaultType]
+    tokens: Union[Mapping[str, float], DefaultType]
     pruning_config: Union["TokenPruningConfig", Dict[str, Any], DefaultType]
     boost: Union[float, DefaultType]
     _name: Union[str, DefaultType]
@@ -4262,9 +4143,7 @@ class WeightedTokensQuery(AttrDict[Any]):
     def __init__(
         self,
         *,
-        tokens: Union[
-            Mapping[str, float], Sequence[Mapping[str, float]], DefaultType
-        ] = DEFAULT,
+        tokens: Union[Mapping[str, float], DefaultType] = DEFAULT,
         pruning_config: Union[
             "TokenPruningConfig", Dict[str, Any], DefaultType
         ] = DEFAULT,
@@ -5166,9 +5045,11 @@ class FiltersAggregate(AttrDict[Any]):
 class FiltersBucket(AttrDict[Any]):
     """
     :arg doc_count: (required)
+    :arg key:
     """
 
     doc_count: int
+    key: str
 
 
 class FrequentItemSetsAggregate(AttrDict[Any]):
