@@ -1,5 +1,9 @@
 # ES|QL Query Builder
 
+::::{warning}
+This functionality is in technical preview and may be changed or removed in a future release. Elastic will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
+::::
+
 The ES|QL Query Builder allows you to construct ES|QL queries using Python syntax. Consider the following example:
 
 ```python
@@ -233,4 +237,4 @@ query = (
 
 Note that arguments passed to functions are assumed to be literals. When passing field names, it is necessary to wrap them with the `E()` helper function so that they are interpreted correctly.
 
-You can find the complete list of available functions in the [ES|QL API reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html#module-elasticsearch.esql.functions).
+You can find the complete list of available functions in the Python client's [ES|QL API reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html#module-elasticsearch.esql.functions).
