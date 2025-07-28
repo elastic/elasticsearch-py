@@ -338,7 +338,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param fielddata: If `true`, clears the fields cache. Use the `fields` parameter
             to clear the cache of specific fields only.
         :param fields: Comma-separated list of field names used to limit the `fielddata`
@@ -563,7 +563,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -656,7 +656,15 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-create>`_
 
-        :param index: Name of the index you wish to create.
+        :param index: Name of the index you wish to create. Index names must meet the
+            following criteria: * Lowercase only * Cannot include `\\`, `/`, `*`, `?`,
+            `"`, `<`, `>`, `|`, ` ` (space character), `,`, or `#` * Indices prior to
+            7.0 could contain a colon (`:`), but that has been deprecated and will not
+            be supported in later versions * Cannot start with `-`, `_`, or `+` * Cannot
+            be `.` or `..` * Cannot be longer than 255 bytes (note thtat it is bytes,
+            so multi-byte characters will reach the limit faster) * Names starting with
+            `.` are deprecated, except for hidden indices and internal indices managed
+            by plugins
         :param aliases: Aliases for the index.
         :param mappings: Mapping for fields in the index. If specified, this mapping
             can include: - Field names - Field data types - Mapping parameters
@@ -942,7 +950,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -1174,6 +1182,71 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def delete_data_stream_options(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Delete data stream options.
+          Removes the data stream options from a data stream.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+
+        :param name: A comma-separated list of data streams of which the data stream
+            options will be deleted; use `*` to get all data streams
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open or closed indices (default: open)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit timestamp for the document
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_options'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.delete_data_stream_options",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def delete_index_template(
         self,
         *,
@@ -1246,7 +1319,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a legacy index template.</p>
+          <p>Delete a legacy index template.
+          IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-template>`_
@@ -1486,7 +1560,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param flat_settings: If `true`, returns settings in flat format.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
@@ -1570,7 +1644,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, requests that include a missing data stream
             or index in the target indices or data streams return an error.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -1919,7 +1993,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param force: If `true`, the request forces a flush even if there are no changes
             to commit to the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
@@ -2237,7 +2311,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -2317,8 +2391,7 @@ class IndicesClient(NamespacedClient):
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
             or `_all`.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
-            Supports comma-separated values, such as `open,hidden`. Valid values are:
-            `all`, `open`, `closed`, `hidden`, `none`.
+            Supports comma-separated values, such as `open,hidden`.
         :param include_defaults: If `true`, return all default settings in the response.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -2470,6 +2543,172 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def get_data_stream_mappings(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get data stream mappings.</p>
+          <p>Get mapping information for one or more data streams.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream-mappings>`_
+
+        :param name: A comma-separated list of data streams or data stream patterns.
+            Supports wildcards (`*`).
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_mappings'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_stream_mappings",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def get_data_stream_options(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get data stream options.</p>
+          <p>Get the data stream options configuration of one or more data streams.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+
+        :param name: Comma-separated list of data streams to limit the request. Supports
+            wildcards (`*`). To target all data streams, omit this parameter or use `*`
+            or `_all`.
+        :param expand_wildcards: Type of data stream that wildcard patterns can match.
+            Supports comma-separated values, such as `open,hidden`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_options'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_stream_options",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def get_data_stream_settings(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get data stream settings.</p>
+          <p>Get setting information for one or more data streams.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream-settings>`_
+
+        :param name: A comma-separated list of data streams or data stream patterns.
+            Supports wildcards (`*`).
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_settings'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_data_stream_settings",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def get_field_mapping(
         self,
         *,
@@ -2513,7 +2752,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param include_defaults: If `true`, return all default settings in the response.
@@ -2665,7 +2904,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
@@ -2875,7 +3114,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index templates.
+          <p>Get legacy index templates.
           Get information about one or more index templates.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
@@ -3157,7 +3396,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -3416,8 +3655,7 @@ class IndicesClient(NamespacedClient):
             for this data stream. A data stream lifecycle that's disabled (enabled: `false`)
             will have no effect on the data stream.
         :param expand_wildcards: Type of data stream that wildcard patterns can match.
-            Supports comma-separated values, such as `open,hidden`. Valid values are:
-            `all`, `hidden`, `open`, `closed`, `none`.
+            Supports comma-separated values, such as `open,hidden`.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -3463,6 +3701,244 @@ class IndicesClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="indices.put_data_lifecycle",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="mappings",
+    )
+    def put_data_stream_mappings(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Update data stream mappings.</p>
+          <p>This API can be used to override mappings on specific data streams. These overrides will take precedence over what
+          is specified in the template that the data stream matches. The mapping change is only applied to new write indices
+          that are created during rollover after this API is called. No indices are changed by this API.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-mappings>`_
+
+        :param name: A comma-separated list of data streams or data stream patterns.
+        :param mappings:
+        :param dry_run: If `true`, the request does not actually change the mappings
+            on any data streams. Instead, it simulates changing the settings and reports
+            back to the user what would have happened had these settings actually been
+            applied.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if mappings is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'mappings' and 'body', one of them should be set."
+            )
+        elif mappings is not None and body is not None:
+            raise ValueError("Cannot set both 'mappings' and 'body'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_mappings'
+        __query: t.Dict[str, t.Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = mappings if mappings is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_data_stream_mappings",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("failure_store",),
+    )
+    def put_data_stream_options(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        failure_store: t.Optional[t.Mapping[str, t.Any]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Update data stream options.
+          Update the data stream options of the specified data streams.</p>
+
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+
+        :param name: Comma-separated list of data streams used to limit the request.
+            Supports wildcards (`*`). To target all data streams use `*` or `_all`.
+        :param expand_wildcards: Type of data stream that wildcard patterns can match.
+            Supports comma-separated values, such as `open,hidden`.
+        :param failure_store: If defined, it will update the failure store configuration
+            of every data stream resolved by the name expression.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_options'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if failure_store is not None:
+                __body["failure_store"] = failure_store
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_data_stream_options",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="settings",
+    )
+    def put_data_stream_settings(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Update data stream settings.</p>
+          <p>This API can be used to override settings on specific data streams. These overrides will take precedence over what
+          is specified in the template that the data stream matches. To prevent your data stream from getting into an invalid state,
+          only certain settings are allowed. If possible, the setting change is applied to all
+          backing indices. Otherwise, it will be applied when the data stream is next rolled over.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-settings>`_
+
+        :param name: A comma-separated list of data streams or data stream patterns.
+        :param settings:
+        :param dry_run: If `true`, the request does not actually change the settings
+            on any data streams or indices. Instead, it simulates changing the settings
+            and reports back to the user what would have happened had these settings
+            actually been applied.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if settings is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'settings' and 'body', one of them should be set."
+            )
+        elif settings is not None and body is not None:
+            raise ValueError("Cannot set both 'settings' and 'body'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_data_stream/{__path_parts["name"]}/_settings'
+        __query: t.Dict[str, t.Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = settings if settings is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="indices.put_data_stream_settings",
             path_parts=__path_parts,
         )
 
@@ -3693,24 +4169,17 @@ class IndicesClient(NamespacedClient):
 
           <p>Update field mappings.
           Add new fields to an existing data stream or index.
-          You can also use this API to change the search settings of existing fields and add new properties to existing object fields.
-          For data streams, these changes are applied to all backing indices by default.</p>
-          <p><strong>Add multi-fields to an existing field</strong></p>
-          <p>Multi-fields let you index the same field in different ways.
-          You can use this API to update the fields mapping parameter and enable multi-fields for an existing field.
-          WARNING: If an index (or data stream) contains documents when you add a multi-field, those documents will not have values for the new multi-field.
-          You can populate the new multi-field with the update by query API.</p>
-          <p><strong>Change supported mapping parameters for an existing field</strong></p>
-          <p>The documentation for each mapping parameter indicates whether you can update it for an existing field using this API.
-          For example, you can use the update mapping API to update the <code>ignore_above</code> parameter.</p>
-          <p><strong>Change the mapping of an existing field</strong></p>
-          <p>Except for supported mapping parameters, you can't change the mapping or field type of an existing field.
-          Changing an existing field could invalidate data that's already indexed.</p>
-          <p>If you need to change the mapping of a field in a data stream's backing indices, refer to documentation about modifying data streams.
-          If you need to change the mapping of a field in other indices, create a new index with the correct mapping and reindex your data into that index.</p>
-          <p><strong>Rename a field</strong></p>
-          <p>Renaming a field would invalidate data already indexed under the old field name.
-          Instead, add an alias field to create an alternate field name.</p>
+          You can use the update mapping API to:</p>
+          <ul>
+          <li>Add a new field to an existing index</li>
+          <li>Update mappings for multiple indices in a single request</li>
+          <li>Add new properties to an object field</li>
+          <li>Enable multi-fields for an existing field</li>
+          <li>Update supported mapping parameters</li>
+          <li>Change a field's mapping using reindexing</li>
+          <li>Rename a field using a field alias</li>
+          </ul>
+          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs//manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
@@ -3729,7 +4198,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param field_names: Control whether field names are enabled for the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
@@ -3847,8 +4316,36 @@ class IndicesClient(NamespacedClient):
           Changes dynamic index settings in real time.
           For data streams, index setting changes are applied to all backing indices by default.</p>
           <p>To revert a setting to the default value, use a null value.
-          The list of per-index settings that can be updated dynamically on live indices can be found in index module documentation.
+          The list of per-index settings that can be updated dynamically on live indices can be found in index settings documentation.
           To preserve existing settings from being updated, set the <code>preserve_existing</code> parameter to <code>true</code>.</p>
+          <p>For performance optimization during bulk indexing, you can disable the refresh interval.
+          Refer to <a href="https://www.elastic.co/docs/deploy-manage/production-guidance/optimize-performance/indexing-speed#disable-refresh-interval">disable refresh interval</a> for an example.
+          There are multiple valid ways to represent index settings in the request body. You can specify only the setting, for example:</p>
+          <pre><code>{
+            &quot;number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can use an <code>index</code> setting object:</p>
+          <pre><code>{
+            &quot;index&quot;: {
+              &quot;number_of_replicas&quot;: 1
+            }
+          }
+          </code></pre>
+          <p>Or you can use dot annotation:</p>
+          <pre><code>{
+            &quot;index.number_of_replicas&quot;: 1
+          }
+          </code></pre>
+          <p>Or you can embed any of the aforementioned options in a <code>settings</code> object. For example:</p>
+          <pre><code>{
+            &quot;settings&quot;: {
+              &quot;index&quot;: {
+                &quot;number_of_replicas&quot;: 1
+              }
+            }
+          }
+          </code></pre>
           <p>NOTE: You can only define new analyzers on closed indices.
           To add an analyzer, you must close the index, define the analyzer, and reopen the index.
           You cannot close the write index of a data stream.
@@ -3856,7 +4353,8 @@ class IndicesClient(NamespacedClient):
           Then roll over the data stream to apply the new analyzer to the stream's write index and future backing indices.
           This affects searches and any new data added to the stream after the rollover.
           However, it does not affect the data stream's backing indices or their existing data.
-          To change the analyzer for existing backing indices, you must create a new data stream and reindex your data into it.</p>
+          To change the analyzer for existing backing indices, you must create a new data stream and reindex your data into it.
+          Refer to <a href="https://www.elastic.co/docs/manage-data/data-store/text-analysis/specify-an-analyzer#update-analyzers-on-existing-indices">updating analyzers on existing indices</a> for step-by-step examples.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-settings>`_
@@ -3968,7 +4466,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an index template.
+          <p>Create or update a legacy index template.
           Index templates define settings, mappings, and aliases that can be applied automatically to new indices.
           Elasticsearch applies templates to new indices based on an index pattern that matches the index name.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
@@ -4057,10 +4555,20 @@ class IndicesClient(NamespacedClient):
         *,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         active_only: t.Optional[bool] = None,
+        allow_no_indices: t.Optional[bool] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4093,8 +4601,17 @@ class IndicesClient(NamespacedClient):
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
         :param active_only: If `true`, the response only includes ongoing shard recoveries.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices.
         :param detailed: If `true`, the response includes detailed information about
             shard recoveries.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -4106,14 +4623,20 @@ class IndicesClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
             __query["active_only"] = active_only
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
         if detailed is not None:
             __query["detailed"] = detailed
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -4172,7 +4695,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
@@ -4289,6 +4812,105 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def remove_block(
+        self,
+        *,
+        index: str,
+        block: t.Union[str, t.Literal["metadata", "read", "read_only", "write"]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Remove an index block.</p>
+          <p>Remove an index block from an index.
+          Index blocks limit the operations allowed on an index by blocking specific operation types.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-remove-block>`_
+
+        :param index: A comma-separated list or wildcard expression of index names used
+            to limit the request. By default, you must explicitly name the indices you
+            are removing blocks from. To allow the removal of blocks from indices with
+            `_all`, `*`, or other wildcard expressions, change the `action.destructive_requires_name`
+            setting to `false`. You can update this setting in the `elasticsearch.yml`
+            file or by using the cluster update settings API.
+        :param block: The block type to remove from the index.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param expand_wildcards: The type of index that wildcard patterns can match.
+            If the request can target data streams, this argument determines whether
+            wildcard expressions match hidden data streams. It supports comma-separated
+            values, such as `open,hidden`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. It can also be set to `-1` to indicate that the request should
+            never timeout.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response will indicate that it was not completely acknowledged. It can
+            also be set to `-1` to indicate that the request should never timeout.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if block in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'block'")
+        __path_parts: t.Dict[str, str] = {
+            "index": _quote(index),
+            "block": _quote(block),
+        }
+        __path = f'/{__path_parts["index"]}/_block/{__path_parts["block"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.remove_block",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def resolve_cluster(
         self,
         *,
@@ -4371,10 +4993,9 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
-            NOTE: This option is only supported when specifying an index expression.
-            You will get an error if you specify index options to the `_resolve/cluster`
-            API endpoint that takes no index expression.
+            as `open,hidden`. NOTE: This option is only supported when specifying an
+            index expression. You will get an error if you specify index options to the
+            `_resolve/cluster` API endpoint that takes no index expression.
         :param ignore_throttled: If true, concrete, expanded, or aliased indices are
             ignored when frozen. NOTE: This option is only supported when specifying
             an index expression. You will get an error if you specify index options to
@@ -4467,7 +5088,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
@@ -4681,7 +5302,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         """
@@ -5505,7 +6126,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param explain: If `true`, the response returns detailed information if an error
             has occurred.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
