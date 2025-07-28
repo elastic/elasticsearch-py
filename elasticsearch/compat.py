@@ -16,11 +16,14 @@
 #  under the License.
 
 import inspect
+import os
 import sys
 from pathlib import Path
 from typing import Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
+
+DISABLE_WARN_STACKLEVEL_ENV_VAR = "DISABLE_WARN_STACKLEVEL"
 
 
 def to_str(x: Union[str, bytes], encoding: str = "ascii") -> str:
@@ -37,6 +40,8 @@ def to_bytes(x: Union[str, bytes], encoding: str = "ascii") -> bytes:
 
 def warn_stacklevel() -> int:
     """Dynamically determine warning stacklevel for warnings based on the call stack"""
+    if os.environ.get(DISABLE_WARN_STACKLEVEL_ENV_VAR) in ["1", "true", "True"]:
+        return 0
     try:
         # Grab the root module from the current module '__name__'
         module_name = __name__.partition(".")[0]
