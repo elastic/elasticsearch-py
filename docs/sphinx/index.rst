@@ -131,6 +131,7 @@ Contents
    quickstart
    interactive
    api
+   esql
    exceptions
    async
    helpers
