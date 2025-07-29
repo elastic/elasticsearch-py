@@ -281,7 +281,6 @@ class AsyncSearchClient(NamespacedClient):
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
-        min_compatible_shard_node: t.Optional[str] = None,
         min_score: t.Optional[float] = None,
         pit: t.Optional[t.Mapping[str, t.Any]] = None,
         post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -401,7 +400,6 @@ class AsyncSearchClient(NamespacedClient):
             per node this search executes concurrently. This value should be used to
             limit the impact of the search on the cluster in order to limit the number
             of concurrent shard requests
-        :param min_compatible_shard_node:
         :param min_score: Minimum _score for matching documents. Documents with a lower
             _score are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
@@ -526,8 +524,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
             __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
-        if min_compatible_shard_node is not None:
-            __query["min_compatible_shard_node"] = min_compatible_shard_node
         if preference is not None:
             __query["preference"] = preference
         if pretty is not None:

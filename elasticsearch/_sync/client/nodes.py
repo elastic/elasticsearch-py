@@ -108,7 +108,8 @@ class NodesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.18/get-repositories-metering-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
-            information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
+            information. For more information about the nodes selective options, refer
+            to the node specification documentation.
         """
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")

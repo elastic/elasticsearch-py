@@ -290,6 +290,7 @@ class ClusterClient(NamespacedClient):
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        settings_filter: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -310,6 +311,8 @@ class ClusterClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
+        :param settings_filter: Filter out results, for example to filter out sensitive
+            information. Supports wildcards or full settings keys
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -335,6 +338,8 @@ class ClusterClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if settings_filter is not None:
+            __query["settings_filter"] = settings_filter
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -441,7 +446,7 @@ class ClusterClient(NamespacedClient):
         wait_for_no_relocating_shards: t.Optional[bool] = None,
         wait_for_nodes: t.Optional[t.Union[int, str]] = None,
         wait_for_status: t.Optional[
-            t.Union[str, t.Literal["green", "red", "yellow"]]
+            t.Union[str, t.Literal["green", "red", "unavailable", "unknown", "yellow"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -731,6 +736,7 @@ class ClusterClient(NamespacedClient):
         *,
         name: str,
         template: t.Optional[t.Mapping[str, t.Any]] = None,
+        cause: t.Optional[str] = None,
         create: t.Optional[bool] = None,
         deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -774,6 +780,7 @@ class ClusterClient(NamespacedClient):
             update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
+        :param cause: User defined reason for create the component template.
         :param create: If `true`, this request cannot replace or update existing component
             templates.
         :param deprecated: Marks this index template as deprecated. When creating or
@@ -798,6 +805,8 @@ class ClusterClient(NamespacedClient):
         __path = f'/_component_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -870,9 +879,9 @@ class ClusterClient(NamespacedClient):
 
         :param flat_settings: Return settings in flat format (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
-        :param persistent:
+        :param persistent: The settings that persist after the cluster restarts.
         :param timeout: Explicit operation timeout
-        :param transient:
+        :param transient: The settings that do not persist after the cluster restarts.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_cluster/settings"
@@ -928,7 +937,7 @@ class ClusterClient(NamespacedClient):
           This API returns information that reflects current state on the local cluster.
           The <code>connected</code> field does not necessarily reflect whether a remote cluster is down or unavailable, only whether there is currently an open connection to it.
           Elasticsearch does not spontaneously try to reconnect to a disconnected remote cluster.
-          To trigger a reconnection, attempt a cross-cluster search, ES|QL cross-cluster search, or try the <a href="https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-resolve-cluster">resolve cluster endpoint</a>.</p>
+          To trigger a reconnection, attempt a cross-cluster search, ES|QL cross-cluster search, or try the <code>/_resolve/cluster</code> endpoint.</p>
           </blockquote>
 
 
