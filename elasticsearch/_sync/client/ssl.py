@@ -52,7 +52,7 @@ class SslClient(NamespacedClient):
           <p>If Elasticsearch is configured to use a keystore or truststore, the API output includes all certificates in that store, even though some of the certificates might not be in active use within the cluster.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/security-api-ssl.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/security-api-ssl.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ssl/certificates"

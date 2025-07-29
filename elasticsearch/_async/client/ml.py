@@ -45,7 +45,7 @@ class MlClient(NamespacedClient):
           Calling this API clears the caches without restarting the deployment.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/clear-trained-model-deployment-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/clear-trained-model-deployment-cache.html>`_
 
         :param model_id: The unique identifier of the trained model.
         """
@@ -100,7 +100,7 @@ class MlClient(NamespacedClient):
           When a datafeed that has a specified end date stops, it automatically closes its associated job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-close-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-close-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
             a group name, or a wildcard expression. You can close multiple anomaly detection
@@ -165,7 +165,7 @@ class MlClient(NamespacedClient):
           <p>Remove all scheduled events from a calendar, then delete it.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-calendar.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         """
@@ -209,7 +209,7 @@ class MlClient(NamespacedClient):
           <p>Delete events from a calendar.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-calendar-event.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param event_id: Identifier for the scheduled event. You can obtain this identifier
@@ -260,7 +260,7 @@ class MlClient(NamespacedClient):
           <p>Delete anomaly jobs from a calendar.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-calendar-job.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param job_id: An identifier for the anomaly detection jobs. It can be a job
@@ -312,7 +312,7 @@ class MlClient(NamespacedClient):
           <p>Delete a data frame analytics job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job.
         :param force: If `true`, it deletes a job that is not stopped; this method is
@@ -363,7 +363,7 @@ class MlClient(NamespacedClient):
           <p>Delete a datafeed.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -426,7 +426,7 @@ class MlClient(NamespacedClient):
           <code>&lt;job_id&gt;</code>.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-expired-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-expired-data.html>`_
 
         :param job_id: Identifier for an anomaly detection job. It can be a job identifier,
             a group name, or a wildcard expression.
@@ -490,7 +490,7 @@ class MlClient(NamespacedClient):
           filter. You must update or delete the job before you can delete the filter.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-filter.html>`_
 
         :param filter_id: A string that uniquely identifies a filter.
         """
@@ -540,7 +540,7 @@ class MlClient(NamespacedClient):
           forecasts before they expire.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-forecast.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param forecast_id: A comma-separated list of forecast identifiers. If you do
@@ -616,7 +616,7 @@ class MlClient(NamespacedClient):
           delete job request.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param delete_user_annotations: Specifies whether annotations that have been
@@ -676,7 +676,7 @@ class MlClient(NamespacedClient):
           the <code>model_snapshot_id</code> in the results from the get jobs API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-delete-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-delete-snapshot.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: Identifier for the model snapshot.
@@ -728,7 +728,7 @@ class MlClient(NamespacedClient):
           <p>The request deletes a trained inference model that is not referenced by an ingest pipeline.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-trained-models.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param force: Forcefully deletes a trained model that is referenced by ingest
@@ -783,7 +783,7 @@ class MlClient(NamespacedClient):
           by the <code>model_id</code>, this API returns an error.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/delete-trained-models-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-trained-models-aliases.html>`_
 
         :param model_id: The trained model ID to which the model alias refers.
         :param model_alias: The model alias to delete.
@@ -844,7 +844,7 @@ class MlClient(NamespacedClient):
           estimates for the fields it references.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-estimate-model-memory.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-estimate-model-memory.html>`_
 
         :param analysis_config: For a list of the properties that you can specify in
             the `analysis_config` component of the body of this API.
@@ -916,7 +916,7 @@ class MlClient(NamespacedClient):
           field and an analytics result field to be present.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/evaluate-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/evaluate-dfanalytics.html>`_
 
         :param evaluation: Defines the type of evaluation you want to perform.
         :param index: Defines the `index` in which the evaluation will be performed.
@@ -1001,7 +1001,7 @@ class MlClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/explain-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/explain-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -1112,7 +1112,7 @@ class MlClient(NamespacedClient):
           analyzing further data.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-flush-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-flush-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param advance_time: Refer to the description for the `advance_time` query parameter.
@@ -1187,7 +1187,7 @@ class MlClient(NamespacedClient):
           based on historical data.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-forecast.html>`_
 
         :param job_id: Identifier for the anomaly detection job. The job must be open
             when you create a forecast; otherwise, an error occurs.
@@ -1273,7 +1273,7 @@ class MlClient(NamespacedClient):
           The API presents a chronological view of the records, grouped by bucket.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-bucket.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-bucket.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param timestamp: The timestamp of a single bucket result. If you do not specify
@@ -1371,7 +1371,7 @@ class MlClient(NamespacedClient):
           <p>Get info about events in calendars.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-calendar-event.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar. You can get
             information for multiple calendars by using a comma-separated list of ids
@@ -1440,7 +1440,7 @@ class MlClient(NamespacedClient):
           <p>Get calendar configuration info.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-calendar.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar. You can get
             information for multiple calendars by using a comma-separated list of ids
@@ -1516,7 +1516,7 @@ class MlClient(NamespacedClient):
           <p>Get anomaly detection job results for categories.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-category.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-category.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param category_id: Identifier for the category, which is unique in the job.
@@ -1604,7 +1604,7 @@ class MlClient(NamespacedClient):
           wildcard expression.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. If you do not specify
             this option, the API returns information for the first hundred data frame
@@ -1679,7 +1679,7 @@ class MlClient(NamespacedClient):
           <p>Get data frame analytics job stats.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-dfanalytics-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-dfanalytics-stats.html>`_
 
         :param id: Identifier for the data frame analytics job. If you do not specify
             this option, the API returns information for the first hundred data frame
@@ -1753,7 +1753,7 @@ class MlClient(NamespacedClient):
           This API returns a maximum of 10,000 datafeeds.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-datafeed-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-datafeed-stats.html>`_
 
         :param datafeed_id: Identifier for the datafeed. It can be a datafeed identifier
             or a wildcard expression. If you do not specify one of these options, the
@@ -1817,7 +1817,7 @@ class MlClient(NamespacedClient):
           This API returns a maximum of 10,000 datafeeds.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-datafeed.html>`_
 
         :param datafeed_id: Identifier for the datafeed. It can be a datafeed identifier
             or a wildcard expression. If you do not specify one of these options, the
@@ -1884,7 +1884,7 @@ class MlClient(NamespacedClient):
           You can get a single filter or all filters.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-filter.html>`_
 
         :param filter_id: A string that uniquely identifies a filter.
         :param from_: Skips the specified number of filters.
@@ -1952,7 +1952,7 @@ class MlClient(NamespacedClient):
           <code>influencer_field_name</code> is specified in the job configuration.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-influencer.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-influencer.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param desc: If true, the results are sorted in descending order.
@@ -2036,7 +2036,7 @@ class MlClient(NamespacedClient):
           <p>Get anomaly detection job stats.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-job-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-job-stats.html>`_
 
         :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
             a group name, a comma-separated list of jobs, or a wildcard expression. If
@@ -2100,7 +2100,7 @@ class MlClient(NamespacedClient):
           <code>_all</code>, by specifying <code>*</code> as the <code>&lt;job_id&gt;</code>, or by omitting the <code>&lt;job_id&gt;</code>.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
             a group name, or a wildcard expression. If you do not specify one of these
@@ -2166,7 +2166,7 @@ class MlClient(NamespacedClient):
           on each node, both within the JVM heap, and natively, outside of the JVM.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-ml-memory.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-ml-memory.html>`_
 
         :param node_id: The names of particular nodes in the cluster to target. For example,
             `nodeId1,nodeId2` or `ml:true`
@@ -2224,7 +2224,7 @@ class MlClient(NamespacedClient):
           <p>Get anomaly detection job model snapshot upgrade usage info.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-job-model-snapshot-upgrade-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-job-model-snapshot-upgrade-stats.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: A numerical character string that uniquely identifies the
@@ -2298,7 +2298,7 @@ class MlClient(NamespacedClient):
           <p>Get model snapshots info.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-snapshot.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: A numerical character string that uniquely identifies the
@@ -2418,7 +2418,7 @@ class MlClient(NamespacedClient):
           jobs' largest bucket span.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-overall-buckets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-overall-buckets.html>`_
 
         :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
             a group name, a comma-separated list of jobs or groups, or a wildcard expression.
@@ -2528,7 +2528,7 @@ class MlClient(NamespacedClient):
           number of detectors.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-get-record.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-get-record.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param desc: Refer to the description for the `desc` query parameter.
@@ -2627,7 +2627,7 @@ class MlClient(NamespacedClient):
           <p>Get trained model configuration info.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-trained-models.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model or a model alias.
             You can get information for multiple trained models in a single API request
@@ -2718,7 +2718,7 @@ class MlClient(NamespacedClient):
           models in a single API request by using a comma-separated list of model IDs or a wildcard expression.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-trained-models-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-trained-models-stats.html>`_
 
         :param model_id: The unique identifier of the trained model or a model alias.
             It can be a comma-separated list or a wildcard expression.
@@ -2784,7 +2784,7 @@ class MlClient(NamespacedClient):
           <p>Evaluate a trained model.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/infer-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/infer-trained-model.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param docs: An array of objects to pass to the model for inference. The objects
@@ -2851,7 +2851,7 @@ class MlClient(NamespacedClient):
           cluster configuration.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/get-ml-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-ml-info.html>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_ml/info"
@@ -2900,7 +2900,7 @@ class MlClient(NamespacedClient):
           new data is received.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-open-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-open-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param timeout: Refer to the description for the `timeout` query parameter.
@@ -2957,7 +2957,7 @@ class MlClient(NamespacedClient):
           <p>Add scheduled events to the calendar.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-post-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-post-calendar-event.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param events: A list of one of more scheduled events. The event’s start and
@@ -3018,7 +3018,7 @@ class MlClient(NamespacedClient):
           It is not currently possible to post data to multiple jobs using wildcards or a comma-separated list.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-post-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-post-data.html>`_
 
         :param job_id: Identifier for the anomaly detection job. The job must have a
             state of open to receive and process the data.
@@ -3085,7 +3085,7 @@ class MlClient(NamespacedClient):
           Preview the extracted features used by a data frame analytics config.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/preview-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/preview-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job.
         :param config: A data frame analytics config as described in create data frame
@@ -3158,7 +3158,7 @@ class MlClient(NamespacedClient):
           You can also use secondary authorization headers to supply the credentials.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-preview-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-preview-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -3237,7 +3237,7 @@ class MlClient(NamespacedClient):
           <p>Create a calendar.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-put-calendar.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param description: A description of the calendar.
@@ -3294,7 +3294,7 @@ class MlClient(NamespacedClient):
           <p>Add anomaly detection job to calendar.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-put-calendar-job.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param job_id: An identifier for the anomaly detection jobs. It can be a job
@@ -3377,7 +3377,7 @@ class MlClient(NamespacedClient):
           <p>If you supply only a subset of the regression or classification parameters, hyperparameter optimization occurs. It determines a value for each of the undefined parameters.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -3562,7 +3562,7 @@ class MlClient(NamespacedClient):
           directly to the <code>.ml-config</code> index. Do not give users <code>write</code> privileges on the <code>.ml-config</code> index.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-put-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -3724,7 +3724,7 @@ class MlClient(NamespacedClient):
           Specifically, filters are referenced in the <code>custom_rules</code> property of detector configuration objects.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-put-filter.html>`_
 
         :param filter_id: A string that uniquely identifies a filter.
         :param description: A description of the filter.
@@ -3826,7 +3826,7 @@ class MlClient(NamespacedClient):
           If you include a <code>datafeed_config</code> but do not provide a query, the datafeed uses <code>{&quot;match_all&quot;: {&quot;boost&quot;: 1}}</code>.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-put-job.html>`_
 
         :param job_id: The identifier for the anomaly detection job. This identifier
             can contain lowercase alphanumeric characters (a-z and 0-9), hyphens, and
@@ -3876,13 +3876,7 @@ class MlClient(NamespacedClient):
         :param description: A description of the job.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
             ignored when frozen.
@@ -4034,7 +4028,7 @@ class MlClient(NamespacedClient):
           Enable you to supply a trained model that is not created by data frame analytics.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-trained-models.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
@@ -4155,7 +4149,7 @@ class MlClient(NamespacedClient):
           returns a warning.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-trained-models-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-trained-models-aliases.html>`_
 
         :param model_id: The identifier for the trained model that the alias refers to.
         :param model_alias: The alias to create or update. This value cannot end in numbers.
@@ -4216,7 +4210,7 @@ class MlClient(NamespacedClient):
           <p>Create part of a trained model definition.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-trained-model-definition-part.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-trained-model-definition-part.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param part: The definition part number. When the definition is loaded for inference
@@ -4298,7 +4292,7 @@ class MlClient(NamespacedClient):
           The vocabulary is stored in the index as described in <code>inference_config.*.vocabulary</code> of the trained model definition.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/put-trained-model-vocabulary.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-trained-model-vocabulary.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param vocabulary: The model vocabulary, which must not be empty.
@@ -4361,7 +4355,7 @@ class MlClient(NamespacedClient):
           comma separated list.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-reset-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-reset-job.html>`_
 
         :param job_id: The ID of the job to reset.
         :param delete_user_annotations: Specifies whether annotations that have been
@@ -4425,7 +4419,7 @@ class MlClient(NamespacedClient):
           snapshot after Black Friday or a critical system failure.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-revert-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-revert-snapshot.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: You can specify `empty` as the <snapshot_id>. Reverting to
@@ -4500,7 +4494,7 @@ class MlClient(NamespacedClient):
           machine learning info API.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-set-upgrade-mode.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-set-upgrade-mode.html>`_
 
         :param enabled: When `true`, it enables `upgrade_mode` which temporarily halts
             all job and datafeed tasks and prohibits new job and datafeed tasks from
@@ -4560,7 +4554,7 @@ class MlClient(NamespacedClient):
           the destination index in advance with custom settings and mappings.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/start-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -4623,7 +4617,7 @@ class MlClient(NamespacedClient):
           authorization headers when you created or updated the datafeed, those credentials are used instead.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-start-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-start-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -4700,7 +4694,7 @@ class MlClient(NamespacedClient):
           It allocates the model to every machine learning node.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/start-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/start-trained-model-deployment.html>`_
 
         :param model_id: The unique identifier of the trained model. Currently, only
             PyTorch models are supported.
@@ -4801,7 +4795,7 @@ class MlClient(NamespacedClient):
           throughout its lifecycle.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/stop-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/stop-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -4871,7 +4865,7 @@ class MlClient(NamespacedClient):
           multiple times throughout its lifecycle.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-stop-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-stop-datafeed.html>`_
 
         :param datafeed_id: Identifier for the datafeed. You can stop multiple datafeeds
             in a single API request by using a comma-separated list of datafeeds or a
@@ -4936,7 +4930,7 @@ class MlClient(NamespacedClient):
           <p>Stop a trained model deployment.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/stop-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/stop-trained-model-deployment.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param allow_no_match: Specifies what to do when the request: contains wildcard
@@ -5119,7 +5113,7 @@ class MlClient(NamespacedClient):
           those credentials are used instead.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-update-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-update-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -5145,13 +5139,7 @@ class MlClient(NamespacedClient):
             check runs only on real-time datafeeds.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param frequency: The interval at which scheduled queries are made while the
             datafeed runs in real time. The default value is either the bucket span for
             short bucket spans, or, for longer bucket spans, a sensible fraction of the
@@ -5286,7 +5274,7 @@ class MlClient(NamespacedClient):
           Updates the description of a filter, adds items, or removes items from the list.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-update-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-update-filter.html>`_
 
         :param filter_id: A string that uniquely identifies a filter.
         :param add_items: The items to add to the filter.
@@ -5380,7 +5368,7 @@ class MlClient(NamespacedClient):
           Updates certain properties of an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-update-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-update-job.html>`_
 
         :param job_id: Identifier for the job.
         :param allow_lazy_open: Advanced configuration option. Specifies whether this
@@ -5512,7 +5500,7 @@ class MlClient(NamespacedClient):
           Updates certain properties of a snapshot.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-update-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-update-snapshot.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: Identifier for the model snapshot.
@@ -5654,7 +5642,7 @@ class MlClient(NamespacedClient):
           job.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.17/ml-upgrade-job-model-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ml-upgrade-job-model-snapshot.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: A numerical character string that uniquely identifies the
@@ -5733,7 +5721,7 @@ class MlClient(NamespacedClient):
           <p>Validate an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/guide/en/machine-learning/8.17/ml-jobs.html>`_
+        `<https://www.elastic.co/guide/en/machine-learning/8.19/ml-jobs.html>`_
 
         :param analysis_config:
         :param analysis_limits:
