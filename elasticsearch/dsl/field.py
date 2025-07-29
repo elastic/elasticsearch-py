@@ -3849,9 +3849,6 @@ class SemanticText(Field):
         by using the Update mapping API. Use the Create inference API to
         create the endpoint. If not specified, the inference endpoint
         defined by inference_id will be used at both index and query time.
-    :arg index_options: Settings for index_options that override any
-        defaults used by semantic_text, for example specific quantization
-        settings.
     :arg chunking_settings: Settings for chunking text into smaller
         passages. If specified, these will override the chunking settings
         sent in the inference endpoint associated with inference_id. If
@@ -3867,9 +3864,6 @@ class SemanticText(Field):
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         inference_id: Union[str, "DefaultType"] = DEFAULT,
         search_inference_id: Union[str, "DefaultType"] = DEFAULT,
-        index_options: Union[
-            "types.SemanticTextIndexOptions", Dict[str, Any], "DefaultType"
-        ] = DEFAULT,
         chunking_settings: Union[
             "types.ChunkingSettings", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
@@ -3881,8 +3875,6 @@ class SemanticText(Field):
             kwargs["inference_id"] = inference_id
         if search_inference_id is not DEFAULT:
             kwargs["search_inference_id"] = search_inference_id
-        if index_options is not DEFAULT:
-            kwargs["index_options"] = index_options
         if chunking_settings is not DEFAULT:
             kwargs["chunking_settings"] = chunking_settings
         super().__init__(*args, **kwargs)

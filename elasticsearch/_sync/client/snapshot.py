@@ -1266,11 +1266,6 @@ class SnapshotClient(NamespacedClient):
           <p>If you omit the <code>&lt;snapshot&gt;</code> request path parameter, the request retrieves information only for currently running snapshots.
           This usage is preferred.
           If needed, you can specify <code>&lt;repository&gt;</code> and <code>&lt;snapshot&gt;</code> to retrieve information for specific snapshots, even if they're not currently running.</p>
-          <p>Note that the stats will not be available for any shard snapshots in an ongoing snapshot completed by a node that (even momentarily) left the cluster.
-          Loading the stats from the repository is an expensive operation (see the WARNING below).
-          Therefore the stats values for such shards will be -1 even though the &quot;stage&quot; value will be &quot;DONE&quot;, in order to minimize latency.
-          A &quot;description&quot; field will be present for a shard snapshot completed by a departed node explaining why the shard snapshot's stats results are invalid.
-          Consequently, the total stats for the index will be less than expected due to the missing values from these shards.</p>
           <p>WARNING: Using the API to return the status of any snapshots other than currently running snapshots can be expensive.
           The API requires a read from the repository for each shard in each snapshot.
           For example, if you have 100 snapshots with 1,000 shards each, an API request that includes all snapshots will require 100,000 reads (100 snapshots x 1,000 shards).</p>
