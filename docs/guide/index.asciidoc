@@ -22,8 +22,12 @@ include::integrations.asciidoc[]
 
 include::examples.asciidoc[]
 
+include::helpers.asciidoc[]
+
 include::elasticsearch-dsl.asciidoc[]
 
-include::helpers.asciidoc[]
+include::esql-query-builder.asciidoc[]
+
+include::async.asciidoc[]
 
 include::release-notes.asciidoc[]
