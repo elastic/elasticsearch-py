@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import json
 from datetime import date, datetime
 from fnmatch import fnmatch
 from typing import (
@@ -56,7 +57,163 @@ class MetaField:
         self.args, self.kwargs = args, kwargs
 
 
-class InstrumentedField:
+class InstrumentedExpression:
+    """Proxy object for a ES|QL expression."""
+
+    def __init__(self, expr: str):
+        self._expr = expr
+
+    def _render_value(self, value: Any) -> str:
+        if isinstance(value, InstrumentedExpression):
+            return str(value)
+        return json.dumps(value)
+
+    def __str__(self) -> str:
+        return self._expr
+
+    def __repr__(self) -> str:
+        return f"InstrumentedExpression[{self._expr}]"
+
+    def __pos__(self) -> "InstrumentedExpression":
+        return self
+
+    def __neg__(self) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"-({self._expr})")
+
+    def __eq__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
+        return InstrumentedExpression(f"{self._expr} == {self._render_value(value)}")
+
+    def __ne__(self, value: Any) -> "InstrumentedExpression":  # type: ignore[override]
+        return InstrumentedExpression(f"{self._expr} != {self._render_value(value)}")
+
+    def __lt__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} < {self._render_value(value)}")
+
+    def __gt__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} > {self._render_value(value)}")
+
+    def __le__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} <= {self._render_value(value)}")
+
+    def __ge__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} >= {self._render_value(value)}")
+
+    def __add__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} + {self._render_value(value)}")
+
+    def __radd__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._render_value(value)} + {self._expr}")
+
+    def __sub__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} - {self._render_value(value)}")
+
+    def __rsub__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._render_value(value)} - {self._expr}")
+
+    def __mul__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} * {self._render_value(value)}")
+
+    def __rmul__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._render_value(value)} * {self._expr}")
+
+    def __truediv__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} / {self._render_value(value)}")
+
+    def __rtruediv__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._render_value(value)} / {self._expr}")
+
+    def __mod__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._expr} % {self._render_value(value)}")
+
+    def __rmod__(self, value: Any) -> "InstrumentedExpression":
+        return InstrumentedExpression(f"{self._render_value(value)} % {self._expr}")
+
+    def is_null(self) -> "InstrumentedExpression":
+        """Compare the expression against NULL."""
+        return InstrumentedExpression(f"{self._expr} IS NULL")
+
+    def is_not_null(self) -> "InstrumentedExpression":
+        """Compare the expression against NOT NULL."""
+        return InstrumentedExpression(f"{self._expr} IS NOT NULL")
+
+    def in_(self, *values: Any) -> "InstrumentedExpression":
+        """Test if the expression equals one of the given values."""
+        rendered_values = ", ".join([f"{value}" for value in values])
+        return InstrumentedExpression(f"{self._expr} IN ({rendered_values})")
+
+    def like(self, *patterns: str) -> "InstrumentedExpression":
+        """Filter the expression using a string pattern."""
+        if len(patterns) == 1:
+            return InstrumentedExpression(
+                f"{self._expr} LIKE {self._render_value(patterns[0])}"
+            )
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} LIKE ({", ".join([self._render_value(p) for p in patterns])})'
+            )
+
+    def rlike(self, *patterns: str) -> "InstrumentedExpression":
+        """Filter the expression using a regular expression."""
+        if len(patterns) == 1:
+            return InstrumentedExpression(
+                f"{self._expr} RLIKE {self._render_value(patterns[0])}"
+            )
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} RLIKE ({", ".join([self._render_value(p) for p in patterns])})'
+            )
+
+    def match(self, query: str) -> "InstrumentedExpression":
+        """Perform a match query on the field."""
+        return InstrumentedExpression(f"{self._expr}:{self._render_value(query)}")
+
+    def asc(self) -> "InstrumentedExpression":
+        """Return the field name representation for ascending sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} ASC")
+
+    def desc(self) -> "InstrumentedExpression":
+        """Return the field name representation for descending sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} DESC")
+
+    def nulls_first(self) -> "InstrumentedExpression":
+        """Return the field name representation for nulls first sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} NULLS FIRST")
+
+    def nulls_last(self) -> "InstrumentedExpression":
+        """Return the field name representation for nulls last sort order.
+
+        For use in ES|QL queries only.
+        """
+        return InstrumentedExpression(f"{self._expr} NULLS LAST")
+
+    def where(
+        self, *expressions: Union[str, "InstrumentedExpression"]
+    ) -> "InstrumentedExpression":
+        """Add a condition to be met for the row to be included.
+
+        Use only in expressions given in the ``STATS`` command.
+        """
+        if len(expressions) == 1:
+            return InstrumentedExpression(f"{self._expr} WHERE {expressions[0]}")
+        else:
+            return InstrumentedExpression(
+                f'{self._expr} WHERE {" AND ".join([f"({expr})" for expr in expressions])}'
+            )
+
+
+E = InstrumentedExpression
+
+
+class InstrumentedField(InstrumentedExpression):
     """Proxy object for a mapped document field.
 
     An object of this instance is returned when a field is accessed as a class
@@ -71,8 +228,8 @@ class InstrumentedField:
         s = s.sort(-MyDocument.name)  # sort by name in descending order
     """
 
-    def __init__(self, name: str, field: Field):
-        self._name = name
+    def __init__(self, name: str, field: Optional[Field]):
+        super().__init__(name)
         self._field = field
 
     # note that the return value type here assumes classes will only be used to
@@ -83,26 +240,29 @@ class InstrumentedField:
             # first let's see if this is an attribute of this object
             return super().__getattribute__(attr)  # type: ignore[no-any-return]
         except AttributeError:
-            try:
-                # next we see if we have a sub-field with this name
-                return InstrumentedField(f"{self._name}.{attr}", self._field[attr])
-            except KeyError:
-                # lastly we let the wrapped field resolve this attribute
-                return getattr(self._field, attr)  # type: ignore[no-any-return]
+            if self._field:
+                try:
+                    # next we see if we have a sub-field with this name
+                    return InstrumentedField(f"{self._expr}.{attr}", self._field[attr])
+                except KeyError:
+                    # lastly we let the wrapped field resolve this attribute
+                    return getattr(self._field, attr)  # type: ignore[no-any-return]
+            else:
+                raise
 
-    def __pos__(self) -> str:
+    def __pos__(self) -> str:  # type: ignore[override]
         """Return the field name representation for ascending sort order"""
-        return f"{self._name}"
+        return f"{self._expr}"
 
-    def __neg__(self) -> str:
+    def __neg__(self) -> str:  # type: ignore[override]
         """Return the field name representation for descending sort order"""
-        return f"-{self._name}"
+        return f"-{self._expr}"
 
     def __str__(self) -> str:
-        return self._name
+        return self._expr
 
     def __repr__(self) -> str:
-        return f"InstrumentedField[{self._name}]"
+        return f"InstrumentedField[{self._expr}]"
 
 
 class DocumentMeta(type):

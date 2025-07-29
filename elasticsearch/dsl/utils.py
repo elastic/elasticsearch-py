@@ -333,7 +333,7 @@ class DslBase(metaclass=DslMeta):
             _expand__to_dot = EXPAND__TO_DOT
         self._params: Dict[str, Any] = {}
         for pname, pvalue in params.items():
-            if pvalue == DEFAULT:
+            if pvalue is DEFAULT:
                 continue
             # expand "__" to dots
             if "__" in pname and _expand__to_dot:
