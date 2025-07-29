@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _quote,
+    _rewrite_parameters,
+    _stability_warning,
+)
 
 
 class EsqlClient(NamespacedClient):
@@ -31,6 +37,8 @@ class EsqlClient(NamespacedClient):
             "columnar",
             "filter",
             "include_ccs_metadata",
+            "keep_alive",
+            "keep_on_completion",
             "locale",
             "params",
             "profile",
@@ -88,7 +96,9 @@ class EsqlClient(NamespacedClient):
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one
@@ -151,10 +161,6 @@ class EsqlClient(NamespacedClient):
             __query["format"] = format
         if human is not None:
             __query["human"] = human
-        if keep_alive is not None:
-            __query["keep_alive"] = keep_alive
-        if keep_on_completion is not None:
-            __query["keep_on_completion"] = keep_on_completion
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -166,6 +172,10 @@ class EsqlClient(NamespacedClient):
                 __body["filter"] = filter
             if include_ccs_metadata is not None:
                 __body["include_ccs_metadata"] = include_ccs_metadata
+            if keep_alive is not None:
+                __body["keep_alive"] = keep_alive
+            if keep_on_completion is not None:
+                __body["keep_on_completion"] = keep_on_completion
             if locale is not None:
                 __body["locale"] = locale
             if params is not None:
@@ -248,6 +258,14 @@ class EsqlClient(NamespacedClient):
         drop_null_columns: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        format: t.Optional[
+            t.Union[
+                str,
+                t.Literal[
+                    "arrow", "cbor", "csv", "json", "smile", "tsv", "txt", "yaml"
+                ],
+            ]
+        ] = None,
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
@@ -273,6 +291,7 @@ class EsqlClient(NamespacedClient):
             will be removed from the `columns` and `values` portion of the results. If
             `true`, the response will include an extra section under the name `all_columns`
             which has the name of all the columns.
+        :param format: A short version of the Accept header, for example `json` or `yaml`.
         :param keep_alive: The period for which the query and its results are stored
             in the cluster. When this period expires, the query and its results are deleted,
             even if the query is still ongoing.
@@ -293,6 +312,8 @@ class EsqlClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
         if human is not None:
             __query["human"] = human
         if keep_alive is not None:
@@ -366,6 +387,87 @@ class EsqlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def get_query(
+        self,
+        *,
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get a specific running ES|QL query information.
+          Returns an object extended information about a running ES|QL query.</p>
+
+
+        :param id: The query ID
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_query/queries/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.get_query",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def list_queries(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get running ES|QL queries information.
+          Returns an object containing IDs and other information about the running ES|QL queries.</p>
+
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_query/queries"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.list_queries",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=(
             "query",
@@ -422,7 +524,9 @@ class EsqlClient(NamespacedClient):
             parameter, runs it, and returns the results.
         :param allow_partial_results: If `true`, partial results will be returned if
             there are shard failures, but the query can continue to execute on other
-            clusters and shards.
+            clusters and shards. If `false`, the query will fail if there are any failures.
+            To override the default behavior, you can set the `esql.query.allow_partial_results`
+            cluster setting to `false`.
         :param columnar: By default, ES|QL returns results as rows. For example, FROM
             returns each individual document as one row. For the JSON, YAML, CBOR and
             smile formats, ES|QL can return the results in a columnar fashion where one

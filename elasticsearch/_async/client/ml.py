@@ -1676,7 +1676,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get data frame analytics jobs usage info.</p>
+          <p>Get data frame analytics job stats.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-data-frame-analytics-stats>`_
@@ -1744,7 +1744,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get datafeeds usage info.
+          <p>Get datafeed stats.
           You can get statistics for multiple datafeeds in a single API request by
           using a comma-separated list of datafeeds or a wildcard expression. You can
           get statistics for all datafeeds by using <code>_all</code>, by specifying <code>*</code> as the
@@ -2033,7 +2033,7 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection jobs usage info.</p>
+          <p>Get anomaly detection job stats.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-job-stats>`_
@@ -3871,13 +3871,7 @@ class MlClient(NamespacedClient):
         :param description: A description of the job.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
             ignored when frozen.
@@ -5140,13 +5134,7 @@ class MlClient(NamespacedClient):
             check runs only on real-time datafeeds.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
-            expressions match hidden data streams. Supports comma-separated values. Valid
-            values are: * `all`: Match any data stream or index, including hidden ones.
-            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
-            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
-            streams and hidden indices. Must be combined with `open`, `closed`, or both.
-            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
-            indices. Also matches any non-hidden data stream.
+            expressions match hidden data streams. Supports comma-separated values.
         :param frequency: The interval at which scheduled queries are made while the
             datafeed runs in real time. The default value is either the bucket span for
             short bucket spans, or, for longer bucket spans, a sensible fraction of the

@@ -45,7 +45,8 @@ class WatcherClient(NamespacedClient):
           <p>IMPORTANT: If the specified watch is currently being executed, this API will return an error
           The reason for this behavior is to prevent overwriting the watch status from a watch execution.</p>
           <p>Acknowledging an action throttles further executions of that action until its <code>ack.state</code> is reset to <code>awaits_successful_execution</code>.
-          This happens when the condition of the watch is not met (the condition evaluates to false).</p>
+          This happens when the condition of the watch is not met (the condition evaluates to false).
+          To demonstrate how throttling works in practice and how it can be configured for individual actions within a watch, refer to External documentation.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-ack-watch>`_
@@ -274,7 +275,8 @@ class WatcherClient(NamespacedClient):
           This serves as great tool for testing and debugging your watches prior to adding them to Watcher.</p>
           <p>When Elasticsearch security features are enabled on your cluster, watches are run with the privileges of the user that stored the watches.
           If your user is allowed to read index <code>a</code>, but not index <code>b</code>, then the exact same set of rules will apply during execution of a watch.</p>
-          <p>When using the run watch API, the authorization data of the user that called the API will be used as a base, instead of the information who stored the watch.</p>
+          <p>When using the run watch API, the authorization data of the user that called the API will be used as a base, instead of the information who stored the watch.
+          Refer to the external documentation for examples of watch execution requests, including existing, customized, and inline watches.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-execute-watch>`_

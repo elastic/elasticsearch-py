@@ -49,24 +49,25 @@ class ClusterClient(NamespacedClient):
 
           <p>Explain the shard allocations.
           Get explanations for shard allocations in the cluster.
+          This API accepts the current_node, index, primary and shard parameters in the request body or in query parameters, but not in both at the same time.
           For unassigned shards, it provides an explanation for why the shard is unassigned.
           For assigned shards, it provides an explanation for why the shard is remaining on its current node and has not moved or rebalanced to another node.
-          This API can be very useful when attempting to diagnose why a shard is unassigned or why a shard continues to remain on its current node when you might expect otherwise.</p>
+          This API can be very useful when attempting to diagnose why a shard is unassigned or why a shard continues to remain on its current node when you might expect otherwise.
+          Refer to the linked documentation for examples of how to troubleshoot allocation issues using this API.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-allocation-explain>`_
 
-        :param current_node: Specifies the node ID or the name of the node to only explain
-            a shard that is currently located on the specified node.
+        :param current_node: Explain a shard only if it is currently located on the specified
+            node name or node ID.
         :param include_disk_info: If true, returns information about disk usage and shard
             sizes.
         :param include_yes_decisions: If true, returns YES decisions in explanation.
-        :param index: Specifies the name of the index that you would like an explanation
-            for.
+        :param index: The name of the index that you would like an explanation for.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param primary: If true, returns explanation for the primary shard for the given
-            shard ID.
-        :param shard: Specifies the ID of the shard that you would like an explanation
+        :param primary: If true, returns an explanation for the primary shard for the
+            specified shard ID.
+        :param shard: An identifier for the shard that you would like an explanation
             for.
         """
         __path_parts: t.Dict[str, str] = {}
@@ -290,6 +291,7 @@ class ClusterClient(NamespacedClient):
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        settings_filter: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -310,6 +312,8 @@ class ClusterClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
+        :param settings_filter: Filter out results, for example to filter out sensitive
+            information. Supports wildcards or full settings keys
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -335,6 +339,8 @@ class ClusterClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if settings_filter is not None:
+            __query["settings_filter"] = settings_filter
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -361,8 +367,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster-wide settings.
-          By default, it returns only settings that have been explicitly defined.</p>
+          <p>Get cluster-wide settings.</p>
+          <p>By default, it returns only settings that have been explicitly defined.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-get-settings>`_
@@ -441,7 +447,7 @@ class ClusterClient(NamespacedClient):
         wait_for_no_relocating_shards: t.Optional[bool] = None,
         wait_for_nodes: t.Optional[t.Union[int, str]] = None,
         wait_for_status: t.Optional[
-            t.Union[str, t.Literal["green", "red", "yellow"]]
+            t.Union[str, t.Literal["green", "red", "unavailable", "unknown", "yellow"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -731,6 +737,7 @@ class ClusterClient(NamespacedClient):
         *,
         name: str,
         template: t.Optional[t.Mapping[str, t.Any]] = None,
+        cause: t.Optional[str] = None,
         create: t.Optional[bool] = None,
         deprecated: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -774,6 +781,7 @@ class ClusterClient(NamespacedClient):
             update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
+        :param cause: User defined reason for create the component template.
         :param create: If `true`, this request cannot replace or update existing component
             templates.
         :param deprecated: Marks this index template as deprecated. When creating or
@@ -798,6 +806,8 @@ class ClusterClient(NamespacedClient):
         __path = f'/_component_template/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if cause is not None:
+            __query["cause"] = cause
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -870,9 +880,9 @@ class ClusterClient(NamespacedClient):
 
         :param flat_settings: Return settings in flat format (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
-        :param persistent:
+        :param persistent: The settings that persist after the cluster restarts.
         :param timeout: Explicit operation timeout
-        :param transient:
+        :param transient: The settings that do not persist after the cluster restarts.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_cluster/settings"
@@ -1109,7 +1119,8 @@ class ClusterClient(NamespacedClient):
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+        :param master_timeout: Timeout for waiting for new cluster state in case it is
+            blocked
         :param wait_for_metadata_version: Wait for the metadata version to be equal or
             greater than the specified metadata version
         :param wait_for_timeout: The maximum time to wait for wait_for_metadata_version

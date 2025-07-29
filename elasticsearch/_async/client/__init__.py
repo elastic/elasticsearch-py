@@ -637,6 +637,8 @@ class AsyncElasticsearch(BaseClient):
           Imagine a <code>_bulk?refresh=wait_for</code> request with three documents in it that happen to be routed to different shards in an index with five shards.
           The request will only wait for those three shards to refresh.
           The other two shards that make up the index do not participate in the <code>_bulk</code> request at all.</p>
+          <p>You might want to disable the refresh interval temporarily to improve indexing throughput for large bulk requests.
+          Refer to the linked documentation for step-by-step instructions using the index settings API.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-bulk>`_
@@ -1029,10 +1031,7 @@ class AsyncElasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        if_primary_term: t.Optional[int] = None,
-        if_seq_no: t.Optional[int] = None,
         include_source_on_error: t.Optional[bool] = None,
-        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
@@ -1117,18 +1116,8 @@ class AsyncElasticsearch(BaseClient):
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format.
         :param document:
-        :param if_primary_term: Only perform the operation if the document has this primary
-            term.
-        :param if_seq_no: Only perform the operation if the document has this sequence
-            number.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
-        :param op_type: Set to `create` to only index the document if it does not already
-            exist (put if absent). If a document with the specified `_id` already exists,
-            the indexing operation will fail. The behavior is the same as using the `<index>/_create`
-            endpoint. If a document ID is specified, this paramater defaults to `index`.
-            Otherwise, it defaults to `create`. If the request targets a data stream,
-            an `op_type` of `create` is required.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
             If the index has a default ingest pipeline specified, setting the value to
             `_none` turns off the default ingest pipeline for this request. If a final
@@ -1180,14 +1169,8 @@ class AsyncElasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if if_primary_term is not None:
-            __query["if_primary_term"] = if_primary_term
-        if if_seq_no is not None:
-            __query["if_seq_no"] = if_seq_no
         if include_source_on_error is not None:
             __query["include_source_on_error"] = include_source_on_error
-        if op_type is not None:
-            __query["op_type"] = op_type
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
@@ -1645,7 +1628,7 @@ class AsyncElasticsearch(BaseClient):
     async def delete_by_query_rethrottle(
         self,
         *,
-        task_id: t.Union[int, str],
+        task_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -2251,6 +2234,7 @@ class AsyncElasticsearch(BaseClient):
     @_rewrite_parameters(
         parameter_aliases={
             "_source": "source",
+            "_source_exclude_vectors": "source_exclude_vectors",
             "_source_excludes": "source_excludes",
             "_source_includes": "source_includes",
         },
@@ -2270,6 +2254,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
+        source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2324,7 +2309,7 @@ class AsyncElasticsearch(BaseClient):
         :param index: The name of the index that contains the document.
         :param id: A unique document identifier.
         :param force_synthetic_source: Indicates whether the request forces synthetic
-            `_source`. Use this paramater to test if the mapping supports synthetic `_source`
+            `_source`. Use this parameter to test if the mapping supports synthetic `_source`
             and to get a sense of the worst case performance. Fetches with this parameter
             enabled will be slower than enabling synthetic source natively in the index.
         :param preference: The node or shard the operation should be performed on. By
@@ -2343,6 +2328,7 @@ class AsyncElasticsearch(BaseClient):
         :param routing: A custom value used to route operations to a specific shard.
         :param source: Indicates whether to return the `_source` field (`true` or `false`)
             or lists the fields to return.
+        :param source_exclude_vectors: Whether vectors should be excluded from _source
         :param source_excludes: A comma-separated list of source fields to exclude from
             the response. You can also use this parameter to exclude fields from the
             subset specified in `_source_includes` query parameter. If the `_source`
@@ -2355,8 +2341,8 @@ class AsyncElasticsearch(BaseClient):
         :param stored_fields: A comma-separated list of stored fields to return as part
             of a hit. If no fields are specified, no stored fields are included in the
             response. If this field is specified, the `_source` parameter defaults to
-            `false`. Only leaf fields can be retrieved with the `stored_field` option.
-            Object fields can't be returned;​if specified, the request fails.
+            `false`. Only leaf fields can be retrieved with the `stored_fields` option.
+            Object fields can't be returned; if specified, the request fails.
         :param version: The version number for concurrency control. It must match the
             current version of the document for the request to succeed.
         :param version_type: The version type.
@@ -2388,6 +2374,8 @@ class AsyncElasticsearch(BaseClient):
             __query["routing"] = routing
         if source is not None:
             __query["_source"] = source
+        if source_exclude_vectors is not None:
+            __query["_source_exclude_vectors"] = source_exclude_vectors
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
@@ -2560,7 +2548,6 @@ class AsyncElasticsearch(BaseClient):
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
@@ -2597,8 +2584,6 @@ class AsyncElasticsearch(BaseClient):
             the response.
         :param source_includes: A comma-separated list of source fields to include in
             the response.
-        :param stored_fields: A comma-separated list of stored fields to return as part
-            of a hit.
         :param version: The version number for concurrency control. It must match the
             current version of the document for the request to succeed.
         :param version_type: The version type.
@@ -2632,8 +2617,6 @@ class AsyncElasticsearch(BaseClient):
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
             __query["_source_includes"] = source_includes
-        if stored_fields is not None:
-            __query["stored_fields"] = stored_fields
         if version is not None:
             __query["version"] = version
         if version_type is not None:
@@ -2742,6 +2725,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         require_alias: t.Optional[bool] = None,
+        require_data_stream: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -2877,6 +2861,8 @@ class AsyncElasticsearch(BaseClient):
             this operation visible to search. If `wait_for`, it waits for a refresh to
             make this operation visible to search. If `false`, it does nothing with refreshes.
         :param require_alias: If `true`, the destination must be an index alias.
+        :param require_data_stream: If `true`, the request's actions must target a data
+            stream (existing or to be created).
         :param routing: A custom value that is used to route operations to a specific
             shard.
         :param timeout: The period the request waits for the following operations: automatic
@@ -2938,6 +2924,8 @@ class AsyncElasticsearch(BaseClient):
             __query["refresh"] = refresh
         if require_alias is not None:
             __query["require_alias"] = require_alias
+        if require_data_stream is not None:
+            __query["require_data_stream"] = require_data_stream
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -2973,7 +2961,8 @@ class AsyncElasticsearch(BaseClient):
         .. raw:: html
 
           <p>Get cluster info.
-          Get basic build, version, and cluster information.</p>
+          Get basic build, version, and cluster information.
+          ::: In Serverless, this API is retained for backward compatibility only. Some response fields, such as the version number, should be ignored.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-info>`_
@@ -3586,8 +3575,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
@@ -3887,110 +3875,7 @@ class AsyncElasticsearch(BaseClient):
           In this case, the response includes a count of the version conflicts that were encountered.
           Note that the handling of other error types is unaffected by the <code>conflicts</code> property.
           Additionally, if you opt to count version conflicts, the operation could attempt to reindex more documents from the source than <code>max_docs</code> until it has successfully indexed <code>max_docs</code> documents into the target or it has gone through every document in the source query.</p>
-          <p>NOTE: The reindex API makes no effort to handle ID collisions.
-          The last document written will &quot;win&quot; but the order isn't usually predictable so it is not a good idea to rely on this behavior.
-          Instead, make sure that IDs are unique by using a script.</p>
-          <p><strong>Running reindex asynchronously</strong></p>
-          <p>If the request contains <code>wait_for_completion=false</code>, Elasticsearch performs some preflight checks, launches the request, and returns a task you can use to cancel or get the status of the task.
-          Elasticsearch creates a record of this task as a document at <code>_tasks/&lt;task_id&gt;</code>.</p>
-          <p><strong>Reindex from multiple sources</strong></p>
-          <p>If you have many sources to reindex it is generally better to reindex them one at a time rather than using a glob pattern to pick up multiple sources.
-          That way you can resume the process if there are any errors by removing the partially completed source and starting over.
-          It also makes parallelizing the process fairly simple: split the list of sources to reindex and run each list in parallel.</p>
-          <p>For example, you can use a bash script like this:</p>
-          <pre><code>for index in i1 i2 i3 i4 i5; do
-            curl -HContent-Type:application/json -XPOST localhost:9200/_reindex?pretty -d'{
-              &quot;source&quot;: {
-                &quot;index&quot;: &quot;'$index'&quot;
-              },
-              &quot;dest&quot;: {
-                &quot;index&quot;: &quot;'$index'-reindexed&quot;
-              }
-            }'
-          done
-          </code></pre>
-          <p><strong>Throttling</strong></p>
-          <p>Set <code>requests_per_second</code> to any positive decimal number (<code>1.4</code>, <code>6</code>, <code>1000</code>, for example) to throttle the rate at which reindex issues batches of index operations.
-          Requests are throttled by padding each batch with a wait time.
-          To turn off throttling, set <code>requests_per_second</code> to <code>-1</code>.</p>
-          <p>The throttling is done by waiting between batches so that the scroll that reindex uses internally can be given a timeout that takes into account the padding.
-          The padding time is the difference between the batch size divided by the <code>requests_per_second</code> and the time spent writing.
-          By default the batch size is <code>1000</code>, so if <code>requests_per_second</code> is set to <code>500</code>:</p>
-          <pre><code>target_time = 1000 / 500 per second = 2 seconds
-          wait_time = target_time - write_time = 2 seconds - .5 seconds = 1.5 seconds
-          </code></pre>
-          <p>Since the batch is issued as a single bulk request, large batch sizes cause Elasticsearch to create many requests and then wait for a while before starting the next set.
-          This is &quot;bursty&quot; instead of &quot;smooth&quot;.</p>
-          <p><strong>Slicing</strong></p>
-          <p>Reindex supports sliced scroll to parallelize the reindexing process.
-          This parallelization can improve efficiency and provide a convenient way to break the request down into smaller parts.</p>
-          <p>NOTE: Reindexing from remote clusters does not support manual or automatic slicing.</p>
-          <p>You can slice a reindex request manually by providing a slice ID and total number of slices to each request.
-          You can also let reindex automatically parallelize by using sliced scroll to slice on <code>_id</code>.
-          The <code>slices</code> parameter specifies the number of slices to use.</p>
-          <p>Adding <code>slices</code> to the reindex request just automates the manual process, creating sub-requests which means it has some quirks:</p>
-          <ul>
-          <li>You can see these requests in the tasks API. These sub-requests are &quot;child&quot; tasks of the task for the request with slices.</li>
-          <li>Fetching the status of the task for the request with <code>slices</code> only contains the status of completed slices.</li>
-          <li>These sub-requests are individually addressable for things like cancellation and rethrottling.</li>
-          <li>Rethrottling the request with <code>slices</code> will rethrottle the unfinished sub-request proportionally.</li>
-          <li>Canceling the request with <code>slices</code> will cancel each sub-request.</li>
-          <li>Due to the nature of <code>slices</code>, each sub-request won't get a perfectly even portion of the documents. All documents will be addressed, but some slices may be larger than others. Expect larger slices to have a more even distribution.</li>
-          <li>Parameters like <code>requests_per_second</code> and <code>max_docs</code> on a request with <code>slices</code> are distributed proportionally to each sub-request. Combine that with the previous point about distribution being uneven and you should conclude that using <code>max_docs</code> with <code>slices</code> might not result in exactly <code>max_docs</code> documents being reindexed.</li>
-          <li>Each sub-request gets a slightly different snapshot of the source, though these are all taken at approximately the same time.</li>
-          </ul>
-          <p>If slicing automatically, setting <code>slices</code> to <code>auto</code> will choose a reasonable number for most indices.
-          If slicing manually or otherwise tuning automatic slicing, use the following guidelines.</p>
-          <p>Query performance is most efficient when the number of slices is equal to the number of shards in the index.
-          If that number is large (for example, <code>500</code>), choose a lower number as too many slices will hurt performance.
-          Setting slices higher than the number of shards generally does not improve efficiency and adds overhead.</p>
-          <p>Indexing performance scales linearly across available resources with the number of slices.</p>
-          <p>Whether query or indexing performance dominates the runtime depends on the documents being reindexed and cluster resources.</p>
-          <p><strong>Modify documents during reindexing</strong></p>
-          <p>Like <code>_update_by_query</code>, reindex operations support a script that modifies the document.
-          Unlike <code>_update_by_query</code>, the script is allowed to modify the document's metadata.</p>
-          <p>Just as in <code>_update_by_query</code>, you can set <code>ctx.op</code> to change the operation that is run on the destination.
-          For example, set <code>ctx.op</code> to <code>noop</code> if your script decides that the document doesn’t have to be indexed in the destination. This &quot;no operation&quot; will be reported in the <code>noop</code> counter in the response body.
-          Set <code>ctx.op</code> to <code>delete</code> if your script decides that the document must be deleted from the destination.
-          The deletion will be reported in the <code>deleted</code> counter in the response body.
-          Setting <code>ctx.op</code> to anything else will return an error, as will setting any other field in <code>ctx</code>.</p>
-          <p>Think of the possibilities! Just be careful; you are able to change:</p>
-          <ul>
-          <li><code>_id</code></li>
-          <li><code>_index</code></li>
-          <li><code>_version</code></li>
-          <li><code>_routing</code></li>
-          </ul>
-          <p>Setting <code>_version</code> to <code>null</code> or clearing it from the <code>ctx</code> map is just like not sending the version in an indexing request.
-          It will cause the document to be overwritten in the destination regardless of the version on the target or the version type you use in the reindex API.</p>
-          <p><strong>Reindex from remote</strong></p>
-          <p>Reindex supports reindexing from a remote Elasticsearch cluster.
-          The <code>host</code> parameter must contain a scheme, host, port, and optional path.
-          The <code>username</code> and <code>password</code> parameters are optional and when they are present the reindex operation will connect to the remote Elasticsearch node using basic authentication.
-          Be sure to use HTTPS when using basic authentication or the password will be sent in plain text.
-          There are a range of settings available to configure the behavior of the HTTPS connection.</p>
-          <p>When using Elastic Cloud, it is also possible to authenticate against the remote cluster through the use of a valid API key.
-          Remote hosts must be explicitly allowed with the <code>reindex.remote.whitelist</code> setting.
-          It can be set to a comma delimited list of allowed remote host and port combinations.
-          Scheme is ignored; only the host and port are used.
-          For example:</p>
-          <pre><code>reindex.remote.whitelist: [otherhost:9200, another:9200, 127.0.10.*:9200, localhost:*&quot;]
-          </code></pre>
-          <p>The list of allowed hosts must be configured on any nodes that will coordinate the reindex.
-          This feature should work with remote clusters of any version of Elasticsearch.
-          This should enable you to upgrade from any version of Elasticsearch to the current version by reindexing from a cluster of the old version.</p>
-          <p>WARNING: Elasticsearch does not support forward compatibility across major versions.
-          For example, you cannot reindex from a 7.x cluster into a 6.x cluster.</p>
-          <p>To enable queries sent to older versions of Elasticsearch, the <code>query</code> parameter is sent directly to the remote host without validation or modification.</p>
-          <p>NOTE: Reindexing from remote clusters does not support manual or automatic slicing.</p>
-          <p>Reindexing from a remote server uses an on-heap buffer that defaults to a maximum size of 100mb.
-          If the remote index includes very large documents you'll need to use a smaller batch size.
-          It is also possible to set the socket read timeout on the remote connection with the <code>socket_timeout</code> field and the connection timeout with the <code>connect_timeout</code> field.
-          Both default to 30 seconds.</p>
-          <p><strong>Configuring SSL parameters</strong></p>
-          <p>Reindex from remote supports configurable SSL settings.
-          These must be specified in the <code>elasticsearch.yml</code> file, with the exception of the secure settings, which you add in the Elasticsearch keystore.
-          It is not possible to configure SSL in the body of the reindex request.</p>
+          <p>Refer to the linked documentation for examples of how to reindex documents.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-reindex>`_
@@ -4424,6 +4309,7 @@ class AsyncElasticsearch(BaseClient):
         ),
         parameter_aliases={
             "_source": "source",
+            "_source_exclude_vectors": "source_exclude_vectors",
             "_source_excludes": "source_excludes",
             "_source_includes": "source_includes",
             "from": "from_",
@@ -4507,6 +4393,7 @@ class AsyncElasticsearch(BaseClient):
             ]
         ] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
+        source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stats: t.Optional[t.Sequence[str]] = None,
@@ -4652,11 +4539,11 @@ class AsyncElasticsearch(BaseClient):
             of the specified nodes are available, select shards from any available node
             using the default method. * `_prefer_nodes:<node-id>,<node-id>` to if possible,
             run the search on the specified nodes IDs. If not, select shards using the
-            default method. `_shards:<shard>,<shard>` to run the search only on the specified
-            shards. You can combine this value with other `preference` values. However,
-            the `_shards` value must come first. For example: `_shards:2,3|_local`. `<custom-string>`
-            (any string that does not start with `_`) to route searches with the same
-            `<custom-string>` to the same shards in the same order.
+            default method. * `_shards:<shard>,<shard>` to run the search only on the
+            specified shards. You can combine this value with other `preference` values.
+            However, the `_shards` value must come first. For example: `_shards:2,3|_local`.
+            * `<custom-string>` (any string that does not start with `_`) to route searches
+            with the same `<custom-string>` to the same shards in the same order.
         :param profile: Set to `true` to return detailed timing information about the
             execution of individual components in a search request. NOTE: This is a debugging
             tool and adds significant overhead to search execution.
@@ -4701,6 +4588,7 @@ class AsyncElasticsearch(BaseClient):
             fields are returned in the `hits._source` property of the search response.
             If the `stored_fields` property is specified, the `_source` property defaults
             to `false`. Otherwise, it defaults to `true`.
+        :param source_exclude_vectors: Whether vectors should be excluded from _source
         :param source_excludes: A comma-separated list of source fields to exclude from
             the response. You can also use this parameter to exclude fields from the
             subset specified in `_source_includes` query parameter. If the `_source`
@@ -4825,6 +4713,8 @@ class AsyncElasticsearch(BaseClient):
             __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
+        if source_exclude_vectors is not None:
+            __query["_source_exclude_vectors"] = source_exclude_vectors
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
@@ -4992,51 +4882,6 @@ class AsyncElasticsearch(BaseClient):
           <li>Optionally, a <code>geo_bounds</code> aggregation on the <code>&lt;field&gt;</code>. The search only includes this aggregation if the <code>exact_bounds</code> parameter is <code>true</code>.</li>
           <li>If the optional parameter <code>with_labels</code> is <code>true</code>, the internal search will include a dynamic runtime field that calls the <code>getLabelPosition</code> function of the geometry doc value. This enables the generation of new point features containing suggested geometry labels, so that, for example, multi-polygons will have only one label.</li>
           </ul>
-          <p>For example, Elasticsearch may translate a vector tile search API request with a <code>grid_agg</code> argument of <code>geotile</code> and an <code>exact_bounds</code> argument of <code>true</code> into the following search</p>
-          <pre><code>GET my-index/_search
-          {
-            &quot;size&quot;: 10000,
-            &quot;query&quot;: {
-              &quot;geo_bounding_box&quot;: {
-                &quot;my-geo-field&quot;: {
-                  &quot;top_left&quot;: {
-                    &quot;lat&quot;: -40.979898069620134,
-                    &quot;lon&quot;: -45
-                  },
-                  &quot;bottom_right&quot;: {
-                    &quot;lat&quot;: -66.51326044311186,
-                    &quot;lon&quot;: 0
-                  }
-                }
-              }
-            },
-            &quot;aggregations&quot;: {
-              &quot;grid&quot;: {
-                &quot;geotile_grid&quot;: {
-                  &quot;field&quot;: &quot;my-geo-field&quot;,
-                  &quot;precision&quot;: 11,
-                  &quot;size&quot;: 65536,
-                  &quot;bounds&quot;: {
-                    &quot;top_left&quot;: {
-                      &quot;lat&quot;: -40.979898069620134,
-                      &quot;lon&quot;: -45
-                    },
-                    &quot;bottom_right&quot;: {
-                      &quot;lat&quot;: -66.51326044311186,
-                      &quot;lon&quot;: 0
-                    }
-                  }
-                }
-              },
-              &quot;bounds&quot;: {
-                &quot;geo_bounds&quot;: {
-                  &quot;field&quot;: &quot;my-geo-field&quot;,
-                  &quot;wrap_longitude&quot;: false
-                }
-              }
-            }
-          }
-          </code></pre>
           <p>The API returns results as a binary Mapbox vector tile.
           Mapbox vector tiles are encoded as Google Protobufs (PBF). By default, the tile contains three layers:</p>
           <ul>
@@ -5291,6 +5136,7 @@ class AsyncElasticsearch(BaseClient):
           Some cells may intersect more than one vector tile.
           To compute the H3 resolution for each precision, Elasticsearch compares the average density of hexagonal bins at each resolution with the average density of tile bins at each zoom level.
           Elasticsearch uses the H3 resolution that is closest to the corresponding geotile density.</p>
+          <p>Learn how to use the vector tile search API with practical examples in the <a href="https://www.elastic.co/docs/reference/elasticsearch/rest-apis/vector-tile-search">Vector tile search examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-mvt>`_
@@ -5480,7 +5326,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
-            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+            as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
         :param local: If `true`, the request retrieves information from the local node
@@ -5592,8 +5438,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. Supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param explain: If `true`, returns detailed information about score calculation
             as part of each hit. If you specify both this and the `explain` query parameter,
             the API uses only the query parameter.
@@ -5867,7 +5712,8 @@ class AsyncElasticsearch(BaseClient):
           The information is only retrieved for the shard the requested document resides in.
           The term and field statistics are therefore only useful as relative measures whereas the absolute numbers have no meaning in this context.
           By default, when requesting term vectors of artificial documents, a shard to get the statistics from is randomly selected.
-          Use <code>routing</code> only to hit a particular shard.</p>
+          Use <code>routing</code> only to hit a particular shard.
+          Refer to the linked documentation for detailed examples of how to use this API.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-termvectors>`_
@@ -6038,7 +5884,8 @@ class AsyncElasticsearch(BaseClient):
           </ul>
           <p>The document must still be reindexed, but using this API removes some network roundtrips and reduces chances of version conflicts between the GET and the index operation.</p>
           <p>The <code>_source</code> field must be enabled to use this API.
-          In addition to <code>_source</code>, you can access the following variables through the <code>ctx</code> map: <code>_index</code>, <code>_type</code>, <code>_id</code>, <code>_version</code>, <code>_routing</code>, and <code>_now</code> (the current timestamp).</p>
+          In addition to <code>_source</code>, you can access the following variables through the <code>ctx</code> map: <code>_index</code>, <code>_type</code>, <code>_id</code>, <code>_version</code>, <code>_routing</code>, and <code>_now</code> (the current timestamp).
+          For usage examples such as partial updates, upserts, and scripted updates, see the External documentation.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-update>`_
@@ -6231,6 +6078,24 @@ class AsyncElasticsearch(BaseClient):
           A bulk update request is performed for each batch of matching documents.
           Any query or update failures cause the update by query request to fail and the failures are shown in the response.
           Any update requests that completed successfully still stick, they are not rolled back.</p>
+          <p><strong>Refreshing shards</strong></p>
+          <p>Specifying the <code>refresh</code> parameter refreshes all shards once the request completes.
+          This is different to the update API's <code>refresh</code> parameter, which causes only the shard
+          that received the request to be refreshed. Unlike the update API, it does not support
+          <code>wait_for</code>.</p>
+          <p><strong>Running update by query asynchronously</strong></p>
+          <p>If the request contains <code>wait_for_completion=false</code>, Elasticsearch
+          performs some preflight checks, launches the request, and returns a
+          <a href="https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks">task</a> you can use to cancel or get the status of the task.
+          Elasticsearch creates a record of this task as a document at <code>.tasks/task/${taskId}</code>.</p>
+          <p><strong>Waiting for active shards</strong></p>
+          <p><code>wait_for_active_shards</code> controls how many copies of a shard must be active
+          before proceeding with the request. See <a href="https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-create#operation-create-wait_for_active_shards"><code>wait_for_active_shards</code></a>
+          for details. <code>timeout</code> controls how long each write request waits for unavailable
+          shards to become available. Both work exactly the way they work in the
+          <a href="https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-bulk">Bulk API</a>. Update by query uses scrolled searches, so you can also
+          specify the <code>scroll</code> parameter to control how long it keeps the search context
+          alive, for example <code>?scroll=10m</code>. The default is 5 minutes.</p>
           <p><strong>Throttling update requests</strong></p>
           <p>To control the rate at which update by query issues batches of update operations, you can set <code>requests_per_second</code> to any positive decimal number.
           This pads each batch with a wait time to throttle the rate.
@@ -6265,18 +6130,8 @@ class AsyncElasticsearch(BaseClient):
           <li>Query performance is most efficient when the number of slices is equal to the number of shards in the index or backing index. If that number is large (for example, 500), choose a lower number as too many slices hurts performance. Setting slices higher than the number of shards generally does not improve efficiency and adds overhead.</li>
           <li>Update performance scales linearly across available resources with the number of slices.</li>
           </ul>
-          <p>Whether query or update performance dominates the runtime depends on the documents being reindexed and cluster resources.</p>
-          <p><strong>Update the document source</strong></p>
-          <p>Update by query supports scripts to update the document source.
-          As with the update API, you can set <code>ctx.op</code> to change the operation that is performed.</p>
-          <p>Set <code>ctx.op = &quot;noop&quot;</code> if your script decides that it doesn't have to make any changes.
-          The update by query operation skips updating the document and increments the <code>noop</code> counter.</p>
-          <p>Set <code>ctx.op = &quot;delete&quot;</code> if your script decides that the document should be deleted.
-          The update by query operation deletes the document and increments the <code>deleted</code> counter.</p>
-          <p>Update by query supports only <code>index</code>, <code>noop</code>, and <code>delete</code>.
-          Setting <code>ctx.op</code> to anything else is an error.
-          Setting any other field in <code>ctx</code> is an error.
-          This API enables you to only modify the source of matching documents; you cannot move them.</p>
+          <p>Whether query or update performance dominates the runtime depends on the documents being reindexed and cluster resources.
+          Refer to the linked documentation for examples of how to update documents using the <code>_update_by_query</code> API:</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-update-by-query>`_
@@ -6304,8 +6159,7 @@ class AsyncElasticsearch(BaseClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
-            values, such as `open,hidden`. Valid values are: `all`, `open`, `closed`,
-            `hidden`, `none`.
+            values, such as `open,hidden`.
         :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.

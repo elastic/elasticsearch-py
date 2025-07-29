@@ -36,7 +36,7 @@ class TasksClient(NamespacedClient):
     async def cancel(
         self,
         *,
-        task_id: t.Optional[t.Union[int, str]] = None,
+        task_id: t.Optional[str] = None,
         actions: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
