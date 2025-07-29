@@ -11,6 +11,7 @@ High-level documentation for this client is `also available <https://www.elastic
    :maxdepth: 2 
 
    es_api
+   esql
    dsl
    api_helpers
    exceptions
