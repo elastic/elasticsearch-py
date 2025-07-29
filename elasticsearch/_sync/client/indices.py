@@ -1208,7 +1208,7 @@ class IndicesClient(NamespacedClient):
           Removes the data stream options from a data stream.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
 
         :param name: A comma-separated list of data streams of which the data stream
             options will be deleted; use `*` to get all data streams
@@ -2543,57 +2543,6 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    def get_data_stream_mappings(
-        self,
-        *,
-        name: t.Union[str, t.Sequence[str]],
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Get data stream mappings.</p>
-          <p>Get mapping information for one or more data streams.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream-mappings>`_
-
-        :param name: A comma-separated list of data streams or data stream patterns.
-            Supports wildcards (`*`).
-        :param master_timeout: The period to wait for a connection to the master node.
-            If no response is received before the timeout expires, the request fails
-            and returns an error.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_data_stream/{__path_parts["name"]}/_mappings'
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "GET",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="indices.get_data_stream_mappings",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
     def get_data_stream_options(
         self,
         *,
@@ -2619,7 +2568,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the data stream options configuration of one or more data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
 
         :param name: Comma-separated list of data streams to limit the request. Supports
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
@@ -3705,83 +3654,6 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_name="mappings",
-    )
-    def put_data_stream_mappings(
-        self,
-        *,
-        name: t.Union[str, t.Sequence[str]],
-        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        body: t.Optional[t.Mapping[str, t.Any]] = None,
-        dry_run: t.Optional[bool] = None,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Update data stream mappings.</p>
-          <p>This API can be used to override mappings on specific data streams. These overrides will take precedence over what
-          is specified in the template that the data stream matches. The mapping change is only applied to new write indices
-          that are created during rollover after this API is called. No indices are changed by this API.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-mappings>`_
-
-        :param name: A comma-separated list of data streams or data stream patterns.
-        :param mappings:
-        :param dry_run: If `true`, the request does not actually change the mappings
-            on any data streams. Instead, it simulates changing the settings and reports
-            back to the user what would have happened had these settings actually been
-            applied.
-        :param master_timeout: The period to wait for a connection to the master node.
-            If no response is received before the timeout expires, the request fails
-            and returns an error.
-        :param timeout: The period to wait for a response. If no response is received
-            before the timeout expires, the request fails and returns an error.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        if mappings is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'mappings' and 'body', one of them should be set."
-            )
-        elif mappings is not None and body is not None:
-            raise ValueError("Cannot set both 'mappings' and 'body'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_data_stream/{__path_parts["name"]}/_mappings'
-        __query: t.Dict[str, t.Any] = {}
-        if dry_run is not None:
-            __query["dry_run"] = dry_run
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
-        __body = mappings if mappings is not None else body
-        __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "PUT",
-            __path,
-            params=__query,
-            headers=__headers,
-            body=__body,
-            endpoint_id="indices.put_data_stream_mappings",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters(
         body_fields=("failure_store",),
     )
     def put_data_stream_options(
@@ -3812,7 +3684,7 @@ class IndicesClient(NamespacedClient):
           Update the data stream options of the specified data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.

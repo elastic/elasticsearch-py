@@ -2232,7 +2232,6 @@ class Elasticsearch(BaseClient):
     @_rewrite_parameters(
         parameter_aliases={
             "_source": "source",
-            "_source_exclude_vectors": "source_exclude_vectors",
             "_source_excludes": "source_excludes",
             "_source_includes": "source_includes",
         },
@@ -2252,7 +2251,6 @@ class Elasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
-        source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2326,7 +2324,6 @@ class Elasticsearch(BaseClient):
         :param routing: A custom value used to route operations to a specific shard.
         :param source: Indicates whether to return the `_source` field (`true` or `false`)
             or lists the fields to return.
-        :param source_exclude_vectors: Whether vectors should be excluded from _source
         :param source_excludes: A comma-separated list of source fields to exclude from
             the response. You can also use this parameter to exclude fields from the
             subset specified in `_source_includes` query parameter. If the `_source`
@@ -2372,8 +2369,6 @@ class Elasticsearch(BaseClient):
             __query["routing"] = routing
         if source is not None:
             __query["_source"] = source
-        if source_exclude_vectors is not None:
-            __query["_source_exclude_vectors"] = source_exclude_vectors
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:
@@ -4307,7 +4302,6 @@ class Elasticsearch(BaseClient):
         ),
         parameter_aliases={
             "_source": "source",
-            "_source_exclude_vectors": "source_exclude_vectors",
             "_source_excludes": "source_excludes",
             "_source_includes": "source_includes",
             "from": "from_",
@@ -4391,7 +4385,6 @@ class Elasticsearch(BaseClient):
             ]
         ] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
-        source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stats: t.Optional[t.Sequence[str]] = None,
@@ -4586,7 +4579,6 @@ class Elasticsearch(BaseClient):
             fields are returned in the `hits._source` property of the search response.
             If the `stored_fields` property is specified, the `_source` property defaults
             to `false`. Otherwise, it defaults to `true`.
-        :param source_exclude_vectors: Whether vectors should be excluded from _source
         :param source_excludes: A comma-separated list of source fields to exclude from
             the response. You can also use this parameter to exclude fields from the
             subset specified in `_source_includes` query parameter. If the `_source`
@@ -4711,8 +4703,6 @@ class Elasticsearch(BaseClient):
             __query["scroll"] = scroll
         if search_type is not None:
             __query["search_type"] = search_type
-        if source_exclude_vectors is not None:
-            __query["_source_exclude_vectors"] = source_exclude_vectors
         if source_excludes is not None:
             __query["_source_excludes"] = source_excludes
         if source_includes is not None:

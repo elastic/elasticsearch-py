@@ -49,7 +49,6 @@ class ClusterClient(NamespacedClient):
 
           <p>Explain the shard allocations.
           Get explanations for shard allocations in the cluster.
-          This API accepts the current_node, index, primary and shard parameters in the request body or in query parameters, but not in both at the same time.
           For unassigned shards, it provides an explanation for why the shard is unassigned.
           For assigned shards, it provides an explanation for why the shard is remaining on its current node and has not moved or rebalanced to another node.
           This API can be very useful when attempting to diagnose why a shard is unassigned or why a shard continues to remain on its current node when you might expect otherwise.
@@ -58,16 +57,17 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-allocation-explain>`_
 
-        :param current_node: Explain a shard only if it is currently located on the specified
-            node name or node ID.
+        :param current_node: Specifies the node ID or the name of the node to only explain
+            a shard that is currently located on the specified node.
         :param include_disk_info: If true, returns information about disk usage and shard
             sizes.
         :param include_yes_decisions: If true, returns YES decisions in explanation.
-        :param index: The name of the index that you would like an explanation for.
+        :param index: Specifies the name of the index that you would like an explanation
+            for.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param primary: If true, returns an explanation for the primary shard for the
-            specified shard ID.
-        :param shard: An identifier for the shard that you would like an explanation
+        :param primary: If true, returns explanation for the primary shard for the given
+            shard ID.
+        :param shard: Specifies the ID of the shard that you would like an explanation
             for.
         """
         __path_parts: t.Dict[str, str] = {}
@@ -1119,8 +1119,7 @@ class ClusterClient(NamespacedClient):
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
-        :param master_timeout: Timeout for waiting for new cluster state in case it is
-            blocked
+        :param master_timeout: Specify timeout for connection to master
         :param wait_for_metadata_version: Wait for the metadata version to be equal or
             greater than the specified metadata version
         :param wait_for_timeout: The maximum time to wait for wait_for_metadata_version
