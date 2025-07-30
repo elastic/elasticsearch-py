@@ -18,6 +18,56 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.1.0 (2025-07-30)
+
+Enhancements
+
+* ES|QL query builder (technical preview) ([#2997](https://github.com/elastic/elasticsearch-py/pull/2997))
+* Update OpenTelemetry conventions ([#2999](https://github.com/elastic/elasticsearch-py/pull/2999))
+* Add option to disable accurate reporting of file and line location in warnings (Fixes #3003) ([#3006](https://github.com/elastic/elasticsearch-py/pull/3006))
+
+APIs
+
+* Remove `if_primary_term`, `if_seq_no` and `op_type` from Create API
+* Remove `master_timeout` from Ingest Get Ip Location Database API
+* Remove `application`, `priviledge` and `username` from the Security Get User API
+* Rename `type_query_string` to `type` in License Post Start Trial API
+* Add `require_data_stream` to Index API
+* Add `settings_filter` to Cluster Get Component Template API
+* Add `cause` to Cluster Put Component Template API
+* Add `master_timeout` to Cluster State API
+* Add `ccs_minimize_roundtrips` to EQL Search API
+* Add `keep_alive` and `keep_on_completion` to ES|QL Async Query API
+* Add `format` to ES|QL Async Query Get API
+* Add ES|QL Get Query and List Queries APIs
+* Add Indices Delete Data Stream Options API
+* Add Indices Get Data Stream Options and Put Data Stream Options APIS
+* Add Indices Get Data Stream Settings and Put Data Stream Settings APIs
+* Add `allow_no_indices`, `expand_wildcards` and `ignore_available` to Indices Recovery API
+* Add Indices Remove Block API
+* Add Amazon Sagemaker to Inference API
+* Add `input_type` to Inference API
+* Add `timeout` to all Inference Put APIs
+* Add Inference Put Custom API
+* Add Inference Put DeepSeek API
+* Add `task_settings` to Put HuggingFace API
+* Add `refresh` to Security Grant API Key API
+* Add `wait_for_completion` to the Snapshot Delete API
+* Add `state` to Snapshot Get API
+* Add `refresh` to Synonyms Put Synonym, Put Synonym Rule and Delete Synonym Rule APIs
+
+DSL
+
+* Handle lists in `copy_to` option in DSL field declarations correctly (Fixes #2992) ([#2993](https://github.com/elastic/elasticsearch-py/pull/2993))
+* Add `index_options` to SparseVector type
+* Add SparseVectorIndexOptions type
+* Add `key` to FiltersBucket type
+
+Other changes
+
+* Drop support for Python 3.8 ([#3001](https://github.com/elastic/elasticsearch-py/pull/3001))
+
+
 
 ## 9.0.2 (2025-06-05) [elasticsearch-python-client-902-release-notes]
 
