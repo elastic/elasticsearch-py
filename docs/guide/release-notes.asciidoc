@@ -1,6 +1,38 @@
 [[release-notes]]
 == Release notes
 
+=== 8.19.0 (2025-07-30)
+
+- ES|QL query builder (technical preview) (https://github.com/elastic/elasticsearch-py/pull/2997[#2997])
+- Add option to disable accurate reporting of file and line location in warnings (Fixes #3003) (https://github.com/elastic/elasticsearch-py/pull/3006[#3006])
+
+API updates
+
+- Remove `if_primary_term`, `if_seq_no` and `op_type` from Create API
+- Remove `stored_fields` from Get Source API
+- Remove `min_compatible_shard_node` from Async Search Submit API
+- Remove `master_timeout` from Cat Aliases API
+- Remove `master_timeout` from Ingest Get Ip Location Database API
+- Remove `application`, `priviledge` and `username` from the Security Get User API
+- Rename `type_query_string` to `type` in License Post Start Trial API
+- Add `require_data_stream` to Index API
+- Add `settings_filter` to Cluster Get Component Template API
+- Add `cause` to Cluster Put Component Template API
+- Add `ccs_minimize_roundtrips` to EQL Search API
+- Add `keep_alive` and `keep_on_completion` to ES|QL Async Query API
+- Add `format` to ES|QL Async Query Get API
+- Add `allow_no_indices`, `expand_wildcards` and `ignore_available` to Indices Recovery API
+- Add `input_type` to Inference API
+- Add `timeout` to all Inference Put APIs
+- Add Inference Put Custom API
+- Add `refresh` to Security Get User Profile API
+- Add `wait_for_completion` to the Snapshot Delete API
+
+
+DSL Updates
+- Handle lists in `copy_to` option in DSL field declarations correctly  (Fixes #2992) (https://github.com/elastic/elasticsearch-py/pull/2994[#2994])
+- Add `key` to FiltersBucket type
+
 === 8.18.1 (2025-04-29)
 
 - Update APIs
