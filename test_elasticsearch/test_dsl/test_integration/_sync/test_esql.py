@@ -17,11 +17,11 @@
 
 import pytest
 
-from elasticsearch.dsl import AsyncDocument, M
+from elasticsearch.dsl import Document, E, M
 from elasticsearch.esql import ESQL, functions
 
 
-class Employee(AsyncDocument):
+class Employee(Document):
     emp_no: M[int]
     first_name: M[str]
     last_name: M[str]
@@ -32,7 +32,7 @@ class Employee(AsyncDocument):
         name = "employees"
 
 
-async def load_db():
+def load_db():
     data = [
         [10000, "Joseph", "Wall", 2.2, True],
         [10001, "Stephanie", "Ward", 1.749, True],
@@ -45,21 +45,21 @@ async def load_db():
         [10008, "Maria", "Cannon", 2.079, False],
         [10009, "Joseph", "Sutton", 2.025, True],
     ]
-    if await Employee._index.exists():
-        await Employee._index.delete()
-    await Employee.init()
+    if Employee._index.exists():
+        Employee._index.delete()
+    Employee.init()
 
     for e in data:
         employee = Employee(
             emp_no=e[0], first_name=e[1], last_name=e[2], height=e[3], still_hired=e[4]
         )
-        await employee.save()
-    await Employee._index.refresh()
+        employee.save()
+    Employee._index.refresh()
 
 
-@pytest.mark.asyncio
-async def test_esql(async_client):
-    await load_db()
+@pytest.mark.sync
+def test_esql(client):
+    load_db()
 
     # get the full names of the employees
     query = (
@@ -69,7 +69,7 @@ async def test_esql(async_client):
         .sort("name")
         .limit(10)
     )
-    r = await async_client.esql.query(query=str(query))
+    r = client.esql.query(query=str(query))
     assert r.body["values"] == [
         ["Angela Navarro"],
         ["David Keller"],
@@ -89,5 +89,15 @@ async def test_esql(async_client):
             Employee.still_hired == True  # noqa: E712
         )
     )
-    r = await async_client.esql.query(query=str(query))
+    r = client.esql.query(query=str(query))
     assert r.body["values"] == [[1.95]]
+
+    # find employees by name using a parameter
+    query = (
+        ESQL.from_(Employee)
+        .where(Employee.first_name == E("?"))
+        .keep(Employee.last_name)
+        .sort(Employee.last_name.desc())
+    )
+    r = client.esql.query(query=str(query), params=["Maria"])
+    assert r.body["values"] == [["Luna"], ["Cannon"]]
