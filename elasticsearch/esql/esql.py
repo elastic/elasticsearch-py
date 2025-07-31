@@ -117,7 +117,7 @@ class ESQLBase(ABC):
         return index._index._name if hasattr(index, "_index") else str(index)
 
     @staticmethod
-    def _format_id(id: FieldType, allow_patterns=False) -> str:
+    def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
         s = str(id)  # in case it is an InstrumentedField
         if allow_patterns and "*" in s:
             return s  # patterns cannot be escaped
@@ -696,7 +696,7 @@ class ChangePoint(ESQLBase):
         names = (
             ""
             if not self._type_name and not self._pvalue_name
-            else f' AS {self._format_id(self._type_name) or "type"}, {self._format_id(self._pvalue_name) or "pvalue"}'
+            else f' AS {self._format_id(self._type_name or "type")}, {self._format_id(self._pvalue_name or "pvalue")}'
         )
         return f"CHANGE_POINT {self._value}{key}{names}"
 
