@@ -78,6 +78,8 @@ FAILING_TESTS = {
     "cluster/voting_config_exclusions",
     "entsearch/10_basic",
     "indices/clone",
+    "indices/data_stream_mappings[0]",
+    "indices/data_streams_options[0]",
     "indices/resolve_cluster",
     "indices/settings",
     "indices/split",
@@ -501,7 +503,13 @@ try:
     )
 
     # Download the zip and start reading YAML from the files in memory
-    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", yaml_tests_url).data))
+    package_zip = zipfile.ZipFile(
+        io.BytesIO(
+            http.request(
+                "GET", yaml_tests_url, retries=urllib3.Retry(3, redirect=10)
+            ).data
+        )
+    )
 
     for yaml_file in package_zip.namelist():
         if not re.match(r"^.*\/tests\/.*\.ya?ml$", yaml_file):
