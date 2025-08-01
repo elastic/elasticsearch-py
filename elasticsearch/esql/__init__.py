@@ -15,4 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from ..dsl import E  # noqa: F401
 from .esql import ESQL, and_, not_, or_  # noqa: F401

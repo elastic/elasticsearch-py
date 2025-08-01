@@ -19,11 +19,15 @@ import json
 from typing import Any
 
 from elasticsearch.dsl.document_base import InstrumentedExpression
-from elasticsearch.esql.esql import ExpressionType
+from elasticsearch.esql.esql import ESQLBase, ExpressionType
 
 
 def _render(v: Any) -> str:
-    return json.dumps(v) if not isinstance(v, InstrumentedExpression) else str(v)
+    return (
+        json.dumps(v)
+        if not isinstance(v, InstrumentedExpression)
+        else ESQLBase._format_expr(v)
+    )
 
 
 def abs(number: ExpressionType) -> InstrumentedExpression:
@@ -69,7 +73,9 @@ def atan2(
     :param y_coordinate: y coordinate. If `null`, the function returns `null`.
     :param x_coordinate: x coordinate. If `null`, the function returns `null`.
     """
-    return InstrumentedExpression(f"ATAN2({y_coordinate}, {x_coordinate})")
+    return InstrumentedExpression(
+        f"ATAN2({_render(y_coordinate)}, {_render(x_coordinate)})"
+    )
 
 
 def avg(number: ExpressionType) -> InstrumentedExpression:
@@ -114,7 +120,7 @@ def bucket(
     :param to: End of the range. Can be a number, a date or a date expressed as a string.
     """
     return InstrumentedExpression(
-        f"BUCKET({_render(field)}, {_render(buckets)}, {from_}, {_render(to)})"
+        f"BUCKET({_render(field)}, {_render(buckets)}, {_render(from_)}, {_render(to)})"
     )
 
 
@@ -169,7 +175,7 @@ def cidr_match(ip: ExpressionType, block_x: ExpressionType) -> InstrumentedExpre
     :param ip: IP address of type `ip` (both IPv4 and IPv6 are supported).
     :param block_x: CIDR block to test the IP against.
     """
-    return InstrumentedExpression(f"CIDR_MATCH({_render(ip)}, {block_x})")
+    return InstrumentedExpression(f"CIDR_MATCH({_render(ip)}, {_render(block_x)})")
 
 
 def coalesce(first: ExpressionType, rest: ExpressionType) -> InstrumentedExpression:
@@ -264,7 +270,7 @@ def date_diff(
     :param end_timestamp: A string representing an end timestamp
     """
     return InstrumentedExpression(
-        f"DATE_DIFF({_render(unit)}, {start_timestamp}, {end_timestamp})"
+        f"DATE_DIFF({_render(unit)}, {_render(start_timestamp)}, {_render(end_timestamp)})"
     )
 
 
@@ -285,7 +291,9 @@ def date_extract(
         the function returns `null`.
     :param date: Date expression. If `null`, the function returns `null`.
     """
-    return InstrumentedExpression(f"DATE_EXTRACT({date_part}, {_render(date)})")
+    return InstrumentedExpression(
+        f"DATE_EXTRACT({_render(date_part)}, {_render(date)})"
+    )
 
 
 def date_format(
@@ -301,7 +309,7 @@ def date_format(
     """
     if date_format is not None:
         return InstrumentedExpression(
-            f"DATE_FORMAT({json.dumps(date_format)}, {_render(date)})"
+            f"DATE_FORMAT({_render(date_format)}, {_render(date)})"
         )
     else:
         return InstrumentedExpression(f"DATE_FORMAT({_render(date)})")
@@ -317,7 +325,9 @@ def date_parse(
     :param date_string: Date expression as a string. If `null` or an empty
                         string, the function returns `null`.
     """
-    return InstrumentedExpression(f"DATE_PARSE({date_pattern}, {date_string})")
+    return InstrumentedExpression(
+        f"DATE_PARSE({_render(date_pattern)}, {_render(date_string)})"
+    )
 
 
 def date_trunc(
@@ -929,7 +939,7 @@ def replace(
     :param new_string: Replacement string.
     """
     return InstrumentedExpression(
-        f"REPLACE({_render(string)}, {_render(regex)}, {new_string})"
+        f"REPLACE({_render(string)}, {_render(regex)}, {_render(new_string)})"
     )
 
 
@@ -1004,7 +1014,7 @@ def scalb(d: ExpressionType, scale_factor: ExpressionType) -> InstrumentedExpres
     :param scale_factor: Numeric expression for the scale factor. If `null`, the
                          function returns `null`.
     """
-    return InstrumentedExpression(f"SCALB({_render(d)}, {scale_factor})")
+    return InstrumentedExpression(f"SCALB({_render(d)}, {_render(scale_factor)})")
 
 
 def sha1(input: ExpressionType) -> InstrumentedExpression:
@@ -1116,7 +1126,7 @@ def st_contains(
                    first. This means it is not possible to combine `geo_*` and
                    `cartesian_*` parameters.
     """
-    return InstrumentedExpression(f"ST_CONTAINS({geom_a}, {geom_b})")
+    return InstrumentedExpression(f"ST_CONTAINS({_render(geom_a)}, {_render(geom_b)})")
 
 
 def st_disjoint(
@@ -1135,7 +1145,7 @@ def st_disjoint(
                    first. This means it is not possible to combine `geo_*` and
                    `cartesian_*` parameters.
     """
-    return InstrumentedExpression(f"ST_DISJOINT({geom_a}, {geom_b})")
+    return InstrumentedExpression(f"ST_DISJOINT({_render(geom_a)}, {_render(geom_b)})")
 
 
 def st_distance(
@@ -1153,7 +1163,7 @@ def st_distance(
                    also have the same coordinate system as the first. This means it
                    is not possible to combine `geo_point` and `cartesian_point` parameters.
     """
-    return InstrumentedExpression(f"ST_DISTANCE({geom_a}, {geom_b})")
+    return InstrumentedExpression(f"ST_DISTANCE({_render(geom_a)}, {_render(geom_b)})")
 
 
 def st_envelope(geometry: ExpressionType) -> InstrumentedExpression:
@@ -1208,7 +1218,7 @@ def st_geohash_to_long(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input geohash grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOHASH_TO_LONG({grid_id})")
+    return InstrumentedExpression(f"ST_GEOHASH_TO_LONG({_render(grid_id)})")
 
 
 def st_geohash_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
@@ -1218,7 +1228,7 @@ def st_geohash_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input geohash grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOHASH_TO_STRING({grid_id})")
+    return InstrumentedExpression(f"ST_GEOHASH_TO_STRING({_render(grid_id)})")
 
 
 def st_geohex(
@@ -1254,7 +1264,7 @@ def st_geohex_to_long(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input geohex grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOHEX_TO_LONG({grid_id})")
+    return InstrumentedExpression(f"ST_GEOHEX_TO_LONG({_render(grid_id)})")
 
 
 def st_geohex_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
@@ -1264,7 +1274,7 @@ def st_geohex_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input Geohex grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOHEX_TO_STRING({grid_id})")
+    return InstrumentedExpression(f"ST_GEOHEX_TO_STRING({_render(grid_id)})")
 
 
 def st_geotile(
@@ -1300,7 +1310,7 @@ def st_geotile_to_long(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input geotile grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOTILE_TO_LONG({grid_id})")
+    return InstrumentedExpression(f"ST_GEOTILE_TO_LONG({_render(grid_id)})")
 
 
 def st_geotile_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
@@ -1310,7 +1320,7 @@ def st_geotile_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
     :param grid_id: Input geotile grid-id. The input can be a single- or
                     multi-valued column or an expression.
     """
-    return InstrumentedExpression(f"ST_GEOTILE_TO_STRING({grid_id})")
+    return InstrumentedExpression(f"ST_GEOTILE_TO_STRING({_render(grid_id)})")
 
 
 def st_intersects(
@@ -1330,7 +1340,9 @@ def st_intersects(
                    first. This means it is not possible to combine `geo_*` and
                    `cartesian_*` parameters.
     """
-    return InstrumentedExpression(f"ST_INTERSECTS({geom_a}, {geom_b})")
+    return InstrumentedExpression(
+        f"ST_INTERSECTS({_render(geom_a)}, {_render(geom_b)})"
+    )
 
 
 def st_within(geom_a: ExpressionType, geom_b: ExpressionType) -> InstrumentedExpression:
@@ -1346,7 +1358,7 @@ def st_within(geom_a: ExpressionType, geom_b: ExpressionType) -> InstrumentedExp
                    first. This means it is not possible to combine `geo_*` and
                    `cartesian_*` parameters.
     """
-    return InstrumentedExpression(f"ST_WITHIN({geom_a}, {geom_b})")
+    return InstrumentedExpression(f"ST_WITHIN({_render(geom_a)}, {_render(geom_b)})")
 
 
 def st_x(point: ExpressionType) -> InstrumentedExpression:

@@ -84,7 +84,7 @@ def test_completion():
     assert (
         query.render()
         == """ROW question = "What is Elasticsearch?"
-| COMPLETION question WITH test_completion_model
+| COMPLETION question WITH {"inference_id": "test_completion_model"}
 | KEEP question, completion"""
     )
 
@@ -97,7 +97,7 @@ def test_completion():
     assert (
         query.render()
         == """ROW question = "What is Elasticsearch?"
-| COMPLETION answer = question WITH test_completion_model
+| COMPLETION answer = question WITH {"inference_id": "test_completion_model"}
 | KEEP question, answer"""
     )
 
@@ -128,7 +128,7 @@ def test_completion():
       "Synopsis: ", synopsis, "\\n",
       "Actors: ", MV_CONCAT(actors, ", "), "\\n",
   )
-| COMPLETION summary = prompt WITH test_completion_model
+| COMPLETION summary = prompt WITH {"inference_id": "test_completion_model"}
 | KEEP title, summary, rating"""
     )
 
@@ -160,7 +160,7 @@ def test_completion():
 | SORT rating DESC
 | LIMIT 10
 | EVAL prompt = CONCAT("Summarize this movie using the following information: \\n", "Title: ", title, "\\n", "Synopsis: ", synopsis, "\\n", "Actors: ", MV_CONCAT(actors, ", "), "\\n")
-| COMPLETION summary = prompt WITH test_completion_model
+| COMPLETION summary = prompt WITH {"inference_id": "test_completion_model"}
 | KEEP title, summary, rating"""
     )
 
@@ -713,3 +713,11 @@ def test_match_operator():
         == """FROM books
 | WHERE author:"Faulkner\""""
     )
+
+
+def test_parameters():
+    query = ESQL.from_("employees").where("name == ?")
+    assert query.render() == "FROM employees\n| WHERE name == ?"
+
+    query = ESQL.from_("employees").where(E("name") == E("?"))
+    assert query.render() == "FROM employees\n| WHERE name == ?"
