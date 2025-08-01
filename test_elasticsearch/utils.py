@@ -179,7 +179,7 @@ def wipe_data_streams(client):
 def wipe_indices(client):
     indices = client.cat.indices().strip().splitlines()
     if len(indices) > 0:
-        index_names = [i.split(" ")[2] for i in indices]
+        index_names = [i.split()[2] for i in indices]
         client.options(ignore_status=404).indices.delete(
             index=",".join(index_names),
             expand_wildcards="all",
