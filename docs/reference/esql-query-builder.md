@@ -203,6 +203,26 @@ query = (
 )
 ```
 
+### Preventing injection attacks
+
+ES|QL, like most query languages, is vulnerable to [code injection attacks](https://en.wikipedia.org/wiki/Code_injection) if untrusted data provided by users is added to a query. To eliminate this risk, ES|QL allows untrusted data to be given separately from the query as parameters.
+
+Continuing with the example above, let's assume that the application needs a `find_employee_by_name()` function that searches for the name given as an argument. If this argument is received by the application from users, then it is considered untrusted and should not be added to the query directly. Here is how to code the function in a secure manner:
+
+```python
+def find_employee_by_name(name):
+    query = (
+        ESQL.from_("employees")
+        .keep("first_name", "last_name", "height")
+        .where(E("first_name") == E("?"))
+    )
+    return client.esql.query(query=str(query), params=[name])
+```
+
+Here the part of the query in which the untrusted data needs to be inserted is replaced with a parameter, which in ES|QL is defined by the question mark. When using Python expressions, the parameter must be given as `E("?")` so that it is treated as an expression and not as a literal string.
+
+The list of values given in the `params` argument to the query endpoint are assigned in order to the parameters defined in the query.
+
 ## Using ES|QL functions
 
 The ES|QL language includes a rich set of functions that can be used in expressions and conditionals. These can be included in expressions given as strings, as shown in the example below:
@@ -235,6 +255,6 @@ query = (
 )
 ```
 
-Note that arguments passed to functions are assumed to be literals. When passing field names, it is necessary to wrap them with the `E()` helper function so that they are interpreted correctly.
+Note that arguments passed to functions are assumed to be literals. When passing field names, parameters or other ES|QL expressions, it is necessary to wrap them with the `E()` helper function so that they are interpreted correctly.
 
 You can find the complete list of available functions in the Python client's [ES|QL API reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html#module-elasticsearch.esql.functions).

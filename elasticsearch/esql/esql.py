@@ -16,6 +16,7 @@
 #  under the License.
 
 import json
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Tuple, Type, Union
 
@@ -110,6 +111,29 @@ class ESQLBase(ABC):
     @abstractmethod
     def _render_internal(self) -> str:
         pass
+
+    @staticmethod
+    def _format_index(index: IndexType) -> str:
+        return index._index._name if hasattr(index, "_index") else str(index)
+
+    @staticmethod
+    def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
+        s = str(id)  # in case it is an InstrumentedField
+        if allow_patterns and "*" in s:
+            return s  # patterns cannot be escaped
+        if re.fullmatch(r"[a-zA-Z_@][a-zA-Z0-9_\.]*", s):
+            return s
+        # this identifier needs to be escaped
+        s.replace("`", "``")
+        return f"`{s}`"
+
+    @staticmethod
+    def _format_expr(expr: ExpressionType) -> str:
+        return (
+            json.dumps(expr)
+            if not isinstance(expr, (str, InstrumentedExpression))
+            else str(expr)
+        )
 
     def _is_forked(self) -> bool:
         if self.__class__.__name__ == "Fork":
@@ -427,7 +451,7 @@ class ESQLBase(ABC):
         """
         return Sample(self, probability)
 
-    def sort(self, *columns: FieldType) -> "Sort":
+    def sort(self, *columns: ExpressionType) -> "Sort":
         """The ``SORT`` processing command sorts a table on one or more columns.
 
         :param columns: The columns to sort on.
@@ -570,15 +594,12 @@ class From(ESQLBase):
         return self
 
     def _render_internal(self) -> str:
-        indices = [
-            index if isinstance(index, str) else index._index._name
-            for index in self._indices
-        ]
+        indices = [self._format_index(index) for index in self._indices]
         s = f'{self.__class__.__name__.upper()} {", ".join(indices)}'
         if self._metadata_fields:
             s = (
                 s
-                + f' METADATA {", ".join([str(field) for field in self._metadata_fields])}'
+                + f' METADATA {", ".join([self._format_id(field) for field in self._metadata_fields])}'
             )
         return s
 
@@ -594,7 +615,11 @@ class Row(ESQLBase):
     def __init__(self, **params: ExpressionType):
         super().__init__()
         self._params = {
-            k: json.dumps(v) if not isinstance(v, InstrumentedExpression) else v
+            self._format_id(k): (
+                json.dumps(v)
+                if not isinstance(v, InstrumentedExpression)
+                else self._format_expr(v)
+            )
             for k, v in params.items()
         }
 
@@ -615,7 +640,7 @@ class Show(ESQLBase):
         self._item = item
 
     def _render_internal(self) -> str:
-        return f"SHOW {self._item}"
+        return f"SHOW {self._format_id(self._item)}"
 
 
 class Branch(ESQLBase):
@@ -667,11 +692,11 @@ class ChangePoint(ESQLBase):
         return self
 
     def _render_internal(self) -> str:
-        key = "" if not self._key else f" ON {self._key}"
+        key = "" if not self._key else f" ON {self._format_id(self._key)}"
         names = (
             ""
             if not self._type_name and not self._pvalue_name
-            else f' AS {self._type_name or "type"}, {self._pvalue_name or "pvalue"}'
+            else f' AS {self._format_id(self._type_name or "type")}, {self._format_id(self._pvalue_name or "pvalue")}'
         )
         return f"CHANGE_POINT {self._value}{key}{names}"
 
@@ -709,12 +734,13 @@ class Completion(ESQLBase):
     def _render_internal(self) -> str:
         if self._inference_id is None:
             raise ValueError("The completion command requires an inference ID")
+        with_ = {"inference_id": self._inference_id}
         if self._named_prompt:
             column = list(self._named_prompt.keys())[0]
             prompt = list(self._named_prompt.values())[0]
-            return f"COMPLETION {column} = {prompt} WITH {self._inference_id}"
+            return f"COMPLETION {self._format_id(column)} = {self._format_id(prompt)} WITH {json.dumps(with_)}"
         else:
-            return f"COMPLETION {self._prompt[0]} WITH {self._inference_id}"
+            return f"COMPLETION {self._format_id(self._prompt[0])} WITH {json.dumps(with_)}"
 
 
 class Dissect(ESQLBase):
@@ -742,9 +768,13 @@ class Dissect(ESQLBase):
 
     def _render_internal(self) -> str:
         sep = (
-            "" if self._separator is None else f' APPEND_SEPARATOR="{self._separator}"'
+            ""
+            if self._separator is None
+            else f" APPEND_SEPARATOR={json.dumps(self._separator)}"
         )
-        return f"DISSECT {self._input} {json.dumps(self._pattern)}{sep}"
+        return (
+            f"DISSECT {self._format_id(self._input)} {json.dumps(self._pattern)}{sep}"
+        )
 
 
 class Drop(ESQLBase):
@@ -760,7 +790,7 @@ class Drop(ESQLBase):
         self._columns = columns
 
     def _render_internal(self) -> str:
-        return f'DROP {", ".join([str(col) for col in self._columns])}'
+        return f'DROP {", ".join([self._format_id(col, allow_patterns=True) for col in self._columns])}'
 
 
 class Enrich(ESQLBase):
@@ -814,12 +844,18 @@ class Enrich(ESQLBase):
         return self
 
     def _render_internal(self) -> str:
-        on = "" if self._match_field is None else f" ON {self._match_field}"
+        on = (
+            ""
+            if self._match_field is None
+            else f" ON {self._format_id(self._match_field)}"
+        )
         with_ = ""
         if self._named_fields:
-            with_ = f' WITH {", ".join([f"{name} = {field}" for name, field in self._named_fields.items()])}'
+            with_ = f' WITH {", ".join([f"{self._format_id(name)} = {self._format_id(field)}" for name, field in self._named_fields.items()])}'
         elif self._fields is not None:
-            with_ = f' WITH {", ".join([str(field) for field in self._fields])}'
+            with_ = (
+                f' WITH {", ".join([self._format_id(field) for field in self._fields])}'
+            )
         return f"ENRICH {self._policy}{on}{with_}"
 
 
@@ -832,7 +868,10 @@ class Eval(ESQLBase):
     """
 
     def __init__(
-        self, parent: ESQLBase, *columns: FieldType, **named_columns: FieldType
+        self,
+        parent: ESQLBase,
+        *columns: ExpressionType,
+        **named_columns: ExpressionType,
     ):
         if columns and named_columns:
             raise ValueError(
@@ -844,10 +883,13 @@ class Eval(ESQLBase):
     def _render_internal(self) -> str:
         if isinstance(self._columns, dict):
             cols = ", ".join(
-                [f"{name} = {value}" for name, value in self._columns.items()]
+                [
+                    f"{self._format_id(name)} = {self._format_expr(value)}"
+                    for name, value in self._columns.items()
+                ]
             )
         else:
-            cols = ", ".join([f"{col}" for col in self._columns])
+            cols = ", ".join([f"{self._format_expr(col)}" for col in self._columns])
         return f"EVAL {cols}"
 
 
@@ -900,7 +942,7 @@ class Grok(ESQLBase):
         self._pattern = pattern
 
     def _render_internal(self) -> str:
-        return f"GROK {self._input} {json.dumps(self._pattern)}"
+        return f"GROK {self._format_id(self._input)} {json.dumps(self._pattern)}"
 
 
 class Keep(ESQLBase):
@@ -916,7 +958,7 @@ class Keep(ESQLBase):
         self._columns = columns
 
     def _render_internal(self) -> str:
-        return f'KEEP {", ".join([f"{col}" for col in self._columns])}'
+        return f'KEEP {", ".join([f"{self._format_id(col, allow_patterns=True)}" for col in self._columns])}'
 
 
 class Limit(ESQLBase):
@@ -932,7 +974,7 @@ class Limit(ESQLBase):
         self._max_number_of_rows = max_number_of_rows
 
     def _render_internal(self) -> str:
-        return f"LIMIT {self._max_number_of_rows}"
+        return f"LIMIT {json.dumps(self._max_number_of_rows)}"
 
 
 class LookupJoin(ESQLBase):
@@ -967,7 +1009,9 @@ class LookupJoin(ESQLBase):
             if isinstance(self._lookup_index, str)
             else self._lookup_index._index._name
         )
-        return f"LOOKUP JOIN {index} ON {self._field}"
+        return (
+            f"LOOKUP JOIN {self._format_index(index)} ON {self._format_id(self._field)}"
+        )
 
 
 class MvExpand(ESQLBase):
@@ -983,7 +1027,7 @@ class MvExpand(ESQLBase):
         self._column = column
 
     def _render_internal(self) -> str:
-        return f"MV_EXPAND {self._column}"
+        return f"MV_EXPAND {self._format_id(self._column)}"
 
 
 class Rename(ESQLBase):
@@ -999,7 +1043,7 @@ class Rename(ESQLBase):
         self._columns = columns
 
     def _render_internal(self) -> str:
-        return f'RENAME {", ".join([f"{old_name} AS {new_name}" for old_name, new_name in self._columns.items()])}'
+        return f'RENAME {", ".join([f"{self._format_id(old_name)} AS {self._format_id(new_name)}" for old_name, new_name in self._columns.items()])}'
 
 
 class Sample(ESQLBase):
@@ -1015,7 +1059,7 @@ class Sample(ESQLBase):
         self._probability = probability
 
     def _render_internal(self) -> str:
-        return f"SAMPLE {self._probability}"
+        return f"SAMPLE {json.dumps(self._probability)}"
 
 
 class Sort(ESQLBase):
@@ -1026,12 +1070,16 @@ class Sort(ESQLBase):
     in a single expression.
     """
 
-    def __init__(self, parent: ESQLBase, *columns: FieldType):
+    def __init__(self, parent: ESQLBase, *columns: ExpressionType):
         super().__init__(parent)
         self._columns = columns
 
     def _render_internal(self) -> str:
-        return f'SORT {", ".join([f"{col}" for col in self._columns])}'
+        sorts = [
+            " ".join([self._format_id(term) for term in str(col).split(" ")])
+            for col in self._columns
+        ]
+        return f'SORT {", ".join([f"{sort}" for sort in sorts])}'
 
 
 class Stats(ESQLBase):
@@ -1062,14 +1110,17 @@ class Stats(ESQLBase):
 
     def _render_internal(self) -> str:
         if isinstance(self._expressions, dict):
-            exprs = [f"{key} = {value}" for key, value in self._expressions.items()]
+            exprs = [
+                f"{self._format_id(key)} = {self._format_expr(value)}"
+                for key, value in self._expressions.items()
+            ]
         else:
-            exprs = [f"{expr}" for expr in self._expressions]
+            exprs = [f"{self._format_expr(expr)}" for expr in self._expressions]
         expression_separator = ",\n        "
         by = (
             ""
             if self._grouping_expressions is None
-            else f'\n        BY {", ".join([f"{expr}" for expr in self._grouping_expressions])}'
+            else f'\n        BY {", ".join([f"{self._format_expr(expr)}" for expr in self._grouping_expressions])}'
         )
         return f'STATS {expression_separator.join([f"{expr}" for expr in exprs])}{by}'
 
@@ -1087,7 +1138,7 @@ class Where(ESQLBase):
         self._expressions = expressions
 
     def _render_internal(self) -> str:
-        return f'WHERE {" AND ".join([f"{expr}" for expr in self._expressions])}'
+        return f'WHERE {" AND ".join([f"{self._format_expr(expr)}" for expr in self._expressions])}'
 
 
 def and_(*expressions: InstrumentedExpression) -> "InstrumentedExpression":
