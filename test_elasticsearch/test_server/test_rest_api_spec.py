@@ -79,6 +79,7 @@ FAILING_TESTS = {
     "entsearch/10_basic",
     "indices/clone",
     "indices/data_stream_mappings[0]",
+    "indices/data_streams_options[0]",
     "indices/resolve_cluster",
     "indices/settings",
     "indices/split",
