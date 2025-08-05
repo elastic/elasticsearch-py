@@ -495,20 +495,14 @@ YAML_TEST_SPECS = []
 # Try loading the REST API test specs from the Elastic Artifacts API
 try:
     # Construct the HTTP and Elasticsearch client
-    http = urllib3.PoolManager(retries=10)
+    http = urllib3.PoolManager(retries=urllib3.Retry(total=10))
 
     yaml_tests_url = (
         "https://api.github.com/repos/elastic/elasticsearch-clients-tests/zipball/main"
     )
 
     # Download the zip and start reading YAML from the files in memory
-    package_zip = zipfile.ZipFile(
-        io.BytesIO(
-            http.request(
-                "GET", yaml_tests_url, retries=urllib3.Retry(3, redirect=10)
-            ).data
-        )
-    )
+    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", yaml_tests_url).data))
 
     for yaml_file in package_zip.namelist():
         if not re.match(r"^.*\/tests\/.*\.ya?ml$", yaml_file):
