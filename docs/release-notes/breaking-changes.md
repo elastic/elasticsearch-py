@@ -28,7 +28,7 @@ For more information, check [PR #2840](https://github.com/elastic/elasticsearch-
  * `host_info_callback` is now `sniffed_node_callback`
  * `sniffer_timeout` is now `min_delay_between_sniffing`
  * `sniff_on_connection_fail` is now `sniff_on_node_failure`
- * `maxsize` is now `connection_per_node`
+ * `maxsize` is now `connections_per_node`
 ::::
 
 ::::{dropdown} Remove deprecated url_prefix and use_ssl host keys
