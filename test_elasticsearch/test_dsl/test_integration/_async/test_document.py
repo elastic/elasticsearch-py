@@ -630,7 +630,9 @@ async def test_can_save_to_different_index(
 async def test_save_without_skip_empty_will_include_empty_fields(
     async_write_client: AsyncElasticsearch,
 ) -> None:
-    test_repo = Repository(field_1=[], field_2=None, field_3={}, meta={"id": 42})
+    test_repo = Repository(
+        field_1=[], field_2=None, field_3={}, field_4={"entries": []}, meta={"id": 42}
+    )
     assert await test_repo.save(index="test-document", skip_empty=False)
 
     assert_doc_equals(
@@ -638,7 +640,12 @@ async def test_save_without_skip_empty_will_include_empty_fields(
             "found": True,
             "_index": "test-document",
             "_id": "42",
-            "_source": {"field_1": [], "field_2": None, "field_3": {}},
+            "_source": {
+                "field_1": [],
+                "field_2": None,
+                "field_3": {},
+                "field_4": {"entries": []},
+            },
         },
         await async_write_client.get(index="test-document", id=42),
     )
