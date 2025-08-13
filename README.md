@@ -90,6 +90,24 @@ Documentation for the client is [available on elastic.co] and [Read the Docs].
 [Read the Docs]: https://elasticsearch-py.readthedocs.io
 
 
+## Try Elasticsearch and Kibana locally
+
+If you want to try Elasticsearch and Kibana locally, you can run the following command:
+
+```bash
+curl -fsSL https://elastic.co/start-local | sh
+```
+
+This will run Elasticsearch at [http://localhost:9200](http://localhost:9200) and Kibana at [http://localhost:5601](http://localhost:5601).
+
+More information is available [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/run-elasticsearch-locally.html).
+
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
+
+
 ## License
 
 This software is licensed under the [Apache License 2.0](./LICENSE). See [NOTICE](./NOTICE).
