@@ -631,7 +631,7 @@ async def test_save_without_skip_empty_will_include_empty_fields(
     async_write_client: AsyncElasticsearch,
 ) -> None:
     test_repo = Repository(
-        field_1=[], field_2=None, field_3={}, field_4={"entries": []}, meta={"id": 42}
+        field_1=[], field_2=None, field_3={}, owner={"name": None}, meta={"id": 42}
     )
     assert await test_repo.save(index="test-document", skip_empty=False)
 
@@ -644,7 +644,7 @@ async def test_save_without_skip_empty_will_include_empty_fields(
                 "field_1": [],
                 "field_2": None,
                 "field_3": {},
-                "field_4": {"entries": []},
+                "owner": {"name": None},
             },
         },
         await async_write_client.get(index="test-document", id=42),
