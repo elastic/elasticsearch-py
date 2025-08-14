@@ -119,8 +119,15 @@ class Field(DslBase):
     def __getitem__(self, subfield: str) -> "Field":
         return cast(Field, self._params.get("fields", {})[subfield])
 
-    def _serialize(self, data: Any) -> Any:
+    def _serialize(self, data: Any, skip_empty: bool) -> Any:
         return data
+
+    def _safe_serialize(self, data: Any, skip_empty: bool) -> Any:
+        try:
+            return self._serialize(data, skip_empty)
+        except TypeError:
+            # older method signature, without skip_empty
+            return self._serialize(data)  # type: ignore[call-arg]
 
     def _deserialize(self, data: Any) -> Any:
         return data
@@ -133,10 +140,16 @@ class Field(DslBase):
             return AttrList([])
         return self._empty()
 
-    def serialize(self, data: Any) -> Any:
+    def serialize(self, data: Any, skip_empty: bool = True) -> Any:
         if isinstance(data, (list, AttrList, tuple)):
-            return list(map(self._serialize, cast(Iterable[Any], data)))
-        return self._serialize(data)
+            return list(
+                map(
+                    self._safe_serialize,
+                    cast(Iterable[Any], data),
+                    [skip_empty] * len(data),
+                )
+            )
+        return self._safe_serialize(data, skip_empty)
 
     def deserialize(self, data: Any) -> Any:
         if isinstance(data, (list, AttrList, tuple)):
@@ -186,7 +199,7 @@ class RangeField(Field):
         data = {k: self._core_field.deserialize(v) for k, v in data.items()}  # type: ignore[union-attr]
         return Range(data)
 
-    def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
+    def _serialize(self, data: Any, skip_empty: bool) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
         if not isinstance(data, collections.abc.Mapping):
@@ -550,7 +563,7 @@ class Object(Field):
         return self._wrap(data)
 
     def _serialize(
-        self, data: Optional[Union[Dict[str, Any], "InnerDoc"]]
+        self, data: Optional[Union[Dict[str, Any], "InnerDoc"]], skip_empty: bool
     ) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
@@ -559,7 +572,7 @@ class Object(Field):
         if isinstance(data, collections.abc.Mapping):
             return data
 
-        return data.to_dict()
+        return data.to_dict(skip_empty=skip_empty)
 
     def clean(self, data: Any) -> Any:
         data = super().clean(data)
@@ -768,7 +781,7 @@ class Binary(Field):
     def _deserialize(self, data: Any) -> bytes:
         return base64.b64decode(data)
 
-    def _serialize(self, data: Any) -> Optional[str]:
+    def _serialize(self, data: Any, skip_empty: bool) -> Optional[str]:
         if data is None:
             return None
         return base64.b64encode(data).decode()
@@ -2619,7 +2632,7 @@ class Ip(Field):
         # the ipaddress library for pypy only accepts unicode.
         return ipaddress.ip_address(unicode(data))
 
-    def _serialize(self, data: Any) -> Optional[str]:
+    def _serialize(self, data: Any, skip_empty: bool) -> Optional[str]:
         if data is None:
             return None
         return str(data)
@@ -3367,7 +3380,7 @@ class Percolator(Field):
     def _deserialize(self, data: Any) -> "Query":
         return Q(data)  # type: ignore[no-any-return]
 
-    def _serialize(self, data: Any) -> Optional[Dict[str, Any]]:
+    def _serialize(self, data: Any, skip_empty: bool) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
         return data.to_dict()  # type: ignore[no-any-return]
