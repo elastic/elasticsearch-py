@@ -603,7 +603,7 @@ class ObjectBase(AttrDict[Any]):
             # if this is a mapped field,
             f = self.__get_field(k)
             if f and f._coerce:
-                v = f.serialize(v)
+                v = f.serialize(v, skip_empty=skip_empty)
 
             # if someone assigned AttrList, unwrap it
             if isinstance(v, AttrList):
