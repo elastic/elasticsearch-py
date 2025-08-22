@@ -17,8 +17,13 @@
 
 import pytest
 
-from elasticsearch.dsl import AsyncDocument, E, M
-from elasticsearch.esql import ESQL, functions
+from elasticsearch.dsl import AsyncDocument, InnerDoc, M
+from elasticsearch.esql import ESQL, E, functions
+
+
+class Address(InnerDoc):
+    address: M[str]
+    city: M[str]
 
 
 class Employee(AsyncDocument):
@@ -27,6 +32,7 @@ class Employee(AsyncDocument):
     last_name: M[str]
     height: M[float]
     still_hired: M[bool]
+    address: M[Address]
 
     class Index:
         name = "employees"
@@ -34,16 +40,86 @@ class Employee(AsyncDocument):
 
 async def load_db():
     data = [
-        [10000, "Joseph", "Wall", 2.2, True],
-        [10001, "Stephanie", "Ward", 1.749, True],
-        [10002, "David", "Keller", 1.872, True],
-        [10003, "Roger", "Hinton", 1.694, False],
-        [10004, "Joshua", "Garcia", 1.661, False],
-        [10005, "Matthew", "Richards", 1.633, False],
-        [10006, "Maria", "Luna", 1.893, True],
-        [10007, "Angela", "Navarro", 1.604, False],
-        [10008, "Maria", "Cannon", 2.079, False],
-        [10009, "Joseph", "Sutton", 2.025, True],
+        [
+            10000,
+            "Joseph",
+            "Wall",
+            2.2,
+            True,
+            Address(address="8875 Long Shoals Suite 441", city="Marcville, TX"),
+        ],
+        [
+            10001,
+            "Stephanie",
+            "Ward",
+            1.749,
+            True,
+            Address(address="90162 Carter Harbor Suite 099", city="Davisborough, DE"),
+        ],
+        [
+            10002,
+            "David",
+            "Keller",
+            1.872,
+            True,
+            Address(address="6697 Patrick Union Suite 797", city="Fuentesmouth, SD"),
+        ],
+        [
+            10003,
+            "Roger",
+            "Hinton",
+            1.694,
+            False,
+            Address(address="809 Kelly Mountains", city="South Megan, DE"),
+        ],
+        [
+            10004,
+            "Joshua",
+            "Garcia",
+            1.661,
+            False,
+            Address(address="718 Angela Forks", city="Port Erinland, MA"),
+        ],
+        [
+            10005,
+            "Matthew",
+            "Richards",
+            1.633,
+            False,
+            Address(address="2869 Brown Mountains", city="New Debra, NH"),
+        ],
+        [
+            10006,
+            "Maria",
+            "Luna",
+            1.893,
+            True,
+            Address(address="5861 Morgan Springs", city="Lake Daniel, WI"),
+        ],
+        [
+            10007,
+            "Angela",
+            "Navarro",
+            1.604,
+            False,
+            Address(address="2848 Allen Station", city="Saint Joseph, OR"),
+        ],
+        [
+            10008,
+            "Maria",
+            "Cannon",
+            2.079,
+            False,
+            Address(address="322 NW Johnston", city="Bakerburgh, MP"),
+        ],
+        [
+            10009,
+            "Joseph",
+            "Sutton",
+            2.025,
+            True,
+            Address(address="77 Cardinal E", city="Lakestown, IL"),
+        ],
     ]
     if await Employee._index.exists():
         await Employee._index.delete()
@@ -51,7 +127,12 @@ async def load_db():
 
     for e in data:
         employee = Employee(
-            emp_no=e[0], first_name=e[1], last_name=e[2], height=e[3], still_hired=e[4]
+            emp_no=e[0],
+            first_name=e[1],
+            last_name=e[2],
+            height=e[3],
+            still_hired=e[4],
+            address=e[5],
         )
         await employee.save()
     await Employee._index.refresh()
