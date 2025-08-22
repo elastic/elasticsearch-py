@@ -97,7 +97,10 @@ class ESQLBase(ABC):
     commands, used to build ES|QL queries.
     """
 
-    def __init__(self, parent: Optional["ESQLBase"] = None):
+    def __init__(
+        self,
+        parent: Optional["ESQLBase"] = None,
+    ):
         self._parent = parent
 
     def __repr__(self) -> str:
