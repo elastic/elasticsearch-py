@@ -4569,7 +4569,7 @@ class ArrayPercentilesItem(AttrDict[Any]):
     :arg value_as_string:
     """
 
-    key: str
+    key: float
     value: Union[float, None]
     value_as_string: str
 
@@ -5415,7 +5415,9 @@ class HdrPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5425,7 +5427,9 @@ class HdrPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5932,7 +5936,9 @@ class PercentilesBucketAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6467,7 +6473,9 @@ class TDigestPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6477,7 +6485,9 @@ class TDigestPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
