@@ -4179,7 +4179,7 @@ class IndicesClient(NamespacedClient):
           <li>Change a field's mapping using reindexing</li>
           <li>Rename a field using a field alias</li>
           </ul>
-          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs//manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
+          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs/manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
