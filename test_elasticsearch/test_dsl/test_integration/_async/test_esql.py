@@ -145,9 +145,9 @@ async def test_esql(async_client):
     # get the full names of the employees
     query = (
         ESQL.from_(Employee)
-        .eval(name=functions.concat(Employee.first_name, " ", Employee.last_name))
-        .keep("name")
-        .sort("name")
+        .eval(full_name=functions.concat(Employee.first_name, " ", Employee.last_name))
+        .keep("full_name")
+        .sort("full_name")
         .limit(10)
     )
     r = await async_client.esql.query(query=str(query))
@@ -182,3 +182,73 @@ async def test_esql(async_client):
     )
     r = await async_client.esql.query(query=str(query), params=["Maria"])
     assert r.body["values"] == [["Luna"], ["Cannon"]]
+
+
+@pytest.mark.asyncio
+async def test_esql_dsl(async_client):
+    await load_db()
+
+    # get employees with first name "Maria"
+    query = (
+        Employee.esql_from()
+        .where(Employee.first_name == "Maria")
+        .sort("last_name")
+        .limit(10)
+    )
+    marias = []
+    async for emp in Employee.esql_execute(query):
+        marias.append(emp)
+    assert len(marias) == 2
+    assert marias[0].last_name == "Cannon"
+    assert marias[0].address.address == "322 NW Johnston"
+    assert marias[0].address.city == "Bakerburgh, MP"
+    assert marias[1].last_name == "Luna"
+    assert marias[1].address.address == "5861 Morgan Springs"
+    assert marias[1].address.city == "Lake Daniel, WI"
+
+    # run a query with a missing field
+    query = (
+        Employee.esql_from()
+        .where(Employee.first_name == "Maria")
+        .drop(Employee.address.city)
+        .sort("last_name")
+        .limit(10)
+    )
+    with pytest.raises(ValueError):
+        await Employee.esql_execute(query).__anext__()
+    marias = []
+    async for emp in Employee.esql_execute(query, ignore_missing_fields=True):
+        marias.append(emp)
+    assert marias[0].last_name == "Cannon"
+    assert marias[0].address.address == "322 NW Johnston"
+    assert marias[0].address.city is None
+    assert marias[1].last_name == "Luna"
+    assert marias[1].address.address == "5861 Morgan Springs"
+    assert marias[1].address.city is None
+
+    # run a query with additional calculated fields
+    query = (
+        Employee.esql_from()
+        .where(Employee.first_name == "Maria")
+        .eval(
+            full_name=functions.concat(Employee.first_name, " ", Employee.last_name),
+            height_cm=functions.to_integer(Employee.height * 100),
+        )
+        .sort("last_name")
+        .limit(10)
+    )
+    assert isinstance(await Employee.esql_execute(query).__anext__(), Employee)
+    assert isinstance(
+        await Employee.esql_execute(query, return_additional=True).__anext__(), tuple
+    )
+    marias = []
+    async for emp, extra in Employee.esql_execute(query, return_additional=True):
+        marias.append([emp, extra])
+    assert marias[0][0].last_name == "Cannon"
+    assert marias[0][0].address.address == "322 NW Johnston"
+    assert marias[0][0].address.city == "Bakerburgh, MP"
+    assert marias[0][1] == {"full_name": "Maria Cannon", "height_cm": 208}
+    assert marias[1][0].last_name == "Luna"
+    assert marias[1][0].address.address == "5861 Morgan Springs"
+    assert marias[1][0].address.city == "Lake Daniel, WI"
+    assert marias[1][1] == {"full_name": "Maria Luna", "height_cm": 189}
