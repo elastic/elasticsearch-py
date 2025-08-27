@@ -1425,6 +1425,127 @@ print(response.took)
 If you want to inspect the contents of the `response` objects, just use its `to_dict` method to get access to the raw data for pretty printing.
 
 
+## ES|QL Queries
+
+When working with `Document` classes, you can use the ES|QL query language to retrieve documents. For this you can use the `esql_from()` and `esql_execute()` methods available to all sub-classes of `Document`.
+
+Consider the following `Employee` document definition:
+
+```python
+from elasticsearch.dsl import Document, InnerDoc, M
+
+class Address(InnerDoc):
+    address: M[str]
+    city: M[str]
+    zip_code: M[str]
+
+class Employee(Document):
+    emp_no: M[int]
+    first_name: M[str]
+    last_name: M[str]
+    height: M[float]
+    still_hired: M[bool]
+    address: M[Address]
+
+    class Index:
+        name = 'employees'
+```
+
+The `esql_from()` method creates a base ES|QL query for the index associated with the document class. The following example creates a base query for the `Employee` class:
+
+```python
+query = Employee.esql_from()
+```
+
+This query includes a `FROM` command with the index name, and a `KEEP` command that retrieves all the document attributes.
+
+To execute this query and receive the results, you can pass the query to the `esql_execute()` method:
+
+```python
+for emp in Employee.esql_execute(query):
+    print(f"{emp.name} from {emp.address.city} is {emp.height:.2f}m tall")
+```
+
+In this example, the `esql_execute()` class method runs the query and returns all the documents in the index, up to the maximum of 1000 results allowed by ES|QL. Here is a possible output from this example:
+
+```
+Kevin Macias from North Robert is 1.60m tall
+Drew Harris from Boltonshire is 1.68m tall
+Julie Williams from Maddoxshire is 1.99m tall
+Christopher Jones from Stevenbury is 1.98m tall
+Anthony Lopez from Port Sarahtown is 2.42m tall
+Tricia Stone from North Sueshire is 2.39m tall
+Katherine Ramirez from Kimberlyton is 1.83m tall
+...
+```
+
+To search for specific documents you can extend the base query with additional ES|QL commands that narrow the search criteria. The next example searches for documents that include only employees that are 2m tall or more, sorted by their last name. It also limits the results to 4 people:
+
+```python
+query = (
+    Employee.esql_from()
+    .where(Employee.height >= 2)
+    .sort(Employee.last_name)
+    .limit(4)
+)
+```
+
+When running this query with the same for-loop shown above, possible results would be:
+
+```
+Michael Adkins from North Stacey is 2.48m tall
+Kimberly Allen from Toddside is 2.24m tall
+Crystal Austin from East Michaelchester is 2.30m tall
+Rebecca Berger from Lake Adrianside is 2.40m tall
+```
+
+### Additional fields
+
+ES|QL provides a few ways to add new fields to a query, for example through the `EVAL` command. The following example shows a query that adds an evaluated field:
+
+```python
+from elasticsearch.esql import E, functions
+
+query = (
+    Employee.esql_from()
+    .eval(height_cm=functions.round(Employee.height * 100))
+    .where(E("height_cm") >= 200)
+    .sort(Employee.last_name)
+    .limit(10)
+)
+```
+
+In this example we are adding the height in centimeters to the query, calculated from the `height` document field, which is in meters. The `height_cm` calculated field is available to use in other query clauses, and in particular is referenced in `where()` in this example. Note how the new field is given as `E("height_cm")` in this clause. The `E()` wrapper tells the query builder that the argument is an ES|QL field name and not a string literal. This is done automatically for document fields that are given as class attributes, such as `Employee.height` in the `eval()`. The `E()` wrapper is only needed for fields that are not in the document.
+
+By default, the `esql_execute()` method returns only document instances. To receive any additional fields that are not part of the document in the query results, the `return_additional=True` argument can be passed to it, and then the results are returned as tuples with the document as first element, and a dictionary with the additional fields as second element:
+
+```python
+for emp, additional in Employee.esql_execute(query, return_additional=True):
+    print(emp.name, additional)
+```
+
+Example output from the query given above:
+
+```
+Michael Adkins {'height_cm': 248.0}
+Kimberly Allen {'height_cm': 224.0}
+Crystal Austin {'height_cm': 230.0}
+Rebecca Berger {'height_cm': 240.0}
+Katherine Blake {'height_cm': 214.0}
+Edward Butler {'height_cm': 246.0}
+Steven Carlson {'height_cm': 242.0}
+Mark Carter {'height_cm': 240.0}
+Joseph Castillo {'height_cm': 229.0}
+Alexander Cohen {'height_cm': 245.0}
+```
+
+### Missing fields
+
+The base query returned by the `esql_from()` method includes a `KEEP` command with the complete list of fields that are part of the document. If any subsequent clauses added to the query remove fields that are part of the document, then the `esql_execute()` method will raise an exception, because it will not be able construct complete document instances to return as results.
+
+To prevent errors, it is recommended that the `keep()` and `drop()` clauses are not used when working with `Document` instances.
+
+If a query has missing fields, it can be forced to execute without errors by passing the `ignore_missing_fields=True` argument to `esql_execute()`. When this option is used, returned documents will have any missing fields set to `None`.
 
 ## Using asyncio with Elasticsearch Python DSL [asyncio]
 

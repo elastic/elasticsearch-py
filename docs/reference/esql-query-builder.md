@@ -20,7 +20,7 @@ The ES|QL Query Builder allows you to construct ES|QL queries using Python synta
 You can then see the assembled ES|QL query by printing the resulting query object:
 
 ```python
->>> query
+>>> print(query)
 FROM employees
 | SORT emp_no
 | KEEP first_name, last_name, height
