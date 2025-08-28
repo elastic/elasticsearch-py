@@ -28,12 +28,12 @@ FROM employees
 | LIMIT 3
 ```
 
-To execute this query, you can cast it to a string and pass the string to the `client.esql.query()` endpoint:
+To execute this query, you can pass it to the `client.esql.query()` endpoint:
 
 ```python
 >>> from elasticsearch import Elasticsearch
 >>> client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
->>> response = client.esql.query(query=str(query))
+>>> response = client.esql.query(query=query)
 ```
 
 The response body contains a `columns` attribute with the list of columns included in the results, and a `values` attribute with the list of results for the query, each given as a list of column values. Here is a possible response body returned by the example query given above:
@@ -216,7 +216,7 @@ def find_employee_by_name(name):
         .keep("first_name", "last_name", "height")
         .where(E("first_name") == E("?"))
     )
-    return client.esql.query(query=str(query), params=[name])
+    return client.esql.query(query=query, params=[name])
 ```
 
 Here the part of the query in which the untrusted data needs to be inserted is replaced with a parameter, which in ES|QL is defined by the question mark. When using Python expressions, the parameter must be given as `E("?")` so that it is treated as an expression and not as a literal string.

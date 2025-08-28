@@ -1479,12 +1479,12 @@ Katherine Ramirez from Kimberlyton is 1.83m tall
 ...
 ```
 
-To search for specific documents you can extend the base query with additional ES|QL commands that narrow the search criteria. The next example searches for documents that include only employees that are 2m tall or more, sorted by their last name. It also limits the results to 4 people:
+To search for specific documents you can extend the base query with additional ES|QL commands that narrow the search criteria. The next example searches for documents that include only employees that are taller than 2 meters, sorted by their last name. It also limits the results to 4 people:
 
 ```python
 query = (
     Employee.esql_from()
-    .where(Employee.height >= 2)
+    .where(Employee.height > 2)
     .sort(Employee.last_name)
     .limit(4)
 )

@@ -121,7 +121,7 @@ def main(check=False):
                 [
                     "sed",
                     "-i.bak",
-                    "s/elasticsearch\\[async\\]/elasticsearch/",
+                    's/"elasticsearch\\[async\\]"/elasticsearch/',
                     f"{output_dir}{file}",
                 ]
             )
