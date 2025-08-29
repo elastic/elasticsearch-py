@@ -83,7 +83,7 @@ Let’s have a simple Python class representing an article in a blogging system:
 
 ```python
 from datetime import datetime
-from elasticsearch.dsl import Document, Date, Integer, Keyword, Text, connections
+from elasticsearch.dsl import Document, Date, Integer, Keyword, Text, connections, mapped_field
 
 # Define a default Elasticsearch client
 connections.create_connection(hosts="https://localhost:9200")
@@ -91,7 +91,7 @@ connections.create_connection(hosts="https://localhost:9200")
 class Article(Document):
     title: str = mapped_field(Text(analyzer='snowball', fields={'raw': Keyword()}))
     body: str = mapped_field(Text(analyzer='snowball'))
-    tags: str = mapped_field(Keyword())
+    tags: list[str] = mapped_field(Keyword())
     published_from: datetime
     lines: int
 
@@ -215,6 +215,20 @@ response = ubq.execute()
 
 As you can see, the `Update By Query` object provides many of the savings offered by the `Search` object, and additionally allows one to update the results of the search based on a script assigned in the same manner.
 
+
+## ES|QL Queries
+
+The DSL module features an integration with the ES|QL query builder, consisting of two methods available in all `Document` sub-classes: `esql_from()` and `esql_execute()`. Using the `Article` document from above, we can search for up to ten articles that include `"world"` in their titles with the following ES|QL query:
+
+```python
+from elasticsearch.esql import functions
+
+query = Article.esql_from().where(functions.match(Article.title, 'world')).limit(10)
+for a in Article.esql_execute(query):
+    print(a.title)
+```
+
+Review the [ES|QL Query Builder section](esql-query-builder.md) to learn more about building ES|QL queries in Python.
 
 ## Migration from the standard client [_migration_from_the_standard_client]
 

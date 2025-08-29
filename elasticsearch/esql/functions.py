@@ -649,7 +649,7 @@ def min_over_time(field: ExpressionType) -> InstrumentedExpression:
 
 
 def multi_match(
-    query: ExpressionType, fields: ExpressionType, options: ExpressionType = None
+    query: ExpressionType, *fields: ExpressionType, options: ExpressionType = None
 ) -> InstrumentedExpression:
     """Use `MULTI_MATCH` to perform a multi-match query on the specified field.
     The multi_match query builds on the match query to allow multi-field queries.
@@ -661,11 +661,11 @@ def multi_match(
     """
     if options is not None:
         return InstrumentedExpression(
-            f"MULTI_MATCH({_render(query)}, {_render(fields)}, {_render(options)})"
+            f'MULTI_MATCH({_render(query)}, {", ".join([_render(c) for c in fields])}, {_render(options)})'
         )
     else:
         return InstrumentedExpression(
-            f"MULTI_MATCH({_render(query)}, {_render(fields)})"
+            f'MULTI_MATCH({_render(query)}, {", ".join([_render(c) for c in fields])})'
         )
 
 
