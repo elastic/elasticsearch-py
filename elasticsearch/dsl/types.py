@@ -4390,7 +4390,7 @@ class ArrayPercentilesItem(AttrDict[Any]):
     :arg value_as_string:
     """
 
-    key: str
+    key: float
     value: Union[float, None]
     value_as_string: str
 
@@ -5236,7 +5236,9 @@ class HdrPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5246,7 +5248,9 @@ class HdrPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5753,7 +5757,9 @@ class PercentilesBucketAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5954,17 +5960,19 @@ class SearchProfile(AttrDict[Any]):
 class ShardFailure(AttrDict[Any]):
     """
     :arg reason: (required)
-    :arg shard: (required)
     :arg index:
     :arg node:
+    :arg shard:
     :arg status:
+    :arg primary:
     """
 
     reason: "ErrorCause"
-    shard: int
     index: str
     node: str
+    shard: int
     status: str
+    primary: bool
 
 
 class ShardProfile(AttrDict[Any]):
@@ -6288,7 +6296,9 @@ class TDigestPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6298,7 +6308,9 @@ class TDigestPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 

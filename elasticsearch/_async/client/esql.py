@@ -44,7 +44,7 @@ class EsqlClient(NamespacedClient):
     async def async_query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -99,7 +99,12 @@ class EsqlClient(NamespacedClient):
             which has the name of all the columns.
         :param filter: Specify a Query DSL query in the filter parameter to filter the
             set of documents that an ES|QL query runs on.
-        :param format: A short version of the Accept header, for example `json` or `yaml`.
+        :param format: A short version of the Accept header, e.g. json, yaml. `csv`,
+            `tsv`, and `txt` formats will return results in a tabular format, excluding
+            other metadata fields from the response. For async requests, nothing will
+            be returned if the async query doesn't finish within the timeout. The query
+            ID and running status are available in the `X-Elasticsearch-Async-Id` and
+            `X-Elasticsearch-Async-Is-Running` HTTP headers of the response, respectively.
         :param include_ccs_metadata: When set to `true` and performing a cross-cluster
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
@@ -151,7 +156,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:
@@ -389,7 +394,7 @@ class EsqlClient(NamespacedClient):
     async def query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -438,7 +443,9 @@ class EsqlClient(NamespacedClient):
             `all_columns` which has the name of all columns.
         :param filter: Specify a Query DSL query in the filter parameter to filter the
             set of documents that an ES|QL query runs on.
-        :param format: A short version of the Accept header, e.g. json, yaml.
+        :param format: A short version of the Accept header, e.g. json, yaml. `csv`,
+            `tsv`, and `txt` formats will return results in a tabular format, excluding
+            other metadata fields from the response.
         :param include_ccs_metadata: When set to `true` and performing a cross-cluster
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
@@ -476,7 +483,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:

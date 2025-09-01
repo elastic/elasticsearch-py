@@ -3715,7 +3715,7 @@ class IndicesClient(NamespacedClient):
           <li>Change a field's mapping using reindexing</li>
           <li>Rename a field using a field alias</li>
           </ul>
-          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs//manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
+          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs/manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-indices-put-mapping>`_
@@ -4587,7 +4587,7 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Roll over to a new index.
-          TIP: It is recommended to use the index lifecycle rollover action to automate rollovers.</p>
+          TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
           <p>The rollover API creates a new index for a data stream or index alias.
           The API behavior depends on the rollover target.</p>
           <p><strong>Roll over a data stream</strong></p>
