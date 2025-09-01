@@ -144,12 +144,29 @@ class ChiSquareHeuristic(AttrDict[Any]):
 
 class ChunkingSettings(AttrDict[Any]):
     """
-    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
-        Defaults to `sentence` if omitted.
+    :arg strategy: (required) The chunking strategy: `sentence`, `word`,
+        `none` or `recursive`.   * If `strategy` is set to `recursive`,
+        you must also specify:  - `max_chunk_size` - either `separators`
+        or`separator_group`  Learn more about different chunking
+        strategies in the linked documentation. Defaults to `sentence` if
+        omitted.
     :arg max_chunk_size: (required) The maximum size of a chunk in words.
         This value cannot be higher than `300` or lower than `20` (for
         `sentence` strategy) or `10` (for `word` strategy). Defaults to
         `250` if omitted.
+    :arg separator_group: Only applicable to the `recursive` strategy and
+        required when using it.  Sets a predefined list of separators in
+        the saved chunking settings based on the selected text type.
+        Values can be `markdown` or `plaintext`.  Using this parameter is
+        an alternative to manually specifying a custom `separators` list.
+    :arg separators: Only applicable to the `recursive` strategy and
+        required when using it.  A list of strings used as possible split
+        points when chunking text.  Each string can be a plain string or a
+        regular expression (regex) pattern. The system tries each
+        separator in order to split the text, starting from the first item
+        in the list.  After splitting, it attempts to recombine smaller
+        pieces into larger chunks that stay within the `max_chunk_size`
+        limit, to reduce the total number of chunks generated.
     :arg overlap: The number of overlapping words for chunks. It is
         applicable only to a `word` chunking strategy. This value cannot
         be higher than half the `max_chunk_size` value. Defaults to `100`
@@ -161,6 +178,8 @@ class ChunkingSettings(AttrDict[Any]):
 
     strategy: Union[str, DefaultType]
     max_chunk_size: Union[int, DefaultType]
+    separator_group: Union[str, DefaultType]
+    separators: Union[Sequence[str], DefaultType]
     overlap: Union[int, DefaultType]
     sentence_overlap: Union[int, DefaultType]
 
@@ -169,6 +188,8 @@ class ChunkingSettings(AttrDict[Any]):
         *,
         strategy: Union[str, DefaultType] = DEFAULT,
         max_chunk_size: Union[int, DefaultType] = DEFAULT,
+        separator_group: Union[str, DefaultType] = DEFAULT,
+        separators: Union[Sequence[str], DefaultType] = DEFAULT,
         overlap: Union[int, DefaultType] = DEFAULT,
         sentence_overlap: Union[int, DefaultType] = DEFAULT,
         **kwargs: Any,
@@ -177,6 +198,10 @@ class ChunkingSettings(AttrDict[Any]):
             kwargs["strategy"] = strategy
         if max_chunk_size is not DEFAULT:
             kwargs["max_chunk_size"] = max_chunk_size
+        if separator_group is not DEFAULT:
+            kwargs["separator_group"] = separator_group
+        if separators is not DEFAULT:
+            kwargs["separators"] = separators
         if overlap is not DEFAULT:
             kwargs["overlap"] = overlap
         if sentence_overlap is not DEFAULT:
@@ -4523,7 +4548,7 @@ class ArrayPercentilesItem(AttrDict[Any]):
     :arg value_as_string:
     """
 
-    key: str
+    key: float
     value: Union[float, None]
     value_as_string: str
 
@@ -5369,7 +5394,9 @@ class HdrPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5379,7 +5406,9 @@ class HdrPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5886,7 +5915,9 @@ class PercentilesBucketAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6087,17 +6118,19 @@ class SearchProfile(AttrDict[Any]):
 class ShardFailure(AttrDict[Any]):
     """
     :arg reason: (required)
-    :arg shard: (required)
     :arg index:
     :arg node:
+    :arg shard:
     :arg status:
+    :arg primary:
     """
 
     reason: "ErrorCause"
-    shard: int
     index: str
     node: str
+    shard: int
     status: str
+    primary: bool
 
 
 class ShardProfile(AttrDict[Any]):
@@ -6421,7 +6454,9 @@ class TDigestPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6431,7 +6466,9 @@ class TDigestPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
