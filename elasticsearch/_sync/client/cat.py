@@ -47,7 +47,34 @@ class CatClient(NamespacedClient):
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "alias",
+                            "filter",
+                            "index",
+                            "is_write_index",
+                            "routing.index",
+                            "routing.search",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "alias",
+                        "filter",
+                        "index",
+                        "is_write_index",
+                        "routing.index",
+                        "routing.search",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -74,7 +101,8 @@ class CatClient(NamespacedClient):
             values, such as `open,hidden`.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -137,7 +165,48 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "disk.avail",
+                            "disk.indices",
+                            "disk.indices.forecast",
+                            "disk.percent",
+                            "disk.total",
+                            "disk.used",
+                            "host",
+                            "ip",
+                            "node",
+                            "node.role",
+                            "shards",
+                            "shards.undesired",
+                            "write_load.forecast",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "disk.avail",
+                        "disk.indices",
+                        "disk.indices.forecast",
+                        "disk.percent",
+                        "disk.total",
+                        "disk.used",
+                        "host",
+                        "ip",
+                        "node",
+                        "node.role",
+                        "shards",
+                        "shards.undesired",
+                        "write_load.forecast",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -161,7 +230,8 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -224,7 +294,36 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "alias_count",
+                            "included_in",
+                            "mapping_count",
+                            "metadata_count",
+                            "name",
+                            "settings_count",
+                            "version",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "alias_count",
+                        "included_in",
+                        "mapping_count",
+                        "metadata_count",
+                        "name",
+                        "settings_count",
+                        "version",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -249,7 +348,8 @@ class CatClient(NamespacedClient):
             If it is omitted, all component templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -310,7 +410,12 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Literal["count", "epoch", "timestamp"]]],
+                t.Union[str, t.Literal["count", "epoch", "timestamp"]],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -334,7 +439,8 @@ class CatClient(NamespacedClient):
             and indices, omit this parameter or use `*` or `_all`.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param s: List of columns that determine how the table should be sorted. Sorting
@@ -389,7 +495,14 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["field", "host", "id", "ip", "node", "size"]]
+                ],
+                t.Union[str, t.Literal["field", "host", "id", "ip", "node", "size"]],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -412,7 +525,8 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param s: List of columns that determine how the table should be sorted. Sorting

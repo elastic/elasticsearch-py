@@ -6010,17 +6010,19 @@ class SearchProfile(AttrDict[Any]):
 class ShardFailure(AttrDict[Any]):
     """
     :arg reason: (required)
-    :arg shard: (required)
     :arg index:
     :arg node:
+    :arg shard:
     :arg status:
+    :arg primary:
     """
 
     reason: "ErrorCause"
-    shard: int
     index: str
     node: str
+    shard: int
     status: str
+    primary: bool
 
 
 class ShardProfile(AttrDict[Any]):

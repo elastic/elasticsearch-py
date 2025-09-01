@@ -44,7 +44,7 @@ class EsqlClient(NamespacedClient):
     async def async_query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -153,7 +153,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:
@@ -391,7 +391,7 @@ class EsqlClient(NamespacedClient):
     async def query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -480,7 +480,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:
