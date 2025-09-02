@@ -422,6 +422,83 @@ def test_rename():
     )
 
 
+def test_rerank():
+    query = (
+        ESQL.from_("books")
+        .metadata("_score")
+        .where('MATCH(description, "hobbit")')
+        .sort("_score DESC")
+        .limit(100)
+        .rerank("hobbit")
+        .on("description")
+        .with_(inference_id="test_reranker")
+        .limit(3)
+        .keep("title", "_score")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _score
+| WHERE MATCH(description, "hobbit")
+| SORT _score DESC
+| LIMIT 100
+| RERANK "hobbit" ON description WITH {"inference_id": "test_reranker"}
+| LIMIT 3
+| KEEP title, _score"""
+    )
+
+    query = (
+        ESQL.from_("books")
+        .metadata("_score")
+        .where('MATCH(description, "hobbit") OR MATCH(author, "Tolkien")')
+        .sort("_score DESC")
+        .limit(100)
+        .rerank(rerank_score="hobbit")
+        .on("description", "author")
+        .with_(inference_id="test_reranker")
+        .sort("rerank_score")
+        .limit(3)
+        .keep("title", "_score", "rerank_score")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _score
+| WHERE MATCH(description, "hobbit") OR MATCH(author, "Tolkien")
+| SORT _score DESC
+| LIMIT 100
+| RERANK rerank_score = "hobbit" ON description, author WITH {"inference_id": "test_reranker"}
+| SORT rerank_score
+| LIMIT 3
+| KEEP title, _score, rerank_score"""
+    )
+
+    query = (
+        ESQL.from_("books")
+        .metadata("_score")
+        .where('MATCH(description, "hobbit") OR MATCH(author, "Tolkien")')
+        .sort("_score DESC")
+        .limit(100)
+        .rerank(rerank_score="hobbit")
+        .on("description", "author")
+        .with_(inference_id="test_reranker")
+        .eval(original_score="_score", _score="rerank_score + original_score")
+        .sort("_score")
+        .limit(3)
+        .keep("title", "original_score", "rerank_score", "_score")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _score
+| WHERE MATCH(description, "hobbit") OR MATCH(author, "Tolkien")
+| SORT _score DESC
+| LIMIT 100
+| RERANK rerank_score = "hobbit" ON description, author WITH {"inference_id": "test_reranker"}
+| EVAL original_score = _score, _score = rerank_score + original_score
+| SORT _score
+| LIMIT 3
+| KEEP title, original_score, rerank_score, _score"""
+    )
+
+
 def test_sample():
     query = ESQL.from_("employees").keep("emp_no").sample(0.05)
     assert (
