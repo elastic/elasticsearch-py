@@ -1141,17 +1141,14 @@ class Rerank(ESQLBase):
         if self._named_query:
             column = list(self._named_query.keys())[0]
             query = list(self._named_query.values())[0]
-            return (
-                f"RERANK {self._format_id(column)} = {json.dumps(query)} "
-                f"ON {', '.join([self._format_id(field) for field in self._fields])} "
-                f"WITH {json.dumps(with_)}"
-            )
+            query = f"{self._format_id(column)} = {json.dumps(query)}"
         else:
-            return (
-                f"RERANK {json.dumps(self._query[0])} "
-                f"ON {', '.join([self._format_id(field) for field in self._fields])} "
-                f"WITH {json.dumps(with_)}"
-            )
+            query = json.dumps(self._query[0])
+        return (
+            f"RERANK {query} "
+            f"ON {', '.join([self._format_id(field) for field in self._fields])} "
+            f"WITH {json.dumps(with_)}"
+        )
 
 
 class Sample(ESQLBase):
