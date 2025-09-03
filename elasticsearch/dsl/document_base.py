@@ -28,6 +28,7 @@ from typing import (
     List,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
     get_args,
@@ -49,6 +50,7 @@ from .utils import DOC_META_FIELDS, ObjectBase
 if TYPE_CHECKING:
     from elastic_transport import ObjectApiResponse
 
+    from ..esql.esql import ESQLBase
     from .index_base import IndexBase
 
 
@@ -602,3 +604,44 @@ class DocumentBase(ObjectBase):
 
         meta["_source"] = d
         return meta
+
+    @classmethod
+    def _get_field_names(
+        cls, for_esql: bool = False, nested_class: Optional[Type[InnerDoc]] = None
+    ) -> List[str]:
+        """Return the list of field names used by this document.
+        If the document has nested objects, their fields are reported using dot
+        notation. If the ``for_esql`` argument is set to ``True``, the list omits
+        nested fields, which are currently unsupported in ES|QL.
+        """
+        fields = []
+        class_ = nested_class or cls
+        for field_name in class_._doc_type.mapping:
+            field = class_._doc_type.mapping[field_name]
+            if isinstance(field, Object):
+                if for_esql and isinstance(field, Nested):
+                    # ES|QL does not recognize Nested fields at this time
+                    continue
+                sub_fields = cls._get_field_names(
+                    for_esql=for_esql, nested_class=field._doc_class
+                )
+                for sub_field in sub_fields:
+                    fields.append(f"{field_name}.{sub_field}")
+            else:
+                fields.append(field_name)
+        return fields
+
+    @classmethod
+    def esql_from(cls) -> "ESQLBase":
+        """Return a base ES|QL query for instances of this document class.
+
+        The returned query is initialized with ``FROM`` and ``KEEP`` statements,
+        and can be completed as desired.
+        """
+        from ..esql import ESQL  # here to avoid circular imports
+
+        return (
+            ESQL.from_(cls)
+            .metadata("_id")
+            .keep("_id", *tuple(cls._get_field_names(for_esql=True)))
+        )
