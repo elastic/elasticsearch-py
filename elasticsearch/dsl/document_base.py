@@ -28,6 +28,7 @@ from typing import (
     List,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
     get_args,
@@ -606,7 +607,7 @@ class DocumentBase(ObjectBase):
 
     @classmethod
     def _get_field_names(
-        cls, for_esql: bool = False, nested_class: Optional[type[InnerDoc]] = None
+        cls, for_esql: bool = False, nested_class: Optional[Type[InnerDoc]] = None
     ) -> List[str]:
         """Return the list of field names used by this document.
         If the document has nested objects, their fields are reported using dot
