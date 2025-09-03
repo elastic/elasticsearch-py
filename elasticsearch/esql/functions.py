@@ -661,11 +661,11 @@ def multi_match(
     """
     if options is not None:
         return InstrumentedExpression(
-            f"MULTI_MATCH({_render(query)}, {_render(fields)}, {_render(options)})"
+            f'MULTI_MATCH({_render(query)}, {", ".join([_render(c) for c in fields])}, {_render(options)})'
         )
     else:
         return InstrumentedExpression(
-            f"MULTI_MATCH({_render(query)}, {_render(fields)})"
+            f'MULTI_MATCH({_render(query)}, {", ".join([_render(c) for c in fields])})'
         )
 
 
