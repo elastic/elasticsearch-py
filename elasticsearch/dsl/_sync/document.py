@@ -43,8 +43,7 @@ from .search import Search
 
 if TYPE_CHECKING:
     from elasticsearch import Elasticsearch
-
-    from ...esql.esql import ESQLBase
+    from elasticsearch.esql.esql import ESQLBase
 
 
 class IndexMeta(DocumentMeta):
@@ -553,13 +552,15 @@ class Document(DocumentBase, metaclass=IndexMeta):
         # nested fields, which ES|QL does not return, causing an error. When passing
         # `ignore_missing_fields=True` the list will be generated with
         # `for_esql=True`, so the error will not occur, but the documents will
-        # not have any nested objects in them.
+        # not have any Nested objects in them.
         doc_fields = set(cls._get_field_names(for_esql=ignore_missing_fields))
         if not ignore_missing_fields and not doc_fields.issubset(set(query_columns)):
             raise ValueError(
                 f"Not all fields of {cls.__name__} were returned by the query. "
                 "Make sure your document does not use Nested fields, which are "
-                "currently not supported in ES|QL."
+                "currently not supported in ES|QL. To force the query to be "
+                "evaluated in spite of the missing fields, pass set the "
+                "ignore_missing_fields=True option in the esql_execute() call."
             )
         non_doc_fields: set[str] = set(query_columns) - doc_fields - {"_id"}
         index_id = query_columns.index("_id")
