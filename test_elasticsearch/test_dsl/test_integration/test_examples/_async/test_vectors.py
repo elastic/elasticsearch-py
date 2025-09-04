@@ -15,8 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from hashlib import md5
-from typing import Any, List, Tuple
+from typing import Any, Tuple
 from unittest import SkipTest
 
 import pytest
@@ -35,18 +34,7 @@ async def test_vector_search(
     if es_version < (8, 11):
         raise SkipTest("This test requires Elasticsearch 8.11 or newer")
 
-    class MockModel:
-        def __init__(self, model: Any):
-            pass
-
-        def encode(self, text: str) -> List[float]:
-            vector = [int(ch) for ch in md5(text.encode()).digest()]
-            total = sum(vector)
-            return [float(v) / total for v in vector]
-
-    mocker.patch.object(vectors, "SentenceTransformer", new=MockModel)
-
     await vectors.create()
     await vectors.WorkplaceDoc._index.refresh()
     results = await (await vectors.search("Welcome to our team!")).execute()
-    assert results[0].name == "New Employee Onboarding Guide"
+    assert results[0].name == "Intellectual Property Policy"
