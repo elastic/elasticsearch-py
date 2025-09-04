@@ -606,6 +606,7 @@ class Elasticsearch(BaseClient):
           <li>JavaScript: Check out <code>client.helpers.*</code></li>
           <li>.NET: Check out <code>BulkAllObservable</code></li>
           <li>PHP: Check out bulk indexing.</li>
+          <li>Ruby: Check out <code>Elasticsearch::Helpers::BulkHelper</code></li>
           </ul>
           <p><strong>Submitting bulk requests with cURL</strong></p>
           <p>If you're providing text file input to <code>curl</code>, you must use the <code>--data-binary</code> flag instead of plain <code>-d</code>.
@@ -1324,7 +1325,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("max_docs", "query", "slice"),
+        body_fields=("max_docs", "query", "slice", "sort"),
         parameter_aliases={"from": "from_"},
     )
     def delete_by_query(
@@ -1368,7 +1369,12 @@ class Elasticsearch(BaseClient):
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
-        sort: t.Optional[t.Sequence[str]] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Union[str, t.Mapping[str, t.Any]],
+            ]
+        ] = None,
         stats: t.Optional[t.Sequence[str]] = None,
         terminate_after: t.Optional[int] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1500,7 +1506,7 @@ class Elasticsearch(BaseClient):
         :param slice: Slice the request manually using the provided slice ID and total
             number of slices.
         :param slices: The number of slices this task should be divided into.
-        :param sort: A comma-separated list of `<field>:<direction>` pairs.
+        :param sort: A sort object that specifies the order of deleted documents.
         :param stats: The specific `tag` of the request for logging and statistical purposes.
         :param terminate_after: The maximum number of documents to collect for each shard.
             If a query reaches this limit, Elasticsearch terminates the query early.
@@ -1590,8 +1596,6 @@ class Elasticsearch(BaseClient):
             __query["search_type"] = search_type
         if slices is not None:
             __query["slices"] = slices
-        if sort is not None:
-            __query["sort"] = sort
         if stats is not None:
             __query["stats"] = stats
         if terminate_after is not None:
@@ -1611,6 +1615,8 @@ class Elasticsearch(BaseClient):
                 __body["query"] = query
             if slice is not None:
                 __body["slice"] = slice
+            if sort is not None:
+                __body["sort"] = sort
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -3868,6 +3874,13 @@ class Elasticsearch(BaseClient):
           In this case, the response includes a count of the version conflicts that were encountered.
           Note that the handling of other error types is unaffected by the <code>conflicts</code> property.
           Additionally, if you opt to count version conflicts, the operation could attempt to reindex more documents from the source than <code>max_docs</code> until it has successfully indexed <code>max_docs</code> documents into the target or it has gone through every document in the source query.</p>
+          <p>It's recommended to reindex on indices with a green status. Reindexing can fail when a node shuts down or crashes.</p>
+          <ul>
+          <li>When requested with <code>wait_for_completion=true</code> (default), the request fails if the node shuts down.</li>
+          <li>When requested with <code>wait_for_completion=false</code>, a task id is returned, for use with the task management APIs. The task may disappear or fail if the node shuts down.
+          When retrying a failed reindex operation, it might be necessary to set <code>conflicts=proceed</code> or to first delete the partial destination index.
+          Additionally, dry runs, checking disk space, and fetching index recovery information can help address the root cause.</li>
+          </ul>
           <p>Refer to the linked documentation for examples of how to reindex documents.</p>
 
 
@@ -5647,7 +5660,7 @@ class Elasticsearch(BaseClient):
         doc: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         field_statistics: t.Optional[bool] = None,
-        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        fields: t.Optional[t.Sequence[str]] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,

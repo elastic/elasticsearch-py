@@ -1208,7 +1208,7 @@ class IndicesClient(NamespacedClient):
           Removes the data stream options from a data stream.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream-options>`_
 
         :param name: A comma-separated list of data streams of which the data stream
             options will be deleted; use `*` to get all data streams
@@ -2568,7 +2568,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the data stream options configuration of one or more data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream-options>`_
 
         :param name: Comma-separated list of data streams to limit the request. Supports
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
@@ -3684,7 +3684,7 @@ class IndicesClient(NamespacedClient):
           Update the data stream options of the specified data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/9.1/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-options>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.
@@ -4051,7 +4051,7 @@ class IndicesClient(NamespacedClient):
           <li>Change a field's mapping using reindexing</li>
           <li>Rename a field using a field alias</li>
           </ul>
-          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs//manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
+          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs/manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
