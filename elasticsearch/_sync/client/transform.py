@@ -602,6 +602,66 @@ class TransformClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def set_upgrade_mode(
+        self,
+        *,
+        enabled: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Set upgrade_mode for transform indices.
+          Sets a cluster wide upgrade_mode setting that prepares transform
+          indices for an upgrade.
+          When upgrading your cluster, in some circumstances you must restart your
+          nodes and reindex your transform indices. In those circumstances,
+          there must be no transforms running. You can close the transforms,
+          do the upgrade, then open all the transforms again. Alternatively,
+          you can use this API to temporarily halt tasks associated with the transforms
+          and prevent new transforms from opening. You can also use this API
+          during upgrades that do not require you to reindex your transform
+          indices, though stopping transforms is not a requirement in that case.
+          You can see the current value for the upgrade_mode setting by using the get
+          transform info API.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-transform-set-upgrade-mode>`_
+
+        :param enabled: When `true`, it enables `upgrade_mode` which temporarily halts
+            all transform tasks and prohibits new transform tasks from starting.
+        :param timeout: The time to wait for the request to be completed.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_transform/set_upgrade_mode"
+        __query: t.Dict[str, t.Any] = {}
+        if enabled is not None:
+            __query["enabled"] = enabled
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.set_upgrade_mode",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
