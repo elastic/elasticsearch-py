@@ -21,6 +21,7 @@ from typing import (
     Any,
     Dict,
     Iterable,
+    Iterator,
     List,
     Optional,
     Tuple,
@@ -42,6 +43,7 @@ from .search import Search
 
 if TYPE_CHECKING:
     from elasticsearch import Elasticsearch
+    from elasticsearch.esql.esql import ESQLBase
 
 
 class IndexMeta(DocumentMeta):
@@ -512,3 +514,85 @@ class Document(DocumentBase, metaclass=IndexMeta):
                 return action
 
         return bulk(es, Generate(actions), **kwargs)
+
+    @classmethod
+    def esql_execute(
+        cls,
+        query: "ESQLBase",
+        return_additional: bool = False,
+        ignore_missing_fields: bool = False,
+        using: Optional[UsingType] = None,
+        **kwargs: Any,
+    ) -> Iterator[Union[Self, Tuple[Self, Dict[str, Any]]]]:
+        """
+        Execute the given ES|QL query and return an iterator of 2-element tuples,
+        where the first element is an instance of this ``Document`` and the
+        second a dictionary with any remaining columns requested in the query.
+
+        :arg query: an ES|QL query object created with the ``esql_from()`` method.
+        :arg return_additional: if ``False`` (the default), this method returns
+            document objects. If set to ``True``, the method returns tuples with
+            a document in the first element and a dictionary with any additional
+            columns returned by the query in the second element.
+        :arg ignore_missing_fields: if ``False`` (the default), all the fields of
+            the document must be present in the query, or else an exception is
+            raised. Set to ``True`` to allow missing fields, which will result in
+            partially initialized document objects.
+        :arg using: connection alias to use, defaults to ``'default'``
+        :arg kwargs: additional options for the ``client.esql.query()`` function.
+        """
+        es = cls._get_connection(using)
+        response = es.esql.query(query=str(query), **kwargs)
+        query_columns = [col["name"] for col in response.body.get("columns", [])]
+
+        # Here we get the list of columns defined in the document, which are the
+        # columns that we will take from each result to assemble the document
+        # object.
+        # When `for_esql=False` is passed below by default, the list will include
+        # nested fields, which ES|QL does not return, causing an error. When passing
+        # `ignore_missing_fields=True` the list will be generated with
+        # `for_esql=True`, so the error will not occur, but the documents will
+        # not have any Nested objects in them.
+        doc_fields = set(cls._get_field_names(for_esql=ignore_missing_fields))
+        if not ignore_missing_fields and not doc_fields.issubset(set(query_columns)):
+            raise ValueError(
+                f"Not all fields of {cls.__name__} were returned by the query. "
+                "Make sure your document does not use Nested fields, which are "
+                "currently not supported in ES|QL. To force the query to be "
+                "evaluated in spite of the missing fields, pass set the "
+                "ignore_missing_fields=True option in the esql_execute() call."
+            )
+        non_doc_fields: set[str] = set(query_columns) - doc_fields - {"_id"}
+        index_id = query_columns.index("_id")
+
+        results = response.body.get("values", [])
+        for column_values in results:
+            # create a dictionary with all the document fields, expanding the
+            # dot notation returned by ES|QL into the recursive dictionaries
+            # used by Document.from_dict()
+            doc_dict: Dict[str, Any] = {}
+            for col, val in zip(query_columns, column_values):
+                if col in doc_fields:
+                    cols = col.split(".")
+                    d = doc_dict
+                    for c in cols[:-1]:
+                        if c not in d:
+                            d[c] = {}
+                        d = d[c]
+                    d[cols[-1]] = val
+
+            # create the document instance
+            obj = cls(meta={"_id": column_values[index_id]})
+            obj._from_dict(doc_dict)
+
+            if return_additional:
+                # build a dict with any other values included in the response
+                other = {
+                    col: val
+                    for col, val in zip(query_columns, column_values)
+                    if col in non_doc_fields
+                }
+
+                yield obj, other
+            else:
+                yield obj
