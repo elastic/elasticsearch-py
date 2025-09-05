@@ -53,7 +53,7 @@ from .test_integration.test_data import (
 
 
 def pytest_configure(config: "pytest.Config"):
-    # mock setence-transformers
+    # mock sentence-transformers
     class MockSentenceTransformer:
         def __init__(self, model: Any):
             pass
