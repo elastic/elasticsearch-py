@@ -19,15 +19,12 @@
 import asyncio
 import os
 import re
-import sys
 import time
 from datetime import datetime
-from hashlib import md5
-from typing import Any, AsyncGenerator, Dict, Generator, List, Tuple, cast
+from typing import Any, AsyncGenerator, Dict, Generator, Tuple, cast
 from unittest import SkipTest
 from unittest.mock import AsyncMock, Mock
 
-import pytest
 import pytest_asyncio
 from elastic_transport import ObjectApiResponse
 from pytest import fixture, skip
@@ -50,54 +47,6 @@ from .test_integration.test_data import (
     create_flat_git_index,
     create_git_index,
 )
-
-
-def pytest_configure(config: "pytest.Config"):
-    # mock sentence-transformers
-    class MockSentenceTransformer:
-        def __init__(self, model: Any):
-            pass
-
-        def encode(self, text: str) -> List[float]:
-            vector = [int(ch) for ch in md5(text.encode()).digest()]
-            total = sum(vector)
-            return [float(v) / total for v in vector]
-
-    mock_sentence_transformers_mod = type(sys)("sentence_transformers")
-    setattr(
-        mock_sentence_transformers_mod,
-        "__original_mod",
-        sys.modules.get("sentence_transformers"),
-    )
-    setattr(
-        mock_sentence_transformers_mod, "SentenceTransformer", MockSentenceTransformer
-    )
-    sys.modules[mock_sentence_transformers_mod.__name__] = (
-        mock_sentence_transformers_mod
-    )
-
-    # mock nltk
-    def mock_tokenize(content: str):
-        return content.split("\n")
-
-    mock_nltk_mod = type(sys)("nlkt")
-    setattr(mock_nltk_mod, "__original_mod", sys.modules.get("nltk"))
-    setattr(mock_nltk_mod, "download", Mock())
-    setattr(mock_nltk_mod, "sent_tokenize", mock_tokenize)
-    sys.modules["nltk"] = mock_nltk_mod
-
-
-def pytest_unconfigure(config: "pytest.Config"):
-    original_sentence_transformers = sys.modules["sentence_transformers"].__original_mod
-    if original_sentence_transformers:
-        sys.modules["sentence_transformers"] = original_sentence_transformers
-    else:
-        del sys.modules["sentence_transformers"]
-    original_nltk = sys.modules["nltk"].__original_mod
-    if original_nltk:
-        sys.modules["nltk"] = original_nltk
-    else:
-        del sys.modules["nltk"]
 
 
 def get_test_client(

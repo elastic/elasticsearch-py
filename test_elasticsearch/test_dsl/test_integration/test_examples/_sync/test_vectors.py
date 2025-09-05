@@ -15,26 +15,51 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Tuple
+import sys
+from hashlib import md5
+from typing import Any, List, Tuple
 from unittest import SkipTest
+from unittest.mock import Mock, patch
 
 import pytest
 
 from elasticsearch import Elasticsearch
 
-from ..examples import vectors
-
 
 @pytest.mark.sync
 def test_vector_search(
-    write_client: Elasticsearch, es_version: Tuple[int, ...], mocker: Any
+    write_client: Elasticsearch, es_version: Tuple[int, ...]
 ) -> None:
     # this test only runs on Elasticsearch >= 8.11 because the example uses
     # a dense vector without specifying an explicit size
     if es_version < (8, 11):
         raise SkipTest("This test requires Elasticsearch 8.11 or newer")
 
-    vectors.create()
-    vectors.WorkplaceDoc._index.refresh()
-    results = (vectors.search("Welcome to our team!")).execute()
-    assert results[0].name == "Intellectual Property Policy"
+    class MockSentenceTransformer:
+        def __init__(self, model: Any):
+            pass
+
+        def encode(self, text: str) -> List[float]:
+            vector = [int(ch) for ch in md5(text.encode()).digest()]
+            total = sum(vector)
+            return [float(v) / total for v in vector]
+
+    def mock_nltk_tokenize(content: str):
+        return content.split("\n")
+
+    # mock sentence_transformers and nltk, because they are quite big and
+    # irrelevant for testing the example logic
+    with patch.dict(
+        sys.modules,
+        {
+            "sentence_transformers": Mock(SentenceTransformer=MockSentenceTransformer),
+            "nltk": Mock(sent_tokenize=mock_nltk_tokenize),
+        },
+    ):
+        # import the example after the dependencies are mocked
+        from ..examples import vectors
+
+        vectors.create()
+        vectors.WorkplaceDoc._index.refresh()
+        results = (vectors.search("Welcome to our team!")).execute()
+        assert results[0].name == "Intellectual Property Policy"
