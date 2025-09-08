@@ -170,6 +170,48 @@ class ChiSquareHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class ChunkingSettings(AttrDict[Any]):
+    """
+    :arg strategy: (required) The chunking strategy: `sentence` or `word`.
+        Defaults to `sentence` if omitted.
+    :arg max_chunk_size: (required) The maximum size of a chunk in words.
+        This value cannot be higher than `300` or lower than `20` (for
+        `sentence` strategy) or `10` (for `word` strategy). Defaults to
+        `250` if omitted.
+    :arg overlap: The number of overlapping words for chunks. It is
+        applicable only to a `word` chunking strategy. This value cannot
+        be higher than half the `max_chunk_size` value. Defaults to `100`
+        if omitted.
+    :arg sentence_overlap: The number of overlapping sentences for chunks.
+        It is applicable only for a `sentence` chunking strategy. It can
+        be either `1` or `0`. Defaults to `1` if omitted.
+    """
+
+    strategy: Union[str, DefaultType]
+    max_chunk_size: Union[int, DefaultType]
+    overlap: Union[int, DefaultType]
+    sentence_overlap: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        strategy: Union[str, DefaultType] = DEFAULT,
+        max_chunk_size: Union[int, DefaultType] = DEFAULT,
+        overlap: Union[int, DefaultType] = DEFAULT,
+        sentence_overlap: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if strategy is not DEFAULT:
+            kwargs["strategy"] = strategy
+        if max_chunk_size is not DEFAULT:
+            kwargs["max_chunk_size"] = max_chunk_size
+        if overlap is not DEFAULT:
+            kwargs["overlap"] = overlap
+        if sentence_overlap is not DEFAULT:
+            kwargs["sentence_overlap"] = sentence_overlap
+        super().__init__(kwargs)
+
+
 class ClassificationInferenceOptions(AttrDict[Any]):
     """
     :arg num_top_classes: Specifies the number of top class predictions to
@@ -3119,6 +3161,26 @@ class ScriptedHeuristic(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SemanticTextIndexOptions(AttrDict[Any]):
+    """
+    :arg dense_vector:
+    """
+
+    dense_vector: Union["DenseVectorIndexOptions", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        dense_vector: Union[
+            "DenseVectorIndexOptions", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if dense_vector is not DEFAULT:
+            kwargs["dense_vector"] = dense_vector
+        super().__init__(kwargs)
+
+
 class ShapeFieldQuery(AttrDict[Any]):
     """
     :arg indexed_shape: Queries using a pre-indexed shape.
@@ -3196,10 +3258,15 @@ class SortOptions(AttrDict[Any]):
 
 class SourceFilter(AttrDict[Any]):
     """
-    :arg excludes:
-    :arg includes:
+    :arg exclude_vectors: If `true`, vector fields are excluded from the
+        returned source.  This option takes precedence over `includes`:
+        any vector field will remain excluded even if it matches an
+        `includes` rule.
+    :arg excludes: A list of fields to exclude from the returned source.
+    :arg includes: A list of fields to include in the returned source.
     """
 
+    exclude_vectors: Union[bool, DefaultType]
     excludes: Union[
         Union[str, InstrumentedField],
         Sequence[Union[str, InstrumentedField]],
@@ -3214,6 +3281,7 @@ class SourceFilter(AttrDict[Any]):
     def __init__(
         self,
         *,
+        exclude_vectors: Union[bool, DefaultType] = DEFAULT,
         excludes: Union[
             Union[str, InstrumentedField],
             Sequence[Union[str, InstrumentedField]],
@@ -3226,6 +3294,8 @@ class SourceFilter(AttrDict[Any]):
         ] = DEFAULT,
         **kwargs: Any,
     ):
+        if exclude_vectors is not DEFAULT:
+            kwargs["exclude_vectors"] = exclude_vectors
         if excludes is not DEFAULT:
             kwargs["excludes"] = str(excludes)
         if includes is not DEFAULT:
@@ -3675,6 +3745,38 @@ class SpanWithinQuery(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class SparseVectorIndexOptions(AttrDict[Any]):
+    """
+    :arg prune: Whether to perform pruning, omitting the non-significant
+        tokens from the query to improve query performance. If prune is
+        true but the pruning_config is not specified, pruning will occur
+        but default values will be used. Default: false
+    :arg pruning_config: Optional pruning configuration. If enabled, this
+        will omit non-significant tokens from the query in order to
+        improve query performance. This is only used if prune is set to
+        true. If prune is set to true but pruning_config is not specified,
+        default values will be used.
+    """
+
+    prune: Union[bool, DefaultType]
+    pruning_config: Union["TokenPruningConfig", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        prune: Union[bool, DefaultType] = DEFAULT,
+        pruning_config: Union[
+            "TokenPruningConfig", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if prune is not DEFAULT:
+            kwargs["prune"] = prune
+        if pruning_config is not DEFAULT:
+            kwargs["pruning_config"] = pruning_config
+        super().__init__(kwargs)
+
+
 class SuggestContext(AttrDict[Any]):
     """
     :arg name: (required)
@@ -3713,15 +3815,30 @@ class TDigest(AttrDict[Any]):
     :arg compression: Limits the maximum number of nodes used by the
         underlying TDigest algorithm to `20 * compression`, enabling
         control of memory usage and approximation error.
+    :arg execution_hint: The default implementation of TDigest is
+        optimized for performance, scaling to millions or even billions of
+        sample values while maintaining acceptable accuracy levels (close
+        to 1% relative error for millions of samples in some cases). To
+        use an implementation optimized for accuracy, set this parameter
+        to high_accuracy instead. Defaults to `default` if omitted.
     """
 
     compression: Union[int, DefaultType]
+    execution_hint: Union[Literal["default", "high_accuracy"], DefaultType]
 
     def __init__(
-        self, *, compression: Union[int, DefaultType] = DEFAULT, **kwargs: Any
+        self,
+        *,
+        compression: Union[int, DefaultType] = DEFAULT,
+        execution_hint: Union[
+            Literal["default", "high_accuracy"], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
     ):
         if compression is not DEFAULT:
             kwargs["compression"] = compression
+        if execution_hint is not DEFAULT:
+            kwargs["execution_hint"] = execution_hint
         super().__init__(kwargs)
 
 
@@ -4444,7 +4561,7 @@ class ArrayPercentilesItem(AttrDict[Any]):
     :arg value_as_string:
     """
 
-    key: str
+    key: float
     value: Union[float, None]
     value_as_string: str
 
@@ -5290,7 +5407,9 @@ class HdrPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5300,7 +5419,9 @@ class HdrPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -5809,7 +5930,9 @@ class PercentilesBucketAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6010,17 +6133,19 @@ class SearchProfile(AttrDict[Any]):
 class ShardFailure(AttrDict[Any]):
     """
     :arg reason: (required)
-    :arg shard: (required)
     :arg index:
     :arg node:
+    :arg shard:
     :arg status:
+    :arg primary:
     """
 
     reason: "ErrorCause"
-    shard: int
     index: str
     node: str
+    shard: int
     status: str
+    primary: bool
 
 
 class ShardProfile(AttrDict[Any]):
@@ -6344,7 +6469,9 @@ class TDigestPercentileRanksAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 
@@ -6354,7 +6481,9 @@ class TDigestPercentilesAggregate(AttrDict[Any]):
     :arg meta:
     """
 
-    values: Union[Mapping[str, Union[str, int, None]], Sequence["ArrayPercentilesItem"]]
+    values: Union[
+        Mapping[str, Union[str, float, None]], Sequence["ArrayPercentilesItem"]
+    ]
     meta: Mapping[str, Any]
 
 

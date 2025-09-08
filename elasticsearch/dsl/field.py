@@ -3862,6 +3862,14 @@ class SemanticText(Field):
         by using the Update mapping API. Use the Create inference API to
         create the endpoint. If not specified, the inference endpoint
         defined by inference_id will be used at both index and query time.
+    :arg index_options: Settings for index_options that override any
+        defaults used by semantic_text, for example specific quantization
+        settings.
+    :arg chunking_settings: Settings for chunking text into smaller
+        passages. If specified, these will override the chunking settings
+        sent in the inference endpoint associated with inference_id. If
+        chunking settings are updated, they will not be applied to
+        existing documents until they are reindexed.
     """
 
     name = "semantic_text"
@@ -3872,6 +3880,12 @@ class SemanticText(Field):
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         inference_id: Union[str, "DefaultType"] = DEFAULT,
         search_inference_id: Union[str, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            "types.SemanticTextIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        chunking_settings: Union[
+            "types.ChunkingSettings", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         **kwargs: Any,
     ):
         if meta is not DEFAULT:
@@ -3880,6 +3894,10 @@ class SemanticText(Field):
             kwargs["inference_id"] = inference_id
         if search_inference_id is not DEFAULT:
             kwargs["search_inference_id"] = search_inference_id
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
+        if chunking_settings is not DEFAULT:
+            kwargs["chunking_settings"] = chunking_settings
         super().__init__(*args, **kwargs)
 
 
@@ -4076,6 +4094,9 @@ class Short(Integer):
 class SparseVector(Field):
     """
     :arg store:
+    :arg index_options: Additional index options for the sparse vector
+        field that controls the token pruning behavior of the sparse
+        vector field.
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -4094,6 +4115,9 @@ class SparseVector(Field):
         self,
         *args: Any,
         store: Union[bool, "DefaultType"] = DEFAULT,
+        index_options: Union[
+            "types.SparseVectorIndexOptions", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -4108,6 +4132,8 @@ class SparseVector(Field):
     ):
         if store is not DEFAULT:
             kwargs["store"] = store
+        if index_options is not DEFAULT:
+            kwargs["index_options"] = index_options
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
