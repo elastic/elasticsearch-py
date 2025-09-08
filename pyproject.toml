@@ -78,8 +78,6 @@ dev = [
     "pandas",
     "mapbox-vector-tile",
     "jinja2",
-    "nltk",
-    "sentence_transformers",
     "tqdm",
     "mypy",
     "pyright",
