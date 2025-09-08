@@ -56,6 +56,7 @@ class SimulateClient(NamespacedClient):
             t.Mapping[str, t.Mapping[str, t.Any]]
         ] = None,
         mapping_addition: t.Optional[t.Mapping[str, t.Any]] = None,
+        merge_type: t.Optional[t.Union[str, t.Literal["index", "template"]]] = None,
         pipeline: t.Optional[str] = None,
         pipeline_substitutions: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Any]]
@@ -93,6 +94,11 @@ class SimulateClient(NamespacedClient):
         :param index_template_substitutions: A map of index template names to substitute
             index template definition objects.
         :param mapping_addition:
+        :param merge_type: The mapping merge type if mapping overrides are being provided
+            in mapping_addition. The allowed values are one of index or template. The
+            index option merges mappings the way they would be merged into an existing
+            index. The template option merges mappings the way they would be merged into
+            a template.
         :param pipeline: The pipeline to use as the default pipeline. This value can
             be used to override the default pipeline of the index.
         :param pipeline_substitutions: Pipelines to test. If you don’t specify the `pipeline`
@@ -116,6 +122,8 @@ class SimulateClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if merge_type is not None:
+            __query["merge_type"] = merge_type
         if pipeline is not None:
             __query["pipeline"] = pipeline
         if pretty is not None:
