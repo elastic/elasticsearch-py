@@ -17,6 +17,7 @@
 
 import logging
 import time
+from enum import Enum
 from operator import methodcaller
 from queue import Queue
 from typing import (
@@ -44,8 +45,15 @@ from .errors import BulkIndexError, ScanError
 
 logger = logging.getLogger("elasticsearch.helpers")
 
-_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any]]
-_TYPE_BULK_ACTION_HEADER = Dict[str, Any]
+
+class BulkMeta(Enum):
+    flush = 1
+
+
+FLUSH_NOW = BulkMeta.flush
+
+_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION_HEADER = Union[Dict[str, Any], BulkMeta]
 _TYPE_BULK_ACTION_BODY = Union[None, bytes, Dict[str, Any]]
 _TYPE_BULK_ACTION_HEADER_AND_BODY = Tuple[
     _TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY
@@ -61,6 +69,9 @@ def expand_action(data: _TYPE_BULK_ACTION) -> _TYPE_BULK_ACTION_HEADER_AND_BODY:
     # when given a string, assume user wants to index raw json
     if isinstance(data, (bytes, str)):
         return {"index": {}}, to_bytes(data, "utf-8")
+
+    if isinstance(data, BulkMeta):
+        return data, {}
 
     # make sure we don't alter the action
     data = data.copy()
@@ -154,21 +165,26 @@ class _ActionChunker:
         ret = None
         raw_action = action
         raw_data = data
-        action_bytes = to_bytes(self.serializer.dumps(action), "utf-8")
-        # +1 to account for the trailing new line character
-        cur_size = len(action_bytes) + 1
+        action_bytes = None
+        data_bytes = None
+        cur_size = 0
+        if not isinstance(action, BulkMeta):
+            action_bytes = to_bytes(self.serializer.dumps(action), "utf-8")
+            # +1 to account for the trailing new line character
+            cur_size = len(action_bytes) + 1
 
-        data_bytes: Optional[bytes]
-        if data is not None:
-            data_bytes = to_bytes(self.serializer.dumps(data), "utf-8")
-            cur_size += len(data_bytes) + 1
-        else:
-            data_bytes = None
+            data_bytes: Optional[bytes]
+            if data is not None:
+                data_bytes = to_bytes(self.serializer.dumps(data), "utf-8")
+                cur_size += len(data_bytes) + 1
+            else:
+                data_bytes = None
 
         # full chunk, send it and start a new one
         if self.bulk_actions and (
             self.size + cur_size > self.max_chunk_bytes
             or self.action_count == self.chunk_size
+            or (action == BulkMeta.flush and self.bulk_actions)
         ):
             ret = (self.bulk_data, self.bulk_actions)
             self.bulk_actions = []
@@ -176,15 +192,16 @@ class _ActionChunker:
             self.size = 0
             self.action_count = 0
 
-        self.bulk_actions.append(action_bytes)
-        if data_bytes is not None:
-            self.bulk_actions.append(data_bytes)
-            self.bulk_data.append((raw_action, raw_data))
-        else:
-            self.bulk_data.append((raw_action,))
+        if action_bytes is not None:
+            self.bulk_actions.append(action_bytes)
+            if data_bytes is not None:
+                self.bulk_actions.append(data_bytes)
+                self.bulk_data.append((raw_action, raw_data))
+            else:
+                self.bulk_data.append((raw_action,))
 
-        self.size += cur_size
-        self.action_count += 1
+            self.size += cur_size
+            self.action_count += 1
         return ret
 
     def flush(
