@@ -39,6 +39,8 @@ from ..helpers.actions import (
     _TYPE_BULK_ACTION_BODY,
     _TYPE_BULK_ACTION_HEADER,
     _TYPE_BULK_ACTION_HEADER_AND_BODY,
+    _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY,
+    BulkMeta,
     _ActionChunker,
     _process_bulk_chunk_error,
     _process_bulk_chunk_success,
@@ -54,9 +56,10 @@ T = TypeVar("T")
 
 
 async def _chunk_actions(
-    actions: AsyncIterable[_TYPE_BULK_ACTION_HEADER_AND_BODY],
+    actions: AsyncIterable[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY],
     chunk_size: int,
     max_chunk_bytes: int,
+    flush_after_seconds: Optional[float],
     serializer: Serializer,
 ) -> AsyncIterable[
     Tuple[
@@ -76,10 +79,44 @@ async def _chunk_actions(
     chunker = _ActionChunker(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
-    async for action, data in actions:
-        ret = chunker.feed(action, data)
-        if ret:
-            yield ret
+
+    if not flush_after_seconds:
+        async for action, data in actions:
+            ret = chunker.feed(action, data)
+            if ret:
+                yield ret
+    else:
+        item_queue: asyncio.Queue[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY] = (
+            asyncio.Queue()
+        )
+
+        async def get_items() -> None:
+            try:
+                async for item in actions:
+                    await item_queue.put(item)
+            except Exception:
+                await item_queue.put((BulkMeta.done, None))
+                raise
+            await item_queue.put((BulkMeta.done, None))
+
+        item_getter_job = asyncio.create_task(get_items())
+
+        timeout: Optional[float] = flush_after_seconds
+        while True:
+            try:
+                action, data = await asyncio.wait_for(item_queue.get(), timeout=timeout)
+                timeout = flush_after_seconds
+            except asyncio.TimeoutError:
+                action, data = BulkMeta.flush, None
+                timeout = None
+
+            if action is BulkMeta.done:
+                break
+            ret = chunker.feed(action, data)
+            if ret:
+                yield ret
+        await item_getter_job
+
     ret = chunker.flush()
     if ret:
         yield ret
@@ -162,6 +199,7 @@ async def async_streaming_bulk(
     actions: Union[Iterable[_TYPE_BULK_ACTION], AsyncIterable[_TYPE_BULK_ACTION]],
     chunk_size: int = 500,
     max_chunk_bytes: int = 100 * 1024 * 1024,
+    flush_after_seconds: Optional[float] = None,
     raise_on_error: bool = True,
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
@@ -234,7 +272,7 @@ async def async_streaming_bulk(
     ]
     bulk_actions: List[bytes]
     async for bulk_data, bulk_actions in _chunk_actions(
-        map_actions(), chunk_size, max_chunk_bytes, serializer
+        map_actions(), chunk_size, max_chunk_bytes, flush_after_seconds, serializer
     ):
         for attempt in range(max_retries + 1):
             to_retry: List[bytes] = []
