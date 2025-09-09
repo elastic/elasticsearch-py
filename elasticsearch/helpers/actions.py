@@ -50,13 +50,14 @@ class BulkMeta(Enum):
     flush = 1
 
 
-FLUSH_NOW = BulkMeta.flush
+BULK_FLUSH = BulkMeta.flush
 
 _TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any], BulkMeta]
-_TYPE_BULK_ACTION_HEADER = Union[Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION_HEADER = Dict[str, Any]
+_TYPE_BULK_ACTION_HEADER_AND_META = Union[Dict[str, Any], BulkMeta]
 _TYPE_BULK_ACTION_BODY = Union[None, bytes, Dict[str, Any]]
 _TYPE_BULK_ACTION_HEADER_AND_BODY = Tuple[
-    _TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY
+    _TYPE_BULK_ACTION_HEADER_AND_META, _TYPE_BULK_ACTION_BODY
 ]
 
 
@@ -150,7 +151,7 @@ class _ActionChunker:
         ] = []
 
     def feed(
-        self, action: _TYPE_BULK_ACTION_HEADER, data: _TYPE_BULK_ACTION_BODY
+        self, action: _TYPE_BULK_ACTION_HEADER_AND_META, data: _TYPE_BULK_ACTION_BODY
     ) -> Optional[
         Tuple[
             List[
@@ -163,17 +164,14 @@ class _ActionChunker:
         ]
     ]:
         ret = None
-        raw_action = action
-        raw_data = data
-        action_bytes = None
-        data_bytes = None
+        action_bytes = b""
+        data_bytes: Optional[bytes] = None
         cur_size = 0
         if not isinstance(action, BulkMeta):
             action_bytes = to_bytes(self.serializer.dumps(action), "utf-8")
             # +1 to account for the trailing new line character
             cur_size = len(action_bytes) + 1
 
-            data_bytes: Optional[bytes]
             if data is not None:
                 data_bytes = to_bytes(self.serializer.dumps(data), "utf-8")
                 cur_size += len(data_bytes) + 1
@@ -192,13 +190,13 @@ class _ActionChunker:
             self.size = 0
             self.action_count = 0
 
-        if action_bytes is not None:
+        if not isinstance(action, BulkMeta):
             self.bulk_actions.append(action_bytes)
             if data_bytes is not None:
                 self.bulk_actions.append(data_bytes)
-                self.bulk_data.append((raw_action, raw_data))
+                self.bulk_data.append((action, data))
             else:
-                self.bulk_data.append((raw_action,))
+                self.bulk_data.append((action,))
 
             self.size += cur_size
             self.action_count += 1

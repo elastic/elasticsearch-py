@@ -85,6 +85,7 @@ class TestChunkActions:
     def test_expand_action(self):
         assert helpers.expand_action({}) == ({"index": {}}, {})
         assert helpers.expand_action({"key": "val"}) == ({"index": {}}, {"key": "val"})
+        assert helpers.expand_action(helpers.BULK_FLUSH) == (helpers.BULK_FLUSH, {})
 
     def test_expand_action_actions(self):
         assert helpers.expand_action(
@@ -177,6 +178,25 @@ class TestChunkActions:
         for chunk_data, chunk_actions in chunks:
             chunk = b"".join(chunk_actions)
             assert len(chunk) <= max_byte_size
+
+    def test_chunks_are_chopped_by_flush(self):
+        flush = helpers.expand_action(helpers.BULK_FLUSH)
+        actions = (
+            self.actions[:3]
+            + [flush] * 2  # two consecutive flushes after 3 items
+            + self.actions[3:4]
+            + [flush]  # flush after one more item
+            + self.actions[4:]
+            + [flush]  # flush at the end
+        )
+        chunks = list(helpers._chunk_actions(actions, 100, 99999999, JSONSerializer()))
+        assert 3 == len(chunks)
+        assert len(chunks[0][0]) == 3
+        assert len(chunks[0][1]) == 6
+        assert len(chunks[1][0]) == 1
+        assert len(chunks[1][1]) == 2
+        assert len(chunks[2][0]) == 96
+        assert len(chunks[2][1]) == 192
 
 
 class TestExpandActions:
