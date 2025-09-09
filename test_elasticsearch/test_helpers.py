@@ -18,6 +18,7 @@
 import pickle
 import threading
 import time
+from typing import Optional
 from unittest import mock
 
 import pytest
@@ -85,7 +86,6 @@ class TestChunkActions:
     def test_expand_action(self):
         assert helpers.expand_action({}) == ({"index": {}}, {})
         assert helpers.expand_action({"key": "val"}) == ({"index": {}}, {"key": "val"})
-        assert helpers.expand_action(helpers.BULK_FLUSH) == (helpers.BULK_FLUSH, {})
 
     def test_expand_action_actions(self):
         assert helpers.expand_action(
@@ -157,21 +157,34 @@ class TestChunkActions:
             {"_source": {"key2": "val2"}, "key": "val", "_op_type": "update"}
         ) == ({"update": {}}, {"key2": "val2"})
 
-    def test_chunks_are_chopped_by_byte_size(self):
+    @pytest.mark.parametrize("flush_seconds", [None, 10])
+    def test_chunks_are_chopped_by_byte_size(self, flush_seconds: Optional[float]):
         assert 100 == len(
-            list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))
+            list(
+                helpers._chunk_actions(
+                    self.actions, 100000, 1, flush_seconds, JSONSerializer()
+                )
+            )
         )
 
-    def test_chunks_are_chopped_by_chunk_size(self):
+    @pytest.mark.parametrize("flush_seconds", [None, 10])
+    def test_chunks_are_chopped_by_chunk_size(self, flush_seconds: Optional[float]):
         assert 10 == len(
-            list(helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer()))
+            list(
+                helpers._chunk_actions(
+                    self.actions, 10, 99999999, flush_seconds, JSONSerializer()
+                )
+            )
         )
 
-    def test_chunks_are_chopped_by_byte_size_properly(self):
+    @pytest.mark.parametrize("flush_seconds", [None, 10])
+    def test_chunks_are_chopped_by_byte_size_properly(
+        self, flush_seconds: Optional[float]
+    ):
         max_byte_size = 170
         chunks = list(
             helpers._chunk_actions(
-                self.actions, 100000, max_byte_size, JSONSerializer()
+                self.actions, 100000, max_byte_size, flush_seconds, JSONSerializer()
             )
         )
         assert 25 == len(chunks)
@@ -179,8 +192,9 @@ class TestChunkActions:
             chunk = b"".join(chunk_actions)
             assert len(chunk) <= max_byte_size
 
-    def test_chunks_are_chopped_by_flush(self):
-        flush = helpers.expand_action(helpers.BULK_FLUSH)
+    @pytest.mark.parametrize("flush_seconds", [None, 10])
+    def test_chunks_are_chopped_by_flush(self, flush_seconds: Optional[float]):
+        flush = (helpers.BULK_FLUSH, None)
         actions = (
             self.actions[:3]
             + [flush] * 2  # two consecutive flushes after 3 items
@@ -189,7 +203,11 @@ class TestChunkActions:
             + self.actions[4:]
             + [flush]  # flush at the end
         )
-        chunks = list(helpers._chunk_actions(actions, 100, 99999999, JSONSerializer()))
+        chunks = list(
+            helpers._chunk_actions(
+                actions, 100, 99999999, flush_seconds, JSONSerializer()
+            )
+        )
         assert 3 == len(chunks)
         assert len(chunks[0][0]) == 3
         assert len(chunks[0][1]) == 6

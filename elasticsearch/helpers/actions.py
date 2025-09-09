@@ -16,10 +16,11 @@
 #  under the License.
 
 import logging
+import queue
 import time
 from enum import Enum
 from operator import methodcaller
-from queue import Queue
+from threading import Thread
 from typing import (
     Any,
     Callable,
@@ -48,16 +49,23 @@ logger = logging.getLogger("elasticsearch.helpers")
 
 class BulkMeta(Enum):
     flush = 1
+    done = 2
 
 
 BULK_FLUSH = BulkMeta.flush
 
-_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any]]
 _TYPE_BULK_ACTION_HEADER = Dict[str, Any]
-_TYPE_BULK_ACTION_HEADER_AND_META = Union[Dict[str, Any], BulkMeta]
 _TYPE_BULK_ACTION_BODY = Union[None, bytes, Dict[str, Any]]
 _TYPE_BULK_ACTION_HEADER_AND_BODY = Tuple[
-    _TYPE_BULK_ACTION_HEADER_AND_META, _TYPE_BULK_ACTION_BODY
+    _TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY
+]
+
+_TYPE_BULK_ACTION_WITH_META = Union[bytes, str, Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION_HEADER_WITH_META = Union[Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY = Union[
+    Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+    Tuple[BulkMeta, Any],
 ]
 
 
@@ -70,9 +78,6 @@ def expand_action(data: _TYPE_BULK_ACTION) -> _TYPE_BULK_ACTION_HEADER_AND_BODY:
     # when given a string, assume user wants to index raw json
     if isinstance(data, (bytes, str)):
         return {"index": {}}, to_bytes(data, "utf-8")
-
-    if isinstance(data, BulkMeta):
-        return data, {}
 
     # make sure we don't alter the action
     data = data.copy()
@@ -151,7 +156,9 @@ class _ActionChunker:
         ] = []
 
     def feed(
-        self, action: _TYPE_BULK_ACTION_HEADER_AND_META, data: _TYPE_BULK_ACTION_BODY
+        self,
+        action: _TYPE_BULK_ACTION_HEADER_WITH_META,
+        data: _TYPE_BULK_ACTION_BODY,
     ) -> Optional[
         Tuple[
             List[
@@ -224,9 +231,10 @@ class _ActionChunker:
 
 
 def _chunk_actions(
-    actions: Iterable[_TYPE_BULK_ACTION_HEADER_AND_BODY],
+    actions: Iterable[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY],
     chunk_size: int,
     max_chunk_bytes: int,
+    flush_after_seconds: Optional[float],
     serializer: Serializer,
 ) -> Iterable[
     Tuple[
@@ -246,10 +254,48 @@ def _chunk_actions(
     chunker = _ActionChunker(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
-    for action, data in actions:
-        ret = chunker.feed(action, data)
-        if ret:
-            yield ret
+
+    if not flush_after_seconds:
+        for action, data in actions:
+            ret = chunker.feed(action, data)
+            if ret:
+                yield ret
+    else:
+        item_queue: queue.Queue[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY] = (
+            queue.Queue()
+        )
+
+        def get_items() -> None:
+            ret = None
+            try:
+                for item in actions:
+                    item_queue.put(item)
+            except BaseException as exc:
+                ret = exc
+            item_queue.put((BulkMeta.done, ret))
+
+        item_getter_job = Thread(target=get_items)
+        item_getter_job.start()
+
+        timeout: Optional[float] = flush_after_seconds
+        while True:
+            try:
+                action, data = item_queue.get(timeout=timeout)
+                timeout = flush_after_seconds
+            except queue.Empty:
+                action, data = BulkMeta.flush, None
+                timeout = None
+
+            if action is BulkMeta.done:
+                if isinstance(data, BaseException):
+                    raise data
+                break
+            ret = chunker.feed(action, data)
+            if ret:
+                yield ret
+
+        item_getter_job.join()
+
     ret = chunker.flush()
     if ret:
         yield ret
@@ -376,9 +422,10 @@ def _process_bulk_chunk(
 
 def streaming_bulk(
     client: Elasticsearch,
-    actions: Iterable[_TYPE_BULK_ACTION],
+    actions: Iterable[_TYPE_BULK_ACTION_WITH_META],
     chunk_size: int = 500,
     max_chunk_bytes: int = 100 * 1024 * 1024,
+    flush_after_seconds: Optional[float] = None,
     raise_on_error: bool = True,
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
@@ -440,6 +487,13 @@ def streaming_bulk(
 
         serializer = client.transport.serializers.get_serializer("application/json")
 
+        def expand_action_with_meta(
+            data: _TYPE_BULK_ACTION_WITH_META,
+        ) -> _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY:
+            if isinstance(data, BulkMeta):
+                return data, None
+            return expand_action_callback(data)
+
         bulk_data: List[
             Union[
                 Tuple[_TYPE_BULK_ACTION_HEADER],
@@ -448,9 +502,10 @@ def streaming_bulk(
         ]
         bulk_actions: List[bytes]
         for bulk_data, bulk_actions in _chunk_actions(
-            map(expand_action_callback, actions),
+            map(expand_action_with_meta, actions),
             chunk_size,
             max_chunk_bytes,
+            flush_after_seconds,
             serializer,
         ):
             for attempt in range(max_retries + 1):
@@ -572,6 +627,7 @@ def parallel_bulk(
     thread_count: int = 4,
     chunk_size: int = 500,
     max_chunk_bytes: int = 100 * 1024 * 1024,
+    flush_after_seconds: Optional[float] = None,
     queue_size: int = 4,
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
@@ -611,7 +667,7 @@ def parallel_bulk(
             super()._setup_queues()  # type: ignore[misc]
             # The queue must be at least the size of the number of threads to
             # prevent hanging when inserting sentinel values during teardown.
-            self._inqueue: Queue[
+            self._inqueue: queue.Queue[
                 Tuple[
                     List[
                         Union[
@@ -620,7 +676,7 @@ def parallel_bulk(
                     ],
                     List[bytes],
                 ]
-            ] = Queue(max(queue_size, thread_count))
+            ] = queue.Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
     with client._otel.helpers_span("helpers.parallel_bulk") as otel_span:
@@ -640,7 +696,11 @@ def parallel_bulk(
                     )
                 ),
                 _chunk_actions(
-                    expanded_actions, chunk_size, max_chunk_bytes, serializer
+                    expanded_actions,
+                    chunk_size,
+                    max_chunk_bytes,
+                    flush_after_seconds,
+                    serializer,
                 ),
             ):
                 yield from result
