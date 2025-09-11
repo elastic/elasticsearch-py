@@ -22,6 +22,8 @@ from elastic_transport import ObjectApiResponse
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
+ESQLBase = str  # not used in this release of the client
+
 
 class EsqlClient(NamespacedClient):
 
@@ -44,7 +46,7 @@ class EsqlClient(NamespacedClient):
     def async_query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -153,7 +155,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:
@@ -391,7 +393,7 @@ class EsqlClient(NamespacedClient):
     def query(
         self,
         *,
-        query: t.Optional[str] = None,
+        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
         columnar: t.Optional[bool] = None,
         delimiter: t.Optional[str] = None,
         drop_null_columns: t.Optional[bool] = None,
@@ -480,7 +482,7 @@ class EsqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             if query is not None:
-                __body["query"] = query
+                __body["query"] = str(query)
             if columnar is not None:
                 __body["columnar"] = columnar
             if filter is not None:
