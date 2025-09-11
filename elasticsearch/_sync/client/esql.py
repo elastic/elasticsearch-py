@@ -28,6 +28,9 @@ from .utils import (
     _stability_warning,
 )
 
+if t.TYPE_CHECKING:
+    from elasticsearch.esql import ESQLBase
+
 
 class EsqlClient(NamespacedClient):
 
