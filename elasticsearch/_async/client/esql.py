@@ -22,6 +22,8 @@ from elastic_transport import ObjectApiResponse
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
+ESQLBase = str  # not used in this release of the client
+
 
 class EsqlClient(NamespacedClient):
 
