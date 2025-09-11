@@ -1,6 +1,34 @@
 [[release-notes]]
 == Release notes
 
+=== 8.19.1 (2025-09-11)
+
+- ES|QL query builder integration with the DSL module (Fixes #3056) (https://github.com/elastic/elasticsearch-py/pull/3058[#3058])
+- ES|QL query builder robustness fixes (https://github.com/elastic/elasticsearch-py/pull/3017[#3017])
+- Fix ES|QL `multi_match()` signature (https://github.com/elastic/elasticsearch-py/pull/3052[#3052])
+
+API
+
+- Add support for ES|QL query builder objects to ES|QL Query and Async Query APIs
+- Add Amazon Sagemaker to Inference API
+- Add `expand_wildcards` parameter to Snapshot Create API
+- Add Transform Set Upgrade Mode API
+- Fix type of `params` parameter of SQL Query API to array
+- Fix type of `fields` parameter ofTerm Vectors API to array of strings
+- Move `sort` parameter of the Delete By Query API from query to body
+
+DSL
+
+- Preserve the `skip_empty` setting in `to_dict()` recursive serializations (https://github.com/elastic/elasticsearch-py/pull/3041[#3041])
+- Add `ChunkingSettings` type
+- Add `SemanticTextIndexOptions` type
+- Add `exclude_vectors` attribute to `SourceFilter` type
+- Add `SparseVectorIndexOptions` type
+- Add `execution_hint` attribute to `TDigest` type
+- Add `shard` and `primary` attributes to `ShardFailure` type
+- Fix type of `key` attribute of `ArrayPercentilesItem` to float
+
+
 === 8.19.0 (2025-07-30)
 
 - ES|QL query builder (technical preview) (https://github.com/elastic/elasticsearch-py/pull/2997[#2997])
