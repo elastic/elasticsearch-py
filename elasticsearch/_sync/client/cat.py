@@ -47,7 +47,34 @@ class CatClient(NamespacedClient):
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "alias",
+                            "filter",
+                            "index",
+                            "is_write_index",
+                            "routing.index",
+                            "routing.search",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "alias",
+                        "filter",
+                        "index",
+                        "is_write_index",
+                        "routing.index",
+                        "routing.search",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -74,7 +101,8 @@ class CatClient(NamespacedClient):
             values, such as `open,hidden`.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -137,7 +165,48 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "disk.avail",
+                            "disk.indices",
+                            "disk.indices.forecast",
+                            "disk.percent",
+                            "disk.total",
+                            "disk.used",
+                            "host",
+                            "ip",
+                            "node",
+                            "node.role",
+                            "shards",
+                            "shards.undesired",
+                            "write_load.forecast",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "disk.avail",
+                        "disk.indices",
+                        "disk.indices.forecast",
+                        "disk.percent",
+                        "disk.total",
+                        "disk.used",
+                        "host",
+                        "ip",
+                        "node",
+                        "node.role",
+                        "shards",
+                        "shards.undesired",
+                        "write_load.forecast",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -161,7 +230,8 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -224,7 +294,36 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "alias_count",
+                            "included_in",
+                            "mapping_count",
+                            "metadata_count",
+                            "name",
+                            "settings_count",
+                            "version",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "alias_count",
+                        "included_in",
+                        "mapping_count",
+                        "metadata_count",
+                        "name",
+                        "settings_count",
+                        "version",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -249,7 +348,8 @@ class CatClient(NamespacedClient):
             If it is omitted, all component templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -310,7 +410,12 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Literal["count", "epoch", "timestamp"]]],
+                t.Union[str, t.Literal["count", "epoch", "timestamp"]],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -334,7 +439,8 @@ class CatClient(NamespacedClient):
             and indices, omit this parameter or use `*` or `_all`.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param s: List of columns that determine how the table should be sorted. Sorting
@@ -389,7 +495,14 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["field", "host", "id", "ip", "node", "size"]]
+                ],
+                t.Union[str, t.Literal["field", "host", "id", "ip", "node", "size"]],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -412,7 +525,8 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param s: List of columns that determine how the table should be sorted. Sorting
@@ -465,7 +579,52 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "active_shards_percent",
+                            "cluster",
+                            "epoch",
+                            "init",
+                            "max_task_wait_time",
+                            "node.data",
+                            "node.total",
+                            "pending_tasks",
+                            "pri",
+                            "relo",
+                            "shards",
+                            "status",
+                            "timestamp",
+                            "unassign",
+                            "unassign.pri",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "active_shards_percent",
+                        "cluster",
+                        "epoch",
+                        "init",
+                        "max_task_wait_time",
+                        "node.data",
+                        "node.total",
+                        "pending_tasks",
+                        "pri",
+                        "relo",
+                        "shards",
+                        "status",
+                        "timestamp",
+                        "unassign",
+                        "unassign.pri",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -495,7 +654,8 @@ class CatClient(NamespacedClient):
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param s: List of columns that determine how the table should be sorted. Sorting
@@ -583,7 +743,316 @@ class CatClient(NamespacedClient):
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "bulk.avg_size_in_bytes",
+                            "bulk.avg_time",
+                            "bulk.total_operations",
+                            "bulk.total_size_in_bytes",
+                            "bulk.total_time",
+                            "completion.size",
+                            "creation.date",
+                            "creation.date.string",
+                            "dataset.size",
+                            "dense_vector.value_count",
+                            "docs.count",
+                            "docs.deleted",
+                            "fielddata.evictions",
+                            "fielddata.memory_size",
+                            "flush.total",
+                            "flush.total_time",
+                            "get.current",
+                            "get.exists_time",
+                            "get.exists_total",
+                            "get.missing_time",
+                            "get.missing_total",
+                            "get.time",
+                            "get.total",
+                            "health",
+                            "index",
+                            "indexing.delete_current",
+                            "indexing.delete_time",
+                            "indexing.delete_total",
+                            "indexing.index_current",
+                            "indexing.index_failed",
+                            "indexing.index_failed_due_to_version_conflict",
+                            "indexing.index_time",
+                            "indexing.index_total",
+                            "memory.total",
+                            "merges.current",
+                            "merges.current_docs",
+                            "merges.current_size",
+                            "merges.total",
+                            "merges.total_docs",
+                            "merges.total_size",
+                            "merges.total_time",
+                            "pri",
+                            "pri.bulk.avg_size_in_bytes",
+                            "pri.bulk.avg_time",
+                            "pri.bulk.total_operations",
+                            "pri.bulk.total_size_in_bytes",
+                            "pri.bulk.total_time",
+                            "pri.completion.size",
+                            "pri.dense_vector.value_count",
+                            "pri.fielddata.evictions",
+                            "pri.fielddata.memory_size",
+                            "pri.flush.total",
+                            "pri.flush.total_time",
+                            "pri.get.current",
+                            "pri.get.exists_time",
+                            "pri.get.exists_total",
+                            "pri.get.missing_time",
+                            "pri.get.missing_total",
+                            "pri.get.time",
+                            "pri.get.total",
+                            "pri.indexing.delete_current",
+                            "pri.indexing.delete_time",
+                            "pri.indexing.delete_total",
+                            "pri.indexing.index_current",
+                            "pri.indexing.index_failed",
+                            "pri.indexing.index_failed_due_to_version_conflict",
+                            "pri.indexing.index_time",
+                            "pri.indexing.index_total",
+                            "pri.memory.total",
+                            "pri.merges.current",
+                            "pri.merges.current_docs",
+                            "pri.merges.current_size",
+                            "pri.merges.total",
+                            "pri.merges.total_docs",
+                            "pri.merges.total_size",
+                            "pri.merges.total_time",
+                            "pri.query_cache.evictions",
+                            "pri.query_cache.memory_size",
+                            "pri.refresh.external_time",
+                            "pri.refresh.external_total",
+                            "pri.refresh.listeners",
+                            "pri.refresh.time",
+                            "pri.refresh.total",
+                            "pri.request_cache.evictions",
+                            "pri.request_cache.hit_count",
+                            "pri.request_cache.memory_size",
+                            "pri.request_cache.miss_count",
+                            "pri.search.fetch_current",
+                            "pri.search.fetch_time",
+                            "pri.search.fetch_total",
+                            "pri.search.open_contexts",
+                            "pri.search.query_current",
+                            "pri.search.query_time",
+                            "pri.search.query_total",
+                            "pri.search.scroll_current",
+                            "pri.search.scroll_time",
+                            "pri.search.scroll_total",
+                            "pri.segments.count",
+                            "pri.segments.fixed_bitset_memory",
+                            "pri.segments.index_writer_memory",
+                            "pri.segments.memory",
+                            "pri.segments.version_map_memory",
+                            "pri.sparse_vector.value_count",
+                            "pri.store.size",
+                            "pri.suggest.current",
+                            "pri.suggest.time",
+                            "pri.suggest.total",
+                            "pri.warmer.current",
+                            "pri.warmer.total",
+                            "pri.warmer.total_time",
+                            "query_cache.evictions",
+                            "query_cache.memory_size",
+                            "refresh.external_time",
+                            "refresh.external_total",
+                            "refresh.listeners",
+                            "refresh.time",
+                            "refresh.total",
+                            "rep",
+                            "request_cache.evictions",
+                            "request_cache.hit_count",
+                            "request_cache.memory_size",
+                            "request_cache.miss_count",
+                            "search.fetch_current",
+                            "search.fetch_time",
+                            "search.fetch_total",
+                            "search.open_contexts",
+                            "search.query_current",
+                            "search.query_time",
+                            "search.query_total",
+                            "search.scroll_current",
+                            "search.scroll_time",
+                            "search.scroll_total",
+                            "segments.count",
+                            "segments.fixed_bitset_memory",
+                            "segments.index_writer_memory",
+                            "segments.memory",
+                            "segments.version_map_memory",
+                            "sparse_vector.value_count",
+                            "status",
+                            "store.size",
+                            "suggest.current",
+                            "suggest.time",
+                            "suggest.total",
+                            "uuid",
+                            "warmer.current",
+                            "warmer.total",
+                            "warmer.total_time",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "bulk.avg_size_in_bytes",
+                        "bulk.avg_time",
+                        "bulk.total_operations",
+                        "bulk.total_size_in_bytes",
+                        "bulk.total_time",
+                        "completion.size",
+                        "creation.date",
+                        "creation.date.string",
+                        "dataset.size",
+                        "dense_vector.value_count",
+                        "docs.count",
+                        "docs.deleted",
+                        "fielddata.evictions",
+                        "fielddata.memory_size",
+                        "flush.total",
+                        "flush.total_time",
+                        "get.current",
+                        "get.exists_time",
+                        "get.exists_total",
+                        "get.missing_time",
+                        "get.missing_total",
+                        "get.time",
+                        "get.total",
+                        "health",
+                        "index",
+                        "indexing.delete_current",
+                        "indexing.delete_time",
+                        "indexing.delete_total",
+                        "indexing.index_current",
+                        "indexing.index_failed",
+                        "indexing.index_failed_due_to_version_conflict",
+                        "indexing.index_time",
+                        "indexing.index_total",
+                        "memory.total",
+                        "merges.current",
+                        "merges.current_docs",
+                        "merges.current_size",
+                        "merges.total",
+                        "merges.total_docs",
+                        "merges.total_size",
+                        "merges.total_time",
+                        "pri",
+                        "pri.bulk.avg_size_in_bytes",
+                        "pri.bulk.avg_time",
+                        "pri.bulk.total_operations",
+                        "pri.bulk.total_size_in_bytes",
+                        "pri.bulk.total_time",
+                        "pri.completion.size",
+                        "pri.dense_vector.value_count",
+                        "pri.fielddata.evictions",
+                        "pri.fielddata.memory_size",
+                        "pri.flush.total",
+                        "pri.flush.total_time",
+                        "pri.get.current",
+                        "pri.get.exists_time",
+                        "pri.get.exists_total",
+                        "pri.get.missing_time",
+                        "pri.get.missing_total",
+                        "pri.get.time",
+                        "pri.get.total",
+                        "pri.indexing.delete_current",
+                        "pri.indexing.delete_time",
+                        "pri.indexing.delete_total",
+                        "pri.indexing.index_current",
+                        "pri.indexing.index_failed",
+                        "pri.indexing.index_failed_due_to_version_conflict",
+                        "pri.indexing.index_time",
+                        "pri.indexing.index_total",
+                        "pri.memory.total",
+                        "pri.merges.current",
+                        "pri.merges.current_docs",
+                        "pri.merges.current_size",
+                        "pri.merges.total",
+                        "pri.merges.total_docs",
+                        "pri.merges.total_size",
+                        "pri.merges.total_time",
+                        "pri.query_cache.evictions",
+                        "pri.query_cache.memory_size",
+                        "pri.refresh.external_time",
+                        "pri.refresh.external_total",
+                        "pri.refresh.listeners",
+                        "pri.refresh.time",
+                        "pri.refresh.total",
+                        "pri.request_cache.evictions",
+                        "pri.request_cache.hit_count",
+                        "pri.request_cache.memory_size",
+                        "pri.request_cache.miss_count",
+                        "pri.search.fetch_current",
+                        "pri.search.fetch_time",
+                        "pri.search.fetch_total",
+                        "pri.search.open_contexts",
+                        "pri.search.query_current",
+                        "pri.search.query_time",
+                        "pri.search.query_total",
+                        "pri.search.scroll_current",
+                        "pri.search.scroll_time",
+                        "pri.search.scroll_total",
+                        "pri.segments.count",
+                        "pri.segments.fixed_bitset_memory",
+                        "pri.segments.index_writer_memory",
+                        "pri.segments.memory",
+                        "pri.segments.version_map_memory",
+                        "pri.sparse_vector.value_count",
+                        "pri.store.size",
+                        "pri.suggest.current",
+                        "pri.suggest.time",
+                        "pri.suggest.total",
+                        "pri.warmer.current",
+                        "pri.warmer.total",
+                        "pri.warmer.total_time",
+                        "query_cache.evictions",
+                        "query_cache.memory_size",
+                        "refresh.external_time",
+                        "refresh.external_total",
+                        "refresh.listeners",
+                        "refresh.time",
+                        "refresh.total",
+                        "rep",
+                        "request_cache.evictions",
+                        "request_cache.hit_count",
+                        "request_cache.memory_size",
+                        "request_cache.miss_count",
+                        "search.fetch_current",
+                        "search.fetch_time",
+                        "search.fetch_total",
+                        "search.open_contexts",
+                        "search.query_current",
+                        "search.query_time",
+                        "search.query_total",
+                        "search.scroll_current",
+                        "search.scroll_time",
+                        "search.scroll_total",
+                        "segments.count",
+                        "segments.fixed_bitset_memory",
+                        "segments.index_writer_memory",
+                        "segments.memory",
+                        "segments.version_map_memory",
+                        "sparse_vector.value_count",
+                        "status",
+                        "store.size",
+                        "suggest.current",
+                        "suggest.time",
+                        "suggest.total",
+                        "uuid",
+                        "warmer.current",
+                        "warmer.total",
+                        "warmer.total_time",
+                    ],
+                ],
+            ]
+        ] = None,
         health: t.Optional[
             t.Union[str, t.Literal["green", "red", "unavailable", "unknown", "yellow"]]
         ] = None,
@@ -627,7 +1096,8 @@ class CatClient(NamespacedClient):
         :param expand_wildcards: The type of index that wildcard patterns can match.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param health: The health status used to limit returned indices. By default,
             the response includes indices of any health status.
         :param help: When set to `true` will output available columns. This option can't
@@ -699,7 +1169,12 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Literal["host", "id", "ip", "node"]]],
+                t.Union[str, t.Literal["host", "id", "ip", "node"]],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -720,7 +1195,8 @@ class CatClient(NamespacedClient):
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1689,7 +2165,24 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "attr", "host", "id", "ip", "node", "pid", "port", "value"
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "attr", "host", "id", "ip", "node", "pid", "port", "value"
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1710,7 +2203,8 @@ class CatClient(NamespacedClient):
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -2050,7 +2544,19 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal["insertOrder", "priority", "source", "timeInQueue"],
+                    ]
+                ],
+                t.Union[
+                    str, t.Literal["insertOrder", "priority", "source", "timeInQueue"]
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -2074,7 +2580,8 @@ class CatClient(NamespacedClient):
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -2132,7 +2639,19 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal["component", "description", "id", "name", "version"],
+                    ]
+                ],
+                t.Union[
+                    str, t.Literal["component", "description", "id", "name", "version"]
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_bootstrap: t.Optional[bool] = None,
@@ -2154,7 +2673,8 @@ class CatClient(NamespacedClient):
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param include_bootstrap: Include bootstrap plugins in the response
@@ -2972,7 +3492,52 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "action",
+                            "id",
+                            "ip",
+                            "node",
+                            "node_id",
+                            "parent_task_id",
+                            "port",
+                            "running_time",
+                            "running_time_ns",
+                            "start_time",
+                            "task_id",
+                            "timestamp",
+                            "type",
+                            "version",
+                            "x_opaque_id",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "action",
+                        "id",
+                        "ip",
+                        "node",
+                        "node_id",
+                        "parent_task_id",
+                        "port",
+                        "running_time",
+                        "running_time_ns",
+                        "start_time",
+                        "task_id",
+                        "timestamp",
+                        "type",
+                        "version",
+                        "x_opaque_id",
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         nodes: t.Optional[t.Sequence[str]] = None,
@@ -3001,7 +3566,8 @@ class CatClient(NamespacedClient):
             shard recoveries.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param nodes: Unique node identifiers, which are used to limit the response.
@@ -3070,7 +3636,24 @@ class CatClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         format: t.Optional[str] = None,
-        h: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "composed_of", "index_patterns", "name", "order", "version"
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "composed_of", "index_patterns", "name", "order", "version"
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -3094,7 +3677,8 @@ class CatClient(NamespacedClient):
             If omitted, all templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: A comma-separated list of columns names to display. It supports simple
+            wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
