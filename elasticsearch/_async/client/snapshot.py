@@ -52,9 +52,16 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/clean-up-snapshot-repo-api.html>`_
 
-        :param name: Snapshot repository to clean up.
-        :param master_timeout: Period to wait for a connection to the master node.
-        :param timeout: Period to wait for a response.
+        :param name: The name of the snapshot repository to clean up.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If the master node is not available before the timeout expires, the request
+            fails and returns an error. To indicate that the request should never timeout,
+            set it to `-1`
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response will indicate that it was not completely acknowledged. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -109,11 +116,15 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/clone-snapshot-api.html>`_
 
-        :param repository: A repository name
-        :param snapshot: The name of the snapshot to clone from
-        :param target_snapshot: The name of the cloned snapshot to create
-        :param indices:
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param repository: The name of the snapshot repository that both source and target
+            snapshot belong to.
+        :param snapshot: The source snapshot name.
+        :param target_snapshot: The target snapshot name.
+        :param indices: A comma-separated list of indices to include in the snapshot.
+            Multi-target syntax is supported.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -157,6 +168,7 @@ class SnapshotClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=(
+            "expand_wildcards",
             "feature_states",
             "ignore_unavailable",
             "include_global_state",
@@ -171,6 +183,14 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
         feature_states: t.Optional[t.Sequence[str]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -193,13 +213,20 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/create-snapshot-api.html>`_
 
-        :param repository: Repository for the snapshot.
-        :param snapshot: Name of the snapshot. Must be unique in the repository.
-        :param feature_states: Feature states to include in the snapshot. Each feature
+        :param repository: The name of the repository for the snapshot.
+        :param snapshot: The name of the snapshot. It supportes date math. It must be
+            unique in the repository.
+        :param expand_wildcards: Determines how wildcard patterns in the `indices` parameter
+            match data streams and indices. It supports comma-separated values such as
+            `open,hidden`.
+        :param feature_states: The feature states to include in the snapshot. Each feature
             state includes one or more system indices containing related data. You can
             view a list of eligible features using the get features API. If `include_global_state`
             is `true`, all current feature states are included by default. If `include_global_state`
-            is `false`, no feature states are included by default.
+            is `false`, no feature states are included by default. Note that specifying
+            an empty array will result in the default behavior. To exclude all feature
+            states, regardless of the `include_global_state` value, specify an array
+            with only the value `none` (`["none"]`).
         :param ignore_unavailable: If `true`, the request ignores data streams and indices
             in `indices` that are missing or closed. If `false`, the request returns
             an error for any data stream or index that is missing or closed.
@@ -208,18 +235,24 @@ class SnapshotClient(NamespacedClient):
             composable index templates, legacy index templates, ingest pipelines, and
             ILM policies. It also includes data stored in system indices, such as Watches
             and task records (configurable via `feature_states`).
-        :param indices: Data streams and indices to include in the snapshot. Supports
-            multi-target syntax. Includes all data streams and indices by default.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param metadata: Optional metadata for the snapshot. May have any contents. Must
-            be less than 1024 bytes. This map is not automatically generated by Elasticsearch.
-        :param partial: If `true`, allows restoring a partial snapshot of indices with
-            unavailable shards. Only shards that were successfully included in the snapshot
-            will be restored. All missing shards will be recreated as empty. If `false`,
-            the entire restore operation will fail if one or more indices included in
-            the snapshot do not have all primary shards available.
+        :param indices: A comma-separated list of data streams and indices to include
+            in the snapshot. It supports a multi-target syntax. The default is an empty
+            array (`[]`), which includes all regular data streams and regular indices.
+            To exclude all data streams and indices, use `-*`. You can't use this parameter
+            to include or exclude system indices or system data streams from a snapshot.
+            Use `feature_states` instead.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param metadata: Arbitrary metadata to the snapshot, such as a record of who
+            took the snapshot, why it was taken, or any other useful data. It can have
+            any contents but it must be less than 1024 bytes. This information is not
+            automatically generated by Elasticsearch.
+        :param partial: If `true`, it enables you to restore a partial snapshot of indices
+            with unavailable shards. Only shards that were successfully included in the
+            snapshot will be restored. All missing shards will be recreated as empty.
+            If `false`, the entire restore operation will fail if one or more indices
+            included in the snapshot do not have all primary shards available.
         :param wait_for_completion: If `true`, the request returns a response when the
             snapshot is complete. If `false`, the request returns a response when the
             snapshot initializes.
@@ -248,6 +281,8 @@ class SnapshotClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         if not __body:
+            if expand_wildcards is not None:
+                __body["expand_wildcards"] = expand_wildcards
             if feature_states is not None:
                 __body["feature_states"] = feature_states
             if ignore_unavailable is not None:
@@ -299,15 +334,26 @@ class SnapshotClient(NamespacedClient):
           IMPORTANT: If you are migrating searchable snapshots, the repository name must be identical in the source and destination clusters.
           To register a snapshot repository, the cluster's global metadata must be writeable.
           Ensure there are no cluster blocks (for example, <code>cluster.blocks.read_only</code> and <code>clsuter.blocks.read_only_allow_delete</code> settings) that prevent write access.</p>
+          <p>Several options for this API can be specified using a query parameter or a request body parameter.
+          If both parameters are specified, only the query parameter is used.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/put-snapshot-repo-api.html>`_
 
-        :param name: A repository name
+        :param name: The name of the snapshot repository to register or update.
         :param repository:
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
-        :param verify: Whether to verify the repository after creation
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response will indicate that it was not completely acknowledged. To indicate
+            that the request should never timeout, set it to `-1`.
+        :param verify: If `true`, the request verifies the repository is functional on
+            all master and data nodes in the cluster. If `false`, this verification is
+            skipped. You can also perform this verification with the verify snapshot
+            repository API.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -367,9 +413,12 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-snapshot-api.html>`_
 
-        :param repository: A repository name
-        :param snapshot: A comma-separated list of snapshot names
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param repository: The name of the repository to delete a snapshot from.
+        :param snapshot: A comma-separated list of snapshot names to delete. It also
+            accepts wildcards (`*`).
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
         :param wait_for_completion: If `true`, the request returns a response when the
             matching snapshots are all deleted. If `false`, the request returns a response
             as soon as the deletes are scheduled.
@@ -428,10 +477,16 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/delete-snapshot-repo-api.html>`_
 
-        :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
-            are supported.
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param name: The ame of the snapshot repositories to unregister. Wildcard (`*`)
+            patterns are supported.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response will indicate that it was not completely acknowledged. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -501,50 +556,64 @@ class SnapshotClient(NamespacedClient):
         .. raw:: html
 
           <p>Get snapshot information.</p>
+          <p>NOTE: The <code>after</code> parameter and <code>next</code> field enable you to iterate through snapshots with some consistency guarantees regarding concurrent creation or deletion of snapshots.
+          It is guaranteed that any snapshot that exists at the beginning of the iteration and is not concurrently deleted will be seen during the iteration.
+          Snapshots concurrently created may be seen during an iteration.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-api.html>`_
 
-        :param repository: Comma-separated list of snapshot repository names used to
-            limit the request. Wildcard (*) expressions are supported.
-        :param snapshot: Comma-separated list of snapshot names to retrieve. Also accepts
-            wildcards (*). - To get information about all snapshots in a registered repository,
-            use a wildcard (*) or _all. - To get information about any snapshots that
-            are currently running, use _current.
-        :param after: Offset identifier to start pagination from as returned by the next
-            field in the response body.
-        :param from_sort_value: Value of the current sort column at which to start retrieval.
-            Can either be a string snapshot- or repository name when sorting by snapshot
-            or repository name, a millisecond time value or a number when sorting by
-            index- or shard count.
-        :param ignore_unavailable: If false, the request returns an error for any snapshots
+        :param repository: A comma-separated list of snapshot repository names used to
+            limit the request. Wildcard (`*`) expressions are supported.
+        :param snapshot: A comma-separated list of snapshot names to retrieve Wildcards
+            (`*`) are supported. * To get information about all snapshots in a registered
+            repository, use a wildcard (`*`) or `_all`. * To get information about any
+            snapshots that are currently running, use `_current`.
+        :param after: An offset identifier to start pagination from as returned by the
+            next field in the response body.
+        :param from_sort_value: The value of the current sort column at which to start
+            retrieval. It can be a string `snapshot-` or a repository name when sorting
+            by snapshot or repository name. It can be a millisecond time value or a number
+            when sorting by `index-` or shard count.
+        :param ignore_unavailable: If `false`, the request returns an error for any snapshots
             that are unavailable.
-        :param include_repository: If true, returns the repository name in each snapshot.
-        :param index_details: If true, returns additional information about each index
-            in the snapshot comprising the number of shards in the index, the total size
-            of the index in bytes, and the maximum number of segments per shard in the
-            index. Defaults to false, meaning that this information is omitted.
-        :param index_names: If true, returns the name of each index in each snapshot.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
+        :param include_repository: If `true`, the response includes the repository name
+            in each snapshot.
+        :param index_details: If `true`, the response includes additional information
+            about each index in the snapshot comprising the number of shards in the index,
+            the total size of the index in bytes, and the maximum number of segments
+            per shard in the index. The default is `false`, meaning that this information
+            is omitted.
+        :param index_names: If `true`, the response includes the name of each index in
+            each snapshot.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
         :param offset: Numeric offset to start pagination from based on the snapshots
             matching this request. Using a non-zero value for this parameter is mutually
             exclusive with using the after parameter. Defaults to 0.
-        :param order: Sort order. Valid values are asc for ascending and desc for descending
-            order. Defaults to asc, meaning ascending order.
-        :param size: Maximum number of snapshots to return. Defaults to 0 which means
-            return all that match the request without limit.
-        :param slm_policy_filter: Filter snapshots by a comma-separated list of SLM policy
-            names that snapshots belong to. Also accepts wildcards (*) and combinations
-            of wildcards followed by exclude patterns starting with -. To include snapshots
-            not created by an SLM policy you can use the special pattern _none that will
-            match all snapshots without an SLM policy.
-        :param sort: Allows setting a sort order for the result. Defaults to start_time,
-            i.e. sorting by snapshot start time stamp.
-        :param verbose: If true, returns additional information about each snapshot such
-            as the version of Elasticsearch which took the snapshot, the start and end
-            times of the snapshot, and the number of shards snapshotted.
+        :param order: The sort order. Valid values are `asc` for ascending and `desc`
+            for descending order. The default behavior is ascending order.
+        :param size: The maximum number of snapshots to return. The default is 0, which
+            means to return all that match the request without limit.
+        :param slm_policy_filter: Filter snapshots by a comma-separated list of snapshot
+            lifecycle management (SLM) policy names that snapshots belong to. You can
+            use wildcards (`*`) and combinations of wildcards followed by exclude patterns
+            starting with `-`. For example, the pattern `*,-policy-a-\\*` will return
+            all snapshots except for those that were created by an SLM policy with a
+            name starting with `policy-a-`. Note that the wildcard pattern `*` matches
+            all snapshots created by an SLM policy but not those snapshots that were
+            not created by an SLM policy. To include snapshots that were not created
+            by an SLM policy, you can use the special pattern `_none` that will match
+            all snapshots without an SLM policy.
+        :param sort: The sort order for the result. The default behavior is sorting by
+            snapshot start time stamp.
+        :param verbose: If `true`, returns additional information about each snapshot
+            such as the version of Elasticsearch which took the snapshot, the start and
+            end times of the snapshot, and the number of shards snapshotted. NOTE: The
+            parameters `size`, `order`, `after`, `from_sort_value`, `offset`, `slm_policy_filter`,
+            and `sort` are not supported when you set `verbose=false` and the sort order
+            for requests with `verbose=false` is undefined.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -620,10 +689,16 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-repo-api.html>`_
 
-        :param name: A comma-separated list of repository names
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param name: A comma-separated list of snapshot repository names used to limit
+            the request. Wildcard (`*`) expressions are supported including combining
+            wildcards with exclude patterns starting with `-`. To get information about
+            all snapshot repositories registered in the cluster, omit this parameter
+            or use `*` or `_all`.
+        :param local: If `true`, the request gets information from the local node only.
+            If `false`, the request gets information from the master node.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -881,21 +956,39 @@ class SnapshotClient(NamespacedClient):
           It may also incorrectly fail to report some anomalies that the concurrent writes prevented it from detecting.</p>
           <p>NOTE: This API is intended for exploratory use by humans. You should expect the request parameters and the response format to vary in future versions.</p>
           <p>NOTE: This API may not work correctly in a mixed-version cluster.</p>
+          <p>The default values for the parameters of this API are designed to limit the impact of the integrity verification on other activities in your cluster.
+          For instance, by default it will only use at most half of the <code>snapshot_meta</code> threads to verify the integrity of each snapshot, allowing other snapshot operations to use the other half of this thread pool.
+          If you modify these parameters to speed up the verification process, you risk disrupting other snapshot-related operations in your cluster.
+          For large repositories, consider setting up a separate single-node Elasticsearch cluster just for running the integrity verification API.</p>
+          <p>The response exposes implementation details of the analysis which may change from version to version.
+          The response body format is therefore not considered stable and may be different in newer versions.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/verify-repo-integrity-api.html>`_
 
-        :param name: A repository name
-        :param blob_thread_pool_concurrency: Number of threads to use for reading blob
-            contents
-        :param index_snapshot_verification_concurrency: Number of snapshots to verify
-            concurrently within each index
-        :param index_verification_concurrency: Number of indices to verify concurrently
-        :param max_bytes_per_sec: Rate limit for individual blob verification
-        :param max_failed_shard_snapshots: Maximum permitted number of failed shard snapshots
-        :param meta_thread_pool_concurrency: Number of threads to use for reading metadata
-        :param snapshot_verification_concurrency: Number of snapshots to verify concurrently
-        :param verify_blob_contents: Whether to verify the contents of individual blobs
+        :param name: The name of the snapshot repository.
+        :param blob_thread_pool_concurrency: If `verify_blob_contents` is `true`, this
+            parameter specifies how many blobs to verify at once.
+        :param index_snapshot_verification_concurrency: The maximum number of index snapshots
+            to verify concurrently within each index verification.
+        :param index_verification_concurrency: The number of indices to verify concurrently.
+            The default behavior is to use the entire `snapshot_meta` thread pool.
+        :param max_bytes_per_sec: If `verify_blob_contents` is `true`, this parameter
+            specifies the maximum amount of data that Elasticsearch will read from the
+            repository every second.
+        :param max_failed_shard_snapshots: The number of shard snapshot failures to track
+            during integrity verification, in order to avoid excessive resource usage.
+            If your repository contains more than this number of shard snapshot failures,
+            the verification will fail.
+        :param meta_thread_pool_concurrency: The maximum number of snapshot metadata
+            operations to run concurrently. The default behavior is to use at most half
+            of the `snapshot_meta` thread pool at once.
+        :param snapshot_verification_concurrency: The number of snapshots to verify concurrently.
+            The default behavior is to use at most half of the `snapshot_meta` thread
+            pool at once.
+        :param verify_blob_contents: Indicates whether to verify the checksum of every
+            data blob in the repository. If this feature is enabled, Elasticsearch will
+            read the entire repository contents, which may be extremely slow and expensive.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -995,21 +1088,64 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/restore-snapshot-api.html>`_
 
-        :param repository: A repository name
-        :param snapshot: A snapshot name
-        :param feature_states:
-        :param ignore_index_settings:
-        :param ignore_unavailable:
-        :param include_aliases:
-        :param include_global_state:
-        :param index_settings:
-        :param indices:
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param partial:
-        :param rename_pattern:
-        :param rename_replacement:
-        :param wait_for_completion: Should this request wait until the operation has
-            completed before returning
+        :param repository: The name of the repository to restore a snapshot from.
+        :param snapshot: The name of the snapshot to restore.
+        :param feature_states: The feature states to restore. If `include_global_state`
+            is `true`, the request restores all feature states in the snapshot by default.
+            If `include_global_state` is `false`, the request restores no feature states
+            by default. Note that specifying an empty array will result in the default
+            behavior. To restore no feature states, regardless of the `include_global_state`
+            value, specify an array containing only the value `none` (`["none"]`).
+        :param ignore_index_settings: The index settings to not restore from the snapshot.
+            You can't use this option to ignore `index.number_of_shards`. For data streams,
+            this option applies only to restored backing indices. New backing indices
+            are configured using the data stream's matching index template.
+        :param ignore_unavailable: If `true`, the request ignores any index or data stream
+            in indices that's missing from the snapshot. If `false`, the request returns
+            an error for any missing index or data stream.
+        :param include_aliases: If `true`, the request restores aliases for any restored
+            data streams and indices. If `false`, the request doesn’t restore aliases.
+        :param include_global_state: If `true`, restore the cluster state. The cluster
+            state includes: * Persistent cluster settings * Index templates * Legacy
+            index templates * Ingest pipelines * Index lifecycle management (ILM) policies
+            * Stored scripts * For snapshots taken after 7.12.0, feature states If `include_global_state`
+            is `true`, the restore operation merges the legacy index templates in your
+            cluster with the templates contained in the snapshot, replacing any existing
+            ones whose name matches one in the snapshot. It completely removes all persistent
+            settings, non-legacy index templates, ingest pipelines, and ILM lifecycle
+            policies that exist in your cluster and replaces them with the corresponding
+            items from the snapshot. Use the `feature_states` parameter to configure
+            how feature states are restored. If `include_global_state` is `true` and
+            a snapshot was created without a global state then the restore request will
+            fail.
+        :param index_settings: Index settings to add or change in restored indices, including
+            backing indices. You can't use this option to change `index.number_of_shards`.
+            For data streams, this option applies only to restored backing indices. New
+            backing indices are configured using the data stream's matching index template.
+        :param indices: A comma-separated list of indices and data streams to restore.
+            It supports a multi-target syntax. The default behavior is all regular indices
+            and regular data streams in the snapshot. You can't use this parameter to
+            restore system indices or system data streams. Use `feature_states` instead.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
+        :param partial: If `false`, the entire restore operation will fail if one or
+            more indices included in the snapshot do not have all primary shards available.
+            If true, it allows restoring a partial snapshot of indices with unavailable
+            shards. Only shards that were successfully included in the snapshot will
+            be restored. All missing shards will be recreated as empty.
+        :param rename_pattern: A rename pattern to apply to restored data streams and
+            indices. Data streams and indices matching the rename pattern will be renamed
+            according to `rename_replacement`. The rename pattern is applied as defined
+            by the regular expression that supports referencing the original text, according
+            to the `appendReplacement` logic.
+        :param rename_replacement: The rename replacement string that is used with the
+            `rename_pattern`.
+        :param wait_for_completion: If `true`, the request returns a response when the
+            restore operation completes. The operation is complete when it finishes all
+            attempts to recover primary shards for restored indices. This applies even
+            if one or more of the recovery attempts fail. If `false`, the request returns
+            a response when the restore operation initializes.
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'repository'")
@@ -1087,9 +1223,12 @@ class SnapshotClient(NamespacedClient):
         .. raw:: html
 
           <p>Get the snapshot status.
-          Get a detailed description of the current state for each shard participating in the snapshot.
-          Note that this API should be used only to obtain detailed shard-level information for ongoing snapshots.
+          Get a detailed description of the current state for each shard participating in the snapshot.</p>
+          <p>Note that this API should be used only to obtain detailed shard-level information for ongoing snapshots.
           If this detail is not needed or you want to obtain information about one or more existing snapshots, use the get snapshot API.</p>
+          <p>If you omit the <code>&lt;snapshot&gt;</code> request path parameter, the request retrieves information only for currently running snapshots.
+          This usage is preferred.
+          If needed, you can specify <code>&lt;repository&gt;</code> and <code>&lt;snapshot&gt;</code> to retrieve information for specific snapshots, even if they're not currently running.</p>
           <p>WARNING: Using the API to return the status of any snapshots other than currently running snapshots can be expensive.
           The API requires a read from the repository for each shard in each snapshot.
           For example, if you have 100 snapshots with 1,000 shards each, an API request that includes all snapshots will require 100,000 reads (100 snapshots x 1,000 shards).</p>
@@ -1099,11 +1238,16 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-snapshot-status-api.html>`_
 
-        :param repository: A repository name
-        :param snapshot: A comma-separated list of snapshot names
-        :param ignore_unavailable: Whether to ignore unavailable snapshots, defaults
-            to false which means a SnapshotMissingException is thrown
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param repository: The snapshot repository name used to limit the request. It
+            supports wildcards (`*`) if `<snapshot>` isn't specified.
+        :param snapshot: A comma-separated list of snapshots to retrieve status for.
+            The default is currently running snapshots. Wildcards (`*`) are not supported.
+        :param ignore_unavailable: If `false`, the request returns an error for any snapshots
+            that are unavailable. If `true`, the request ignores snapshots that are unavailable,
+            such as those that are corrupted or temporarily cannot be returned.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
         """
         __path_parts: t.Dict[str, str]
         if repository not in SKIP_IN_PATH and snapshot not in SKIP_IN_PATH:
@@ -1162,9 +1306,15 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/verify-snapshot-repo-api.html>`_
 
-        :param name: A repository name
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param name: The name of the snapshot repository to verify.
+        :param master_timeout: The period to wait for the master node. If the master
+            node is not available before the timeout expires, the request fails and returns
+            an error. To indicate that the request should never timeout, set it to `-1`.
+        :param timeout: The period to wait for a response from all relevant nodes in
+            the cluster after updating the cluster metadata. If no response is received
+            before the timeout expires, the cluster metadata update still applies but
+            the response will indicate that it was not completely acknowledged. To indicate
+            that the request should never timeout, set it to `-1`.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")

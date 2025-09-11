@@ -283,7 +283,7 @@ class SqlClient(NamespacedClient):
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         page_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        params: t.Optional[t.Mapping[str, t.Any]] = None,
+        params: t.Optional[t.Sequence[t.Any]] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
         request_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
