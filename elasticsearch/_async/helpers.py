@@ -33,6 +33,7 @@ from typing import (
     Union,
 )
 
+from ..compat import safe_task
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
@@ -94,28 +95,24 @@ async def _chunk_actions(
             try:
                 async for item in actions:
                     await item_queue.put(item)
-            except Exception:
+            finally:
                 await item_queue.put((BulkMeta.done, None))
-                raise
-            await item_queue.put((BulkMeta.done, None))
 
-        item_getter_job = asyncio.create_task(get_items())
+        async with safe_task(get_items()):
+            timeout: Optional[float] = flush_after_seconds
+            while True:
+                try:
+                    action, data = await asyncio.wait_for(item_queue.get(), timeout=timeout)
+                    timeout = flush_after_seconds
+                except asyncio.TimeoutError:
+                    action, data = BulkMeta.flush, None
+                    timeout = None
 
-        timeout: Optional[float] = flush_after_seconds
-        while True:
-            try:
-                action, data = await asyncio.wait_for(item_queue.get(), timeout=timeout)
-                timeout = flush_after_seconds
-            except asyncio.TimeoutError:
-                action, data = BulkMeta.flush, None
-                timeout = None
-
-            if action is BulkMeta.done:
-                break
-            ret = chunker.feed(action, data)
-            if ret:
-                yield ret
-        await item_getter_job
+                if action is BulkMeta.done:
+                    break
+                ret = chunker.feed(action, data)
+                if ret:
+                    yield ret
 
     ret = chunker.flush()
     if ret:

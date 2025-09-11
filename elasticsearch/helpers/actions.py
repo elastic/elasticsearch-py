@@ -39,7 +39,7 @@ from typing import (
 from elastic_transport import OpenTelemetrySpan
 
 from .. import Elasticsearch
-from ..compat import to_bytes
+from ..compat import to_bytes, safe_thread
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..serializer import Serializer
 from .errors import BulkIndexError, ScanError
@@ -266,35 +266,28 @@ def _chunk_actions(
         )
 
         def get_items() -> None:
-            ret = None
             try:
                 for item in actions:
                     item_queue.put(item)
-            except BaseException as exc:
-                ret = exc
-            item_queue.put((BulkMeta.done, ret))
+            finally:
+                # make sure we signal the end even if there is an exception
+                item_queue.put((BulkMeta.done, None))
 
-        item_getter_job = Thread(target=get_items)
-        item_getter_job.start()
+        with safe_thread(get_items):
+            timeout: Optional[float] = flush_after_seconds
+            while True:
+                try:
+                    action, data = item_queue.get(timeout=timeout)
+                    timeout = flush_after_seconds
+                except queue.Empty:
+                    action, data = BulkMeta.flush, None
+                    timeout = None
 
-        timeout: Optional[float] = flush_after_seconds
-        while True:
-            try:
-                action, data = item_queue.get(timeout=timeout)
-                timeout = flush_after_seconds
-            except queue.Empty:
-                action, data = BulkMeta.flush, None
-                timeout = None
-
-            if action is BulkMeta.done:
-                if isinstance(data, BaseException):
-                    raise data
-                break
-            ret = chunker.feed(action, data)
-            if ret:
-                yield ret
-
-        item_getter_job.join()
+                if action is BulkMeta.done:
+                    break
+                ret = chunker.feed(action, data)
+                if ret:
+                    yield ret
 
     ret = chunker.flush()
     if ret:
