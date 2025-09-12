@@ -18,6 +18,30 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+
+## 9.1.1 (2025-09-11)
+
+### Enhancements
+
+* ES|QL query builder integration with the DSL module ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
+* ES|QL query builder robustness fixes ([#3017](https://github.com/elastic/elasticsearch-py/pull/3017))
+* Fix ES|QL `multi_match()` signature ([#3052](https://github.com/elastic/elasticsearch-py/pull/3052))
+
+### API
+
+* Add support for ES|QL query builder objects to ES|QL Query and Async Query APIs
+* Add Transform Set Upgrade Mode API
+* Fix type of `fields` parameter of Term Vectors API to array of strings
+* Fix type of `params` parameter of SQL Query API to array
+
+### DSL
+
+* Preserve the `skip_empty` setting in `to_dict()` recursive serializations ([#3041](https://github.com/elastic/elasticsearch-py/pull/3041))
+* Add `separator_group` and `separators` attributes to `ChunkingSettings` type
+* Add `primary` attribute to `ShardFailure` type
+* Fix type of `key` attribute of `ArrayPercentilesItem` to float
+
+
 ## 9.1.0 (2025-07-30)
 
 ### Enhancements
@@ -67,6 +91,27 @@ Other changes
 
 * Drop support for Python 3.8 ([#3001](https://github.com/elastic/elasticsearch-py/pull/3001))
 
+
+## 9.0.4 (2025-09-11)
+
+### Enhancements
+
+* ES|QL query builder integration with the DSL module ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
+* ES|QL query builder robustness fixes ([#3017](https://github.com/elastic/elasticsearch-py/pull/3017))
+* Fix ES|QL `multi_match()` signature ([#3052](https://github.com/elastic/elasticsearch-py/pull/3052))
+
+### API
+
+* Add support for ES|QL query builder objects to ES|QL Query and Async Query APIs
+* Add Transform Set Upgrade Mode API
+* Fix type of `fields` parameter of Term Vectors API to array of strings
+* Fix type of `params` parameter of SQL Query API to array
+
+### DSL
+
+* Preserve the `skip_empty` setting in `to_dict()` recursive serializations ([#3041](https://github.com/elastic/elasticsearch-py/pull/3041))
+* Add `primary` attribute to `ShardFailure` type
+* Fix type of `key` attribute of `ArrayPercentilesItem` to float
 
 ## 9.0.3 (2025-07-30)
 

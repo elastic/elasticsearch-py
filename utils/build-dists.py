@@ -121,6 +121,7 @@ def test_dist(dist):
                 "--install-types",
                 "--non-interactive",
                 "--ignore-missing-imports",
+                "--implicit-reexport",
                 os.path.join(base_dir, "test_elasticsearch/test_types/async_types.py"),
             )
 
@@ -145,6 +146,7 @@ def test_dist(dist):
                 "--install-types",
                 "--non-interactive",
                 "--ignore-missing-imports",
+                "--implicit-reexport",
                 os.path.join(base_dir, "test_elasticsearch/test_types/sync_types.py"),
             )
         else:
@@ -156,6 +158,7 @@ def test_dist(dist):
                 "--install-types",
                 "--non-interactive",
                 "--ignore-missing-imports",
+                "--implicit-reexport",
                 os.path.join(
                     base_dir, "test_elasticsearch/test_types/aliased_types.py"
                 ),
