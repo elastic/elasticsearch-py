@@ -15,10 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import asyncio
+from contextlib import contextmanager, asynccontextmanager
 import inspect
 import os
 import sys
 from pathlib import Path
+from threading import Thread
 from typing import Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
@@ -76,9 +79,46 @@ def warn_stacklevel() -> int:
     return 0
 
 
+@contextmanager
+def safe_thread(target, *args, **kwargs):
+    """Run a thread within a context manager block.
+
+    The thread is automatically joined when the block ends. If the thread raised
+    an exception, it is raised in the caller's context.
+    """
+    captured_exception = None
+
+    def run():
+        try:
+            target(*args, **kwargs)
+        except BaseException as exc:
+            nonlocal captured_exception
+            captured_exception = exc
+
+    thread = Thread(target=run)
+    thread.start()
+    yield
+    thread.join()
+    if captured_exception:
+        raise captured_exception
+
+
+@asynccontextmanager
+async def safe_task(coro):
+    """Run a background task within a context manager block.
+
+    The task is awaited when the block ends.
+    """
+    task = asyncio.create_task(coro)
+    yield task
+    await task
+
+
 __all__ = [
     "string_types",
     "to_str",
     "to_bytes",
     "warn_stacklevel",
+    "safe_thread",
+    "safe_task",
 ]
