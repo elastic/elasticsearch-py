@@ -20,21 +20,20 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % ### Fixes [elasticsearch-python-client-next-fixes]
 ## 9.1.1 (2025-09-11)
 
-* ES|QL query builder integration with the DSL module (Fixes #3056) ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
+* ES|QL query builder integration with the DSL module ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
 * ES|QL query builder robustness fixes ([#3017](https://github.com/elastic/elasticsearch-py/pull/3017))
 * Fix ES|QL `multi_match()` signature ([#3052](https://github.com/elastic/elasticsearch-py/pull/3052))
 
 API
 * Add support for ES|QL query builder objects to ES|QL Query and Async Query APIs
 * Add Transform Set Upgrade Mode API
-* Fix type of `fields` parameter ofTerm Vectors API to array of strings
+* Fix type of `fields` parameter of Term Vectors API to array of strings
 * Fix type of `params` parameter of SQL Query API to array
-* Move `sort` parameter of the Delete By Query API from query to body
 
 DSL
 * Preserve the `skip_empty` setting in `to_dict()` recursive serializations ([#3041](https://github.com/elastic/elasticsearch-py/pull/3041))
 * Add `separator_group` and `separators` attributes to `ChunkingSettings` type
-* Add `shard` and `primary` attributes to `ShardFailure` type
+* Add `primary` attribute to `ShardFailure` type
 * Fix type of `key` attribute of `ArrayPercentilesItem` to float
 
 
