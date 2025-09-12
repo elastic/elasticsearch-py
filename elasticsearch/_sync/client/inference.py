@@ -389,23 +389,26 @@ class InferenceClient(NamespacedClient):
           However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
           <p>The following integrations are available through the inference API. You can find the available task types next to the integration name:</p>
           <ul>
+          <li>AI21 (<code>chat_completion</code>, <code>completion</code>)</li>
           <li>AlibabaCloud AI Search (<code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
           <li>Amazon Bedrock (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Amazon SageMaker (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
           <li>Anthropic (<code>completion</code>)</li>
           <li>Azure AI Studio (<code>completion</code>, 'rerank', <code>text_embedding</code>)</li>
           <li>Azure OpenAI (<code>completion</code>, <code>text_embedding</code>)</li>
           <li>Cohere (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
-          <li>DeepSeek (<code>completion</code>, <code>chat_completion</code>)</li>
+          <li>DeepSeek (<code>chat_completion</code>, <code>completion</code>)</li>
           <li>Elasticsearch (<code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code> - this service is for built-in models and models uploaded through Eland)</li>
           <li>ELSER (<code>sparse_embedding</code>)</li>
           <li>Google AI Studio (<code>completion</code>, <code>text_embedding</code>)</li>
-          <li>Google Vertex AI (<code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>Google Vertex AI (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Hugging Face (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>JinaAI (<code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>Llama (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Mistral (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
-          <li>VoyageAI (<code>text_embedding</code>, <code>rerank</code>)</li>
+          <li>VoyageAI (<code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Watsonx inference integration (<code>text_embedding</code>)</li>
-          <li>JinaAI (<code>text_embedding</code>, <code>rerank</code>)</li>
           </ul>
 
 
@@ -458,6 +461,86 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("service", "service_settings"),
+    )
+    def put_ai21(
+        self,
+        *,
+        task_type: t.Union[str, t.Literal["chat_completion", "completion"]],
+        ai21_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["ai21"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create a AI21 inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>ai21</code> service.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-ai21>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+        :param ai21_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `ai21`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `ai21` service.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if ai21_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ai21_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "ai21_inference_id": _quote(ai21_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["ai21_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_ai21",
             path_parts=__path_parts,
         )
 
@@ -656,6 +739,112 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put_amazonbedrock",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=(
+            "service",
+            "service_settings",
+            "chunking_settings",
+            "task_settings",
+        ),
+    )
+    def put_amazonsagemaker(
+        self,
+        *,
+        task_type: t.Union[
+            str,
+            t.Literal[
+                "chat_completion",
+                "completion",
+                "rerank",
+                "sparse_embedding",
+                "text_embedding",
+            ],
+        ],
+        amazonsagemaker_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["amazon_sagemaker"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an Amazon SageMaker inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>amazon_sagemaker</code> service.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-amazonsagemaker>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+        :param amazonsagemaker_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `amazon_sagemaker`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `amazon_sagemaker` service and `service_settings.api`
+            you specified.
+        :param chunking_settings: The chunking configuration object.
+        :param task_settings: Settings to configure the inference task. These settings
+            are specific to the task type and `service_settings.api` you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if amazonsagemaker_inference_id in SKIP_IN_PATH:
+            raise ValueError(
+                "Empty value passed for parameter 'amazonsagemaker_inference_id'"
+            )
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "amazonsagemaker_inference_id": _quote(amazonsagemaker_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["amazonsagemaker_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_amazonsagemaker",
             path_parts=__path_parts,
         )
 
@@ -1424,7 +1613,8 @@ class InferenceClient(NamespacedClient):
             this case, `elser`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `elser` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Note that for ELSER
+            endpoints, the max_chunk_size may not exceed `300`.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -1884,6 +2074,92 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put_jinaai",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("service", "service_settings", "chunking_settings"),
+    )
+    def put_llama(
+        self,
+        *,
+        task_type: t.Union[
+            str, t.Literal["chat_completion", "completion", "text_embedding"]
+        ],
+        llama_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["llama"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create a Llama inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>llama</code> service.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-llama>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+        :param llama_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `llama`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `llama` service.
+        :param chunking_settings: The chunking configuration object.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if llama_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'llama_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "llama_inference_id": _quote(llama_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["llama_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_llama",
             path_parts=__path_parts,
         )
 

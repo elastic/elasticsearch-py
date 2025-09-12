@@ -872,35 +872,40 @@ class SnapshotClient(NamespacedClient):
 
         :param name: The name of the repository.
         :param blob_count: The total number of blobs to write to the repository during
-            the test. For realistic experiments, you should set it to at least `2000`.
+            the test. For realistic experiments, set this parameter to at least `2000`.
         :param concurrency: The number of operations to run concurrently during the test.
+            For realistic experiments, leave this parameter unset.
         :param detailed: Indicates whether to return detailed results, including timing
             information for every operation performed during the analysis. If false,
             it returns only a summary of the analysis.
         :param early_read_node_count: The number of nodes on which to perform an early
             read operation while writing each blob. Early read operations are only rarely
-            performed.
+            performed. For realistic experiments, leave this parameter unset.
         :param max_blob_size: The maximum size of a blob to be written during the test.
-            For realistic experiments, you should set it to at least `2gb`.
+            For realistic experiments, set this parameter to at least `2gb`.
         :param max_total_data_size: An upper limit on the total size of all the blobs
-            written during the test. For realistic experiments, you should set it to
+            written during the test. For realistic experiments, set this parameter to
             at least `1tb`.
         :param rare_action_probability: The probability of performing a rare action such
-            as an early read, an overwrite, or an aborted write on each blob.
+            as an early read, an overwrite, or an aborted write on each blob. For realistic
+            experiments, leave this parameter unset.
         :param rarely_abort_writes: Indicates whether to rarely cancel writes before
-            they complete.
+            they complete. For realistic experiments, leave this parameter unset.
         :param read_node_count: The number of nodes on which to read a blob after writing.
+            For realistic experiments, leave this parameter unset.
         :param register_operation_count: The minimum number of linearizable register
-            operations to perform in total. For realistic experiments, you should set
-            it to at least `100`.
+            operations to perform in total. For realistic experiments, set this parameter
+            to at least `100`.
         :param seed: The seed for the pseudo-random number generator used to generate
             the list of operations performed during the test. To repeat the same set
             of operations in multiple experiments, use the same seed in each experiment.
             Note that the operations are performed concurrently so might not always happen
-            in the same order on each run.
+            in the same order on each run. For realistic experiments, leave this parameter
+            unset.
         :param timeout: The period of time to wait for the test to complete. If no response
             is received before the timeout expires, the test is cancelled and returns
-            an error.
+            an error. For realistic experiments, set this parameter sufficiently long
+            to allow the test to complete.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")

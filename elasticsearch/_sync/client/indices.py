@@ -1208,7 +1208,7 @@ class IndicesClient(NamespacedClient):
           Removes the data stream options from a data stream.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream-options>`_
 
         :param name: A comma-separated list of data streams of which the data stream
             options will be deleted; use `*` to get all data streams
@@ -2619,7 +2619,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the data stream options configuration of one or more data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-stream-options>`_
 
         :param name: Comma-separated list of data streams to limit the request. Supports
             wildcards (`*`). To target all data streams, omit this parameter or use `*`
@@ -3812,7 +3812,7 @@ class IndicesClient(NamespacedClient):
           Update the data stream options of the specified data streams.</p>
 
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-options>`_
 
         :param name: Comma-separated list of data streams used to limit the request.
             Supports wildcards (`*`). To target all data streams use `*` or `_all`.
@@ -4179,7 +4179,7 @@ class IndicesClient(NamespacedClient):
           <li>Change a field's mapping using reindexing</li>
           <li>Rename a field using a field alias</li>
           </ul>
-          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs//manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
+          <p>Learn how to use the update mapping API with practical examples in the <a href="https://www.elastic.co/docs/manage-data/data-store/mapping/update-mappings-examples">Update mapping API examples</a> guide.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
@@ -5065,6 +5065,16 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        mode: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str, t.Literal["logsdb", "lookup", "standard", "time_series"]
+                    ]
+                ],
+                t.Union[str, t.Literal["logsdb", "lookup", "standard", "time_series"]],
+            ]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -5091,6 +5101,8 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
             a missing or closed index.
+        :param mode: Filter indices by index mode - standard, lookup, time_series, etc.
+            Comma-separated list of IndexMode. Empty means no filter.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -5109,6 +5121,8 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if mode is not None:
+            __query["mode"] = mode
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
@@ -5150,7 +5164,7 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Roll over to a new index.
-          TIP: It is recommended to use the index lifecycle rollover action to automate rollovers.</p>
+          TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
           <p>The rollover API creates a new index for a data stream or index alias.
           The API behavior depends on the rollover target.</p>
           <p><strong>Roll over a data stream</strong></p>
