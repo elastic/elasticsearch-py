@@ -41,6 +41,7 @@ from ..helpers.actions import (
     _TYPE_BULK_ACTION_HEADER,
     _TYPE_BULK_ACTION_HEADER_AND_BODY,
     _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY,
+    _TYPE_BULK_ACTION_WITH_META,
     BulkMeta,
     _ActionChunker,
     _process_bulk_chunk_error,
@@ -195,7 +196,10 @@ async def azip(
 
 async def async_streaming_bulk(
     client: AsyncElasticsearch,
-    actions: Union[Iterable[_TYPE_BULK_ACTION], AsyncIterable[_TYPE_BULK_ACTION]],
+    actions: Union[
+        Iterable[_TYPE_BULK_ACTION_WITH_META],
+        AsyncIterable[_TYPE_BULK_ACTION_WITH_META],
+    ],
     chunk_size: int = 500,
     max_chunk_bytes: int = 100 * 1024 * 1024,
     flush_after_seconds: Optional[float] = None,
@@ -257,9 +261,14 @@ async def async_streaming_bulk(
     if isinstance(retry_on_status, int):
         retry_on_status = (retry_on_status,)
 
-    async def map_actions() -> AsyncIterable[_TYPE_BULK_ACTION_HEADER_AND_BODY]:
+    async def map_actions() -> (
+        AsyncIterable[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY]
+    ):
         async for item in aiter(actions):
-            yield expand_action_callback(item)
+            if isinstance(item, BulkMeta):
+                yield item, None
+            else:
+                yield expand_action_callback(item)
 
     serializer = client.transport.serializers.get_serializer("application/json")
 

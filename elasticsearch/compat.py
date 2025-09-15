@@ -22,7 +22,7 @@ import sys
 from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
 from threading import Thread
-from typing import Tuple, Type, Union
+from typing import Any, AsyncIterator, Callable, Coroutine, Iterator, Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
 
@@ -80,7 +80,9 @@ def warn_stacklevel() -> int:
 
 
 @contextmanager
-def safe_thread(target, *args, **kwargs):
+def safe_thread(
+    target: Callable[..., Any], *args: Any, **kwargs: Any
+) -> Iterator[Thread]:
     """Run a thread within a context manager block.
 
     The thread is automatically joined when the block ends. If the thread raised
@@ -88,7 +90,7 @@ def safe_thread(target, *args, **kwargs):
     """
     captured_exception = None
 
-    def run():
+    def run() -> None:
         try:
             target(*args, **kwargs)
         except BaseException as exc:
@@ -97,14 +99,14 @@ def safe_thread(target, *args, **kwargs):
 
     thread = Thread(target=run)
     thread.start()
-    yield
+    yield thread
     thread.join()
     if captured_exception:
         raise captured_exception
 
 
 @asynccontextmanager
-async def safe_task(coro):
+async def safe_task(coro: Coroutine[Any, Any, Any]) -> AsyncIterator[asyncio.Task[Any]]:
     """Run a background task within a context manager block.
 
     The task is awaited when the block ends.

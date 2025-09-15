@@ -20,7 +20,6 @@ import queue
 import time
 from enum import Enum
 from operator import methodcaller
-from threading import Thread
 from typing import (
     Any,
     Callable,
