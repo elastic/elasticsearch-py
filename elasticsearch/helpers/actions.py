@@ -39,7 +39,7 @@ from typing import (
 from elastic_transport import OpenTelemetrySpan
 
 from .. import Elasticsearch
-from ..compat import to_bytes, safe_thread
+from ..compat import safe_thread, to_bytes
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..serializer import Serializer
 from .errors import BulkIndexError, ScanError

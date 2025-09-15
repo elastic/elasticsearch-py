@@ -102,7 +102,9 @@ async def _chunk_actions(
             timeout: Optional[float] = flush_after_seconds
             while True:
                 try:
-                    action, data = await asyncio.wait_for(item_queue.get(), timeout=timeout)
+                    action, data = await asyncio.wait_for(
+                        item_queue.get(), timeout=timeout
+                    )
                     timeout = flush_after_seconds
                 except asyncio.TimeoutError:
                     action, data = BulkMeta.flush, None
