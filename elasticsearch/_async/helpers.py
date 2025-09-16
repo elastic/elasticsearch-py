@@ -235,6 +235,9 @@ async def async_streaming_bulk(
     :arg actions: iterable or async iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
+    :arg flush_after_seconds: time in seconds after which a chunk is written even
+        if hasn't reached `chunk_size` or `max_chunk_bytes`. Set to 0 to not use a
+        timeout-based flush. (default: 0)
     :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
         from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
