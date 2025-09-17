@@ -101,7 +101,7 @@ def _recursive_to_dict(value: Any) -> Any:
         return value
 
 
-class AttrList(Generic[_ValT]):
+class AttrList(Generic[_ValT], collections.abc.Sequence[_ValT]):
     def __init__(
         self, l: List[_ValT], obj_wrapper: Optional[Callable[[_ValT], Any]] = None
     ):
@@ -254,6 +254,9 @@ class AttrDict(Generic[_ValT]):
 
     def items(self) -> Iterable[Tuple[str, _ValT]]:
         return self._d_.items()
+
+
+collections.abc.MutableMapping.register(AttrDict)
 
 
 class DslMeta(type):
@@ -651,8 +654,8 @@ def merge(
     raise_on_conflict: bool = False,
 ) -> None:
     if not (
-        isinstance(data, (AttrDict, collections.abc.Mapping))
-        and isinstance(new_data, (AttrDict, collections.abc.Mapping))
+        isinstance(data, collections.abc.Mapping)
+        and isinstance(new_data, collections.abc.Mapping)
     ):
         raise ValueError(
             f"You can only merge two dicts! Got {data!r} and {new_data!r} instead."
@@ -661,8 +664,8 @@ def merge(
     for key, value in new_data.items():
         if (
             key in data
-            and isinstance(data[key], (AttrDict, collections.abc.Mapping))
-            and isinstance(value, (AttrDict, collections.abc.Mapping))
+            and isinstance(data[key], collections.abc.Mapping)
+            and isinstance(value, collections.abc.Mapping)
         ):
             merge(data[key], value, raise_on_conflict)  # type: ignore[arg-type]
         elif key in data and data[key] != value and raise_on_conflict:

@@ -196,7 +196,7 @@ class RangeField(Field):
     def _serialize(self, data: Any, skip_empty: bool) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
-        if not isinstance(data, collections.abc.Mapping):
+        if isinstance(data, AttrDict) or not isinstance(data, collections.abc.Mapping):
             data = data.to_dict()
         return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore[union-attr]
 
@@ -327,14 +327,18 @@ class {{ k.name }}({{ k.parent }}):
     def _serialize(
         self, data: Optional[Union[Dict[str, Any], "InnerDoc"]], skip_empty: bool
     ) -> Optional[Dict[str, Any]]:
+        from .document import InnerDoc
+
         if data is None:
             return None
 
+        if isinstance(data, InnerDoc):
+            return data.to_dict(skip_empty=skip_empty)
+        elif isinstance(data, AttrDict):
+            return data.to_dict()
         # somebody assigned raw dict to the field, we should tolerate that
-        if isinstance(data, collections.abc.Mapping):
+        elif isinstance(data, collections.abc.Mapping):
             return data
-
-        return data.to_dict(skip_empty=skip_empty)
 
     def clean(self, data: Any) -> Any:
         data = super().clean(data)
@@ -388,7 +392,7 @@ class {{ k.name }}({{ k.parent }}):
             # Divide by a float to preserve milliseconds on the datetime.
             return datetime.utcfromtimestamp(data / 1000.0)
 
-        raise ValidationException(f"Could not parse date from the value ({data!r})")        
+        raise ValidationException(f"Could not parse date from the value ({data!r})")
         {% elif k.field == "boolean" %}
         super().__init__(*args, **kwargs)
 
@@ -402,7 +406,7 @@ class {{ k.name }}({{ k.parent }}):
             data = self.deserialize(data)
         if data is None and self._required:
             raise ValidationException("Value required for this field.")
-        return data  # type: ignore[no-any-return]        
+        return data  # type: ignore[no-any-return]
         {% elif k.field == "float" %}
         super().__init__(*args, **kwargs)
 
@@ -432,7 +436,7 @@ class {{ k.name }}({{ k.parent }}):
         super().__init__(*args, **kwargs)
 
     def _deserialize(self, data: Any) -> int:
-        return int(data)        
+        return int(data)
         {% elif k.field == "ip" %}
         super().__init__(*args, **kwargs)
 
@@ -443,7 +447,7 @@ class {{ k.name }}({{ k.parent }}):
     def _serialize(self, data: Any, skip_empty: bool) -> Optional[str]:
         if data is None:
             return None
-        return str(data)        
+        return str(data)
         {% elif k.field == "binary" %}
         super().__init__(*args, **kwargs)
 
@@ -458,7 +462,7 @@ class {{ k.name }}({{ k.parent }}):
     def _serialize(self, data: Any, skip_empty: bool) -> Optional[str]:
         if data is None:
             return None
-        return base64.b64encode(data).decode()        
+        return base64.b64encode(data).decode()
         {% elif k.field == "percolator" %}
         super().__init__(*args, **kwargs)
 

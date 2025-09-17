@@ -202,7 +202,7 @@ class RangeField(Field):
     def _serialize(self, data: Any, skip_empty: bool) -> Optional[Dict[str, Any]]:
         if data is None:
             return None
-        if not isinstance(data, collections.abc.Mapping):
+        if isinstance(data, AttrDict) or not isinstance(data, collections.abc.Mapping):
             data = data.to_dict()
         return {k: self._core_field.serialize(v) for k, v in data.items()}  # type: ignore[union-attr]
 
@@ -565,14 +565,18 @@ class Object(Field):
     def _serialize(
         self, data: Optional[Union[Dict[str, Any], "InnerDoc"]], skip_empty: bool
     ) -> Optional[Dict[str, Any]]:
+        from .document import InnerDoc
+
         if data is None:
             return None
 
+        if isinstance(data, InnerDoc):
+            return data.to_dict(skip_empty=skip_empty)
+        elif isinstance(data, AttrDict):
+            return data.to_dict()
         # somebody assigned raw dict to the field, we should tolerate that
-        if isinstance(data, collections.abc.Mapping):
+        elif isinstance(data, collections.abc.Mapping):
             return data
-
-        return data.to_dict(skip_empty=skip_empty)
 
     def clean(self, data: Any) -> Any:
         data = super().clean(data)
