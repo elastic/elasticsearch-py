@@ -571,7 +571,8 @@ class Object(Field):
         # somebody assigned raw dict to the field, we should tolerate that
         if isinstance(data, collections.abc.Mapping):
             return data
-
+        if isinstance(data, AttrDict):
+            return data.to_dict()
         return data.to_dict(skip_empty=skip_empty)
 
     def clean(self, data: Any) -> Any:
