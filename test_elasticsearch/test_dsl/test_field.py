@@ -24,6 +24,7 @@ import pytest
 from dateutil import tz
 
 from elasticsearch.dsl import InnerDoc, Range, ValidationException, field
+from elasticsearch.dsl.utils import AttrDict
 
 
 def test_date_range_deserialization() -> None:
@@ -232,3 +233,9 @@ def test_object_constructor() -> None:
 
     with pytest.raises(ValidationException):
         field.Object(doc_class=Inner, dynamic=False)
+
+
+def test_object_with_attrdict() -> None:
+    f = field.Object(dynamic=True)
+    assert f.deserialize(AttrDict({"a": "b"})).to_dict() == {"a": "b"}
+    assert f.serialize(AttrDict({"a": "b"})) == {"a": "b"}
