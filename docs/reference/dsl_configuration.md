@@ -1,9 +1,10 @@
 ---
 mapped_pages:
   - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/_configuration.html
+navigation_title: Configuration
 ---
 
-# Configuration [_configuration]
+# Python DSL configuration for {{es}} [_configuration]
 
 There are several ways to configure connections for the library. The easiest and most useful approach is to define one default connection that can be used every time an API call is made without explicitly passing in other connections.
 
