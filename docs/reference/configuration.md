@@ -1,9 +1,10 @@
 ---
 mapped_pages:
   - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/config.html
+navigation_title: Configuration
 ---
 
-# Configuration [config]
+# Python client configuration for {{es}} [config]
 
 This page contains information about the most important configuration options of the Python {{es}} client.
 
