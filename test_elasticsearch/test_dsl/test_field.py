@@ -23,6 +23,7 @@ from typing import cast
 import pytest
 from dateutil import tz
 
+from elasticsearch import dsl
 from elasticsearch.dsl import InnerDoc, Range, ValidationException, field
 
 
@@ -232,3 +233,19 @@ def test_object_constructor() -> None:
 
     with pytest.raises(ValidationException):
         field.Object(doc_class=Inner, dynamic=False)
+
+
+def test_all_fields_exported() -> None:
+    """Make sure that all the generated field classes are exported at the top-level"""
+    fields = [
+        f
+        for f in dir(field)
+        if isinstance(getattr(field, f), type)
+        and issubclass(getattr(field, f), field.Field)
+    ]
+    all = dir(dsl)
+    not_found = []
+    for f in fields:
+        if f not in all:
+            not_found.append(f)
+    assert not_found == []
