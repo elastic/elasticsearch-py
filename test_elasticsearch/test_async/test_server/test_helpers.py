@@ -17,6 +17,7 @@
 
 import asyncio
 import logging
+import time
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
@@ -122,6 +123,45 @@ class TestStreamingBulk:
         assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
             "_source"
         ]
+
+    async def test_explicit_flushes(self, async_client):
+        async def async_gen():
+            yield {"answer": 2, "_id": 0}
+            yield {"answer": 1, "_id": 1}
+            yield helpers.BULK_FLUSH
+            await asyncio.sleep(0.5)
+            yield {"answer": 2, "_id": 2}
+
+        timestamps = []
+        async for ok, item in helpers.async_streaming_bulk(
+            async_client, async_gen(), index="test-index", refresh=True
+        ):
+            timestamps.append(time.time())
+            assert ok
+
+        # make sure there is a pause between the writing of the 2nd and 3rd items
+        assert timestamps[2] - timestamps[1] > (timestamps[1] - timestamps[0]) * 2
+
+    async def test_timeout_flushes(self, async_client):
+        async def async_gen():
+            yield {"answer": 2, "_id": 0}
+            yield {"answer": 1, "_id": 1}
+            await asyncio.sleep(0.5)
+            yield {"answer": 2, "_id": 2}
+
+        timestamps = []
+        async for ok, item in helpers.async_streaming_bulk(
+            async_client,
+            async_gen(),
+            index="test-index",
+            refresh=True,
+            flush_after_seconds=0.05,
+        ):
+            assert ok
+            timestamps.append(time.time())
+
+        # make sure there is a pause between the writing of the 2nd and 3rd items
+        assert timestamps[2] - timestamps[1] > (timestamps[1] - timestamps[0]) * 2
 
     async def test_all_errors_from_chunk_are_raised_on_failure(self, async_client):
         await async_client.indices.create(
