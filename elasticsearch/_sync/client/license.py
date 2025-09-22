@@ -104,8 +104,10 @@ class LicenseClient(NamespacedClient):
             license types. If `false`, this parameter returns platinum for both platinum
             and enterprise license types. This behavior is maintained for backwards compatibility.
             This parameter is deprecated and will always be set to true in 8.x.
-        :param local: Specifies whether to retrieve local information. The default value
-            is `false`, which means the information is retrieved from the master node.
+        :param local: Specifies whether to retrieve local information. From 9.2 onwards
+            the default value is `true`, which means the information is retrieved from
+            the responding node. In earlier versions the default is `false`, which means
+            the information is retrieved from the elected master node.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license"
