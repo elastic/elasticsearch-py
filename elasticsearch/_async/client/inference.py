@@ -2504,7 +2504,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("input", "task_settings"),
+        body_fields=("input", "input_type", "task_settings"),
     )
     async def text_embedding(
         self,
@@ -2514,6 +2514,7 @@ class InferenceClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        input_type: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Any] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -2529,6 +2530,13 @@ class InferenceClient(NamespacedClient):
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
+        :param input_type: The input data type for the text embedding model. Possible
+            values include: * `SEARCH` * `INGEST` * `CLASSIFICATION` * `CLUSTERING` Not
+            all services support all values. Unsupported values will trigger a validation
+            exception. Accepted values depend on the configured inference service, refer
+            to the relevant service-specific documentation for more info. > info > The
+            `input_type` parameter specified on the root level of the request body will
+            take precedence over the `input_type` parameter specified in `task_settings`.
         :param task_settings: Optional task settings
         :param timeout: Specifies the amount of time to wait for the inference request
             to complete.
@@ -2554,6 +2562,8 @@ class InferenceClient(NamespacedClient):
         if not __body:
             if input is not None:
                 __body["input"] = input
+            if input_type is not None:
+                __body["input_type"] = input_type
             if task_settings is not None:
                 __body["task_settings"] = task_settings
         if not __body:

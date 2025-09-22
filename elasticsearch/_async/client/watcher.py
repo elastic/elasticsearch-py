@@ -552,11 +552,7 @@ class WatcherClient(NamespacedClient):
                 __body["transform"] = transform
             if trigger is not None:
                 __body["trigger"] = trigger
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
