@@ -825,7 +825,11 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __body = create_from if create_from is not None else body
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4977,7 +4981,9 @@ class IndicesClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_name="index_template",
+    )
     def simulate_index_template(
         self,
         *,
@@ -4988,6 +4994,8 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        index_template: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -5007,12 +5015,19 @@ class IndicesClient(NamespacedClient):
             only be dry-run added if new or can also replace an existing one
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
+        :param index_template:
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
+        if index_template is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'index_template' and 'body', one of them should be set."
+            )
+        elif index_template is not None and body is not None:
+            raise ValueError("Cannot set both 'index_template' and 'body'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
@@ -5032,12 +5047,18 @@ class IndicesClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        __body = index_template if index_template is not None else body
+        if not __body:
+            __body = None
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="indices.simulate_index_template",
             path_parts=__path_parts,
         )
