@@ -1,9 +1,10 @@
 ---
 mapped_pages:
   - https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/examples.html
+navigation_title: Examples
 ---
 
-# Examples [examples]
+# {{es}} Python client examples [examples]
 
 Below you can find examples of how to use the most frequently called APIs with the Python client.
 
