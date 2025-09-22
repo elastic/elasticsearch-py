@@ -34,6 +34,8 @@ from typing import (
     overload,
 )
 
+from typing_extensions import _AnnotatedAlias
+
 try:
     import annotationlib
 except ImportError:
@@ -358,6 +360,10 @@ class DocumentOptions:
                 # the field has a type annotation, so next we try to figure out
                 # what field type we can use
                 type_ = annotations[name]
+                type_metadata = []
+                if isinstance(type_, _AnnotatedAlias):
+                    type_metadata = type_.__metadata__
+                    type_ = type_.__origin__
                 skip = False
                 required = True
                 multi = False
@@ -404,6 +410,12 @@ class DocumentOptions:
                     # use best field type for the type hint provided
                     field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]
 
+                # if this field does not have a right-hand value, we look in the metadata
+                # of the annotation to see if we find it there
+                for md in type_metadata:
+                    if isinstance(md, (_FieldMetadataDict, Field)):
+                        attrs[name] = md
+
                 if field:
                     field_kwargs = {
                         "multi": multi,
@@ -416,7 +428,7 @@ class DocumentOptions:
                 # this field has a right-side value, which can be field
                 # instance on its own or wrapped with mapped_field()
                 attr_value = attrs[name]
-                if isinstance(attr_value, dict):
+                if isinstance(attr_value, _FieldMetadataDict):
                     # the mapped_field() wrapper function was used so we need
                     # to look for the field instance and also record any
                     # dataclass-style defaults
@@ -426,7 +438,7 @@ class DocumentOptions:
                     )
                     if default_value:
                         field_defaults[name] = default_value
-                if attr_value:
+                if isinstance(attr_value, Field):
                     value = attr_value
                     if required is not None:
                         value._required = required
@@ -505,6 +517,12 @@ class Mapped(Generic[_FieldType]):
 M = Mapped
 
 
+class _FieldMetadataDict(dict[str, Any]):
+    """This class is used to identify metadata returned by the `mapped_field()` function."""
+
+    pass
+
+
 def mapped_field(
     field: Optional[Field] = None,
     *,
@@ -529,13 +547,13 @@ def mapped_field(
     when one isn't provided explicitly. Only one of ``factory`` and
     ``default_factory`` can be used.
     """
-    return {
-        "_field": field,
-        "init": init,
-        "default": default,
-        "default_factory": default_factory,
+    return _FieldMetadataDict(
+        _field=field,
+        init=init,
+        default=default,
+        default_factory=default_factory,
         **kwargs,
-    }
+    )
 
 
 @dataclass_transform(field_specifiers=(mapped_field,))
