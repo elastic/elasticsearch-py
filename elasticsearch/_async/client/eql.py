@@ -229,6 +229,7 @@ class EqlClient(NamespacedClient):
         keep_on_completion: t.Optional[bool] = None,
         max_samples_per_key: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         result_position: t.Optional[t.Union[str, t.Literal["head", "tail"]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         size: t.Optional[int] = None,
@@ -285,6 +286,10 @@ class EqlClient(NamespacedClient):
             `size` parameter to get a smaller or larger set of samples. To retrieve more
             than one sample per set of join keys, use the `max_samples_per_key` parameter.
             Pipes are not supported for sample queries.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param result_position:
         :param runtime_mappings:
         :param size: For basic queries, the maximum number of matching events to return.
@@ -318,6 +323,8 @@ class EqlClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if not __body:
             if query is not None:
                 __body["query"] = query
