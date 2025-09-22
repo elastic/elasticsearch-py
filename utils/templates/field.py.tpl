@@ -334,7 +334,11 @@ class {{ k.name }}({{ k.parent }}):
         if isinstance(data, collections.abc.Mapping):
             return data
 
-        return data.to_dict(skip_empty=skip_empty)
+        try:
+            return data.to_dict(skip_empty=skip_empty)
+        except TypeError:
+            # this would only happen if an AttrDict was given instead of an InnerDoc
+            return data.to_dict()
 
     def clean(self, data: Any) -> Any:
         data = super().clean(data)
