@@ -23,6 +23,7 @@ from ...utils import CA_CERTS, wipe_cluster
 
 pytestmark = pytest.mark.asyncio
 
+
 @pytest.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
 

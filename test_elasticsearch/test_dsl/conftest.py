@@ -25,8 +25,8 @@ from typing import Any, AsyncGenerator, Dict, Generator, Tuple, cast
 from unittest import SkipTest
 from unittest.mock import AsyncMock, Mock
 
-from elastic_transport import ObjectApiResponse
 import pytest
+from elastic_transport import ObjectApiResponse
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch
 from elasticsearch.dsl import Search
