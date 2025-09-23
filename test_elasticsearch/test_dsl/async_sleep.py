@@ -15,8 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import anyio
 from typing import Union
+
+import anyio
 
 
 async def sleep(secs: Union[int, float]) -> None:

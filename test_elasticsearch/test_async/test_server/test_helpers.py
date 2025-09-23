@@ -15,11 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import anyio
 import logging
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
+import anyio
 import pytest
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 

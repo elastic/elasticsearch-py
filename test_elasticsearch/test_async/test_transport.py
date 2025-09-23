@@ -16,12 +16,12 @@
 #  under the License.
 
 
-import time
-import anyio
 import re
+import time
 import warnings
 from typing import Any, Dict, Optional
 
+import anyio
 import pytest
 from elastic_transport import (
     ApiResponseMeta,

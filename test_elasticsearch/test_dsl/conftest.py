@@ -16,8 +16,6 @@
 #  under the License.
 
 
-import sniffio
-import anyio
 import os
 import re
 import time
@@ -26,7 +24,9 @@ from typing import Any, AsyncGenerator, Dict, Generator, Tuple, cast
 from unittest import SkipTest
 from unittest.mock import AsyncMock, Mock
 
+import anyio
 import pytest
+import sniffio
 from elastic_transport import ObjectApiResponse
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch

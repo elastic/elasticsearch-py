@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import anyio
 import logging
 from typing import (
     Any,
@@ -32,6 +31,8 @@ from typing import (
     TypeVar,
     Union,
 )
+
+import anyio
 
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (

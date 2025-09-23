@@ -15,13 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import sniffio
 import pytest
+import sniffio
 
 import elasticsearch
 
 from ...utils import CA_CERTS, wipe_cluster
-
 
 
 @pytest.fixture(scope="function")
