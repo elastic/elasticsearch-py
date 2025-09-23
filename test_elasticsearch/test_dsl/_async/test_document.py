@@ -582,21 +582,21 @@ def test_meta_fields_can_be_set_directly_in_init() -> None:
     assert md.meta.id is p
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_no_index(async_mock_client: Any) -> None:
     md = MyDoc()
     with raises(ValidationException):
         await md.save(using="mock")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete_no_index(async_mock_client: Any) -> None:
     md = MyDoc()
     with raises(ValidationException):
         await md.delete(using="mock")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_no_fields() -> None:
     md = MyDoc()
     with raises(IllegalOperation):

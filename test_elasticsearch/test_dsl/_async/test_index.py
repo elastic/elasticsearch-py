@@ -190,7 +190,7 @@ def test_index_template_can_have_order() -> None:
     assert {"index_patterns": ["i-*"], "order": 2} == it.to_dict()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_index_template_save_result(async_mock_client: Any) -> None:
     it = AsyncIndexTemplate("test-template", "test-*")
 

@@ -15,20 +15,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
+import anyio
 import logging
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
 import pytest
-import pytest_asyncio
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 
 from elasticsearch import helpers
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import ScanError
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = pytest.mark.anyio
 
 
 class AsyncMock(MagicMock):
@@ -92,7 +91,7 @@ class TestStreamingBulk:
     async def test_documents_data_types(self, async_client):
         async def async_gen():
             for x in range(100):
-                await asyncio.sleep(0)
+                await anyio.sleep(0)
                 yield {"answer": x, "_id": x}
 
         def sync_gen():
@@ -491,7 +490,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -915,7 +914,7 @@ async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
         assert "from" not in search_mock.call_args[1]
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -993,7 +992,7 @@ class TestReindex:
         )["_source"]
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -1054,7 +1053,7 @@ class TestParentChildReindex:
         } == q
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def reindex_data_stream_setup(async_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []

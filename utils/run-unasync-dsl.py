@@ -74,7 +74,6 @@ def main(check=False):
         "async_examples": "examples",
         "async_sleep": "sleep",
         "assert_awaited_once_with": "assert_called_once_with",
-        "pytest_asyncio": "pytest",
         "asynccontextmanager": "contextmanager",
     }
     rules = [
@@ -129,7 +128,7 @@ def main(check=False):
                 [
                     "sed",
                     "-i.bak",
-                    "s/pytest.mark.asyncio/pytest.mark.sync/",
+                    "s/pytest.mark.anyio/pytest.mark.sync/",
                     f"{output_dir}{file}",
                 ]
             )

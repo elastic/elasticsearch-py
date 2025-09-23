@@ -15,10 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
+import anyio
 from typing import Union
 
 
 async def sleep(secs: Union[int, float]) -> None:
     """Tests can use this function to sleep."""
-    await asyncio.sleep(secs)
+    await anyio.sleep(secs)

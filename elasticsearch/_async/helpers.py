@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
+import anyio
 import logging
 from typing import (
     Any,
@@ -245,7 +245,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await asyncio.sleep(
+                await anyio.sleep(
                     min(max_backoff, initial_backoff * 2 ** (attempt - 1))
                 )
 

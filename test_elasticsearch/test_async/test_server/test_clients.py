@@ -18,7 +18,7 @@
 
 import pytest
 
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 
 @pytest.mark.parametrize("kwargs", [{"body": {"text": "привет"}}, {"text": "привет"}])

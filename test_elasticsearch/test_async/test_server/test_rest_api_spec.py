@@ -25,7 +25,6 @@ import json
 import warnings
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import ElasticsearchWarning, RequestError
 
@@ -39,7 +38,7 @@ from ...test_server.test_rest_api_spec import (
 )
 from ...utils import parse_version
 
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 XPACK_FEATURES = None
 ES_VERSION = None
@@ -240,7 +239,7 @@ class AsyncYamlRunner(YamlRunner):
         return name in XPACK_FEATURES
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 def async_runner(async_client_factory):
     return AsyncYamlRunner(async_client_factory)
 

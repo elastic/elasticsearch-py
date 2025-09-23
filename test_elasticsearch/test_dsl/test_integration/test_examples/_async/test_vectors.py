@@ -26,7 +26,7 @@ import pytest
 from elasticsearch import AsyncElasticsearch
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_vector_search(
     async_write_client: AsyncElasticsearch, es_version: Tuple[int, ...]
 ) -> None:
