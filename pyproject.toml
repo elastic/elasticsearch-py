@@ -116,6 +116,7 @@ include = [
 packages = ["elasticsearch"]
 
 [tool.pytest.ini_options]
+anyio_mode = "auto"
 junit_family = "legacy"
 xfail_strict = true
 markers = [
