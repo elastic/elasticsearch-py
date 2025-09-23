@@ -43,7 +43,7 @@ if [[ -z $es_node_name ]]; then
 
 fi
 
-  export script_path=$(dirname $(realpath -s $0))
+  export script_path=$(dirname $(realpath $0))
   source $script_path/functions/cleanup.sh
   source $script_path/functions/wait-for-container.sh
   trap "cleanup_trap ${network_name}" EXIT

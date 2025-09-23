@@ -10,7 +10,7 @@ export TEST_SUITE="${TEST_SUITE:=platinum}"
 export PYTHON_VERSION="${PYTHON_VERSION:=3.13}"
 export PYTHON_CONNECTION_CLASS="${PYTHON_CONNECTION_CLASS:=urllib3}"
 
-script_path=$(dirname $(realpath -s $0))
+script_path=$(dirname $(realpath $0))
 source $script_path/functions/imports.sh
 set -euo pipefail
 

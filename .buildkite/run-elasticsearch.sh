@@ -21,7 +21,7 @@
 # - Moved ELASTIC_PASSWORD and xpack.security.enabled to the base arguments for "Security On by default"
 # - Use https only when TEST_SUITE is "platinum", when "free" use http
 
-script_path=$(dirname $(realpath -s $0))
+script_path=$(dirname $(realpath $0))
 source $script_path/functions/imports.sh
 set -euo pipefail
 
