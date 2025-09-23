@@ -16,7 +16,6 @@
 #  under the License.
 
 import pytest
-import pytest_asyncio
 
 import elasticsearch
 
@@ -24,8 +23,7 @@ from ...utils import CA_CERTS, wipe_cluster
 
 pytestmark = pytest.mark.asyncio
 
-
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
 
     if not hasattr(elasticsearch, "AsyncElasticsearch"):

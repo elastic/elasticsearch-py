@@ -25,9 +25,8 @@ from typing import Any, AsyncGenerator, Dict, Generator, Tuple, cast
 from unittest import SkipTest
 from unittest.mock import AsyncMock, Mock
 
-import pytest_asyncio
 from elastic_transport import ObjectApiResponse
-from pytest import fixture, skip
+import pytest
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch
 from elasticsearch.dsl import Search
@@ -110,7 +109,7 @@ def _get_version(version_string: str) -> Tuple[int, ...]:
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
 
-@fixture
+@pytest.fixture
 def client(elasticsearch_url) -> Elasticsearch:
     try:
         connection = get_test_client(
@@ -121,10 +120,10 @@ def client(elasticsearch_url) -> Elasticsearch:
         wipe_cluster(connection)
         connection.close()
     except SkipTest:
-        skip()
+        pytest.skip()
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def async_client(elasticsearch_url) -> AsyncGenerator[AsyncElasticsearch, None]:
     try:
         connection = await get_async_test_client(
@@ -135,10 +134,10 @@ async def async_client(elasticsearch_url) -> AsyncGenerator[AsyncElasticsearch, 
         wipe_cluster(connection)
         await connection.close()
     except SkipTest:
-        skip()
+        pytest.skip()
 
 
-@fixture
+@pytest.fixture
 def es_version(client: Elasticsearch) -> Generator[Tuple[int, ...], None, None]:
     info = client.info()
     yield tuple(
@@ -147,7 +146,7 @@ def es_version(client: Elasticsearch) -> Generator[Tuple[int, ...], None, None]:
     )
 
 
-@fixture
+@pytest.fixture
 def write_client(client: Elasticsearch) -> Generator[Elasticsearch, None, None]:
     yield client
     for index_name in client.indices.get(index="test-*", expand_wildcards="all"):
@@ -158,14 +157,14 @@ def write_client(client: Elasticsearch) -> Generator[Elasticsearch, None, None]:
     )
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def async_write_client(
     write_client: Elasticsearch, async_client: AsyncElasticsearch
 ) -> AsyncGenerator[AsyncElasticsearch, None]:
     yield async_client
 
 
-@fixture
+@pytest.fixture
 def mock_client(
     dummy_response: ObjectApiResponse[Any],
 ) -> Generator[Elasticsearch, None, None]:
@@ -179,7 +178,7 @@ def mock_client(
     connections._kwargs = {}
 
 
-@fixture
+@pytest.fixture
 def async_mock_client(
     dummy_response: ObjectApiResponse[Any],
 ) -> Generator[Elasticsearch, None, None]:
@@ -195,7 +194,7 @@ def async_mock_client(
     async_connections._kwargs = {}
 
 
-@fixture
+@pytest.fixture
 def data_client(client: Elasticsearch) -> Generator[Elasticsearch, None, None]:
     # create mappings
     create_git_index(client, "git")
@@ -208,14 +207,14 @@ def data_client(client: Elasticsearch) -> Generator[Elasticsearch, None, None]:
     client.options(ignore_status=404).indices.delete(index="flat-git")
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def async_data_client(
     data_client: Elasticsearch, async_client: AsyncElasticsearch
 ) -> AsyncGenerator[AsyncElasticsearch, None]:
     yield async_client
 
 
-@fixture
+@pytest.fixture
 def dummy_response() -> ObjectApiResponse[Any]:
     return ObjectApiResponse(
         meta=None,
@@ -271,7 +270,7 @@ def dummy_response() -> ObjectApiResponse[Any]:
     )
 
 
-@fixture
+@pytest.fixture
 def aggs_search() -> Search:
     s = Search(index="flat-git")
     s.aggs.bucket("popular_files", "terms", field="files", size=2).metric(
@@ -284,7 +283,7 @@ def aggs_search() -> Search:
     return s
 
 
-@fixture
+@pytest.fixture
 def aggs_data() -> Dict[str, Any]:
     return {
         "took": 4,
@@ -440,7 +439,7 @@ def make_pr(pr_module: Any) -> Any:
     )
 
 
-@fixture
+@pytest.fixture
 def pull_request(write_client: Elasticsearch) -> sync_document.PullRequest:
     sync_document.PullRequest.init()
     pr = cast(sync_document.PullRequest, make_pr(sync_document))
@@ -448,7 +447,7 @@ def pull_request(write_client: Elasticsearch) -> sync_document.PullRequest:
     return pr
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def async_pull_request(
     async_write_client: AsyncElasticsearch,
 ) -> async_document.PullRequest:
@@ -458,7 +457,7 @@ async def async_pull_request(
     return pr
 
 
-@fixture
+@pytest.fixture
 def setup_ubq_tests(client: Elasticsearch) -> str:
     index = "test-git"
     create_git_index(client, index)

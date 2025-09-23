@@ -18,7 +18,6 @@
 from datetime import datetime
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import Q
@@ -42,7 +41,7 @@ nick = User(
 )
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def question(async_write_client: AsyncElasticsearch) -> Question:
     await setup()
     assert await async_write_client.indices.exists_index_template(name="base")
