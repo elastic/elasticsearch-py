@@ -56,6 +56,7 @@ vectorstore_mmr = ["numpy>=1", "simsimd>=3"]
 dev = [
     "requests>=2, <3",
     "aiohttp",
+    "anyio",
     "pytest",
     "pytest-cov",
     "pytest-mock",
