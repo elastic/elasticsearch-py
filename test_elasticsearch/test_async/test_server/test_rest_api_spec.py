@@ -38,7 +38,8 @@ from ...test_server.test_rest_api_spec import (
 )
 from ...utils import parse_version
 
-# TODO fix test suite so that it can be run twice
+# We're not using `pytest.mark.anyio` here because it would run the test suite twice,
+# which does not work as it does not fully clean up after itself.
 pytestmark = pytest.mark.asyncio
 
 XPACK_FEATURES = None
