@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import asyncio
 import logging
 from typing import (
     Any,
@@ -32,7 +33,7 @@ from typing import (
     Union,
 )
 
-import anyio
+import sniffio
 
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
@@ -52,6 +53,15 @@ from .client import AsyncElasticsearch  # noqa
 logger = logging.getLogger("elasticsearch.helpers")
 
 T = TypeVar("T")
+
+
+async def _sleep(seconds: float) -> None:
+    if sniffio.current_async_library() == "trio":
+        import trio
+
+        await trio.sleep(seconds)
+    else:
+        await asyncio.sleep(seconds)
 
 
 async def _chunk_actions(

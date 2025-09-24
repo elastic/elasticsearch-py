@@ -45,7 +45,7 @@ dependencies = [
     "elastic-transport @ git+https://github.com/pquentin/elastic-transport-python.git@trio-support",
     "python-dateutil",
     "typing-extensions",
-    "anyio",
+    "sniffio",
 ]
 
 # TODO revert before merging/releasing
@@ -86,7 +86,7 @@ dev = [
     "jinja2",
     "tqdm",
     "trio",
-    "sniffio",
+    "anyio",
     "mypy",
     "pyright",
     "types-python-dateutil",
