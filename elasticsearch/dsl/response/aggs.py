@@ -63,7 +63,7 @@ class BucketData(AggResponse[_R]):
         )
 
     def __iter__(self) -> Iterator["Agg"]:  # type: ignore[override]
-        return iter(self.buckets)
+        return iter(self.buckets)  # type: ignore[arg-type]
 
     def __len__(self) -> int:
         return len(self.buckets)
