@@ -432,6 +432,9 @@ class DocumentOptions:
                     # the mapped_field() wrapper function was used so we need
                     # to look for the field instance and also record any
                     # dataclass-style defaults
+                    if attr_value.get("exclude"):
+                        # skip this field
+                        continue
                     attr_value = attrs[name].get("_field")
                     default_value = attrs[name].get("default") or attrs[name].get(
                         "default_factory"
@@ -529,6 +532,7 @@ def mapped_field(
     init: bool = True,
     default: Any = None,
     default_factory: Optional[Callable[[], Any]] = None,
+    exclude: bool = False,
     **kwargs: Any,
 ) -> Any:
     """Construct a field using dataclass behaviors
@@ -538,20 +542,23 @@ def mapped_field(
     options.
 
     :param field: The instance of ``Field`` to use for this field. If not provided,
-    an instance that is appropriate for the type given to the field is used.
+        an instance that is appropriate for the type given to the field is used.
     :param init: a value of ``True`` adds this field to the constructor, and a
-    value of ``False`` omits it from it. The default is ``True``.
+        value of ``False`` omits it from it. The default is ``True``.
     :param default: a default value to use for this field when one is not provided
-    explicitly.
+        explicitly.
     :param default_factory: a callable that returns a default value for the field,
-    when one isn't provided explicitly. Only one of ``factory`` and
-    ``default_factory`` can be used.
+        when one isn't provided explicitly. Only one of ``factory`` and
+        ``default_factory`` can be used.
+    :param exclude: Set to ``True`` to exclude this field from the Elasticsearch
+        index.
     """
     return _FieldMetadataDict(
         _field=field,
         init=init,
         default=default,
         default_factory=default_factory,
+        exclude=exclude,
         **kwargs,
     )
 

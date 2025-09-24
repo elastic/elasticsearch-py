@@ -678,6 +678,7 @@ def test_doc_with_type_hints() -> None:
         )
         i1: ClassVar
         i2: ClassVar[int]
+        i3: str = mapped_field(exclude=True)
 
     class TypedDocAnnotated(Document):
         st: Annotated[str, "foo"]
@@ -705,6 +706,7 @@ def test_doc_with_type_hints() -> None:
         else:
             i1: ClassVar
             i2: ClassVar[int]
+        i3: Annotated[str, mapped_field(exclude=True)]
 
     for doc_class in [TypedDoc, TypedDocAnnotated]:
         props = doc_class._doc_type.mapping.to_dict()["properties"]
@@ -741,6 +743,7 @@ def test_doc_with_type_hints() -> None:
 
         doc_class.i1 = "foo"
         doc_class.i2 = 123
+        doc_class.i3 = "bar"
 
         doc = doc_class()
         assert doc.k3 == "foo"
@@ -759,6 +762,7 @@ def test_doc_with_type_hints() -> None:
 
         assert doc_class.i1 == "foo"
         assert doc_class.i2 == 123
+        assert doc_class.i3 == "bar"
 
         doc.st = "s"
         doc.li = [1, 2, 3]
