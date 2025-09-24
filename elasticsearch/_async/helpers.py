@@ -256,9 +256,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await anyio.sleep(
-                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
-                )
+                await _sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 data: Union[
