@@ -16,14 +16,13 @@
 #  under the License.
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import RequestError
 
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def mvt_setup(async_client):
     await async_client.indices.create(
         index="museums",

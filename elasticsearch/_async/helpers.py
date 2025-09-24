@@ -33,6 +33,8 @@ from typing import (
     Union,
 )
 
+import sniffio
+
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
@@ -51,6 +53,15 @@ from .client import AsyncElasticsearch  # noqa
 logger = logging.getLogger("elasticsearch.helpers")
 
 T = TypeVar("T")
+
+
+async def _sleep(seconds: float) -> None:
+    if sniffio.current_async_library() == "trio":
+        import trio
+
+        await trio.sleep(seconds)
+    else:
+        await asyncio.sleep(seconds)
 
 
 async def _chunk_actions(
@@ -245,9 +256,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await asyncio.sleep(
-                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
-                )
+                await _sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 data: Union[

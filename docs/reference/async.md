@@ -50,6 +50,27 @@ All APIs that are available under the sync client are also available under the a
 
 See also the [Using OpenTelemetry](/reference/opentelemetry.md) page.
 
+## Trio support
+
+If you prefer using Trio instead of asyncio to take advantage of its better structured concurrency support, you can use the HTTPX async node which supports Trio out of the box.
+
+```python
+import trio
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch(
+    "https://...",
+    api_key="...",
+    node_class="httpxasync")
+
+async def main():
+    resp = await client.info()
+    print(resp.body)
+
+trio.run(main)
+```
+
+The one limitation of Trio support is that it does not currently support node sniffing, which was not implemented with structured concurrency in mind.
 
 ## Frequently Asked Questions [_frequently_asked_questions]
 

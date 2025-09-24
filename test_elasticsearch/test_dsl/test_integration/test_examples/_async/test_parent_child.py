@@ -18,7 +18,6 @@
 from datetime import datetime
 
 import pytest
-import pytest_asyncio
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import Q
@@ -42,7 +41,7 @@ nick = User(
 )
 
 
-@pytest_asyncio.fixture
+@pytest.fixture
 async def question(async_write_client: AsyncElasticsearch) -> Question:
     await setup()
     assert await async_write_client.indices.exists_index_template(name="base")
@@ -64,7 +63,7 @@ async def question(async_write_client: AsyncElasticsearch) -> Question:
     return q
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_comment(
     async_write_client: AsyncElasticsearch, question: Question
 ) -> None:
@@ -79,7 +78,7 @@ async def test_comment(
     assert c.author.username == "fxdgear"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_question_answer(
     async_write_client: AsyncElasticsearch, question: Question
 ) -> None:
