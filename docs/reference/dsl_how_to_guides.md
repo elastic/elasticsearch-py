@@ -1555,6 +1555,12 @@ The DSL module supports async/await with [asyncio](https://docs.python.org/3/lib
 $ python -m pip install "elasticsearch[async]"
 ```
 
+The DSL module also supports [Trio](https://trio.readthedocs.io/en/stable/) when using the Async HTTPX client. You do need to install Trio and HTTPX separately:
+
+```bash
+$ python -m pip install "elasticsearch trio httpx"
+```
+
 ### Connections [_connections]
 
 Use the `async_connections` module to manage your asynchronous connections.
@@ -1563,6 +1569,14 @@ Use the `async_connections` module to manage your asynchronous connections.
 from elasticsearch.dsl import async_connections
 
 async_connections.create_connection(hosts=['localhost'], timeout=20)
+```
+
+If you're using Trio, you need to explicitly request the Async HTTP client:
+
+```python
+from elasticsearch.dsl import async_connections
+
+async_connections.create_connection(hosts=['localhost'], node_class="httpxasync")
 ```
 
 All the options available in the `connections` module can be used with `async_connections`.
@@ -1575,8 +1589,6 @@ These warnings come from the `aiohttp` package, which is used internally by the 
 es = async_connections.get_connection()
 await es.close()
 ```
-
-
 
 ### Search DSL [_search_dsl]
 
