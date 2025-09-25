@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, ClassVar, Dict, Tuple, Type
+from typing import Any, ClassVar, Dict, List, Optional, Tuple, Type
 
 from pydantic import BaseModel, Field, PrivateAttr
 from typing_extensions import Annotated, Self, dataclass_transform
@@ -23,28 +23,95 @@ from typing_extensions import Annotated, Self, dataclass_transform
 from elasticsearch import dsl
 
 
+class ESMeta(BaseModel):
+    id: str = ""
+    index: str = ""
+    primary_term: int = 0
+    seq_no: int = 0
+    version: int = 0
+
+
 class _BaseModel(BaseModel):
-    meta: Annotated[Dict[str, Any], dsl.mapped_field(exclude=True)] = Field(default={})
+    meta: Annotated[ESMeta, dsl.mapped_field(exclude=True)] = Field(
+        default=ESMeta(), init=False
+    )
 
 
-class BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
-    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
-        model = super().__new__(cls, name, bases, attrs)
+class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
+    @staticmethod
+    def process_annotations(metacls: Type["_BaseESModelMetaclass"], annotations: Dict[str, Any]) -> Dict[str, Any]:
+        updated_annotations = {}
+        for var, ann in annotations.items():
+            if isinstance(ann, type(BaseModel)):
+                # an inner Pydantic model is transformed into an Object field
+                updated_annotations[var] = metacls.make_dsl_class(metacls, dsl.InnerDoc, ann)
+            elif (
+                hasattr(ann, "__origin__")
+                and ann.__origin__ in [list, List]
+                and isinstance(ann.__args__[0], type(BaseModel))
+            ):
+                # an inner list of Pydantic models is transformed into a Nested field
+                updated_annotations[var] = List[  # type: ignore[assignment,misc]
+                    metacls.make_dsl_class(metacls, dsl.InnerDoc, ann.__args__[0])
+                ]
+            else:
+                updated_annotations[var] = ann
+        return updated_annotations
+
+    @staticmethod
+    def make_dsl_class(metacls: Type["_BaseESModelMetaclass"], dsl_class: type, pydantic_model: type, pydantic_attrs: Optional[Dict[str, Any]] = None) -> type:
         dsl_attrs = {
             attr: value
-            for attr, value in dsl.AsyncDocument.__dict__.items()
+            for attr, value in dsl_class.__dict__.items()
             if not attr.startswith("__")
         }
-        model._doc = type(dsl.AsyncDocument)(  # type: ignore[misc]
-            f"_ES{name}",
-            dsl.AsyncDocument.__bases__,
-            {**attrs, **dsl_attrs, "__qualname__": f"_ES{name}"},
+        pydantic_attrs = {
+            **(pydantic_attrs or {}),
+            "__annotations__": metacls.process_annotations(
+                metacls, pydantic_model.__annotations__
+            ),
+        }
+        return type(dsl_class)(
+            f"_ES{pydantic_model.__name__}",
+            (dsl_class,),
+            {
+                **pydantic_attrs,
+                **dsl_attrs,
+                "__qualname__": f"_ES{pydantic_model.__name__}",
+            },
         )
+
+
+class BaseESModelMetaclass(_BaseESModelMetaclass):
+    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
+        model = super().__new__(cls, name, bases, attrs)
+        model._doc = cls.make_dsl_class(cls, dsl.Document, model, attrs)
         return model
 
 
 @dataclass_transform(kw_only_default=True, field_specifiers=(Field, PrivateAttr))
 class BaseESModel(_BaseModel, metaclass=BaseESModelMetaclass):
+    _doc: ClassVar[Type[dsl.Document]]
+
+    def to_doc(self) -> dsl.Document:
+        data = self.model_dump()
+        meta = {f"_{k}": v for k, v in data.pop("meta", {}).items()}
+        return self._doc(**meta, **data)
+
+    @classmethod
+    def from_doc(cls, dsl_obj: dsl.Document) -> Self:
+        return cls(meta=ESMeta(**dsl_obj.meta.to_dict()), **dsl_obj.to_dict())
+
+
+class AsyncBaseESModelMetaclass(_BaseESModelMetaclass):
+    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
+        model = super().__new__(cls, name, bases, attrs)
+        model._doc = cls.make_dsl_class(cls, dsl.AsyncDocument, model, attrs)
+        return model
+
+
+@dataclass_transform(kw_only_default=True, field_specifiers=(Field, PrivateAttr))
+class AsyncBaseESModel(_BaseModel, metaclass=AsyncBaseESModelMetaclass):
     _doc: ClassVar[Type[dsl.AsyncDocument]]
 
     def to_doc(self) -> dsl.AsyncDocument:
@@ -54,4 +121,9 @@ class BaseESModel(_BaseModel, metaclass=BaseESModelMetaclass):
 
     @classmethod
     def from_doc(cls, dsl_obj: dsl.AsyncDocument) -> Self:
-        return cls(meta=dsl_obj.meta.to_dict(), **dsl_obj.to_dict())
+        return cls(meta=ESMeta(**dsl_obj.meta.to_dict()), **dsl_obj.to_dict())
+
+
+# TODO
+# - object and nested fields
+# - tests

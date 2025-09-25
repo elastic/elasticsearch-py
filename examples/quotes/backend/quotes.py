@@ -4,18 +4,19 @@ import os
 from time import time
 from typing import Annotated
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from sentence_transformers import SentenceTransformer
 
-from elasticsearch.dsl.pydantic import BaseESModel
+from elasticsearch import NotFoundError
+from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']])
 
 
-class Quote(BaseESModel):
+class Quote(AsyncBaseESModel):
     quote: str
     author: Annotated[str, dsl.Keyword()]
     tags: Annotated[list[str], dsl.Keyword()]
@@ -44,11 +45,49 @@ class SearchResponse(BaseModel):
     total: int
 
 
-app = FastAPI()
+app = FastAPI(
+    title="Quotes API",
+    version="1.0.0",
+)
+
+@app.get("/api/quotes/{id}")
+async def get_quote(id: str) -> Quote:
+    doc = None
+    try:
+        doc = await Quote._doc.get(id)
+    except NotFoundError:
+        pass
+    if not doc:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return Quote.from_doc(doc)
+
+
+@app.post("/api/quotes", status_code=201)
+async def create_quote(req: Quote) -> Quote:
+    doc = req.to_doc()
+    doc.meta.id = ""
+    await doc.save(refresh=True)
+    return Quote.from_doc(doc)
+
+
+@app.put("/api/quotes/{id}")
+async def update_quote(id: str, req: Quote) -> Quote:
+    doc = req.to_doc()
+    doc.meta.id = id
+    await doc.save(refresh=True)
+    return Quote.from_doc(doc)
+
+
+@app.delete("/api/quotes/{id}", status_code=204)
+async def delete_quote(id: str, req: Quote) -> None:
+    doc = await Quote._doc.get(id)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Item not found")
+    await doc.delete(refresh=True)
 
 
 @app.post('/api/search')
-async def search(req: SearchRequest) -> SearchResponse:
+async def search_quotes(req: SearchRequest) -> SearchResponse:
     quotes, tags, total = await search_quotes(req.query, req.filters, use_knn=req.knn, start=req.start)
     return SearchResponse(
         quotes=quotes,

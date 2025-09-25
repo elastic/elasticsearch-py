@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:5000',
+      '/docs': 'http://localhost:5000',
+      '/redoc': 'http://localhost:5000',
+      '/openapi.json': 'http://localhost:5000',
     },
   },
 })

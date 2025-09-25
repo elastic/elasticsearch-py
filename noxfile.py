@@ -90,7 +90,6 @@ def lint(session):
         "flake8",
         "black~=25.0",
         "mypy",
-        "pydantic",
         "isort~=6.0",
         "types-requests",
         "types-python-dateutil",

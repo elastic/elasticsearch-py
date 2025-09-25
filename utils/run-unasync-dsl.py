@@ -62,6 +62,7 @@ def main(check=False):
         "AsyncMapping": "Mapping",
         "AsyncFacetedSearch": "FacetedSearch",
         "AsyncUsingType": "UsingType",
+        "AsyncBaseESModel": "BaseESModel",
         "async_connections": "connections",
         "async_scan": "scan",
         "async_simulate": "simulate",

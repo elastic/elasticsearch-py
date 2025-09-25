@@ -64,6 +64,7 @@ dev = [
     "python-dateutil",
     "unasync",
     "pyyaml>=5.4",
+    "pydantic",
     "isort",
     "black",
     "twine",
@@ -135,4 +136,5 @@ exclude_lines = [
 ]
 
 [tool.mypy]
+plugins = ["pydantic.mypy"]
 ignore_missing_imports = true
