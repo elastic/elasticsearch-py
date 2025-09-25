@@ -5,7 +5,7 @@ from time import time
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 from sentence_transformers import SentenceTransformer
 
 from elasticsearch import NotFoundError
@@ -50,6 +50,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
 @app.get("/api/quotes/{id}")
 async def get_quote(id: str) -> Quote:
     doc = None
@@ -64,6 +65,7 @@ async def get_quote(id: str) -> Quote:
 
 @app.post("/api/quotes", status_code=201)
 async def create_quote(req: Quote) -> Quote:
+    embed_quotes([req])
     doc = req.to_doc()
     doc.meta.id = ""
     await doc.save(refresh=True)
@@ -71,16 +73,33 @@ async def create_quote(req: Quote) -> Quote:
 
 
 @app.put("/api/quotes/{id}")
-async def update_quote(id: str, req: Quote) -> Quote:
-    doc = req.to_doc()
-    doc.meta.id = id
+async def update_quote(id: str, quote: Quote) -> Quote:
+    doc = None
+    try:
+        doc = await Quote._doc.get(id)
+    except NotFoundError:
+        pass
+    if not doc:
+        raise HTTPException(status_code=404, detail="Item not found")
+    if quote.quote:
+        embed_quotes([quote])
+        doc.quote = quote.quote
+        doc.embedding = quote.embedding
+    if quote.author:
+        doc.author = quote.author
+    if quote.tags:
+        doc.tags = quote.tags
     await doc.save(refresh=True)
     return Quote.from_doc(doc)
 
 
 @app.delete("/api/quotes/{id}", status_code=204)
-async def delete_quote(id: str, req: Quote) -> None:
-    doc = await Quote._doc.get(id)
+async def delete_quote(id: str) -> None:
+    doc = None
+    try:
+        doc = await Quote._doc.get(id)
+    except NotFoundError:
+        pass
     if not doc:
         raise HTTPException(status_code=404, detail="Item not found")
     await doc.delete(refresh=True)
@@ -88,13 +107,34 @@ async def delete_quote(id: str, req: Quote) -> None:
 
 @app.post('/api/search')
 async def search_quotes(req: SearchRequest) -> SearchResponse:
-    quotes, tags, total = await search_quotes(req.query, req.filters, use_knn=req.knn, start=req.start)
+    s = Quote._doc.search()
+    if req.query == '':
+        s = s.query(dsl.query.MatchAll())
+    elif req.knn:
+        s = s.query(dsl.query.Knn(field=Quote._doc.embedding, query_vector=model.encode(req.query).tolist()))
+    else:
+        s = s.query(dsl.query.Match(quote=req.query))
+    for tag in req.filters:
+        s = s.filter(dsl.query.Terms(tags=[tag]))
+    s.aggs.bucket('tags', dsl.aggs.Terms(field=Quote._doc.tags, size=100))
+
+    r = await s[req.start:req.start + 25].execute()
+    tags = [(tag.key, tag.doc_count) for tag in r.aggs.tags.buckets]
+    quotes = [Quote.from_doc(hit) for hit in r.hits]
+    total = r['hits'].total.value
+    
     return SearchResponse(
         quotes=quotes,
         tags=[Tag(tag=t[0], count=t[1]) for t in tags],
         start=req.start,
         total=total
     )
+
+
+def embed_quotes(quotes):
+    embeddings = model.encode([q.quote for q in quotes])
+    for q, e in zip(quotes, embeddings):
+        q.embedding = e.tolist()
 
 
 async def ingest_quotes():
@@ -105,11 +145,6 @@ async def ingest_quotes():
     def ingest_progress(count, start):
         elapsed = time() - start
         print(f'\rIngested {count} quotes. ({count / elapsed:.0f}/sec)', end='')
-
-    def embed_quotes(quotes):
-        embeddings = model.encode([q.quote for q in quotes])
-        for q, e in zip(quotes, embeddings):
-            q.embedding = e.tolist()
 
     async def get_next_quote():
         quotes: list[Quote] = []
@@ -135,22 +170,6 @@ async def ingest_quotes():
                 ingest_progress(count, start)
 
     await Quote._doc.bulk(get_next_quote())
-
-
-async def search_quotes(q, tags, use_knn=True, start=0, size=25):
-    s = Quote._doc.search()
-    if q == '':
-        s = s.query(dsl.query.MatchAll())
-    elif use_knn:
-        s = s.query(dsl.query.Knn(field=Quote._doc.embedding, query_vector=model.encode(q).tolist()))
-    else:
-        s = s.query(dsl.query.Match(quote=q))
-    for tag in tags:
-        s = s.filter(dsl.query.Terms(tags=[tag]))
-    s.aggs.bucket('tags', dsl.aggs.Terms(field=Quote._doc.tags, size=100))
-    r = await s[start:start + size].execute()
-    tags = [(tag.key, tag.doc_count) for tag in r.aggs.tags.buckets]
-    return [Quote.from_doc(hit) for hit in r.hits], tags, r['hits'].total.value
 
 
 if __name__ == "__main__":

@@ -973,6 +973,7 @@ def test_pydantic_integration() -> None:
             "id": "",
             "index": "",
             "primary_term": 0,
+            "score": 0,
             "seq_no": 0,
             "version": 0,
         },
