@@ -29,22 +29,28 @@ class ESMeta(BaseModel):
     primary_term: int = 0
     seq_no: int = 0
     version: int = 0
+    score: float = 0
 
 
 class _BaseModel(BaseModel):
     meta: Annotated[ESMeta, dsl.mapped_field(exclude=True)] = Field(
-        default=ESMeta(), init=False
+        default=ESMeta(),
+        init=False,
     )
 
 
 class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
     @staticmethod
-    def process_annotations(metacls: Type["_BaseESModelMetaclass"], annotations: Dict[str, Any]) -> Dict[str, Any]:
+    def process_annotations(
+        metacls: Type["_BaseESModelMetaclass"], annotations: Dict[str, Any]
+    ) -> Dict[str, Any]:
         updated_annotations = {}
         for var, ann in annotations.items():
             if isinstance(ann, type(BaseModel)):
                 # an inner Pydantic model is transformed into an Object field
-                updated_annotations[var] = metacls.make_dsl_class(metacls, dsl.InnerDoc, ann)
+                updated_annotations[var] = metacls.make_dsl_class(
+                    metacls, dsl.InnerDoc, ann
+                )
             elif (
                 hasattr(ann, "__origin__")
                 and ann.__origin__ in [list, List]
@@ -59,7 +65,12 @@ class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
         return updated_annotations
 
     @staticmethod
-    def make_dsl_class(metacls: Type["_BaseESModelMetaclass"], dsl_class: type, pydantic_model: type, pydantic_attrs: Optional[Dict[str, Any]] = None) -> type:
+    def make_dsl_class(
+        metacls: Type["_BaseESModelMetaclass"],
+        dsl_class: type,
+        pydantic_model: type,
+        pydantic_attrs: Optional[Dict[str, Any]] = None,
+    ) -> type:
         dsl_attrs = {
             attr: value
             for attr, value in dsl_class.__dict__.items()
@@ -95,7 +106,7 @@ class BaseESModel(_BaseModel, metaclass=BaseESModelMetaclass):
 
     def to_doc(self) -> dsl.Document:
         data = self.model_dump()
-        meta = {f"_{k}": v for k, v in data.pop("meta", {}).items()}
+        meta = {f"_{k}": v for k, v in data.pop("meta", {}).items() if v}
         return self._doc(**meta, **data)
 
     @classmethod
@@ -116,7 +127,7 @@ class AsyncBaseESModel(_BaseModel, metaclass=AsyncBaseESModelMetaclass):
 
     def to_doc(self) -> dsl.AsyncDocument:
         data = self.model_dump()
-        meta = {f"_{k}": v for k, v in data.pop("meta", {}).items()}
+        meta = {f"_{k}": v for k, v in data.pop("meta", {}).items() if v}
         return self._doc(**meta, **data)
 
     @classmethod
