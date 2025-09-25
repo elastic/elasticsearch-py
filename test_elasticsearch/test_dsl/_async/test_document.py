@@ -29,6 +29,7 @@ from datetime import datetime
 from hashlib import md5
 from typing import Annotated, Any, ClassVar, Dict, List, Optional
 
+import pydantic
 import pytest
 from pytest import raises
 
@@ -36,6 +37,7 @@ from elasticsearch.dsl import (
     AsyncDocument,
     Index,
     InnerDoc,
+    Keyword,
     M,
     Mapping,
     MetaField,
@@ -47,6 +49,7 @@ from elasticsearch.dsl import (
 )
 from elasticsearch.dsl.document_base import InstrumentedField
 from elasticsearch.dsl.exceptions import IllegalOperation, ValidationException
+from elasticsearch.dsl.pydantic import AsyncBaseESModel
 
 
 class MyInner(InnerDoc):
@@ -913,3 +916,106 @@ def test_instrumented_field() -> None:
         Doc.ns.something
     with raises(AttributeError):
         Doc.ns.st.something
+
+
+def test_pydantic_integration() -> None:
+    class Location(pydantic.BaseModel):
+        city: str
+        country: str
+
+    class Address(pydantic.BaseModel):
+        street: str
+        location: Location
+
+    class Phone(pydantic.BaseModel):
+        type: str
+        number: str
+
+    class User(AsyncBaseESModel):
+        name: Annotated[str, Keyword()] = pydantic.Field(default="Unknown")
+        bio: str
+        age: int = pydantic.Field(strict=True, ge=0)
+        address: Address = pydantic.Field(
+            default=Address(
+                street="Unknown", location=Location(city="Unknown", country="Unknown")
+            )
+        )
+        phones: list[Phone] = pydantic.Field(default=[])
+
+    u = User(
+        name="foo",
+        bio="lorem ipsum",
+        age=30,
+        address=Address(
+            street="123 Main St.",
+            location=Location(city="San Francisco", country="USA"),
+        ),
+    )
+    u.phones.append(Phone(type="Home", number="+12345678900"))
+    assert u.model_dump() == {
+        "name": "foo",
+        "bio": "lorem ipsum",
+        "age": 30,
+        "address": {
+            "street": "123 Main St.",
+            "location": {
+                "city": "San Francisco",
+                "country": "USA",
+            },
+        },
+        "phones": [
+            {
+                "type": "Home",
+                "number": "+12345678900",
+            }
+        ],
+        "meta": {
+            "id": "",
+            "index": "",
+            "primary_term": 0,
+            "seq_no": 0,
+            "version": 0,
+        },
+    }
+    udoc = u.to_doc()
+    assert udoc.name == "foo"
+    assert udoc.bio == "lorem ipsum"
+    assert udoc.age == 30
+    assert udoc.to_dict() == {
+        "name": "foo",
+        "bio": "lorem ipsum",
+        "age": 30,
+        "address": {
+            "street": "123 Main St.",
+            "location": {
+                "city": "San Francisco",
+                "country": "USA",
+            },
+        },
+        "phones": [
+            {
+                "type": "Home",
+                "number": "+12345678900",
+            }
+        ],
+    }
+
+    u2 = User.from_doc(udoc)
+    assert u == u2
+
+    with raises(pydantic.ValidationError):
+        _ = User()
+
+    with raises(pydantic.ValidationError):
+        _ = User(name="foo", bio="lorem ipsum")
+
+    with raises(pydantic.ValidationError):
+        _ = User(name="foo", bio="lorem ipsum", age=-10)
+
+    u3 = User(bio="lorem ipsum", age=30)
+    assert u3.name == "Unknown"
+    assert u3.address.location.country == "Unknown"
+    assert u3.phones == []
+    assert u3.to_doc().name == "Unknown"
+    assert u3.to_doc().address.location.country == "Unknown"
+    assert u3.to_doc().phones == []
