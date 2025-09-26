@@ -167,9 +167,11 @@ async def ingest_quotes():
                 embed_quotes(quotes)
                 for q in quotes:
                     yield q.to_doc()
+                count += len(quotes)
                 ingest_progress(count, start)
 
     await Quote._doc.bulk(get_next_quote())
+    print("\nIngest complete.")
 
 
 if __name__ == "__main__":
