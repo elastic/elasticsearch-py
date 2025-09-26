@@ -533,7 +533,7 @@ def test_document_inheritance() -> None:
     } == MySubDoc._doc_type.mapping.to_dict()
 
 
-def test_childdoc_class_can_override_parent() -> None:
+def test_child_class_can_override_parent() -> None:
     class A(Document):
         o = field.Object(dynamic=False, properties={"a": field.Text()})
 

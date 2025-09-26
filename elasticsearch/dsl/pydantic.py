@@ -24,6 +24,8 @@ from elasticsearch import dsl
 
 
 class ESMeta(BaseModel):
+    """Metadata items associated with Elasticsearch documents."""
+
     id: str = ""
     index: str = ""
     primary_term: int = 0
@@ -40,10 +42,15 @@ class _BaseModel(BaseModel):
 
 
 class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
+    """Generic metaclass methods for BaseEsModel and AsyncBaseESModel."""
+
     @staticmethod
     def process_annotations(
         metacls: Type["_BaseESModelMetaclass"], annotations: Dict[str, Any]
     ) -> Dict[str, Any]:
+        """Process Pydantic typing annotations and adapt them so that they can
+        be used to create the Elasticsearch document.
+        """
         updated_annotations = {}
         for var, ann in annotations.items():
             if isinstance(ann, type(BaseModel)):
@@ -71,6 +78,8 @@ class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
         pydantic_model: type,
         pydantic_attrs: Optional[Dict[str, Any]] = None,
     ) -> type:
+        """Create a DSL document class dynamically, using the structure of a
+        Pydantic model."""
         dsl_attrs = {
             attr: value
             for attr, value in dsl_class.__dict__.items()
@@ -94,9 +103,20 @@ class _BaseESModelMetaclass(type(BaseModel)):  # type: ignore[misc]
 
 
 class BaseESModelMetaclass(_BaseESModelMetaclass):
+    """Metaclass for the BaseESModel class."""
+
     def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
         model = super().__new__(cls, name, bases, attrs)
         model._doc = cls.make_dsl_class(cls, dsl.Document, model, attrs)
+        return model
+
+
+class AsyncBaseESModelMetaclass(_BaseESModelMetaclass):
+    """Metaclass for the AsyncBaseESModel class."""
+
+    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
+        model = super().__new__(cls, name, bases, attrs)
+        model._doc = cls.make_dsl_class(cls, dsl.AsyncDocument, model, attrs)
         return model
 
 
@@ -105,20 +125,15 @@ class BaseESModel(_BaseModel, metaclass=BaseESModelMetaclass):
     _doc: ClassVar[Type[dsl.Document]]
 
     def to_doc(self) -> dsl.Document:
+        """Convert this model to an Elasticsearch document."""
         data = self.model_dump()
         meta = {f"_{k}": v for k, v in data.pop("meta", {}).items() if v}
         return self._doc(**meta, **data)
 
     @classmethod
     def from_doc(cls, dsl_obj: dsl.Document) -> Self:
+        """Create a model from the given Elasticsearch document."""
         return cls(meta=ESMeta(**dsl_obj.meta.to_dict()), **dsl_obj.to_dict())
-
-
-class AsyncBaseESModelMetaclass(_BaseESModelMetaclass):
-    def __new__(cls, name: str, bases: Tuple[type, ...], attrs: Dict[str, Any]) -> Any:
-        model = super().__new__(cls, name, bases, attrs)
-        model._doc = cls.make_dsl_class(cls, dsl.AsyncDocument, model, attrs)
-        return model
 
 
 @dataclass_transform(kw_only_default=True, field_specifiers=(Field, PrivateAttr))
@@ -126,15 +141,12 @@ class AsyncBaseESModel(_BaseModel, metaclass=AsyncBaseESModelMetaclass):
     _doc: ClassVar[Type[dsl.AsyncDocument]]
 
     def to_doc(self) -> dsl.AsyncDocument:
+        """Convert this model to an Elasticsearch document."""
         data = self.model_dump()
         meta = {f"_{k}": v for k, v in data.pop("meta", {}).items() if v}
         return self._doc(**meta, **data)
 
     @classmethod
     def from_doc(cls, dsl_obj: dsl.AsyncDocument) -> Self:
+        """Create a model from the given Elasticsearch document."""
         return cls(meta=ESMeta(**dsl_obj.meta.to_dict()), **dsl_obj.to_dict())
-
-
-# TODO
-# - object and nested fields
-# - tests
