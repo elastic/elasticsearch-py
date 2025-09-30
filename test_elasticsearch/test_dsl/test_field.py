@@ -24,7 +24,14 @@ import pytest
 from dateutil import tz
 
 from elasticsearch import dsl
-from elasticsearch.dsl import InnerDoc, Range, ValidationException, field
+from elasticsearch.dsl import (
+    AttrDict,
+    AttrList,
+    InnerDoc,
+    Range,
+    ValidationException,
+    field,
+)
 
 
 def test_date_range_deserialization() -> None:
@@ -233,6 +240,33 @@ def test_object_constructor() -> None:
 
     with pytest.raises(ValidationException):
         field.Object(doc_class=Inner, dynamic=False)
+
+
+def test_dynamic_object() -> None:
+    f = field.Object(dynamic=True)
+    assert f.deserialize({"a": "b"}).to_dict() == {"a": "b"}
+    assert f.deserialize(AttrDict({"a": "b"})).to_dict() == {"a": "b"}
+    assert f.serialize({"a": "b"}) == {"a": "b"}
+    assert f.serialize(AttrDict({"a": "b"})) == {"a": "b"}
+
+
+def test_dynamic_nested() -> None:
+    f = field.Nested(dynamic=True)
+    assert f.deserialize([{"a": "b"}, {"c": "d"}]) == [{"a": "b"}, {"c": "d"}]
+    assert f.deserialize([AttrDict({"a": "b"}), {"c": "d"}]) == [
+        {"a": "b"},
+        {"c": "d"},
+    ]
+    assert f.deserialize(AttrList([AttrDict({"a": "b"}), {"c": "d"}])) == [
+        {"a": "b"},
+        {"c": "d"},
+    ]
+    assert f.serialize([{"a": "b"}, {"c": "d"}]) == [{"a": "b"}, {"c": "d"}]
+    assert f.serialize([AttrDict({"a": "b"}), {"c": "d"}]) == [{"a": "b"}, {"c": "d"}]
+    assert f.serialize(AttrList([AttrDict({"a": "b"}), {"c": "d"}])) == [
+        {"a": "b"},
+        {"c": "d"},
+    ]
 
 
 def test_all_fields_exported() -> None:
