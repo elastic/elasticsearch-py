@@ -287,6 +287,7 @@ class AsyncSearchClient(NamespacedClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         request_cache: t.Optional[bool] = None,
@@ -408,6 +409,10 @@ class AsyncSearchClient(NamespacedClient):
         :param preference: Specify the node or shard the operation should be performed
             on (default: random)
         :param profile:
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param q: Query in the Lucene query string syntax
         :param query: Defines the search definition using the Query DSL.
         :param request_cache: Specify if request cache should be used for this request
@@ -528,6 +533,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if request_cache is not None:

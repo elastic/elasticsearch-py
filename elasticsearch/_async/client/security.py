@@ -2052,6 +2052,45 @@ class SecurityClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    async def get_stats(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get security stats.</p>
+          <p>Gather security usage statistics from all node(s) within the cluster.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-get-stats>`_
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/stats"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_stats",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=(
             "grant_type",

@@ -580,6 +580,7 @@ class IngestClient(NamespacedClient):
         body_fields=(
             "deprecated",
             "description",
+            "field_access_pattern",
             "meta",
             "on_failure",
             "processors",
@@ -594,6 +595,9 @@ class IngestClient(NamespacedClient):
         deprecated: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
+        field_access_pattern: t.Optional[
+            t.Union[str, t.Literal["classic", "flexible"]]
+        ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         if_version: t.Optional[int] = None,
@@ -621,6 +625,8 @@ class IngestClient(NamespacedClient):
             or updating a non-deprecated index template, Elasticsearch will emit a deprecation
             warning.
         :param description: Description of the ingest pipeline.
+        :param field_access_pattern: Controls how processors in this pipeline should
+            read and write data on a document's source.
         :param if_version: Required version for optimistic concurrency control for pipeline
             updates
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -667,6 +673,8 @@ class IngestClient(NamespacedClient):
                 __body["deprecated"] = deprecated
             if description is not None:
                 __body["description"] = description
+            if field_access_pattern is not None:
+                __body["field_access_pattern"] = field_access_pattern
             if meta is not None:
                 __body["_meta"] = meta
             if on_failure is not None:

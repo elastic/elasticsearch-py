@@ -2775,6 +2775,31 @@ class NumericFielddata(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class PValueHeuristic(AttrDict[Any]):
+    """
+    :arg background_is_superset:
+    :arg normalize_above: Should the results be normalized when above the
+        given value. Allows for consistent significance results at various
+        scales. Note: `0` is a special value which means no normalization
+    """
+
+    background_is_superset: Union[bool, DefaultType]
+    normalize_above: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        background_is_superset: Union[bool, DefaultType] = DEFAULT,
+        normalize_above: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if background_is_superset is not DEFAULT:
+            kwargs["background_is_superset"] = background_is_superset
+        if normalize_above is not DEFAULT:
+            kwargs["normalize_above"] = normalize_above
+        super().__init__(kwargs)
+
+
 class PercentageScoreHeuristic(AttrDict[Any]):
     pass
 
@@ -3168,9 +3193,11 @@ class ScriptedHeuristic(AttrDict[Any]):
 class SemanticTextIndexOptions(AttrDict[Any]):
     """
     :arg dense_vector:
+    :arg sparse_vector:
     """
 
     dense_vector: Union["DenseVectorIndexOptions", Dict[str, Any], DefaultType]
+    sparse_vector: Union["SparseVectorIndexOptions", Dict[str, Any], DefaultType]
 
     def __init__(
         self,
@@ -3178,10 +3205,15 @@ class SemanticTextIndexOptions(AttrDict[Any]):
         dense_vector: Union[
             "DenseVectorIndexOptions", Dict[str, Any], DefaultType
         ] = DEFAULT,
+        sparse_vector: Union[
+            "SparseVectorIndexOptions", Dict[str, Any], DefaultType
+        ] = DEFAULT,
         **kwargs: Any,
     ):
         if dense_vector is not DEFAULT:
             kwargs["dense_vector"] = dense_vector
+        if sparse_vector is not DEFAULT:
+            kwargs["sparse_vector"] = sparse_vector
         super().__init__(kwargs)
 
 
@@ -4030,24 +4062,25 @@ class TestPopulation(AttrDict[Any]):
 
 class TextEmbedding(AttrDict[Any]):
     """
-    :arg model_id: (required)
     :arg model_text: (required)
+    :arg model_id: Model ID is required for all dense_vector fields but
+        may be inferred for semantic_text fields
     """
 
-    model_id: Union[str, DefaultType]
     model_text: Union[str, DefaultType]
+    model_id: Union[str, DefaultType]
 
     def __init__(
         self,
         *,
-        model_id: Union[str, DefaultType] = DEFAULT,
         model_text: Union[str, DefaultType] = DEFAULT,
+        model_id: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
-        if model_id is not DEFAULT:
-            kwargs["model_id"] = model_id
         if model_text is not DEFAULT:
             kwargs["model_text"] = model_text
+        if model_id is not DEFAULT:
+            kwargs["model_id"] = model_id
         super().__init__(kwargs)
 
 

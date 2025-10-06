@@ -2980,6 +2980,14 @@ class SignificantTerms(Bucket[_R]):
         the foreground sample with a term divided by the number of
         documents in the background with the term.
     :arg script_heuristic: Customized score, implemented via a script.
+    :arg p_value: Significant terms heuristic that calculates the p-value
+        between the term existing in foreground and background sets.  The
+        p-value is the probability of obtaining test results at least as
+        extreme as the results actually observed, under the assumption
+        that the null hypothesis is correct. The p-value is calculated
+        assuming that the foreground set and the background set are
+        independent https://en.wikipedia.org/wiki/Bernoulli_trial, with
+        the null hypothesis that the probabilities are the same.
     :arg shard_min_doc_count: Regulates the certainty a shard has if the
         term should actually be added to the candidate list or not with
         respect to the `min_doc_count`. Terms will only be considered if
@@ -3033,6 +3041,9 @@ class SignificantTerms(Bucket[_R]):
         script_heuristic: Union[
             "types.ScriptedHeuristic", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
+        p_value: Union[
+            "types.PValueHeuristic", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         shard_min_doc_count: Union[int, "DefaultType"] = DEFAULT,
         shard_size: Union[int, "DefaultType"] = DEFAULT,
         size: Union[int, "DefaultType"] = DEFAULT,
@@ -3051,6 +3062,7 @@ class SignificantTerms(Bucket[_R]):
             mutual_information=mutual_information,
             percentage=percentage,
             script_heuristic=script_heuristic,
+            p_value=p_value,
             shard_min_doc_count=shard_min_doc_count,
             shard_size=shard_size,
             size=size,

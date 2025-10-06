@@ -285,6 +285,7 @@ class SqlClient(NamespacedClient):
         page_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         params: t.Optional[t.Sequence[t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         query: t.Optional[str] = None,
         request_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -332,6 +333,10 @@ class SqlClient(NamespacedClient):
             is no longer available. Subsequent scroll requests prolong the lifetime of
             the scroll cursor by the duration of `page_timeout` in the scroll request.
         :param params: The values for parameters in the query.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param query: The SQL query to run.
         :param request_timeout: The timeout before the request fails.
         :param runtime_mappings: One or more runtime fields for the search request. These
@@ -357,6 +362,8 @@ class SqlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if not __body:
             if allow_partial_search_results is not None:
                 __body["allow_partial_search_results"] = allow_partial_search_results
