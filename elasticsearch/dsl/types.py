@@ -3907,24 +3907,25 @@ class TestPopulation(AttrDict[Any]):
 
 class TextEmbedding(AttrDict[Any]):
     """
-    :arg model_id: (required)
     :arg model_text: (required)
+    :arg model_id: Model ID is required for all dense_vector fields but
+        may be inferred for semantic_text fields
     """
 
-    model_id: Union[str, DefaultType]
     model_text: Union[str, DefaultType]
+    model_id: Union[str, DefaultType]
 
     def __init__(
         self,
         *,
-        model_id: Union[str, DefaultType] = DEFAULT,
         model_text: Union[str, DefaultType] = DEFAULT,
+        model_id: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
-        if model_id is not DEFAULT:
-            kwargs["model_id"] = model_id
         if model_text is not DEFAULT:
             kwargs["model_text"] = model_text
+        if model_id is not DEFAULT:
+            kwargs["model_id"] = model_id
         super().__init__(kwargs)
 
 
