@@ -141,7 +141,9 @@ class LogstashClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-logstash-put-pipeline>`_
 
-        :param id: An identifier for the pipeline.
+        :param id: An identifier for the pipeline. Pipeline IDs must begin with a letter
+            or underscore and contain only letters, underscores, dashes, hyphens and
+            numbers.
         :param pipeline:
         """
         if id in SKIP_IN_PATH:

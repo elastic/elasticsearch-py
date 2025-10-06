@@ -368,9 +368,7 @@ class NodesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
-        level: t.Optional[
-            t.Union[str, t.Literal["cluster", "indices", "shards"]]
-        ] = None,
+        level: t.Optional[t.Union[str, t.Literal["indices", "node", "shards"]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         types: t.Optional[t.Sequence[str]] = None,
