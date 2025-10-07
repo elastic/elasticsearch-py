@@ -284,14 +284,14 @@ class ESQLBase(ABC):
 
     def fork(
         self,
-        fork1: "ESQLBase",
-        fork2: Optional["ESQLBase"] = None,
-        fork3: Optional["ESQLBase"] = None,
-        fork4: Optional["ESQLBase"] = None,
-        fork5: Optional["ESQLBase"] = None,
-        fork6: Optional["ESQLBase"] = None,
-        fork7: Optional["ESQLBase"] = None,
-        fork8: Optional["ESQLBase"] = None,
+        fork1: "Branch",
+        fork2: Optional["Branch"] = None,
+        fork3: Optional["Branch"] = None,
+        fork4: Optional["Branch"] = None,
+        fork5: Optional["Branch"] = None,
+        fork6: Optional["Branch"] = None,
+        fork7: Optional["Branch"] = None,
+        fork8: Optional["Branch"] = None,
     ) -> "Fork":
         """The ``FORK`` processing command creates multiple execution branches to operate on the
         same input data and combines the results in a single output table.
@@ -377,7 +377,7 @@ class ESQLBase(ABC):
         return Limit(self, max_number_of_rows)
 
     def lookup_join(self, lookup_index: IndexType) -> "LookupJoin":
-        """`LOOKUP JOIN` enables you to add data from another index, AKA a 'lookup' index,
+        """``LOOKUP JOIN`` enables you to add data from another index, AKA a 'lookup' index,
         to your ES|QL query results, simplifying data enrichment and analysis workflows.
 
         :param lookup_index: The name of the lookup index. This must be a specific index
@@ -411,7 +411,7 @@ class ESQLBase(ABC):
         return LookupJoin(self, lookup_index)
 
     def mv_expand(self, column: FieldType) -> "MvExpand":
-        """The `MV_EXPAND` processing command expands multivalued columns into one row per
+        """The ``MV_EXPAND`` processing command expands multivalued columns into one row per
         value, duplicating other columns.
 
         :param column: The multivalued column to expand.
@@ -449,7 +449,7 @@ class ESQLBase(ABC):
         :param named_query: The query text used to rerank the documents, given as a
                             keyword argument. The argument name is used for the column
                             name. If the query is given as a positional argument, the
-                            results will be stored in a column named `_score`. If the
+                            results will be stored in a column named ``_score``. If the
                             specified column already exists, it will be overwritten with
                             the new results.
 
@@ -540,7 +540,7 @@ class ESQLBase(ABC):
         :param named_expressions: A list of expressions, given as keyword arguments. The
                                   argument names are used for the returned aggregated values.
 
-        Note that only one of `expressions` and `named_expressions` must be provided.
+        Note that only one of ``expressions`` and ``named_expressions`` must be provided.
 
         Examples::
 
@@ -596,7 +596,7 @@ class ESQLBase(ABC):
 
     def where(self, *expressions: ExpressionType) -> "Where":
         """The ``WHERE`` processing command produces a table that contains all the rows
-        from the input table for which the provided condition evaluates to `true`.
+        from the input table for which the provided condition evaluates to ``true``.
 
         :param expressions: A list of boolean expressions, given as positional arguments.
                             These expressions are combined with an ``AND`` logical operator.
@@ -720,21 +720,22 @@ class ChangePoint(ESQLBase):
         self._pvalue_name: Optional[str] = None
 
     def on(self, key: FieldType) -> "ChangePoint":
-        """Continuation of the `CHANGE_POINT` command.
+        """Continuation of the ``CHANGE_POINT`` command.
 
         :param key: The column with the key to order the values by. If not specified,
-                    `@timestamp` is used.
+                    ``@timestamp`` is used.
         """
         self._key = key
         return self
 
     def as_(self, type_name: str, pvalue_name: str) -> "ChangePoint":
-        """Continuation of the `CHANGE_POINT` command.
+        """Continuation of the ``CHANGE_POINT`` command.
 
         :param type_name: The name of the output column with the change point type.
-                          If not specified, `type` is used.
+                          If not specified, ``type`` is used.
         :param pvalue_name: The name of the output column with the p-value that indicates
-                            how extreme the change point is. If not specified, `pvalue` is used.
+                            how extreme the change point is. If not specified, ``pvalue``
+                            is used.
         """
         self._type_name = type_name
         self._pvalue_name = pvalue_name
@@ -771,10 +772,10 @@ class Completion(ESQLBase):
         self._inference_id: Optional[str] = None
 
     def with_(self, inference_id: str) -> "Completion":
-        """Continuation of the `COMPLETION` command.
+        """Continuation of the ``COMPLETION`` command.
 
         :param inference_id: The ID of the inference endpoint to use for the task. The
-                             inference endpoint must be configured with the completion
+                             inference endpoint must be configured with the ``completion``
                              task type.
         """
         self._inference_id = inference_id
@@ -863,7 +864,7 @@ class Enrich(ESQLBase):
         :param match_field: The match field. ``ENRICH`` uses its value to look for records
                             in the enrich index. If not specified, the match will be
                             performed on the column with the same name as the
-                            `match_field` defined in the enrich policy.
+                            ``match_field`` defined in the enrich policy.
         """
         self._match_field = match_field
         return self
@@ -953,14 +954,14 @@ class Fork(ESQLBase):
     def __init__(
         self,
         parent: ESQLBase,
-        fork1: ESQLBase,
-        fork2: Optional[ESQLBase] = None,
-        fork3: Optional[ESQLBase] = None,
-        fork4: Optional[ESQLBase] = None,
-        fork5: Optional[ESQLBase] = None,
-        fork6: Optional[ESQLBase] = None,
-        fork7: Optional[ESQLBase] = None,
-        fork8: Optional[ESQLBase] = None,
+        fork1: "Branch",
+        fork2: Optional["Branch"] = None,
+        fork3: Optional["Branch"] = None,
+        fork4: Optional["Branch"] = None,
+        fork5: Optional["Branch"] = None,
+        fork6: Optional["Branch"] = None,
+        fork7: Optional["Branch"] = None,
+        fork8: Optional["Branch"] = None,
     ):
         super().__init__(parent)
         self._branches = [fork1, fork2, fork3, fork4, fork5, fork6, fork7, fork8]
@@ -1040,7 +1041,7 @@ class LookupJoin(ESQLBase):
         self._field: Optional[FieldType] = None
 
     def on(self, field: FieldType) -> "LookupJoin":
-        """Continuation of the `LOOKUP_JOIN` command.
+        """Continuation of the ``LOOKUP JOIN`` command.
 
         :param field: The field to join on. This field must exist in both your current query
                       results and in the lookup index. If the field contains multi-valued
@@ -1117,14 +1118,19 @@ class Rerank(ESQLBase):
         self._inference_id: Optional[str] = None
 
     def on(self, *fields: str) -> "Rerank":
+        """Continuation of the ``RERANK`` command.
+
+        :param fields: One or more fields to use for reranking. These fields should
+                       contain the text that the reranking model will evaluate.
+        """
         self._fields = fields
         return self
 
     def with_(self, inference_id: str) -> "Rerank":
-        """Continuation of the `COMPLETION` command.
+        """Continuation of the ``RERANK`` command.
 
         :param inference_id: The ID of the inference endpoint to use for the task. The
-                             inference endpoint must be configured with the completion
+                             inference endpoint must be configured with the ``rerank``
                              task type.
         """
         self._inference_id = inference_id
@@ -1210,6 +1216,12 @@ class Stats(ESQLBase):
         self._grouping_expressions: Optional[Tuple[ExpressionType, ...]] = None
 
     def by(self, *grouping_expressions: ExpressionType) -> "Stats":
+        """Continuation of the ``STATS`` command.
+
+        :param grouping_expressions: Expressions that output the values to group by.
+                                     If their names coincide with one of the computed
+                                     columns, that column will be ignored.
+        """
         self._grouping_expressions = grouping_expressions
         return self
 
