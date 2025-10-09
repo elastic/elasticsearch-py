@@ -1116,7 +1116,7 @@ class Fuse(ESQLBase):
         super().__init__(parent)
         self.method = method
         self.by_columns: List[FieldType] = []
-        self.options = {}
+        self.options: Dict[str, Any] = {}
 
     def by(self, *columns: FieldType) -> "Fuse":
         self.by_columns += list(columns)
