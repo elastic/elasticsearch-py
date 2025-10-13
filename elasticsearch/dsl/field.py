@@ -3874,9 +3874,13 @@ class SemanticText(Field):
         sent in the inference endpoint associated with inference_id. If
         chunking settings are updated, they will not be applied to
         existing documents until they are reindexed.
+    :arg fields:
     """
 
     name = "semantic_text"
+    _param_defs = {
+        "fields": {"type": "field", "hash": True},
+    }
 
     def __init__(
         self,
@@ -3890,6 +3894,7 @@ class SemanticText(Field):
         chunking_settings: Union[
             "types.ChunkingSettings", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
         if meta is not DEFAULT:
@@ -3902,6 +3907,8 @@ class SemanticText(Field):
             kwargs["index_options"] = index_options
         if chunking_settings is not DEFAULT:
             kwargs["chunking_settings"] = chunking_settings
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
         super().__init__(*args, **kwargs)
 
 

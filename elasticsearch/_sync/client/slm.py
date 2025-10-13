@@ -431,11 +431,7 @@ class SlmClient(NamespacedClient):
                 __body["retention"] = retention
             if schedule is not None:
                 __body["schedule"] = schedule
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

@@ -97,11 +97,7 @@ class GraphClient(NamespacedClient):
                 __body["query"] = query
             if vertices is not None:
                 __body["vertices"] = vertices
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

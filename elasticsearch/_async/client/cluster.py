@@ -96,11 +96,7 @@ class ClusterClient(NamespacedClient):
                 __body["primary"] = primary
             if shard is not None:
                 __body["shard"] = shard
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -1048,11 +1044,7 @@ class ClusterClient(NamespacedClient):
         if not __body:
             if commands is not None:
                 __body["commands"] = commands
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
