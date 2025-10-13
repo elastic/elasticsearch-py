@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python 3.x
         uses: actions/setup-python@v5
         with:
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set up Python 3.x
         uses: actions/setup-python@v5
         with:
@@ -47,7 +47,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set Up Python - ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
