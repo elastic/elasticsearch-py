@@ -73,7 +73,7 @@ dev = [
     "orjson",
     "numpy",
     "simsimd",
-    "pyarrow",
+    "pyarrow; python_version<3.14",
     "pandas",
     "mapbox-vector-tile",
     "jinja2",
