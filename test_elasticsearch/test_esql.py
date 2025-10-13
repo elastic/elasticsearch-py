@@ -55,6 +55,22 @@ def test_show():
     assert query.render() == "SHOW INFO"
 
 
+def test_ts():
+    query = (
+        ESQL.ts("metrics")
+        .where("@timestamp >= now() - 1 day")
+        .stats("SUM(AVG_OVER_TIME(memory_usage))")
+        .by("host", "TBUCKET(1 hour)")
+    )
+    assert (
+        query.render()
+        == """TS metrics
+| WHERE @timestamp >= now() - 1 day
+| STATS SUM(AVG_OVER_TIME(memory_usage))
+        BY host, TBUCKET(1 hour)"""
+    )
+
+
 def test_change_point():
     query = (
         ESQL.row(key=list(range(1, 26)))
@@ -276,6 +292,78 @@ def test_fork():
     )
 
 
+def test_fuse():
+    query = (
+        ESQL.from_("books")
+        .metadata("_id", "_index", "_score")
+        .fork(
+            ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+            ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+        )
+        .fuse()
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _id, _index, _score
+| FORK ( WHERE title:"Shakespeare" | SORT _score DESC )
+       ( WHERE semantic_title:"Shakespeare" | SORT _score DESC )
+| FUSE"""
+    )
+
+    query = (
+        ESQL.from_("books")
+        .metadata("_id", "_index", "_score")
+        .fork(
+            ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+            ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+        )
+        .fuse("linear")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _id, _index, _score
+| FORK ( WHERE title:"Shakespeare" | SORT _score DESC )
+       ( WHERE semantic_title:"Shakespeare" | SORT _score DESC )
+| FUSE LINEAR"""
+    )
+
+    query = (
+        ESQL.from_("books")
+        .metadata("_id", "_index", "_score")
+        .fork(
+            ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+            ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+        )
+        .fuse("linear")
+        .by("title", "description")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _id, _index, _score
+| FORK ( WHERE title:"Shakespeare" | SORT _score DESC )
+       ( WHERE semantic_title:"Shakespeare" | SORT _score DESC )
+| FUSE LINEAR BY title BY description"""
+    )
+
+    query = (
+        ESQL.from_("books")
+        .metadata("_id", "_index", "_score")
+        .fork(
+            ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+            ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+        )
+        .fuse("linear")
+        .with_(normalizer="minmax")
+    )
+    assert (
+        query.render()
+        == """FROM books METADATA _id, _index, _score
+| FORK ( WHERE title:"Shakespeare" | SORT _score DESC )
+       ( WHERE semantic_title:"Shakespeare" | SORT _score DESC )
+| FUSE LINEAR WITH {"normalizer": "minmax"}"""
+    )
+
+
 def test_grok():
     query = (
         ESQL.row(a="2023-01-23T12:15:00.000Z 127.0.0.1 some.email@foo.com 42")
@@ -319,6 +407,82 @@ def test_grok():
         == """FROM addresses
 | KEEP city.name, zip_code
 | GROK zip_code "%{WORD:zip_parts} %{WORD:zip_parts}\""""
+    )
+
+
+def test_inline_stats():
+    query = (
+        ESQL.from_("employees")
+        .keep("emp_no", "languages", "salary")
+        .inline_stats(max_salary=functions.max(E("salary")))
+        .by("languages")
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| KEEP emp_no, languages, salary
+| INLINE STATS max_salary = MAX(salary)
+               BY languages"""
+    )
+
+    query = (
+        ESQL.from_("employees")
+        .keep("emp_no", "languages", "salary")
+        .inline_stats(max_salary=functions.max(E("salary")))
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| KEEP emp_no, languages, salary
+| INLINE STATS max_salary = MAX(salary)"""
+    )
+
+    query = (
+        ESQL.from_("employees")
+        .where("still_hired")
+        .keep("emp_no", "languages", "salary", "hire_date")
+        .eval(tenure=functions.date_diff("year", E("hire_date"), "2025-09-18T00:00:00"))
+        .drop("hire_date")
+        .inline_stats(
+            avg_salary=functions.avg(E("salary")),
+            count=functions.count(E("*")),
+        )
+        .by("languages", "tenure")
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| WHERE still_hired
+| KEEP emp_no, languages, salary, hire_date
+| EVAL tenure = DATE_DIFF("year", hire_date, "2025-09-18T00:00:00")
+| DROP hire_date
+| INLINE STATS avg_salary = AVG(salary),
+               count = COUNT(*)
+               BY languages, tenure"""
+    )
+
+    query = (
+        ESQL.from_("employees")
+        .keep("emp_no", "salary")
+        .inline_stats(
+            avg_lt_50=functions.round(functions.avg(E("salary"))).where(
+                E("salary") < 50000
+            ),
+            avg_lt_60=functions.round(functions.avg(E("salary"))).where(
+                E("salary") >= 50000, E("salary") < 60000
+            ),
+            avg_gt_60=functions.round(functions.avg(E("salary"))).where(
+                E("salary") >= 60000
+            ),
+        )
+    )
+    assert (
+        query.render()
+        == """FROM employees
+| KEEP emp_no, salary
+| INLINE STATS avg_lt_50 = ROUND(AVG(salary)) WHERE salary < 50000,
+               avg_lt_60 = ROUND(AVG(salary)) WHERE (salary >= 50000) AND (salary < 60000),
+               avg_gt_60 = ROUND(AVG(salary)) WHERE salary >= 60000"""
     )
 
 
