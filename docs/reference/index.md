@@ -69,8 +69,14 @@ Compatibility does not imply full feature parity. New {{es}} features are suppor
 
 {{es}} language clients are also _backward compatible_ across minor versions &mdash; with default distributions and without guarantees. 
 
+### Major version upgrades
+
 :::{tip}
 To upgrade to a new major version, first upgrade {{es}}, then upgrade the Python {{es}} client.
 :::
 
-If you need to work with multiple client versions, note that older versions are also released as `elasticsearch7` and `elasticsearch8`.
+Since version 8.0, the {{es}} server supports a compatibility mode that allows smoother upgrade experiences. In a nutshell, this makes it possible to upgrade the {{es}} server to the next major version, while continuing to use the same client. This gives more room to coordinate the upgrade of your codebase to the next major version.
+
+For example, to upgrade a system that uses {{es}} 8.x you can upgrade the {{es}} server to 9.x first, and the 8.x Python {{es}} client will continue to work (aside from any breaking changes, which should be listed in the server release notes). You can continue using the 8.x client during the server migration, and only upgrade it once the server migration is complete. The process is described in detail in the [REST API compatibility workflow](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/compatibility#_rest_api_compatibility_workflow) section of the {{es}} documentation.
+
+If you need to work with multiple client versions, note that older versions are also released with the `elasticsearch8` and `elasticsearch9` package names so that they can be installed together.
