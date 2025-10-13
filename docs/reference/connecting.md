@@ -277,13 +277,6 @@ client = Elasticsearch(
 ```
 
 
-## Enabling the Compatibility Mode [compatibility-mode]
-
-The {{es}} server version 8.0 is introducing a new compatibility mode that allows you a smoother upgrade experience from 7 to 8. In a nutshell, you can use the latest 7.x Python {{es}} {{es}} client with an 8.x {{es}} server, giving more room to coordinate the upgrade of your codebase to the next major version.
-
-If you want to leverage this functionality, please make sure that you are using the latest 7.x Python {{es}} client and set the environment variable `ELASTIC_CLIENT_APIVERSIONING` to `true`. The client is handling the rest internally. For every 8.0 and beyond Python {{es}} client, you’re all set! The compatibility mode is enabled by default.
-
-
 ## Using the Client in a Function-as-a-Service Environment [connecting-faas]
 
 This section illustrates the best practices for leveraging the {{es}} client in a Function-as-a-Service (FaaS) environment.
