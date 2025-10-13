@@ -277,12 +277,6 @@ client = Elasticsearch(
 ```
 
 
-## Version Compatibility [compatibility-mode]
-
-Since version 8.0, the {{es}} server supports a compatibility mode that allows smoother upgrade experiences. In a nutshell, this makes it possible to use the previous major version of the Python {{es}} client with it, giving more room to coordinate the upgrade of your codebase to the next major version.
-
-For example, to upgrade a system that uses {{es}} 8.x you can upgrade the {{es}} server to 9.x first, and the 8.x Python {{es}} client will continue to work (aside from any breaking changes, which should be listed in the server release notes). You can continue using the 8.x client during the server migration, and only upgrade it once the server migration is complete. The process is described in detail in the [REST API compatibility workflow](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/compatibility#_rest_api_compatibility_workflow) section of the {{es}} documentation.
-
 ## Using the Client in a Function-as-a-Service Environment [connecting-faas]
 
 This section illustrates the best practices for leveraging the {{es}} client in a Function-as-a-Service (FaaS) environment.
