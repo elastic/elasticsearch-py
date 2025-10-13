@@ -18,7 +18,7 @@
 import json
 import re
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from ..dsl.document_base import DocumentBase, InstrumentedExpression, InstrumentedField
 
@@ -77,6 +77,22 @@ class ESQL(ABC):
             query = ESQL.show("INFO")
         """
         return Show(item)
+
+    @staticmethod
+    def ts(*indices: IndexType) -> "TS":
+        """The ``TS`` source command is similar to ``FROM``, but for time series indices.
+
+        :param indices: A list of indices, data streams or aliases. Supports wildcards and date math.
+
+        Examples::
+
+            query = (
+                ESQL.ts("metrics")
+                .where("@timestamp >= now() - 1 day")
+                .stats("SUM(AVG_OVER_TIME(memory_usage)").by("host", "TBUCKET(1 hour)")
+            )
+        """
+        return TS(*indices)
 
     @staticmethod
     def branch() -> "Branch":
@@ -284,14 +300,14 @@ class ESQLBase(ABC):
 
     def fork(
         self,
-        fork1: "ESQLBase",
-        fork2: Optional["ESQLBase"] = None,
-        fork3: Optional["ESQLBase"] = None,
-        fork4: Optional["ESQLBase"] = None,
-        fork5: Optional["ESQLBase"] = None,
-        fork6: Optional["ESQLBase"] = None,
-        fork7: Optional["ESQLBase"] = None,
-        fork8: Optional["ESQLBase"] = None,
+        fork1: "Branch",
+        fork2: Optional["Branch"] = None,
+        fork3: Optional["Branch"] = None,
+        fork4: Optional["Branch"] = None,
+        fork5: Optional["Branch"] = None,
+        fork6: Optional["Branch"] = None,
+        fork7: Optional["Branch"] = None,
+        fork8: Optional["Branch"] = None,
     ) -> "Fork":
         """The ``FORK`` processing command creates multiple execution branches to operate on the
         same input data and combines the results in a single output table.
@@ -313,6 +329,51 @@ class ESQLBase(ABC):
         if self._is_forked():
             raise ValueError("a query can only have one fork")
         return Fork(self, fork1, fork2, fork3, fork4, fork5, fork6, fork7, fork8)
+
+    def fuse(self, method: Optional[str] = None) -> "Fuse":
+        """The ``FUSE`` processing command merges rows from multiple result sets and assigns
+        new relevance scores.
+
+        :param method: Defaults to ``RRF``. Can be one of ``RRF`` (for Reciprocal Rank Fusion)
+                       or ``LINEAR`` (for linear combination of scores). Designates which
+                       method to use to assign new relevance scores.
+
+        Examples::
+
+            query1 = (
+                ESQL.from_("books").metadata("_id", "_index", "_score")
+                .fork(
+                    ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+                    ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+                )
+                .fuse()
+            )
+            query2 = (
+                ESQL.from_("books").metadata("_id", "_index", "_score")
+                .fork(
+                    ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+                    ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+                )
+                .fuse("linear")
+            )
+            query3 = (
+                ESQL.from_("books").metadata("_id", "_index", "_score")
+                .fork(
+                    ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+                    ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+                )
+                .fuse("linear").by("title", "description")
+            )
+            query4 = (
+                ESQL.from_("books").metadata("_id", "_index", "_score")
+                .fork(
+                    ESQL.branch().where('title:"Shakespeare"').sort("_score DESC"),
+                    ESQL.branch().where('semantic_title:"Shakespeare"').sort("_score DESC"),
+                )
+                .fuse("linear").with_(normalizer="minmax")
+            )
+        """
+        return Fuse(self, method)
 
     def grok(self, input: FieldType, pattern: str) -> "Grok":
         """``GROK`` enables you to extract structured data out of a string.
@@ -348,6 +409,58 @@ class ESQLBase(ABC):
         """
         return Grok(self, input, pattern)
 
+    def inline_stats(
+        self, *expressions: ExpressionType, **named_expressions: ExpressionType
+    ) -> "Stats":
+        """The ``INLINE STATS`` processing command groups rows according to a common value
+        and calculates one or more aggregated values over the grouped rows.
+
+        The command is identical to ``STATS`` except that it preserves all the columns from
+        the input table.
+
+        :param expressions: A list of expressions, given as positional arguments.
+        :param named_expressions: A list of expressions, given as keyword arguments. The
+                                  argument names are used for the returned aggregated values.
+
+        Note that only one of ``expressions`` and ``named_expressions`` must be provided.
+
+        Examples::
+
+            query1 = (
+                ESQL.from_("employees")
+                .keep("emp_no", "languages", "salary")
+                .inline_stats(max_salary=functions.max(E("salary"))).by("languages")
+            )
+            query2 = (
+                ESQL.from_("employees")
+                .keep("emp_no", "languages", "salary")
+                .inline_stats(max_salary=functions.max(E("salary")))
+            )
+            query3 = (
+                ESQL.from_("employees")
+                .where("still_hired")
+                .keep("emp_no", "languages", "salary", "hire_date")
+                .eval(tenure=functions.date_diff("year", E("hire_date"), "2025-09-18T00:00:00"))
+                .drop("hire_date")
+                .inline_stats(
+                    avg_salary=functions.avg(E("salary")),
+                    count=functions.count(E("*")),
+                )
+                .by("languages", "tenure")
+            )
+            query4 = (
+                ESQL.from_("employees")
+                .keep("emp_no", "salary")
+                .inline_stats(
+                    avg_lt_50=functions.round(functions.avg(E("salary"))).where(E("salary") < 50000),
+                    avg_lt_60=functions.round(functions.avg(E("salary"))).where(E("salary") >= 50000, E("salary") < 60000),
+                    avg_gt_60=functions.round(functions.avg(E("salary"))).where(E("salary") >= 60000),
+                )
+            )
+
+        """
+        return InlineStats(self, *expressions, **named_expressions)
+
     def keep(self, *columns: FieldType) -> "Keep":
         """The ``KEEP`` processing command enables you to specify what columns are returned
         and the order in which they are returned.
@@ -377,7 +490,7 @@ class ESQLBase(ABC):
         return Limit(self, max_number_of_rows)
 
     def lookup_join(self, lookup_index: IndexType) -> "LookupJoin":
-        """`LOOKUP JOIN` enables you to add data from another index, AKA a 'lookup' index,
+        """``LOOKUP JOIN`` enables you to add data from another index, AKA a 'lookup' index,
         to your ES|QL query results, simplifying data enrichment and analysis workflows.
 
         :param lookup_index: The name of the lookup index. This must be a specific index
@@ -411,7 +524,7 @@ class ESQLBase(ABC):
         return LookupJoin(self, lookup_index)
 
     def mv_expand(self, column: FieldType) -> "MvExpand":
-        """The `MV_EXPAND` processing command expands multivalued columns into one row per
+        """The ``MV_EXPAND`` processing command expands multivalued columns into one row per
         value, duplicating other columns.
 
         :param column: The multivalued column to expand.
@@ -449,7 +562,7 @@ class ESQLBase(ABC):
         :param named_query: The query text used to rerank the documents, given as a
                             keyword argument. The argument name is used for the column
                             name. If the query is given as a positional argument, the
-                            results will be stored in a column named `_score`. If the
+                            results will be stored in a column named ``_score``. If the
                             specified column already exists, it will be overwritten with
                             the new results.
 
@@ -540,7 +653,7 @@ class ESQLBase(ABC):
         :param named_expressions: A list of expressions, given as keyword arguments. The
                                   argument names are used for the returned aggregated values.
 
-        Note that only one of `expressions` and `named_expressions` must be provided.
+        Note that only one of ``expressions`` and ``named_expressions`` must be provided.
 
         Examples::
 
@@ -596,7 +709,7 @@ class ESQLBase(ABC):
 
     def where(self, *expressions: ExpressionType) -> "Where":
         """The ``WHERE`` processing command produces a table that contains all the rows
-        from the input table for which the provided condition evaluates to `true`.
+        from the input table for which the provided condition evaluates to ``true``.
 
         :param expressions: A list of boolean expressions, given as positional arguments.
                             These expressions are combined with an ``AND`` logical operator.
@@ -629,13 +742,15 @@ class From(ESQLBase):
     in a single expression.
     """
 
+    command_name = "FROM"
+
     def __init__(self, *indices: IndexType):
         super().__init__()
         self._indices = indices
         self._metadata_fields: Tuple[FieldType, ...] = tuple()
 
     def metadata(self, *fields: FieldType) -> "From":
-        """Continuation of the ``FROM`` source command.
+        """Continuation of the ``FROM`` and ``TS`` source commands.
 
         :param fields: metadata fields to retrieve, given as positional arguments.
         """
@@ -644,7 +759,7 @@ class From(ESQLBase):
 
     def _render_internal(self) -> str:
         indices = [self._format_index(index) for index in self._indices]
-        s = f'{self.__class__.__name__.upper()} {", ".join(indices)}'
+        s = f'{self.command_name} {", ".join(indices)}'
         if self._metadata_fields:
             s = (
                 s
@@ -692,6 +807,17 @@ class Show(ESQLBase):
         return f"SHOW {self._format_id(self._item)}"
 
 
+class TS(From):
+    """Implementation of the ``TS`` source command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    command_name = "TS"
+
+
 class Branch(ESQLBase):
     """Implementation of a branch inside a ``FORK`` processing command.
 
@@ -720,21 +846,22 @@ class ChangePoint(ESQLBase):
         self._pvalue_name: Optional[str] = None
 
     def on(self, key: FieldType) -> "ChangePoint":
-        """Continuation of the `CHANGE_POINT` command.
+        """Continuation of the ``CHANGE_POINT`` command.
 
         :param key: The column with the key to order the values by. If not specified,
-                    `@timestamp` is used.
+                    ``@timestamp`` is used.
         """
         self._key = key
         return self
 
     def as_(self, type_name: str, pvalue_name: str) -> "ChangePoint":
-        """Continuation of the `CHANGE_POINT` command.
+        """Continuation of the ``CHANGE_POINT`` command.
 
         :param type_name: The name of the output column with the change point type.
-                          If not specified, `type` is used.
+                          If not specified, ``type`` is used.
         :param pvalue_name: The name of the output column with the p-value that indicates
-                            how extreme the change point is. If not specified, `pvalue` is used.
+                            how extreme the change point is. If not specified, ``pvalue``
+                            is used.
         """
         self._type_name = type_name
         self._pvalue_name = pvalue_name
@@ -771,10 +898,10 @@ class Completion(ESQLBase):
         self._inference_id: Optional[str] = None
 
     def with_(self, inference_id: str) -> "Completion":
-        """Continuation of the `COMPLETION` command.
+        """Continuation of the ``COMPLETION`` command.
 
         :param inference_id: The ID of the inference endpoint to use for the task. The
-                             inference endpoint must be configured with the completion
+                             inference endpoint must be configured with the ``completion``
                              task type.
         """
         self._inference_id = inference_id
@@ -863,7 +990,7 @@ class Enrich(ESQLBase):
         :param match_field: The match field. ``ENRICH`` uses its value to look for records
                             in the enrich index. If not specified, the match will be
                             performed on the column with the same name as the
-                            `match_field` defined in the enrich policy.
+                            ``match_field`` defined in the enrich policy.
         """
         self._match_field = match_field
         return self
@@ -953,14 +1080,14 @@ class Fork(ESQLBase):
     def __init__(
         self,
         parent: ESQLBase,
-        fork1: ESQLBase,
-        fork2: Optional[ESQLBase] = None,
-        fork3: Optional[ESQLBase] = None,
-        fork4: Optional[ESQLBase] = None,
-        fork5: Optional[ESQLBase] = None,
-        fork6: Optional[ESQLBase] = None,
-        fork7: Optional[ESQLBase] = None,
-        fork8: Optional[ESQLBase] = None,
+        fork1: "Branch",
+        fork2: Optional["Branch"] = None,
+        fork3: Optional["Branch"] = None,
+        fork4: Optional["Branch"] = None,
+        fork5: Optional["Branch"] = None,
+        fork6: Optional["Branch"] = None,
+        fork7: Optional["Branch"] = None,
+        fork8: Optional["Branch"] = None,
     ):
         super().__init__(parent)
         self._branches = [fork1, fork2, fork3, fork4, fork5, fork6, fork7, fork8]
@@ -975,6 +1102,39 @@ class Fork(ESQLBase):
                 else:
                     cmds += f"\n       ( {cmd} )"
         return f"FORK {cmds}"
+
+
+class Fuse(ESQLBase):
+    """Implementation of the ``FUSE`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase, method: Optional[str] = None):
+        super().__init__(parent)
+        self.method = method
+        self.by_columns: List[FieldType] = []
+        self.options: Dict[str, Any] = {}
+
+    def by(self, *columns: FieldType) -> "Fuse":
+        self.by_columns += list(columns)
+        return self
+
+    def with_(self, **options: Any) -> "Fuse":
+        self.options = options
+        return self
+
+    def _render_internal(self) -> str:
+        method = f" {self.method.upper()}" if self.method else ""
+        by = (
+            " " + " ".join([f"BY {column}" for column in self.by_columns])
+            if self.by_columns
+            else ""
+        )
+        with_ = " WITH " + json.dumps(self.options) if self.options else ""
+        return f"FUSE{method}{by}{with_}"
 
 
 class Grok(ESQLBase):
@@ -1040,7 +1200,7 @@ class LookupJoin(ESQLBase):
         self._field: Optional[FieldType] = None
 
     def on(self, field: FieldType) -> "LookupJoin":
-        """Continuation of the `LOOKUP_JOIN` command.
+        """Continuation of the ``LOOKUP JOIN`` command.
 
         :param field: The field to join on. This field must exist in both your current query
                       results and in the lookup index. If the field contains multi-valued
@@ -1117,14 +1277,19 @@ class Rerank(ESQLBase):
         self._inference_id: Optional[str] = None
 
     def on(self, *fields: str) -> "Rerank":
+        """Continuation of the ``RERANK`` command.
+
+        :param fields: One or more fields to use for reranking. These fields should
+                       contain the text that the reranking model will evaluate.
+        """
         self._fields = fields
         return self
 
     def with_(self, inference_id: str) -> "Rerank":
-        """Continuation of the `COMPLETION` command.
+        """Continuation of the ``RERANK`` command.
 
         :param inference_id: The ID of the inference endpoint to use for the task. The
-                             inference endpoint must be configured with the completion
+                             inference endpoint must be configured with the ``rerank``
                              task type.
         """
         self._inference_id = inference_id
@@ -1195,6 +1360,8 @@ class Stats(ESQLBase):
     in a single expression.
     """
 
+    command_name = "STATS"
+
     def __init__(
         self,
         parent: ESQLBase,
@@ -1210,6 +1377,12 @@ class Stats(ESQLBase):
         self._grouping_expressions: Optional[Tuple[ExpressionType, ...]] = None
 
     def by(self, *grouping_expressions: ExpressionType) -> "Stats":
+        """Continuation of the ``STATS`` and ``INLINE STATS`` commands.
+
+        :param grouping_expressions: Expressions that output the values to group by.
+                                     If their names coincide with one of the computed
+                                     columns, that column will be ignored.
+        """
         self._grouping_expressions = grouping_expressions
         return self
 
@@ -1221,13 +1394,25 @@ class Stats(ESQLBase):
             ]
         else:
             exprs = [f"{self._format_expr(expr)}" for expr in self._expressions]
-        expression_separator = ",\n        "
+        indent = " " * (len(self.command_name) + 3)
+        expression_separator = f",\n{indent}"
         by = (
             ""
             if self._grouping_expressions is None
-            else f'\n        BY {", ".join([f"{self._format_expr(expr)}" for expr in self._grouping_expressions])}'
+            else f'\n{indent}BY {", ".join([f"{self._format_expr(expr)}" for expr in self._grouping_expressions])}'
         )
-        return f'STATS {expression_separator.join([f"{expr}" for expr in exprs])}{by}'
+        return f'{self.command_name} {expression_separator.join([f"{expr}" for expr in exprs])}{by}'
+
+
+class InlineStats(Stats):
+    """Implementation of the ``INLINE STATS`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    command_name = "INLINE STATS"
 
 
 class Where(ESQLBase):
