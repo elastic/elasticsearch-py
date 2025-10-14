@@ -35,6 +35,11 @@ from typing import (
 )
 
 try:
+    import annotationlib
+except ImportError:
+    annotationlib = None
+
+try:
     from types import UnionType
 except ImportError:
     UnionType = None  # type: ignore[assignment, misc]
@@ -332,21 +337,16 @@ class DocumentOptions:
         #     # ignore attributes
         #     field10: ClassVar[string] = "a regular class variable"
         annotations = attrs.get("__annotations__", {})
-        if not annotations:
+        if not annotations and annotationlib:
             # Python 3.14+ uses annotationlib
-            try:
-                import annotationlib
-
-                annotate = annotationlib.get_annotate_from_class_namespace(attrs)
-                if annotate:
-                    annotations = (
-                        annotationlib.call_annotate_function(
-                            annotate, format=annotationlib.Format.VALUE
-                        )
-                        or {}
+            annotate = annotationlib.get_annotate_from_class_namespace(attrs)
+            if annotate:
+                annotations = (
+                    annotationlib.call_annotate_function(
+                        annotate, format=annotationlib.Format.VALUE
                     )
-            except ImportError:
-                pass
+                    or {}
+                )
         fields = {n for n in attrs if isinstance(attrs[n], Field)}
         fields.update(annotations.keys())
         field_defaults = {}
