@@ -270,11 +270,7 @@ class LicenseClient(NamespacedClient):
                 __body["license"] = license
             if licenses is not None:
                 __body["licenses"] = licenses
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

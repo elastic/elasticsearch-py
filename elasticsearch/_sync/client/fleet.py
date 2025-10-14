@@ -644,11 +644,7 @@ class FleetClient(NamespacedClient):
                 __body["track_total_hits"] = track_total_hits
             if version is not None:
                 __body["version"] = version
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
