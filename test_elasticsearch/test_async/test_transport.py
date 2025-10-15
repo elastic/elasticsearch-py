@@ -582,10 +582,7 @@ class TestSniffing:
             == "Sniffing should not be enabled when connecting to Elastic Cloud"
         )
 
-    async def test_sniff_on_start_close_unlocks_async_calls(self, anyio_backend):
-        if anyio_backend == "trio":
-            pytest.skip("trio does not support sniffing")
-
+    async def test_sniff_on_start_close_unlocks_async_calls(self):
         client = AsyncElasticsearch(  # noqa: F821
             [
                 NodeConfig(
