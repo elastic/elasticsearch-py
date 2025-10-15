@@ -16,6 +16,7 @@ steps:
           - "3.11"
           - "3.12"
           - "3.13"
+          - "3.14"
         connection:
           - "urllib3"
           - "requests"
@@ -23,11 +24,11 @@ steps:
           - "test"
       adjustments:
         - with:
-            python: "3.9"
+            python: "3.10"
             connection: "urllib3"
             nox_session: "test_otel"
         - with:
-            python: "3.13"
+            python: "3.14"
             connection: "urllib3"
             nox_session: "test_otel"
     command: ./.buildkite/run-tests
