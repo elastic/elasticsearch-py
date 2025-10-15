@@ -38,6 +38,20 @@ def abs(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"ABS({_render(number)})")
 
 
+def absent(field: ExpressionType) -> InstrumentedExpression:
+    """Returns true if the input expression yields no non-null values within the
+    current aggregation context.
+
+    :param field: Expression that outputs values to be checked for absence.
+    """
+    return InstrumentedExpression(f"ABSENT({_render(field)})")
+
+
+def absent_over_time(field: ExpressionType) -> InstrumentedExpression:
+    """Calculates the absence of a field in the output result over time range."""
+    return InstrumentedExpression(f"ABSENT_OVER_TIME({_render(field)})")
+
+
 def acos(number: ExpressionType) -> InstrumentedExpression:
     """Returns the arccosine of `n` as an angle, expressed in radians.
 
@@ -364,6 +378,11 @@ def exp(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"EXP({_render(number)})")
 
 
+def first(value: ExpressionType, sort: ExpressionType) -> InstrumentedExpression:
+    """Calculates the earliest value of a field."""
+    return InstrumentedExpression(f"FIRST({_render(value)}, {_render(sort)})")
+
+
 def first_over_time(field: ExpressionType) -> InstrumentedExpression:
     """The earliest value of a field, where recency determined by the
     `@timestamp` field.
@@ -461,6 +480,11 @@ def kql(query: ExpressionType) -> InstrumentedExpression:
     :param query: Query string in KQL query string format.
     """
     return InstrumentedExpression(f"KQL({_render(query)})")
+
+
+def last(value: ExpressionType, sort: ExpressionType) -> InstrumentedExpression:
+    """Calculates the latest value of a field."""
+    return InstrumentedExpression(f"LAST({_render(value)}, {_render(sort)})")
 
 
 def last_over_time(field: ExpressionType) -> InstrumentedExpression:
@@ -697,6 +721,18 @@ def mv_concat(string: ExpressionType, delim: ExpressionType) -> InstrumentedExpr
     return InstrumentedExpression(f"MV_CONCAT({_render(string)}, {_render(delim)})")
 
 
+def mv_contains(
+    superset: ExpressionType, subset: ExpressionType
+) -> InstrumentedExpression:
+    """Checks if all values yielded by the second multivalue expression are present in the
+    values yielded by the first multivalue expression. Returns a boolean. Null values are
+    treated as an empty set.
+    """
+    return InstrumentedExpression(
+        f"MV_CONTAINS({_render(superset)}, {_render(subset)})"
+    )
+
+
 def mv_count(field: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued expression into a single valued column containing
     a count of the number of values.
@@ -892,6 +928,18 @@ def pow(base: ExpressionType, exponent: ExpressionType) -> InstrumentedExpressio
     :param exponent: Numeric expression for the exponent. If `null`, the function returns `null`.
     """
     return InstrumentedExpression(f"POW({_render(base)}, {_render(exponent)})")
+
+
+def present(field: ExpressionType) -> InstrumentedExpression:
+    """Returns true if the input expression yields any non-null values within the current
+    aggregation context. Otherwise it returns false.
+    """
+    return InstrumentedExpression(f"PRESENT({_render(field)})")
+
+
+def present_over_time(field: ExpressionType) -> InstrumentedExpression:
+    """Calculates the presence of a field in the output result over time range."""
+    return InstrumentedExpression(f"PRESENT_OVER_TIME({_render(field)})")
 
 
 def qstr(
@@ -1452,6 +1500,11 @@ def sum(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"SUM({_render(number)})")
 
 
+def sum_over_time(field: ExpressionType) -> InstrumentedExpression:
+    """Calculates the sum over time value of a field."""
+    return InstrumentedExpression(f"SUM({_render(field)})")
+
+
 def tan(angle: ExpressionType) -> InstrumentedExpression:
     """Returns the tangent of an angle.
 
@@ -1481,6 +1534,17 @@ def term(field: ExpressionType, query: ExpressionType) -> InstrumentedExpression
     :param query: Term you wish to find in the provided field.
     """
     return InstrumentedExpression(f"TERM({_render(field)}, {_render(query)})")
+
+
+def text_embedding(
+    text: ExpressionType, inference_id: ExpressionType
+) -> InstrumentedExpression:
+    """Generates dense vector embeddings from text input using a specified inference endpoint.
+    Use this function to generate query vectors for KNN searches against your vectorized data
+    or others dense vector based operations."""
+    return InstrumentedExpression(
+        f"TEXT_EMBEDDING({_render(text)}, {_render(inference_id)})"
+    )
 
 
 def top(
@@ -1596,6 +1660,22 @@ def to_double(field: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"TO_DOUBLE({_render(field)})")
 
 
+def to_geohash(field: ExpressionType) -> InstrumentedExpression:
+    """Converts an input value to a geohash value. A string will only be successfully
+    converted if it respects the geohash format, as described for the geohash grid
+    aggregation.
+    """
+    return InstrumentedExpression(f"TO_GEOHASH({_render(field)})")
+
+
+def to_geohex(field: ExpressionType) -> InstrumentedExpression:
+    """Converts an input value to a geohex value. A string will only be successfully
+    converted if it respects the geohex format, as described for the geohex grid
+    aggregation.
+    """
+    return InstrumentedExpression(f"TO_GEOHEX({_render(field)})")
+
+
 def to_geopoint(field: ExpressionType) -> InstrumentedExpression:
     """Converts an input value to a `geo_point` value. A string will only be
     successfully converted if it respects the WKT Point format.
@@ -1614,6 +1694,14 @@ def to_geoshape(field: ExpressionType) -> InstrumentedExpression:
                   or an expression.
     """
     return InstrumentedExpression(f"TO_GEOSHAPE({_render(field)})")
+
+
+def to_geotile(field: ExpressionType) -> InstrumentedExpression:
+    """Converts an input value to a geotile value. A string will only be successfully
+    converted if it respects the geotile format, as described for the geotile grid
+    aggregation.
+    """
+    return InstrumentedExpression(f"TO_GEOTILE({_render(field)})")
 
 
 def to_integer(field: ExpressionType) -> InstrumentedExpression:

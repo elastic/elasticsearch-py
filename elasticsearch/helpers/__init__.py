@@ -19,12 +19,21 @@ from .._async.helpers import async_bulk, async_reindex, async_scan, async_stream
 from .._utils import fixup_module_metadata
 from .actions import _chunk_actions  # noqa: F401
 from .actions import _process_bulk_chunk  # noqa: F401
-from .actions import bulk, expand_action, parallel_bulk, reindex, scan, streaming_bulk
+from .actions import (
+    BULK_FLUSH,
+    bulk,
+    expand_action,
+    parallel_bulk,
+    reindex,
+    scan,
+    streaming_bulk,
+)
 from .errors import BulkIndexError, ScanError
 
 __all__ = [
     "BulkIndexError",
     "ScanError",
+    "BULK_FLUSH",
     "expand_action",
     "streaming_bulk",
     "bulk",
