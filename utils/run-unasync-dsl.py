@@ -124,15 +124,16 @@ def main(check=False):
                     f"{output_dir}{file}",
                 ]
             )
-            subprocess.check_call(
-                [
-                    "sed",
-                    "-i.bak",
-                    "s/pytest.mark.anyio/pytest.mark.sync/",
-                    f"{output_dir}{file}",
-                ]
-            )
-            subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
+            for library in ["asyncio", "trio", "anyio"]:
+                subprocess.check_call(
+                    [
+                        "sed",
+                        "-i.bak",
+                        f"s/pytest.mark.{library}/pytest.mark.sync/",
+                        f"{output_dir}{file}",
+                    ]
+                )
+                subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
 
             if check:
                 # make sure there are no differences between _sync and _sync_check
