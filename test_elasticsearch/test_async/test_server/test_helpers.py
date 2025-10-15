@@ -128,7 +128,7 @@ class TestStreamingBulk:
             yield {"answer": 2, "_id": 0}
             yield {"answer": 1, "_id": 1}
             yield helpers.BULK_FLUSH
-            await asyncio.sleep(0.5)
+            await anyio.sleep(0.5)
             yield {"answer": 2, "_id": 2}
 
         timestamps = []
@@ -145,7 +145,7 @@ class TestStreamingBulk:
         async def async_gen():
             yield {"answer": 2, "_id": 0}
             yield {"answer": 1, "_id": 1}
-            await asyncio.sleep(0.5)
+            await anyio.sleep(0.5)
             yield {"answer": 2, "_id": 2}
 
         timestamps = []
