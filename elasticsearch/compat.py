@@ -106,7 +106,9 @@ def safe_thread(
 
 
 @asynccontextmanager
-async def safe_task(coro: Coroutine[Any, Any, Any]) -> AsyncIterator[asyncio.Task[Any]]:
+async def safe_task(
+    coro: Coroutine[Any, Any, Any],
+) -> "AsyncIterator[asyncio.Task[Any]]":
     """Run a background task within a context manager block.
 
     The task is awaited when the block ends.
