@@ -25,7 +25,6 @@ from ...utils import CA_CERTS, wipe_cluster
 
 @pytest.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
-    print("async!", elasticsearch_url)
     kwargs = {}
     if sniffio.current_async_library() == "trio":
         kwargs["node_class"] = "httpxasync"
