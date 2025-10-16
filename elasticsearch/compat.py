@@ -15,14 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
 import inspect
 import os
 import sys
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import contextmanager
 from pathlib import Path
 from threading import Thread
-from typing import Any, AsyncIterator, Callable, Coroutine, Iterator, Tuple, Type, Union
+from typing import Any, Callable, Iterator, Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
 

@@ -93,6 +93,8 @@ async def _chunk_actions(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
 
+    action: _TYPE_BULK_ACTION_WITH_META
+    data: _TYPE_BULK_ACTION_BODY
     if not flush_after_seconds:
         async for action, data in actions:
             ret = chunker.feed(action, data)
@@ -115,8 +117,8 @@ async def _chunk_actions(
 
             timeout: Optional[float] = flush_after_seconds
             while True:
-                action: _TYPE_BULK_ACTION_WITH_META = {}
-                data: _TYPE_BULK_ACTION_BODY = None
+                action = {}
+                data = None
                 with move_on_after(timeout) as scope:
                     action, data = await receiver.receive()
                     timeout = flush_after_seconds
