@@ -34,8 +34,8 @@ from typing import (
 )
 
 import sniffio
+from anyio import create_memory_object_stream, create_task_group, move_on_after
 
-from ..compat import safe_task
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
@@ -99,26 +99,28 @@ async def _chunk_actions(
             if ret:
                 yield ret
     else:
-        item_queue: asyncio.Queue[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY] = (
-            asyncio.Queue()
-        )
+        sender, receiver = create_memory_object_stream[
+            _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY
+        ]()
 
         async def get_items() -> None:
             try:
                 async for item in actions:
-                    await item_queue.put(item)
+                    await sender.send(item)
             finally:
-                await item_queue.put((BulkMeta.done, None))
+                await sender.send((BulkMeta.done, None))
 
-        async with safe_task(get_items()):
+        async with create_task_group() as tg:
+            tg.start_soon(get_items)
+
             timeout: Optional[float] = flush_after_seconds
             while True:
-                try:
-                    action, data = await asyncio.wait_for(
-                        item_queue.get(), timeout=timeout
-                    )
+                action: _TYPE_BULK_ACTION_WITH_META = {}
+                data: _TYPE_BULK_ACTION_BODY = None
+                with move_on_after(timeout) as scope:
+                    action, data = await receiver.receive()
                     timeout = flush_after_seconds
-                except asyncio.TimeoutError:
+                if scope.cancelled_caught:
                     action, data = BulkMeta.flush, None
                     timeout = None
 

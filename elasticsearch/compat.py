@@ -105,22 +105,10 @@ def safe_thread(
         raise captured_exception
 
 
-@asynccontextmanager
-async def safe_task(coro: Coroutine[Any, Any, Any]) -> AsyncIterator[asyncio.Task[Any]]:
-    """Run a background task within a context manager block.
-
-    The task is awaited when the block ends.
-    """
-    task = asyncio.create_task(coro)
-    yield task
-    await task
-
-
 __all__ = [
     "string_types",
     "to_str",
     "to_bytes",
     "warn_stacklevel",
     "safe_thread",
-    "safe_task",
 ]

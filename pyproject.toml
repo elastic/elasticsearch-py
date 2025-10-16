@@ -46,6 +46,7 @@ dependencies = [
     "python-dateutil",
     "typing-extensions",
     "sniffio",
+    "anyio",
 ]
 
 # TODO revert before merging/releasing
@@ -86,7 +87,6 @@ dev = [
     "jinja2",
     "tqdm",
     "trio",
-    "anyio",
     "mypy",
     "pyright",
     "types-python-dateutil",
