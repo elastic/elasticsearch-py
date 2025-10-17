@@ -44,7 +44,7 @@ def pytest_argv():
     ]
 
 
-@nox.session(python=["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"])
+@nox.session(python=["3.10", "3.11", "3.12", "3.13", "3.14"])
 def test(session):
     session.install("-e", ".[dev]", env=INSTALL_ENV, silent=False)
 
