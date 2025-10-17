@@ -20,6 +20,7 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import copy
 import io
 import json
 import os
@@ -117,6 +118,7 @@ class YamlRunner:
         self._state = {}
 
     def use_spec(self, test_spec):
+        test_spec = copy.deepcopy(test_spec)
         self._setup_code = test_spec.pop("setup", None)
         self._run_code = test_spec.pop("run", None)
         self._teardown_code = test_spec.pop("teardown", None)

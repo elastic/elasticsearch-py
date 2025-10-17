@@ -15,14 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
 import inspect
 import os
 import sys
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import contextmanager
 from pathlib import Path
 from threading import Thread
-from typing import Any, AsyncIterator, Callable, Coroutine, Iterator, Tuple, Type, Union
+from typing import Any, Callable, Iterator, Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
 
@@ -105,22 +104,10 @@ def safe_thread(
         raise captured_exception
 
 
-@asynccontextmanager
-async def safe_task(coro: Coroutine[Any, Any, Any]) -> AsyncIterator[asyncio.Task[Any]]:
-    """Run a background task within a context manager block.
-
-    The task is awaited when the block ends.
-    """
-    task = asyncio.create_task(coro)
-    yield task
-    await task
-
-
 __all__ = [
     "string_types",
     "to_str",
     "to_bytes",
     "warn_stacklevel",
     "safe_thread",
-    "safe_task",
 ]

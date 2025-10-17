@@ -33,7 +33,9 @@ from typing import (
     Union,
 )
 
-from ..compat import safe_task
+import sniffio
+from anyio import create_memory_object_stream, create_task_group, move_on_after
+
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
@@ -55,6 +57,15 @@ from .client import AsyncElasticsearch  # noqa
 logger = logging.getLogger("elasticsearch.helpers")
 
 T = TypeVar("T")
+
+
+async def _sleep(seconds: float) -> None:
+    if sniffio.current_async_library() == "trio":
+        import trio
+
+        await trio.sleep(seconds)
+    else:
+        await asyncio.sleep(seconds)
 
 
 async def _chunk_actions(
@@ -82,32 +93,36 @@ async def _chunk_actions(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
 
+    action: _TYPE_BULK_ACTION_WITH_META
+    data: _TYPE_BULK_ACTION_BODY
     if not flush_after_seconds:
         async for action, data in actions:
             ret = chunker.feed(action, data)
             if ret:
                 yield ret
     else:
-        item_queue: asyncio.Queue[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY] = (
-            asyncio.Queue()
-        )
+        sender, receiver = create_memory_object_stream[
+            _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY
+        ]()
 
         async def get_items() -> None:
             try:
                 async for item in actions:
-                    await item_queue.put(item)
+                    await sender.send(item)
             finally:
-                await item_queue.put((BulkMeta.done, None))
+                await sender.send((BulkMeta.done, None))
 
-        async with safe_task(get_items()):
+        async with create_task_group() as tg:
+            tg.start_soon(get_items)
+
             timeout: Optional[float] = flush_after_seconds
             while True:
-                try:
-                    action, data = await asyncio.wait_for(
-                        item_queue.get(), timeout=timeout
-                    )
+                action = {}
+                data = None
+                with move_on_after(timeout) as scope:
+                    action, data = await receiver.receive()
                     timeout = flush_after_seconds
-                except asyncio.TimeoutError:
+                if scope.cancelled_caught:
                     action, data = BulkMeta.flush, None
                     timeout = None
 
@@ -294,9 +309,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await asyncio.sleep(
-                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
-                )
+                await _sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 data: Union[

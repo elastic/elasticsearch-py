@@ -16,11 +16,12 @@
 #  under the License.
 
 
-import asyncio
 import re
+import time
 import warnings
 from typing import Any, Dict, Optional
 
+import anyio
 import pytest
 from elastic_transport import (
     ApiResponseMeta,
@@ -39,8 +40,6 @@ from elasticsearch.exceptions import (
     ElasticsearchWarning,
     UnsupportedProductError,
 )
-
-pytestmark = pytest.mark.asyncio
 
 
 class DummyNode(BaseAsyncNode):
@@ -175,6 +174,7 @@ CLUSTER_NODES_MASTER_ONLY = """{
 }"""
 
 
+@pytest.mark.anyio
 class TestTransport:
     async def test_request_timeout_extracted_from_params_and_passed(self):
         client = AsyncElasticsearch(
@@ -378,6 +378,9 @@ class TestTransport:
         assert len(client.transport.node_pool._alive_nodes) == 2
         assert len(client.transport.node_pool._dead_consecutive_failures) == 0
 
+
+@pytest.mark.asyncio
+class TestSniffing:
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],
         [(CLUSTER_NODES, "1.1.1.1"), (CLUSTER_NODES_7x_PUBLISH_HOST, "somehost.tld")],
@@ -528,23 +531,22 @@ class TestTransport:
         assert len(client.transport.node_pool) == 3
 
     async def test_sniff_after_n_seconds(self):
-        event_loop = asyncio.get_running_loop()
         client = AsyncElasticsearch(  # noqa: F821
             [NodeConfig("http", "localhost", 9200, _extras={"data": CLUSTER_NODES})],
             node_class=DummyNode,
             min_delay_between_sniffing=5,
         )
-        client.transport._last_sniffed_at = event_loop.time()
+        client.transport._last_sniffed_at = time.monotonic()
 
         await client.info()
 
         for _ in range(4):
             await client.info()
-            await asyncio.sleep(0)
+            await anyio.sleep(0)
 
         assert 1 == len(client.transport.node_pool)
 
-        client.transport._last_sniffed_at = event_loop.time() - 5.1
+        client.transport._last_sniffed_at = time.monotonic() - 5.1
 
         await client.info()
         await client.transport._sniffing_task  # Need to wait for the sniffing task to complete
@@ -554,9 +556,9 @@ class TestTransport:
             node.base_url for node in client.transport.node_pool.all()
         )
         assert (
-            event_loop.time() - 1
+            time.monotonic() - 1
             < client.transport._last_sniffed_at
-            < event_loop.time() + 0.01
+            < time.monotonic() + 0.01
         )
 
     @pytest.mark.parametrize(
@@ -581,7 +583,6 @@ class TestTransport:
         )
 
     async def test_sniff_on_start_close_unlocks_async_calls(self):
-        event_loop = asyncio.get_running_loop()
         client = AsyncElasticsearch(  # noqa: F821
             [
                 NodeConfig(
@@ -596,20 +597,17 @@ class TestTransport:
         )
 
         # Start making _async_calls() before we cancel
-        tasks = []
-        start_time = event_loop.time()
-        for _ in range(3):
-            tasks.append(event_loop.create_task(client.info()))
-            await asyncio.sleep(0)
+        async with anyio.create_task_group() as tg:
+            start_time = time.monotonic()
+            for _ in range(3):
+                tg.start_soon(client.info)
+            await anyio.sleep(0)
 
-        # Close the transport while the sniffing task is active! :(
-        await client.transport.close()
+            # Close the transport while the sniffing task is active! :(
+            await client.transport.close()
 
-        # Now we start waiting on all those _async_calls()
-        await asyncio.gather(*tasks)
-        end_time = event_loop.time()
+        end_time = time.monotonic()
         duration = end_time - start_time
-
         # A lot quicker than 10 seconds defined in 'delay'
         assert duration < 1
 
@@ -661,6 +659,7 @@ class TestTransport:
         assert ports == {9200, 124}
 
 
+@pytest.mark.anyio
 @pytest.mark.parametrize("headers", [{}, {"X-elastic-product": "BAD HEADER"}])
 async def test_unsupported_product_error(headers):
     client = AsyncElasticsearch(
@@ -690,6 +689,7 @@ async def test_unsupported_product_error(headers):
     )
 
 
+@pytest.mark.anyio
 @pytest.mark.parametrize("status", [401, 403, 413, 500])
 async def test_unsupported_product_error_not_raised_on_non_2xx(status):
     client = AsyncElasticsearch(
@@ -709,6 +709,7 @@ async def test_unsupported_product_error_not_raised_on_non_2xx(status):
         assert e.meta.status == status
 
 
+@pytest.mark.anyio
 @pytest.mark.parametrize("status", [404, 500])
 async def test_api_error_raised_before_product_error(status):
     client = AsyncElasticsearch(
@@ -737,6 +738,7 @@ async def test_api_error_raised_before_product_error(status):
     assert calls[0][0] == ("GET", "/")
 
 
+@pytest.mark.anyio
 @pytest.mark.parametrize(
     "headers",
     [

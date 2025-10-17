@@ -39,7 +39,7 @@ def test_expand__to_dot_is_respected() -> None:
     assert {"query": {"match": {"a__b": 42}}} == s.to_dict()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_execute_uses_cache() -> None:
     s = AsyncSearch()
     r = object()
@@ -48,7 +48,7 @@ async def test_execute_uses_cache() -> None:
     assert r is await s.execute()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_cache_can_be_ignored(async_mock_client: Any) -> None:
     s = AsyncSearch(using="mock")
     r = object()
@@ -58,7 +58,7 @@ async def test_cache_can_be_ignored(async_mock_client: Any) -> None:
     async_mock_client.search.assert_awaited_once_with(index=None, body={})
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_iter_iterates_over_hits() -> None:
     s = AsyncSearch()
     s._response = [1, 2, 3]  # type: ignore[assignment]
@@ -612,7 +612,7 @@ def test_from_dict_doesnt_need_query() -> None:
     assert {"size": 5} == s.to_dict()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_params_being_passed_to_search(async_mock_client: Any) -> None:
     s = AsyncSearch(using="mock")
     s = s.params(routing="42")
@@ -704,7 +704,7 @@ def test_exclude() -> None:
     } == s.to_dict()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete_by_query(async_mock_client: Any) -> None:
     s = AsyncSearch(using="mock", index="i").query("match", lang="java")
     await s.delete()
@@ -789,7 +789,7 @@ def test_rescore_query_to_dict() -> None:
     }
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_empty_search() -> None:
     s = AsyncEmptySearch(index="index-name")
     s = s.query("match", lang="java")
