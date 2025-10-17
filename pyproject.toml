@@ -41,17 +41,12 @@ keywords = [
 ]
 dynamic = ["version"]
 dependencies = [
-    # TODO revert before merging/releasing
-    "elastic-transport @ git+https://github.com/pquentin/elastic-transport-python.git@trio-support",
+    "elastic-transport>=9.2.0,<10",
     "python-dateutil",
     "typing-extensions",
     "sniffio",
     "anyio",
 ]
-
-# TODO revert before merging/releasing
-[tool.hatch.metadata]
-allow-direct-references = true
 
 [project.optional-dependencies]
 async = ["aiohttp>=3,<4"]
