@@ -134,7 +134,7 @@ In this example you can see:
 * retrieving and saving the object into Elasticsearch
 * accessing the underlying client for other APIs
 
-You can see more in the `persistence` chapter.
+You can see more in the [persistence](dsl_how_to_guides.md#_persistence_2) chapter.
 
 
 ## Pre-built Faceted Search [_pre_built_faceted_search]
