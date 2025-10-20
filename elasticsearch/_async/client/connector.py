@@ -103,7 +103,7 @@ class ConnectorClient(NamespacedClient):
 
         :param connector_id: The unique identifier of the connector to be deleted
         :param delete_sync_jobs: A flag indicating if associated sync jobs should be
-            also removed. Defaults to false.
+            also removed.
         :param hard: A flag indicating if the connector should be hard deleted.
         """
         if connector_id in SKIP_IN_PATH:
@@ -360,7 +360,7 @@ class ConnectorClient(NamespacedClient):
 
         :param connector_name: A comma-separated list of connector names to fetch connector
             documents for
-        :param from_: Starting offset (default: 0)
+        :param from_: Starting offset
         :param include_deleted: A flag to indicate if the desired connector should be
             fetched, even if it was soft-deleted.
         :param index_name: A comma-separated list of connector index names to fetch connector
@@ -955,7 +955,7 @@ class ConnectorClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-connector-sync-job-list>`_
 
         :param connector_id: A connector id to fetch connector sync jobs for
-        :param from_: Starting offset (default: 0)
+        :param from_: Starting offset
         :param job_type: A comma-separated list of job types to fetch the sync jobs for
         :param size: Specifies a max number of results to get
         :param status: A sync job status to fetch connector sync jobs for

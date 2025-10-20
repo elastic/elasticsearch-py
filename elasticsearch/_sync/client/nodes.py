@@ -404,8 +404,8 @@ class NodesClient(NamespacedClient):
             are requested).
         :param include_unloaded_segments: If `true`, the response includes information
             from segments that are not loaded into memory.
-        :param level: Indicates whether statistics are aggregated at the cluster, index,
-            or shard level.
+        :param level: Indicates whether statistics are aggregated at the node, indices,
+            or shards level.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         :param types: A comma-separated list of document types for the indexing index
