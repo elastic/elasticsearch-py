@@ -630,7 +630,7 @@ For more comprehensive examples have a look at the [DSL examples](https://github
 
 ### Document [doc_type]
 
-If you want to create a model-like wrapper around your documents, use the `Document` class. It can also be used to create all the necessary mappings and settings in elasticsearch (see `life-cycle` for details).
+If you want to create a model-like wrapper around your documents, use the `Document` class (or the equivalent `AsyncDocument` for asynchronous applications). It can also be used to create all the necessary mappings and settings in Elasticsearch (see [Document life cycle](#life-cycle) below for details).
 
 ```python
 from datetime import datetime
@@ -721,9 +721,19 @@ class Post(Document):
     published: bool                 # same as published = Boolean(required=True)
 ```
 
-It is important to note that when using `Field` subclasses such as `Text`, `Date` and `Boolean`, they must be given in the right-side of an assignment, as shown in examples above. Using these classes as type hints will result in errors.
+::::{note}
+When using `Field` subclasses such as `Text`, `Date` and `Boolean` to define attributes, these classes must be given in the right-hand side.
 
-Python types are mapped to their corresponding field types according to the following table:
+```python
+class Post(Document):
+    title = Text()  # correct
+    subtitle: Text  # incorrect
+```
+
+Using a `Field` subclass as a Python type hint will result in errors.
+::::
+
+Python types are mapped to their corresponding `Field` types according to the following table:
 
 | Python type | DSL field |
 | --- | --- |
@@ -735,7 +745,7 @@ Python types are mapped to their corresponding field types according to the foll
 | `datetime` | `Date(required=True)` |
 | `date` | `Date(format="yyyy-MM-dd", required=True)` |
 
-To type a field as optional, the standard `Optional` modifier from the Python `typing` package can be used. When using Python 3.10 or newer, "pipe" syntax can also be used, by adding `| None` to a type. The `List` modifier can be added to a field to convert it to an array, similar to using the `multi=True` argument on the field object.
+To type a field as optional, the standard `Optional` modifier from the Python `typing` package can be used. When using Python 3.10 or newer, "pipe" syntax can also be used, by adding `| None` to a type. The `List` modifier can be added to a field to convert it to an array, similar to using the `multi=True` argument on the `Field` object.
 
 ```python
 from typing import Optional, List
@@ -763,7 +773,7 @@ class Post(Document):
     comments: List[Comment]  # same as comments = Nested(Comment, required=True)
 ```
 
-Unfortunately it is impossible to have Python type hints that uniquely identify every possible Elasticsearch field type. To choose a field type that is different than the one that is assigned according to the table above, the desired field instance can be added explicitly as a right-side assignment in the field declaration. The next example creates a field that is typed as `Optional[str]`, but is mapped to `Keyword` instead of `Text`:
+Unfortunately it is impossible to have Python type hints that uniquely identify every possible Elasticsearch `Field` type. To choose a type that is different than the one that is assigned according to the table above, the desired `Field` instance can be added explicitly as a right-side assignment in the field declaration. The next example creates a field that is typed as `Optional[str]`, but is mapped to `Keyword` instead of `Text`:
 
 ```python
 class MyDocument(Document):
@@ -787,7 +797,7 @@ class MyDocument(Document):
     category: str = mapped_field(Keyword(), default="general")
 ```
 
-When using the `mapped_field()` wrapper function, an explicit field type instance can be passed as a first positional argument, as the `category` field does in the example above.
+The `mapped_field()` wrapper function can optionally be given an explicit field type instance as a first positional argument, as the `category` field does in the example above to be defined as `Keyword` instead of the `Text` default.
 
 Static type checkers such as [mypy](https://mypy-lang.org/) and [pyright](https://github.com/microsoft/pyright) can use the type hints and the dataclass-specific options added to the `mapped_field()` function to improve type inference and provide better real-time code completion and suggestions in IDEs.
 
@@ -829,7 +839,7 @@ s = MyDocument.search().sort(-MyDocument.created_at, MyDocument.title)
 
 When specifying sorting order, the `+` and `-` unary operators can be used on the class field attributes to indicate ascending and descending order.
 
-Finally, the `ClassVar` annotation can be used to define a regular class attribute that should not be mapped to the Elasticsearch index:
+Finally, it is also possible to define class attributes and request that they are ignored when building the Elasticsearch mapping. One way is to type attributes with the `ClassVar` annotation. Alternatively, the `mapped_field()` wrapper function accepts an `exclude` argument that can be set to `True`:
 
 ```python
 from typing import ClassVar
@@ -837,8 +847,8 @@ from typing import ClassVar
 class MyDoc(Document):
     title: M[str] created_at: M[datetime] = mapped_field(default_factory=datetime.now)
     my_var: ClassVar[str]  # regular class variable, ignored by Elasticsearch
+    anoter_custom_var: int = mapped_field(exclude=True)  # also ignored by Elasticsearch
 ```
-
 
 #### Note on dates [_note_on_dates]
 
@@ -878,7 +888,7 @@ first.meta.id = 47
 first.save()
 ```
 
-All the metadata fields (`id`, `routing`, `index` etc) can be accessed (and set) via a `meta` attribute or directly using the underscored variant:
+All the metadata fields (`id`, `routing`, `index`, etc.) can be accessed (and set) via a `meta` attribute or directly using the underscored variant:
 
 ```python
 post = Post(meta={'id': 42})
@@ -961,12 +971,111 @@ first = Post.get(id=42)
 first.delete()
 ```
 
+#### Integration with Pydantic models
+
+::::{warning}
+This functionality is in technical preview and may be changed or removed in a future release. Elastic will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
+::::
+
+::::{note}
+This feature is available in the Python Elasticsearch client starting with release 9.2.0.
+::::
+
+Applications that define their data models using [Pydantic](https://docs.pydantic.dev/latest/) can combine these
+models with Elasticsearch DSL annotations. To take advantage of this option, Pydantic's `BaseModel` base class
+needs to be replaced with `BaseESModel` (or `AsyncBaseESModel` for asynchronous applications), and then the model
+can include type annotations for Pydantic and Elasticsearch both, as demonstrated in the following example:
+
+```python
+from typing import Annotated
+from pydantic import Field
+from elasticsearch import dsl
+from elasticsearch.dsl.pydantic import BaseESModel
+
+class Quote(BaseESModel):
+    quote: str
+    author: Annotated[str, dsl.Keyword()]
+    tags: Annotated[list[str], dsl.Keyword(normalizer="lowercase")]
+    embedding: Annotated[list[float], dsl.DenseVector()] = Field(init=False, default=[])
+
+    class Index:
+        name = "quotes"
+```
+
+In this example, the `quote` attribute is annotated with a `str` type hint. Both Pydantic and Elasticsearch use this 
+annotation.
+
+The `author` and `tags` attributes have a Python type hint and an Elasticsearch annotation, both wrapped with
+Python's `typing.Annotated`. When using the `BaseESModel` class, the typing information intended for Elasticsearch needs
+to be defined inside `Annotated`.
+
+The `embedding` attribute includes a base Python type and an Elasticsearch annotation in the same format as the
+other fields, but it adds Pydantic's `Field` definition as a right-hand side assignment.
+
+Finally, any other items that need to be defined for the Elasticsearch document class, such as `class Index` and
+`class Meta` entries (discussed later), can be added as well.
+
+The next example demonstrates how to define `Object` and `Nested` fields:
+
+```python
+from typing import Annotated
+from pydantic import BaseModel, Field
+from elasticsearch import dsl
+from elasticsearch.dsl.pydantic import BaseESModel
+
+class Phone(BaseModel):
+    type: Annotated[str, dsl.Keyword()] = Field(default="Home")
+    number: str
+
+class Person(BaseESModel):
+    name: str
+    main_phone: Phone          # same as Object(Phone)
+    other_phones: list[Phone]  # same as Nested(Phone)
+
+    class Index:
+        name = "people"
+```
+
+Note that inner classes do not need to be defined with a custom base class; these should be standard Pydantic model 
+classes. The attributes defined in these classes can include Elasticsearch annotations, as long as they are given
+in an `Annotated` type hint.
+
+All model classes that are created as described in this section function like normal Pydantic models and can be used
+anywhere standard Pydantic models are used, but they have some added attributes:
+
+- `_doc`: a class attribute that is a dynamically generated `Document` class to use with the Elasticsearch index.
+- `meta`: an attribute added to all models that includes Elasticsearch document metadata items such as `id`, `score`, etc.
+- `to_doc()`: a method that converts the Pydantic model to an Elasticsearch document.
+- `from_doc()`: a class method that accepts an Elasticsearch document as an argument and returns an equivalent Pydantic model.
+
+These are demonstrated in the examples below:
+
+```python
+# create a Pydantic model
+quote = Quote(
+    quote="An unexamined life is not worth living.",
+    author="Socrates",
+    tags=["phillosophy"]
+)
+
+# save the model to the Elasticsearch index
+quote.to_doc().save()
+
+# get a document from the Elasticsearch index as a Pydantic model
+quote = Quote.from_doc(Quote._doc.get(id=42))
+
+# run a search and print the Pydantic models
+s = Quote._doc.search().query(Match(Quote._doc.quote, "life"))
+for doc in s:
+    quote = Quote.from_doc(doc)
+    print(quote.meta.id, quote.meta.score, quote.quote)
+```
 
 #### Analysis [_analysis]
 
 To specify `analyzer` values for `Text` fields you can just use the name of the analyzer (as a string) and either rely on the analyzer being defined (like built-in analyzers) or define the analyzer yourself manually.
 
-Alternatively you can create your own analyzer and have the persistence layer handle its creation, from our example earlier:
+Alternatively, you can create your own analyzer and have the persistence layer handle its creation, from our example earlier:
 
 ```python
 from elasticsearch.dsl import analyzer, tokenizer
@@ -1634,7 +1743,7 @@ for response in responses:
 
 ### Asynchronous Documents, Indexes, and more [_asynchronous_documents_indexes_and_more]
 
-The `Document`, `Index`, `IndexTemplate`, `Mapping`, `UpdateByQuery` and `FacetedSearch` classes all have asynchronous versions that use the same name with an `Async` prefix. These classes expose the same interfaces as the synchronous versions, but any methods that perform I/O are defined as coroutines.
+The `Document`, `BaseESModel`, `Index`, `IndexTemplate`, `Mapping`, `UpdateByQuery` and `FacetedSearch` classes all have asynchronous versions that use the same name with an `Async` prefix. These classes expose the same interfaces as the synchronous versions, but any methods that perform I/O are defined as coroutines.
 
 Auxiliary classes that do not perform I/O do not have asynchronous versions. The same classes can be used in synchronous and asynchronous applications.
 
