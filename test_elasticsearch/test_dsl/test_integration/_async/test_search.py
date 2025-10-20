@@ -52,7 +52,7 @@ class Commit(AsyncDocument):
         name = "flat-git"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_filters_aggregation_buckets_are_accessible(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -77,7 +77,7 @@ async def test_filters_aggregation_buckets_are_accessible(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_top_hits_are_wrapped_in_response(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -96,7 +96,7 @@ async def test_top_hits_are_wrapped_in_response(
     assert isinstance(hits[0], Commit)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_inner_hits_are_wrapped_in_response(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -112,7 +112,7 @@ async def test_inner_hits_are_wrapped_in_response(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_inner_hits_are_serialized_to_dict(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -133,7 +133,7 @@ async def test_inner_hits_are_serialized_to_dict(
     assert isinstance(d["hits"]["hits"][0]["inner_hits"]["repo"], dict)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_scan_respects_doc_types(async_data_client: AsyncElasticsearch) -> None:
     repos = [repo async for repo in Repository.search().scan()]
 
@@ -142,7 +142,7 @@ async def test_scan_respects_doc_types(async_data_client: AsyncElasticsearch) ->
     assert repos[0].organization == "elasticsearch"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_scan_iterates_through_all_docs(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -154,7 +154,7 @@ async def test_scan_iterates_through_all_docs(
     assert {d["_id"] for d in FLAT_DATA} == {c.meta.id for c in commits}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search_after(async_data_client: AsyncElasticsearch) -> None:
     page_size = 7
     s = AsyncSearch(index="flat-git")[:page_size].sort("authored_date")
@@ -170,7 +170,7 @@ async def test_search_after(async_data_client: AsyncElasticsearch) -> None:
     assert {d["_id"] for d in FLAT_DATA} == {c.meta.id for c in commits}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search_after_no_search(async_data_client: AsyncElasticsearch) -> None:
     s = AsyncSearch(index="flat-git")
     with raises(
@@ -184,7 +184,7 @@ async def test_search_after_no_search(async_data_client: AsyncElasticsearch) -> 
         s.search_after()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search_after_no_sort(async_data_client: AsyncElasticsearch) -> None:
     s = AsyncSearch(index="flat-git")
     r = await s.execute()
@@ -194,7 +194,7 @@ async def test_search_after_no_sort(async_data_client: AsyncElasticsearch) -> No
         r.search_after()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search_after_no_results(async_data_client: AsyncElasticsearch) -> None:
     s = AsyncSearch(index="flat-git")[:100].sort("authored_date")
     r = await s.execute()
@@ -208,7 +208,7 @@ async def test_search_after_no_results(async_data_client: AsyncElasticsearch) ->
         r.search_after()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_point_in_time(async_data_client: AsyncElasticsearch) -> None:
     page_size = 7
     commits = []
@@ -229,7 +229,7 @@ async def test_point_in_time(async_data_client: AsyncElasticsearch) -> None:
     assert {d["_id"] for d in FLAT_DATA} == {c.meta.id for c in commits}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_iterate(async_data_client: AsyncElasticsearch) -> None:
     s = AsyncSearch(index="flat-git")
 
@@ -239,7 +239,7 @@ async def test_iterate(async_data_client: AsyncElasticsearch) -> None:
     assert {d["_id"] for d in FLAT_DATA} == {c.meta.id for c in commits}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_response_is_cached(async_data_client: AsyncElasticsearch) -> None:
     s = Repository.search()
     repos = [repo async for repo in s]
@@ -248,7 +248,7 @@ async def test_response_is_cached(async_data_client: AsyncElasticsearch) -> None
     assert s._response.hits == repos
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_multi_search(async_data_client: AsyncElasticsearch) -> None:
     s1 = Repository.search()
     s2 = AsyncSearch[Repository](index="flat-git")
@@ -266,7 +266,7 @@ async def test_multi_search(async_data_client: AsyncElasticsearch) -> None:
     assert r2._search is s2
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_multi_missing(async_data_client: AsyncElasticsearch) -> None:
     s1 = Repository.search()
     s2 = AsyncSearch[Repository](index="flat-git")
@@ -290,7 +290,7 @@ async def test_multi_missing(async_data_client: AsyncElasticsearch) -> None:
     assert r3 is None
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_raw_subfield_can_be_used_in_aggs(
     async_data_client: AsyncElasticsearch,
 ) -> None:

@@ -22,7 +22,7 @@ from elasticsearch.dsl import AsyncUpdateByQuery
 from elasticsearch.dsl.search import Q
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_by_query_no_script(
     async_write_client: AsyncElasticsearch, setup_ubq_tests: str
 ) -> None:
@@ -44,7 +44,7 @@ async def test_update_by_query_no_script(
     assert response.success()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_by_query_with_script(
     async_write_client: AsyncElasticsearch, setup_ubq_tests: str
 ) -> None:
@@ -64,7 +64,7 @@ async def test_update_by_query_with_script(
     assert response.version_conflicts == 0
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete_by_query_with_script(
     async_write_client: AsyncElasticsearch, setup_ubq_tests: str
 ) -> None:
