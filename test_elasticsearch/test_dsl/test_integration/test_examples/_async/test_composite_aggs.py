@@ -23,7 +23,7 @@ from elasticsearch.dsl import A, AsyncSearch
 from ..async_examples.composite_agg import scan_aggs
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_scan_aggs_exhausts_all_files(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -34,7 +34,7 @@ async def test_scan_aggs_exhausts_all_files(
     assert len(file_list) == 26
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_scan_aggs_with_multiple_aggs(
     async_data_client: AsyncElasticsearch,
 ) -> None:

@@ -34,7 +34,7 @@ class Post(AsyncDocument):
     published_from = Date()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_index_template_works(async_write_client: AsyncElasticsearch) -> None:
     it = AsyncIndexTemplate("test-template", "test-legacy-*")
     it.document(Post)
@@ -56,7 +56,7 @@ async def test_index_template_works(async_write_client: AsyncElasticsearch) -> N
     } == await async_write_client.indices.get_mapping(index="test-legacy-blog")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_composable_index_template_works(
     async_write_client: AsyncElasticsearch,
 ) -> None:
@@ -80,7 +80,7 @@ async def test_composable_index_template_works(
     } == await async_write_client.indices.get_mapping(index="test-blog")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_index_can_be_saved_even_with_settings(
     async_write_client: AsyncElasticsearch,
 ) -> None:
@@ -98,13 +98,13 @@ async def test_index_can_be_saved_even_with_settings(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_index_exists(async_data_client: AsyncElasticsearch) -> None:
     assert await AsyncIndex("git").exists()
     assert not await AsyncIndex("not-there").exists()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_index_can_be_created_with_settings_and_mappings(
     async_write_client: AsyncElasticsearch,
 ) -> None:
@@ -132,7 +132,7 @@ async def test_index_can_be_created_with_settings_and_mappings(
     }
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete(async_write_client: AsyncElasticsearch) -> None:
     await async_write_client.indices.create(
         index="test-index",
@@ -144,7 +144,7 @@ async def test_delete(async_write_client: AsyncElasticsearch) -> None:
     assert not await async_write_client.indices.exists(index="test-index")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_multiple_indices_with_same_doc_type_work(
     async_write_client: AsyncElasticsearch,
 ) -> None:

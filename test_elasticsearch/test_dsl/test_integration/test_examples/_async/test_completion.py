@@ -22,7 +22,7 @@ from elasticsearch import AsyncElasticsearch
 from ..async_examples.completion import Person
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_person_suggests_on_all_variants_of_name(
     async_write_client: AsyncElasticsearch,
 ) -> None:
