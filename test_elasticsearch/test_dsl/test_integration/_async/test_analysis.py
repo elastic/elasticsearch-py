@@ -21,7 +21,7 @@ from elasticsearch import AsyncElasticsearch
 from elasticsearch.dsl import analyzer, token_filter, tokenizer
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_simulate_with_just__builtin_tokenizer(
     async_client: AsyncElasticsearch,
 ) -> None:
@@ -32,7 +32,7 @@ async def test_simulate_with_just__builtin_tokenizer(
     assert tokens[0].token == "Hello World!"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_simulate_complex(async_client: AsyncElasticsearch) -> None:
     a = analyzer(
         "my-analyzer",
@@ -46,7 +46,7 @@ async def test_simulate_complex(async_client: AsyncElasticsearch) -> None:
     assert ["this", "works"] == [t.token for t in tokens]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_simulate_builtin(async_client: AsyncElasticsearch) -> None:
     a = analyzer("my-analyzer", "english")
     tokens = (await a.async_simulate("fixes running")).tokens

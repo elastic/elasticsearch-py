@@ -144,7 +144,7 @@ def test_from_dict_doesnt_need_query() -> None:
     assert {"script": {"source": "test"}} == ubq.to_dict()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_params_being_passed_to_search(async_mock_client: Any) -> None:
     ubq = AsyncUpdateByQuery(using="mock", index="i")
     ubq = ubq.params(routing="42")
