@@ -22,7 +22,7 @@ from elasticsearch import AsyncElasticsearch
 from ..async_examples.percolate import BlogPost, setup
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_post_gets_tagged_automatically(
     async_write_client: AsyncElasticsearch,
 ) -> None:

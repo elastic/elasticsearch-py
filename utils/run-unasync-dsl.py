@@ -75,7 +75,6 @@ def main(check=False):
         "async_examples": "examples",
         "async_sleep": "sleep",
         "assert_awaited_once_with": "assert_called_once_with",
-        "pytest_asyncio": "pytest",
         "asynccontextmanager": "contextmanager",
     }
     rules = [
@@ -126,15 +125,16 @@ def main(check=False):
                     f"{output_dir}{file}",
                 ]
             )
-            subprocess.check_call(
-                [
-                    "sed",
-                    "-i.bak",
-                    "s/pytest.mark.asyncio/pytest.mark.sync/",
-                    f"{output_dir}{file}",
-                ]
-            )
-            subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
+            for library in ["asyncio", "trio", "anyio"]:
+                subprocess.check_call(
+                    [
+                        "sed",
+                        "-i.bak",
+                        f"s/pytest.mark.{library}/pytest.mark.sync/",
+                        f"{output_dir}{file}",
+                    ]
+                )
+                subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
 
             if check:
                 # make sure there are no differences between _sync and _sync_check

@@ -40,9 +40,11 @@ keywords = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "elastic-transport>=9.1.0,<10",
+    "elastic-transport>=9.2.0,<10",
     "python-dateutil",
     "typing-extensions",
+    "sniffio",
+    "anyio",
 ]
 
 [project.optional-dependencies]
@@ -55,6 +57,7 @@ vectorstore_mmr = ["numpy>=1", "simsimd>=3"]
 dev = [
     "requests>=2, <3",
     "aiohttp",
+    "httpx",
     "pytest",
     "pytest-cov",
     "pytest-mock",
@@ -78,6 +81,7 @@ dev = [
     "mapbox-vector-tile",
     "jinja2",
     "tqdm",
+    "trio",
     "mypy",
     "pyright",
     "types-python-dateutil",

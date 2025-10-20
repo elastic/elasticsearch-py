@@ -16,27 +16,26 @@
 #  under the License.
 
 import pytest
-import pytest_asyncio
+import sniffio
 
 import elasticsearch
 
 from ...utils import CA_CERTS, wipe_cluster
 
-pytestmark = pytest.mark.asyncio
 
-
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
-
-    if not hasattr(elasticsearch, "AsyncElasticsearch"):
-        pytest.skip("test requires 'AsyncElasticsearch' and aiohttp to be installed")
-
+    kwargs = {}
+    if sniffio.current_async_library() == "trio":
+        kwargs["node_class"] = "httpxasync"
     # Unfortunately the asyncio client needs to be rebuilt every
     # test execution due to how pytest-asyncio manages
     # event loops (one per test!)
     client = None
     try:
-        client = elasticsearch.AsyncElasticsearch(elasticsearch_url, ca_certs=CA_CERTS)
+        client = elasticsearch.AsyncElasticsearch(
+            elasticsearch_url, ca_certs=CA_CERTS, **kwargs
+        )
         yield client
     finally:
         if client:
