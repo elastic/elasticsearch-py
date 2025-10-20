@@ -2,7 +2,7 @@
 name = "quotes"
 version = "0.1"
 dependencies = [
-    "elasticsearch[async]>=8,<9",
+    "elasticsearch[async]>=9,<10",
     "fastapi",
     "orjson",
     "sentence-transformers",
