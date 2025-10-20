@@ -111,7 +111,8 @@ async def search_quotes(req: SearchRequest) -> SearchResponse:
     if req.query == '':
         s = s.query(dsl.query.MatchAll())
     elif req.knn:
-        s = s.query(dsl.query.Knn(field=Quote._doc.embedding, query_vector=model.encode(req.query).tolist()))
+        query_vector = model.encode(req.query).tolist()
+        s = s.query(dsl.query.Knn(field=Quote._doc.embedding, query_vector=query_vector))
     else:
         s = s.query(dsl.query.Match(quote=req.query))
     for tag in req.filters:
