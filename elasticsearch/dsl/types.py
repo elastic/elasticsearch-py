@@ -151,9 +151,10 @@ class ChunkingSettings(AttrDict[Any]):
         strategies in the linked documentation. Defaults to `sentence` if
         omitted.
     :arg max_chunk_size: (required) The maximum size of a chunk in words.
-        This value cannot be higher than `300` or lower than `20` (for
-        `sentence` strategy) or `10` (for `word` strategy). Defaults to
-        `250` if omitted.
+        This value cannot be lower than `20` (for `sentence` strategy) or
+        `10` (for `word` strategy). This value should not exceed the
+        window size for the associated model. Defaults to `250` if
+        omitted.
     :arg separator_group: Only applicable to the `recursive` strategy and
         required when using it.  Sets a predefined list of separators in
         the saved chunking settings based on the selected text type.
@@ -397,14 +398,17 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         HNSW graph.  Only applicable to `hnsw`, `int8_hnsw`, `bbq_hnsw`,
         and `int4_hnsw` index types. Defaults to `16` if omitted.
     :arg rescore_vector: The rescore vector options. This is only
-        applicable to `bbq_hnsw`, `int4_hnsw`, `int8_hnsw`, `bbq_flat`,
-        `int4_flat`, and `int8_flat` index types.
+        applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`, `int8_hnsw`,
+        `bbq_flat`, `int4_flat`, and `int8_flat` index types.
+    :arg on_disk_rescore: `true` if vector rescoring should be done on-
+        disk  Only applicable to `bbq_hnsw`
     """
 
     type: Union[
         Literal[
             "bbq_flat",
             "bbq_hnsw",
+            "bbq_disk",
             "flat",
             "hnsw",
             "int4_flat",
@@ -420,6 +424,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     rescore_vector: Union[
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
+    on_disk_rescore: Union[bool, DefaultType]
 
     def __init__(
         self,
@@ -428,6 +433,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             Literal[
                 "bbq_flat",
                 "bbq_hnsw",
+                "bbq_disk",
                 "flat",
                 "hnsw",
                 "int4_flat",
@@ -443,6 +449,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         rescore_vector: Union[
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
+        on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -455,6 +462,8 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["m"] = m
         if rescore_vector is not DEFAULT:
             kwargs["rescore_vector"] = rescore_vector
+        if on_disk_rescore is not DEFAULT:
+            kwargs["on_disk_rescore"] = on_disk_rescore
         super().__init__(kwargs)
 
 
@@ -2326,9 +2335,7 @@ class LikeDocument(AttrDict[Any]):
     per_field_analyzer: Union[Mapping[Union[str, InstrumentedField], str], DefaultType]
     routing: Union[str, DefaultType]
     version: Union[int, DefaultType]
-    version_type: Union[
-        Literal["internal", "external", "external_gte", "force"], DefaultType
-    ]
+    version_type: Union[Literal["internal", "external", "external_gte"], DefaultType]
 
     def __init__(
         self,
@@ -2343,7 +2350,7 @@ class LikeDocument(AttrDict[Any]):
         routing: Union[str, DefaultType] = DEFAULT,
         version: Union[int, DefaultType] = DEFAULT,
         version_type: Union[
-            Literal["internal", "external", "external_gte", "force"], DefaultType
+            Literal["internal", "external", "external_gte"], DefaultType
         ] = DEFAULT,
         **kwargs: Any,
     ):
@@ -3186,6 +3193,33 @@ class ScriptedHeuristic(AttrDict[Any]):
     ):
         if script is not DEFAULT:
             kwargs["script"] = script
+        super().__init__(kwargs)
+
+
+class SemanticTextIndexOptions(AttrDict[Any]):
+    """
+    :arg dense_vector:
+    :arg sparse_vector:
+    """
+
+    dense_vector: Union["DenseVectorIndexOptions", Dict[str, Any], DefaultType]
+    sparse_vector: Union["SparseVectorIndexOptions", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        dense_vector: Union[
+            "DenseVectorIndexOptions", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        sparse_vector: Union[
+            "SparseVectorIndexOptions", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if dense_vector is not DEFAULT:
+            kwargs["dense_vector"] = dense_vector
+        if sparse_vector is not DEFAULT:
+            kwargs["sparse_vector"] = sparse_vector
         super().__init__(kwargs)
 
 

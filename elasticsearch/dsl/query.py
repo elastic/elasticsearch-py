@@ -1433,7 +1433,7 @@ class MoreLikeThis(Query):
         ] = DEFAULT,
         version: Union[int, "DefaultType"] = DEFAULT,
         version_type: Union[
-            Literal["internal", "external", "external_gte", "force"], "DefaultType"
+            Literal["internal", "external", "external_gte"], "DefaultType"
         ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
