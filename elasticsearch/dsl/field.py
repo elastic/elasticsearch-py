@@ -3892,7 +3892,7 @@ class SemanticText(Field):
             "types.SemanticTextIndexOptions", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
         chunking_settings: Union[
-            "types.ChunkingSettings", Dict[str, Any], "DefaultType"
+            "types.ChunkingSettings", None, Dict[str, Any], "DefaultType"
         ] = DEFAULT,
         fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         **kwargs: Any,

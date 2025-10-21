@@ -653,6 +653,54 @@ class Cardinality(Agg[_R]):
         )
 
 
+class CartesianBounds(Agg[_R]):
+    """
+    A metric aggregation that computes the spatial bounding box containing
+    all values for a Point or Shape field.
+
+    :arg field: The field on which to run the aggregation.
+    :arg missing: The value to apply to documents that do not have a
+        value. By default, documents without a value are ignored.
+    :arg script:
+    """
+
+    name = "cartesian_bounds"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(field=field, missing=missing, script=script, **kwargs)
+
+
+class CartesianCentroid(Agg[_R]):
+    """
+    A metric aggregation that computes the weighted centroid from all
+    coordinate values for point and shape fields.
+
+    :arg field: The field on which to run the aggregation.
+    :arg missing: The value to apply to documents that do not have a
+        value. By default, documents without a value are ignored.
+    :arg script:
+    """
+
+    name = "cartesian_centroid"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
+        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(field=field, missing=missing, script=script, **kwargs)
+
+
 class CategorizeText(Bucket[_R]):
     """
     A multi-bucket aggregation that groups semi-structured text into
@@ -732,6 +780,43 @@ class CategorizeText(Bucket[_R]):
             min_doc_count=min_doc_count,
             shard_min_doc_count=shard_min_doc_count,
             **kwargs,
+        )
+
+
+class ChangePoint(Pipeline[_R]):
+    """
+    A sibling pipeline that detects, spikes, dips, and change points in a
+    metric. Given a distribution of values provided by the sibling multi-
+    bucket aggregation, this aggregation indicates the bucket of any spike
+    or dip and/or the bucket at which the largest change in the
+    distribution of values, if they are statistically significant. There
+    must be at least 22 bucketed values. Fewer than 1,000 is preferred.
+
+    :arg format: `DecimalFormat` pattern for the output value. If
+        specified, the formatted value is returned in the aggregation’s
+        `value_as_string` property.
+    :arg gap_policy: Policy to apply when gaps are found in the data.
+        Defaults to `skip` if omitted.
+    :arg buckets_path: Path to the buckets that contain one set of values
+        to correlate.
+    """
+
+    name = "change_point"
+
+    def __init__(
+        self,
+        *,
+        format: Union[str, "DefaultType"] = DEFAULT,
+        gap_policy: Union[
+            Literal["skip", "insert_zeros", "keep_values"], "DefaultType"
+        ] = DEFAULT,
+        buckets_path: Union[
+            str, Sequence[str], Mapping[str, str], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            format=format, gap_policy=gap_policy, buckets_path=buckets_path, **kwargs
         )
 
 
