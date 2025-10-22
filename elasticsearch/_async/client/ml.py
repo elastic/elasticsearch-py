@@ -2390,7 +2390,7 @@ class MlClient(NamespacedClient):
         exclude_interim: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        overall_score: t.Optional[t.Union[float, str]] = None,
+        overall_score: t.Optional[float] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
         top_n: t.Optional[int] = None,
@@ -5716,7 +5716,7 @@ class MlClient(NamespacedClient):
           <p>Validate an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/guide/en/machine-learning/master/ml-jobs.html>`_
+        `<https://www.elastic.co/guide/en/machine-learning/9.2/ml-jobs.html>`_
 
         :param analysis_config:
         :param analysis_limits:
