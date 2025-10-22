@@ -843,11 +843,7 @@ class Elasticsearch(BaseClient):
         if not __body:
             if id is not None:
                 __body["id"] = id
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -921,8 +917,8 @@ class Elasticsearch(BaseClient):
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
             be used only when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as a default when no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -1049,7 +1045,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -1228,7 +1224,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -1473,8 +1469,8 @@ class Elasticsearch(BaseClient):
             used only when the `q` query string parameter is specified.
         :param conflicts: What to do if delete by query hits version conflicts: `abort`
             or `proceed`.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -1768,7 +1764,7 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -1897,7 +1893,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -2026,8 +2022,8 @@ class Elasticsearch(BaseClient):
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
             be used only when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -2279,7 +2275,7 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2569,7 +2565,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2749,7 +2745,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -3436,7 +3432,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3854,7 +3850,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("dest", "source", "conflicts", "max_docs", "script", "size"),
+        body_fields=("dest", "source", "conflicts", "max_docs", "script"),
     )
     def reindex(
         self,
@@ -3872,7 +3868,6 @@ class Elasticsearch(BaseClient):
         require_alias: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        size: t.Optional[int] = None,
         slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
@@ -3948,7 +3943,6 @@ class Elasticsearch(BaseClient):
             reindexing.
         :param scroll: The period of time that a consistent view of the index should
             be maintained for scrolled search.
-        :param size:
         :param slices: The number of slices this task should be divided into. It defaults
             to one slice, which means the task isn't sliced into subtasks. Reindex supports
             sliced scroll to parallelize the reindexing process. This parallelization
@@ -4013,8 +4007,6 @@ class Elasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if script is not None:
                 __body["script"] = script
-            if size is not None:
-                __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4141,11 +4133,7 @@ class Elasticsearch(BaseClient):
                 __body["params"] = params
             if source is not None:
                 __body["source"] = source
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4228,11 +4216,7 @@ class Elasticsearch(BaseClient):
                 __body["context_setup"] = context_setup
             if script is not None:
                 __body["script"] = script
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4510,8 +4494,8 @@ class Elasticsearch(BaseClient):
             node and the remote clusters are minimized when running cross-cluster search
             (CCS) requests.
         :param collapse: Collapses search results the values of the specified field.
-        :param default_operator: The default operator for the query string query: `AND`
-            or `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for the query string query: `and`
+            or `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as a default when no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -5689,11 +5673,7 @@ class Elasticsearch(BaseClient):
                 __body["string"] = string
             if timeout is not None:
                 __body["timeout"] = timeout
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5743,7 +5723,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6219,8 +6199,8 @@ class Elasticsearch(BaseClient):
             be used only when the `q` query string parameter is specified.
         :param conflicts: The preferred behavior when update by query hits version conflicts:
             `abort` or `proceed`.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter

@@ -232,11 +232,7 @@ class IndicesClient(NamespacedClient):
                 __body["text"] = text
             if tokenizer is not None:
                 __body["tokenizer"] = tokenizer
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -812,11 +808,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'source'")
         if dest in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if create_from is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'create_from' and 'body', one of them should be set."
-            )
-        elif create_from is not None and body is not None:
+        if create_from is not None and body is not None:
             raise ValueError("Cannot set both 'create_from' and 'body'")
         __path_parts: t.Dict[str, str] = {
             "source": _quote(source),
@@ -3000,6 +2992,94 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def get_sample(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def get_sample_stats(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request stats for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample/stats'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample_stats",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     async def get_settings(
         self,
         *,
@@ -3694,11 +3774,7 @@ class IndicesClient(NamespacedClient):
                 __body["downsampling"] = downsampling
             if enabled is not None:
                 __body["enabled"] = enabled
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3854,11 +3930,7 @@ class IndicesClient(NamespacedClient):
         if not __body:
             if failure_store is not None:
                 __body["failure_store"] = failure_store
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5554,11 +5626,7 @@ class IndicesClient(NamespacedClient):
                 __body["aliases"] = aliases
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5610,11 +5678,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if index_template is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'index_template' and 'body', one of them should be set."
-            )
-        elif index_template is not None and body is not None:
+        if index_template is not None and body is not None:
             raise ValueError("Cannot set both 'index_template' and 'body'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
@@ -5914,11 +5978,7 @@ class IndicesClient(NamespacedClient):
                 __body["aliases"] = aliases
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5995,8 +6055,8 @@ class IndicesClient(NamespacedClient):
             are requested).
         :param include_unloaded_segments: If true, the response includes information
             from segments that are not loaded into memory.
-        :param level: Indicates whether statistics are aggregated at the cluster, index,
-            or shard level.
+        :param level: Indicates whether statistics are aggregated at the cluster, indices,
+            or shards level.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
@@ -6162,8 +6222,8 @@ class IndicesClient(NamespacedClient):
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
         :param analyzer: Analyzer to use for the query string. This parameter can only
             be used when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`.
+        :param default_operator: The default operator for query string query: `and` or
+            `or`.
         :param df: Field to use as default where no field prefix is given in the query
             string. This parameter can only be used when the `q` query string parameter
             is specified.

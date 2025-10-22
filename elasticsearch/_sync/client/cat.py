@@ -1543,7 +1543,7 @@ class CatClient(NamespacedClient):
 
         :param id: The ID of the data frame analytics to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            configs. (This includes `_all` string or when no configs have been specified)
+            configs. (This includes `_all` string or when no configs have been specified.)
         :param bytes: Sets the units for columns that contain a byte-size value. Note
             that byte-size value units work in terms of powers of 1024. For instance
             `1kb` means 1024 bytes, not 1000 bytes. If omitted, byte-size values are
@@ -2516,6 +2516,7 @@ class CatClient(NamespacedClient):
                     t.Union[
                         str,
                         t.Literal[
+                            "available_processors",
                             "build",
                             "completion.size",
                             "cpu",
@@ -2611,6 +2612,7 @@ class CatClient(NamespacedClient):
                 t.Union[
                     str,
                     t.Literal[
+                        "available_processors",
                         "build",
                         "completion.size",
                         "cpu",
