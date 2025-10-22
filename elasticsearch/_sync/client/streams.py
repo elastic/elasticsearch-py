@@ -15,8 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-class C:
 
+import typing as t
+
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
+from ._base import NamespacedClient
+from .utils import (
+    Stability,
+    _rewrite_parameters,
+    _stability_warning,
+)
+
+
+class StreamsClient(NamespacedClient):
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)
     def logs_disable(

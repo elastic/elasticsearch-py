@@ -15,8 +15,19 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-class C:
+import typing as t
 
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import (
+    Stability,
+    _rewrite_parameters,
+    _stability_warning,
+)
+
+
+class StreamsClient(NamespacedClient):
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)
     async def tags(
