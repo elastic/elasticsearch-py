@@ -812,11 +812,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'source'")
         if dest in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if create_from is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'create_from' and 'body', one of them should be set."
-            )
-        elif create_from is not None and body is not None:
+        if create_from is not None and body is not None:
             raise ValueError("Cannot set both 'create_from' and 'body'")
         __path_parts: t.Dict[str, str] = {
             "source": _quote(source),
@@ -5460,11 +5456,7 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
-        if index_template is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'index_template' and 'body', one of them should be set."
-            )
-        elif index_template is not None and body is not None:
+        if index_template is not None and body is not None:
             raise ValueError("Cannot set both 'index_template' and 'body'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
