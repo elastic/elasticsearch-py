@@ -126,9 +126,10 @@ class AsyncDocument(DocumentBase, metaclass=AsyncIndexMeta):
         Create an :class:`~elasticsearch.dsl.Search` instance that will search
         over this ``Document``.
         """
-        return AsyncSearch(
+        s = AsyncSearch(
             using=cls._get_using(using), index=cls._default_index(index), doc_type=[cls]
         )
+        return s.source(cls._get_field_names())
 
     @classmethod
     async def get(

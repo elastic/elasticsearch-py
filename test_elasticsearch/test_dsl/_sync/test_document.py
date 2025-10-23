@@ -821,10 +821,9 @@ def test_doc_with_type_hints() -> None:
 
         s = doc_class.search().sort(doc_class.st, -doc_class.dt, +doc_class.ob.st)
         s.aggs.bucket("terms_agg", "terms", field=doc_class.k1)
-        assert s.to_dict() == {
-            "aggs": {"terms_agg": {"terms": {"field": "k1"}}},
-            "sort": ["st", {"dt": {"order": "desc"}}, "ob.st"],
-        }
+        d = s.to_dict()
+        assert d["aggs"] == {"terms_agg": {"terms": {"field": "k1"}}}
+        assert d["sort"] == ["st", {"dt": {"order": "desc"}}, "ob.st"]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires Python 3.10")
