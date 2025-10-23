@@ -135,7 +135,7 @@ def test_inner_hits_are_serialized_to_dict(
 
 @pytest.mark.sync
 def test_scan_respects_doc_types(data_client: Elasticsearch) -> None:
-    repos = [repo for repo in Repository.search().scan()]
+    repos = [repo for repo in Repository.search().source("organization").scan()]
 
     assert 1 == len(repos)
     assert isinstance(repos[0], Repository)
