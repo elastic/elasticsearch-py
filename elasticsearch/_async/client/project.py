@@ -28,6 +28,7 @@ from .utils import (
 
 
 class StreamsClient(NamespacedClient):
+
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)
     async def tags(
