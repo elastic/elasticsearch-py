@@ -50,6 +50,7 @@ arguments are required for all calls.
    api/snapshots
    api/snapshottable-features
    api/sql
+   api/streams
    api/synonyms
    api/tls-ssl
    api/tasks

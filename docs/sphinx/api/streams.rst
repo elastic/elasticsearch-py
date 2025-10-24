@@ -1,9 +1,9 @@
-.. _indices:
+.. _streams:
 
-Indices
+Streams
 -------
 .. py:module:: elasticsearch.client
    :no-index:
 
-.. autoclass:: IndicesClient
+.. autoclass:: StreamsClient
    :members:

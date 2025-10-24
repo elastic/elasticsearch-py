@@ -2323,9 +2323,7 @@ class LikeDocument(AttrDict[Any]):
     per_field_analyzer: Union[Mapping[Union[str, InstrumentedField], str], DefaultType]
     routing: Union[str, DefaultType]
     version: Union[int, DefaultType]
-    version_type: Union[
-        Literal["internal", "external", "external_gte", "force"], DefaultType
-    ]
+    version_type: Union[Literal["internal", "external", "external_gte"], DefaultType]
 
     def __init__(
         self,
@@ -2340,7 +2338,7 @@ class LikeDocument(AttrDict[Any]):
         routing: Union[str, DefaultType] = DEFAULT,
         version: Union[int, DefaultType] = DEFAULT,
         version_type: Union[
-            Literal["internal", "external", "external_gte", "force"], DefaultType
+            Literal["internal", "external", "external_gte"], DefaultType
         ] = DEFAULT,
         **kwargs: Any,
     ):
@@ -2768,6 +2766,31 @@ class NumericFielddata(AttrDict[Any]):
     ):
         if format is not DEFAULT:
             kwargs["format"] = format
+        super().__init__(kwargs)
+
+
+class PValueHeuristic(AttrDict[Any]):
+    """
+    :arg background_is_superset:
+    :arg normalize_above: Should the results be normalized when above the
+        given value. Allows for consistent significance results at various
+        scales. Note: `0` is a special value which means no normalization
+    """
+
+    background_is_superset: Union[bool, DefaultType]
+    normalize_above: Union[int, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        background_is_superset: Union[bool, DefaultType] = DEFAULT,
+        normalize_above: Union[int, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if background_is_superset is not DEFAULT:
+            kwargs["background_is_superset"] = background_is_superset
+        if normalize_above is not DEFAULT:
+            kwargs["normalize_above"] = normalize_above
         super().__init__(kwargs)
 
 
@@ -4024,24 +4047,25 @@ class TestPopulation(AttrDict[Any]):
 
 class TextEmbedding(AttrDict[Any]):
     """
-    :arg model_id: (required)
     :arg model_text: (required)
+    :arg model_id: Model ID is required for all dense_vector fields but
+        may be inferred for semantic_text fields
     """
 
-    model_id: Union[str, DefaultType]
     model_text: Union[str, DefaultType]
+    model_id: Union[str, DefaultType]
 
     def __init__(
         self,
         *,
-        model_id: Union[str, DefaultType] = DEFAULT,
         model_text: Union[str, DefaultType] = DEFAULT,
+        model_id: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
-        if model_id is not DEFAULT:
-            kwargs["model_id"] = model_id
         if model_text is not DEFAULT:
             kwargs["model_text"] = model_text
+        if model_id is not DEFAULT:
+            kwargs["model_id"] = model_id
         super().__init__(kwargs)
 
 
@@ -4672,6 +4696,82 @@ class CardinalityAggregate(AttrDict[Any]):
     meta: Mapping[str, Any]
 
 
+class CartesianBoundsAggregate(AttrDict[Any]):
+    """
+    :arg bounds:
+    :arg meta:
+    """
+
+    bounds: "TopLeftBottomRightGeoBounds"
+    meta: Mapping[str, Any]
+
+
+class CartesianCentroidAggregate(AttrDict[Any]):
+    """
+    :arg count: (required)
+    :arg location:
+    :arg meta:
+    """
+
+    count: int
+    location: "CartesianPoint"
+    meta: Mapping[str, Any]
+
+
+class CartesianPoint(AttrDict[Any]):
+    """
+    :arg x: (required)
+    :arg y: (required)
+    """
+
+    x: float
+    y: float
+
+
+class ChangePointAggregate(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg bucket:
+    :arg meta:
+    """
+
+    type: "ChangeType"
+    bucket: "ChangePointBucket"
+    meta: Mapping[str, Any]
+
+
+class ChangePointBucket(AttrDict[Any]):
+    """
+    :arg key: (required)
+    :arg doc_count: (required)
+    """
+
+    key: Union[int, float, str, bool, None, Any]
+    doc_count: int
+
+
+class ChangeType(AttrDict[Any]):
+    """
+    :arg dip:
+    :arg distribution_change:
+    :arg indeterminable:
+    :arg non_stationary:
+    :arg spike:
+    :arg stationary:
+    :arg step_change:
+    :arg trend_change:
+    """
+
+    dip: "Dip"
+    distribution_change: "DistributionChange"
+    indeterminable: "Indeterminable"
+    non_stationary: "NonStationary"
+    spike: "Spike"
+    stationary: "Stationary"
+    step_change: "StepChange"
+    trend_change: "TrendChange"
+
+
 class ChildrenAggregate(AttrDict[Any]):
     """
     :arg doc_count: (required)
@@ -4947,6 +5047,26 @@ class DfsStatisticsProfile(AttrDict[Any]):
     time: Any
     debug: Mapping[str, Any]
     children: Sequence["DfsStatisticsProfile"]
+
+
+class Dip(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg change_point: (required)
+    """
+
+    p_value: float
+    change_point: int
+
+
+class DistributionChange(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg change_point: (required)
+    """
+
+    p_value: float
+    change_point: int
 
 
 class DoubleTermsAggregate(AttrDict[Any]):
@@ -5512,6 +5632,14 @@ class HitsMetadata(AttrDict[Any]):
     max_score: Union[float, None]
 
 
+class Indeterminable(AttrDict[Any]):
+    """
+    :arg reason: (required)
+    """
+
+    reason: str
+
+
 class InferenceAggregate(AttrDict[Any]):
     """
     :arg value:
@@ -5914,6 +6042,18 @@ class NestedIdentity(AttrDict[Any]):
     _nested: "NestedIdentity"
 
 
+class NonStationary(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg r_value: (required)
+    :arg trend: (required)
+    """
+
+    p_value: float
+    r_value: float
+    trend: str
+
+
 class ParentAggregate(AttrDict[Any]):
     """
     :arg doc_count: (required)
@@ -6271,6 +6411,16 @@ class SimpleValueAggregate(AttrDict[Any]):
     meta: Mapping[str, Any]
 
 
+class Spike(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg change_point: (required)
+    """
+
+    p_value: float
+    change_point: int
+
+
 class StandardDeviationBounds(AttrDict[Any]):
     """
     :arg upper: (required)
@@ -6305,6 +6455,10 @@ class StandardDeviationBoundsAsString(AttrDict[Any]):
     lower_population: str
     upper_sampling: str
     lower_sampling: str
+
+
+class Stationary(AttrDict[Any]):
+    pass
 
 
 class StatsAggregate(AttrDict[Any]):
@@ -6360,6 +6514,16 @@ class StatsBucketAggregate(AttrDict[Any]):
     avg_as_string: str
     sum_as_string: str
     meta: Mapping[str, Any]
+
+
+class StepChange(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg change_point: (required)
+    """
+
+    p_value: float
+    change_point: int
 
 
 class StringRareTermsAggregate(AttrDict[Any]):
@@ -6591,6 +6755,18 @@ class TotalHits(AttrDict[Any]):
 
     relation: Literal["eq", "gte"]
     value: int
+
+
+class TrendChange(AttrDict[Any]):
+    """
+    :arg p_value: (required)
+    :arg r_value: (required)
+    :arg change_point: (required)
+    """
+
+    p_value: float
+    r_value: float
+    change_point: int
 
 
 class UnmappedRareTermsAggregate(AttrDict[Any]):
