@@ -729,6 +729,9 @@ class SearchBase(Request[_R]):
         ) -> Union[str, List[str], Dict[str, List[str]]]:
             if isinstance(fields, dict):
                 return {k: ensure_strings(v) for k, v in fields.items()}
+            elif isinstance(fields, bool):
+                # boolean settings should stay the way they are
+                return fields
             elif not isinstance(fields, (str, InstrumentedField)):
                 # we assume that if `fields` is not a any of [dict, str,
                 # InstrumentedField] then it is an iterable of strings or

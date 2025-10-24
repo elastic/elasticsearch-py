@@ -129,7 +129,7 @@ class AsyncDocument(DocumentBase, metaclass=AsyncIndexMeta):
         s = AsyncSearch[Self](
             using=cls._get_using(using), index=cls._default_index(index), doc_type=[cls]
         )
-        return s.source(cls._get_field_names())  # type: ignore[arg-type]
+        return s.source(exclude_vectors=False)
 
     @classmethod
     async def get(
