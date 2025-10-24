@@ -1,9 +1,9 @@
-.. _indices:
+.. _project:
 
-Indices
+Project
 -------
 .. py:module:: elasticsearch.client
    :no-index:
 
-.. autoclass:: IndicesClient
+.. autoclass:: ProjectClient
    :members:
