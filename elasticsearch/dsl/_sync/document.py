@@ -120,9 +120,10 @@ class Document(DocumentBase, metaclass=IndexMeta):
         Create an :class:`~elasticsearch.dsl.Search` instance that will search
         over this ``Document``.
         """
-        return Search(
+        s = Search[Self](
             using=cls._get_using(using), index=cls._default_index(index), doc_type=[cls]
         )
+        return s.source(exclude_vectors=False)
 
     @classmethod
     def get(
