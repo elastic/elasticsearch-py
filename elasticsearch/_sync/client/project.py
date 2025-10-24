@@ -27,7 +27,7 @@ from .utils import (
 )
 
 
-class StreamsClient(NamespacedClient):
+class ProjectClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)

@@ -47,6 +47,7 @@ from ._sync.client.migration import MigrationClient as MigrationClient  # noqa: 
 from ._sync.client.ml import MlClient as MlClient  # noqa: F401
 from ._sync.client.monitoring import MonitoringClient as MonitoringClient  # noqa: F401
 from ._sync.client.nodes import NodesClient as NodesClient  # noqa: F401
+from ._sync.client.project import ProjectClient as ProjectClient  # noqa: F401
 from ._sync.client.query_rules import QueryRulesClient as QueryRulesClient  # noqa: F401
 from ._sync.client.rollup import RollupClient as RollupClient  # noqa: F401
 from ._sync.client.search_application import (  # noqa: F401
@@ -62,6 +63,7 @@ from ._sync.client.slm import SlmClient as SlmClient  # noqa: F401
 from ._sync.client.snapshot import SnapshotClient as SnapshotClient  # noqa: F401
 from ._sync.client.sql import SqlClient as SqlClient  # noqa: F401
 from ._sync.client.ssl import SslClient as SslClient  # noqa: F401
+from ._sync.client.streams import StreamsClient as StreamsClient  # noqa: F401
 from ._sync.client.synonyms import SynonymsClient as SynonymsClient  # noqa: F401
 from ._sync.client.tasks import TasksClient as TasksClient  # noqa: F401
 from ._sync.client.text_structure import (  # noqa: F401
@@ -105,6 +107,7 @@ __all__ = [
     "MlClient",
     "MonitoringClient",
     "NodesClient",
+    "ProjectClient",
     "RollupClient",
     "SearchApplicationClient",
     "SearchableSnapshotsClient",
@@ -115,6 +118,7 @@ __all__ = [
     "SnapshotClient",
     "SqlClient",
     "SslClient",
+    "StreamsClient",
     "TasksClient",
     "TextStructureClient",
     "TransformClient",
