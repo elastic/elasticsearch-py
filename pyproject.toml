@@ -101,7 +101,7 @@ Homepage = "https://github.com/elastic/elasticsearch-py"
 
 [tool.hatch.version]
 path = "elasticsearch/_version.py"
-pattern = "__versionstr__ = \"(?P<version>[^']+)\""
+pattern = "__versionstr__ = \"(?P<version>[^']+?)\""
 
 [tool.hatch.build.targets.sdist]
 include = [

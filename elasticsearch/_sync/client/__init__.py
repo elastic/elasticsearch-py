@@ -63,6 +63,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
+from .project import ProjectClient
 from .query_rules import QueryRulesClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
@@ -74,6 +75,7 @@ from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .streams import StreamsClient
 from .synonyms import SynonymsClient
 from .tasks import TasksClient
 from .text_structure import TextStructureClient
@@ -368,6 +370,7 @@ class Elasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
+        self.project = ProjectClient(self)
         self.query_rules = QueryRulesClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
@@ -378,6 +381,7 @@ class Elasticsearch(BaseClient):
         self.shutdown = ShutdownClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.streams = StreamsClient(self)
         self.synonyms = SynonymsClient(self)
         self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
@@ -843,11 +847,7 @@ class Elasticsearch(BaseClient):
         if not __body:
             if id is not None:
                 __body["id"] = id
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -887,6 +887,7 @@ class Elasticsearch(BaseClient):
         min_score: t.Optional[float] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
@@ -920,8 +921,8 @@ class Elasticsearch(BaseClient):
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
             be used only when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as a default when no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -941,6 +942,10 @@ class Elasticsearch(BaseClient):
             in the result.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param q: The query in Lucene query string syntax. This parameter cannot be used
             with a request body.
         :param query: Defines the search query using Query DSL. A request body query
@@ -993,6 +998,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if routing is not None:
@@ -1042,7 +1049,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -1221,7 +1228,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -1466,8 +1473,8 @@ class Elasticsearch(BaseClient):
             used only when the `q` query string parameter is specified.
         :param conflicts: What to do if delete by query hits version conflicts: `abort`
             or `proceed`.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -1761,7 +1768,7 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -1890,7 +1897,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -2019,8 +2026,8 @@ class Elasticsearch(BaseClient):
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
             be used only when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -2131,6 +2138,7 @@ class Elasticsearch(BaseClient):
         include_unmapped: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         types: t.Optional[t.Sequence[str]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -2174,6 +2182,11 @@ class Elasticsearch(BaseClient):
             deleted documents) are outside of the provided range. However, not all queries
             can rewrite to `match_none` so this API may return an index even if the provided
             filter matches no document.
+        :param project_routing: Specifies a subset of projects to target for the field-caps
+            query using project metadata tags in a subset of Lucene query syntax. Allowed
+            Lucene queries: the _alias tag and a single value (possibly wildcarded).
+            Examples: _alias:my-project _alias:_origin _alias:*pr* Supported in serverless
+            only.
         :param runtime_mappings: Define ad-hoc runtime fields in the request similar
             to the way it is done in search requests. These fields exist only as part
             of the query and take precedence over fields defined with the same name in
@@ -2211,6 +2224,8 @@ class Elasticsearch(BaseClient):
             __query["include_unmapped"] = include_unmapped
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if types is not None:
             __query["types"] = types
         if not __body:
@@ -2264,7 +2279,7 @@ class Elasticsearch(BaseClient):
         stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2554,7 +2569,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2734,7 +2749,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union[str, t.Literal["all", "index-setting"]]]
@@ -3149,6 +3164,7 @@ class Elasticsearch(BaseClient):
         max_concurrent_shard_requests: t.Optional[int] = None,
         pre_filter_shard_size: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         search_type: t.Optional[
@@ -3210,6 +3226,10 @@ class Elasticsearch(BaseClient):
             roundtrip can limit the number of shards significantly if for instance a
             shard can not match any documents based on its rewrite method i.e., if date
             filters are mandatory to match but the shard bounds and the query are disjoint.
+        :param project_routing: Specifies a subset of projects to target for a search
+            using project metadata tags in a subset Lucene syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possible wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param rest_total_hits_as_int: If true, hits.total are returned as an integer
             in the response. Defaults to false, which returns an object.
         :param routing: Custom routing value used to route search operations to a specific
@@ -3259,6 +3279,8 @@ class Elasticsearch(BaseClient):
             __query["pre_filter_shard_size"] = pre_filter_shard_size
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
@@ -3297,6 +3319,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         max_concurrent_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
@@ -3330,6 +3353,10 @@ class Elasticsearch(BaseClient):
             for cross-cluster search requests.
         :param max_concurrent_searches: The maximum number of concurrent searches the
             API can run.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param rest_total_hits_as_int: If `true`, the response returns `hits.total` as
             an integer. If `false`, it returns `hits.total` as an object.
         :param search_type: The type of the search operation.
@@ -3362,6 +3389,8 @@ class Elasticsearch(BaseClient):
             __query["max_concurrent_searches"] = max_concurrent_searches
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if search_type is not None:
@@ -3407,7 +3436,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3532,6 +3561,7 @@ class Elasticsearch(BaseClient):
         max_concurrent_shard_requests: t.Optional[int] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         routing: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3588,6 +3618,11 @@ class Elasticsearch(BaseClient):
             that each sub-search request executes per node.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
+        :param project_routing: Specifies a subset of projects to target for the PIT
+            request using project metadata tags in a subset of Lucene query syntax. Allowed
+            Lucene queries: the _alias tag and a single value (possibly wildcarded).
+            Examples: _alias:my-project _alias:_origin _alias:*pr* Supported in serverless
+            only.
         :param routing: A custom value that is used to route operations to a specific
             shard.
         """
@@ -3619,6 +3654,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if routing is not None:
             __query["routing"] = routing
         if not __body:
@@ -3817,7 +3854,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("dest", "source", "conflicts", "max_docs", "script", "size"),
+        body_fields=("dest", "source", "conflicts", "max_docs", "script"),
     )
     def reindex(
         self,
@@ -3835,7 +3872,6 @@ class Elasticsearch(BaseClient):
         require_alias: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        size: t.Optional[int] = None,
         slices: t.Optional[t.Union[int, t.Union[str, t.Literal["auto"]]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         wait_for_active_shards: t.Optional[
@@ -3911,7 +3947,6 @@ class Elasticsearch(BaseClient):
             reindexing.
         :param scroll: The period of time that a consistent view of the index should
             be maintained for scrolled search.
-        :param size:
         :param slices: The number of slices this task should be divided into. It defaults
             to one slice, which means the task isn't sliced into subtasks. Reindex supports
             sliced scroll to parallelize the reindexing process. This parallelization
@@ -3976,8 +4011,6 @@ class Elasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if script is not None:
                 __body["script"] = script
-            if size is not None:
-                __body["size"] = size
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4104,11 +4137,7 @@ class Elasticsearch(BaseClient):
                 __body["params"] = params
             if source is not None:
                 __body["source"] = source
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4191,11 +4220,7 @@ class Elasticsearch(BaseClient):
                 __body["context_setup"] = context_setup
             if script is not None:
                 __body["script"] = script
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4375,6 +4400,7 @@ class Elasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         rank: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4472,8 +4498,8 @@ class Elasticsearch(BaseClient):
             node and the remote clusters are minimized when running cross-cluster search
             (CCS) requests.
         :param collapse: Collapses search results the values of the specified field.
-        :param default_operator: The default operator for the query string query: `AND`
-            or `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for the query string query: `and`
+            or `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as a default when no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter
@@ -4558,6 +4584,10 @@ class Elasticsearch(BaseClient):
         :param profile: Set to `true` to return detailed timing information about the
             execution of individual components in a search request. NOTE: This is a debugging
             tool and adds significant overhead to search execution.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param q: A query in the Lucene query string syntax. Query parameter searches
             do not support the full Elasticsearch Query DSL but are handy for testing.
             IMPORTANT: This parameter overrides the query parameter in the request body.
@@ -4712,6 +4742,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if request_cache is not None:
@@ -4866,6 +4898,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         size: t.Optional[int] = None,
@@ -5183,6 +5216,10 @@ class Elasticsearch(BaseClient):
             In the aggs layer, each feature represents a `geotile_grid` cell. If `grid,
             each feature is a polygon of the cells bounding box. If `point`, each feature
             is a Point that is the centroid of the cell.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param query: The query DSL used to filter documents for the search.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
@@ -5246,6 +5283,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if not __body:
             if aggs is not None:
                 __body["aggs"] = aggs
@@ -5419,6 +5458,7 @@ class Elasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -5464,6 +5504,10 @@ class Elasticsearch(BaseClient):
         :param preference: The node or shard the operation should be performed on. It
             is random by default.
         :param profile: If `true`, the query execution is profiled.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param rest_total_hits_as_int: If `true`, `hits.total` is rendered as an integer
             in the response. If `false`, it is rendered as an object.
         :param routing: A custom value used to route operations to a specific shard.
@@ -5505,6 +5549,8 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
@@ -5631,11 +5677,7 @@ class Elasticsearch(BaseClient):
                 __body["string"] = string
             if timeout is not None:
                 __body["timeout"] = timeout
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5685,7 +5727,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union[str, t.Literal["external", "external_gte", "internal"]]
         ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6161,8 +6203,8 @@ class Elasticsearch(BaseClient):
             be used only when the `q` query string parameter is specified.
         :param conflicts: The preferred behavior when update by query hits version conflicts:
             `abort` or `proceed`.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`. This parameter can be used only when the `q` query string parameter
+        :param default_operator: The default operator for query string query: `and` or
+            `or`. This parameter can be used only when the `q` query string parameter
             is specified.
         :param df: The field to use as default where no field prefix is given in the
             query string. This parameter can be used only when the `q` query string parameter

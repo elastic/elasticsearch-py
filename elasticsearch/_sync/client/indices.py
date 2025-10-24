@@ -232,11 +232,7 @@ class IndicesClient(NamespacedClient):
                 __body["text"] = text
             if tokenizer is not None:
                 __body["tokenizer"] = tokenizer
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -812,11 +808,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'source'")
         if dest in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'dest'")
-        if create_from is None and body is None:
-            raise ValueError(
-                "Empty value passed for parameters 'create_from' and 'body', one of them should be set."
-            )
-        elif create_from is not None and body is not None:
+        if create_from is not None and body is not None:
             raise ValueError("Cannot set both 'create_from' and 'body'")
         __path_parts: t.Dict[str, str] = {
             "source": _quote(source),
@@ -833,7 +825,11 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __body = create_from if create_from is not None else body
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1393,6 +1389,7 @@ class IndicesClient(NamespacedClient):
           <p>NOTE: The total size of fields of the analyzed shards of the index in the response is usually smaller than the index <code>store_size</code> value because some small metadata files are ignored and some parts of data files might not be scanned by the API.
           Since stored fields are stored together in a compressed format, the sizes of stored fields are also estimates and can be inaccurate.
           The stored size of the <code>_id</code> field is likely underestimated while the <code>_source</code> field is overestimated.</p>
+          <p>For usage examples see the External documentation or refer to <a href="https://www.elastic.co/docs/reference/elasticsearch/rest-apis/index-disk-usage">Analyze the index disk usage example</a> for an example.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-disk-usage>`_
@@ -2995,6 +2992,94 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def get_sample(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def get_sample_stats(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request stats for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample/stats'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample_stats",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def get_settings(
         self,
         *,
@@ -3689,11 +3774,7 @@ class IndicesClient(NamespacedClient):
                 __body["downsampling"] = downsampling
             if enabled is not None:
                 __body["enabled"] = enabled
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3849,11 +3930,7 @@ class IndicesClient(NamespacedClient):
         if not __body:
             if failure_store is not None:
                 __body["failure_store"] = failure_store
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4677,6 +4754,7 @@ class IndicesClient(NamespacedClient):
           For data streams, the API runs the refresh operation on the stream’s backing indices.</p>
           <p>By default, Elasticsearch periodically refreshes indices every second, but only on indices that have received one search request or more in the last 30 seconds.
           You can change this default interval with the <code>index.refresh_interval</code> setting.</p>
+          <p>In Elastic Cloud Serverless, the default refresh interval is 5 seconds across all indices.</p>
           <p>Refresh requests are synchronous and do not return a response until the refresh operation completes.</p>
           <p>Refreshes are resource-intensive.
           To ensure good cluster performance, it's recommended to wait for Elasticsearch's periodic refresh rather than performing an explicit refresh when possible.</p>
@@ -5076,6 +5154,7 @@ class IndicesClient(NamespacedClient):
             ]
         ] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5103,6 +5182,10 @@ class IndicesClient(NamespacedClient):
             a missing or closed index.
         :param mode: Filter indices by index mode - standard, lookup, time_series, etc.
             Comma-separated list of IndexMode. Empty means no filter.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -5125,6 +5208,8 @@ class IndicesClient(NamespacedClient):
             __query["mode"] = mode
         if pretty is not None:
             __query["pretty"] = pretty
+        if project_routing is not None:
+            __query["project_routing"] = project_routing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -5541,11 +5626,7 @@ class IndicesClient(NamespacedClient):
                 __body["aliases"] = aliases
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5556,7 +5637,9 @@ class IndicesClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_name="index_template",
+    )
     def simulate_index_template(
         self,
         *,
@@ -5567,6 +5650,8 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        index_template: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -5586,12 +5671,15 @@ class IndicesClient(NamespacedClient):
             only be dry-run added if new or can also replace an existing one
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
+        :param index_template:
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
+        if index_template is not None and body is not None:
+            raise ValueError("Cannot set both 'index_template' and 'body'")
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_index_template/_simulate_index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
@@ -5611,12 +5699,18 @@ class IndicesClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        __body = index_template if index_template is not None else body
+        if not __body:
+            __body = None
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="indices.simulate_index_template",
             path_parts=__path_parts,
         )
@@ -5884,11 +5978,7 @@ class IndicesClient(NamespacedClient):
                 __body["aliases"] = aliases
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5965,8 +6055,8 @@ class IndicesClient(NamespacedClient):
             are requested).
         :param include_unloaded_segments: If true, the response includes information
             from segments that are not loaded into memory.
-        :param level: Indicates whether statistics are aggregated at the cluster, index,
-            or shard level.
+        :param level: Indicates whether statistics are aggregated at the cluster, indices,
+            or shards level.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
@@ -6132,8 +6222,8 @@ class IndicesClient(NamespacedClient):
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
         :param analyzer: Analyzer to use for the query string. This parameter can only
             be used when the `q` query string parameter is specified.
-        :param default_operator: The default operator for query string query: `AND` or
-            `OR`.
+        :param default_operator: The default operator for query string query: `and` or
+            `or`.
         :param df: Field to use as default where no field prefix is given in the query
             string. This parameter can only be used when the `q` query string parameter
             is specified.

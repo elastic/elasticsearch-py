@@ -44,7 +44,11 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform completion inference on the service</p>
+          <p>Perform completion inference on the service
+          Get responses for completion tasks.
+          This API works only with the completion task type.</p>
+          <p>IMPORTANT: The inference APIs enable you to use certain services, such as built-in machine learning models (ELSER, E5), models uploaded through Eland, Cohere, OpenAI, Azure, Google AI Studio, Google Vertex AI, Anthropic, Watsonx.ai, or Hugging Face. For built-in models and models uploaded through Eland, the inference APIs offer an alternative way to use and manage trained models. However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
+          <p>This API requires the <code>monitor_inference</code> cluster privilege (the built-in <code>inference_admin</code> and <code>inference_user</code> roles grant this privilege).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
@@ -78,11 +82,7 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -338,11 +338,7 @@ class InferenceClient(NamespacedClient):
                 __body["query"] = query
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -529,11 +525,7 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -627,11 +619,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -727,11 +715,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -833,11 +817,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -930,11 +910,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1026,11 +1002,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1130,11 +1102,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1224,11 +1192,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1236,6 +1200,99 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put_cohere",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=(
+            "service",
+            "service_settings",
+            "chunking_settings",
+            "task_settings",
+        ),
+    )
+    async def put_contextualai(
+        self,
+        *,
+        task_type: t.Union[str, t.Literal["rerank"]],
+        contextualai_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["contextualai"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an Contextual AI inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>contexualai</code> service.</p>
+          <p>To review the available <code>rerank</code> models, refer to <a href="https://docs.contextual.ai/api-reference/rerank/rerank#body-model">https://docs.contextual.ai/api-reference/rerank/rerank#body-model</a>.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-contextualai>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+        :param contextualai_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `contextualai`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `contextualai` service.
+        :param chunking_settings: The chunking configuration object.
+        :param task_settings: Settings to configure the inference task. These settings
+            are specific to the task type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if contextualai_inference_id in SKIP_IN_PATH:
+            raise ValueError(
+                "Empty value passed for parameter 'contextualai_inference_id'"
+            )
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "contextualai_inference_id": _quote(contextualai_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["contextualai_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_contextualai",
             path_parts=__path_parts,
         )
 
@@ -1355,11 +1412,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1439,11 +1492,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1509,7 +1558,9 @@ class InferenceClient(NamespacedClient):
             this case, `elasticsearch`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `elasticsearch` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `sparse_embedding` and `text_embedding` task types. Not applicable to
+            the `rerank`, `completion`, or `chat_completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1551,11 +1602,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1650,11 +1697,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1736,11 +1779,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1834,11 +1873,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1966,11 +2001,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2062,11 +2093,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2148,11 +2175,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2234,11 +2257,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2332,11 +2351,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2427,11 +2442,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2511,11 +2522,7 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2527,20 +2534,22 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("input", "query", "task_settings"),
+        body_fields=("input", "query", "return_documents", "task_settings", "top_n"),
     )
     async def rerank(
         self,
         *,
         inference_id: str,
-        input: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        input: t.Optional[t.Sequence[str]] = None,
         query: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        return_documents: t.Optional[bool] = None,
         task_settings: t.Optional[t.Any] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        top_n: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2552,14 +2561,14 @@ class InferenceClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
 
         :param inference_id: The unique identifier for the inference endpoint.
-        :param input: The text on which you want to perform the inference task. It can
-            be a single string or an array. > info > Inference endpoints for the `completion`
-            task type currently only support a single string as input.
+        :param input: The documents to rank.
         :param query: Query input.
+        :param return_documents: Include the document text in the response.
         :param task_settings: Task settings for the individual inference request. These
             settings are specific to the task type you specified and override the task
             settings specified when initializing the service.
         :param timeout: The amount of time to wait for the inference request to complete.
+        :param top_n: Limit the response to the top N documents.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -2586,13 +2595,13 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if query is not None:
                 __body["query"] = query
+            if return_documents is not None:
+                __body["return_documents"] = return_documents
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+            if top_n is not None:
+                __body["top_n"] = top_n
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2656,11 +2665,7 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2672,7 +2677,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("input", "task_settings"),
+        body_fields=("input", "input_type", "task_settings"),
     )
     async def text_embedding(
         self,
@@ -2682,6 +2687,7 @@ class InferenceClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        input_type: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         task_settings: t.Optional[t.Any] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -2697,6 +2703,13 @@ class InferenceClient(NamespacedClient):
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
+        :param input_type: The input data type for the text embedding model. Possible
+            values include: * `SEARCH` * `INGEST` * `CLASSIFICATION` * `CLUSTERING` Not
+            all services support all values. Unsupported values will trigger a validation
+            exception. Accepted values depend on the configured inference service, refer
+            to the relevant service-specific documentation for more info. > info > The
+            `input_type` parameter specified on the root level of the request body will
+            take precedence over the `input_type` parameter specified in `task_settings`.
         :param task_settings: Optional task settings
         :param timeout: Specifies the amount of time to wait for the inference request
             to complete.
@@ -2722,13 +2735,11 @@ class InferenceClient(NamespacedClient):
         if not __body:
             if input is not None:
                 __body["input"] = input
+            if input_type is not None:
+                __body["input_type"] = input_type
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

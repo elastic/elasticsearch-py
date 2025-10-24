@@ -40,6 +40,7 @@ class EsqlClient(NamespacedClient):
             "columnar",
             "filter",
             "include_ccs_metadata",
+            "include_execution_metadata",
             "keep_alive",
             "keep_on_completion",
             "locale",
@@ -71,6 +72,7 @@ class EsqlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         include_ccs_metadata: t.Optional[bool] = None,
+        include_execution_metadata: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
@@ -120,7 +122,11 @@ class EsqlClient(NamespacedClient):
             be returned if the async query doesn't finish within the timeout. The query
             ID and running status are available in the `X-Elasticsearch-Async-Id` and
             `X-Elasticsearch-Async-Is-Running` HTTP headers of the response, respectively.
-        :param include_ccs_metadata: When set to `true` and performing a cross-cluster
+        :param include_ccs_metadata: When set to `true` and performing a cross-cluster/cross-project
+            query, the response will include an extra `_clusters` object with information
+            about the clusters that participated in the search along with info such as
+            shards count.
+        :param include_execution_metadata: When set to `true` and performing a cross-cluster/cross-project
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
             shards count.
@@ -180,6 +186,8 @@ class EsqlClient(NamespacedClient):
                 __body["filter"] = filter
             if include_ccs_metadata is not None:
                 __body["include_ccs_metadata"] = include_ccs_metadata
+            if include_execution_metadata is not None:
+                __body["include_execution_metadata"] = include_execution_metadata
             if keep_alive is not None:
                 __body["keep_alive"] = keep_alive
             if keep_on_completion is not None:
@@ -486,6 +494,7 @@ class EsqlClient(NamespacedClient):
             "columnar",
             "filter",
             "include_ccs_metadata",
+            "include_execution_metadata",
             "locale",
             "params",
             "profile",
@@ -514,8 +523,16 @@ class EsqlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         include_ccs_metadata: t.Optional[bool] = None,
+        include_execution_metadata: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
-        params: t.Optional[t.Sequence[t.Union[None, bool, float, int, str]]] = None,
+        params: t.Optional[
+            t.Sequence[
+                t.Union[
+                    t.Sequence[t.Union[None, bool, float, int, str]],
+                    t.Union[None, bool, float, int, str],
+                ]
+            ]
+        ] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
         tables: t.Optional[
@@ -554,7 +571,11 @@ class EsqlClient(NamespacedClient):
         :param format: A short version of the Accept header, e.g. json, yaml. `csv`,
             `tsv`, and `txt` formats will return results in a tabular format, excluding
             other metadata fields from the response.
-        :param include_ccs_metadata: When set to `true` and performing a cross-cluster
+        :param include_ccs_metadata: When set to `true` and performing a cross-cluster/cross-project
+            query, the response will include an extra `_clusters` object with information
+            about the clusters that participated in the search along with info such as
+            shards count.
+        :param include_execution_metadata: When set to `true` and performing a cross-cluster/cross-project
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
             shards count.
@@ -600,6 +621,8 @@ class EsqlClient(NamespacedClient):
                 __body["filter"] = filter
             if include_ccs_metadata is not None:
                 __body["include_ccs_metadata"] = include_ccs_metadata
+            if include_execution_metadata is not None:
+                __body["include_execution_metadata"] = include_execution_metadata
             if locale is not None:
                 __body["locale"] = locale
             if params is not None:

@@ -368,9 +368,7 @@ class NodesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
-        level: t.Optional[
-            t.Union[str, t.Literal["cluster", "indices", "shards"]]
-        ] = None,
+        level: t.Optional[t.Union[str, t.Literal["indices", "node", "shards"]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         types: t.Optional[t.Sequence[str]] = None,
@@ -404,8 +402,8 @@ class NodesClient(NamespacedClient):
             are requested).
         :param include_unloaded_segments: If `true`, the response includes information
             from segments that are not loaded into memory.
-        :param level: Indicates whether statistics are aggregated at the cluster, index,
-            or shard level.
+        :param level: Indicates whether statistics are aggregated at the node, indices,
+            or shards level.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         :param types: A comma-separated list of document types for the indexing index
