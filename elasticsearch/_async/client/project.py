@@ -32,7 +32,7 @@ class ProjectClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_stability_warning(Stability.EXPERIMENTAL)
-    def tags(
+    async def tags(
         self,
         *,
         error_trace: t.Optional[bool] = None,
@@ -61,7 +61,7 @@ class ProjectClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
+        return await self.perform_request(  # type: ignore[return-value]
             "GET",
             __path,
             params=__query,
