@@ -135,7 +135,7 @@ async def test_inner_hits_are_serialized_to_dict(
 
 @pytest.mark.anyio
 async def test_scan_respects_doc_types(async_data_client: AsyncElasticsearch) -> None:
-    repos = [repo async for repo in Repository.search().source("organization").scan()]
+    repos = [repo async for repo in Repository.search().scan()]
 
     assert 1 == len(repos)
     assert isinstance(repos[0], Repository)
