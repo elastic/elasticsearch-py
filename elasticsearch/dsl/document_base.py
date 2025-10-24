@@ -34,6 +34,13 @@ from typing import (
     overload,
 )
 
+from typing_extensions import _AnnotatedAlias
+
+try:
+    import annotationlib
+except ImportError:
+    annotationlib = None
+
 try:
     from types import UnionType
 except ImportError:
@@ -332,6 +339,16 @@ class DocumentOptions:
         #     # ignore attributes
         #     field10: ClassVar[string] = "a regular class variable"
         annotations = attrs.get("__annotations__", {})
+        if not annotations and annotationlib:
+            # Python 3.14+ uses annotationlib
+            annotate = annotationlib.get_annotate_from_class_namespace(attrs)
+            if annotate:
+                annotations = (
+                    annotationlib.call_annotate_function(
+                        annotate, format=annotationlib.Format.VALUE
+                    )
+                    or {}
+                )
         fields = {n for n in attrs if isinstance(attrs[n], Field)}
         fields.update(annotations.keys())
         field_defaults = {}
@@ -343,6 +360,10 @@ class DocumentOptions:
                 # the field has a type annotation, so next we try to figure out
                 # what field type we can use
                 type_ = annotations[name]
+                type_metadata = []
+                if isinstance(type_, _AnnotatedAlias):
+                    type_metadata = type_.__metadata__
+                    type_ = type_.__origin__
                 skip = False
                 required = True
                 multi = False
@@ -389,6 +410,12 @@ class DocumentOptions:
                     # use best field type for the type hint provided
                     field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]
 
+                # if this field does not have a right-hand value, we look in the metadata
+                # of the annotation to see if we find it there
+                for md in type_metadata:
+                    if isinstance(md, (_FieldMetadataDict, Field)):
+                        attrs[name] = md
+
                 if field:
                     field_kwargs = {
                         "multi": multi,
@@ -401,17 +428,20 @@ class DocumentOptions:
                 # this field has a right-side value, which can be field
                 # instance on its own or wrapped with mapped_field()
                 attr_value = attrs[name]
-                if isinstance(attr_value, dict):
+                if isinstance(attr_value, _FieldMetadataDict):
                     # the mapped_field() wrapper function was used so we need
                     # to look for the field instance and also record any
                     # dataclass-style defaults
+                    if attr_value.get("exclude"):
+                        # skip this field
+                        continue
                     attr_value = attrs[name].get("_field")
                     default_value = attrs[name].get("default") or attrs[name].get(
                         "default_factory"
                     )
                     if default_value:
                         field_defaults[name] = default_value
-                if attr_value:
+                if isinstance(attr_value, Field):
                     value = attr_value
                     if required is not None:
                         value._required = required
@@ -490,12 +520,19 @@ class Mapped(Generic[_FieldType]):
 M = Mapped
 
 
+class _FieldMetadataDict(dict[str, Any]):
+    """This class is used to identify metadata returned by the `mapped_field()` function."""
+
+    pass
+
+
 def mapped_field(
     field: Optional[Field] = None,
     *,
     init: bool = True,
     default: Any = None,
     default_factory: Optional[Callable[[], Any]] = None,
+    exclude: bool = False,
     **kwargs: Any,
 ) -> Any:
     """Construct a field using dataclass behaviors
@@ -505,22 +542,25 @@ def mapped_field(
     options.
 
     :param field: The instance of ``Field`` to use for this field. If not provided,
-    an instance that is appropriate for the type given to the field is used.
+        an instance that is appropriate for the type given to the field is used.
     :param init: a value of ``True`` adds this field to the constructor, and a
-    value of ``False`` omits it from it. The default is ``True``.
+        value of ``False`` omits it from it. The default is ``True``.
     :param default: a default value to use for this field when one is not provided
-    explicitly.
+        explicitly.
     :param default_factory: a callable that returns a default value for the field,
-    when one isn't provided explicitly. Only one of ``factory`` and
-    ``default_factory`` can be used.
+        when one isn't provided explicitly. Only one of ``factory`` and
+        ``default_factory`` can be used.
+    :param exclude: Set to ``True`` to exclude this field from the Elasticsearch
+        index.
     """
-    return {
-        "_field": field,
-        "init": init,
-        "default": default,
-        "default_factory": default_factory,
+    return _FieldMetadataDict(
+        _field=field,
+        init=init,
+        default=default,
+        default_factory=default_factory,
+        exclude=exclude,
         **kwargs,
-    }
+    )
 
 
 @dataclass_transform(field_specifiers=(mapped_field,))

@@ -142,7 +142,7 @@ class Tags(AsyncDocument):
         name = "tags"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_serialization(async_write_client: AsyncElasticsearch) -> None:
     await SerializationDoc.init()
     await async_write_client.index(
@@ -174,7 +174,7 @@ async def test_serialization(async_write_client: AsyncElasticsearch) -> None:
     }
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_nested_inner_hits_are_wrapped_properly(async_pull_request: Any) -> None:
     history_query = Q(
         "nested",
@@ -203,7 +203,7 @@ async def test_nested_inner_hits_are_wrapped_properly(async_pull_request: Any) -
     assert "score" in history.meta
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_nested_inner_hits_are_deserialized_properly(
     async_pull_request: Any,
 ) -> None:
@@ -221,7 +221,7 @@ async def test_nested_inner_hits_are_deserialized_properly(
     assert isinstance(pr.comments[0].created_at, datetime)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_nested_top_hits_are_wrapped_properly(async_pull_request: Any) -> None:
     s = PullRequest.search()
     s.aggs.bucket("comments", "nested", path="comments").metric(
@@ -234,7 +234,7 @@ async def test_nested_top_hits_are_wrapped_properly(async_pull_request: Any) -> 
     assert isinstance(r.aggregations.comments.hits.hits[0], Comment)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_object_field(async_write_client: AsyncElasticsearch) -> None:
     await Wiki.init()
     w = Wiki(
@@ -255,7 +255,7 @@ async def test_update_object_field(async_write_client: AsyncElasticsearch) -> No
     assert w.ranked == {"test1": 0.1, "topic2": 0.2}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_script(async_write_client: AsyncElasticsearch) -> None:
     await Wiki.init()
     w = Wiki(owner=User(name="Honza Kral"), _id="elasticsearch-py", views=42)
@@ -266,7 +266,7 @@ async def test_update_script(async_write_client: AsyncElasticsearch) -> None:
     assert w.views == 47
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_script_with_dict(async_write_client: AsyncElasticsearch) -> None:
     await Wiki.init()
     w = Wiki(owner=User(name="Honza Kral"), _id="elasticsearch-py", views=42)
@@ -284,7 +284,7 @@ async def test_update_script_with_dict(async_write_client: AsyncElasticsearch) -
     assert w.views == 47
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_retry_on_conflict(async_write_client: AsyncElasticsearch) -> None:
     await Wiki.init()
     w = Wiki(owner=User(name="Honza Kral"), _id="elasticsearch-py", views=42)
@@ -306,7 +306,7 @@ async def test_update_retry_on_conflict(async_write_client: AsyncElasticsearch) 
     assert w.views == 52
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 @pytest.mark.parametrize("retry_on_conflict", [None, 0])
 async def test_update_conflicting_version(
     async_write_client: AsyncElasticsearch, retry_on_conflict: bool
@@ -330,7 +330,7 @@ async def test_update_conflicting_version(
         )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_and_update_return_doc_meta(
     async_write_client: AsyncElasticsearch,
 ) -> None:
@@ -365,14 +365,14 @@ async def test_save_and_update_return_doc_meta(
     }
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_init(async_write_client: AsyncElasticsearch) -> None:
     await Repository.init(index="test-git")
 
     assert await async_write_client.indices.exists(index="test-git")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get_raises_404_on_index_missing(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -380,7 +380,7 @@ async def test_get_raises_404_on_index_missing(
         await Repository.get("elasticsearch-dsl-php", index="not-there")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get_raises_404_on_non_existent_id(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -388,7 +388,7 @@ async def test_get_raises_404_on_non_existent_id(
         await Repository.get("elasticsearch-dsl-php")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get_returns_none_if_404_ignored(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -397,7 +397,7 @@ async def test_get_returns_none_if_404_ignored(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get_returns_none_if_404_ignored_and_index_doesnt_exist(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -406,7 +406,7 @@ async def test_get_returns_none_if_404_ignored_and_index_doesnt_exist(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get(async_data_client: AsyncElasticsearch) -> None:
     elasticsearch_repo = await Repository.get("elasticsearch-dsl-py")
 
@@ -415,17 +415,17 @@ async def test_get(async_data_client: AsyncElasticsearch) -> None:
     assert datetime(2014, 3, 3) == elasticsearch_repo.created_at
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_exists_return_true(async_data_client: AsyncElasticsearch) -> None:
     assert await Repository.exists("elasticsearch-dsl-py")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_exists_false(async_data_client: AsyncElasticsearch) -> None:
     assert not await Repository.exists("elasticsearch-dsl-php")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_get_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
     first_commit = await Commit.get(
         id="3ca6e1e73a071a705b4babd2f581c91a2a3e5037", routing="elasticsearch-dsl-py"
@@ -439,7 +439,7 @@ async def test_get_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
     tzinfo = timezone("Europe/Prague")
     first_commit = await Commit.get(
@@ -471,7 +471,7 @@ COMMIT_DOCS_WITH_MISSING = [
 ]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_mget(async_data_client: AsyncElasticsearch) -> None:
     commits = await Commit.mget(COMMIT_DOCS_WITH_MISSING)
     assert commits[0] is None
@@ -482,7 +482,7 @@ async def test_mget(async_data_client: AsyncElasticsearch) -> None:
     assert commits[3].meta.id == "eb3e543323f189fd7b698e66295427204fff5755"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_mget_raises_exception_when_missing_param_is_invalid(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -490,7 +490,7 @@ async def test_mget_raises_exception_when_missing_param_is_invalid(
         await Commit.mget(COMMIT_DOCS_WITH_MISSING, missing="raj")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_mget_raises_404_when_missing_param_is_raise(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -498,7 +498,7 @@ async def test_mget_raises_404_when_missing_param_is_raise(
         await Commit.mget(COMMIT_DOCS_WITH_MISSING, missing="raise")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_mget_ignores_missing_docs_when_missing_param_is_skip(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -509,7 +509,7 @@ async def test_mget_ignores_missing_docs_when_missing_param_is_skip(
     assert commits[1].meta.id == "eb3e543323f189fd7b698e66295427204fff5755"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_works_from_search_response(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -524,7 +524,7 @@ async def test_update_works_from_search_response(
     assert "elasticsearch" == new_version.owner.name
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update(async_data_client: AsyncElasticsearch) -> None:
     elasticsearch_repo = await Repository.get("elasticsearch-dsl-py")
     assert elasticsearch_repo is not None
@@ -551,7 +551,7 @@ async def test_update(async_data_client: AsyncElasticsearch) -> None:
     assert "primary_term" in new_version.meta
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_updates_existing_doc(async_data_client: AsyncElasticsearch) -> None:
     elasticsearch_repo = await Repository.get("elasticsearch-dsl-py")
     assert elasticsearch_repo is not None
@@ -566,7 +566,7 @@ async def test_save_updates_existing_doc(async_data_client: AsyncElasticsearch) 
     assert new_repo["_seq_no"] == elasticsearch_repo.meta.seq_no
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_empty_field(async_client: AsyncElasticsearch) -> None:
     await Tags._index.delete(ignore_unavailable=True)
     await Tags.init()
@@ -579,7 +579,7 @@ async def test_update_empty_field(async_client: AsyncElasticsearch) -> None:
     assert r.hits[0].tags == []
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_automatically_uses_seq_no_and_primary_term(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -591,7 +591,7 @@ async def test_save_automatically_uses_seq_no_and_primary_term(
         await elasticsearch_repo.save()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete_automatically_uses_seq_no_and_primary_term(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -609,7 +609,7 @@ def assert_doc_equals(expected: Any, actual: Any) -> None:
         assert actual[f] == expected[f]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_can_save_to_different_index(
     async_write_client: AsyncElasticsearch,
 ) -> None:
@@ -627,7 +627,7 @@ async def test_can_save_to_different_index(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 @pytest.mark.parametrize("validate", (True, False))
 async def test_save_without_skip_empty_will_include_empty_fields(
     async_write_client: AsyncElasticsearch,
@@ -673,7 +673,7 @@ async def test_save_without_skip_empty_will_include_empty_fields(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete(async_write_client: AsyncElasticsearch) -> None:
     await async_write_client.create(
         index="test-document",
@@ -695,12 +695,12 @@ async def test_delete(async_write_client: AsyncElasticsearch) -> None:
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search(async_data_client: AsyncElasticsearch) -> None:
     assert await Repository.search().count() == 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_search_returns_proper_doc_classes(
     async_data_client: AsyncElasticsearch,
 ) -> None:
@@ -712,7 +712,7 @@ async def test_search_returns_proper_doc_classes(
     assert elasticsearch_repo.owner.name == "elasticsearch"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_refresh_mapping(async_data_client: AsyncElasticsearch) -> None:
     class Commit(AsyncDocument):
         class Index:
@@ -727,7 +727,7 @@ async def test_refresh_mapping(async_data_client: AsyncElasticsearch) -> None:
     assert isinstance(Commit._index._mapping["committed_date"], Date)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_highlight_in_meta(async_data_client: AsyncElasticsearch) -> None:
     commit = (
         await Commit.search()
@@ -742,7 +742,7 @@ async def test_highlight_in_meta(async_data_client: AsyncElasticsearch) -> None:
     assert len(commit.meta.highlight["description"]) > 0
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_bulk(async_data_client: AsyncElasticsearch) -> None:
     class Address(InnerDoc):
         street: str
@@ -830,7 +830,7 @@ async def test_bulk(async_data_client: AsyncElasticsearch) -> None:
     }
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_legacy_dense_vector(
     async_client: AsyncElasticsearch, es_version: Tuple[int, ...]
 ) -> None:
@@ -854,7 +854,7 @@ async def test_legacy_dense_vector(
     assert docs[0].float_vector == doc.float_vector
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_dense_vector(
     async_client: AsyncElasticsearch, es_version: Tuple[int, ...]
 ) -> None:
@@ -864,7 +864,7 @@ async def test_dense_vector(
     class Doc(AsyncDocument):
         float_vector: List[float] = mapped_field(DenseVector())
         byte_vector: List[int] = mapped_field(DenseVector(element_type="byte"))
-        bit_vector: str = mapped_field(DenseVector(element_type="bit"))
+        bit_vector: List[int] = mapped_field(DenseVector(element_type="bit"))
 
         class Index:
             name = "vectors"
@@ -873,18 +873,20 @@ async def test_dense_vector(
     await Doc.init()
 
     doc = Doc(
-        float_vector=[1.0, 1.2, 2.3], byte_vector=[12, 23, 34, 45], bit_vector="12abf0"
+        float_vector=[1.0, 1.2, 2.3],
+        byte_vector=[12, 23, 34, 45],
+        bit_vector=[18, -43, -112],
     )
     await doc.save(refresh=True)
 
     docs = await Doc.search().execute()
     assert len(docs) == 1
-    assert docs[0].float_vector == doc.float_vector
+    assert [round(v, 1) for v in docs[0].float_vector] == doc.float_vector
     assert docs[0].byte_vector == doc.byte_vector
     assert docs[0].bit_vector == doc.bit_vector
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_copy_to(async_client: AsyncElasticsearch) -> None:
     class Person(AsyncDocument):
         first_name: M[str] = mapped_field(Text(copy_to=["full_name", "all"]))

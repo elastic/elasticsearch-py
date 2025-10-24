@@ -18,8 +18,10 @@
 import inspect
 import os
 import sys
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Tuple, Type, Union
+from threading import Thread
+from typing import Any, Callable, Iterator, Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
 
@@ -76,9 +78,36 @@ def warn_stacklevel() -> int:
     return 0
 
 
+@contextmanager
+def safe_thread(
+    target: Callable[..., Any], *args: Any, **kwargs: Any
+) -> Iterator[Thread]:
+    """Run a thread within a context manager block.
+
+    The thread is automatically joined when the block ends. If the thread raised
+    an exception, it is raised in the caller's context.
+    """
+    captured_exception = None
+
+    def run() -> None:
+        try:
+            target(*args, **kwargs)
+        except BaseException as exc:
+            nonlocal captured_exception
+            captured_exception = exc
+
+    thread = Thread(target=run)
+    thread.start()
+    yield thread
+    thread.join()
+    if captured_exception:
+        raise captured_exception
+
+
 __all__ = [
     "string_types",
     "to_str",
     "to_bytes",
     "warn_stacklevel",
+    "safe_thread",
 ]

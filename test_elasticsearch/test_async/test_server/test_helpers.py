@@ -15,20 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
 import logging
+import time
 from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
+import anyio
 import pytest
-import pytest_asyncio
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 
 from elasticsearch import helpers
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import ScanError
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = pytest.mark.anyio
 
 
 class AsyncMock(MagicMock):
@@ -92,7 +92,7 @@ class TestStreamingBulk:
     async def test_documents_data_types(self, async_client):
         async def async_gen():
             for x in range(100):
-                await asyncio.sleep(0)
+                await anyio.sleep(0)
                 yield {"answer": x, "_id": x}
 
         def sync_gen():
@@ -122,6 +122,45 @@ class TestStreamingBulk:
         assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
             "_source"
         ]
+
+    async def test_explicit_flushes(self, async_client):
+        async def async_gen():
+            yield {"answer": 2, "_id": 0}
+            yield {"answer": 1, "_id": 1}
+            yield helpers.BULK_FLUSH
+            await anyio.sleep(0.5)
+            yield {"answer": 2, "_id": 2}
+
+        timestamps = []
+        async for ok, item in helpers.async_streaming_bulk(
+            async_client, async_gen(), index="test-index", refresh=True
+        ):
+            timestamps.append(time.time())
+            assert ok
+
+        # make sure there is a pause between the writing of the 2nd and 3rd items
+        assert timestamps[2] - timestamps[1] > (timestamps[1] - timestamps[0]) * 2
+
+    async def test_timeout_flushes(self, async_client):
+        async def async_gen():
+            yield {"answer": 2, "_id": 0}
+            yield {"answer": 1, "_id": 1}
+            await anyio.sleep(0.5)
+            yield {"answer": 2, "_id": 2}
+
+        timestamps = []
+        async for ok, item in helpers.async_streaming_bulk(
+            async_client,
+            async_gen(),
+            index="test-index",
+            refresh=True,
+            flush_after_seconds=0.05,
+        ):
+            assert ok
+            timestamps.append(time.time())
+
+        # make sure there is a pause between the writing of the 2nd and 3rd items
+        assert timestamps[2] - timestamps[1] > (timestamps[1] - timestamps[0]) * 2
 
     async def test_all_errors_from_chunk_are_raised_on_failure(self, async_client):
         await async_client.indices.create(
@@ -491,7 +530,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -915,7 +954,7 @@ async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
         assert "from" not in search_mock.call_args[1]
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -993,7 +1032,7 @@ class TestReindex:
         )["_source"]
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -1054,7 +1093,7 @@ class TestParentChildReindex:
         } == q
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def reindex_data_stream_setup(async_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []

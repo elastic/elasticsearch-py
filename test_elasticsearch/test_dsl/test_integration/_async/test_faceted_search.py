@@ -126,7 +126,7 @@ def pr_search_cls(es_version: Tuple[int, ...]) -> Type[AsyncFacetedSearch]:
     return PRSearch
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_facet_with_custom_metric(async_data_client: AsyncElasticsearch) -> None:
     ms = MetricSearch()
     r = await ms.execute()
@@ -136,7 +136,7 @@ async def test_facet_with_custom_metric(async_data_client: AsyncElasticsearch) -
     assert dates[0] == 1399038439000
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_nested_facet(
     async_pull_request: PullRequest, pr_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -147,7 +147,7 @@ async def test_nested_facet(
     assert [(datetime(2018, 1, 1, 0, 0), 1, False)] == r.facets.comments
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_nested_facet_with_filter(
     async_pull_request: PullRequest, pr_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -162,7 +162,7 @@ async def test_nested_facet_with_filter(
     assert not r.hits
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_datehistogram_facet(
     async_data_client: AsyncElasticsearch, repo_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -173,7 +173,7 @@ async def test_datehistogram_facet(
     assert [(datetime(2014, 3, 1, 0, 0), 1, False)] == r.facets.created
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_boolean_facet(
     async_data_client: AsyncElasticsearch, repo_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -186,7 +186,7 @@ async def test_boolean_facet(
     assert value is True
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_empty_search_finds_everything(
     async_data_client: AsyncElasticsearch,
     es_version: Tuple[int, ...],
@@ -236,7 +236,7 @@ async def test_empty_search_finds_everything(
     ] == r.facets.deletions
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_term_filters_are_shown_as_selected_and_data_is_filtered(
     async_data_client: AsyncElasticsearch, commit_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -283,7 +283,7 @@ async def test_term_filters_are_shown_as_selected_and_data_is_filtered(
     ] == r.facets.deletions
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_range_filters_are_shown_as_selected_and_data_is_filtered(
     async_data_client: AsyncElasticsearch, commit_search_cls: Type[AsyncFacetedSearch]
 ) -> None:
@@ -294,7 +294,7 @@ async def test_range_filters_are_shown_as_selected_and_data_is_filtered(
     assert 19 == r.hits.total.value  # type: ignore[attr-defined]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_pagination(
     async_data_client: AsyncElasticsearch, commit_search_cls: Type[AsyncFacetedSearch]
 ) -> None:

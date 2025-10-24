@@ -62,6 +62,7 @@ def main(check=False):
         "AsyncMapping": "Mapping",
         "AsyncFacetedSearch": "FacetedSearch",
         "AsyncUsingType": "UsingType",
+        "AsyncBaseESModel": "BaseESModel",
         "async_connections": "connections",
         "async_scan": "scan",
         "async_simulate": "simulate",
@@ -74,7 +75,6 @@ def main(check=False):
         "async_examples": "examples",
         "async_sleep": "sleep",
         "assert_awaited_once_with": "assert_called_once_with",
-        "pytest_asyncio": "pytest",
         "asynccontextmanager": "contextmanager",
     }
     rules = [
@@ -101,7 +101,7 @@ def main(check=False):
     output_dirs = []
     for dir in source_dirs:
         output_dirs.append(f"{dir[0]}_sync_check/" if check else dir[1])
-    subprocess.check_call(["black", "--target-version=py38", *output_dirs])
+    subprocess.check_call(["black", "--target-version=py310", *output_dirs])
     subprocess.check_call(["isort", *output_dirs])
     for dir, output_dir in zip(source_dirs, output_dirs):
         for file in glob("*.py", root_dir=dir[0]):
@@ -125,15 +125,16 @@ def main(check=False):
                     f"{output_dir}{file}",
                 ]
             )
-            subprocess.check_call(
-                [
-                    "sed",
-                    "-i.bak",
-                    "s/pytest.mark.asyncio/pytest.mark.sync/",
-                    f"{output_dir}{file}",
-                ]
-            )
-            subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
+            for library in ["asyncio", "trio", "anyio"]:
+                subprocess.check_call(
+                    [
+                        "sed",
+                        "-i.bak",
+                        f"s/pytest.mark.{library}/pytest.mark.sync/",
+                        f"{output_dir}{file}",
+                    ]
+                )
+                subprocess.check_call(["rm", f"{output_dir}{file}.bak"])
 
             if check:
                 # make sure there are no differences between _sync and _sync_check

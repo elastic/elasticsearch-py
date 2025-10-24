@@ -33,12 +33,18 @@ from typing import (
     Union,
 )
 
+import sniffio
+from anyio import create_memory_object_stream, create_task_group, move_on_after
+
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
     _TYPE_BULK_ACTION_BODY,
     _TYPE_BULK_ACTION_HEADER,
     _TYPE_BULK_ACTION_HEADER_AND_BODY,
+    _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY,
+    _TYPE_BULK_ACTION_WITH_META,
+    BulkMeta,
     _ActionChunker,
     _process_bulk_chunk_error,
     _process_bulk_chunk_success,
@@ -53,10 +59,20 @@ logger = logging.getLogger("elasticsearch.helpers")
 T = TypeVar("T")
 
 
+async def _sleep(seconds: float) -> None:
+    if sniffio.current_async_library() == "trio":
+        import trio
+
+        await trio.sleep(seconds)
+    else:
+        await asyncio.sleep(seconds)
+
+
 async def _chunk_actions(
-    actions: AsyncIterable[_TYPE_BULK_ACTION_HEADER_AND_BODY],
+    actions: AsyncIterable[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY],
     chunk_size: int,
     max_chunk_bytes: int,
+    flush_after_seconds: Optional[float],
     serializer: Serializer,
 ) -> AsyncIterable[
     Tuple[
@@ -76,10 +92,46 @@ async def _chunk_actions(
     chunker = _ActionChunker(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
-    async for action, data in actions:
-        ret = chunker.feed(action, data)
-        if ret:
-            yield ret
+
+    action: _TYPE_BULK_ACTION_WITH_META
+    data: _TYPE_BULK_ACTION_BODY
+    if not flush_after_seconds:
+        async for action, data in actions:
+            ret = chunker.feed(action, data)
+            if ret:
+                yield ret
+    else:
+        sender, receiver = create_memory_object_stream[
+            _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY
+        ]()
+
+        async def get_items() -> None:
+            try:
+                async for item in actions:
+                    await sender.send(item)
+            finally:
+                await sender.send((BulkMeta.done, None))
+
+        async with create_task_group() as tg:
+            tg.start_soon(get_items)
+
+            timeout: Optional[float] = flush_after_seconds
+            while True:
+                action = {}
+                data = None
+                with move_on_after(timeout) as scope:
+                    action, data = await receiver.receive()
+                    timeout = flush_after_seconds
+                if scope.cancelled_caught:
+                    action, data = BulkMeta.flush, None
+                    timeout = None
+
+                if action is BulkMeta.done:
+                    break
+                ret = chunker.feed(action, data)
+                if ret:
+                    yield ret
+
     ret = chunker.flush()
     if ret:
         yield ret
@@ -159,9 +211,13 @@ async def azip(
 
 async def async_streaming_bulk(
     client: AsyncElasticsearch,
-    actions: Union[Iterable[_TYPE_BULK_ACTION], AsyncIterable[_TYPE_BULK_ACTION]],
+    actions: Union[
+        Iterable[_TYPE_BULK_ACTION_WITH_META],
+        AsyncIterable[_TYPE_BULK_ACTION_WITH_META],
+    ],
     chunk_size: int = 500,
     max_chunk_bytes: int = 100 * 1024 * 1024,
+    flush_after_seconds: Optional[float] = None,
     raise_on_error: bool = True,
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
@@ -194,6 +250,9 @@ async def async_streaming_bulk(
     :arg actions: iterable or async iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
+    :arg flush_after_seconds: time in seconds after which a chunk is written even
+        if hasn't reached `chunk_size` or `max_chunk_bytes`. Set to 0 to not use a
+        timeout-based flush. (default: 0)
     :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
         from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
@@ -220,9 +279,14 @@ async def async_streaming_bulk(
     if isinstance(retry_on_status, int):
         retry_on_status = (retry_on_status,)
 
-    async def map_actions() -> AsyncIterable[_TYPE_BULK_ACTION_HEADER_AND_BODY]:
+    async def map_actions() -> (
+        AsyncIterable[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY]
+    ):
         async for item in aiter(actions):
-            yield expand_action_callback(item)
+            if isinstance(item, BulkMeta):
+                yield item, None
+            else:
+                yield expand_action_callback(item)
 
     serializer = client.transport.serializers.get_serializer("application/json")
 
@@ -234,7 +298,7 @@ async def async_streaming_bulk(
     ]
     bulk_actions: List[bytes]
     async for bulk_data, bulk_actions in _chunk_actions(
-        map_actions(), chunk_size, max_chunk_bytes, serializer
+        map_actions(), chunk_size, max_chunk_bytes, flush_after_seconds, serializer
     ):
         for attempt in range(max_retries + 1):
             to_retry: List[bytes] = []
@@ -245,9 +309,7 @@ async def async_streaming_bulk(
                 ]
             ] = []
             if attempt:
-                await asyncio.sleep(
-                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
-                )
+                await _sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 data: Union[

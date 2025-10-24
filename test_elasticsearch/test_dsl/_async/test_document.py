@@ -27,8 +27,9 @@ import pickle
 import sys
 from datetime import datetime
 from hashlib import md5
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Annotated, Any, ClassVar, Dict, List, Optional
 
+import pydantic
 import pytest
 from pytest import raises
 
@@ -36,6 +37,7 @@ from elasticsearch.dsl import (
     AsyncDocument,
     Index,
     InnerDoc,
+    Keyword,
     M,
     Mapping,
     MetaField,
@@ -47,6 +49,7 @@ from elasticsearch.dsl import (
 )
 from elasticsearch.dsl.document_base import InstrumentedField
 from elasticsearch.dsl.exceptions import IllegalOperation, ValidationException
+from elasticsearch.dsl.pydantic import AsyncBaseESModel
 
 
 class MyInner(InnerDoc):
@@ -582,21 +585,21 @@ def test_meta_fields_can_be_set_directly_in_init() -> None:
     assert md.meta.id is p
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_save_no_index(async_mock_client: Any) -> None:
     md = MyDoc()
     with raises(ValidationException):
         await md.save(using="mock")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_delete_no_index(async_mock_client: Any) -> None:
     md = MyDoc()
     with raises(ValidationException):
         await md.delete(using="mock")
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_update_no_fields() -> None:
     md = MyDoc()
     with raises(IllegalOperation):
@@ -678,118 +681,149 @@ def test_doc_with_type_hints() -> None:
         )
         i1: ClassVar
         i2: ClassVar[int]
+        i3: str = mapped_field(exclude=True)
 
-    props = TypedDoc._doc_type.mapping.to_dict()["properties"]
-    assert props == {
-        "st": {"type": "text"},
-        "dt": {"type": "date"},
-        "li": {"type": "integer"},
-        "ob": {
-            "type": "object",
-            "properties": {
-                "st": {"type": "text"},
-                "dt": {"type": "date"},
-                "li": {"type": "integer"},
+    class TypedDocAnnotated(AsyncDocument):
+        st: Annotated[str, "foo"]
+        dt: Annotated[Optional[datetime], "bar"]
+        li: Annotated[List[int], "baz"]
+        ob: Annotated[TypedInnerDoc, "qux"]
+        ns: Annotated[List[TypedInnerDoc], "quux"]
+        ip: Annotated[Optional[str], field.Ip()]
+        k1: Annotated[str, field.Keyword(required=True)]
+        k2: Annotated[M[str], field.Keyword()]
+        k3: Annotated[str, mapped_field(field.Keyword(), default="foo")]
+        k4: Annotated[M[Optional[str]], mapped_field(field.Keyword())]  # type: ignore[misc]
+        s1: Annotated[Secret, SecretField()]
+        s2: Annotated[M[Secret], SecretField()]
+        s3: Annotated[Secret, mapped_field(SecretField())]  # type: ignore[misc]
+        s4: Annotated[
+            M[Optional[Secret]],
+            mapped_field(SecretField(), default_factory=lambda: "foo"),
+        ]
+        if sys.version_info[0] > 3 or (
+            sys.version_info[0] == 3 and sys.version_info[1] >= 11
+        ):
+            i1: Annotated[ClassVar, "classvar"]
+            i2: Annotated[ClassVar[int], "classvar"]
+        else:
+            i1: ClassVar
+            i2: ClassVar[int]
+        i3: Annotated[str, mapped_field(exclude=True)]
+
+    for doc_class in [TypedDoc, TypedDocAnnotated]:
+        props = doc_class._doc_type.mapping.to_dict()["properties"]
+        assert props == {
+            "st": {"type": "text"},
+            "dt": {"type": "date"},
+            "li": {"type": "integer"},
+            "ob": {
+                "type": "object",
+                "properties": {
+                    "st": {"type": "text"},
+                    "dt": {"type": "date"},
+                    "li": {"type": "integer"},
+                },
             },
-        },
-        "ns": {
-            "type": "nested",
-            "properties": {
-                "st": {"type": "text"},
-                "dt": {"type": "date"},
-                "li": {"type": "integer"},
+            "ns": {
+                "type": "nested",
+                "properties": {
+                    "st": {"type": "text"},
+                    "dt": {"type": "date"},
+                    "li": {"type": "integer"},
+                },
             },
-        },
-        "ip": {"type": "ip"},
-        "k1": {"type": "keyword"},
-        "k2": {"type": "keyword"},
-        "k3": {"type": "keyword"},
-        "k4": {"type": "keyword"},
-        "s1": {"type": "text"},
-        "s2": {"type": "text"},
-        "s3": {"type": "text"},
-        "s4": {"type": "text"},
-    }
+            "ip": {"type": "ip"},
+            "k1": {"type": "keyword"},
+            "k2": {"type": "keyword"},
+            "k3": {"type": "keyword"},
+            "k4": {"type": "keyword"},
+            "s1": {"type": "text"},
+            "s2": {"type": "text"},
+            "s3": {"type": "text"},
+            "s4": {"type": "text"},
+        }
 
-    TypedDoc.i1 = "foo"
-    TypedDoc.i2 = 123
+        doc_class.i1 = "foo"
+        doc_class.i2 = 123
+        doc_class.i3 = "bar"
 
-    doc = TypedDoc()
-    assert doc.k3 == "foo"
-    assert doc.s4 == "foo"
-    with raises(ValidationException) as exc_info:
-        doc.full_clean()
-    assert set(exc_info.value.args[0].keys()) == {
-        "st",
-        "k1",
-        "k2",
-        "ob",
-        "s1",
-        "s2",
-        "s3",
-    }
+        doc = doc_class()
+        assert doc.k3 == "foo"
+        assert doc.s4 == "foo"
+        with raises(ValidationException) as exc_info:
+            doc.full_clean()
+        assert set(exc_info.value.args[0].keys()) == {
+            "st",
+            "k1",
+            "k2",
+            "ob",
+            "s1",
+            "s2",
+            "s3",
+        }
 
-    assert TypedDoc.i1 == "foo"
-    assert TypedDoc.i2 == 123
+        assert doc_class.i1 == "foo"
+        assert doc_class.i2 == 123
+        assert doc_class.i3 == "bar"
 
-    doc.st = "s"
-    doc.li = [1, 2, 3]
-    doc.k1 = "k1"
-    doc.k2 = "k2"
-    doc.ob.st = "s"
-    doc.ob.li = [1]
-    doc.s1 = "s1"
-    doc.s2 = "s2"
-    doc.s3 = "s3"
-    doc.full_clean()
-
-    doc.ob = TypedInnerDoc(li=[1])
-    with raises(ValidationException) as exc_info:
-        doc.full_clean()
-    assert set(exc_info.value.args[0].keys()) == {"ob"}
-    assert set(exc_info.value.args[0]["ob"][0].args[0].keys()) == {"st"}
-
-    doc.ob.st = "s"
-    doc.ns.append(TypedInnerDoc(li=[1, 2]))
-    with raises(ValidationException) as exc_info:
+        doc.st = "s"
+        doc.li = [1, 2, 3]
+        doc.k1 = "k1"
+        doc.k2 = "k2"
+        doc.ob.st = "s"
+        doc.ob.li = [1]
+        doc.s1 = "s1"
+        doc.s2 = "s2"
+        doc.s3 = "s3"
         doc.full_clean()
 
-    doc.ns[0].st = "s"
-    doc.full_clean()
+        doc.ob = TypedInnerDoc(li=[1])
+        with raises(ValidationException) as exc_info:
+            doc.full_clean()
+        assert set(exc_info.value.args[0].keys()) == {"ob"}
+        assert set(exc_info.value.args[0]["ob"][0].args[0].keys()) == {"st"}
 
-    doc.ip = "1.2.3.4"
-    n = datetime.now()
-    doc.dt = n
-    assert doc.to_dict() == {
-        "st": "s",
-        "li": [1, 2, 3],
-        "dt": n,
-        "ob": {
+        doc.ob.st = "s"
+        doc.ns.append(TypedInnerDoc(li=[1, 2]))
+        with raises(ValidationException) as exc_info:
+            doc.full_clean()
+
+        doc.ns[0].st = "s"
+        doc.full_clean()
+
+        doc.ip = "1.2.3.4"
+        n = datetime.now()
+        doc.dt = n
+        assert doc.to_dict() == {
             "st": "s",
-            "li": [1],
-        },
-        "ns": [
-            {
+            "li": [1, 2, 3],
+            "dt": n,
+            "ob": {
                 "st": "s",
-                "li": [1, 2],
-            }
-        ],
-        "ip": "1.2.3.4",
-        "k1": "k1",
-        "k2": "k2",
-        "k3": "foo",
-        "s1": "s1",
-        "s2": "s2",
-        "s3": "s3",
-        "s4": "foo",
-    }
+                "li": [1],
+            },
+            "ns": [
+                {
+                    "st": "s",
+                    "li": [1, 2],
+                }
+            ],
+            "ip": "1.2.3.4",
+            "k1": "k1",
+            "k2": "k2",
+            "k3": "foo",
+            "s1": "s1",
+            "s2": "s2",
+            "s3": "s3",
+            "s4": "foo",
+        }
 
-    s = TypedDoc.search().sort(TypedDoc.st, -TypedDoc.dt, +TypedDoc.ob.st)
-    s.aggs.bucket("terms_agg", "terms", field=TypedDoc.k1)
-    assert s.to_dict() == {
-        "aggs": {"terms_agg": {"terms": {"field": "k1"}}},
-        "sort": ["st", {"dt": {"order": "desc"}}, "ob.st"],
-    }
+        s = doc_class.search().sort(doc_class.st, -doc_class.dt, +doc_class.ob.st)
+        s.aggs.bucket("terms_agg", "terms", field=doc_class.k1)
+        d = s.to_dict()
+        assert d["aggs"] == {"terms_agg": {"terms": {"field": "k1"}}}
+        assert d["sort"] == ["st", {"dt": {"order": "desc"}}, "ob.st"]
 
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires Python 3.10")
@@ -881,3 +915,107 @@ def test_instrumented_field() -> None:
         Doc.ns.something
     with raises(AttributeError):
         Doc.ns.st.something
+
+
+def test_pydantic_integration() -> None:
+    class Location(pydantic.BaseModel):
+        city: str
+        country: str
+
+    class Address(pydantic.BaseModel):
+        street: str
+        location: Location
+
+    class Phone(pydantic.BaseModel):
+        type: str
+        number: str
+
+    class User(AsyncBaseESModel):
+        name: Annotated[str, Keyword()] = pydantic.Field(default="Unknown")
+        bio: str
+        age: int = pydantic.Field(strict=True, ge=0)
+        address: Address = pydantic.Field(
+            default=Address(
+                street="Unknown", location=Location(city="Unknown", country="Unknown")
+            )
+        )
+        phones: list[Phone] = pydantic.Field(default=[])
+
+    u = User(
+        name="foo",
+        bio="lorem ipsum",
+        age=30,
+        address=Address(
+            street="123 Main St.",
+            location=Location(city="San Francisco", country="USA"),
+        ),
+    )
+    u.phones.append(Phone(type="Home", number="+12345678900"))
+    assert u.model_dump() == {
+        "name": "foo",
+        "bio": "lorem ipsum",
+        "age": 30,
+        "address": {
+            "street": "123 Main St.",
+            "location": {
+                "city": "San Francisco",
+                "country": "USA",
+            },
+        },
+        "phones": [
+            {
+                "type": "Home",
+                "number": "+12345678900",
+            }
+        ],
+        "meta": {
+            "id": "",
+            "index": "",
+            "primary_term": 0,
+            "score": 0,
+            "seq_no": 0,
+            "version": 0,
+        },
+    }
+    udoc = u.to_doc()
+    assert udoc.name == "foo"
+    assert udoc.bio == "lorem ipsum"
+    assert udoc.age == 30
+    assert udoc.to_dict() == {
+        "name": "foo",
+        "bio": "lorem ipsum",
+        "age": 30,
+        "address": {
+            "street": "123 Main St.",
+            "location": {
+                "city": "San Francisco",
+                "country": "USA",
+            },
+        },
+        "phones": [
+            {
+                "type": "Home",
+                "number": "+12345678900",
+            }
+        ],
+    }
+
+    u2 = User.from_doc(udoc)
+    assert u == u2
+
+    with raises(pydantic.ValidationError):
+        _ = User()
+
+    with raises(pydantic.ValidationError):
+        _ = User(name="foo", bio="lorem ipsum")
+
+    with raises(pydantic.ValidationError):
+        _ = User(name="foo", bio="lorem ipsum", age=-10)
+
+    u3 = User(bio="lorem ipsum", age=30)
+    assert u3.name == "Unknown"
+    assert u3.address.location.country == "Unknown"
+    assert u3.phones == []
+    assert u3.to_doc().name == "Unknown"
+    assert u3.to_doc().address.location.country == "Unknown"
+    assert u3.to_doc().phones == []

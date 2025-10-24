@@ -138,7 +138,7 @@ async def load_db():
     await Employee._index.refresh()
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_esql(async_client):
     await load_db()
 
@@ -184,7 +184,7 @@ async def test_esql(async_client):
     assert r.body["values"] == [["Luna"], ["Cannon"]]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_esql_dsl(async_client):
     await load_db()
 

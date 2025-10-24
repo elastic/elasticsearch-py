@@ -7,7 +7,7 @@ name = "elasticsearch"
 description = "Python client for Elasticsearch"
 readme = "README.md"
 license = "Apache-2.0"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [
     { name = "Elastic Client Library Maintainers", email = "client-libs@elastic.co" },
 ]
@@ -21,7 +21,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -41,9 +40,11 @@ keywords = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "elastic-transport>=9.1.0,<10",
+    "elastic-transport>=9.2.0,<10",
     "python-dateutil",
     "typing-extensions",
+    "sniffio",
+    "anyio",
 ]
 
 [project.optional-dependencies]
@@ -56,6 +57,7 @@ vectorstore_mmr = ["numpy>=1", "simsimd>=3"]
 dev = [
     "requests>=2, <3",
     "aiohttp",
+    "httpx",
     "pytest",
     "pytest-cov",
     "pytest-mock",
@@ -65,6 +67,7 @@ dev = [
     "python-dateutil",
     "unasync",
     "pyyaml>=5.4",
+    "pydantic",
     "isort",
     "black",
     "twine",
@@ -73,11 +76,12 @@ dev = [
     "orjson",
     "numpy",
     "simsimd",
-    "pyarrow",
+    "pyarrow; python_version<'3.14'",
     "pandas",
     "mapbox-vector-tile",
     "jinja2",
     "tqdm",
+    "trio",
     "mypy",
     "pyright",
     "types-python-dateutil",
@@ -136,4 +140,5 @@ exclude_lines = [
 ]
 
 [tool.mypy]
+plugins = ["pydantic.mypy"]
 ignore_missing_imports = true
