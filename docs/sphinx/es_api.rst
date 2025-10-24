@@ -39,6 +39,7 @@ arguments are required for all calls.
    api/ml
    api/monitoring
    api/nodes
+   api/project
    api/query-rules
    api/rollup-indices
    api/search-application
@@ -50,6 +51,7 @@ arguments are required for all calls.
    api/snapshots
    api/snapshottable-features
    api/sql
+   api/streams
    api/synonyms
    api/tls-ssl
    api/tasks

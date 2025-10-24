@@ -775,13 +775,20 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("access", "name", "expiration", "metadata"),
+        body_fields=(
+            "access",
+            "name",
+            "certificate_identity",
+            "expiration",
+            "metadata",
+        ),
     )
     async def create_cross_cluster_api_key(
         self,
         *,
         access: t.Optional[t.Mapping[str, t.Any]] = None,
         name: t.Optional[str] = None,
+        certificate_identity: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -814,6 +821,10 @@ class SecurityClient(NamespacedClient):
             automatically converts the access specification to a role descriptor which
             has relevant privileges assigned accordingly.
         :param name: Specifies the name for this API key.
+        :param certificate_identity: The certificate identity to associate with this
+            API key. This field is used to restrict the API key to connections authenticated
+            by a specific TLS certificate. The value should match the certificate's distinguished
+            name (DN) pattern.
         :param expiration: Expiration time for the API key. By default, API keys never
             expire.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
@@ -841,6 +852,8 @@ class SecurityClient(NamespacedClient):
                 __body["access"] = access
             if name is not None:
                 __body["name"] = name
+            if certificate_identity is not None:
+                __body["certificate_identity"] = certificate_identity
             if expiration is not None:
                 __body["expiration"] = expiration
             if metadata is not None:
@@ -2049,6 +2062,45 @@ class SecurityClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="security.get_settings",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def get_stats(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get security stats.</p>
+          <p>Gather security usage statistics from all node(s) within the cluster.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-get-stats>`_
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/stats"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.get_stats",
             path_parts=__path_parts,
         )
 
@@ -4434,13 +4486,14 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("access", "expiration", "metadata"),
+        body_fields=("access", "certificate_identity", "expiration", "metadata"),
     )
     async def update_cross_cluster_api_key(
         self,
         *,
         id: str,
         access: t.Optional[t.Mapping[str, t.Any]] = None,
+        certificate_identity: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -4473,6 +4526,13 @@ class SecurityClient(NamespacedClient):
             of permissions for cross cluster search and cross cluster replication. At
             least one of them must be specified. When specified, the new access assignment
             fully replaces the previously assigned access.
+        :param certificate_identity: The certificate identity to associate with this
+            API key. This field is used to restrict the API key to connections authenticated
+            by a specific TLS certificate. The value should match the certificate's distinguished
+            name (DN) pattern. When specified, this fully replaces any previously assigned
+            certificate identity. To clear an existing certificate identity, explicitly
+            set this field to `null`. When omitted, the existing certificate identity
+            remains unchanged.
         :param expiration: The expiration time for the API key. By default, API keys
             never expire. This property can be omitted to leave the value unchanged.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
@@ -4499,6 +4559,8 @@ class SecurityClient(NamespacedClient):
         if not __body:
             if access is not None:
                 __body["access"] = access
+            if certificate_identity is not None:
+                __body["certificate_identity"] = certificate_identity
             if expiration is not None:
                 __body["expiration"] = expiration
             if metadata is not None:
