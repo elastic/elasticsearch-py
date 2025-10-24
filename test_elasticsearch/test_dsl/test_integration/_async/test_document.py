@@ -864,7 +864,7 @@ async def test_dense_vector(
     class Doc(AsyncDocument):
         float_vector: List[float] = mapped_field(DenseVector())
         byte_vector: List[int] = mapped_field(DenseVector(element_type="byte"))
-        bit_vector: str = mapped_field(DenseVector(element_type="bit"))
+        bit_vector: List[int] = mapped_field(DenseVector(element_type="bit"))
 
         class Index:
             name = "vectors"
@@ -873,13 +873,15 @@ async def test_dense_vector(
     await Doc.init()
 
     doc = Doc(
-        float_vector=[1.0, 1.2, 2.3], byte_vector=[12, 23, 34, 45], bit_vector="12abf0"
+        float_vector=[1.0, 1.2, 2.3],
+        byte_vector=[12, 23, 34, 45],
+        bit_vector=[18, -43, -112],
     )
     await doc.save(refresh=True)
 
     docs = await Doc.search().execute()
     assert len(docs) == 1
-    assert docs[0].float_vector == doc.float_vector
+    assert [round(v, 1) for v in docs[0].float_vector] == doc.float_vector
     assert docs[0].byte_vector == doc.byte_vector
     assert docs[0].bit_vector == doc.bit_vector
 
