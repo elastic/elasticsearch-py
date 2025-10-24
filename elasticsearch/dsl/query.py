@@ -1079,6 +1079,8 @@ class Knn(Query):
         a query_vector_builder or query_vector, but not both.
     :arg num_candidates: The number of nearest neighbor candidates to
         consider per shard
+    :arg visit_percentage: The percentage of vectors to explore per shard
+        while doing knn search with bbq_disk
     :arg k: The final number of nearest neighbors to return as top hits
     :arg filter: Filters for the kNN search query
     :arg similarity: The minimum similarity for a vector to be considered
@@ -1107,6 +1109,7 @@ class Knn(Query):
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
         num_candidates: Union[int, "DefaultType"] = DEFAULT,
+        visit_percentage: Union[float, "DefaultType"] = DEFAULT,
         k: Union[int, "DefaultType"] = DEFAULT,
         filter: Union[Query, Sequence[Query], "DefaultType"] = DEFAULT,
         similarity: Union[float, "DefaultType"] = DEFAULT,
@@ -1122,6 +1125,7 @@ class Knn(Query):
             query_vector=query_vector,
             query_vector_builder=query_vector_builder,
             num_candidates=num_candidates,
+            visit_percentage=visit_percentage,
             k=k,
             filter=filter,
             similarity=similarity,
@@ -1433,7 +1437,7 @@ class MoreLikeThis(Query):
         ] = DEFAULT,
         version: Union[int, "DefaultType"] = DEFAULT,
         version_type: Union[
-            Literal["internal", "external", "external_gte", "force"], "DefaultType"
+            Literal["internal", "external", "external_gte"], "DefaultType"
         ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,

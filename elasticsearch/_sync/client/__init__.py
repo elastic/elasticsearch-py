@@ -74,6 +74,7 @@ from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .streams import StreamsClient
 from .synonyms import SynonymsClient
 from .tasks import TasksClient
 from .text_structure import TextStructureClient
@@ -378,6 +379,7 @@ class Elasticsearch(BaseClient):
         self.shutdown = ShutdownClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.streams = StreamsClient(self)
         self.synonyms = SynonymsClient(self)
         self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
