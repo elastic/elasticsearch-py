@@ -1118,6 +1118,8 @@ class Knn(Query):
         ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
+        size=10,
+        from_num=0,
         **kwargs: Any,
     ):
         super().__init__(
@@ -1132,6 +1134,8 @@ class Knn(Query):
             rescore_vector=rescore_vector,
             boost=boost,
             _name=_name,
+            size=size,
+            from_num=from_num,
             **kwargs,
         )
 
