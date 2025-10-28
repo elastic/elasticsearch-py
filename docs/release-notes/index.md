@@ -19,6 +19,81 @@ To check for security updates, go to [Security announcements for the Elastic sta
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
 
+## 9.2.0 (2025-10-28)
+
+### Enhancements
+
+* Support Trio when using the `HTTPX <https://www.python-httpx.org/>`_ async client ([#3089](https://github.com/elastic/elasticsearch-py/pull/3089))
+* Pydantic integration for the DSL module ([#3086](https://github.com/elastic/elasticsearch-py/pull/3086))
+* Add `flush_after_seconds` option to `streaming_bulk()` ([#3064](https://github.com/elastic/elasticsearch-py/pull/3064))
+* Add `TS`, `FUSE` and `INLINE STATS` commands to the ES|QL query builder ([#3096](https://github.com/elastic/elasticsearch-py/pull/3096))
+
+### Bug Fixes
+
+* DSL: support passing inner documents as `AttrDict` instances ([#3080](https://github.com/elastic/elasticsearch-py/pull/3080))
+* DSL: add some recently added field classes as top-level exports for the package ([#3078](https://github.com/elastic/elasticsearch-py/pull/3078))
+
+### API
+
+- Add `streams` namespace with `streams.logs_disable`, `streams.logs_enable`, `streams.status` APIs
+- Add `inference.contextualai` API
+- Add `security.get_stats` API
+- Add `bytes` and `time` parameters to various APIs in the `cat` namespace.
+- Add `include_execution_metadata` parameter to `esql.async_query` and `esql.query` APIs
+- Add `index_template` parameter to `indices.simulate_index_template` API
+- Add `input_type` parameter to `inference.text_embedding` API
+- Add `field_access_pattern` parameter to `ingest.put_pipeline` API
+- Removed unsupported `size` parameter from `reindex` API
+
+#### Serverless-specific
+
+- Add `project` namespace with `project.tags` API
+- Add `project_routing` parameter to `count`, `field_caps`, `msearch`, `msearch_template`, `open_point_in_time`, `search`, `search_mvt`, `search_template`, `async_search.submit`, `cat.count`, `eql.search`, `indices.resolve_index`, `sql.query` APIs
+
+### DSL
+
+- New `CartesianBounds`, `CartesianCentroid`, `ChangePoint` aggregations
+- Add `p_value` parameter to `SignificantTerms` aggregation
+- Add `fields` parameter to `SemanticText` field
+- Add `visit_percentage` parameter to `Knn` query
+- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
+- Add `sparse_vector` field to `SemanticTextIndexOptions` type
+
+### Other
+
+* Add 3.14 to CI builds ([#3103](https://github.com/elastic/elasticsearch-py/pull/3103))
+* Drop Python 3.9 support ([#3114](https://github.com/elastic/elasticsearch-py/pull/3114))
+
+## 9.1.2 (2025-10-28)
+
+### Enhancements
+
+* Add `flush_after_seconds` option to `streaming_bulk()` ([#3064](https://github.com/elastic/elasticsearch-py/pull/3064))
+
+### Bug Fixes
+
+* DSL: support passing inner documents as `AttrDict` instances ([#3080](https://github.com/elastic/elasticsearch-py/pull/3080))
+* DSL: add some recently added field classes as top-level exports for the package ([#3078](https://github.com/elastic/elasticsearch-py/pull/3078))
+
+### API
+
+- Add `streams` namespace with `streams.logs_disable`, `streams.logs_enable`, `streams.status` APIs
+- Add `bytes` and `time` parameters to various APIs in the `cat` namespace.
+- Add `index_template` parameter to `indices.simulate_index_template` API
+- Add `input_type` parameter to `inference.text_embedding` API
+
+### DSL
+
+- New `CartesianBounds`, `CartesianCentroid`, `ChangePoint` aggregations
+- Add `p_value` parameter to `SignificantTerms` aggregation
+- Add `index_options` and `fields` parameters to `SemanticText` field
+- Add `visit_percentage` parameter to `Knn` query
+- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
+
+### Other
+
+* Add 3.14 to CI builds ([#3103](https://github.com/elastic/elasticsearch-py/pull/3103))
+
 ## 9.1.1 (2025-09-11)
 
 ### Enhancements
