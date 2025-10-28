@@ -261,7 +261,7 @@ def _chunk_actions(
                 yield ret
     else:
         item_queue: queue.Queue[_TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY] = (
-            queue.Queue()
+            queue.Queue(maxsize=1)
         )
 
         def get_items() -> None:
