@@ -1,6 +1,37 @@
 [[release-notes]]
 == Release notes
 
+=== 8.19.2 (2025-10-28)
+
+### Enhancements
+
+- Add `flush_after_seconds` option to `streaming_bulk()` (https://github.com/elastic/elasticsearch-py/pull/3064[#3064])
+
+### Bug Fixes
+
+- DSL: support passing inner documents as `AttrDict` instances (https://github.com/elastic/elasticsearch-py/pull/3080[#3080])
+- DSL: add some recently added field classes as top-level exports for the package (https://github.com/elastic/elasticsearch-py/pull/3078[#3078])
+
+### API
+
+- Add `streams` namespace with `streams.logs_disable`, `streams.logs_enable`, `streams.status` APIs
+- Add `indices.get_data_stream_settings` API
+- Add `indices.put_data_stream_settings` API
+- Add `bytes` and `time` parameters to various APIs in the `cat` namespace.
+- Add `index_template` parameter to `indices.simulate_index_template` API
+- Add `input_type` parameter to `inference.text_embedding` API
+- Removed unsupported `size` parameter from `reindex` API
+
+### DSL
+
+- New `CartesianBounds`, `CartesianCentroid`, `ChangePoint` aggregations
+- Add `p_value` parameter to `SignificantTerms` aggregation
+- Add `fields` parameter to `SemanticText` field
+
+### Other
+
+- Add 3.14 to CI builds (https://github.com/elastic/elasticsearch-py/pull/3103[#3103])
+
 === 8.19.1 (2025-09-11)
 
 - ES|QL query builder integration with the DSL module (https://github.com/elastic/elasticsearch-py/pull/3058[#3058])
