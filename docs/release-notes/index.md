@@ -18,6 +18,36 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.1.2 (2025-10-28)
+
+### Enhancements
+
+* Add `flush_after_seconds` option to `streaming_bulk()` ([#3064](https://github.com/elastic/elasticsearch-py/pull/3064))
+
+### Bug Fixes
+
+* DSL: support passing inner documents as `AttrDict` instances ([#3080](https://github.com/elastic/elasticsearch-py/pull/3080))
+* DSL: add some recently added field classes as top-level exports for the package ([#3078](https://github.com/elastic/elasticsearch-py/pull/3078))
+
+### API
+
+- Add `streams` namespace with `streams.logs_disable`, `streams.logs_enable`, `streams.status` APIs
+- Add `bytes` and `time` parameters to various APIs in the `cat` namespace.
+- Add `index_template` parameter to `indices.simulate_index_template` API
+- Add `input_type` parameter to `inference.text_embedding` API
+
+### DSL
+
+- New `CartesianBounds`, `CartesianCentroid`, `ChangePoint` aggregations
+- Add `p_value` parameter to `SignificantTerms` aggregation
+- Add `index_options` and `fields` parameters to `SemanticText` field
+- Add `visit_percentage` parameter to `Knn` query
+- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
+
+### Other
+
+* Add 3.14 to CI builds ([#3103](https://github.com/elastic/elasticsearch-py/pull/3103))dd
+
 ## 9.1.1 (2025-09-11)
 
 * ES|QL query builder integration with the DSL module ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
