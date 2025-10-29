@@ -6,12 +6,14 @@ mapped_pages:
 
 # Python [overview]
 
-This is the official Python client for {{es}}. Its goal is to provide common ground for all {{es}}-related code in Python. For this reason, the client is designed to be unopinionated and extendable. API reference documentation for this client is available on [Read the Docs](https://elasticsearch-py.readthedocs.io).
+This documentation covers the [official Python client for {{es}](https://github.com/elastic/elasticsearch-py/tree/main/elasticsearch/dsl)}. The goal of the Python client is to provide common ground for all {{es}}-related code in Python. The client is designed to be unopinionated and extendable. 
+
+API reference documentation is provided on [Read the Docs](https://elasticsearch-py.readthedocs.io).
 
 
 ## Example use [_example_use]
 
-Simple use-case:
+Here's a simple Python client use case:
 
 ```python
 >>> from datetime import datetime
@@ -29,14 +31,12 @@ Simple use-case:
 {'any': 'data', 'timestamp': '2013-05-12T19:45:31.804229'}
 ```
 
-::::{tip}
-For an elaborate example of how to ingest data into Elastic Cloud, refer to [this page](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md).
-::::
+
 
 
 ## Features [_features]
 
-The client’s features include:
+The client's features include:
 
 * Translating basic Python data types to and from JSON
 * Configurable automatic discovery of cluster nodes
@@ -46,12 +46,15 @@ The client’s features include:
 * Thread safety
 * Pluggable architecture
 
-The client also contains a convenient set of [helpers](client-helpers.md) for some of the more engaging tasks like bulk indexing and reindexing.
+The client also provides a convenient set of [helpers](client-helpers.md) for tasks like bulk indexing and reindexing.
 
+::::{tip}
+For details on ingesting data into Elastic Cloud with Python, refer to [Ingest data with Python](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md).
+::::
 
-## Elasticsearch Python DSL [_elasticsearch_python_dsl]
+### Elasticsearch Python DSL [_elasticsearch_python_dsl]
 
-For a higher level access with more limited scope, have a look at the DSL module, which provides a more convenient and idiomatic way to write and manipulate queries.
+The [Python DSL module](../reference/elasticsearch-dsl.md) offers a convenient and idiomatic way to write and manipulate queries. 
 
 
 ## Compatibility [_compatibility]
@@ -71,12 +74,20 @@ Compatibility does not imply full feature parity. New {{es}} features are suppor
 
 ### Major version upgrades
 
-:::{tip}
-To upgrade to a new major version, first upgrade {{es}}, then upgrade the Python {{es}} client.
+:::{important}
+To upgrade to a new major version, first upgrade {{es}}, then upgrade the Python client.
 :::
 
-Since version 8.0, the {{es}} server supports a compatibility mode that allows smoother upgrade experiences. In a nutshell, this makes it possible to upgrade the {{es}} server to the next major version, while continuing to use the same client. This gives more room to coordinate the upgrade of your codebase to the next major version.
+As of version 8.0, {{es}} offers a compatibility mode for smoother upgrades. In compatibility mode, you can upgrade your {{es}} cluster to the next major version while continuing to use your existing client during the transition.
 
-For example, to upgrade a system that uses {{es}} 8.x you can upgrade the {{es}} server to 9.x first, and the 8.x Python {{es}} client will continue to work (aside from any breaking changes, which should be listed in the server release notes). You can continue using the 8.x client during the server migration, and only upgrade it once the server migration is complete. The process is described in detail in the [REST API compatibility workflow](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/compatibility#_rest_api_compatibility_workflow) section of the {{es}} documentation.
+For example, if you're upgrading {{es}} 8.x to {{es}} 9.x, you can continue to use the 8.x Python {{es}} client during the server migration, with the except of client [breaking changes](../release-notes/breaking-changes.md).
 
-If you need to work with multiple client versions, note that older versions are also released with the `elasticsearch8` and `elasticsearch9` package names so that they can be installed together.
+For details, refer to [REST API compatibility workflow](elasticsearch://reference/elasticsearch/rest-apis/compatibility.md#_rest_api_compatibility_workflow).
+
+:::{tip}
+To support working with multiple client versions, the Python client is also released under the package names `elasticsearch8` and `elasticsearch9` (to prevent name collisions).
+:::
+
+## Additional resources
+- [Upgrade your deployment or cluster](docs-content://deploy-manage/upgrade.md)
+- [Python client GitHub repo](https://github.com/elastic/elasticsearch-py)
