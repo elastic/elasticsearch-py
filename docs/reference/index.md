@@ -6,7 +6,7 @@ mapped_pages:
 
 # Python [overview]
 
-This documentation covers the [official Python client for {{es}](https://github.com/elastic/elasticsearch-py/tree/main/elasticsearch/dsl)}. The goal of the Python client is to provide common ground for all {{es}}-related code in Python. The client is designed to be unopinionated and extendable. 
+This documentation covers the [official Python client for {{es}](https://github.com/elastic/elasticsearch-py)}. The goal of the Python client is to provide common ground for all {{es}}-related code in Python. The client is designed to be unopinionated and extendable. 
 
 API reference documentation is provided on [Read the Docs](https://elasticsearch-py.readthedocs.io).
 
