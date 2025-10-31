@@ -61,12 +61,12 @@ Language clients are **forward compatible**: each client version works with equi
 
 | Client version | {{es}} `8.x` | {{es}} `9.x` | {{es}} `10.x` |
 |----------------|---------------------------------|---------------------------------|----------------------------------|
-| 9.x client| &#10060; Not compatible with {{es}} 8.x | &#9989; Compatible with {{es}} 9.x | &#9989; Compatible with {{es}} 10.x |
+| 9.x client | &#10060; Not compatible with {{es}} 8.x | &#9989; Compatible with {{es}} 9.x | &#9989; Compatible with {{es}} 10.x |
 | 8.x client | &#9989; Compatible with {{es}} 8.x | &#9989; Compatible with {{es}} 9.x | &#10060; Not compatible with {{es}} 10.x |
 
 Compatibility does not imply feature parity. New {{es}} features are supported only in equivalent client versions. For example, an 8.12 client fully supports {{es}} 8.12 features and works with 8.13 without breaking, but it does not support new {{es}} 8.13 features. An 8.13 client fully supports {{es}} 8.13 features.
 
-{{es}} language clients are also **backward compatible** across minor versions &mdash; with default distributions and without guarantees. 
+{{es}} language clients are also **backward compatible** across minor versions, with default distributions and without guarantees. 
 
 ### Major version upgrades
 
@@ -74,11 +74,11 @@ Compatibility does not imply feature parity. New {{es}} features are supported o
 To upgrade to a new major version, first [upgrade {{es}}](docs-content://deploy-manage/upgrade.md), then upgrade the Python client.
 :::
 
-As of version 8.0, {{es}} offers a compatibility mode for smoother upgrades. In compatibility mode, you can upgrade your {{es}} cluster to the next major version while continuing to use your existing client during the transition. 
+As of version 8.0, {{es}} offers a [compatibility mode](elasticsearch://reference/elasticsearch/rest-apis/compatibility.md) for smoother upgrades. In compatibility mode, you can upgrade your {{es}} cluster to the next major version while continuing to use your existing client during the transition. 
 
-For example, if you're upgrading {{es}} 8.x to {{es}} 9.x, you can continue to use the 8.x Python {{es}} client during and after the server upgrade, with the exception of [breaking changes](../release-notes/breaking-changes.md).
+For example, if you're upgrading {{es}} from 8.x to 9.x, you can continue to use the 8.x Python client during and after the {{es}} server upgrade, with the exception of [breaking changes](../release-notes/breaking-changes.md).
 
-To enable compatibility mode, set the environment variable `ELASTIC_CLIENT_APIVERSIONING` to `true`. For more details, refer to [{{es}} API compatibility](elasticsearch://reference/elasticsearch/rest-apis/compatibility.md).
+In the Python client, compatibility mode is always enabled. 
 
 :::{tip}
 To support working with multiple client versions, the Python client is also released under the package names `elasticsearch8` and `elasticsearch9` (to prevent name collisions).
