@@ -37,7 +37,7 @@ from typing import (
 try:
     import annotationlib
 except ImportError:
-    annotationlib = None
+    annotationlib = None  # type: ignore[assignment]
 
 try:
     from types import UnionType
