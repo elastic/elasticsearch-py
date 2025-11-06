@@ -917,7 +917,7 @@ first = Post.get(id=42)
 first.update(published=True, published_by='me')
 ```
 
-In case you wish to use a `painless` script to perform the update you can pass in the script string as `script` or the `id` of a [stored script](docs-content://explore-analyze/scripting/modules-scripting-using.md) via `script_id`. All additional keyword arguments to the `update` method will then be passed in as parameters of the script. The document will not be updated in place.
+In case you wish to use a `painless` script to perform the update you can pass in the script string as `script` or the `id` of a [stored script](docs-content://explore-analyze/scripting/modules-scripting-store-and-retrieve.md) via `script_id`. All additional keyword arguments to the `update` method will then be passed in as parameters of the script. The document will not be updated in place.
 
 ```python
 # retrieve the document
