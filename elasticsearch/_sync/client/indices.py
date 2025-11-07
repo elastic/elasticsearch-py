@@ -657,7 +657,7 @@ class IndicesClient(NamespacedClient):
             `"`, `<`, `>`, `|`, ` ` (space character), `,`, or `#` * Indices prior to
             7.0 could contain a colon (`:`), but that has been deprecated and will not
             be supported in later versions * Cannot start with `-`, `_`, or `+` * Cannot
-            be `.` or `..` * Cannot be longer than 255 bytes (note thtat it is bytes,
+            be `.` or `..` * Cannot be longer than 255 bytes (note that it is bytes,
             so multi-byte characters will reach the limit faster) * Names starting with
             `.` are deprecated, except for hidden indices and internal indices managed
             by plugins
@@ -5295,7 +5295,7 @@ class IndicesClient(NamespacedClient):
             to signal that it needs to be rolled over at the next write. Only allowed
             on data streams.
         :param mappings: Mapping for fields in the index. If specified, this mapping
-            can include field names, field data types, and mapping paramaters.
+            can include field names, field data types, and mapping parameters.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.

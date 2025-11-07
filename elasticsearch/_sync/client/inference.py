@@ -1536,7 +1536,7 @@ class InferenceClient(NamespacedClient):
           <p>Create an inference endpoint to perform an inference task with the <code>elasticsearch</code> service.</p>
           <blockquote>
           <p>info
-          Your Elasticsearch deployment contains preconfigured ELSER and E5 inference endpoints, you only need to create the enpoints using the API if you want to customize the settings.</p>
+          Your Elasticsearch deployment contains preconfigured ELSER and E5 inference endpoints, you only need to create the endpoints using the API if you want to customize the settings.</p>
           </blockquote>
           <p>If you use the ELSER or the E5 model through the <code>elasticsearch</code> service, the API request will automatically download and deploy the model if it isn't downloaded yet.</p>
           <blockquote>
@@ -1639,7 +1639,7 @@ class InferenceClient(NamespacedClient):
           You can also deploy ELSER by using the Elasticsearch inference integration.</p>
           <blockquote>
           <p>info
-          Your Elasticsearch deployment contains a preconfigured ELSER inference endpoint, you only need to create the enpoint using the API if you want to customize the settings.</p>
+          Your Elasticsearch deployment contains a preconfigured ELSER inference endpoint, you only need to create the endpoint using the API if you want to customize the settings.</p>
           </blockquote>
           <p>The API request will automatically download and deploy the ELSER model if it isn't already downloaded.</p>
           <blockquote>

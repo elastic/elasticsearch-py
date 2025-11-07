@@ -601,7 +601,7 @@ class Elasticsearch(BaseClient):
           Note that Elasticsearch limits the maximum size of a HTTP request to 100mb by default so clients must ensure that no request exceeds this size.
           It is not possible to index a single document that exceeds the size limit, so you must pre-process any such documents into smaller pieces before sending them to Elasticsearch.
           For instance, split documents into pages or chapters before indexing them, or store raw binary data in a system outside Elasticsearch and replace the raw data with a link to the external system in the documents that you send to Elasticsearch.</p>
-          <p><strong>Client suppport for bulk requests</strong></p>
+          <p><strong>Client support for bulk requests</strong></p>
           <p>Some of the officially supported clients provide helpers to assist with bulk requests and reindexing:</p>
           <ul>
           <li>Go: Check out <code>esutil.BulkIndexer</code></li>
@@ -2868,7 +2868,7 @@ class Elasticsearch(BaseClient):
         :param op_type: Set to `create` to only index the document if it does not already
             exist (put if absent). If a document with the specified `_id` already exists,
             the indexing operation will fail. The behavior is the same as using the `<index>/_create`
-            endpoint. If a document ID is specified, this paramater defaults to `index`.
+            endpoint. If a document ID is specified, this parameter defaults to `index`.
             Otherwise, it defaults to `create`. If the request targets a data stream,
             an `op_type` of `create` is required.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.

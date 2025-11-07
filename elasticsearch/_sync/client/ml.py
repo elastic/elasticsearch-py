@@ -109,7 +109,7 @@ class MlClient(NamespacedClient):
             or by specifying `*` as the job identifier.
         :param allow_no_match: Refer to the description for the `allow_no_match` query
             parameter.
-        :param force: Refer to the descriptiion for the `force` query parameter.
+        :param force: Refer to the description for the `force` query parameter.
         :param timeout: Refer to the description for the `timeout` query parameter.
         """
         if job_id in SKIP_IN_PATH:
@@ -1183,7 +1183,7 @@ class MlClient(NamespacedClient):
           <p>Predict future behavior of a time series.</p>
           <p>Forecasts are not supported for jobs that perform population analysis; an
           error occurs if you try to create a forecast for a job that has an
-          <code>over_field_name</code> in its configuration. Forcasts predict future behavior
+          <code>over_field_name</code> in its configuration. Forecasts predict future behavior
           based on historical data.</p>
 
 
@@ -1288,7 +1288,7 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of buckets.
         :param page:
         :param size: Specifies the maximum number of buckets to obtain.
-        :param sort: Refer to the desription for the `sort` query parameter.
+        :param sort: Refer to the description for the `sort` query parameter.
         :param start: Refer to the description for the `start` query parameter.
         """
         if job_id in SKIP_IN_PATH:
