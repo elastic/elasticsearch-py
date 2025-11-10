@@ -397,7 +397,7 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: str,
-        snapshot: str,
+        snapshot: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,

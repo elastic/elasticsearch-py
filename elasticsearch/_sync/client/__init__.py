@@ -2131,7 +2131,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        filters: t.Optional[str] = None,
+        filters: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_empty_fields: t.Optional[bool] = None,
@@ -5597,7 +5597,7 @@ class Elasticsearch(BaseClient):
     def terms_enum(
         self,
         *,
-        index: str,
+        index: t.Union[str, t.Sequence[str]],
         field: t.Optional[str] = None,
         case_insensitive: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
