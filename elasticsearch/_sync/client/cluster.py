@@ -1123,7 +1123,8 @@ class ClusterClient(NamespacedClient):
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+        :param master_timeout: Timeout for waiting for new cluster state in case it is
+            blocked
         :param wait_for_metadata_version: Wait for the metadata version to be equal or
             greater than the specified metadata version
         :param wait_for_timeout: The maximum time to wait for wait_for_metadata_version
