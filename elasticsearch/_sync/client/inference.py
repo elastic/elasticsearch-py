@@ -55,7 +55,9 @@ class InferenceClient(NamespacedClient):
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
-        :param task_settings: Optional task settings
+        :param task_settings: Task settings for the individual inference request. These
+            settings are specific to the <task_type> you specified and override the task
+            settings specified when initializing the service.
         :param timeout: Specifies the amount of time to wait for the inference request
             to complete.
         """
@@ -120,15 +122,17 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an inference endpoint</p>
+          <p>Delete an inference endpoint
+          This API requires the manage_inference cluster privilege (the built-in <code>inference_admin</code> role grants this privilege).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-delete>`_
 
         :param inference_id: The inference identifier.
         :param task_type: The task type
-        :param dry_run: When true, the endpoint is not deleted and a list of ingest processors
-            which reference this endpoint is returned.
+        :param dry_run: When true, checks the semantic_text fields and inference processors
+            that reference the endpoint and returns them in a list, but does not delete
+            the endpoint.
         :param force: When true, the inference endpoint is forcefully deleted even if
             it is still being used by ingest processors or semantic text fields.
         """
@@ -194,7 +198,8 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get an inference endpoint</p>
+          <p>Get an inference endpoint
+          This API requires the <code>monitor_inference</code> cluster privilege (the built-in <code>inference_admin</code> and <code>inference_user</code> roles grant this privilege).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-get>`_
@@ -548,7 +553,7 @@ class InferenceClient(NamespacedClient):
         self,
         *,
         task_type: t.Union[
-            str, t.Literal["completion", "rerank", "space_embedding", "text_embedding"]
+            str, t.Literal["completion", "rerank", "sparse_embedding", "text_embedding"]
         ],
         alibabacloud_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["alibabacloud-ai-search"]]] = None,
@@ -577,7 +582,9 @@ class InferenceClient(NamespacedClient):
             this case, `alibabacloud-ai-search`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `alibabacloud-ai-search` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `sparse_embedding` or `text_embedding` task types. Not applicable to
+            the `rerank` or `completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -673,7 +680,8 @@ class InferenceClient(NamespacedClient):
             this case, `amazonbedrock`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `amazonbedrock` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -775,7 +783,9 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `amazon_sagemaker` service and `service_settings.api`
             you specified.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `sparse_embedding` or `text_embedding` task types. Not applicable to
+            the `rerank`, `completion`, or `chat_completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type and `service_settings.api` you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -829,12 +839,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=(
-            "service",
-            "service_settings",
-            "chunking_settings",
-            "task_settings",
-        ),
+        body_fields=("service", "service_settings", "task_settings"),
     )
     def put_anthropic(
         self,
@@ -843,7 +848,6 @@ class InferenceClient(NamespacedClient):
         anthropic_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["anthropic"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -867,8 +871,7 @@ class InferenceClient(NamespacedClient):
         :param service: The type of service supported for the specified task type. In
             this case, `anthropic`.
         :param service_settings: Settings used to install the inference model. These
-            settings are specific to the `watsonxai` service.
-        :param chunking_settings: The chunking configuration object.
+            settings are specific to the `anthropic` service.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -906,8 +909,6 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-            if chunking_settings is not None:
-                __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -959,8 +960,10 @@ class InferenceClient(NamespacedClient):
         :param service: The type of service supported for the specified task type. In
             this case, `azureaistudio`.
         :param service_settings: Settings used to install the inference model. These
-            settings are specific to the `openai` service.
-        :param chunking_settings: The chunking configuration object.
+            settings are specific to the `azureaistudio` service.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank` or `completion`
+            task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1060,7 +1063,8 @@ class InferenceClient(NamespacedClient):
             this case, `azureopenai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `azureopenai` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1152,7 +1156,9 @@ class InferenceClient(NamespacedClient):
             this case, `cohere`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `cohere` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank` or `completion`
+            task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1204,12 +1210,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=(
-            "service",
-            "service_settings",
-            "chunking_settings",
-            "task_settings",
-        ),
+        body_fields=("service", "service_settings", "task_settings"),
     )
     def put_contextualai(
         self,
@@ -1218,7 +1219,6 @@ class InferenceClient(NamespacedClient):
         contextualai_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["contextualai"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -1243,7 +1243,6 @@ class InferenceClient(NamespacedClient):
             this case, `contextualai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `contextualai` service.
-        :param chunking_settings: The chunking configuration object.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1281,8 +1280,6 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-            if chunking_settings is not None:
-                __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -1376,7 +1373,9 @@ class InferenceClient(NamespacedClient):
             this case, `custom`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `custom` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `sparse_embedding` or `text_embedding` task types. Not applicable to
+            the `rerank` or `completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         """
@@ -1424,7 +1423,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("service", "service_settings", "chunking_settings"),
+        body_fields=("service", "service_settings"),
     )
     def put_deepseek(
         self,
@@ -1433,7 +1432,6 @@ class InferenceClient(NamespacedClient):
         deepseek_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["deepseek"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -1456,7 +1454,6 @@ class InferenceClient(NamespacedClient):
             this case, `deepseek`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `deepseek` service.
-        :param chunking_settings: The chunking configuration object.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -1490,8 +1487,6 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-            if chunking_settings is not None:
-                __body["chunking_settings"] = chunking_settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -1560,7 +1555,7 @@ class InferenceClient(NamespacedClient):
             settings are specific to the `elasticsearch` service.
         :param chunking_settings: The chunking configuration object. Applies only to
             the `sparse_embedding` and `text_embedding` task types. Not applicable to
-            the `rerank`, `completion`, or `chat_completion` task types.
+            the `rerank` task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1741,7 +1736,8 @@ class InferenceClient(NamespacedClient):
             this case, `googleaistudio`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `googleaistudio` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` task type.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -1831,7 +1827,9 @@ class InferenceClient(NamespacedClient):
             this case, `googlevertexai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `googlevertexai` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank`, `completion`,
+            or `chat_completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -1959,7 +1957,9 @@ class InferenceClient(NamespacedClient):
             this case, `hugging_face`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `hugging_face` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank`, `completion`,
+            or `chat_completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2053,7 +2053,8 @@ class InferenceClient(NamespacedClient):
             this case, `jinaai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `jinaai` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank` task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2139,7 +2140,9 @@ class InferenceClient(NamespacedClient):
             this case, `llama`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `llama` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` or `chat_completion`
+            task types.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -2221,7 +2224,9 @@ class InferenceClient(NamespacedClient):
             this case, `mistral`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `mistral` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` or `chat_completion`
+            task types.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -2311,7 +2316,9 @@ class InferenceClient(NamespacedClient):
             this case, `openai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `openai` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` or `chat_completion`
+            task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2402,7 +2409,8 @@ class InferenceClient(NamespacedClient):
             this case, `voyageai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `voyageai` service.
-        :param chunking_settings: The chunking configuration object.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank` task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2454,7 +2462,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("service", "service_settings"),
+        body_fields=("service", "service_settings", "chunking_settings"),
     )
     def put_watsonx(
         self,
@@ -2465,6 +2473,7 @@ class InferenceClient(NamespacedClient):
         watsonx_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["watsonxai"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -2489,6 +2498,9 @@ class InferenceClient(NamespacedClient):
             this case, `watsonxai`.
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `watsonxai` service.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `completion` or `chat_completion`
+            task types.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
@@ -2522,6 +2534,8 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -2638,7 +2652,9 @@ class InferenceClient(NamespacedClient):
 
         :param inference_id: The inference Id
         :param input: Inference input. Either a string or an array of strings.
-        :param task_settings: Optional task settings
+        :param task_settings: Task settings for the individual inference request. These
+            settings are specific to the <task_type> you specified and override the task
+            settings specified when initializing the service.
         :param timeout: Specifies the amount of time to wait for the inference request
             to complete.
         """
@@ -2710,7 +2726,9 @@ class InferenceClient(NamespacedClient):
             to the relevant service-specific documentation for more info. > info > The
             `input_type` parameter specified on the root level of the request body will
             take precedence over the `input_type` parameter specified in `task_settings`.
-        :param task_settings: Optional task settings
+        :param task_settings: Task settings for the individual inference request. These
+            settings are specific to the <task_type> you specified and override the task
+            settings specified when initializing the service.
         :param timeout: Specifies the amount of time to wait for the inference request
             to complete.
         """
