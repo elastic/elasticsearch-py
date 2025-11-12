@@ -140,7 +140,7 @@ class ESQLBase(ABC):
         if re.fullmatch(r"[a-zA-Z_@][a-zA-Z0-9_\.]*", s):
             return s
         # this identifier needs to be escaped
-        s.replace("`", "``")
+        s = s.replace("`", "``")
         return f"`{s}`"
 
     @staticmethod
