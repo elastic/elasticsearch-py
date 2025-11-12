@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import pytest
 import pytest_asyncio
 
 import elasticsearch
@@ -43,7 +42,7 @@ async def async_client_factory(elasticsearch_url):
             await client.close()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 def async_client(async_client_factory):
     try:
         yield async_client_factory
