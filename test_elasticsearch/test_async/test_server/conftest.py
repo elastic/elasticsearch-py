@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import pytest
 import pytest_asyncio
 import sniffio
 
