@@ -242,7 +242,7 @@ class AsyncYamlRunner(YamlRunner):
 
 
 @pytest.fixture(scope="function")
-def async_runner(async_client_factory):
+async def async_runner(async_client_factory):
     return AsyncYamlRunner(async_client_factory)
 
 
