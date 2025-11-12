@@ -16,10 +16,10 @@
 #  under the License.
 
 import pytest
+import pytest_asyncio
 import sniffio
 
 import elasticsearch
-import pytest_asyncio
 
 from ...utils import CA_CERTS, wipe_cluster
 
