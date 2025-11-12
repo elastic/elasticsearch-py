@@ -19,11 +19,12 @@ import pytest
 import sniffio
 
 import elasticsearch
+import pytest_asyncio
 
 from ...utils import CA_CERTS, wipe_cluster
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
     kwargs = {}
     if sniffio.current_async_library() == "trio":
@@ -42,7 +43,7 @@ async def async_client_factory(elasticsearch_url):
             await client.close()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 def async_client(async_client_factory):
     try:
         yield async_client_factory
