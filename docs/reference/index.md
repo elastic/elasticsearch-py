@@ -54,7 +54,7 @@ To get started, try this walkthrough: [Ingest data with Python](docs-content://m
 
 The [Python DSL module](../reference/elasticsearch-dsl.md) offers a convenient and idiomatic way to write and manipulate queries. 
 
-## Version compatibility
+## Version compatibility [_compatibility]
 
 Language clients are **forward compatible**: each client version works with equivalent and later minor versions of the **same or next major** version of {{es}}. For full compatibility, the client and {{es}} minor versions should match.
 
