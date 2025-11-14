@@ -9,31 +9,75 @@ mapped_pages:
 
 This documentation covers the [official Python client for {{es}}](https://github.com/elastic/elasticsearch-py). The goal of the Python client is to provide common ground for all {{es}}-related code in Python. The client is designed to be unopinionated and extendable. 
 
-API reference documentation is provided on [Read the Docs](https://elasticsearch-py.readthedocs.io).
+## Example [_example]
 
+::::{tab-set}
 
-The following example shows a simple Python client use case:
-
+:::{tab-item} Standard Python
 ```python
->>> from datetime import datetime
->>> from elasticsearch import Elasticsearch
+import os
+from elasticsearch import Elasticsearch
 
-# Connect to 'http://localhost:9200'
->>> client = Elasticsearch("http://localhost:9200")
+def main():
+    client = Elasticsearch(
+        hosts=[os.getenv("ELASTICSEARCH_URL")],
+        api_key=os.getenv("ELASTIC_API_KEY"),
+    )
 
-# Datetimes will be serialized:
->>> client.index(index="my-index-000001", id=42, document={"any": "data", "timestamp": datetime.now()})
-{'_id': '42', '_index': 'my-index-000001', '_type': 'test-type', '_version': 1, 'ok': True}
-
-# ...but not deserialized
->>> client.get(index="my-index-000001", id=42)['_source']
-{'any': 'data', 'timestamp': '2013-05-12T19:45:31.804229'}
+    resp = client.search(
+        index="my-index-000001",
+        from_="40",
+        size="20",
+        query={
+            "term": {
+                "user.id": "kimchy"
+            }
+        },
+    )
+    print(resp)
 ```
+:::
 
+:::{tab-item} Async Python
+```python
+import os
+from elasticsearch import AsyncElasticsearch
 
+async def main():
+    client = AsyncElasticsearch(
+        hosts=[os.getenv("ELASTICSEARCH_URL")],
+        api_key=os.getenv("ELASTIC_API_KEY"),
+    )
 
+    resp = await client.search(
+        index="my-index-000001",
+        from_="40",
+        size="20",
+        query={
+            "term": {
+                "user.id": "kimchy"
+            }
+        },
+    )
+    print(resp)
+```
+:::
 
-## Features [_features]
+::::
+
+## Overview [_overview]
+
+This package is composed of several modules:
+
+### The actual client
+
+This module, sometimes also called the "low-level" client, implements the support for sending requests to {{es}} servers. The client provides access to the entire surface of the {{es}} API.
+
+* [Getting Started guide](getting-started.md)
+* [Ingest data with Python walkthrough](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md)
+* [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/es_api.html)
+
+#### Features [_features]
 
 The client's features include:
 
@@ -45,19 +89,28 @@ The client's features include:
 * Thread safety
 * Pluggable architecture
 
-The client also provides a convenient set of [helpers](client-helpers.md) for tasks like bulk indexing and reindexing.
+### Bulk helpers
 
-::::{tip}
-To get started, try this walkthrough: [Ingest data with Python](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md)
-::::
+The bulk helpers are a set of functions that simplify the ingest of large amounts of data through a high-level interface based on Python iterables.
 
-### Elasticsearch Python DSL [_elasticsearch_python_dsl]
+* [User guide](client-helpers.md#bulk-helpers)
+* [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/api_helpers.html)
 
-The [Python DSL module](../reference/elasticsearch-dsl.md) offers a convenient and idiomatic way to write and manipulate queries. 
+### ES|QL query builder
 
-## {{es}} version compatibility [_compatibility]
+This module offers an idiomatic interface to construct ES|QL queries using Python expressions.
 
-Language clients are **forward compatible**: each client version works with equivalent and later minor versions of the **same or next major** version of {{es}}. For full compatibility, the client and {{es}} minor versions should match.
+* [User guide](esql-query-builder.md)
+* [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html)
+
+### DSL module
+
+The DSL module could be thought of as a "high-level" client for {{es}}. It allows applications to manipulate documents and queries using Python classes and objects instead of primitive types such as dictionaries and lists.
+
+* [User guide](elasticsearch-dsl.md)
+* [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/dsl.html)
+
+## Compatibility [_compatibility]
 
 | Client version | {{es}} `8.x` | {{es}} `9.x` | {{es}} `10.x` |
 |----------------|---------------------------------|---------------------------------|----------------------------------|
