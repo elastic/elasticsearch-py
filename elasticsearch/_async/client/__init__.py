@@ -504,6 +504,7 @@ class AsyncElasticsearch(BaseClient):
         """
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -515,7 +516,12 @@ class AsyncElasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         try:
             await self.perform_request(
-                "HEAD", __path, params=__query, headers=__headers
+                "HEAD",
+                __path,
+                params=__query,
+                headers=__headers,
+                endpoint_id="ping",
+                path_parts=__path_parts,
             )
             return True
         except (ApiError, TransportError):
