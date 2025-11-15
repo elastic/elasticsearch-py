@@ -191,3 +191,4 @@ def wait_for_cluster_state_updates_to_finish(client, timeout=30):
     while time.time() < end_time:
         if not client.cluster.pending_tasks().get("tasks", ()):
             break
+        time.sleep(0.1)
