@@ -60,7 +60,7 @@ def test_otel(session):
         silent=False,
     )
 
-    argv = pytest_argv() + ["-m", "otel"]
+    argv = pytest_argv() + ["-m", "otel"] + session.posargs
     session.run(*argv, env={"TEST_WITH_OTEL": "1"})
 
 
