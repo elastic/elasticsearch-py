@@ -594,6 +594,7 @@ class Elasticsearch(BaseClient):
         """
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
+        __path_parts: t.Dict[str, str] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -604,7 +605,14 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         try:
-            self.perform_request("HEAD", __path, params=__query, headers=__headers)
+            self.perform_request(
+                "HEAD",
+                __path,
+                params=__query,
+                headers=__headers,
+                endpoint_id="ping",
+                path_parts=__path_parts,
+            )
             return True
         except (ApiError, TransportError):
             return False
