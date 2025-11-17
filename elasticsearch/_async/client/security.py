@@ -477,7 +477,7 @@ class SecurityClient(NamespacedClient):
     async def clear_cached_privileges(
         self,
         *,
-        application: str,
+        application: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -3763,7 +3763,8 @@ class SecurityClient(NamespacedClient):
         :param size: The number of hits to return. It must not be negative. By default,
             you cannot page through more than 10,000 hits using the `from` and `size`
             parameters. To page through more hits, use the `search_after` parameter.
-        :param sort: The sort definition. You can sort on `username`, `roles`, or `enabled`.
+        :param sort: The sort definition. You can sort on `name`, `description`, `metadata`,
+            `applications.application`, `applications.privileges`, and `applications.resources`.
             In addition, sort can also be applied to the `_doc` field to sort by index
             order.
         """

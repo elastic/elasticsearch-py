@@ -126,10 +126,10 @@ class EsqlClient(NamespacedClient):
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
             shards count.
-        :param include_execution_metadata: When set to `true` and performing a cross-cluster/cross-project
-            query, the response will include an extra `_clusters` object with information
-            about the clusters that participated in the search along with info such as
-            shards count.
+        :param include_execution_metadata: When set to `true`, the response will include
+            an extra `_clusters` object with information about the clusters that participated
+            in the search along with info such as shards count. This is similar to `include_ccs_metadata`,
+            but it also returns metadata when the query is not CCS/CPS
         :param keep_alive: The period for which the query and its results are stored
             in the cluster. The default period is five days. When this period expires,
             the query and its results are deleted, even if the query is still ongoing.
@@ -575,10 +575,10 @@ class EsqlClient(NamespacedClient):
             query, the response will include an extra `_clusters` object with information
             about the clusters that participated in the search along with info such as
             shards count.
-        :param include_execution_metadata: When set to `true` and performing a cross-cluster/cross-project
-            query, the response will include an extra `_clusters` object with information
-            about the clusters that participated in the search along with info such as
-            shards count.
+        :param include_execution_metadata: When set to `true`, the response will include
+            an extra `_clusters` object with information about the clusters that participated
+            in the search along with info such as shards count. This is similar to `include_ccs_metadata`,
+            but it also returns metadata when the query is not CCS/CPS
         :param locale:
         :param params: To avoid any attempts of hacking or code injection, extract the
             values in a separate list of parameters. Use question mark placeholders (?)

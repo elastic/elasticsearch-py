@@ -608,7 +608,7 @@ class FieldLookup(AttrDict[Any]):
     id: Union[str, DefaultType]
     index: Union[str, DefaultType]
     path: Union[str, InstrumentedField, DefaultType]
-    routing: Union[str, DefaultType]
+    routing: Union[str, Sequence[str], DefaultType]
 
     def __init__(
         self,
@@ -616,7 +616,7 @@ class FieldLookup(AttrDict[Any]):
         id: Union[str, DefaultType] = DEFAULT,
         index: Union[str, DefaultType] = DEFAULT,
         path: Union[str, InstrumentedField, DefaultType] = DEFAULT,
-        routing: Union[str, DefaultType] = DEFAULT,
+        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if id is not DEFAULT:
@@ -2333,7 +2333,7 @@ class LikeDocument(AttrDict[Any]):
     _id: Union[str, DefaultType]
     _index: Union[str, DefaultType]
     per_field_analyzer: Union[Mapping[Union[str, InstrumentedField], str], DefaultType]
-    routing: Union[str, DefaultType]
+    routing: Union[str, Sequence[str], DefaultType]
     version: Union[int, DefaultType]
     version_type: Union[Literal["internal", "external", "external_gte"], DefaultType]
 
@@ -2347,7 +2347,7 @@ class LikeDocument(AttrDict[Any]):
         per_field_analyzer: Union[
             Mapping[Union[str, InstrumentedField], str], DefaultType
         ] = DEFAULT,
-        routing: Union[str, DefaultType] = DEFAULT,
+        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
         version: Union[int, DefaultType] = DEFAULT,
         version_type: Union[
             Literal["internal", "external", "external_gte"], DefaultType
@@ -3935,7 +3935,7 @@ class TermsLookup(AttrDict[Any]):
     index: Union[str, DefaultType]
     id: Union[str, DefaultType]
     path: Union[str, InstrumentedField, DefaultType]
-    routing: Union[str, DefaultType]
+    routing: Union[str, Sequence[str], DefaultType]
 
     def __init__(
         self,
@@ -3943,7 +3943,7 @@ class TermsLookup(AttrDict[Any]):
         index: Union[str, DefaultType] = DEFAULT,
         id: Union[str, DefaultType] = DEFAULT,
         path: Union[str, InstrumentedField, DefaultType] = DEFAULT,
-        routing: Union[str, DefaultType] = DEFAULT,
+        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if index is not DEFAULT:
@@ -4898,7 +4898,7 @@ class CompletionSuggestOption(AttrDict[Any]):
     fields: Mapping[str, Any]
     _id: str
     _index: str
-    _routing: str
+    _routing: Union[str, Sequence[str]]
     _score: float
     _source: Any
     score: float
