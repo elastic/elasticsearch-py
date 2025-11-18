@@ -53,6 +53,17 @@ def test_otel_end_to_end(sync_client):
     assert expected_attributes.items() <= spans[0].attributes.items()
 
 
+# Since ping is manually implemented, we have a dedicated test for it
+def test_otel_ping(sync_client):
+    tracer, memory_exporter = setup_tracing()
+    sync_client._otel.tracer = tracer
+
+    sync_client.ping()
+    spans = memory_exporter.get_finished_spans()
+    assert len(spans) == 1
+    assert spans[0].name == "ping"
+
+
 @pytest.mark.parametrize(
     "bulk_helper_name", ["bulk", "streaming_bulk", "parallel_bulk"]
 )
