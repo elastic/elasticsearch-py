@@ -9,7 +9,7 @@ resp = client.search(
         "percolate": {
             "field": "query",
             "document": {
-                "body": "Bycicles are missing"
+                "body": "Bicycles are missing"
             }
         }
     },
