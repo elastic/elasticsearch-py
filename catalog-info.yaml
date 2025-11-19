@@ -48,11 +48,11 @@ spec:
         Daily 9.2:
           branch: '9.2'
           cronline: '0 10 * * *'
-          message: 'Daily run for 9.0 branch'
+          message: 'Daily run for 9.2 branch'
         Daily 9.1:
           branch: '9.1'
           cronline: '0 10 * * *'
-          message: 'Daily run for 9.0 branch'
+          message: 'Daily run for 9.1 branch'
         Daily 8.19:
           branch: '8.19'
           cronline: '0 10 * * *'
