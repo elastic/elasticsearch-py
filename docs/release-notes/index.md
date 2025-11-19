@@ -35,6 +35,26 @@ To check for security updates, go to [Security announcements for the Elastic sta
 
 ### API
 
+- Add `source_exclude_vectors` to Field Caps, Scroll and Search APIs
+- Add `require_data_stream` to Index API
+- Add `settings_filter` to Cluster Get Component Template API
+- Add `cause` to Cluster Put Component Template API
+- Add `master_timeout` to Cluster State API
+- Add `ccs_minimize_roundtrips` to EQL Search API
+- Add `keep_alive` and `keep_on_completion` to ES|QL Async Query API
+- Add `format` to ES|QL Async Query Get API
+- Add ES|QL Get Query and List Queries APIs
+- Add Indices Delete Data Stream Options API
+- Add Indices Get Data Stream Mappings and Put Data Stream Mappings APIs
+- Add Indices Get Data Stream Options and Put Data Stream Options APIS
+- Add Indices Get Data Stream Settings and Put Data Stream Settings APIs
+- Add `allow_no_indices`, `expand_wildcards` and `ignore_available` to Indices Recovery API
+- Add Indices Remove Block API
+- Add `input_type` to Inference API
+- Add `timeout` to all Inference Put APIs
+- Add Inference Put Custom API
+- Add Inference Put DeepSeek API
+- Add `task_settings` to Put HuggingFace API
 - Add `streams` namespace with `streams.logs_disable`, `streams.logs_enable`, `streams.status` APIs
 - Add `inference.contextualai` API
 - Add `security.get_stats` API
@@ -43,7 +63,15 @@ To check for security updates, go to [Security announcements for the Elastic sta
 - Add `index_template` parameter to `indices.simulate_index_template` API
 - Add `input_type` parameter to `inference.text_embedding` API
 - Add `field_access_pattern` parameter to `ingest.put_pipeline` API
-- Removed unsupported `size` parameter from `reindex` API
+- Add `refresh` to Security Grant API Key API
+- Add `wait_for_completion` to the Snapshot Delete API
+- Add `state` to Snapshot Get API
+- Add `refresh` to Synonyms Put Synonym, Put Synonym Rule and Delete Synonym Rule APIs
+- Remove unsupported `size` parameter from `reindex` API
+- Remove deprecated `if_primary_term`, `if_seq_no` and `op_type` from Create API
+- Remove deprecated `master_timeout` from Ingest Get Ip Location Database API
+- Remove deprecated `application`, `priviledge` and `username` from the Security Get User API
+- Rename `type_query_string` to `type` in License Post Start Trial API
 
 #### Serverless-specific
 
@@ -58,6 +86,10 @@ To check for security updates, go to [Security announcements for the Elastic sta
 - Add `visit_percentage` parameter to `Knn` query
 - Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
 - Add `sparse_vector` field to `SemanticTextIndexOptions` type
+- Add `index_options` to SparseVector type
+- Add `separator_group` and `separators` to ChunkingSettings type
+- Add SparseVectorIndexOptions type
+- Add key to FiltersBucket type
 
 ### Other
 
