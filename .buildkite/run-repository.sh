@@ -21,6 +21,7 @@ echo -e "\033[34;1mINFO:\033[0m TEST_SUITE ${TEST_SUITE}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m NOX_SESSION ${NOX_SESSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m PYTHON_VERSION ${PYTHON_VERSION}\033[0m"
 echo -e "\033[34;1mINFO:\033[0m PYTHON_CONNECTION_CLASS ${PYTHON_CONNECTION_CLASS}\033[0m"
+echo -e "\033[34;1mINFO:\033[0m ES_YAML_TESTS_BRANCH ${ES_YAML_TESTS_BRANCH}\033[0m"
 
 echo -e "\033[1m>>>>> Build [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
@@ -42,6 +43,7 @@ docker run \
   --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
+  --env "ES_YAML_TESTS_BRANCH=${ES_YAML_TESTS_BRANCH}" \
   --env "TEST_TYPE=server" \
   --env "FORCE_COLOR=1" \
   --name elasticsearch-py \
