@@ -9,7 +9,7 @@ export STACK_VERSION="${STACK_VERSION:=8.0.0-SNAPSHOT}"
 export TEST_SUITE="${TEST_SUITE:=platinum}"
 export PYTHON_VERSION="${PYTHON_VERSION:=3.13}"
 export PYTHON_CONNECTION_CLASS="${PYTHON_CONNECTION_CLASS:=urllib3}"
-export ES_YAML_TESTS_BRANCH=${BUILDKITE_PULL_REQUEST_BASE_BRANCH:=main}
+export ES_YAML_TESTS_BRANCH="${BUILDKITE_PULL_REQUEST_BASE_BRANCH}"
 
 script_path=$(dirname $(realpath -s $0))
 source $script_path/functions/imports.sh
