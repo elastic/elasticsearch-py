@@ -25,6 +25,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import warnings
 import zipfile
 from typing import Tuple, Union
@@ -35,6 +36,7 @@ import yaml
 
 from elasticsearch import ApiError, ElasticsearchWarning, RequestError
 from elasticsearch._sync.client.utils import _base64_auth_header
+from elasticsearch._version import __versionstr__
 from elasticsearch.compat import string_types
 
 # some params had to be changed in python, keep track of them so we can rename
@@ -499,12 +501,29 @@ try:
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(retries=urllib3.Retry(total=10))
 
-    yaml_tests_url = (
-        "https://api.github.com/repos/elastic/elasticsearch-clients-tests/zipball/main"
-    )
+    branch_candidates = []
+    if "ES_YAML_TESTS_BRANCH" in os.environ:
+        branch_candidates.append(os.environ["ES_YAML_TESTS_BRANCH"])
+    git_branch = subprocess.getoutput("git branch --show-current")
+    if git_branch not in branch_candidates:
+        branch_candidates.append(git_branch)
+    package_version = __versionstr__.rsplit(".", 1)[0]
+    if package_version not in branch_candidates:
+        branch_candidates.append(package_version)
+    if "main" not in branch_candidates:
+        branch_candidates.append("main")
+
+    response = None
+    branch = "main"
+    for branch in branch_candidates:
+        yaml_tests_url = f"https://api.github.com/repos/elastic/elasticsearch-clients-tests/zipball/{branch}"
+        response = http.request("GET", yaml_tests_url)
+        if response.status != 404:
+            break
+    assert response is not None
 
     # Download the zip and start reading YAML from the files in memory
-    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", yaml_tests_url).data))
+    package_zip = zipfile.ZipFile(io.BytesIO(response.data))
 
     for yaml_file in package_zip.namelist():
         if not re.match(r"^.*\/tests\/.*\.ya?ml$", yaml_file):
@@ -562,7 +581,9 @@ try:
             elif pytest_test_name in SKIPPED_TESTS or pytest_param_id in SKIPPED_TESTS:
                 pytest_param["skip"] = True
 
-            YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
+            YAML_TEST_SPECS.append(
+                pytest.param(pytest_param, id=f"[{branch}]{pytest_param_id}")
+            )
 
 except Exception as e:
     warnings.warn(f"Could not load REST API tests: {str(e)}")
