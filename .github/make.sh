@@ -11,12 +11,13 @@
 #
 # Targets:
 # ---------------------------
-# assemble <VERSION> : build client artefacts with version
-# bump     <VERSION> : bump client internals to version
-# codegen  <VERSION> : generate endpoints
-# docsgen  <VERSION> : generate documentation
-# examplegen         : generate the doc examples
-# clean              : clean workspace
+# assemble <VERSION>   : build client artefacts with version
+# bump     <VERSION>   : bump client internals to version
+# bumpmatrix <VERSION> : bump stack version in test matrix to version
+# codegen  <VERSION>   : generate endpoints
+# docsgen  <VERSION>   : generate documentation
+# examplegen           : generate the doc examples
+# clean                : clean workspace
 #
 # ------------------------------------------------------- #
 
@@ -24,7 +25,7 @@
 # Bootstrap
 # ------------------------------------------------------- #
 
-script_path=$(dirname "$(realpath -s "$0")")
+script_path=$(dirname "$(realpath "$0")")
 repo=$(realpath "$script_path/../")
 
 # shellcheck disable=SC1090
@@ -100,6 +101,15 @@ case $CMD in
         # VERSION is BRANCH here for now
         TASK_ARGS=("$VERSION")
         ;;
+    bumpmatrix)
+        if [ -v $VERSION ]; then
+            echo -e "\033[31;1mTARGET: bumpmatrix -> missing version parameter\033[0m"
+            exit 1
+        fi
+        echo -e "\033[36;1mTARGET: bump stack in test matrix to version $VERSION\033[0m"
+        TASK=bumpmatrix
+        TASK_ARGS=("$VERSION")
+        ;;
     *)
         echo -e "\nUsage:\n\t $CMD is not supported right now\n"
         exit 1
@@ -157,6 +167,13 @@ if [[ "$CMD" == "bump" ]]; then
     $product \
     /bin/bash -c "python /code/elasticsearch-py/utils/bump-version.py $VERSION"
 
+  exit 0
+fi
+
+if [[ "$CMD" == "bumpmatrix" ]]; then
+  TEST_CONFIG_FILE=.buildkite/pipeline.yml
+  sed -E -i.bak 's/[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT/'$VERSION'/g' $TEST_CONFIG_FILE
+  rm ${TEST_CONFIG_FILE}.bak
   exit 0
 fi
 
