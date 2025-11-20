@@ -26,8 +26,8 @@ def main():
 
     resp = client.search(
         index="my-index-000001",
-        from_="40",
-        size="20",
+        from_=40,
+        size=20,
         query={
             "term": {
                 "user.id": "kimchy"
@@ -51,8 +51,8 @@ async def main():
 
     resp = await client.search(
         index="my-index-000001",
-        from_="40",
-        size="20",
+        from_=40,
+        size=20,
         query={
             "term": {
                 "user.id": "kimchy"
