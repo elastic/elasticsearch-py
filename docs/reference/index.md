@@ -79,13 +79,13 @@ As of version 8.0, {{es}} offers a [REST API compatibility mode](elasticsearch:/
 
 In the Python client, compatibility mode is **always enabled**. You don't need to configure it manually or set an environment variable. The client automatically sends compatibility headers with API requests so that it can communicate with the next major version of {{es}}.
 
-In compatibility mode, your Python client applications can continue running during an upgrade without restart or redeployment. For example, during a rolling upgrade of your {{es}} cluster from 8.x to 9.x, your 8.x Python client continues working throughout the process without any changes or intervention.
+For example, if you're upgrading {{es}} from 8.x to 9.x, you can continue to use the 8.x Python client during and after the {{es}} server upgrade, with the exception of [breaking changes](../release-notes/breaking-changes.md).
 
 **What to expect in compatibility mode:**
 
 If you're using the Python client in compatibility mode to work with the next major version of {{es}}:
 
-* API calls affected by [breaking changes](../release-notes/breaking-changes.md) might fail or behave differently. 
+* API calls affected by [breaking changes](../release-notes/breaking-changes.md) might fail or behave differently.
 * API calls unaffected by breaking changes continue to work as expected.
 * New features from the next major version of {{es}} are not available until you upgrade the client itself.
 
