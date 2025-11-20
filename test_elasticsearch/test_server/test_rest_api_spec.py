@@ -500,7 +500,7 @@ try:
     http = urllib3.PoolManager(retries=urllib3.Retry(total=10))
 
     branch_candidates = []
-    if "ES_YAML_TESTS_BRANCH" in os.environ:
+    if "ES_YAML_TESTS_BRANCH" in os.environ and os.environ["ES_YAML_TESTS_BRANCH"]:
         branch_candidates.append(os.environ["ES_YAML_TESTS_BRANCH"])
     git_branch = subprocess.getoutput("git branch --show-current")
     if git_branch not in branch_candidates:
