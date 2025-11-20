@@ -555,7 +555,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -898,7 +898,7 @@ class AsyncElasticsearch(BaseClient):
         project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         terminate_after: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1053,7 +1053,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -1232,7 +1232,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -1375,7 +1375,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1769,7 +1769,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1899,7 +1899,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2010,7 +2010,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2139,7 +2139,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        filters: t.Optional[str] = None,
+        filters: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_empty_fields: t.Optional[bool] = None,
@@ -2279,7 +2279,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2571,7 +2571,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2753,7 +2753,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -3037,7 +3037,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3174,7 +3174,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
@@ -3440,7 +3440,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -3570,7 +3570,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4418,7 +4418,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         retriever: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -5359,7 +5359,7 @@ class AsyncElasticsearch(BaseClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5468,7 +5468,7 @@ class AsyncElasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
@@ -5605,7 +5605,7 @@ class AsyncElasticsearch(BaseClient):
     async def terms_enum(
         self,
         *,
-        index: str,
+        index: t.Union[str, t.Sequence[str]],
         field: t.Optional[str] = None,
         case_insensitive: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -5731,7 +5731,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -5915,7 +5915,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         retry_on_conflict: t.Optional[int] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scripted_upsert: t.Optional[bool] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
@@ -6095,7 +6095,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,

@@ -220,7 +220,50 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "_none",
+                            "aggregations",
+                            "http",
+                            "indices",
+                            "ingest",
+                            "jvm",
+                            "os",
+                            "plugins",
+                            "process",
+                            "remote_cluster_server",
+                            "settings",
+                            "thread_pool",
+                            "transport",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "_none",
+                        "aggregations",
+                        "http",
+                        "indices",
+                        "ingest",
+                        "jvm",
+                        "os",
+                        "plugins",
+                        "process",
+                        "remote_cluster_server",
+                        "settings",
+                        "thread_pool",
+                        "transport",
+                    ],
+                ],
+            ]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
@@ -357,8 +400,120 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        index_metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "_none",
+                            "adaptive_selection",
+                            "allocations",
+                            "breaker",
+                            "discovery",
+                            "fs",
+                            "http",
+                            "indexing_pressure",
+                            "indices",
+                            "ingest",
+                            "jvm",
+                            "os",
+                            "process",
+                            "repositories",
+                            "script",
+                            "script_cache",
+                            "thread_pool",
+                            "transport",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "_none",
+                        "adaptive_selection",
+                        "allocations",
+                        "breaker",
+                        "discovery",
+                        "fs",
+                        "http",
+                        "indexing_pressure",
+                        "indices",
+                        "ingest",
+                        "jvm",
+                        "os",
+                        "process",
+                        "repositories",
+                        "script",
+                        "script_cache",
+                        "thread_pool",
+                        "transport",
+                    ],
+                ],
+            ]
+        ] = None,
+        index_metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "bulk",
+                            "completion",
+                            "dense_vector",
+                            "docs",
+                            "fielddata",
+                            "flush",
+                            "get",
+                            "indexing",
+                            "mappings",
+                            "merge",
+                            "query_cache",
+                            "recovery",
+                            "refresh",
+                            "request_cache",
+                            "search",
+                            "segments",
+                            "shard_stats",
+                            "sparse_vector",
+                            "store",
+                            "translog",
+                            "warmer",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "bulk",
+                        "completion",
+                        "dense_vector",
+                        "docs",
+                        "fielddata",
+                        "flush",
+                        "get",
+                        "indexing",
+                        "mappings",
+                        "merge",
+                        "query_cache",
+                        "recovery",
+                        "refresh",
+                        "request_cache",
+                        "search",
+                        "segments",
+                        "shard_stats",
+                        "sparse_vector",
+                        "store",
+                        "translog",
+                        "warmer",
+                    ],
+                ],
+            ]
+        ] = None,
         completion_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -483,7 +638,14 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["_all", "aggregations", "rest_actions"]]
+                ],
+                t.Union[str, t.Literal["_all", "aggregations", "rest_actions"]],
+            ]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -502,7 +664,7 @@ class NodesClient(NamespacedClient):
             information; use `_local` to return information from the node you're connecting
             to, leave empty to get information from all nodes
         :param metric: Limits the information returned to the specific metrics. A comma-separated
-            list of the following options: `_all`, `rest_actions`.
+            list of the following options: `_all`, `rest_actions`, `aggregations`.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """

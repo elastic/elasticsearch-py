@@ -1068,7 +1068,40 @@ class ClusterClient(NamespacedClient):
     def state(
         self,
         *,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "blocks",
+                            "customs",
+                            "master_node",
+                            "metadata",
+                            "nodes",
+                            "routing_nodes",
+                            "routing_table",
+                            "version",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "blocks",
+                        "customs",
+                        "master_node",
+                        "metadata",
+                        "nodes",
+                        "routing_nodes",
+                        "routing_table",
+                        "version",
+                    ],
+                ],
+            ]
+        ] = None,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
