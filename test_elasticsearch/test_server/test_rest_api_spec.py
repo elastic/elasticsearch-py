@@ -514,6 +514,7 @@ try:
         branch_candidates.append("main")
 
     response = None
+    branch = "main"
     for branch in branch_candidates:
         yaml_tests_url = f"https://api.github.com/repos/elastic/elasticsearch-clients-tests/zipball/{branch}"
         response = http.request("GET", yaml_tests_url)
@@ -567,7 +568,7 @@ try:
             for prefix in ("rest-api-spec/", "test/", "free/", "platinum/"):
                 if pytest_test_name.startswith(prefix):
                     pytest_test_name = pytest_test_name[len(prefix) :]
-            pytest_param_id = "[%s]%s[%d]" % (branch, pytest_test_name, test_number)
+            pytest_param_id = "%s[%d]" % (pytest_test_name, test_number)
 
             pytest_param = {
                 "setup": setup_steps,
@@ -580,7 +581,9 @@ try:
             elif pytest_test_name in SKIPPED_TESTS or pytest_param_id in SKIPPED_TESTS:
                 pytest_param["skip"] = True
 
-            YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
+            YAML_TEST_SPECS.append(
+                pytest.param(pytest_param, id=f"[{branch}]{pytest_param_id}")
+            )
 
 except Exception as e:
     warnings.warn(f"Could not load REST API tests: {str(e)}")
