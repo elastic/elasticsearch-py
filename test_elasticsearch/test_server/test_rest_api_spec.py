@@ -505,10 +505,10 @@ try:
     if "ES_YAML_TESTS_BRANCH" in os.environ and os.environ["ES_YAML_TESTS_BRANCH"]:
         branch_candidates.append(os.environ["ES_YAML_TESTS_BRANCH"])
     git_branch = subprocess.getoutput("git branch --show-current")
-    if git_branch not in branch_candidates:
+    if git_branch and git_branch not in branch_candidates:
         branch_candidates.append(git_branch)
     package_version = __versionstr__.rsplit(".", 1)[0]
-    if package_version not in branch_candidates:
+    if package_version and package_version not in branch_candidates:
         branch_candidates.append(package_version)
     if "main" not in branch_candidates:
         branch_candidates.append("main")
