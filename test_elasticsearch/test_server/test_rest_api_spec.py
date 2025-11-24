@@ -411,16 +411,21 @@ class YamlRunner:
         return value
 
     def _lookup(self, path):
-        # fetch the possibly nested value from last_response
-        value = self.last_response
         if path == "$body":
-            return value
+            return self.last_response
+        if path.startswith("$"):
+            value = None
+        else:
+            value = self.last_response
         path = path.replace(r"\.", "\1")
         for step in path.split("."):
             if not step:
                 continue
             # We check body again to handle E.g. '$body.$backing_index.data_stream'
-            if step.startswith("$body"):
+            if step == "$body":
+                assert value is None
+                # fetch the possibly nested value from last_response
+                value = self.last_response
                 continue
             step = step.replace("\1", ".")
             step = self._resolve(step)
@@ -432,11 +437,15 @@ class YamlRunner:
                 step = int(step)
                 assert isinstance(value, list)
                 assert len(value) > step
+                value = value[step]
             elif step == "_arbitrary_key_":
                 return list(value.keys())[0]
-            else:
+            elif isinstance(step, string_types) and isinstance(value, dict):
                 assert step in value
-            value = value[step]
+                value = value[step]
+            else:
+                assert value is None
+                value = step
         return value
 
     def _feature_enabled(self, name):
