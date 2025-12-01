@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import csv
 import os
 from time import time
@@ -8,19 +9,23 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, ValidationError
 from sentence_transformers import SentenceTransformer
 
-from elasticsearch import NotFoundError
+from elasticsearch import NotFoundError, OrjsonSerializer
 from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
+from elasticsearch.dsl.types import DenseVectorIndexOptions
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
-dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']])
+dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']], serializer=OrjsonSerializer()
+)
 
 
 class Quote(AsyncBaseESModel):
     quote: str
     author: Annotated[str, dsl.Keyword()]
     tags: Annotated[list[str], dsl.Keyword()]
-    embedding: Annotated[list[float], dsl.DenseVector()] = Field(init=False, default=[])
+    embedding: Annotated[list[float], dsl.DenseVector(
+        index_options=DenseVectorIndexOptions(type="flat"),
+    )] = Field(init=False, default=[])
 
     class Index:
         name = 'quotes'
@@ -135,7 +140,10 @@ async def search_quotes(req: SearchRequest) -> SearchResponse:
 def embed_quotes(quotes):
     embeddings = model.encode([q.quote for q in quotes])
     for q, e in zip(quotes, embeddings):
-        q.embedding = e.tolist()
+        q.embedding = e
+        # q.embedding = e.tolist()
+        ##byte_array = e.byteswap().tobytes()
+        ##q.embedding = base64.b64encode(byte_array).decode()
 
 
 async def ingest_quotes():

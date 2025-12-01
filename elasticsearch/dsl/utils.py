@@ -609,11 +609,11 @@ class ObjectBase(AttrDict[Any]):
             if isinstance(v, AttrList):
                 v = v._l_
 
-            if skip_empty:
-                # don't serialize empty values
-                # careful not to include numeric zeros
-                if v in ([], {}, None):
-                    continue
+            # if skip_empty:
+            #     # don't serialize empty values
+            #     # careful not to include numeric zeros
+            #     if v in ([], {}, None):
+            #         continue
 
             out[k] = v
         return out
