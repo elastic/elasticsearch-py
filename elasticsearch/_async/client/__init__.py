@@ -706,6 +706,7 @@ class AsyncElasticsearch(BaseClient):
           <li>Perl: Check out <code>Search::Elasticsearch::Client::5_0::Bulk</code> and <code>Search::Elasticsearch::Client::5_0::Scroll</code></li>
           <li>Python: Check out <code>elasticsearch.helpers.*</code></li>
           <li>JavaScript: Check out <code>client.helpers.*</code></li>
+          <li>Java: Check out <code>co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester</code></li>
           <li>.NET: Check out <code>BulkAllObservable</code></li>
           <li>PHP: Check out bulk indexing.</li>
           <li>Ruby: Check out <code>Elasticsearch::Helpers::BulkHelper</code></li>
@@ -842,6 +843,73 @@ class AsyncElasticsearch(BaseClient):
             headers=__headers,
             body=__body,
             endpoint_id="bulk",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    async def capabilities(
+        self,
+        *,
+        capabilities: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        local_only: t.Optional[bool] = None,
+        method: t.Optional[
+            t.Union[str, t.Literal["DELETE", "GET", "HEAD", "POST", "PUT"]]
+        ] = None,
+        parameters: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        path: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Checks if the specified combination of method, API, parameters, and arbitrary capabilities are supported.</p>
+
+
+        `<https://github.com/elastic/elasticsearch/blob/8.19/rest-api-spec/src/yamlRestTest/resources/rest-api-spec/test/README.asciidoc#require-or-skip-api-capabilities>`_
+
+        :param capabilities: Comma-separated list of arbitrary API capabilities to check
+        :param local_only: True if only the node being called should be considered
+        :param method: REST method to check
+        :param parameters: Comma-separated list of API parameters to check
+        :param path: API path to check
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_capabilities"
+        __query: t.Dict[str, t.Any] = {}
+        if capabilities is not None:
+            __query["capabilities"] = capabilities
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if local_only is not None:
+            __query["local_only"] = local_only
+        if method is not None:
+            __query["method"] = method
+        if parameters is not None:
+            __query["parameters"] = parameters
+        if path is not None:
+            __query["path"] = path
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="capabilities",
             path_parts=__path_parts,
         )
 
@@ -1729,11 +1797,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: t.Union[int, str],
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -1751,9 +1819,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1762,8 +1834,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4293,11 +4363,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4321,9 +4391,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4332,8 +4406,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -6670,11 +6742,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -6692,9 +6764,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -6703,8 +6779,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",

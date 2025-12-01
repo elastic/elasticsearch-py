@@ -30,7 +30,7 @@ class DanglingIndicesClient(NamespacedClient):
         self,
         *,
         index_uuid: str,
-        accept_data_loss: bool,
+        accept_data_loss: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -57,8 +57,6 @@ class DanglingIndicesClient(NamespacedClient):
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")
-        if accept_data_loss is None:
-            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
@@ -91,7 +89,7 @@ class DanglingIndicesClient(NamespacedClient):
         self,
         *,
         index_uuid: str,
-        accept_data_loss: bool,
+        accept_data_loss: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -121,8 +119,6 @@ class DanglingIndicesClient(NamespacedClient):
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")
-        if accept_data_loss is None:
-            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}

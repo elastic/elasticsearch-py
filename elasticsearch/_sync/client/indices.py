@@ -2629,8 +2629,8 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/indices-get-template.html>`_
 
-        :param name: Comma-separated list of index template names used to limit the request.
-            Wildcard (*) expressions are supported.
+        :param name: Name of index template to retrieve. Wildcard (*) expressions are
+            supported.
         :param flat_settings: If true, returns settings in flat format.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
@@ -3427,7 +3427,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: t.Union[str, t.Sequence[str]],
         data_retention: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        downsampling: t.Optional[t.Mapping[str, t.Any]] = None,
+        downsampling: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[

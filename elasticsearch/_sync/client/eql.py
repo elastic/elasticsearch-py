@@ -291,7 +291,7 @@ class EqlClient(NamespacedClient):
             Defaults to 10
         :param tiebreaker_field: Field used to sort hits with the same timestamp in ascending
             order
-        :param timestamp_field: Field containing event timestamp. Default "@timestamp"
+        :param timestamp_field: Field containing event timestamp.
         :param wait_for_completion_timeout:
         """
         if index in SKIP_IN_PATH:
