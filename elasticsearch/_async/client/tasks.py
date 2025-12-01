@@ -121,8 +121,8 @@ class TasksClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get task information.
-          Get information about a task currently running in the cluster.</p>
+          <p>Get task information.</p>
+          <p>Get information about a task currently running in the cluster.</p>
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
           <p>If the task identifier is not found, a 404 response code indicates that there are no resources that match the request.</p>
@@ -185,8 +185,8 @@ class TasksClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get all tasks.
-          Get information about the tasks currently running on one or more nodes in the cluster.</p>
+          <p>Get all tasks.</p>
+          <p>Get information about the tasks currently running on one or more nodes in the cluster.</p>
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
           <p><strong>Identifying running tasks</strong></p>

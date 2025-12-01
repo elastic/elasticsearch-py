@@ -580,6 +580,192 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def secret_delete(
+        self,
+        *,
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Deletes a connector secret.</p>
+
+
+        :param id: The ID of the secret
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_connector/_secret/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.secret_delete",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def secret_get(
+        self,
+        *,
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Retrieves a secret stored by Connectors.</p>
+
+
+        :param id: The ID of the secret
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_connector/_secret/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="connector.secret_get",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("value",),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def secret_post(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        value: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Creates a secret for a Connector.</p>
+
+
+        :param value:
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_connector/_secret"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if value is not None:
+                __body["value"] = value
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.secret_post",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("value",),
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def secret_put(
+        self,
+        *,
+        id: str,
+        value: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Creates or updates a secret for a Connector.</p>
+
+
+        :param id: The ID of the secret
+        :param value:
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if value is None and body is None:
+            raise ValueError("Empty value passed for parameter 'value'")
+        __path_parts: t.Dict[str, str] = {"id": _quote(id)}
+        __path = f'/_connector/_secret/{__path_parts["id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if value is not None:
+                __body["value"] = value
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="connector.secret_put",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     @_stability_warning(Stability.BETA)
     def sync_job_cancel(
         self,
@@ -643,8 +829,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check in a connector sync job.
-          Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
+          <p>Check in a connector sync job.</p>
+          <p>Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -700,8 +886,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Claim a connector sync job.
-          This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
+          <p>Claim a connector sync job.</p>
+          <p>This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
           Additionally, it can set the <code>sync_cursor</code> property for the sync job.</p>
           <p>This API is not intended for direct connector management by users.
           It supports the implementation of services that utilize the connector protocol to communicate with Elasticsearch.</p>
@@ -819,8 +1005,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set a connector sync job error.
-          Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
+          <p>Set a connector sync job error.</p>
+          <p>Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -1086,8 +1272,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set the connector sync job stats.
-          Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
+          <p>Set the connector sync job stats.</p>
+          <p>Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
           You can also update <code>last_seen</code>.
           This API is mainly used by the connector service for updating sync job information.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
@@ -1402,8 +1588,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update the connector features.
-          Update the connector features in the connector document.
+          <p>Update the connector features.</p>
+          <p>Update the connector features in the connector document.
           This API can be used to control the following aspects of a connector:</p>
           <ul>
           <li>document-level security</li>
