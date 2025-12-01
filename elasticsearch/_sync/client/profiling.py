@@ -15,21 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import typing as t
+class C:
 
-from elastic_transport import ObjectApiResponse
-
-from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
-
-
-class MigrationClient(NamespacedClient):
-
-    @_rewrite_parameters()
-    def deprecations(
+    @_rewrite_parameters(
+        body_name="conditions",
+    )
+    def flamegraph(
         self,
         *,
-        index: t.Optional[str] = None,
+        conditions: t.Optional[t.Any] = None,
+        body: t.Optional[t.Any] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -38,66 +33,21 @@ class MigrationClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get deprecation information.</p>
-          <p>Get information about different cluster, node, and index level settings that use deprecated features that will be removed or changed in the next major version.</p>
-          <p>TIP: This APIs is designed for indirect use by the Upgrade Assistant.
-          You are strongly recommended to use the Upgrade Assistant.</p>
+          <p>Returns basic information about the status of Universal Profiling.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-migration-deprecations>`_
+        `<https://www.elastic.co/guide/en/observability/9.2/universal-profiling.html>`_
 
-        :param index: Comma-separate list of data streams or indices to check. Wildcard
-            (*) expressions are supported.
+        :param conditions:
         """
-        __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
-            __path_parts = {"index": _quote(index)}
-            __path = f'/{__path_parts["index"]}/_migration/deprecations'
-        else:
-            __path_parts = {}
-            __path = "/_migration/deprecations"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "GET",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="migration.deprecations",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
-    def get_feature_upgrade_status(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Get feature migration information.</p>
-          <p>Version upgrades sometimes require changes to how features store configuration information and data in system indices.
-          Check which features need to be migrated and the status of any migrations that are in progress.</p>
-          <p>TIP: This API is designed for indirect use by the Upgrade Assistant.
-          You are strongly recommended to use the Upgrade Assistant.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-migration-get-feature-upgrade-status>`_
-        """
+        if conditions is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'conditions' and 'body', one of them should be set."
+            )
+        elif conditions is not None and body is not None:
+            raise ValueError("Cannot set both 'conditions' and 'body'")
         __path_parts: t.Dict[str, str] = {}
-        __path = "/_migration/system_features"
+        __path = "/_profiling/flamegraph"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -107,54 +57,121 @@ class MigrationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "GET",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="migration.get_feature_upgrade_status",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
-    def post_feature_upgrade(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Start the feature migration.</p>
-          <p>Version upgrades sometimes require changes to how features store configuration information and data in system indices.
-          This API starts the automatic migration process.</p>
-          <p>Some functionality might be temporarily unavailable during the migration process.</p>
-          <p>TIP: The API is designed for indirect use by the Upgrade Assistant. We strongly recommend you use the Upgrade Assistant.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-migration-get-feature-upgrade-status>`_
-        """
-        __path_parts: t.Dict[str, str] = {}
-        __path = "/_migration/system_features"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
+        __body = conditions if conditions is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="migration.post_feature_upgrade",
+            body=__body,
+            endpoint_id="profiling.flamegraph",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="conditions",
+    )
+    def stacktraces(
+        self,
+        *,
+        conditions: t.Optional[t.Any] = None,
+        body: t.Optional[t.Any] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Extracts raw stacktrace information from Universal Profiling.</p>
+
+
+        `<https://www.elastic.co/guide/en/observability/9.2/universal-profiling.html>`_
+
+        :param conditions:
+        """
+        if conditions is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'conditions' and 'body', one of them should be set."
+            )
+        elif conditions is not None and body is not None:
+            raise ValueError("Cannot set both 'conditions' and 'body'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_profiling/stacktraces"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = conditions if conditions is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="profiling.stacktraces",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def status(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        wait_for_resources_created: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Returns basic information about the status of Universal Profiling.</p>
+
+
+        `<https://www.elastic.co/guide/en/observability/9.2/universal-profiling.html>`_
+
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param wait_for_resources_created: Whether to return immediately or wait until
+            resources have been created
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_profiling/status"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_resources_created is not None:
+            __query["wait_for_resources_created"] = wait_for_resources_created
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="profiling.status",
             path_parts=__path_parts,
         )

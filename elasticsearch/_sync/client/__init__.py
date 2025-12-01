@@ -567,8 +567,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Bulk index or delete documents.
-          Perform multiple <code>index</code>, <code>create</code>, <code>delete</code>, and <code>update</code> actions in a single request.
+          <p>Bulk index or delete documents.</p>
+          <p>Perform multiple <code>index</code>, <code>create</code>, <code>delete</code>, and <code>update</code> actions in a single request.
           This reduces overhead and can greatly increase indexing speed.</p>
           <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or index alias:</p>
           <ul>
@@ -616,6 +616,7 @@ class Elasticsearch(BaseClient):
           <li>Perl: Check out <code>Search::Elasticsearch::Client::5_0::Bulk</code> and <code>Search::Elasticsearch::Client::5_0::Scroll</code></li>
           <li>Python: Check out <code>elasticsearch.helpers.*</code></li>
           <li>JavaScript: Check out <code>client.helpers.*</code></li>
+          <li>Java: Check out <code>co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester</code></li>
           <li>.NET: Check out <code>BulkAllObservable</code></li>
           <li>PHP: Check out bulk indexing.</li>
           <li>Ruby: Check out <code>Elasticsearch::Helpers::BulkHelper</code></li>
@@ -757,6 +758,73 @@ class Elasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def capabilities(
+        self,
+        *,
+        capabilities: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        local_only: t.Optional[bool] = None,
+        method: t.Optional[
+            t.Union[str, t.Literal["DELETE", "GET", "HEAD", "POST", "PUT"]]
+        ] = None,
+        parameters: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        path: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Checks if the specified combination of method, API, parameters, and arbitrary capabilities are supported.</p>
+
+
+        `<https://github.com/elastic/elasticsearch/blob/main/rest-api-spec/src/yamlRestTest/resources/rest-api-spec/test/README.asciidoc#require-or-skip-api-capabilities>`_
+
+        :param capabilities: Comma-separated list of arbitrary API capabilities to check
+        :param local_only: True if only the node being called should be considered
+        :param method: REST method to check
+        :param parameters: Comma-separated list of API parameters to check
+        :param path: API path to check
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_capabilities"
+        __query: t.Dict[str, t.Any] = {}
+        if capabilities is not None:
+            __query["capabilities"] = capabilities
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if local_only is not None:
+            __query["local_only"] = local_only
+        if method is not None:
+            __query["method"] = method
+        if parameters is not None:
+            __query["parameters"] = parameters
+        if path is not None:
+            __query["path"] = path
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="capabilities",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=("scroll_id",),
     )
@@ -773,8 +841,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Clear a scrolling search.
-          Clear the search context and results for a scrolling search.</p>
+          <p>Clear a scrolling search.</p>
+          <p>Clear the search context and results for a scrolling search.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-clear-scroll>`_
@@ -827,8 +895,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Close a point in time.
-          A point in time must be opened explicitly before being used in search requests.
+          <p>Close a point in time.</p>
+          <p>A point in time must be opened explicitly before being used in search requests.
           The <code>keep_alive</code> parameter tells Elasticsearch how long it should persist.
           A point in time is automatically closed when the <code>keep_alive</code> period has elapsed.
           However, keeping points in time has a cost; close them as soon as they are no longer required for search requests.</p>
@@ -905,8 +973,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Count search results.
-          Get the number of documents matching a query.</p>
+          <p>Count search results.</p>
+          <p>Get the number of documents matching a query.</p>
           <p>The query can be provided either by using a simple query string as a parameter, or by defining Query DSL within the request body.
           The query is optional. When no query is provided, the API uses <code>match_all</code> to count all the documents.</p>
           <p>The count API supports multi-target syntax. You can run a single count API search across multiple data streams and indices.</p>
@@ -1648,11 +1716,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -1670,9 +1738,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1681,8 +1753,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -1708,8 +1778,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Delete a script or search template.
-          Deletes a stored script or search template.</p>
+          <p>Delete a script or search template.</p>
+          <p>Deletes a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-delete-script>`_
@@ -2020,8 +2090,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Explain a document match result.
-          Get information about why a specific document matches, or doesn't match, a query.
+          <p>Explain a document match result.</p>
+          <p>Get information about why a specific document matches, or doesn't match, a query.
           It computes a score explanation for a query and a specific document.</p>
 
 
@@ -2437,8 +2507,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get a script or search template.
-          Retrieves a stored script or search template.</p>
+          <p>Get a script or search template.</p>
+          <p>Retrieves a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-get-script>`_
@@ -2674,8 +2744,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get the cluster health.
-          Get a report with the health status of an Elasticsearch cluster.
+          <p>Get the cluster health.</p>
+          <p>Get a report with the health status of an Elasticsearch cluster.
           The report contains a list of indicators that compose Elasticsearch functionality.</p>
           <p>Each indicator has a health status of: green, unknown, yellow or red.
           The indicator will provide an explanation and metadata describing the reason for its current health status.</p>
@@ -2987,8 +3057,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get cluster info.
-          Get basic build, version, and cluster information.
+          <p>Get cluster info.</p>
+          <p>Get basic build, version, and cluster information.
           ::: In Serverless, this API is retained for backward compatibility only. Some response fields, such as the version number, should be ignored.</p>
 
 
@@ -3704,8 +3774,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Create or update a script or search template.
-          Creates or updates a stored script or search template.</p>
+          <p>Create or update a script or search template.</p>
+          <p>Creates or updates a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-put-script>`_
@@ -4035,11 +4105,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4063,9 +4133,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4074,8 +4148,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -6120,8 +6192,8 @@ class Elasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Update documents.
-          Updates documents that match the specified query.
+          <p>Update documents.</p>
+          <p>Updates documents that match the specified query.
           If no query is specified, performs an update on every document in the data stream or index without modifying the source, which is useful for picking up mapping changes.</p>
           <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or alias:</p>
           <ul>
@@ -6400,11 +6472,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -6422,9 +6494,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -6433,8 +6509,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
