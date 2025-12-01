@@ -108,8 +108,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get rollup job information.
-          Get the configuration, stats, and status of rollup jobs.</p>
+          <p>Get rollup job information.</p>
+          <p>Get the configuration, stats, and status of rollup jobs.</p>
           <p>NOTE: This API returns only active (both <code>STARTED</code> and <code>STOPPED</code>) jobs.
           If a job was created, ran for a while, then was deleted, the API does not return any details about it.
           For details about a historical rollup job, the rollup capabilities API may be more useful.</p>
@@ -160,8 +160,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the rollup job capabilities.
-          Get the capabilities of any rollup jobs that have been configured for a specific index or index pattern.</p>
+          <p>Get the rollup job capabilities.</p>
+          <p>Get the capabilities of any rollup jobs that have been configured for a specific index or index pattern.</p>
           <p>This API is useful because a rollup job is often configured to rollup only a subset of fields from the source index.
           Furthermore, only certain aggregations can be configured for various fields, leading to a limited subset of functionality depending on that configuration.
           This API enables you to inspect an index and determine:</p>
@@ -216,8 +216,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the rollup index capabilities.
-          Get the rollup capabilities of all jobs inside of a rollup index.
+          <p>Get the rollup index capabilities.</p>
+          <p>Get the rollup capabilities of all jobs inside of a rollup index.
           A single rollup index may store the data for multiple rollup jobs and may have a variety of capabilities depending on those jobs. This API enables you to determine:</p>
           <ul>
           <li>What jobs are stored in an index (or indices specified via a pattern)?</li>
@@ -412,8 +412,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Search rolled-up data.
-          The rollup search endpoint is needed because, internally, rolled-up documents utilize a different document structure than the original data.
+          <p>Search rolled-up data.</p>
+          <p>The rollup search endpoint is needed because, internally, rolled-up documents utilize a different document structure than the original data.
           It rewrites standard Query DSL into a format that matches the rollup documents then takes the response and rewrites it back to what a client would expect given the original query.</p>
           <p>The request body supports a subset of features from the regular search API.
           The following functionality is not available:</p>
@@ -495,8 +495,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Start rollup jobs.
-          If you try to start a job that does not exist, an exception occurs.
+          <p>Start rollup jobs.</p>
+          <p>If you try to start a job that does not exist, an exception occurs.
           If you try to start a job that is already started, nothing happens.</p>
 
 
@@ -543,8 +543,8 @@ class RollupClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop rollup jobs.
-          If you try to stop a job that does not exist, an exception occurs.
+          <p>Stop rollup jobs.</p>
+          <p>If you try to stop a job that does not exist, an exception occurs.
           If you try to stop a job that is already stopped, nothing happens.</p>
           <p>Since only a stopped job can be deleted, it can be useful to block the API until the indexer has fully stopped.
           This is accomplished with the <code>wait_for_completion</code> query parameter, and optionally a timeout. For example:</p>

@@ -44,7 +44,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform completion inference on the service</p>
+          <p>Perform completion inference on the service.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
@@ -120,7 +120,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an inference endpoint</p>
+          <p>Delete an inference endpoint.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-delete>`_
@@ -194,7 +194,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get an inference endpoint</p>
+          <p>Get an inference endpoint.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-get>`_
@@ -2378,7 +2378,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform reranking inference on the service</p>
+          <p>Perform reranking inference on the service.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
@@ -2454,7 +2454,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform sparse embedding inference on the service</p>
+          <p>Perform sparse embedding inference on the service.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
@@ -2523,7 +2523,7 @@ class InferenceClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Perform text embedding inference on the service</p>
+          <p>Perform text embedding inference on the service.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_

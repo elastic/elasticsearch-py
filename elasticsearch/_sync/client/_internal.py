@@ -15,21 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import typing as t
-
-from elastic_transport import ObjectApiResponse
-
-from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
-
-
-class EnrichClient(NamespacedClient):
+class C:
 
     @_rewrite_parameters()
-    def delete_policy(
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def delete_desired_balance(
         self,
         *,
-        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -39,19 +31,13 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an enrich policy.</p>
-          <p>Deletes an existing enrich policy and its enrich index.</p>
+          <p>This API is a diagnostics API and the output should not be relied upon for building applications.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-delete-policy>`_
-
-        :param name: Enrich policy to delete.
         :param master_timeout: Period to wait for a connection to the master node.
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_enrich/policy/{__path_parts["name"]}'
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_internal/desired_balance"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -69,40 +55,34 @@ class EnrichClient(NamespacedClient):
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="enrich.delete_policy",
+            endpoint_id="_internal.delete_desired_balance",
             path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
-    def execute_policy(
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def delete_desired_nodes(
         self,
         *,
-        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        wait_for_completion: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
-          <p>Run an enrich policy.</p>
-          <p>Create the enrich index for an existing enrich policy.</p>
+          <p>Designed for indirect use by ECE/ESS and ECK, direct use is not supported.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-execute-policy>`_
-
-        :param name: Enrich policy to execute.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param wait_for_completion: If `true`, the request blocks other enrich policy
-            execution requests until complete.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_enrich/policy/{__path_parts["name"]}/_execute'
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_internal/desired_nodes"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -114,23 +94,23 @@ class EnrichClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if wait_for_completion is not None:
-            __query["wait_for_completion"] = wait_for_completion
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "PUT",
+            "DELETE",
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="enrich.execute_policy",
+            endpoint_id="_internal.delete_desired_nodes",
             path_parts=__path_parts,
         )
 
     @_rewrite_parameters()
-    def get_policy(
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def get_desired_balance(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -140,23 +120,13 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get an enrich policy.</p>
-          <p>Returns information about an enrich policy.</p>
+          <p>This API is a diagnostics API and the output should not be relied upon for building applications.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-get-policy>`_
-
-        :param name: Comma-separated list of enrich policy names used to limit the request.
-            To return information for all enrich policies, omit this parameter.
         :param master_timeout: Period to wait for a connection to the master node.
         """
-        __path_parts: t.Dict[str, str]
-        if name not in SKIP_IN_PATH:
-            __path_parts = {"name": _quote(name)}
-            __path = f'/_enrich/policy/{__path_parts["name"]}'
-        else:
-            __path_parts = {}
-            __path = "/_enrich/policy"
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_internal/desired_balance"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -174,50 +144,32 @@ class EnrichClient(NamespacedClient):
             __path,
             params=__query,
             headers=__headers,
-            endpoint_id="enrich.get_policy",
+            endpoint_id="_internal.get_desired_balance",
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters(
-        body_fields=("geo_match", "match", "range"),
-    )
-    def put_policy(
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def get_desired_nodes(
         self,
         *,
-        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        geo_match: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        match: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        range: t.Optional[t.Mapping[str, t.Any]] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
-          <p>Create an enrich policy.</p>
-          <p>Creates an enrich policy.</p>
+          <p>Gets the latest desired nodes.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-put-policy>`_
-
-        :param name: Name of the enrich policy to create or update.
-        :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
-            query.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param match: Matches enrich data to incoming documents based on a `term` query.
-        :param range: Matches a number, date, or IP address in incoming documents to
-            a range in the enrich index based on a `term` query.
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_enrich/policy/{__path_parts["name"]}'
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_internal/desired_nodes/_latest"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -228,13 +180,140 @@ class EnrichClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if not __body:
-            if geo_match is not None:
-                __body["geo_match"] = geo_match
-            if match is not None:
-                __body["match"] = match
-            if range is not None:
-                __body["range"] = range
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="_internal.get_desired_nodes",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def prevalidate_node_removal(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        external_ids: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ids: t.Optional[t.Sequence[str]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        names: t.Optional[t.Sequence[str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Prevalidates node removal from the cluster.</p>
+
+
+        :param external_ids: A comma-separated list of node external IDs to prevalidate
+        :param ids: A comma-separated list of node IDs to prevalidate
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param names: A comma-separated list of node names to prevalidate
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_internal/prevalidate_node_removal"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if external_ids is not None:
+            __query["external_ids"] = external_ids
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ids is not None:
+            __query["ids"] = ids
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if names is not None:
+            __query["names"] = names
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="_internal.prevalidate_node_removal",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_name="body",
+        ignore_deprecated_options={"body"},
+    )
+    @_stability_warning(Stability.EXPERIMENTAL)
+    def update_desired_nodes(
+        self,
+        *,
+        history_id: str,
+        version: int,
+        body: t.Optional[t.Any] = None,
+        body: t.Optional[t.Any] = None,
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Designed for indirect use by ECE/ESS and ECK, direct use is not supported.</p>
+
+
+        :param history_id: The history ID
+        :param version: The version number
+        :param body:
+        :param dry_run: Simulate the update
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        if history_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'history_id'")
+        if version in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'version'")
+        if body is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'body' and 'body', one of them should be set."
+            )
+        elif body is not None and body is not None:
+            raise ValueError("Cannot set both 'body' and 'body'")
+        __path_parts: t.Dict[str, str] = {
+            "history_id": _quote(history_id),
+            "version": _quote(version),
+        }
+        __path = f'/_internal/desired_nodes/{__path_parts["history_id"]}/{__path_parts["version"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = body if body is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
@@ -242,50 +321,6 @@ class EnrichClient(NamespacedClient):
             params=__query,
             headers=__headers,
             body=__body,
-            endpoint_id="enrich.put_policy",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
-    def stats(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Get enrich stats.</p>
-          <p>Returns enrich coordinator statistics and information about enrich policies that are currently executing.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-stats>`_
-
-        :param master_timeout: Period to wait for a connection to the master node.
-        """
-        __path_parts: t.Dict[str, str] = {}
-        __path = "/_enrich/_stats"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "GET",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="enrich.stats",
+            endpoint_id="_internal.update_desired_nodes",
             path_parts=__path_parts,
         )

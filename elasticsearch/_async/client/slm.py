@@ -40,8 +40,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a policy.
-          Delete a snapshot lifecycle policy definition.
+          <p>Delete a policy.</p>
+          <p>Delete a snapshot lifecycle policy definition.
           This operation prevents any future snapshots from being taken but does not cancel in-progress snapshots or remove previously-taken snapshots.</p>
 
 
@@ -96,8 +96,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a policy.
-          Immediately create a snapshot according to the snapshot lifecycle policy without waiting for the scheduled time.
+          <p>Run a policy.</p>
+          <p>Immediately create a snapshot according to the snapshot lifecycle policy without waiting for the scheduled time.
           The snapshot policy is normally applied according to its schedule, but you might want to manually run a policy before performing an upgrade or other maintenance.</p>
 
 
@@ -151,8 +151,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a retention policy.
-          Manually apply the retention policy to force immediate removal of snapshots that are expired according to the snapshot lifecycle policy retention rules.
+          <p>Run a retention policy.</p>
+          <p>Manually apply the retention policy to force immediate removal of snapshots that are expired according to the snapshot lifecycle policy retention rules.
           The retention policy is normally applied according to its schedule.</p>
 
 
@@ -204,8 +204,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get policy information.
-          Get snapshot lifecycle policy definitions and information about the latest snapshot attempts.</p>
+          <p>Get policy information.</p>
+          <p>Get snapshot lifecycle policy definitions and information about the latest snapshot attempts.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-lifecycle>`_
@@ -261,8 +261,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get snapshot lifecycle management statistics.
-          Get global and policy-level statistics about actions taken by snapshot lifecycle management.</p>
+          <p>Get snapshot lifecycle management statistics.</p>
+          <p>Get global and policy-level statistics about actions taken by snapshot lifecycle management.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-stats>`_
@@ -373,8 +373,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a policy.
-          Create or update a snapshot lifecycle policy.
+          <p>Create or update a policy.</p>
+          <p>Create or update a snapshot lifecycle policy.
           If the policy already exists, this request increments the policy version.
           Only the latest version of a policy is stored.</p>
 
@@ -460,8 +460,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Start snapshot lifecycle management.
-          Snapshot lifecycle management (SLM) starts automatically when a cluster is formed.
+          <p>Start snapshot lifecycle management.</p>
+          <p>Snapshot lifecycle management (SLM) starts automatically when a cluster is formed.
           Manually starting SLM is necessary only if it has been stopped using the stop SLM API.</p>
 
 
@@ -514,8 +514,8 @@ class SlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop snapshot lifecycle management.
-          Stop all snapshot lifecycle management (SLM) operations and the SLM plugin.
+          <p>Stop snapshot lifecycle management.</p>
+          <p>Stop all snapshot lifecycle management (SLM) operations and the SLM plugin.
           This API is useful when you are performing maintenance on a cluster and need to prevent SLM from performing any actions on your data streams or indices.
           Stopping SLM does not stop any snapshots that are in progress.
           You can manually trigger snapshots with the run snapshot lifecycle policy API even if SLM is stopped.</p>
