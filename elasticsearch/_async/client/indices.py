@@ -23,9 +23,9 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
@@ -244,7 +244,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def cancel_migrate_reindex(
         self,
         *,
@@ -778,7 +778,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="create_from",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def create_from(
         self,
         *,
@@ -1357,7 +1357,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def disk_usage(
         self,
         *,
@@ -1450,7 +1450,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="config",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def downsample(
         self,
         *,
@@ -1862,7 +1862,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def field_usage_stats(
         self,
         *,
@@ -2947,7 +2947,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_migrate_reindex_status(
         self,
         *,
@@ -2992,7 +2992,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_sample(
         self,
         *,
@@ -3036,7 +3036,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_sample_stats(
         self,
         *,
@@ -3251,7 +3251,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="reindex",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def migrate_reindex(
         self,
         *,

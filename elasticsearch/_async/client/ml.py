@@ -20,7 +20,14 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    Visibility,
+    _availability_warning,
+    _quote,
+    _rewrite_parameters,
+)
 
 
 class MlClient(NamespacedClient):
@@ -5692,6 +5699,7 @@ class MlClient(NamespacedClient):
             "results_index_name",
         ),
     )
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     async def validate(
         self,
         *,
@@ -5773,6 +5781,7 @@ class MlClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="detector",
     )
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     async def validate_detector(
         self,
         *,
