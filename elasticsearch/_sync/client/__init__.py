@@ -3094,7 +3094,7 @@ class Elasticsearch(BaseClient):
         ),
         parameter_aliases={"_source": "source"},
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def knn_search(
         self,
         *,
