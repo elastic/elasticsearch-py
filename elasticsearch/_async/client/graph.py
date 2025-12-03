@@ -39,7 +39,7 @@ class GraphClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         vertices: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
@@ -47,8 +47,8 @@ class GraphClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Explore graph analytics.
-          Extract and summarize information about the documents and terms in an Elasticsearch data stream or index.
+          <p>Explore graph analytics.</p>
+          <p>Extract and summarize information about the documents and terms in an Elasticsearch data stream or index.
           The easiest way to understand the behavior of this API is to use the Graph UI to explore connections.
           An initial request to the <code>_explore</code> API contains a seed query that identifies the documents of interest and specifies the fields that define the vertices and connections you want to include in the graph.
           Subsequent requests enable you to spider out from one more vertices of interest.

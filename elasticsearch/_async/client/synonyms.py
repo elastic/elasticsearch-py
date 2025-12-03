@@ -95,8 +95,8 @@ class SynonymsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a synonym rule.
-          Delete a synonym rule from a synonym set.</p>
+          <p>Delete a synonym rule.</p>
+          <p>Delete a synonym rule from a synonym set.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-synonyms-delete-synonym-rule>`_
@@ -204,8 +204,8 @@ class SynonymsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get a synonym rule.
-          Get a synonym rule from a synonym set.</p>
+          <p>Get a synonym rule.</p>
+          <p>Get a synonym rule from a synonym set.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-synonyms-get-synonym-rule>`_
@@ -257,8 +257,8 @@ class SynonymsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get all synonym sets.
-          Get a summary of all defined synonym sets.</p>
+          <p>Get all synonym sets.</p>
+          <p>Get a summary of all defined synonym sets.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-synonyms-get-synonym>`_
@@ -311,8 +311,8 @@ class SynonymsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a synonym set.
-          Synonyms sets are limited to a maximum of 10,000 synonym rules per set.
+          <p>Create or update a synonym set.</p>
+          <p>Synonyms sets are limited to a maximum of 10,000 synonym rules per set.
           If you need to manage more synonym rules, you can create multiple synonym sets.</p>
           <p>When an existing synonyms set is updated, the search analyzers that use the synonyms set are reloaded automatically for all indices.
           This is equivalent to invoking the reload search analyzers API for all indices that use the synonyms set.</p>
@@ -378,8 +378,8 @@ class SynonymsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a synonym rule.
-          Create or update a synonym rule in a synonym set.</p>
+          <p>Create or update a synonym rule.</p>
+          <p>Create or update a synonym rule in a synonym set.</p>
           <p>If any of the synonym rules included is invalid, the API returns an error.</p>
           <p>When you update a synonym rule, all analyzers using the synonyms set will be reloaded automatically to reflect the new rule.</p>
 
