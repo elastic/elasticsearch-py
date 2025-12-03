@@ -20,7 +20,12 @@ import warnings
 
 import pytest
 
-from elasticsearch._sync.client.utils import Stability, _quote, _stability_warning
+from elasticsearch._sync.client.utils import (
+    Stability,
+    Visibility,
+    _availability_warning,
+    _quote,
+)
 from elasticsearch.exceptions import GeneralAvailabilityWarning
 
 
@@ -43,10 +48,10 @@ def test_handles_unicode2():
     assert "%E4%B8%AD*%E6%96%87," == _quote(string)
 
 
-class TestStabilityWarning:
+class TestAvailabilityWarning:
     def test_default(self):
 
-        @_stability_warning(stability=Stability.STABLE)
+        @_availability_warning(stability=Stability.STABLE)
         def func_default(*args, **kwargs):
             pass
 
@@ -56,7 +61,7 @@ class TestStabilityWarning:
 
     def test_beta(self, recwarn):
 
-        @_stability_warning(stability=Stability.BETA)
+        @_availability_warning(stability=Stability.BETA)
         def func_beta(*args, **kwargs):
             pass
 
@@ -68,7 +73,7 @@ class TestStabilityWarning:
 
     def test_experimental(self, recwarn):
 
-        @_stability_warning(stability=Stability.EXPERIMENTAL)
+        @_availability_warning(stability=Stability.EXPERIMENTAL)
         def func_experimental(*args, **kwargs):
             pass
 
@@ -77,3 +82,29 @@ class TestStabilityWarning:
             match="This API is in technical preview and may be changed or removed in a future release.",
         ):
             func_experimental()
+
+    def test_private(self, recwarn):
+
+        @_availability_warning(
+            stability=Stability.STABLE, visibility=Visibility.PRIVATE
+        )
+        def func_private(*args, **kwargs):
+            pass
+
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is private.",
+        ):
+            func_private()
+
+    def test_private_and_beta(self, recwarn):
+
+        @_availability_warning(stability=Stability.BETA, visibility=Visibility.PRIVATE)
+        def func_private_and_beta(*args, **kwargs):
+            pass
+
+        with pytest.warns(
+            GeneralAvailabilityWarning,
+            match="This API is private.",
+        ):
+            func_private_and_beta()
