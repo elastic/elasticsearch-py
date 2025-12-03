@@ -23,9 +23,9 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
@@ -244,7 +244,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def cancel_migrate_reindex(
         self,
         *,
@@ -770,7 +770,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="create_from",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def create_from(
         self,
         *,
@@ -1284,7 +1284,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def disk_usage(
         self,
         *,
@@ -1376,7 +1376,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="config",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def downsample(
         self,
         *,
@@ -1787,7 +1787,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def field_usage_stats(
         self,
         *,
@@ -2761,7 +2761,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_migrate_reindex_status(
         self,
         *,
@@ -2806,6 +2806,97 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+<<<<<<< HEAD
+=======
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def get_sample(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def get_sample_stats(
+        self,
+        *,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Request stats for a random sample of raw documents ingested into the given index or data stream.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/ingest-random-sampling>`_
+
+        :param index: Single index or data stream name. Wildcards are not supported.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_sample/stats'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="indices.get_sample_stats",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+>>>>>>> bbca81a6 (Add warnings for private APIs (#3212))
     async def get_settings(
         self,
         *,
@@ -2977,7 +3068,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="reindex",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def migrate_reindex(
         self,
         *,

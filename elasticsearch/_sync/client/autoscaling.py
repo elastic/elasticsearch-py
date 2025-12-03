@@ -20,12 +20,20 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    Visibility,
+    _availability_warning,
+    _quote,
+    _rewrite_parameters,
+)
 
 
 class AutoscalingClient(NamespacedClient):
 
     @_rewrite_parameters()
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def delete_autoscaling_policy(
         self,
         *,
@@ -81,6 +89,7 @@ class AutoscalingClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_autoscaling_capacity(
         self,
         *,
@@ -134,6 +143,7 @@ class AutoscalingClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_autoscaling_policy(
         self,
         *,
@@ -186,6 +196,7 @@ class AutoscalingClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="policy",
     )
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def put_autoscaling_policy(
         self,
         *,
