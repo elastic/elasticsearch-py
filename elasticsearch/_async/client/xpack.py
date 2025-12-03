@@ -45,8 +45,8 @@ class XPackClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get information.
-          The information provided by the API includes:</p>
+          <p>Get information.</p>
+          <p>The information provided by the API includes:</p>
           <ul>
           <li>Build information including the build number and timestamp.</li>
           <li>License information about the currently installed license.</li>
@@ -98,8 +98,8 @@ class XPackClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get usage information.
-          Get information about the features that are currently enabled and available under the current license.
+          <p>Get usage information.</p>
+          <p>Get information about the features that are currently enabled and available under the current license.
           The API also provides some usage statistics.</p>
 
 

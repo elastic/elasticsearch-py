@@ -31,7 +31,7 @@ class TextStructureClient(NamespacedClient):
         *,
         field: str,
         index: str,
-        column_names: t.Optional[str] = None,
+        column_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         delimiter: t.Optional[str] = None,
         documents_to_sample: t.Optional[int] = None,
         ecs_compatibility: t.Optional[t.Union[str, t.Literal["disabled", "v1"]]] = None,
@@ -55,8 +55,8 @@ class TextStructureClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Find the structure of a text field.
-          Find the structure of a text field in an Elasticsearch index.</p>
+          <p>Find the structure of a text field.</p>
+          <p>Find the structure of a text field in an Elasticsearch index.</p>
           <p>This API provides a starting point for extracting further information from log messages already ingested into Elasticsearch.
           For example, if you have ingested data into a very simple index that has just <code>@timestamp</code> and message fields, you can use this API to see what common structure exists in the message field.</p>
           <p>The response from the API contains:</p>
@@ -217,7 +217,7 @@ class TextStructureClient(NamespacedClient):
         self,
         *,
         messages: t.Optional[t.Sequence[str]] = None,
-        column_names: t.Optional[str] = None,
+        column_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         delimiter: t.Optional[str] = None,
         ecs_compatibility: t.Optional[t.Union[str, t.Literal["disabled", "v1"]]] = None,
         error_trace: t.Optional[bool] = None,
@@ -241,8 +241,8 @@ class TextStructureClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Find the structure of text messages.
-          Find the structure of a list of text messages.
+          <p>Find the structure of text messages.</p>
+          <p>Find the structure of a list of text messages.
           The messages must contain data that is suitable to be ingested into Elasticsearch.</p>
           <p>This API provides a starting point for ingesting data into Elasticsearch in a format that is suitable for subsequent use with other Elastic Stack functionality.
           Use this API rather than the find text structure API if your input text has already been split up into separate messages by some other process.</p>
@@ -398,11 +398,15 @@ class TextStructureClient(NamespacedClient):
         text_files: t.Optional[t.Sequence[t.Any]] = None,
         body: t.Optional[t.Sequence[t.Any]] = None,
         charset: t.Optional[str] = None,
-        column_names: t.Optional[str] = None,
+        column_names: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         delimiter: t.Optional[str] = None,
         ecs_compatibility: t.Optional[str] = None,
         explain: t.Optional[bool] = None,
-        format: t.Optional[str] = None,
+        format: t.Optional[
+            t.Union[
+                str, t.Literal["delimited", "ndjson", "semi_structured_text", "xml"]
+            ]
+        ] = None,
         grok_pattern: t.Optional[str] = None,
         has_header_row: t.Optional[bool] = None,
         line_merge_size_limit: t.Optional[int] = None,
@@ -416,8 +420,8 @@ class TextStructureClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Find the structure of a text file.
-          The text file must contain data that is suitable to be ingested into Elasticsearch.</p>
+          <p>Find the structure of a text file.</p>
+          <p>The text file must contain data that is suitable to be ingested into Elasticsearch.</p>
           <p>This API provides a starting point for ingesting data into Elasticsearch in a format that is suitable for subsequent use with other Elastic Stack functionality.
           Unlike other Elasticsearch endpoints, the data that is posted to this endpoint does not need to be UTF-8 encoded and in JSON format.
           It must, however, be text; binary text formats are not currently supported.
@@ -615,8 +619,8 @@ class TextStructureClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Test a Grok pattern.
-          Test a Grok pattern on one or more lines of text.
+          <p>Test a Grok pattern.</p>
+          <p>Test a Grok pattern on one or more lines of text.
           The API indicates whether the lines match the pattern together with the offsets and lengths of the matched substrings.</p>
 
 
