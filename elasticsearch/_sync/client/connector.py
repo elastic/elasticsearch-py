@@ -23,16 +23,17 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    Visibility,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class ConnectorClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def check_in(
         self,
         *,
@@ -77,7 +78,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def delete(
         self,
         *,
@@ -130,7 +131,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def get(
         self,
         *,
@@ -190,7 +191,7 @@ class ConnectorClient(NamespacedClient):
             "sync_cursor",
         ),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL, Visibility.PRIVATE)
     def last_sync(
         self,
         *,
@@ -324,7 +325,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def list(
         self,
         *,
@@ -402,7 +403,7 @@ class ConnectorClient(NamespacedClient):
             "service_type",
         ),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def post(
         self,
         *,
@@ -486,7 +487,7 @@ class ConnectorClient(NamespacedClient):
             "service_type",
         ),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def put(
         self,
         *,
@@ -566,7 +567,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def sync_job_cancel(
         self,
         *,
@@ -616,7 +617,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def sync_job_check_in(
         self,
         *,
@@ -670,7 +671,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("worker_hostname", "sync_cursor"),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def sync_job_claim(
         self,
         *,
@@ -739,7 +740,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def sync_job_delete(
         self,
         *,
@@ -790,7 +791,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("error",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def sync_job_error(
         self,
         *,
@@ -849,7 +850,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def sync_job_get(
         self,
         *,
@@ -897,7 +898,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def sync_job_list(
         self,
         *,
@@ -980,7 +981,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("id", "job_type", "trigger_method"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def sync_job_post(
         self,
         *,
@@ -1052,7 +1053,7 @@ class ConnectorClient(NamespacedClient):
             "total_document_count",
         ),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def sync_job_update_stats(
         self,
         *,
@@ -1146,7 +1147,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def update_active_filtering(
         self,
         *,
@@ -1193,7 +1194,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("api_key_id", "api_key_secret_id"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_api_key_id(
         self,
         *,
@@ -1255,7 +1256,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("configuration", "values"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_configuration(
         self,
         *,
@@ -1314,7 +1315,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("error",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def update_error(
         self,
         *,
@@ -1373,7 +1374,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("features",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def update_features(
         self,
         *,
@@ -1441,7 +1442,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("advanced_snippet", "filtering", "rules"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_filtering(
         self,
         *,
@@ -1506,7 +1507,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("validation",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def update_filtering_validation(
         self,
         *,
@@ -1563,7 +1564,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("index_name",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_index_name(
         self,
         *,
@@ -1620,7 +1621,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("description", "name"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_name(
         self,
         *,
@@ -1678,7 +1679,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("is_native",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_native(
         self,
         *,
@@ -1734,7 +1735,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("pipeline",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_pipeline(
         self,
         *,
@@ -1791,7 +1792,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("scheduling",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_scheduling(
         self,
         *,
@@ -1847,7 +1848,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("service_type",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     def update_service_type(
         self,
         *,
@@ -1903,7 +1904,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("status",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def update_status(
         self,
         *,

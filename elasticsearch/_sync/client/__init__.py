@@ -85,9 +85,9 @@ from .utils import (
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
     client_node_configs,
     is_requests_http_auth,
     is_requests_node_class,
@@ -3094,7 +3094,7 @@ class Elasticsearch(BaseClient):
         ),
         parameter_aliases={"_source": "source"},
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def knn_search(
         self,
         *,
@@ -4417,7 +4417,7 @@ class Elasticsearch(BaseClient):
     @_rewrite_parameters(
         body_fields=("context", "context_setup", "script"),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def scripts_painless_execute(
         self,
         *,

@@ -23,16 +23,16 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class RollupClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def delete_job(
         self,
         *,
@@ -95,7 +95,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def get_jobs(
         self,
         *,
@@ -147,7 +147,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def get_rollup_caps(
         self,
         *,
@@ -203,7 +203,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def get_rollup_index_caps(
         self,
         *,
@@ -266,7 +266,7 @@ class RollupClient(NamespacedClient):
         ),
         ignore_deprecated_options={"headers"},
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def put_job(
         self,
         *,
@@ -392,7 +392,7 @@ class RollupClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("aggregations", "aggs", "query", "size"),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def rollup_search(
         self,
         *,
@@ -503,7 +503,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def start_job(
         self,
         *,
@@ -549,7 +549,7 @@ class RollupClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def stop_job(
         self,
         *,

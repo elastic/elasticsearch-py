@@ -20,7 +20,7 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import _rewrite_parameters
+from .utils import Stability, Visibility, _availability_warning, _rewrite_parameters
 
 
 class MonitoringClient(NamespacedClient):
@@ -28,6 +28,7 @@ class MonitoringClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="operations",
     )
+    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     async def bulk(
         self,
         *,
