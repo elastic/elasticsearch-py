@@ -22,15 +22,15 @@ from elastic_transport import ObjectApiResponse
 from ._base import NamespacedClient
 from .utils import (
     Stability,
+    _availability_warning,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class ProjectClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def tags(
         self,
         *,
