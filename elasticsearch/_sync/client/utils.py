@@ -79,6 +79,12 @@ class Stability(Enum):
     EXPERIMENTAL = auto()
 
 
+class Visibility(Enum):
+    PUBLIC = auto()
+    FEATURE_FLAG = auto()
+    PRIVATE = auto()
+
+
 _TYPE_HOSTS = Union[
     str, Sequence[Union[str, Mapping[str, Union[str, int]], NodeConfig]]
 ]
@@ -419,15 +425,23 @@ def _rewrite_parameters(
     return wrapper
 
 
-def _stability_warning(
+def _availability_warning(
     stability: Stability,
+    visibility: Visibility = Visibility.PUBLIC,
     version: Optional[str] = None,
     message: Optional[str] = None,
 ) -> Callable[[F], F]:
     def wrapper(api: F) -> F:
         @wraps(api)
         def wrapped(*args: Any, **kwargs: Any) -> Any:
-            if stability == Stability.BETA:
+            if visibility == Visibility.PRIVATE:
+                warnings.warn(
+                    "This API is private. "
+                    "Private APIs are not subject to the support SLA of official GA features.",
+                    category=GeneralAvailabilityWarning,
+                    stacklevel=warn_stacklevel(),
+                )
+            elif stability == Stability.BETA:
                 warnings.warn(
                     "This API is in beta and is subject to change. "
                     "The design and code is less mature than official GA features and is being provided as-is with no warranties. "
