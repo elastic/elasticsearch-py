@@ -165,7 +165,11 @@ class Field(DslBase):
     def clean(self, data: Any) -> Any:
         if data is not None:
             data = self.deserialize(data)
-        if data in (None, [], {}) and self._required:
+        # the "data is ..." comparisons below work well when data is a numpy
+        # array (only for dense vector fields)
+        # unfortunately numpy overrides the == operator in a way that causes
+        # errors when used instead of "is"
+        if (data is None or data is [] or data is {}) and self._required:
             raise ValidationException("Value required for this field.")
         return data
 
@@ -1615,13 +1619,6 @@ class DenseVector(Field):
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
         super().__init__(*args, **kwargs)
-
-    def _deserialize(self, data: Any) -> Any:
-        if self._element_type == "float":
-            return float(data)
-        elif self._element_type == "byte":
-            return int(data)
-        return data
 
 
 class Double(Float):

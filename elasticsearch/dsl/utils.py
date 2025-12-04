@@ -609,11 +609,15 @@ class ObjectBase(AttrDict[Any]):
             if isinstance(v, AttrList):
                 v = v._l_
 
-            # if skip_empty:
-            #     # don't serialize empty values
-            #     # careful not to include numeric zeros
-            #     if v in ([], {}, None):
-            #         continue
+            if skip_empty:
+                # don't serialize empty values
+                # careful not to include numeric zeros
+                # the "data is ..." comparisons below work well when data is a numpy
+                # array (only for dense vector fields)
+                # unfortunately numpy overrides the == operator in a way that causes
+                # errors when used instead of "is"
+                if v is None or v is [] or v is {}:
+                    continue
 
             out[k] = v
         return out

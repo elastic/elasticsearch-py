@@ -13,6 +13,7 @@ from elasticsearch import NotFoundError, OrjsonSerializer
 from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
 from elasticsearch.dsl.types import DenseVectorIndexOptions
+from elasticsearch.helpers.vectors import numpy_array_to_base64_dense_vector
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']], serializer=OrjsonSerializer()
@@ -23,9 +24,7 @@ class Quote(AsyncBaseESModel):
     quote: str
     author: Annotated[str, dsl.Keyword()]
     tags: Annotated[list[str], dsl.Keyword()]
-    embedding: Annotated[list[float], dsl.DenseVector(
-        index_options=DenseVectorIndexOptions(type="flat"),
-    )] = Field(init=False, default=[])
+    embedding: Annotated[list[float] | str, dsl.DenseVector()] = Field(init=False, default=[])
 
     class Index:
         name = 'quotes'
@@ -141,9 +140,7 @@ def embed_quotes(quotes):
     embeddings = model.encode([q.quote for q in quotes])
     for q, e in zip(quotes, embeddings):
         q.embedding = e
-        # q.embedding = e.tolist()
-        ##byte_array = e.byteswap().tobytes()
-        ##q.embedding = base64.b64encode(byte_array).decode()
+        q.embedding = numpy_array_to_base64_dense_vector(e)
 
 
 async def ingest_quotes():
