@@ -217,10 +217,6 @@ class {{ k.name }}({{ k.parent }}):
             {% endfor %}
         {% endfor %}
     {% endif %}
-    {% if k.field == "dense_vector" %}
-    :arg use_numpy: if set to ``True``, deserialize as a numpy array.
-    :arg dtype: The numpy data type to use as a string, when ``use_numpy`` is ``True``. The default is "float32".
-    {% endif %}
     """
     name = "{{ k.field }}"
     {% if k.coerced %}
@@ -250,10 +246,6 @@ class {{ k.name }}({{ k.parent }}):
         {{ arg.name }}: {{ arg.type }} = DEFAULT,
             {% endif %}
         {% endfor %}
-        {% if k.field == "dense_vector" %}
-        use_numpy: bool = False,
-        dtype: str = "float32",
-        {% endif %}
         **kwargs: Any
     ):
         {% for arg in k.args %}
@@ -424,19 +416,28 @@ class {{ k.name }}({{ k.parent }}):
         self._element_type = kwargs.get("element_type", "float")
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
-        self._use_numpy = use_numpy
-        self._dtype = dtype
         super().__init__(*args, **kwargs)
 
+class NumpyDenseVector(DenseVector):
+    """A dense vector field that uses numpy arrays.
+    
+    Accepts the same arguments as class ``DenseVector`` plus:
+
+    :arg dtype: The numpy data type to use for the array. If not given, numpy will select the type based on the data.
+    """
+    def __init__(self, *args: Any, dtype: Optional[type] = None, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self._dtype = dtype
+
     def deserialize(self, data: Any) -> Any: 
-        if self._use_numpy and isinstance(data, list):
+        if isinstance(data, list):
             import numpy as np
-            return np.array(data, dtype=getattr(np, self._dtype))
+            return np.array(data, dtype=self._dtype)
         return super().deserialize(data)
 
     def clean(self, data: Any) -> Any:
-        # this method does the same as the one in the parent class, but it
-        # avoids comparisons that break when data is a numpy array
+        # this method does the same as the one in the parent classes, but it
+        # avoids comparisons that do not work for numpy arrays
         if data is not None:
             data = self.deserialize(data)
         if (data is None or len(data) == 0) and self._required:

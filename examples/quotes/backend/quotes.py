@@ -24,8 +24,8 @@ class Quote(AsyncBaseESModel):
     embedding: Annotated[
         np.ndarray,
         PlainSerializer(lambda v: v.tolist()),
-        dsl.DenseVector(use_numpy=True)
-    ] = Field(init=False, default_factory=lambda: np.array([]))
+        dsl.NumpyDenseVector(dtype=np.float32)
+    ] = Field(init=False, default_factory=lambda: np.array([], dtype=np.float32))
 
     class Config:
         arbitrary_types_allowed = True
