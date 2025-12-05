@@ -17,6 +17,10 @@ Bulk
 ----
 .. autofunction:: bulk
 
+Dense Vector packing
+--------------------
+.. autofunction:: pack_dense_vector
+
 Scan
 ----
 .. autofunction:: scan
