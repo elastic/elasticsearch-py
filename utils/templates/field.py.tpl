@@ -418,11 +418,11 @@ class {{ k.name }}({{ k.parent }}):
             kwargs["multi"] = True
         super().__init__(*args, **kwargs)
 
-    def _deserialize(self, data: Any) -> Any:
-        if self._element_type == "float":
-            return float(data)
-        elif self._element_type == "byte":
-            return int(data)
+    def clean(self, data: Any) -> Any:
+        if data is not None:
+            data = self.deserialize(data)
+        if (data is None or len(data) == 0) and self._required:
+            raise ValidationException("Value required for this field.")
         return data
         {% elif k.field == "scaled_float" %}
         if 'scaling_factor' not in kwargs:

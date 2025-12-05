@@ -135,7 +135,7 @@ async def search_quotes(req: SearchRequest) -> SearchResponse:
 def embed_quotes(quotes):
     embeddings = model.encode([q.quote for q in quotes])
     for q, e in zip(quotes, embeddings):
-        q.embedding = e.tolist()
+        q.embedding = e
 
 
 async def ingest_quotes():
