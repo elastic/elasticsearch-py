@@ -1556,6 +1556,7 @@ class DenseVector(Field):
     :arg fields:
     :arg synthetic_source_keep:
     :arg use_numpy: if set to ``True``, deserialize as a numpy array.
+    :arg dtype: The numpy data type to use as a string, when ``use_numpy`` is ``True``. The default is "float32".
     """
 
     name = "dense_vector"
@@ -1589,6 +1590,7 @@ class DenseVector(Field):
             Literal["none", "arrays", "all"], "DefaultType"
         ] = DEFAULT,
         use_numpy: bool = False,
+        dtype: str = "float32",
         **kwargs: Any,
     ):
         if dims is not DEFAULT:
@@ -1617,13 +1619,14 @@ class DenseVector(Field):
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
         self._use_numpy = use_numpy
+        self._dtype = dtype
         super().__init__(*args, **kwargs)
 
     def deserialize(self, data: Any) -> Any:
         if self._use_numpy and isinstance(data, list):
             import numpy as np
 
-            return np.array(data)
+            return np.array(data, dtype=getattr(np, self._dtype))
         return super().deserialize(data)
 
     def clean(self, data: Any) -> Any:
