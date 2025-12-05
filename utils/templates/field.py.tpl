@@ -217,6 +217,9 @@ class {{ k.name }}({{ k.parent }}):
             {% endfor %}
         {% endfor %}
     {% endif %}
+    {% if k.field == "dense_vector" %}
+    :arg use_numpy: if set to ``True``, deserialize as a numpy array.
+    {% endif %}
     """
     name = "{{ k.field }}"
     {% if k.coerced %}
@@ -246,6 +249,9 @@ class {{ k.name }}({{ k.parent }}):
         {{ arg.name }}: {{ arg.type }} = DEFAULT,
             {% endif %}
         {% endfor %}
+        {% if k.field == "dense_vector" %}
+        use_numpy: bool = False,
+        {% endif %}
         **kwargs: Any
     ):
         {% for arg in k.args %}
@@ -416,9 +422,18 @@ class {{ k.name }}({{ k.parent }}):
         self._element_type = kwargs.get("element_type", "float")
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
+        self._use_numpy = use_numpy
         super().__init__(*args, **kwargs)
 
+    def deserialize(self, data: Any) -> Any: 
+        if self._use_numpy and isinstance(data, list):
+            import numpy as np
+            return np.array(data)
+        return super().deserialize(data)
+
     def clean(self, data: Any) -> Any:
+        # this method does the same as the one in the parent class, but it
+        # avoids comparisons that break when data is a numpy array
         if data is not None:
             data = self.deserialize(data)
         if (data is None or len(data) == 0) and self._required:

@@ -1555,6 +1555,7 @@ class DenseVector(Field):
     :arg dynamic:
     :arg fields:
     :arg synthetic_source_keep:
+    :arg use_numpy: if set to ``True``, deserialize as a numpy array.
     """
 
     name = "dense_vector"
@@ -1587,6 +1588,7 @@ class DenseVector(Field):
         synthetic_source_keep: Union[
             Literal["none", "arrays", "all"], "DefaultType"
         ] = DEFAULT,
+        use_numpy: bool = False,
         **kwargs: Any,
     ):
         if dims is not DEFAULT:
@@ -1614,9 +1616,19 @@ class DenseVector(Field):
         self._element_type = kwargs.get("element_type", "float")
         if self._element_type in ["float", "byte"]:
             kwargs["multi"] = True
+        self._use_numpy = use_numpy
         super().__init__(*args, **kwargs)
 
+    def deserialize(self, data: Any) -> Any:
+        if self._use_numpy and isinstance(data, list):
+            import numpy as np
+
+            return np.array(data)
+        return super().deserialize(data)
+
     def clean(self, data: Any) -> Any:
+        # this method does the same as the one in the parent class, but it
+        # avoids comparisons that break when data is a numpy array
         if data is not None:
             data = self.deserialize(data)
         if (data is None or len(data) == 0) and self._required:

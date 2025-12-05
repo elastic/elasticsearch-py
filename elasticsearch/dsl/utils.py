@@ -612,10 +612,17 @@ class ObjectBase(AttrDict[Any]):
             if skip_empty:
                 # don't serialize empty values
                 # careful not to include numeric zeros
-                # the "is" operator is used below because it is the only comparison
-                # that works for numpy arrays
-                if v is [] or v is {} or v is None:
-                    continue
+                try:
+                    if v in ([], {}, None):
+                        continue
+                except ValueError:
+                    # the above fails when v is a numpy array
+                    # try using len() instead
+                    try:
+                        if len(v) == 0:
+                            continue
+                    except TypeError:
+                        pass
 
             out[k] = v
         return out

@@ -5,22 +5,30 @@ from time import time
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, ValidationError
+import numpy as np
+from pydantic import BaseModel, Field, PlainSerializer
 from sentence_transformers import SentenceTransformer
 
-from elasticsearch import NotFoundError
+from elasticsearch import NotFoundError, OrjsonSerializer
 from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
-dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']])
+dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']], serializer=OrjsonSerializer())
 
 
 class Quote(AsyncBaseESModel):
     quote: str
     author: Annotated[str, dsl.Keyword()]
     tags: Annotated[list[str], dsl.Keyword()]
-    embedding: Annotated[list[float], dsl.DenseVector()] = Field(init=False, default=[])
+    embedding: Annotated[
+        np.ndarray,
+        PlainSerializer(lambda v: v.tolist()),
+        dsl.DenseVector(use_numpy=True)
+    ] = Field(init=False, default_factory=lambda: np.array([]))
+
+    class Config:
+        arbitrary_types_allowed = True
 
     class Index:
         name = 'quotes'
