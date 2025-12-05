@@ -25,6 +25,7 @@ from datetime import datetime
 from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple, Union
 
+import numpy as np
 import pytest
 from pytest import raises
 from pytz import timezone
@@ -853,6 +854,7 @@ def test_dense_vector(client: Elasticsearch, es_version: Tuple[int, ...]) -> Non
         float_vector: List[float] = mapped_field(DenseVector())
         byte_vector: List[int] = mapped_field(DenseVector(element_type="byte"))
         bit_vector: List[int] = mapped_field(DenseVector(element_type="bit"))
+        numpy_float_vector: np.ndarray = mapped_field(DenseVector(use_numpy=True))
 
         class Index:
             name = "vectors"
@@ -864,6 +866,7 @@ def test_dense_vector(client: Elasticsearch, es_version: Tuple[int, ...]) -> Non
         float_vector=[1.0, 1.2, 2.3],
         byte_vector=[12, 23, 34, 45],
         bit_vector=[18, -43, -112],
+        numpy_float_vector=np.array([3.1, 2.25, 1.0]),
     )
     doc.save(refresh=True)
 
@@ -872,6 +875,8 @@ def test_dense_vector(client: Elasticsearch, es_version: Tuple[int, ...]) -> Non
     assert [round(v, 1) for v in docs[0].float_vector] == doc.float_vector
     assert docs[0].byte_vector == doc.byte_vector
     assert docs[0].bit_vector == doc.bit_vector
+    assert type(docs[0].numpy_float_vector) is np.ndarray
+    assert np.array_equal(docs[0].numpy_float_vector, doc.numpy_float_vector)
 
 
 @pytest.mark.sync
