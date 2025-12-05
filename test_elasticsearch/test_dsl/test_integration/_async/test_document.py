@@ -25,6 +25,7 @@ from datetime import datetime
 from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, AsyncIterator, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pytest
 from pytest import raises
 from pytz import timezone
@@ -47,6 +48,7 @@ from elasticsearch.dsl import (
     Mapping,
     MetaField,
     Nested,
+    NumpyDenseVector,
     Object,
     Q,
     RankFeatures,
@@ -57,6 +59,7 @@ from elasticsearch.dsl import (
 from elasticsearch.dsl.query import Match
 from elasticsearch.dsl.types import MatchQuery
 from elasticsearch.dsl.utils import AttrList
+from elasticsearch.helpers import pack_dense_vector
 from elasticsearch.helpers.errors import BulkIndexError
 
 snowball = analyzer("my_snow", tokenizer="standard", filter=["lowercase", "snowball"])
@@ -865,25 +868,47 @@ async def test_dense_vector(
         float_vector: List[float] = mapped_field(DenseVector())
         byte_vector: List[int] = mapped_field(DenseVector(element_type="byte"))
         bit_vector: List[int] = mapped_field(DenseVector(element_type="bit"))
+        numpy_float_vector: np.ndarray = mapped_field(NumpyDenseVector())
+        packed_float_vector: List[float] = mapped_field(DenseVector())
+        packed_numpy_float_vector: np.ndarray = mapped_field(NumpyDenseVector())
 
         class Index:
             name = "vectors"
 
+        def clean(self):
+            # pack the dense vectors before they are sent to Elasticsearch
+            self.packed_float_vector = pack_dense_vector(self.packed_float_vector)
+            self.packed_numpy_float_vector = pack_dense_vector(
+                self.packed_numpy_float_vector
+            )
+
     await Doc._index.delete(ignore_unavailable=True)
     await Doc.init()
 
+    test_float_vector = [1.0, 1.2, 2.3]
+    test_byte_vector = [12, 23, 34, 45]
+    test_bit_vector = [18, -43, -112]
+
     doc = Doc(
-        float_vector=[1.0, 1.2, 2.3],
-        byte_vector=[12, 23, 34, 45],
-        bit_vector=[18, -43, -112],
+        float_vector=test_float_vector,
+        byte_vector=test_byte_vector,
+        bit_vector=test_bit_vector,
+        numpy_float_vector=np.array(test_float_vector),
+        packed_float_vector=test_float_vector,
+        packed_numpy_float_vector=np.array(test_float_vector, dtype=np.float32),
     )
     await doc.save(refresh=True)
 
     docs = await Doc.search().execute()
     assert len(docs) == 1
-    assert [round(v, 1) for v in docs[0].float_vector] == doc.float_vector
-    assert docs[0].byte_vector == doc.byte_vector
-    assert docs[0].bit_vector == doc.bit_vector
+    assert [round(v, 1) for v in docs[0].float_vector] == test_float_vector
+    assert docs[0].byte_vector == test_byte_vector
+    assert docs[0].bit_vector == test_bit_vector
+    assert type(docs[0].numpy_float_vector) is np.ndarray
+    assert [round(v, 1) for v in docs[0].numpy_float_vector] == test_float_vector
+    assert [round(v, 1) for v in docs[0].packed_float_vector] == test_float_vector
+    assert type(docs[0].packed_numpy_float_vector) is np.ndarray
+    assert [round(v, 1) for v in docs[0].packed_numpy_float_vector] == test_float_vector
 
 
 @pytest.mark.anyio

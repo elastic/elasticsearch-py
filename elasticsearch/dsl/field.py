@@ -1616,11 +1616,33 @@ class DenseVector(Field):
             kwargs["multi"] = True
         super().__init__(*args, **kwargs)
 
-    def _deserialize(self, data: Any) -> Any:
-        if self._element_type == "float":
-            return float(data)
-        elif self._element_type == "byte":
-            return int(data)
+
+class NumpyDenseVector(DenseVector):
+    """A dense vector field that uses numpy arrays.
+
+    Accepts the same arguments as class ``DenseVector`` plus:
+
+    :arg dtype: The numpy data type to use for the array. If not given, numpy will select the type based on the data.
+    """
+
+    def __init__(self, *args: Any, dtype: Optional[type] = None, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self._dtype = dtype
+
+    def deserialize(self, data: Any) -> Any:
+        if isinstance(data, list):
+            import numpy as np
+
+            return np.array(data, dtype=self._dtype)
+        return super().deserialize(data)
+
+    def clean(self, data: Any) -> Any:
+        # this method does the same as the one in the parent classes, but it
+        # avoids comparisons that do not work for numpy arrays
+        if data is not None:
+            data = self.deserialize(data)
+        if (data is None or len(data) == 0) and self._required:
+            raise ValidationException("Value required for this field.")
         return data
 
 
