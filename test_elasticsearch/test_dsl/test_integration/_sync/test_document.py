@@ -25,6 +25,7 @@ from datetime import datetime
 from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple, Union
 
+import numpy as np
 import pytest
 from pytest import raises
 from pytz import timezone
@@ -46,6 +47,7 @@ from elasticsearch.dsl import (
     Mapping,
     MetaField,
     Nested,
+    NumpyDenseVector,
     Object,
     Q,
     RankFeatures,
@@ -853,6 +855,7 @@ def test_dense_vector(client: Elasticsearch, es_version: Tuple[int, ...]) -> Non
         float_vector: List[float] = mapped_field(DenseVector())
         byte_vector: List[int] = mapped_field(DenseVector(element_type="byte"))
         bit_vector: List[int] = mapped_field(DenseVector(element_type="bit"))
+        numpy_float_vector: np.ndarray = mapped_field(NumpyDenseVector())
 
         class Index:
             name = "vectors"
@@ -860,18 +863,25 @@ def test_dense_vector(client: Elasticsearch, es_version: Tuple[int, ...]) -> Non
     Doc._index.delete(ignore_unavailable=True)
     Doc.init()
 
+    test_float_vector = [1.0, 1.2, 2.3]
+    test_byte_vector = [12, 23, 34, 45]
+    test_bit_vector = [18, -43, -112]
+
     doc = Doc(
-        float_vector=[1.0, 1.2, 2.3],
-        byte_vector=[12, 23, 34, 45],
-        bit_vector=[18, -43, -112],
+        float_vector=test_float_vector,
+        byte_vector=test_byte_vector,
+        bit_vector=test_bit_vector,
+        numpy_float_vector=np.array(test_float_vector),
     )
     doc.save(refresh=True)
 
     docs = Doc.search().execute()
     assert len(docs) == 1
-    assert [round(v, 1) for v in docs[0].float_vector] == doc.float_vector
-    assert docs[0].byte_vector == doc.byte_vector
-    assert docs[0].bit_vector == doc.bit_vector
+    assert [round(v, 1) for v in docs[0].float_vector] == test_float_vector
+    assert docs[0].byte_vector == test_byte_vector
+    assert docs[0].bit_vector == test_bit_vector
+    assert type(docs[0].numpy_float_vector) is np.ndarray
+    assert [round(v, 1) for v in docs[0].numpy_float_vector] == test_float_vector
 
 
 @pytest.mark.sync

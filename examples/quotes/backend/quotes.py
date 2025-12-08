@@ -5,22 +5,30 @@ from time import time
 from typing import Annotated
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field, ValidationError
+import numpy as np
+from pydantic import BaseModel, Field, PlainSerializer
 from sentence_transformers import SentenceTransformer
 
-from elasticsearch import NotFoundError
+from elasticsearch import NotFoundError, OrjsonSerializer
 from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
-dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']])
+dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']], serializer=OrjsonSerializer())
 
 
 class Quote(AsyncBaseESModel):
     quote: str
     author: Annotated[str, dsl.Keyword()]
     tags: Annotated[list[str], dsl.Keyword()]
-    embedding: Annotated[list[float], dsl.DenseVector()] = Field(init=False, default=[])
+    embedding: Annotated[
+        np.ndarray,
+        PlainSerializer(lambda v: v.tolist()),
+        dsl.NumpyDenseVector(dtype=np.float32)
+    ] = Field(init=False, default_factory=lambda: np.array([], dtype=np.float32))
+
+    class Config:
+        arbitrary_types_allowed = True
 
     class Index:
         name = 'quotes'
@@ -135,7 +143,7 @@ async def search_quotes(req: SearchRequest) -> SearchResponse:
 def embed_quotes(quotes):
     embeddings = model.encode([q.quote for q in quotes])
     for q, e in zip(quotes, embeddings):
-        q.embedding = e.tolist()
+        q.embedding = e
 
 
 async def ingest_quotes():
