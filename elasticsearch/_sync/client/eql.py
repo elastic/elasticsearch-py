@@ -38,8 +38,8 @@ class EqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an async EQL search.
-          Delete an async EQL search or a stored synchronous EQL search.
+          <p>Delete an async EQL search.</p>
+          <p>Delete an async EQL search or a stored synchronous EQL search.
           The API also deletes results for the search.</p>
 
 
@@ -89,8 +89,8 @@ class EqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get async EQL search results.
-          Get the current status and available results for an async EQL search or a stored synchronous EQL search.</p>
+          <p>Get async EQL search results.</p>
+          <p>Get the current status and available results for an async EQL search or a stored synchronous EQL search.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-get>`_
@@ -143,8 +143,8 @@ class EqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the async EQL status.
-          Get the current status for an async EQL search or a stored synchronous EQL search without returning results.</p>
+          <p>Get the async EQL status.</p>
+          <p>Get the current status for an async EQL search or a stored synchronous EQL search without returning results.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-get-status>`_
@@ -242,8 +242,8 @@ class EqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get EQL search results.
-          Returns search results for an Event Query Language (EQL) query.
+          <p>Get EQL search results.</p>
+          <p>Returns search results for an Event Query Language (EQL) query.
           EQL assumes each document in a data stream or index corresponds to an event.</p>
 
 
@@ -291,7 +291,7 @@ class EqlClient(NamespacedClient):
             Defaults to 10
         :param tiebreaker_field: Field used to sort hits with the same timestamp in ascending
             order
-        :param timestamp_field: Field containing event timestamp. Default "@timestamp"
+        :param timestamp_field: Field containing event timestamp.
         :param wait_for_completion_timeout:
         """
         if index in SKIP_IN_PATH:

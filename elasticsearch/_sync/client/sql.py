@@ -89,8 +89,8 @@ class SqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an async SQL search.
-          Delete an async SQL search or a stored synchronous SQL search.
+          <p>Delete an async SQL search.</p>
+          <p>Delete an async SQL search or a stored synchronous SQL search.
           If the search is still running, the API cancels it.</p>
           <p>If the Elasticsearch security features are enabled, only the following users can use this API to delete a search:</p>
           <ul>
@@ -145,8 +145,8 @@ class SqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get async SQL search results.
-          Get the current status and available results for an async SQL search or stored synchronous SQL search.</p>
+          <p>Get async SQL search results.</p>
+          <p>Get the current status and available results for an async SQL search or stored synchronous SQL search.</p>
           <p>If the Elasticsearch security features are enabled, only the user who first submitted the SQL search can retrieve the search using this API.</p>
 
 
@@ -208,8 +208,8 @@ class SqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the async SQL search status.
-          Get the current status of an async SQL search or a stored synchronous SQL search.</p>
+          <p>Get the async SQL search status.</p>
+          <p>Get the current status of an async SQL search or a stored synchronous SQL search.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-get-async-status>`_
@@ -297,8 +297,8 @@ class SqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get SQL search results.
-          Run an SQL request.</p>
+          <p>Get SQL search results.</p>
+          <p>Run an SQL request.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-sql-query>`_
@@ -422,8 +422,8 @@ class SqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Translate SQL into Elasticsearch queries.
-          Translate an SQL search into a search API request containing Query DSL.
+          <p>Translate SQL into Elasticsearch queries.</p>
+          <p>Translate an SQL search into a search API request containing Query DSL.
           It accepts the same request body parameters as the SQL search API, excluding <code>cursor</code>.</p>
 
 

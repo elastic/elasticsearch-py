@@ -151,8 +151,8 @@ class IngestClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete pipelines.
-          Delete one or more ingest pipelines.</p>
+          <p>Delete pipelines.</p>
+          <p>Delete one or more ingest pipelines.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ingest-delete-pipeline>`_
@@ -204,8 +204,8 @@ class IngestClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get GeoIP statistics.
-          Get download statistics for GeoIP2 databases that are used with the GeoIP processor.</p>
+          <p>Get GeoIP statistics.</p>
+          <p>Get download statistics for GeoIP2 databases that are used with the GeoIP processor.</p>
 
 
         `<https://www.elastic.co/docs/reference/enrich-processor/geoip-processor>`_
@@ -399,8 +399,8 @@ class IngestClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a grok processor.
-          Extract structured fields out of a single text field within a document.
+          <p>Run a grok processor.</p>
+          <p>Extract structured fields out of a single text field within a document.
           You must choose which field to extract matched fields from, as well as the grok pattern you expect will match.
           A grok pattern is like a regular expression that supports aliased expressions that can be reused.</p>
 
@@ -609,8 +609,8 @@ class IngestClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a pipeline.
-          Changes made using this API take effect immediately.</p>
+          <p>Create or update a pipeline.</p>
+          <p>Changes made using this API take effect immediately.</p>
 
 
         `<https://www.elastic.co/docs/manage-data/ingest/transform-enrich/ingest-pipelines>`_

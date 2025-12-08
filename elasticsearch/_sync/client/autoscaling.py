@@ -33,7 +33,6 @@ from .utils import (
 class AutoscalingClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def delete_autoscaling_policy(
         self,
         *,
@@ -89,7 +88,6 @@ class AutoscalingClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_autoscaling_capacity(
         self,
         *,
@@ -143,7 +141,6 @@ class AutoscalingClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_autoscaling_policy(
         self,
         *,
@@ -196,7 +193,6 @@ class AutoscalingClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="policy",
     )
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def put_autoscaling_policy(
         self,
         *,

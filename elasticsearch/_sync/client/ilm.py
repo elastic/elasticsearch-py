@@ -40,8 +40,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a lifecycle policy.
-          You cannot delete policies that are currently in use. If the policy is being used to manage any indices, the request fails and returns an error.</p>
+          <p>Delete a lifecycle policy.</p>
+          <p>You cannot delete policies that are currently in use. If the policy is being used to manage any indices, the request fails and returns an error.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ilm-delete-lifecycle>`_
@@ -96,8 +96,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Explain the lifecycle state.
-          Get the current lifecycle status for one or more indices.
+          <p>Explain the lifecycle state.</p>
+          <p>Get the current lifecycle status for one or more indices.
           For data streams, the API retrieves the current lifecycle status for the stream's backing indices.</p>
           <p>The response indicates when the index entered each lifecycle state, provides the definition of the running phase, and information about any failures.</p>
 
@@ -260,8 +260,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Migrate to data tiers routing.
-          Switch the indices, ILM policies, and legacy, composable, and component templates from using custom node attributes and attribute-based allocation filters to using data tiers.
+          <p>Migrate to data tiers routing.</p>
+          <p>Switch the indices, ILM policies, and legacy, composable, and component templates from using custom node attributes and attribute-based allocation filters to using data tiers.
           Optionally, delete one legacy index template.
           Using node roles enables ILM to automatically move the indices between data tiers.</p>
           <p>Migrating away from custom node attributes routing can be manually performed.
@@ -341,8 +341,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Move to a lifecycle step.
-          Manually move an index into a specific step in the lifecycle policy and run that step.</p>
+          <p>Move to a lifecycle step.</p>
+          <p>Manually move an index into a specific step in the lifecycle policy and run that step.</p>
           <p>WARNING: This operation can result in the loss of data. Manually moving an index into a specific step runs that step even if it has already been performed. This is a potentially destructive action and this should be considered an expert level API.</p>
           <p>You must specify both the current step and the step to be executed in the body of the request.
           The request will fail if the current step does not match the step currently running for the index
@@ -417,8 +417,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a lifecycle policy.
-          If the specified policy exists, it is replaced and the policy version is incremented.</p>
+          <p>Create or update a lifecycle policy.</p>
+          <p>If the specified policy exists, it is replaced and the policy version is incremented.</p>
           <p>NOTE: Only the latest version of the policy is stored, you cannot revert to previous versions.</p>
 
 
@@ -481,8 +481,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Remove policies from an index.
-          Remove the assigned lifecycle policies from an index or a data stream's backing indices.
+          <p>Remove policies from an index.</p>
+          <p>Remove the assigned lifecycle policies from an index or a data stream's backing indices.
           It also stops managing the indices.</p>
 
 
@@ -526,8 +526,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Retry a policy.
-          Retry running the lifecycle policy for an index that is in the ERROR step.
+          <p>Retry a policy.</p>
+          <p>Retry running the lifecycle policy for an index that is in the ERROR step.
           The API sets the policy back to the step where the error occurred and runs the step.
           Use the explain lifecycle state API to determine whether an index is in the ERROR step.</p>
 
@@ -574,8 +574,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Start the ILM plugin.
-          Start the index lifecycle management plugin if it is currently stopped.
+          <p>Start the ILM plugin.</p>
+          <p>Start the index lifecycle management plugin if it is currently stopped.
           ILM is started automatically when the cluster is formed.
           Restarting ILM is necessary only when it has been stopped using the stop ILM API.</p>
 
@@ -627,8 +627,8 @@ class IlmClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop the ILM plugin.
-          Halt all lifecycle management operations and stop the index lifecycle management plugin.
+          <p>Stop the ILM plugin.</p>
+          <p>Halt all lifecycle management operations and stop the index lifecycle management plugin.
           This is useful when you are performing maintenance on the cluster and need to prevent ILM from performing any actions on your indices.</p>
           <p>The API returns as soon as the stop request has been acknowledged, but the plugin might continue to run until in-progress operations complete and the plugin can be safely stopped.
           Use the get ILM status API to check whether ILM is running.</p>

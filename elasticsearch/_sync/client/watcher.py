@@ -39,8 +39,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Acknowledge a watch.
-          Acknowledging a watch enables you to manually throttle the execution of the watch's actions.</p>
+          <p>Acknowledge a watch.</p>
+          <p>Acknowledging a watch enables you to manually throttle the execution of the watch's actions.</p>
           <p>The acknowledgement state of an action is stored in the <code>status.actions.&lt;id&gt;.ack.state</code> structure.</p>
           <p>IMPORTANT: If the specified watch is currently being executed, this API will return an error
           The reason for this behavior is to prevent overwriting the watch status from a watch execution.</p>
@@ -101,8 +101,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Activate a watch.
-          A watch can be either active or inactive.</p>
+          <p>Activate a watch.</p>
+          <p>A watch can be either active or inactive.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-activate-watch>`_
@@ -145,8 +145,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Deactivate a watch.
-          A watch can be either active or inactive.</p>
+          <p>Deactivate a watch.</p>
+          <p>A watch can be either active or inactive.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-deactivate-watch>`_
@@ -189,8 +189,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a watch.
-          When the watch is removed, the document representing the watch in the <code>.watches</code> index is gone and it will never be run again.</p>
+          <p>Delete a watch.</p>
+          <p>When the watch is removed, the document representing the watch in the <code>.watches</code> index is gone and it will never be run again.</p>
           <p>Deleting a watch does not delete any watch execution records related to this watch from the watch history.</p>
           <p>IMPORTANT: Deleting a watch must be done by using only this API.
           Do not delete the watch directly from the <code>.watches</code> index using the Elasticsearch delete document API
@@ -266,8 +266,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a watch.
-          This API can be used to force execution of the watch outside of its triggering logic or to simulate the watch execution for debugging purposes.</p>
+          <p>Run a watch.</p>
+          <p>This API can be used to force execution of the watch outside of its triggering logic or to simulate the watch execution for debugging purposes.</p>
           <p>For testing and debugging purposes, you also have fine-grained control on how the watch runs.
           You can run the watch without running all of its actions or alternatively by simulating them.
           You can also force execution by ignoring the watch condition and control whether a watch record would be written to the watch history after it runs.</p>
@@ -362,8 +362,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get Watcher index settings.
-          Get settings for the Watcher internal index (<code>.watches</code>).
+          <p>Get Watcher index settings.</p>
+          <p>Get settings for the Watcher internal index (<code>.watches</code>).
           Only a subset of settings are shown, for example <code>index.auto_expand_replicas</code> and <code>index.number_of_replicas</code>.</p>
 
 
@@ -476,8 +476,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a watch.
-          When a watch is registered, a new document that represents the watch is added to the <code>.watches</code> index and its trigger is immediately registered with the relevant trigger engine.
+          <p>Create or update a watch.</p>
+          <p>When a watch is registered, a new document that represents the watch is added to the <code>.watches</code> index and its trigger is immediately registered with the relevant trigger engine.
           Typically for the <code>schedule</code> trigger, the scheduler is the trigger engine.</p>
           <p>IMPORTANT: You must use Kibana or this API to create a watch.
           Do not add a watch directly to the <code>.watches</code> index by using the Elasticsearch index API.
@@ -591,8 +591,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Query watches.
-          Get all registered watches in a paginated manner and optionally filter watches by a query.</p>
+          <p>Query watches.</p>
+          <p>Get all registered watches in a paginated manner and optionally filter watches by a query.</p>
           <p>Note that only the <code>_id</code> and <code>metadata.*</code> fields are queryable or sortable.</p>
 
 
@@ -667,8 +667,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Start the watch service.
-          Start the Watcher service if it is not already running.</p>
+          <p>Start the watch service.</p>
+          <p>Start the Watcher service if it is not already running.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-start>`_
@@ -732,8 +732,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get Watcher statistics.
-          This API always returns basic metrics.
+          <p>Get Watcher statistics.</p>
+          <p>This API always returns basic metrics.
           You retrieve more metrics by using the metric parameter.</p>
 
 
@@ -784,8 +784,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop the watch service.
-          Stop the Watcher service if it is running.</p>
+          <p>Stop the watch service.</p>
+          <p>Stop the Watcher service if it is running.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-watcher-stop>`_
@@ -840,8 +840,8 @@ class WatcherClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update Watcher index settings.
-          Update settings for the Watcher internal index (<code>.watches</code>).
+          <p>Update Watcher index settings.</p>
+          <p>Update settings for the Watcher internal index (<code>.watches</code>).
           Only a subset of settings can be modified.
           This includes <code>index.auto_expand_replicas</code>, <code>index.number_of_replicas</code>, <code>index.routing.allocation.exclude.*</code>,
           <code>index.routing.allocation.include.*</code> and <code>index.routing.allocation.require.*</code>.
