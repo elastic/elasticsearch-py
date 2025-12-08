@@ -39,8 +39,8 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an enrich policy.
-          Deletes an existing enrich policy and its enrich index.</p>
+          <p>Delete an enrich policy.</p>
+          <p>Deletes an existing enrich policy and its enrich index.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-delete-policy>`_
@@ -88,8 +88,8 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run an enrich policy.
-          Create the enrich index for an existing enrich policy.</p>
+          <p>Run an enrich policy.</p>
+          <p>Create the enrich index for an existing enrich policy.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-execute-policy>`_
@@ -140,8 +140,8 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get an enrich policy.
-          Returns information about an enrich policy.</p>
+          <p>Get an enrich policy.</p>
+          <p>Returns information about an enrich policy.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-get-policy>`_
@@ -198,8 +198,8 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create an enrich policy.
-          Creates an enrich policy.</p>
+          <p>Create an enrich policy.</p>
+          <p>Creates an enrich policy.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-put-policy>`_
@@ -259,8 +259,8 @@ class EnrichClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get enrich stats.
-          Returns enrich coordinator statistics and information about enrich policies that are currently executing.</p>
+          <p>Get enrich stats.</p>
+          <p>Returns enrich coordinator statistics and information about enrich policies that are currently executing.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-stats>`_

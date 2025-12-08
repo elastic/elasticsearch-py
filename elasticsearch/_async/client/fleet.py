@@ -138,8 +138,8 @@ class FleetClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run multiple Fleet searches.
-          Run several Fleet searches with a single API request.
+          <p>Run multiple Fleet searches.</p>
+          <p>Run several Fleet searches with a single API request.
           The API follows the same structure as the multi search API.
           However, similar to the Fleet search API, it supports the <code>wait_for_checkpoints</code> parameter.</p>
 
@@ -388,8 +388,8 @@ class FleetClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a Fleet search.
-          The purpose of the Fleet search API is to provide an API where the search will be run only
+          <p>Run a Fleet search.</p>
+          <p>The purpose of the Fleet search API is to provide an API where the search will be run only
           after the provided checkpoint has been processed and is visible for searches inside of Elasticsearch.</p>
 
 

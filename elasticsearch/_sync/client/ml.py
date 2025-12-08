@@ -1108,8 +1108,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Force buffered data to be processed.
-          The flush jobs API is only applicable when sending data for analysis using
+          <p>Force buffered data to be processed.</p>
+          <p>The flush jobs API is only applicable when sending data for analysis using
           the post data API. Depending on the content of the buffer, then it might
           additionally calculate new results. Both flush and close operations are
           similar, however the flush is more efficient if you are expecting to send
@@ -1276,8 +1276,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection job results for buckets.
-          The API presents a chronological view of the records, grouped by bucket.</p>
+          <p>Get anomaly detection job results for buckets.</p>
+          <p>The API presents a chronological view of the records, grouped by bucket.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-buckets>`_
@@ -1605,8 +1605,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get data frame analytics job configuration info.
-          You can get information for multiple data frame analytics jobs in a single
+          <p>Get data frame analytics job configuration info.</p>
+          <p>You can get information for multiple data frame analytics jobs in a single
           API request by using a comma-separated list of data frame analytics jobs or a
           wildcard expression.</p>
 
@@ -1751,8 +1751,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get datafeed stats.
-          You can get statistics for multiple datafeeds in a single API request by
+          <p>Get datafeed stats.</p>
+          <p>You can get statistics for multiple datafeeds in a single API request by
           using a comma-separated list of datafeeds or a wildcard expression. You can
           get statistics for all datafeeds by using <code>_all</code>, by specifying <code>*</code> as the
           <code>&lt;feed_id&gt;</code>, or by omitting the <code>&lt;feed_id&gt;</code>. If the datafeed is stopped, the
@@ -1816,8 +1816,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get datafeeds configuration info.
-          You can get information for multiple datafeeds in a single API request by
+          <p>Get datafeeds configuration info.</p>
+          <p>You can get information for multiple datafeeds in a single API request by
           using a comma-separated list of datafeeds or a wildcard expression. You can
           get information for all datafeeds by using <code>_all</code>, by specifying <code>*</code> as the
           <code>&lt;feed_id&gt;</code>, or by omitting the <code>&lt;feed_id&gt;</code>.
@@ -1887,8 +1887,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get filters.
-          You can get a single filter or all filters.</p>
+          <p>Get filters.</p>
+          <p>You can get a single filter or all filters.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-get-filters>`_
@@ -1953,8 +1953,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection job results for influencers.
-          Influencers are the entities that have contributed to, or are to blame for,
+          <p>Get anomaly detection job results for influencers.</p>
+          <p>Influencers are the entities that have contributed to, or are to blame for,
           the anomalies. Influencer results are available only if an
           <code>influencer_field_name</code> is specified in the job configuration.</p>
 
@@ -2100,8 +2100,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly detection jobs configuration info.
-          You can get information for multiple anomaly detection jobs in a single API
+          <p>Get anomaly detection jobs configuration info.</p>
+          <p>You can get information for multiple anomaly detection jobs in a single API
           request by using a group name, a comma-separated list of jobs, or a wildcard
           expression. You can get information for all anomaly detection jobs by using
           <code>_all</code>, by specifying <code>*</code> as the <code>&lt;job_id&gt;</code>, or by omitting the <code>&lt;job_id&gt;</code>.</p>
@@ -2168,8 +2168,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get machine learning memory usage info.
-          Get information about how machine learning jobs and trained models are using memory,
+          <p>Get machine learning memory usage info.</p>
+          <p>Get information about how machine learning jobs and trained models are using memory,
           on each node, both within the JVM heap, and natively, outside of the JVM.</p>
 
 
@@ -2522,8 +2522,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get anomaly records for an anomaly detection job.
-          Records contain the detailed analytical results. They describe the anomalous
+          <p>Get anomaly records for an anomaly detection job.</p>
+          <p>Records contain the detailed analytical results. They describe the anomalous
           activity that has been identified in the input data based on the detector
           configuration.
           There can be many anomaly records depending on the characteristics and size
@@ -2715,8 +2715,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get trained models usage info.
-          You can get usage information for multiple trained
+          <p>Get trained models usage info.</p>
+          <p>You can get usage information for multiple trained
           models in a single API request by using a comma-separated list of model IDs or a wildcard expression.</p>
 
 
@@ -2843,8 +2843,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get machine learning information.
-          Get defaults and limits used by machine learning.
+          <p>Get machine learning information.</p>
+          <p>Get defaults and limits used by machine learning.
           This endpoint is designed to be used by a user interface that needs to fully
           understand machine learning configurations where some options are not
           specified, meaning that the defaults should be used. This endpoint may be
@@ -3083,8 +3083,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Preview features used by data frame analytics.
-          Preview the extracted features used by a data frame analytics config.</p>
+          <p>Preview features used by data frame analytics.</p>
+          <p>Preview the extracted features used by a data frame analytics config.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-preview-data-frame-analytics>`_
@@ -3149,8 +3149,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Preview a datafeed.
-          This API returns the first &quot;page&quot; of search results from a datafeed.
+          <p>Preview a datafeed.</p>
+          <p>This API returns the first &quot;page&quot; of search results from a datafeed.
           You can preview an existing datafeed or provide configuration details for a datafeed
           and anomaly detection job in the API. The preview shows the structure of the data
           that will be passed to the anomaly detection engine.
@@ -3371,8 +3371,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a data frame analytics job.
-          This API creates a data frame analytics job that performs an analysis on the
+          <p>Create a data frame analytics job.</p>
+          <p>This API creates a data frame analytics job that performs an analysis on the
           source indices and stores the outcome in a destination index.
           By default, the query used in the source configuration is <code>{&quot;match_all&quot;: {}}</code>.</p>
           <p>If the destination index does not exist, it is created automatically when you start the job.</p>
@@ -3552,8 +3552,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a datafeed.
-          Datafeeds retrieve data from Elasticsearch for analysis by an anomaly detection job.
+          <p>Create a datafeed.</p>
+          <p>Datafeeds retrieve data from Elasticsearch for analysis by an anomaly detection job.
           You can associate only one datafeed with each anomaly detection job.
           The datafeed contains a query that runs at a defined interval (<code>frequency</code>).
           If you are concerned about delayed data, you can add a delay (<code>query_delay') at each interval. By default, the datafeed uses the following query: </code>{&quot;match_all&quot;: {&quot;boost&quot;: 1}}`.</p>
@@ -3721,8 +3721,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a filter.
-          A filter contains a list of strings. It can be used by one or more anomaly detection jobs.
+          <p>Create a filter.</p>
+          <p>A filter contains a list of strings. It can be used by one or more anomaly detection jobs.
           Specifically, filters are referenced in the <code>custom_rules</code> property of detector configuration objects.</p>
 
 
@@ -4026,8 +4026,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a trained model.
-          Enable you to supply a trained model that is not created by data frame analytics.</p>
+          <p>Create a trained model.</p>
+          <p>Enable you to supply a trained model that is not created by data frame analytics.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-put-trained-model>`_
@@ -4132,8 +4132,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a trained model alias.
-          A trained model alias is a logical name used to reference a single trained
+          <p>Create or update a trained model alias.</p>
+          <p>A trained model alias is a logical name used to reference a single trained
           model.
           You can use aliases instead of trained model identifiers to make it easier to
           reference your models. For example, you can use aliases in inference
@@ -4289,8 +4289,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a trained model vocabulary.
-          This API is supported only for natural language processing (NLP) models.
+          <p>Create a trained model vocabulary.</p>
+          <p>This API is supported only for natural language processing (NLP) models.
           The vocabulary is stored in the index as described in <code>inference_config.*.vocabulary</code> of the trained model definition.</p>
 
 
@@ -4350,8 +4350,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Reset an anomaly detection job.
-          All model state and results are deleted. The job is ready to start over as if
+          <p>Reset an anomaly detection job.</p>
+          <p>All model state and results are deleted. The job is ready to start over as if
           it had just been created.
           It is not currently possible to reset multiple jobs using wildcards or a
           comma separated list.</p>
@@ -4411,8 +4411,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Revert to a snapshot.
-          The machine learning features react quickly to anomalous input, learning new
+          <p>Revert to a snapshot.</p>
+          <p>The machine learning features react quickly to anomalous input, learning new
           behaviors in data. Highly anomalous input increases the variance in the
           models whilst the system learns whether this is a new step-change in behavior
           or a one-off event. In the case where this anomalous input is known to be a
@@ -4481,8 +4481,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set upgrade_mode for ML indices.
-          Sets a cluster wide upgrade_mode setting that prepares machine learning
+          <p>Set upgrade_mode for ML indices.</p>
+          <p>Sets a cluster wide upgrade_mode setting that prepares machine learning
           indices for an upgrade.
           When upgrading your cluster, in some circumstances you must restart your
           nodes and reindex your machine learning indices. In those circumstances,
@@ -4528,7 +4528,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("timeout",),
+    )
     def start_data_frame_analytics(
         self,
         *,
@@ -4538,12 +4540,13 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
-          <p>Start a data frame analytics job.
-          A data frame analytics job can be started and stopped multiple times
+          <p>Start a data frame analytics job.</p>
+          <p>A data frame analytics job can be started and stopped multiple times
           throughout its lifecycle.
           If the destination index does not exist, it is created automatically the
           first time you start the data frame analytics job. The
@@ -4569,6 +4572,7 @@ class MlClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4577,14 +4581,20 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
+        if not __body:
+            if timeout is not None:
+                __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.start_data_frame_analytics",
             path_parts=__path_parts,
         )
@@ -4692,8 +4702,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Start a trained model deployment.
-          It allocates the model to every machine learning node.</p>
+          <p>Start a trained model deployment.</p>
+          <p>It allocates the model to every machine learning node.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-start-trained-model-deployment>`_
@@ -4776,7 +4786,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("allow_no_match", "force", "timeout"),
+    )
     def stop_data_frame_analytics(
         self,
         *,
@@ -4788,12 +4800,13 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
-          <p>Stop data frame analytics jobs.
-          A data frame analytics job can be started and stopped multiple times
+          <p>Stop data frame analytics jobs.</p>
+          <p>A data frame analytics job can be started and stopped multiple times
           throughout its lifecycle.</p>
 
 
@@ -4819,26 +4832,33 @@ class MlClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if timeout is not None:
+                __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.stop_data_frame_analytics",
             path_parts=__path_parts,
         )
@@ -4862,8 +4882,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop datafeeds.
-          A datafeed that is stopped ceases to retrieve data from Elasticsearch. A datafeed can be started and stopped
+          <p>Stop datafeeds.</p>
+          <p>A datafeed that is stopped ceases to retrieve data from Elasticsearch. A datafeed can be started and stopped
           multiple times throughout its lifecycle.</p>
 
 
@@ -4914,7 +4934,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("allow_no_match", "force", "id"),
+    )
     def stop_trained_model_deployment(
         self,
         *,
@@ -4924,7 +4946,9 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4944,30 +4968,40 @@ class MlClient(NamespacedClient):
             no matches or only partial matches.
         :param force: Forcefully stops the deployment, even if it is used by ingest pipelines.
             You can't use these pipelines until you restart the model deployment.
+        :param id: If provided, must be the same identifier as in the path.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_stop'
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if id is not None:
+                __body["id"] = id
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.stop_trained_model_deployment",
             path_parts=__path_parts,
         )
@@ -5108,8 +5142,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update a datafeed.
-          You must stop and start the datafeed for the changes to be applied.
+          <p>Update a datafeed.</p>
+          <p>You must stop and start the datafeed for the changes to be applied.
           When Elasticsearch security features are enabled, your datafeed remembers which roles the user who updated it had at
           the time of the update and runs the query using those same roles. If you provide secondary authorization headers,
           those credentials are used instead.</p>
@@ -5272,8 +5306,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update a filter.
-          Updates the description of a filter, adds items, or removes items from the list.</p>
+          <p>Update a filter.</p>
+          <p>Updates the description of a filter, adds items, or removes items from the list.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-filter>`_
@@ -5366,8 +5400,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update an anomaly detection job.
-          Updates certain properties of an anomaly detection job.</p>
+          <p>Update an anomaly detection job.</p>
+          <p>Updates certain properties of an anomaly detection job.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-job>`_
@@ -5498,8 +5532,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update a snapshot.
-          Updates certain properties of a snapshot.</p>
+          <p>Update a snapshot.</p>
+          <p>Updates certain properties of a snapshot.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ml-update-model-snapshot>`_
@@ -5632,8 +5666,8 @@ class MlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Upgrade a snapshot.
-          Upgrade an anomaly detection model snapshot to the latest major version.
+          <p>Upgrade a snapshot.</p>
+          <p>Upgrade an anomaly detection model snapshot to the latest major version.
           Over time, older snapshot formats are deprecated and removed. Anomaly
           detection jobs support only snapshots that are from the current or previous
           major version.
