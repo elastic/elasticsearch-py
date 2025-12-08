@@ -15,12 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import base64
 import logging
 import queue
 import time
 from enum import Enum
 from operator import methodcaller
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Collection,
@@ -31,6 +33,7 @@ from typing import (
     Mapping,
     MutableMapping,
     Optional,
+    Sequence,
     Tuple,
     Union,
 )
@@ -42,6 +45,9 @@ from ..compat import safe_thread, to_bytes
 from ..exceptions import ApiError, NotFoundError, TransportError
 from ..serializer import Serializer
 from .errors import BulkIndexError, ScanError
+
+if TYPE_CHECKING:
+    import numpy as np
 
 logger = logging.getLogger("elasticsearch.helpers")
 
@@ -706,6 +712,21 @@ def parallel_bulk(
         finally:
             pool.close()
             pool.join()
+
+
+def pack_dense_vector(vector: Union["np.ndarray", Sequence[float]]) -> str:
+    """Helper function that packs a dense vector for efficient uploading.
+
+    :arg v: the list or numpy array to pack.
+    """
+    import numpy as np
+
+    if type(vector) is not np.ndarray:
+        vector = np.array(vector, dtype=np.float32)
+    elif vector.dtype != np.float32:
+        raise ValueError("Only arrays of type float32 can be packed")
+    byte_array = vector.byteswap().tobytes()
+    return base64.b64encode(byte_array).decode()
 
 
 def scan(
