@@ -44,7 +44,9 @@ class Doc(AsyncDocument):
         name = "benchmark"
 
 
-async def upload(data_file: str, chunk_size: int, pack: bool) -> tuple[float, float]:
+async def upload(
+    data_file: str, chunk_size: int, repetitions: int, pack: bool
+) -> tuple[float, float]:
     with open(data_file, "rt") as f:
         # read the data file, which comes in ndjson format and convert it to JSON
         json_data = "[" + f.read().strip().replace("\n", ",") + "]"
@@ -68,28 +70,30 @@ async def upload(data_file: str, chunk_size: int, pack: bool) -> tuple[float, fl
     await Doc._index.refresh()
 
     async def get_next_document():
-        for doc in dataset:
-            yield {
-                "_index": "benchmark",
-                "_id": doc["docid"],
-                "_source": {
-                    "title": doc["title"],
-                    "text": doc["text"],
-                    "emb": doc["emb"],
-                },
-            }
+        for i in range(repetitions):
+            for doc in dataset:
+                yield {
+                    "_index": "benchmark",
+                    "_id": doc["docid"] + "_" + str(i),
+                    "_source": {
+                        "title": doc["title"],
+                        "text": doc["text"],
+                        "emb": doc["emb"],
+                    },
+                }
 
     async def get_next_document_packed():
-        for doc in dataset:
-            yield {
-                "_index": "benchmark",
-                "_id": doc["docid"],
-                "_source": {
-                    "title": doc["title"],
-                    "text": doc["text"],
-                    "emb": pack_dense_vector(doc["emb"]),
-                },
-            }
+        for i in range(repetitions):
+            for doc in dataset:
+                yield {
+                    "_index": "benchmark",
+                    "_id": doc["docid"] + "_" + str(i),
+                    "_source": {
+                        "title": doc["title"],
+                        "text": doc["text"],
+                        "emb": pack_dense_vector(doc["emb"]),
+                    },
+                }
 
     start = time.time()
     result = await async_bulk(
@@ -107,7 +111,24 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("data_file", metavar="JSON_DATA_FILE")
     parser.add_argument(
-        "--chunk-sizes", "-s", nargs="+", help="Chunk size(s) for bulk uploader"
+        "--chunk-sizes",
+        "-s",
+        type=int,
+        nargs="+",
+        help="Chunk size(s) for bulk uploader",
+    )
+    parser.add_argument(
+        "--repetitions",
+        "-r",
+        type=int,
+        default=1,
+        help="Number of times the dataset is repeated (default: 1)",
+    )
+    parser.add_argument(
+        "--runs",
+        type=int,
+        default=3,
+        help="Number of runs that are averaged for each chunk size (default: 3)",
     )
     args = parser.parse_args()
 
@@ -115,9 +136,13 @@ async def main():
         print(f"Uploading '{args.data_file}' with chunk size {chunk_size}...")
         runs = []
         packed_runs = []
-        for _ in range(3):
-            runs.append(await upload(args.data_file, chunk_size, False))
-            packed_runs.append(await upload(args.data_file, chunk_size, True))
+        for _ in range(args.runs):
+            runs.append(
+                await upload(args.data_file, chunk_size, args.repetitions, False)
+            )
+            packed_runs.append(
+                await upload(args.data_file, chunk_size, args.repetitions, True)
+            )
 
         # ensure that all runs uploaded the same number of documents
         size = runs[0][0]
