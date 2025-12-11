@@ -717,7 +717,7 @@ def parallel_bulk(
 def pack_dense_vector(vector: Union["np.ndarray", Sequence[float]]) -> str:
     """Helper function that packs a dense vector for efficient uploading.
 
-    :arg v: the list or numpy array to pack.
+    :arg vector: the list or numpy array to pack.
     """
     import numpy as np
 

@@ -24,16 +24,18 @@ import time
 import numpy as np
 
 from elasticsearch import OrjsonSerializer
-from elasticsearch.dsl import AsyncDocument, NumpyDenseVector, async_connections
+from elasticsearch.dsl import (
+    AsyncDocument,
+    Keyword,
+    NumpyDenseVector,
+    async_connections,
+)
 from elasticsearch.dsl.types import DenseVectorIndexOptions
 from elasticsearch.helpers import async_bulk, pack_dense_vector
 
-async_connections.create_connection(
-    hosts=[os.environ["ELASTICSEARCH_URL"]], serializer=OrjsonSerializer()
-)
-
 
 class Doc(AsyncDocument):
+    docid: str = Keyword()
     title: str
     text: str
     emb: np.ndarray = NumpyDenseVector(
@@ -74,8 +76,8 @@ async def upload(
             for doc in dataset:
                 yield {
                     "_index": "benchmark",
-                    "_id": doc["docid"] + "_" + str(i),
                     "_source": {
+                        "docid": doc["docid"],
                         "title": doc["title"],
                         "text": doc["text"],
                         "emb": doc["emb"],
@@ -115,14 +117,15 @@ async def main():
         "-s",
         type=int,
         nargs="+",
+        default=[100, 250, 500, 1000],
         help="Chunk size(s) for bulk uploader",
     )
     parser.add_argument(
         "--repetitions",
         "-r",
         type=int,
-        default=1,
-        help="Number of times the dataset is repeated (default: 1)",
+        default=20,
+        help="Number of times the dataset is repeated (default: 20)",
     )
     parser.add_argument(
         "--runs",
@@ -130,10 +133,29 @@ async def main():
         default=3,
         help="Number of runs that are averaged for each chunk size (default: 3)",
     )
+    parser.add_argument(
+        "--url",
+        default=os.environ.get("ELASTICSEARCH_URL", "http://localhost:9200"),
+        help=(
+            "The connection URL for the Elasticsearch service. "
+            "Can also be given in the ELASTICSEARCH_URL environment variable "
+            "(default: http://localhost:9200)"
+        ),
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        default=False,
+        help="Output results in JSON format.",
+    )
     args = parser.parse_args()
 
+    async_connections.create_connection(hosts=[args.url], serializer=OrjsonSerializer())
+
+    results = []
     for chunk_size in args.chunk_sizes:
-        print(f"Uploading '{args.data_file}' with chunk size {chunk_size}...")
+        if not args.json:
+            print(f"Uploading '{args.data_file}' with chunk size {chunk_size}...")
         runs = []
         packed_runs = []
         for _ in range(args.runs):
@@ -154,12 +176,27 @@ async def main():
         dur = sum([run[1] for run in runs]) / len(runs)
         packed_dur = sum([run[1] for run in packed_runs]) / len(packed_runs)
 
-        print(f"Size:                  {size}")
-        print(f"float duration:        {dur:.02f}s / {size / dur:.02f} docs/s")
-        print(
-            f"float base64 duration: {packed_dur:.02f}s / {size / packed_dur:.02f} docs/s"
+        results.append(
+            {
+                "dataset_size": size,
+                "chunk_size": chunk_size,
+                "float32": {
+                    "duration": int(dur * 1000 + 0.5),
+                },
+                "base64": {
+                    "duration": int(packed_dur * 1000 + 0.5),
+                },
+            }
         )
-        print(f"Speed up:              {dur / packed_dur:.02f}x")
+        if not args.json:
+            print(f"Size:                  {size}")
+            print(f"float duration:        {dur:.02f}s / {size / dur:.02f} docs/s")
+            print(
+                f"float base64 duration: {packed_dur:.02f}s / {size / packed_dur:.02f} docs/s"
+            )
+            print(f"Speed up:              {dur / packed_dur:.02f}x")
+    if args.json:
+        print(json.dumps(results, indent="    "))
 
 
 if __name__ == "__main__":
