@@ -12,6 +12,7 @@ from sentence_transformers import SentenceTransformer
 from elasticsearch import NotFoundError, OrjsonSerializer
 from elasticsearch.dsl.pydantic import AsyncBaseESModel
 from elasticsearch import dsl
+from elasticsearch.helpers import pack_dense_vector
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 dsl.async_connections.create_connection(hosts=[os.environ['ELASTICSEARCH_URL']], serializer=OrjsonSerializer())
@@ -33,6 +34,9 @@ class Quote(AsyncBaseESModel):
     class Index:
         name = 'quotes'
 
+    def clean(self):
+        # pack the embedding for efficient uploading
+        self.embedding = pack_dense_vector(self.embedding)
 
 class Tag(BaseModel):
     tag: str
