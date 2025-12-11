@@ -23,15 +23,15 @@ from elastic_transport import ObjectApiResponse, TextApiResponse
 from ._base import NamespacedClient
 from .utils import (
     Stability,
+    _availability_warning,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class StreamsClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def logs_disable(
         self,
         *,
@@ -83,7 +83,7 @@ class StreamsClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def logs_enable(
         self,
         *,
@@ -138,7 +138,7 @@ class StreamsClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def status(
         self,
         *,

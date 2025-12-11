@@ -23,16 +23,16 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class SearchApplicationClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def delete(
         self,
         *,
@@ -77,7 +77,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def delete_behavioral_analytics(
         self,
         *,
@@ -122,7 +122,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def get(
         self,
         *,
@@ -166,7 +166,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_behavioral_analytics(
         self,
         *,
@@ -215,7 +215,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def list(
         self,
         *,
@@ -270,7 +270,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="payload",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def post_behavioral_analytics_event(
         self,
         *,
@@ -338,7 +338,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="search_application",
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def put(
         self,
         *,
@@ -398,7 +398,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def put_behavioral_analytics(
         self,
         *,
@@ -445,7 +445,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def render_query(
         self,
         *,
@@ -510,7 +510,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def search(
         self,
         *,
