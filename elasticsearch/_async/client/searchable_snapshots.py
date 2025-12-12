@@ -46,8 +46,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cache statistics.
-          Get statistics about the shared cache for partially mounted indices.</p>
+          <p>Get cache statistics.</p>
+          <p>Get statistics about the shared cache for partially mounted indices.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-searchable-snapshots-cache-stats>`_
@@ -107,8 +107,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the cache.
-          Clear indices and data streams from the shared cache for partially mounted indices.</p>
+          <p>Clear the cache.</p>
+          <p>Clear indices and data streams from the shared cache for partially mounted indices.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-searchable-snapshots-clear-cache>`_
@@ -184,8 +184,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Mount a snapshot.
-          Mount a snapshot as a searchable snapshot index.
+          <p>Mount a snapshot.</p>
+          <p>Mount a snapshot as a searchable snapshot index.
           Do not use this API for snapshots managed by index lifecycle management (ILM).
           Manually mounting ILM-managed snapshots can interfere with ILM processes.</p>
 

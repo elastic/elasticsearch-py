@@ -22,9 +22,6 @@ from elastic_transport import ObjectApiResponse
 from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
-    Stability,
-    Visibility,
-    _availability_warning,
     _quote,
     _rewrite_parameters,
 )
@@ -33,7 +30,6 @@ from .utils import (
 class ShutdownClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def delete_node(
         self,
         *,
@@ -48,8 +44,8 @@ class ShutdownClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Cancel node shutdown preparations.
-          Remove a node from the shutdown list so it can resume normal operations.
+          <p>Cancel node shutdown preparations.</p>
+          <p>Remove a node from the shutdown list so it can resume normal operations.
           You must explicitly clear the shutdown request when a node rejoins the cluster or when a node has permanently left the cluster.
           Shutdown requests are never removed automatically by Elasticsearch.</p>
           <p>NOTE: This feature is designed for indirect use by Elastic Cloud, Elastic Cloud Enterprise, and Elastic Cloud on Kubernetes.
@@ -94,7 +90,6 @@ class ShutdownClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_node(
         self,
         *,
@@ -153,7 +148,6 @@ class ShutdownClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("reason", "type", "allocation_delay", "target_node_name"),
     )
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def put_node(
         self,
         *,

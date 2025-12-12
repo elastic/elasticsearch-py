@@ -46,8 +46,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the archived repositories metering.
-          Clear the archived repositories metering information in the cluster.</p>
+          <p>Clear the archived repositories metering.</p>
+          <p>Clear the archived repositories metering information in the cluster.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-clear-repositories-metering-archive>`_
@@ -99,8 +99,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster repositories metering.
-          Get repositories metering information for a cluster.
+          <p>Get cluster repositories metering.</p>
+          <p>Get repositories metering information for a cluster.
           This API exposes monotonically non-decreasing counters and it is expected that clients would durably store the information needed to compute aggregations over a period of time.
           Additionally, the information exposed by this API is volatile, meaning that it will not be present after node restarts.</p>
 
@@ -157,8 +157,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the hot threads for nodes.
-          Get a breakdown of the hot threads on each selected node in the cluster.
+          <p>Get the hot threads for nodes.</p>
+          <p>Get a breakdown of the hot threads on each selected node in the cluster.
           The output is plain text with a breakdown of the top hot threads for each node.</p>
 
 
@@ -378,8 +378,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get node statistics.
-          Get statistics for nodes in a cluster.
+          <p>Get node statistics.</p>
+          <p>Get statistics for nodes in a cluster.
           By default, all stats are returned. You can limit the returned information by using metrics.</p>
 
 
