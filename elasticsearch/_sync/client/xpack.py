@@ -56,7 +56,8 @@ class XPackClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/info-api.html>`_
 
-        :param accept_enterprise: If this param is used it must be set to true
+        :param accept_enterprise: If used, this otherwise ignored parameter must be set
+            to true
         :param categories: A comma-separated list of the information categories to include
             in the response. For example, `build,license,features`.
         """

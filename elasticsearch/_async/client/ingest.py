@@ -355,7 +355,7 @@ class IngestClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param summary: Return pipelines without their definitions (default: false)
+        :param summary: Return pipelines without their definitions
         """
         __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:

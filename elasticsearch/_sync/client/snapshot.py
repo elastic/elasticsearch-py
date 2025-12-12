@@ -23,6 +23,7 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    Visibility,
     _availability_warning,
     _quote,
     _rewrite_parameters,
@@ -913,7 +914,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL, Visibility.PRIVATE)
     def repository_verify_integrity(
         self,
         *,

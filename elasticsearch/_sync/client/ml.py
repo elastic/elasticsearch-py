@@ -3057,10 +3057,7 @@ class MlClient(NamespacedClient):
         if reset_start is not None:
             __query["reset_start"] = reset_start
         __body = data if data is not None else body
-        __headers = {
-            "accept": "application/json",
-            "content-type": "application/x-ndjson",
-        }
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4533,7 +4530,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("timeout",),
+    )
     def start_data_frame_analytics(
         self,
         *,
@@ -4543,6 +4542,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4574,6 +4574,7 @@ class MlClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_start'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4582,14 +4583,20 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
+        if not __body:
+            if timeout is not None:
+                __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.start_data_frame_analytics",
             path_parts=__path_parts,
         )
@@ -4719,7 +4726,7 @@ class MlClient(NamespacedClient):
             is greater than the number of hardware threads it will automatically be changed
             to a value less than the number of hardware threads. If adaptive_allocations
             is enabled, do not set this value, because it’s automatically set.
-        :param priority: The deployment priority.
+        :param priority: The deployment priority
         :param queue_capacity: Specifies the number of inference requests that are allowed
             in the queue. After the number of requests exceeds this value, new requests
             are rejected with a 429 error.
@@ -4781,7 +4788,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("allow_no_match", "force", "timeout"),
+    )
     def stop_data_frame_analytics(
         self,
         *,
@@ -4793,6 +4802,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4824,26 +4834,33 @@ class MlClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"id": _quote(id)}
         __path = f'/_ml/data_frame/analytics/{__path_parts["id"]}/_stop'
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if timeout is not None:
-            __query["timeout"] = timeout
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if timeout is not None:
+                __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.stop_data_frame_analytics",
             path_parts=__path_parts,
         )
@@ -4919,7 +4936,9 @@ class MlClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("allow_no_match", "force", "id"),
+    )
     def stop_trained_model_deployment(
         self,
         *,
@@ -4929,7 +4948,9 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4949,30 +4970,40 @@ class MlClient(NamespacedClient):
             no matches or only partial matches.
         :param force: Forcefully stops the deployment, even if it is used by ingest pipelines.
             You can't use these pipelines until you restart the model deployment.
+        :param id: If provided, must be the same identifier as in the path.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path_parts: t.Dict[str, str] = {"model_id": _quote(model_id)}
         __path = f'/_ml/trained_models/{__path_parts["model_id"]}/deployment/_stop'
         __query: t.Dict[str, t.Any] = {}
-        if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if force is not None:
-            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if allow_no_match is not None:
+                __body["allow_no_match"] = allow_no_match
+            if force is not None:
+                __body["force"] = force
+            if id is not None:
+                __body["id"] = id
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="ml.stop_trained_model_deployment",
             path_parts=__path_parts,
         )

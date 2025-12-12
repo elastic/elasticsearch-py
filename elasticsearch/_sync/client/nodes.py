@@ -170,7 +170,7 @@ class NodesClient(NamespacedClient):
             select, or to get a task from an empty queue) are filtered out.
         :param interval: The interval to do the second sampling of threads.
         :param snapshots: Number of samples of thread stacktrace.
-        :param sort: The sort order for 'cpu' type (default: total)
+        :param sort: The sort order for 'cpu' type
         :param threads: Specifies the number of hot threads to provide information for.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -388,7 +388,7 @@ class NodesClient(NamespacedClient):
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limits the information returned to the specific metrics.
         :param index_metric: Limit the information returned for indices metric to the
             specific index metrics. It can be used only if indices (or all) metric is
             specified.
@@ -502,8 +502,8 @@ class NodesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/cluster-nodes-usage.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
+            information. Use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes.
         :param metric: Limits the information returned to the specific metrics. A comma-separated
             list of the following options: `_all`, `rest_actions`.
         :param timeout: Period to wait for a response. If no response is received before
