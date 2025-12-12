@@ -22,8 +22,6 @@ from elastic_transport import ObjectApiResponse
 from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
-    Stability,
-    _availability_warning,
     _quote,
     _rewrite_parameters,
 )
