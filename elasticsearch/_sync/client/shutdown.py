@@ -33,7 +33,6 @@ from .utils import (
 class ShutdownClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def delete_node(
         self,
         *,
@@ -94,7 +93,6 @@ class ShutdownClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def get_node(
         self,
         *,
@@ -117,7 +115,8 @@ class ShutdownClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/get-shutdown.html>`_
 
-        :param node_id: Which node for which to retrieve the shutdown status
+        :param node_id: Comma-separated list of nodes for which to retrieve the shutdown
+            status
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -153,7 +152,6 @@ class ShutdownClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("reason", "type", "allocation_delay", "target_node_name"),
     )
-    @_availability_warning(Stability.STABLE, Visibility.PRIVATE)
     def put_node(
         self,
         *,

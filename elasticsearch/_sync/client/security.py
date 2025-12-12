@@ -892,8 +892,8 @@ class SecurityClient(NamespacedClient):
             Token names must be unique in the context of the associated service account.
             They must also be globally unique with their fully qualified names, which
             are comprised of the service account principal and token name, such as `<namespace>/<service>/<token-name>`.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
@@ -1208,8 +1208,8 @@ class SecurityClient(NamespacedClient):
         :param namespace: The namespace, which is a top-level grouping of service accounts.
         :param service: The service name.
         :param name: The name of the service account token.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:

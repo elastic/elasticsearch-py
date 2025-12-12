@@ -119,7 +119,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             into no concrete indices. (This includes `_all` string or when no indices
             have been specified)
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+            that are open, closed or both
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         """

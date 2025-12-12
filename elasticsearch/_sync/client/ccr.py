@@ -382,7 +382,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ccr-post-forget-follower.html>`_
 
-        :param index: the name of the leader index for which specified follower retention
+        :param index: Name of the leader index for which specified follower retention
             leases should be removed
         :param follower_cluster:
         :param follower_index:
@@ -862,7 +862,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/ccr-post-resume-follow.html>`_
 
-        :param index: The name of the follow index to resume following.
+        :param index: Name of the follow index to resume following
         :param master_timeout: Period to wait for a connection to the master node.
         :param max_outstanding_read_requests:
         :param max_outstanding_write_requests:

@@ -706,6 +706,7 @@ class Elasticsearch(BaseClient):
           <li>Perl: Check out <code>Search::Elasticsearch::Client::5_0::Bulk</code> and <code>Search::Elasticsearch::Client::5_0::Scroll</code></li>
           <li>Python: Check out <code>elasticsearch.helpers.*</code></li>
           <li>JavaScript: Check out <code>client.helpers.*</code></li>
+          <li>Java: Check out <code>co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester</code></li>
           <li>.NET: Check out <code>BulkAllObservable</code></li>
           <li>PHP: Check out bulk indexing.</li>
           <li>Ruby: Check out <code>Elasticsearch::Helpers::BulkHelper</code></li>
@@ -1729,11 +1730,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: t.Union[int, str],
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -1751,9 +1752,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1762,8 +1767,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4293,11 +4296,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4321,9 +4324,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4332,8 +4339,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -5486,11 +5491,19 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/search-vector-tile-api.html>`_
 
-        :param index: Comma-separated list of data streams, indices, or aliases to search
-        :param field: Field containing geospatial data to return
-        :param zoom: Zoom level for the vector tile to search
-        :param x: X coordinate for the vector tile to search
-        :param y: Y coordinate for the vector tile to search
+        :param index: A list of indices, data streams, or aliases to search. It supports
+            wildcards (`*`). To search all data streams and indices, omit this parameter
+            or use `*` or `_all`. To search a remote cluster, use the `<cluster>:<target>`
+            syntax.
+        :param field: A field that contains the geospatial data to return. It must be
+            a `geo_point` or `geo_shape` field. The field must have doc values enabled.
+            It cannot be a nested field. NOTE: Vector tiles do not natively support geometry
+            collections. For `geometrycollection` values in a `geo_shape` field, the
+            API returns a hits layer feature for each element of the collection. This
+            behavior may change in a future release.
+        :param zoom: The zoom level of the vector tile to search. It accepts `0` to `29`.
+        :param x: The X coordinate for the vector tile to search.
+        :param y: The Y coordinate for the vector tile to search.
         :param aggs: Sub-aggregations for the geotile_grid. It supports the following
             aggregation types: - `avg` - `boxplot` - `cardinality` - `extended stats`
             - `max` - `median absolute deviation` - `min` - `percentile` - `percentile-rank`
@@ -6670,11 +6683,11 @@ class Elasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -6692,9 +6705,13 @@ class Elasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -6703,8 +6720,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",

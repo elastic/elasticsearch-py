@@ -305,7 +305,7 @@ class ClusterClient(NamespacedClient):
             request. Wildcard (`*`) expressions are supported.
         :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
-            template (default: false)
+            template
         :param local: If `true`, the request retrieves information from the local node
             only. If `false`, information is retrieved from the master node.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -882,10 +882,10 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/cluster-update-settings.html>`_
 
-        :param flat_settings: Return settings in flat format (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param flat_settings: Return settings in flat format
+        :param master_timeout: The period to wait for a connection to the master node.
         :param persistent: The settings that persist after the cluster restarts.
-        :param timeout: Explicit operation timeout
+        :param timeout: The period to wait for a response.
         :param transient: The settings that do not persist after the cluster restarts.
         """
         __path_parts: t.Dict[str, str] = {}
@@ -1110,20 +1110,21 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/cluster-state.html>`_
 
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limit the information returned to the specified metrics.
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
             into no concrete indices. (This includes `_all` string or when no indices
             have been specified)
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param flat_settings: Return settings in flat format (default: false)
+            that are open, closed or both
+        :param flat_settings: Return settings in flat format
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+            node
+        :param master_timeout: Timeout for waiting for new cluster state in case it is
+            blocked
         :param wait_for_metadata_version: Wait for the metadata version to be equal or
             greater than the specified metadata version
         :param wait_for_timeout: The maximum time to wait for wait_for_metadata_version

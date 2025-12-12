@@ -402,7 +402,11 @@ class TextStructureClient(NamespacedClient):
         delimiter: t.Optional[str] = None,
         ecs_compatibility: t.Optional[str] = None,
         explain: t.Optional[bool] = None,
-        format: t.Optional[str] = None,
+        format: t.Optional[
+            t.Union[
+                str, t.Literal["delimited", "ndjson", "semi_structured_text", "xml"]
+            ]
+        ] = None,
         grok_pattern: t.Optional[str] = None,
         has_header_row: t.Optional[bool] = None,
         line_merge_size_limit: t.Optional[int] = None,

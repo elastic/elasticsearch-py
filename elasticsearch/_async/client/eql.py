@@ -249,7 +249,7 @@ class EqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/eql-search-api.html>`_
 
-        :param index: The name of the index to scope the operation
+        :param index: Comma-separated list of index names to scope the operation
         :param query: EQL query you wish to run.
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
             into no concrete indices. (This includes `_all` string or when no indices
@@ -291,7 +291,7 @@ class EqlClient(NamespacedClient):
             Defaults to 10
         :param tiebreaker_field: Field used to sort hits with the same timestamp in ascending
             order
-        :param timestamp_field: Field containing event timestamp. Default "@timestamp"
+        :param timestamp_field: Field containing event timestamp.
         :param wait_for_completion_timeout:
         """
         if index in SKIP_IN_PATH:
