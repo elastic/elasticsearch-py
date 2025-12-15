@@ -42,7 +42,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Return tags defined for the project</p>
+          <p>Get tags.</p>
+          <p>Get the tags that are defined for the project.</p>
 
         """
         __path_parts: t.Dict[str, str] = {}
