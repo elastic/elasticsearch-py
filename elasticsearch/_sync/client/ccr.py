@@ -125,8 +125,8 @@ class CcrClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a follower.
-          Create a cross-cluster replication follower index that follows a specific leader index.
+          <p>Create a follower.</p>
+          <p>Create a cross-cluster replication follower index that follows a specific leader index.
           When the API returns, the follower index exists and cross-cluster replication starts replicating operations from the leader index to the follower index.</p>
 
 
@@ -368,8 +368,8 @@ class CcrClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Forget a follower.
-          Remove the cross-cluster replication follower retention leases from the leader.</p>
+          <p>Forget a follower.</p>
+          <p>Remove the cross-cluster replication follower retention leases from the leader.</p>
           <p>A following index takes out retention leases on its leader index.
           These leases are used to increase the likelihood that the shards of the leader index retain the history of operations that the shards of the following index need to run replication.
           When a follower index is converted to a regular index by the unfollow API (either by directly calling the API or by index lifecycle management tasks), these leases are removed.
@@ -382,7 +382,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-forget-follower>`_
 
-        :param index: the name of the leader index for which specified follower retention
+        :param index: Name of the leader index for which specified follower retention
             leases should be removed
         :param follower_cluster:
         :param follower_index:
@@ -640,8 +640,8 @@ class CcrClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update auto-follow patterns.
-          Create a collection of cross-cluster replication auto-follow patterns for a remote cluster.
+          <p>Create or update auto-follow patterns.</p>
+          <p>Create a collection of cross-cluster replication auto-follow patterns for a remote cluster.
           Newly created indices on the remote cluster that match any of the patterns are automatically configured as follower indices.
           Indices on the remote cluster that were created before the auto-follow pattern was created will not be auto-followed even if they match the pattern.</p>
           <p>This API can also be used to update auto-follow patterns.
@@ -853,8 +853,8 @@ class CcrClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Resume a follower.
-          Resume a cross-cluster replication follower index that was paused.
+          <p>Resume a follower.</p>
+          <p>Resume a cross-cluster replication follower index that was paused.
           The follower index could have been paused with the pause follower API.
           Alternatively it could be paused due to replication that cannot be retried due to failures during following tasks.
           When this API returns, the follower index will resume fetching operations from the leader index.</p>
@@ -862,7 +862,7 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-resume-follow>`_
 
-        :param index: The name of the follow index to resume following.
+        :param index: Name of the follow index to resume following
         :param master_timeout: Period to wait for a connection to the master node.
         :param max_outstanding_read_requests:
         :param max_outstanding_write_requests:

@@ -1568,7 +1568,9 @@ class DenseVector(Field):
         self,
         *args: Any,
         dims: Union[int, "DefaultType"] = DEFAULT,
-        element_type: Union[Literal["bit", "byte", "float"], "DefaultType"] = DEFAULT,
+        element_type: Union[
+            Literal["bit", "byte", "float", "bfloat16"], "DefaultType"
+        ] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
         index_options: Union[
             "types.DenseVectorIndexOptions", Dict[str, Any], "DefaultType"

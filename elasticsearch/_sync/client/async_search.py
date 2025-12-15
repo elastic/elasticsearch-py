@@ -213,6 +213,7 @@ class AsyncSearchClient(NamespacedClient):
             "pit",
             "post_filter",
             "profile",
+            "project_routing",
             "query",
             "rescore",
             "runtime_mappings",
@@ -295,7 +296,7 @@ class AsyncSearchClient(NamespacedClient):
             t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         search_after: t.Optional[
@@ -358,7 +359,7 @@ class AsyncSearchClient(NamespacedClient):
         :param allow_partial_search_results: Indicate if an error should be returned
             if there is a partial search failure or timeout
         :param analyze_wildcard: Specify whether wildcard and prefix queries should be
-            analyzed (default: false)
+            analyzed
         :param analyzer: The analyzer to use for the query string
         :param batched_reduce_size: Affects how often partial results become available,
             which happens whenever shard results are reduced. A partial reduction is
@@ -374,7 +375,7 @@ class AsyncSearchClient(NamespacedClient):
             values for field names matching these patterns in the hits.fields property
             of the response.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+            that are open, closed or both
         :param explain: If true, returns detailed information about score computation
             as part of a hit.
         :param ext: Configuration of search extensions defined by Elasticsearch plugins.
@@ -407,7 +408,7 @@ class AsyncSearchClient(NamespacedClient):
             you cannot specify an <index> in the request path.
         :param post_filter:
         :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
+            on
         :param profile:
         :param project_routing: Specifies a subset of projects to target for the search
             using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
@@ -533,8 +534,6 @@ class AsyncSearchClient(NamespacedClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if request_cache is not None:
@@ -592,6 +591,8 @@ class AsyncSearchClient(NamespacedClient):
                 __body["post_filter"] = post_filter
             if profile is not None:
                 __body["profile"] = profile
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if rescore is not None:

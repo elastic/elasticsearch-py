@@ -46,8 +46,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the archived repositories metering.
-          Clear the archived repositories metering information in the cluster.</p>
+          <p>Clear the archived repositories metering.</p>
+          <p>Clear the archived repositories metering information in the cluster.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-clear-repositories-metering-archive>`_
@@ -99,8 +99,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster repositories metering.
-          Get repositories metering information for a cluster.
+          <p>Get cluster repositories metering.</p>
+          <p>Get repositories metering information for a cluster.
           This API exposes monotonically non-decreasing counters and it is expected that clients would durably store the information needed to compute aggregations over a period of time.
           Additionally, the information exposed by this API is volatile, meaning that it will not be present after node restarts.</p>
 
@@ -157,8 +157,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the hot threads for nodes.
-          Get a breakdown of the hot threads on each selected node in the cluster.
+          <p>Get the hot threads for nodes.</p>
+          <p>Get a breakdown of the hot threads on each selected node in the cluster.
           The output is plain text with a breakdown of the top hot threads for each node.</p>
 
 
@@ -169,7 +169,7 @@ class NodesClient(NamespacedClient):
             select, or to get a task from an empty queue) are filtered out.
         :param interval: The interval to do the second sampling of threads.
         :param snapshots: Number of samples of thread stacktrace.
-        :param sort: The sort order for 'cpu' type (default: total)
+        :param sort: The sort order for 'cpu' type
         :param threads: Specifies the number of hot threads to provide information for.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -220,7 +220,50 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "_none",
+                            "aggregations",
+                            "http",
+                            "indices",
+                            "ingest",
+                            "jvm",
+                            "os",
+                            "plugins",
+                            "process",
+                            "remote_cluster_server",
+                            "settings",
+                            "thread_pool",
+                            "transport",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "_none",
+                        "aggregations",
+                        "http",
+                        "indices",
+                        "ingest",
+                        "jvm",
+                        "os",
+                        "plugins",
+                        "process",
+                        "remote_cluster_server",
+                        "settings",
+                        "thread_pool",
+                        "transport",
+                    ],
+                ],
+            ]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
@@ -357,8 +400,120 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        index_metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "_none",
+                            "adaptive_selection",
+                            "allocations",
+                            "breaker",
+                            "discovery",
+                            "fs",
+                            "http",
+                            "indexing_pressure",
+                            "indices",
+                            "ingest",
+                            "jvm",
+                            "os",
+                            "process",
+                            "repositories",
+                            "script",
+                            "script_cache",
+                            "thread_pool",
+                            "transport",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "_none",
+                        "adaptive_selection",
+                        "allocations",
+                        "breaker",
+                        "discovery",
+                        "fs",
+                        "http",
+                        "indexing_pressure",
+                        "indices",
+                        "ingest",
+                        "jvm",
+                        "os",
+                        "process",
+                        "repositories",
+                        "script",
+                        "script_cache",
+                        "thread_pool",
+                        "transport",
+                    ],
+                ],
+            ]
+        ] = None,
+        index_metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[
+                        str,
+                        t.Literal[
+                            "_all",
+                            "bulk",
+                            "completion",
+                            "dense_vector",
+                            "docs",
+                            "fielddata",
+                            "flush",
+                            "get",
+                            "indexing",
+                            "mappings",
+                            "merge",
+                            "query_cache",
+                            "recovery",
+                            "refresh",
+                            "request_cache",
+                            "search",
+                            "segments",
+                            "shard_stats",
+                            "sparse_vector",
+                            "store",
+                            "translog",
+                            "warmer",
+                        ],
+                    ]
+                ],
+                t.Union[
+                    str,
+                    t.Literal[
+                        "_all",
+                        "bulk",
+                        "completion",
+                        "dense_vector",
+                        "docs",
+                        "fielddata",
+                        "flush",
+                        "get",
+                        "indexing",
+                        "mappings",
+                        "merge",
+                        "query_cache",
+                        "recovery",
+                        "refresh",
+                        "request_cache",
+                        "search",
+                        "segments",
+                        "shard_stats",
+                        "sparse_vector",
+                        "store",
+                        "translog",
+                        "warmer",
+                    ],
+                ],
+            ]
+        ] = None,
         completion_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -376,8 +531,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get node statistics.
-          Get statistics for nodes in a cluster.
+          <p>Get node statistics.</p>
+          <p>Get statistics for nodes in a cluster.
           By default, all stats are returned. You can limit the returned information by using metrics.</p>
 
 
@@ -385,7 +540,7 @@ class NodesClient(NamespacedClient):
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limits the information returned to the specific metrics.
         :param index_metric: Limit the information returned for indices metric to the
             specific index metrics. It can be used only if indices (or all) metric is
             specified.
@@ -483,7 +638,14 @@ class NodesClient(NamespacedClient):
         self,
         *,
         node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["_all", "aggregations", "rest_actions"]]
+                ],
+                t.Union[str, t.Literal["_all", "aggregations", "rest_actions"]],
+            ]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -499,10 +661,10 @@ class NodesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-usage>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
+            information. Use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes.
         :param metric: Limits the information returned to the specific metrics. A comma-separated
-            list of the following options: `_all`, `rest_actions`.
+            list of the following options: `_all`, `rest_actions`, `aggregations`.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """

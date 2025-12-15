@@ -54,7 +54,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-autoscaling-delete-autoscaling-policy>`_
 
-        :param name: the name of the autoscaling policy
+        :param name: Name of the autoscaling policy
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -163,7 +163,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-autoscaling-get-autoscaling-capacity>`_
 
-        :param name: the name of the autoscaling policy
+        :param name: Name of the autoscaling policy
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -219,7 +219,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-autoscaling-put-autoscaling-policy>`_
 
-        :param name: the name of the autoscaling policy
+        :param name: Name of the autoscaling policy
         :param policy:
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and

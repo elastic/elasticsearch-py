@@ -30,7 +30,7 @@ class DanglingIndicesClient(NamespacedClient):
         self,
         *,
         index_uuid: str,
-        accept_data_loss: bool,
+        accept_data_loss: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -41,8 +41,8 @@ class DanglingIndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a dangling index.
-          If Elasticsearch encounters index data that is absent from the current cluster state, those indices are considered to be dangling.
+          <p>Delete a dangling index.</p>
+          <p>If Elasticsearch encounters index data that is absent from the current cluster state, those indices are considered to be dangling.
           For example, this can happen if you delete more than <code>cluster.indices.tombstones.size</code> indices while an Elasticsearch node is offline.</p>
 
 
@@ -52,13 +52,11 @@ class DanglingIndicesClient(NamespacedClient):
             API to find the UUID.
         :param accept_data_loss: This parameter must be set to true to acknowledge that
             it will no longer be possible to recove data from the dangling index.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")
-        if accept_data_loss is None:
-            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
@@ -91,7 +89,7 @@ class DanglingIndicesClient(NamespacedClient):
         self,
         *,
         index_uuid: str,
-        accept_data_loss: bool,
+        accept_data_loss: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -116,13 +114,11 @@ class DanglingIndicesClient(NamespacedClient):
             from or determine which shard copies are fresh and which are stale, it cannot
             guarantee that the imported data represents the latest state of the index
             when it was last in the cluster.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")
-        if accept_data_loss is None:
-            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path_parts: t.Dict[str, str] = {"index_uuid": _quote(index_uuid)}
         __path = f'/_dangling/{__path_parts["index_uuid"]}'
         __query: t.Dict[str, t.Any] = {}
