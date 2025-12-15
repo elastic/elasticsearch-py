@@ -38,8 +38,8 @@ class LogstashClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a Logstash pipeline.
-          Delete a pipeline that is used for Logstash Central Management.
+          <p>Delete a Logstash pipeline.</p>
+          <p>Delete a pipeline that is used for Logstash Central Management.
           If the request succeeds, you receive an empty response with an appropriate status code.</p>
 
 
@@ -83,8 +83,8 @@ class LogstashClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get Logstash pipelines.
-          Get pipelines that are used for Logstash Central Management.</p>
+          <p>Get Logstash pipelines.</p>
+          <p>Get pipelines that are used for Logstash Central Management.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-logstash-get-pipeline>`_
