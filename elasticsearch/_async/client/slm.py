@@ -210,7 +210,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-lifecycle>`_
 
-        :param policy_id: Comma-separated list of snapshot lifecycle policies to retrieve
+        :param policy_id: A comma-separated list of snapshot lifecycle policy identifiers.
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
             and returns an error.

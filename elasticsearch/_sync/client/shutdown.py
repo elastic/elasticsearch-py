@@ -112,7 +112,8 @@ class ShutdownClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-shutdown-get-node>`_
 
-        :param node_id: Which node for which to retrieve the shutdown status
+        :param node_id: Comma-separated list of nodes for which to retrieve the shutdown
+            status
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -250,7 +251,11 @@ class ShutdownClient(NamespacedClient):
                 __body["allocation_delay"] = allocation_delay
             if target_node_name is not None:
                 __body["target_node_name"] = target_node_name
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

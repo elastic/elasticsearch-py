@@ -310,8 +310,7 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-basic>`_
 
-        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
-            false)
+        :param acknowledge: Whether the user has acknowledged acknowledge messages
         :param master_timeout: Period to wait for a connection to the master node.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -367,10 +366,9 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-trial>`_
 
-        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
-            false)
+        :param acknowledge: Whether the user has acknowledged acknowledge messages
         :param master_timeout: Period to wait for a connection to the master node.
-        :param type: The type of trial license to generate (default: "trial")
+        :param type: The type of trial license to generate
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_license/start_trial"

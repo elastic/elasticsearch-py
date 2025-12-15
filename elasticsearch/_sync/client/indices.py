@@ -1083,11 +1083,11 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-lifecycle>`_
 
         :param name: A comma-separated list of data streams of which the data stream
-            lifecycle will be deleted; use `*` to get all data streams
+            lifecycle will be deleted. Use `*` to get all data streams
         :param expand_wildcards: Whether wildcard expressions should get expanded to
             open or closed indices (default: open)
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit timestamp for the document
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1211,11 +1211,11 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream-options>`_
 
         :param name: A comma-separated list of data streams of which the data stream
-            options will be deleted; use `*` to get all data streams
+            options will be deleted. Use `*` to get all data streams
         :param expand_wildcards: Whether wildcard expressions should get expanded to
-            open or closed indices (default: open)
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit timestamp for the document
+            open or closed indices
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1832,10 +1832,10 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-explain-data-lifecycle>`_
 
-        :param index: The name of the index to explain
-        :param include_defaults: indicates if the API should return the default values
+        :param index: Comma-separated list of index names to explain
+        :param include_defaults: Indicates if the API should return the default values
             the system uses for the index's lifecycle
-        :param master_timeout: Specify timeout for connection to master
+        :param master_timeout: The period to wait for a connection to the master node.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2117,15 +2117,15 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
         :param flush: Specify whether the index should be flushed after performing the
-            operation (default: true)
+            operation
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param max_num_segments: The number of segments the index should be merged into
-            (default: dynamic)
+            (defayult: dynamic)
         :param only_expunge_deletes: Specify whether the operation should only expunge
             deleted documents
         :param wait_for_completion: Should the request wait until the force merge is
-            completed.
+            completed
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -3273,7 +3273,11 @@ class IndicesClient(NamespacedClient):
         if not __body:
             if actions is not None:
                 __body["actions"] = actions
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3419,7 +3423,7 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-promote-data-stream>`_
 
-        :param name: The name of the data stream
+        :param name: The name of the data stream to promote
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -3887,7 +3891,7 @@ class IndicesClient(NamespacedClient):
             via `actions.auto_create_index`. If set to `false`, then indices or data
             streams matching the template must always be explicitly created, and may
             never be automatically created.
-        :param cause: User defined reason for creating/updating the index template
+        :param cause: User defined reason for creating or updating the index template
         :param composed_of: An ordered list of component template names. Component templates
             are merged in the order specified, meaning that the last component template
             specified has the highest precedence.
@@ -3966,7 +3970,11 @@ class IndicesClient(NamespacedClient):
                 __body["template"] = template
             if version is not None:
                 __body["version"] = version
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4057,7 +4065,7 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
 
         :param index: A comma-separated list of index names the mapping should be added
-            to (supports wildcards); use `_all` or omit to add the mapping on all indices.
+            to (supports wildcards). Use `_all` or omit to add the mapping on all indices.
         :param allow_no_indices: If `false`, the request returns an error if any wildcard
             expression, index alias, or `_all` value targets only missing or closed indices.
             This behavior applies even if the request targets other open indices.
@@ -4141,7 +4149,11 @@ class IndicesClient(NamespacedClient):
                 __body["runtime"] = runtime
             if source is not None:
                 __body["_source"] = source
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4359,7 +4371,7 @@ class IndicesClient(NamespacedClient):
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
-        :param cause: User defined reason for creating/updating the index template
+        :param cause: User defined reason for creating or updating the index template
         :param create: If true, this request cannot replace or update existing index
             templates.
         :param index_patterns: Array of wildcard expressions used to match the names
@@ -4410,7 +4422,11 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
             if version is not None:
                 __body["version"] = version
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5817,7 +5833,7 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param metric: Limit the information returned the specific metrics.
+        :param metric: Limit the information returned the specific metrics
         :param completion_fields: Comma-separated list or wildcard expressions of fields
             to include in fielddata and suggest statistics.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
@@ -5940,7 +5956,11 @@ class IndicesClient(NamespacedClient):
         if not __body:
             if actions is not None:
                 __body["actions"] = actions
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

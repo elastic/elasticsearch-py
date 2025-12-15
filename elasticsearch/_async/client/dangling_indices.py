@@ -52,8 +52,8 @@ class DanglingIndicesClient(NamespacedClient):
             API to find the UUID.
         :param accept_data_loss: This parameter must be set to true to acknowledge that
             it will no longer be possible to recove data from the dangling index.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")
@@ -114,8 +114,8 @@ class DanglingIndicesClient(NamespacedClient):
             from or determine which shard copies are fresh and which are stale, it cannot
             guarantee that the imported data represents the latest state of the index
             when it was last in the cluster.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index_uuid'")

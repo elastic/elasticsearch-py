@@ -350,7 +350,11 @@ class QueryRulesClient(NamespacedClient):
                 __body["type"] = type
             if priority is not None:
                 __body["priority"] = priority
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -414,7 +418,11 @@ class QueryRulesClient(NamespacedClient):
         if not __body:
             if rules is not None:
                 __body["rules"] = rules
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -473,7 +481,11 @@ class QueryRulesClient(NamespacedClient):
         if not __body:
             if match_criteria is not None:
                 __body["match_criteria"] = match_criteria
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

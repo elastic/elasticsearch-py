@@ -1627,7 +1627,11 @@ class Elasticsearch(BaseClient):
                 __body["slice"] = slice
             if sort is not None:
                 __body["sort"] = sort
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2830,13 +2834,11 @@ class Elasticsearch(BaseClient):
               &quot;id&quot;: &quot;elkbee&quot;
             }
           }
-
-          In this example, the operation will succeed since the supplied version of 2 is higher than the current document version of 1.
-          If the document was already updated and its version was set to 2 or higher, the indexing command will fail and result in a conflict (409 HTTP status code).
-
-          A nice side effect is that there is no need to maintain strict ordering of async indexing operations run as a result of changes to a source database, as long as version numbers from the source database are used.
-          Even the simple case of updating the Elasticsearch index using data from a database is simplified if external versioning is used, as only the latest version will be used if the index operations arrive out of order.
           </code></pre>
+          <p>In this example, the operation will succeed since the supplied version of 2 is higher than the current document version of 1.
+          If the document was already updated and its version was set to 2 or higher, the indexing command will fail and result in a conflict (409 HTTP status code).</p>
+          <p>A nice side effect is that there is no need to maintain strict ordering of async indexing operations run as a result of changes to a source database, as long as version numbers from the source database are used.
+          Even the simple case of updating the Elasticsearch index using data from a database is simplified if external versioning is used, as only the latest version will be used if the index operations arrive out of order.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-create>`_
@@ -3116,7 +3118,11 @@ class Elasticsearch(BaseClient):
                 __body["docs"] = docs
             if ids is not None:
                 __body["ids"] = ids
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3716,7 +3722,11 @@ class Elasticsearch(BaseClient):
         if not __body:
             if script is not None:
                 __body["script"] = script
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3812,7 +3822,11 @@ class Elasticsearch(BaseClient):
                 __body["requests"] = requests
             if metric is not None:
                 __body["metric"] = metric
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3985,7 +3999,11 @@ class Elasticsearch(BaseClient):
                 __body["script"] = script
             if size is not None:
                 __body["size"] = size
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5156,11 +5174,19 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-mvt>`_
 
-        :param index: Comma-separated list of data streams, indices, or aliases to search
-        :param field: Field containing geospatial data to return
-        :param zoom: Zoom level for the vector tile to search
-        :param x: X coordinate for the vector tile to search
-        :param y: Y coordinate for the vector tile to search
+        :param index: A list of indices, data streams, or aliases to search. It supports
+            wildcards (`*`). To search all data streams and indices, omit this parameter
+            or use `*` or `_all`. To search a remote cluster, use the `<cluster>:<target>`
+            syntax.
+        :param field: A field that contains the geospatial data to return. It must be
+            a `geo_point` or `geo_shape` field. The field must have doc values enabled.
+            It cannot be a nested field. NOTE: Vector tiles do not natively support geometry
+            collections. For `geometrycollection` values in a `geo_shape` field, the
+            API returns a hits layer feature for each element of the collection. This
+            behavior may change in a future release.
+        :param zoom: The zoom level of the vector tile to search. It accepts `0` to `29`.
+        :param x: The X coordinate for the vector tile to search.
+        :param y: The Y coordinate for the vector tile to search.
         :param aggs: Sub-aggregations for the geotile_grid. It supports the following
             aggregation types: - `avg` - `boxplot` - `cardinality` - `extended stats`
             - `max` - `median absolute deviation` - `min` - `percentile` - `percentile-rank`
@@ -5530,7 +5556,11 @@ class Elasticsearch(BaseClient):
                 __body["profile"] = profile
             if source is not None:
                 __body["source"] = source
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6001,7 +6031,11 @@ class Elasticsearch(BaseClient):
                 __body["_source"] = source
             if upsert is not None:
                 __body["upsert"] = upsert
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

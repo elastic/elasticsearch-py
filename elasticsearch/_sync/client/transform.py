@@ -520,7 +520,11 @@ class TransformClient(NamespacedClient):
                 __body["settings"] = settings
             if sync is not None:
                 __body["sync"] = sync
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -950,7 +954,11 @@ class TransformClient(NamespacedClient):
                 __body["source"] = source
             if sync is not None:
                 __body["sync"] = sync
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

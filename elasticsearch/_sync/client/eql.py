@@ -249,7 +249,7 @@ class EqlClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-search>`_
 
-        :param index: The name of the index to scope the operation
+        :param index: Comma-separated list of index names to scope the operation
         :param query: EQL query you wish to run.
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
             into no concrete indices. (This includes `_all` string or when no indices
@@ -355,7 +355,11 @@ class EqlClient(NamespacedClient):
                 __body["timestamp_field"] = timestamp_field
             if wait_for_completion_timeout is not None:
                 __body["wait_for_completion_timeout"] = wait_for_completion_timeout
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

@@ -71,7 +71,7 @@ class StreamsClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        __headers = {"accept": "application/json,text/plain"}
+        __headers = {"accept": "text/plain,application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -126,7 +126,7 @@ class StreamsClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        __headers = {"accept": "application/json,text/plain"}
+        __headers = {"accept": "text/plain,application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
