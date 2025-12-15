@@ -555,7 +555,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -567,8 +567,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Bulk index or delete documents.
-          Perform multiple <code>index</code>, <code>create</code>, <code>delete</code>, and <code>update</code> actions in a single request.
+          <p>Bulk index or delete documents.</p>
+          <p>Perform multiple <code>index</code>, <code>create</code>, <code>delete</code>, and <code>update</code> actions in a single request.
           This reduces overhead and can greatly increase indexing speed.</p>
           <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or index alias:</p>
           <ul>
@@ -616,6 +616,7 @@ class AsyncElasticsearch(BaseClient):
           <li>Perl: Check out <code>Search::Elasticsearch::Client::5_0::Bulk</code> and <code>Search::Elasticsearch::Client::5_0::Scroll</code></li>
           <li>Python: Check out <code>elasticsearch.helpers.*</code></li>
           <li>JavaScript: Check out <code>client.helpers.*</code></li>
+          <li>Java: Check out <code>co.elastic.clients.elasticsearch._helpers.bulk.BulkIngester</code></li>
           <li>.NET: Check out <code>BulkAllObservable</code></li>
           <li>PHP: Check out bulk indexing.</li>
           <li>Ruby: Check out <code>Elasticsearch::Helpers::BulkHelper</code></li>
@@ -773,8 +774,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Clear a scrolling search.
-          Clear the search context and results for a scrolling search.</p>
+          <p>Clear a scrolling search.</p>
+          <p>Clear the search context and results for a scrolling search.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-clear-scroll>`_
@@ -827,8 +828,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Close a point in time.
-          A point in time must be opened explicitly before being used in search requests.
+          <p>Close a point in time.</p>
+          <p>A point in time must be opened explicitly before being used in search requests.
           The <code>keep_alive</code> parameter tells Elasticsearch how long it should persist.
           A point in time is automatically closed when the <code>keep_alive</code> period has elapsed.
           However, keeping points in time has a cost; close them as soon as they are no longer required for search requests.</p>
@@ -898,15 +899,15 @@ class AsyncElasticsearch(BaseClient):
         project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         terminate_after: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
-          <p>Count search results.
-          Get the number of documents matching a query.</p>
+          <p>Count search results.</p>
+          <p>Get the number of documents matching a query.</p>
           <p>The query can be provided either by using a simple query string as a parameter, or by defining Query DSL within the request body.
           The query is optional. When no query is provided, the API uses <code>match_all</code> to count all the documents.</p>
           <p>The count API supports multi-target syntax. You can run a single count API search across multiple data streams and indices.</p>
@@ -1053,7 +1054,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -1232,7 +1233,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -1375,7 +1376,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1648,11 +1649,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -1670,9 +1671,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_delete_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1681,8 +1686,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -1708,8 +1711,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Delete a script or search template.
-          Deletes a stored script or search template.</p>
+          <p>Delete a script or search template.</p>
+          <p>Deletes a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-delete-script>`_
@@ -1769,7 +1772,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -1899,7 +1902,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2010,7 +2013,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2020,8 +2023,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Explain a document match result.
-          Get information about why a specific document matches, or doesn't match, a query.
+          <p>Explain a document match result.</p>
+          <p>Get information about why a specific document matches, or doesn't match, a query.
           It computes a score explanation for a query and a specific document.</p>
 
 
@@ -2121,7 +2124,7 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("fields", "index_filter", "runtime_mappings"),
+        body_fields=("fields", "index_filter", "project_routing", "runtime_mappings"),
     )
     async def field_caps(
         self,
@@ -2139,7 +2142,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        filters: t.Optional[str] = None,
+        filters: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_empty_fields: t.Optional[bool] = None,
@@ -2232,8 +2235,6 @@ class AsyncElasticsearch(BaseClient):
             __query["include_unmapped"] = include_unmapped
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if types is not None:
             __query["types"] = types
         if not __body:
@@ -2241,6 +2242,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["fields"] = fields
             if index_filter is not None:
                 __body["index_filter"] = index_filter
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if runtime_mappings is not None:
                 __body["runtime_mappings"] = runtime_mappings
         if not __body:
@@ -2279,7 +2282,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_exclude_vectors: t.Optional[bool] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2437,8 +2440,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get a script or search template.
-          Retrieves a stored script or search template.</p>
+          <p>Get a script or search template.</p>
+          <p>Retrieves a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-get-script>`_
@@ -2571,7 +2574,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2674,8 +2677,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get the cluster health.
-          Get a report with the health status of an Elasticsearch cluster.
+          <p>Get the cluster health.</p>
+          <p>Get a report with the health status of an Elasticsearch cluster.
           The report contains a list of indicators that compose Elasticsearch functionality.</p>
           <p>Each indicator has a health status of: green, unknown, yellow or red.
           The indicator will provide an explanation and metadata describing the reason for its current health status.</p>
@@ -2753,7 +2756,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -2846,13 +2849,11 @@ class AsyncElasticsearch(BaseClient):
               &quot;id&quot;: &quot;elkbee&quot;
             }
           }
-
-          In this example, the operation will succeed since the supplied version of 2 is higher than the current document version of 1.
-          If the document was already updated and its version was set to 2 or higher, the indexing command will fail and result in a conflict (409 HTTP status code).
-
-          A nice side effect is that there is no need to maintain strict ordering of async indexing operations run as a result of changes to a source database, as long as version numbers from the source database are used.
-          Even the simple case of updating the Elasticsearch index using data from a database is simplified if external versioning is used, as only the latest version will be used if the index operations arrive out of order.
           </code></pre>
+          <p>In this example, the operation will succeed since the supplied version of 2 is higher than the current document version of 1.
+          If the document was already updated and its version was set to 2 or higher, the indexing command will fail and result in a conflict (409 HTTP status code).</p>
+          <p>A nice side effect is that there is no need to maintain strict ordering of async indexing operations run as a result of changes to a source database, as long as version numbers from the source database are used.
+          Even the simple case of updating the Elasticsearch index using data from a database is simplified if external versioning is used, as only the latest version will be used if the index operations arrive out of order.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-create>`_
@@ -2987,8 +2988,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Get cluster info.
-          Get basic build, version, and cluster information.
+          <p>Get cluster info.</p>
+          <p>Get basic build, version, and cluster information.
           ::: In Serverless, this API is retained for backward compatibility only. Some response fields, such as the version number, should be ignored.</p>
 
 
@@ -3037,7 +3038,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3174,7 +3175,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
@@ -3440,7 +3441,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -3545,7 +3546,7 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("index_filter",),
+        body_fields=("index_filter", "project_routing"),
     )
     async def open_point_in_time(
         self,
@@ -3570,7 +3571,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3662,13 +3663,13 @@ class AsyncElasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if routing is not None:
             __query["routing"] = routing
         if not __body:
             if index_filter is not None:
                 __body["index_filter"] = index_filter
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3704,8 +3705,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Create or update a script or search template.
-          Creates or updates a stored script or search template.</p>
+          <p>Create or update a script or search template.</p>
+          <p>Creates or updates a stored script or search template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-put-script>`_
@@ -3788,7 +3789,9 @@ class AsyncElasticsearch(BaseClient):
         ignore_unavailable: t.Optional[bool] = None,
         metric: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        search_type: t.Optional[str] = None,
+        search_type: t.Optional[
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+        ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3908,7 +3911,8 @@ class AsyncElasticsearch(BaseClient):
           <li>To automatically create a data stream or index with a reindex API request, you must have the <code>auto_configure</code>, <code>create_index</code>, or <code>manage</code> index privilege for the destination data stream, index, or alias.</li>
           <li>If reindexing from a remote cluster, the <code>source.remote.user</code> must have the <code>monitor</code> cluster privilege and the <code>read</code> index privilege for the source data stream, index, or alias.</li>
           </ul>
-          <p>If reindexing from a remote cluster, you must explicitly allow the remote host in the <code>reindex.remote.whitelist</code> setting.
+          <p>If reindexing from a remote cluster into a cluster using Elastic Stack, you must explicitly allow the remote host using the <code>reindex.remote.whitelist</code> node setting on the destination cluster.
+          If reindexing from a remote cluster into an Elastic Cloud Serverless project, only remote hosts from Elastic Cloud Hosted are allowed.
           Automatic data stream creation requires a matching index template with data stream enabled.</p>
           <p>The <code>dest</code> element can be configured like the index API to control optimistic concurrency control.
           Omitting <code>version_type</code> or setting it to <code>internal</code> causes Elasticsearch to blindly dump documents into the destination, overwriting any that happen to have the same ID.</p>
@@ -4035,11 +4039,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -4063,9 +4067,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_reindex/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4074,8 +4082,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4330,6 +4336,7 @@ class AsyncElasticsearch(BaseClient):
             "pit",
             "post_filter",
             "profile",
+            "project_routing",
             "query",
             "rank",
             "rescore",
@@ -4418,7 +4425,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         retriever: t.Optional[t.Mapping[str, t.Any]] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -4750,8 +4757,6 @@ class AsyncElasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if request_cache is not None:
@@ -4811,6 +4816,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["post_filter"] = post_filter
             if profile is not None:
                 __body["profile"] = profile
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if rank is not None:
@@ -5193,11 +5200,19 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-mvt>`_
 
-        :param index: Comma-separated list of data streams, indices, or aliases to search
-        :param field: Field containing geospatial data to return
-        :param zoom: Zoom level for the vector tile to search
-        :param x: X coordinate for the vector tile to search
-        :param y: Y coordinate for the vector tile to search
+        :param index: A list of indices, data streams, or aliases to search. It supports
+            wildcards (`*`). To search all data streams and indices, omit this parameter
+            or use `*` or `_all`. To search a remote cluster, use the `<cluster>:<target>`
+            syntax.
+        :param field: A field that contains the geospatial data to return. It must be
+            a `geo_point` or `geo_shape` field. The field must have doc values enabled.
+            It cannot be a nested field. NOTE: Vector tiles do not natively support geometry
+            collections. For `geometrycollection` values in a `geo_shape` field, the
+            API returns a hits layer feature for each element of the collection. This
+            behavior may change in a future release.
+        :param zoom: The zoom level of the vector tile to search. It accepts `0` to `29`.
+        :param x: The X coordinate for the vector tile to search.
+        :param y: The Y coordinate for the vector tile to search.
         :param aggs: Sub-aggregations for the geotile_grid. It supports the following
             aggregation types: - `avg` - `boxplot` - `cardinality` - `extended stats`
             - `max` - `median absolute deviation` - `min` - `percentile` - `percentile-rank`
@@ -5359,7 +5374,7 @@ class AsyncElasticsearch(BaseClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5468,7 +5483,7 @@ class AsyncElasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
@@ -5605,7 +5620,7 @@ class AsyncElasticsearch(BaseClient):
     async def terms_enum(
         self,
         *,
-        index: str,
+        index: t.Union[str, t.Sequence[str]],
         field: t.Optional[str] = None,
         case_insensitive: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -5731,7 +5746,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
@@ -5915,7 +5930,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         retry_on_conflict: t.Optional[int] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scripted_upsert: t.Optional[bool] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
@@ -6095,7 +6110,7 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        routing: t.Optional[str] = None,
+        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
@@ -6120,8 +6135,8 @@ class AsyncElasticsearch(BaseClient):
         """
         .. raw:: html
 
-          <p>Update documents.
-          Updates documents that match the specified query.
+          <p>Update documents.</p>
+          <p>Updates documents that match the specified query.
           If no query is specified, performs an update on every document in the data stream or index without modifying the source, which is useful for picking up mapping changes.</p>
           <p>If the Elasticsearch security features are enabled, you must have the following index privileges for the target data stream, index, or alias:</p>
           <ul>
@@ -6400,11 +6415,11 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         task_id: str,
+        requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -6422,9 +6437,13 @@ class AsyncElasticsearch(BaseClient):
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
+        if requests_per_second is None:
+            raise ValueError("Empty value passed for parameter 'requests_per_second'")
         __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
         __path = f'/_update_by_query/{__path_parts["task_id"]}/_rethrottle'
         __query: t.Dict[str, t.Any] = {}
+        if requests_per_second is not None:
+            __query["requests_per_second"] = requests_per_second
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -6433,8 +6452,6 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if requests_per_second is not None:
-            __query["requests_per_second"] = requests_per_second
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",

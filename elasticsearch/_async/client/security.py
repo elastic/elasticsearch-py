@@ -288,8 +288,8 @@ class SecurityClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Bulk update API keys.
-          Update the attributes for multiple API keys.</p>
+          <p>Bulk update API keys.</p>
+          <p>Update the attributes for multiple API keys.</p>
           <p>IMPORTANT: It is not possible to use an API key as the authentication credential for this API. To update API keys, the owner user's credentials are required.</p>
           <p>This API is similar to the update API key API but enables you to apply the same update to multiple API keys in one API call. This operation can greatly improve performance over making individual updates.</p>
           <p>It is not possible to update expired or invalidated API keys.</p>
@@ -477,7 +477,7 @@ class SecurityClient(NamespacedClient):
     async def clear_cached_privileges(
         self,
         *,
-        application: str,
+        application: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -905,8 +905,8 @@ class SecurityClient(NamespacedClient):
             Token names must be unique in the context of the associated service account.
             They must also be globally unique with their fully qualified names, which
             are comprised of the service account principal and token name, such as `<namespace>/<service>/<token-name>`.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
@@ -1221,8 +1221,8 @@ class SecurityClient(NamespacedClient):
         :param namespace: The namespace, which is a top-level grouping of service accounts.
         :param service: The service name.
         :param name: The name of the service account token.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
@@ -3763,7 +3763,8 @@ class SecurityClient(NamespacedClient):
         :param size: The number of hits to return. It must not be negative. By default,
             you cannot page through more than 10,000 hits using the `from` and `size`
             parameters. To page through more hits, use the `search_after` parameter.
-        :param sort: The sort definition. You can sort on `username`, `roles`, or `enabled`.
+        :param sort: The sort definition. You can sort on `name`, `description`, `metadata`,
+            `applications.application`, `applications.privileges`, and `applications.resources`.
             In addition, sort can also be applied to the `_doc` field to sort by index
             order.
         """

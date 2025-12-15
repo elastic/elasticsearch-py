@@ -85,6 +85,45 @@ class TransformClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    async def get_node_stats(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get node stats.</p>
+          <p>Get per-node information about transform usage.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-transform-get-node-stats>`_
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_transform/_node_stats"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="transform.get_node_stats",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
@@ -104,8 +143,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get transforms.
-          Get configuration information for transforms.</p>
+          <p>Get transforms.</p>
+          <p>Get configuration information for transforms.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-transform-get-transform>`_
@@ -262,8 +301,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Preview a transform.
-          Generates a preview of the results that you will get when you create a transform with the same configuration.</p>
+          <p>Preview a transform.</p>
+          <p>Generates a preview of the results that you will get when you create a transform with the same configuration.</p>
           <p>It returns a maximum of 100 results. The calculations are based on all the current data in the source index. It also
           generates a list of mappings and settings for the destination index. These values are determined based on the field
           types of the source index and the transform aggregations.</p>
@@ -386,8 +425,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a transform.
-          Creates a transform.</p>
+          <p>Create a transform.</p>
+          <p>Creates a transform.</p>
           <p>A transform copies data from source indices, transforms it, and persists it into an entity-centric destination index. You can also think of the destination index as a two-dimensional tabular data structure (known as
           a data frame). The ID for each document in the data frame is generated from a hash of the entity, so there is a
           unique row per entity.</p>
@@ -616,8 +655,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set upgrade_mode for transform indices.
-          Sets a cluster wide upgrade_mode setting that prepares transform
+          <p>Set upgrade_mode for transform indices.</p>
+          <p>Sets a cluster wide upgrade_mode setting that prepares transform
           indices for an upgrade.
           When upgrading your cluster, in some circumstances you must restart your
           nodes and reindex your transform indices. In those circumstances,
@@ -749,8 +788,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Stop transforms.
-          Stops one or more transforms.</p>
+          <p>Stop transforms.</p>
+          <p>Stops one or more transforms.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-transform-stop-transform>`_
@@ -846,8 +885,8 @@ class TransformClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update a transform.
-          Updates certain properties of a transform.</p>
+          <p>Update a transform.</p>
+          <p>Updates certain properties of a transform.</p>
           <p>All updated properties except <code>description</code> do not take effect until after the transform starts the next checkpoint,
           thus there is data consistency in each checkpoint. To use this API, you must have <code>read</code> and <code>view_index_metadata</code>
           privileges for the source indices. You must also have <code>index</code> and <code>read</code> privileges for the destination index. When

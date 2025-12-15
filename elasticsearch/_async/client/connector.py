@@ -644,8 +644,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check in a connector sync job.
-          Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
+          <p>Check in a connector sync job.</p>
+          <p>Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -701,8 +701,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Claim a connector sync job.
-          This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
+          <p>Claim a connector sync job.</p>
+          <p>This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
           Additionally, it can set the <code>sync_cursor</code> property for the sync job.</p>
           <p>This API is not intended for direct connector management by users.
           It supports the implementation of services that utilize the connector protocol to communicate with Elasticsearch.</p>
@@ -820,8 +820,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set a connector sync job error.
-          Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
+          <p>Set a connector sync job error.</p>
+          <p>Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -1087,8 +1087,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set the connector sync job stats.
-          Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
+          <p>Set the connector sync job stats.</p>
+          <p>Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
           You can also update <code>last_seen</code>.
           This API is mainly used by the connector service for updating sync job information.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
@@ -1403,8 +1403,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update the connector features.
-          Update the connector features in the connector document.
+          <p>Update the connector features.</p>
+          <p>Update the connector features in the connector document.
           This API can be used to control the following aspects of a connector:</p>
           <ul>
           <li>document-level security</li>

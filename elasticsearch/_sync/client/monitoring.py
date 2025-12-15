@@ -45,8 +45,8 @@ class MonitoringClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Send monitoring data.
-          This API is used by the monitoring features to send monitoring data.</p>
+          <p>Send monitoring data.</p>
+          <p>This API is used by the monitoring features to send monitoring data.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch>`_
