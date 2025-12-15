@@ -494,9 +494,9 @@ class WatcherClient(NamespacedClient):
         :param active: The initial state of the watch. The default value is `true`, which
             means the watch is active by default.
         :param condition: The condition that defines if the actions should be run.
-        :param if_primary_term: only update the watch if the last operation that has
+        :param if_primary_term: Only update the watch if the last operation that has
             changed the watch has the specified primary term
-        :param if_seq_no: only update the watch if the last operation that has changed
+        :param if_seq_no: Only update the watch if the last operation that has changed
             the watch has the specified sequence number
         :param input: The input that defines the input that loads the data for the watch.
         :param metadata: Metadata JSON that will be copied into the history entries.
@@ -552,7 +552,11 @@ class WatcherClient(NamespacedClient):
                 __body["transform"] = transform
             if trigger is not None:
                 __body["trigger"] = trigger
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -880,7 +884,11 @@ class WatcherClient(NamespacedClient):
                 __body["index.auto_expand_replicas"] = index_auto_expand_replicas
             if index_number_of_replicas is not None:
                 __body["index.number_of_replicas"] = index_number_of_replicas
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

@@ -94,7 +94,11 @@ class SecurityClient(NamespacedClient):
                 __body["password"] = password
             if username is not None:
                 __body["username"] = username
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -197,7 +201,11 @@ class SecurityClient(NamespacedClient):
         if not __body:
             if names is not None:
                 __body["names"] = names
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -258,7 +266,11 @@ class SecurityClient(NamespacedClient):
         if not __body:
             if roles is not None:
                 __body["roles"] = roles
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -342,7 +354,11 @@ class SecurityClient(NamespacedClient):
                 __body["metadata"] = metadata
             if role_descriptors is not None:
                 __body["role_descriptors"] = role_descriptors
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -416,7 +432,11 @@ class SecurityClient(NamespacedClient):
                 __body["password"] = password
             if password_hash is not None:
                 __body["password_hash"] = password_hash
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -763,7 +783,11 @@ class SecurityClient(NamespacedClient):
                 __body["name"] = name
             if role_descriptors is not None:
                 __body["role_descriptors"] = role_descriptors
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -845,7 +869,11 @@ class SecurityClient(NamespacedClient):
                 __body["expiration"] = expiration
             if metadata is not None:
                 __body["metadata"] = metadata
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -892,8 +920,8 @@ class SecurityClient(NamespacedClient):
             Token names must be unique in the context of the associated service account.
             They must also be globally unique with their fully qualified names, which
             are comprised of the service account principal and token name, such as `<namespace>/<service>/<token-name>`.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
@@ -994,7 +1022,11 @@ class SecurityClient(NamespacedClient):
         if not __body:
             if x509_certificate_chain is not None:
                 __body["x509_certificate_chain"] = x509_certificate_chain
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -1208,8 +1240,8 @@ class SecurityClient(NamespacedClient):
         :param namespace: The namespace, which is a top-level grouping of service accounts.
         :param service: The service name.
         :param name: The name of the service account token.
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` (the default) then wait for a refresh to
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
@@ -2144,7 +2176,11 @@ class SecurityClient(NamespacedClient):
                 __body["scope"] = scope
             if username is not None:
                 __body["username"] = username
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2408,7 +2444,11 @@ class SecurityClient(NamespacedClient):
                 __body["run_as"] = run_as
             if username is not None:
                 __body["username"] = username
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2544,7 +2584,11 @@ class SecurityClient(NamespacedClient):
                 __body["cluster"] = cluster
             if index is not None:
                 __body["index"] = index
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2605,7 +2649,11 @@ class SecurityClient(NamespacedClient):
                 __body["privileges"] = privileges
             if uids is not None:
                 __body["uids"] = uids
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2694,7 +2742,11 @@ class SecurityClient(NamespacedClient):
                 __body["realm_name"] = realm_name
             if username is not None:
                 __body["username"] = username
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -2768,7 +2820,11 @@ class SecurityClient(NamespacedClient):
                 __body["token"] = token
             if username is not None:
                 __body["username"] = username
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -2849,7 +2905,11 @@ class SecurityClient(NamespacedClient):
                 __body["state"] = state
             if realm is not None:
                 __body["realm"] = realm
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2908,7 +2968,11 @@ class SecurityClient(NamespacedClient):
                 __body["token"] = token
             if refresh_token is not None:
                 __body["refresh_token"] = refresh_token
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2991,7 +3055,11 @@ class SecurityClient(NamespacedClient):
                 __body["realm"] = realm
             if state is not None:
                 __body["state"] = state
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3268,7 +3336,11 @@ class SecurityClient(NamespacedClient):
                 __body["run_as"] = run_as
             if transient_metadata is not None:
                 __body["transient_metadata"] = transient_metadata
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3382,7 +3454,11 @@ class SecurityClient(NamespacedClient):
                 __body["rules"] = rules
             if run_as is not None:
                 __body["run_as"] = run_as
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3492,7 +3568,11 @@ class SecurityClient(NamespacedClient):
                 __body["password_hash"] = password_hash
             if roles is not None:
                 __body["roles"] = roles
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3915,7 +3995,11 @@ class SecurityClient(NamespacedClient):
                 __body["ids"] = ids
             if realm is not None:
                 __body["realm"] = realm
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3993,7 +4077,11 @@ class SecurityClient(NamespacedClient):
                 __body["content"] = content
             if query_string is not None:
                 __body["query_string"] = query_string
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4071,7 +4159,11 @@ class SecurityClient(NamespacedClient):
                 __body["acs"] = acs
             if realm is not None:
                 __body["realm"] = realm
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4135,7 +4227,11 @@ class SecurityClient(NamespacedClient):
                 __body["token"] = token
             if refresh_token is not None:
                 __body["refresh_token"] = refresh_token
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4208,7 +4304,11 @@ class SecurityClient(NamespacedClient):
                 __body["realm"] = realm
             if relay_state is not None:
                 __body["relay_state"] = relay_state
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4504,7 +4604,11 @@ class SecurityClient(NamespacedClient):
                 __body["expiration"] = expiration
             if metadata is not None:
                 __body["metadata"] = metadata
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4581,7 +4685,11 @@ class SecurityClient(NamespacedClient):
                 __body["security-profile"] = security_profile
             if security_tokens is not None:
                 __body["security-tokens"] = security_tokens
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4675,7 +4783,11 @@ class SecurityClient(NamespacedClient):
                 __body["data"] = data
             if labels is not None:
                 __body["labels"] = labels
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

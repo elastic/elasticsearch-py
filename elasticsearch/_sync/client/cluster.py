@@ -306,7 +306,7 @@ class ClusterClient(NamespacedClient):
             request. Wildcard (`*`) expressions are supported.
         :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
-            template (default: false)
+            template
         :param local: If `true`, the request retrieves information from the local node
             only. If `false`, information is retrieved from the master node.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -834,7 +834,11 @@ class ClusterClient(NamespacedClient):
                 __body["_meta"] = meta
             if version is not None:
                 __body["version"] = version
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -883,10 +887,10 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-settings>`_
 
-        :param flat_settings: Return settings in flat format (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param flat_settings: Return settings in flat format
+        :param master_timeout: The period to wait for a connection to the master node.
         :param persistent: The settings that persist after the cluster restarts.
-        :param timeout: Explicit operation timeout
+        :param timeout: The period to wait for a response.
         :param transient: The settings that do not persist after the cluster restarts.
         """
         __path_parts: t.Dict[str, str] = {}
@@ -912,7 +916,11 @@ class ClusterClient(NamespacedClient):
                 __body["persistent"] = persistent
             if transient is not None:
                 __body["transient"] = transient
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1111,19 +1119,19 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-state>`_
 
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limit the information returned to the specified metrics.
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
             into no concrete indices. (This includes `_all` string or when no indices
             have been specified)
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param flat_settings: Return settings in flat format (default: false)
+            that are open, closed or both
+        :param flat_settings: Return settings in flat format
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
-            node (default: false)
+            node
         :param master_timeout: Timeout for waiting for new cluster state in case it is
             blocked
         :param wait_for_metadata_version: Wait for the metadata version to be equal or

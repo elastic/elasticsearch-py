@@ -378,7 +378,11 @@ class RollupClient(NamespacedClient):
                 __body["metrics"] = metrics
             if timeout is not None:
                 __body["timeout"] = timeout
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -470,7 +474,11 @@ class RollupClient(NamespacedClient):
                 __body["query"] = query
             if size is not None:
                 __body["size"] = size
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

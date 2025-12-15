@@ -355,7 +355,7 @@ class IngestClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
-        :param summary: Return pipelines without their definitions (default: false)
+        :param summary: Return pipelines without their definitions
         """
         __path_parts: t.Dict[str, str]
         if id not in SKIP_IN_PATH:
@@ -494,7 +494,11 @@ class IngestClient(NamespacedClient):
                 __body["maxmind"] = maxmind
             if name is not None:
                 __body["name"] = name
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -675,7 +679,11 @@ class IngestClient(NamespacedClient):
                 __body["processors"] = processors
             if version is not None:
                 __body["version"] = version
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -747,7 +755,11 @@ class IngestClient(NamespacedClient):
                 __body["docs"] = docs
             if pipeline is not None:
                 __body["pipeline"] = pipeline
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

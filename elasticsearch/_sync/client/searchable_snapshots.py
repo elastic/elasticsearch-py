@@ -119,7 +119,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             into no concrete indices. (This includes `_all` string or when no indices
             have been specified)
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+            that are open, closed or both
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         """
@@ -248,7 +248,11 @@ class SearchableSnapshotsClient(NamespacedClient):
                 __body["index_settings"] = index_settings
             if renamed_index is not None:
                 __body["renamed_index"] = renamed_index
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

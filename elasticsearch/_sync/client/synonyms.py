@@ -348,7 +348,11 @@ class SynonymsClient(NamespacedClient):
         if not __body:
             if synonyms_set is not None:
                 __body["synonyms_set"] = synonyms_set
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -420,7 +424,11 @@ class SynonymsClient(NamespacedClient):
         if not __body:
             if synonyms is not None:
                 __body["synonyms"] = synonyms
-        __headers = {"accept": "application/json", "content-type": "application/json"}
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
