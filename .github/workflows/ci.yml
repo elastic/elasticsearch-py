@@ -56,6 +56,6 @@ jobs:
           python -m pip install nox
       - name: Run Tests
         shell: bash
-        run: python setup.py test
+        run: nox -s test
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
