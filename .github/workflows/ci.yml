@@ -30,7 +30,6 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install nox
-          python -m pip install setuptools<60.0
       - name: Build the docs
         run: nox -s docs
 
@@ -56,6 +55,6 @@ jobs:
           python -m pip install nox
       - name: Run Tests
         shell: bash
-        run: nox -s test
+        run: nox -s test-${{ matrix.python-version }}
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
