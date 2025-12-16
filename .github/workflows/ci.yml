@@ -30,6 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install nox
+          python -m pip install setuptools<60.0
       - name: Build the docs
         run: nox -s docs
 
