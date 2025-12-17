@@ -57,4 +57,4 @@ jobs:
           python -m pip install -r dev-requirements.txt
       - name: Run Tests
         run: |
-          python setup.py test
+          nox -s test
