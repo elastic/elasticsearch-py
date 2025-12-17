@@ -58,4 +58,4 @@ jobs:
           python -m pip install nox
       - name: Run Tests
         run: |
-          nox -s test
+          python -m pytest -v
