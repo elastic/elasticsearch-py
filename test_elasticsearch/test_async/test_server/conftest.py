@@ -16,6 +16,7 @@
 #  under the License.
 
 import asyncio
+from urllib.parse import urlparse
 
 import pytest
 import pytest_asyncio
@@ -35,7 +36,10 @@ async def async_client():
         if not hasattr(elasticsearch, "AsyncElasticsearch"):
             pytest.skip("test requires 'AsyncElasticsearch'")
 
-        kw = {"timeout": 3, "ca_certs": CA_CERTS}
+        kw = {"timeout": 3}
+        if urlparse(ELASTICSEARCH_URL).scheme == "https":
+            kw["ca_certs"] = CA_CERTS
+
         client = elasticsearch.AsyncElasticsearch(ELASTICSEARCH_URL, **kw)
 
         # wait for yellow status
