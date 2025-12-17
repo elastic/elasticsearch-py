@@ -18,6 +18,7 @@
 import asyncio
 
 import pytest
+import pytest_asyncio
 
 import elasticsearch
 from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
@@ -27,7 +28,7 @@ from ...utils import wipe_cluster
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def async_client():
     client = None
     try:

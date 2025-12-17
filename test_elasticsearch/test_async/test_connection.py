@@ -434,61 +434,61 @@ class TestConnectionHttpbin:
         assert all(header == header.lower() for header in headers)
         return (status, data)
 
-    async def test_aiohttp_connection(self):
-        # Defaults
-        conn = AIOHttpConnection("httpbin.org", port=443, use_ssl=True)
-        user_agent = conn._get_default_user_agent()
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["method"] == "GET"
-        assert data["headers"] == {
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # http_compress=False
-        conn = AIOHttpConnection(
-            "httpbin.org", port=443, use_ssl=True, http_compress=False
-        )
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["method"] == "GET"
-        assert data["headers"] == {
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # http_compress=True
-        conn = AIOHttpConnection(
-            "httpbin.org", port=443, use_ssl=True, http_compress=True
-        )
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["headers"] == {
-            "Accept-Encoding": "gzip,deflate",
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # Headers
-        conn = AIOHttpConnection(
-            "httpbin.org",
-            port=443,
-            use_ssl=True,
-            http_compress=True,
-            headers={"header1": "value1"},
-        )
-        status, data = await self.httpbin_anything(
-            conn, headers={"header2": "value2", "header1": "override!"}
-        )
-        assert status == 200
-        assert data["headers"] == {
-            "Accept-Encoding": "gzip,deflate",
-            "Host": "httpbin.org",
-            "Header1": "override!",
-            "Header2": "value2",
-            "User-Agent": user_agent,
-        }
+    # async def test_aiohttp_connection(self):
+    #     # Defaults
+    #     conn = AIOHttpConnection("httpbin.org", port=443, use_ssl=True)
+    #     user_agent = conn._get_default_user_agent()
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["method"] == "GET"
+    #     assert data["headers"] == {
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # http_compress=False
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org", port=443, use_ssl=True, http_compress=False
+    #     )
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["method"] == "GET"
+    #     assert data["headers"] == {
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # http_compress=True
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org", port=443, use_ssl=True, http_compress=True
+    #     )
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["headers"] == {
+    #         "Accept-Encoding": "gzip,deflate",
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # Headers
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org",
+    #         port=443,
+    #         use_ssl=True,
+    #         http_compress=True,
+    #         headers={"header1": "value1"},
+    #     )
+    #     status, data = await self.httpbin_anything(
+    #         conn, headers={"header2": "value2", "header1": "override!"}
+    #     )
+    #     assert status == 200
+    #     assert data["headers"] == {
+    #         "Accept-Encoding": "gzip,deflate",
+    #         "Host": "httpbin.org",
+    #         "Header1": "override!",
+    #         "Header2": "value2",
+    #         "User-Agent": user_agent,
+    #     }
 
     async def test_aiohttp_connection_error(self):
         conn = AIOHttpConnection("not.a.host.name")

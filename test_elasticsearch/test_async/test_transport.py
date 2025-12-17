@@ -24,6 +24,7 @@ import re
 import warnings
 
 import pytest
+import pytest_asyncio
 from mock import patch
 
 from elasticsearch import AsyncTransport
@@ -41,6 +42,16 @@ from elasticsearch.exceptions import (
 from elasticsearch.transport import _ProductChecker
 
 pytestmark = pytest.mark.asyncio
+
+@pytest_asyncio.fixture
+async def event_loop():
+    """Create an instance of the default event loop for each test case."""
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    yield loop
 
 
 class DummyConnection(Connection):
@@ -548,7 +559,7 @@ class TestTransport:
         await t.close()
         assert all([conn.closed for conn in t.connection_pool.connections])
 
-    async def test_sniff_on_start_error_if_no_sniffed_hosts(self, event_loop):
+    async def test_sniff_on_start_error_if_no_sniffed_hosts(self):
         t = AsyncTransport(
             [
                 {"data": ""},
