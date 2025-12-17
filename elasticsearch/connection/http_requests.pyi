@@ -40,5 +40,5 @@ class RequestsHttpConnection(Connection):
         api_key: Optional[Any] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None: ...

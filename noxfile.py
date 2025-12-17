@@ -47,13 +47,7 @@ def format(session):
 
 @nox.session()
 def lint(session):
-    session.install(
-        "flake8",
-        "black>=23.0",
-        "mypy>=1.0",
-        "isort",
-        "types-requests"
-    )
+    session.install("flake8", "black>=23.0", "mypy>=1.0", "isort", "types-requests")
 
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
     session.run("black", "--target-version=py310", "--check", *SOURCE_FILES)
@@ -75,8 +69,6 @@ def lint(session):
 def docs(session):
     session.install(".")
     session.install(
-        "-rdev-requirements.txt",
-        "sphinx-rtd-theme",
-        "sphinx-autodoc-typehints>=1.20.0"
+        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints>=1.20.0"
     )
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")

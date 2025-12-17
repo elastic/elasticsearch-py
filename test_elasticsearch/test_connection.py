@@ -18,7 +18,6 @@
 
 import gzip
 import io
-import json
 import re
 import ssl
 import warnings
@@ -30,7 +29,7 @@ from mock import Mock, patch
 from requests.auth import AuthBase
 from urllib3._collections import HTTPHeaderDict
 
-from elasticsearch import Elasticsearch, __versionstr__
+from elasticsearch import __versionstr__
 from elasticsearch.compat import reraise_exceptions
 from elasticsearch.connection import (
     Connection,
@@ -39,7 +38,6 @@ from elasticsearch.connection import (
 )
 from elasticsearch.exceptions import (
     ConflictError,
-    ConnectionError,
     NotFoundError,
     RequestError,
     TransportError,
@@ -443,7 +441,7 @@ class TestUrllib3Connection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual(u"你好\uda6a", data)
+        self.assertEqual("你好\uda6a", data)
 
     @pytest.mark.skipif(
         not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"
@@ -873,7 +871,7 @@ class TestRequestsConnection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual(u"你好\uda6a", data)
+        self.assertEqual("你好\uda6a", data)
 
     @pytest.mark.skipif(
         not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"

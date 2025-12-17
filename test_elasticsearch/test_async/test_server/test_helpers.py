@@ -757,11 +757,11 @@ class TestScan(object):
                     assert async_client.scroll.call_args[1]["sort"] == "asc"
 
     async def test_scan_duplicate_parameters(self, async_client):
-        with patch.object(async_client, "search") as search_mock, patch.object(
-            async_client, "scroll"
-        ) as scroll_mock, patch.object(
-            async_client, "clear_scroll"
-        ) as clear_scroll_mock:
+        with (
+            patch.object(async_client, "search") as search_mock,
+            patch.object(async_client, "scroll") as scroll_mock,
+            patch.object(async_client, "clear_scroll") as clear_scroll_mock,
+        ):
             search_mock.return_value = MockResponse(
                 {
                     "_scroll_id": "scroll_id",
