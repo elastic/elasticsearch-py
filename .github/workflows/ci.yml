@@ -55,6 +55,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r dev-requirements.txt
+          python -m pip install nox
       - name: Run Tests
         run: |
           nox -s test
