@@ -226,7 +226,7 @@ class TestTransport(TestCase):
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
         headers = t.get_connection().calls[0][1]["headers"]
-        self.assertRegexpMatches(
+        self.assertRegex(
             headers["x-elastic-client-meta"], r"^es=[0-9.]+p?,py=[0-9.]+p?,t=[0-9.]+p?$"
         )
 
@@ -239,7 +239,7 @@ class TestTransport(TestCase):
         t.perform_request("GET", "/", body={}, headers={"Custom": "header"})
         self.assertEqual(1, len(t.get_connection().calls))
         headers = t.get_connection().calls[0][1]["headers"]
-        self.assertRegexpMatches(
+        self.assertRegex(
             headers["x-elastic-client-meta"],
             r"^es=[0-9.]+p?,py=[0-9.]+p?,t=[0-9.]+p?,dm=1.2.3$",
         )
