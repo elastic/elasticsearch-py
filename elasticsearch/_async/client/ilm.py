@@ -383,11 +383,7 @@ class IlmClient(NamespacedClient):
                 __body["current_step"] = current_step
             if next_step is not None:
                 __body["next_step"] = next_step
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -453,11 +449,7 @@ class IlmClient(NamespacedClient):
         if not __body:
             if policy is not None:
                 __body["policy"] = policy
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

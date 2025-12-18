@@ -248,11 +248,7 @@ class SearchableSnapshotsClient(NamespacedClient):
                 __body["index_settings"] = index_settings
             if renamed_index is not None:
                 __body["renamed_index"] = renamed_index
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

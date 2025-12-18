@@ -887,11 +887,7 @@ class MlClient(NamespacedClient):
                 __body["max_bucket_cardinality"] = max_bucket_cardinality
             if overall_cardinality is not None:
                 __body["overall_cardinality"] = overall_cardinality
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -957,11 +953,7 @@ class MlClient(NamespacedClient):
                 __body["index"] = index
             if query is not None:
                 __body["query"] = query
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2828,11 +2820,7 @@ class MlClient(NamespacedClient):
                 __body["docs"] = docs
             if inference_config is not None:
                 __body["inference_config"] = inference_config
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2997,11 +2985,7 @@ class MlClient(NamespacedClient):
         if not __body:
             if events is not None:
                 __body["events"] = events
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3493,11 +3477,7 @@ class MlClient(NamespacedClient):
                 __body["model_memory_limit"] = model_memory_limit
             if version is not None:
                 __body["version"] = version
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3709,11 +3689,7 @@ class MlClient(NamespacedClient):
                 __body["script_fields"] = script_fields
             if scroll_size is not None:
                 __body["scroll_size"] = scroll_size
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3773,11 +3749,7 @@ class MlClient(NamespacedClient):
                 __body["description"] = description
             if items is not None:
                 __body["items"] = items
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3997,11 +3969,7 @@ class MlClient(NamespacedClient):
                 __body["results_index_name"] = results_index_name
             if results_retention_days is not None:
                 __body["results_retention_days"] = results_retention_days
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4135,11 +4103,7 @@ class MlClient(NamespacedClient):
                 __body["prefix_strings"] = prefix_strings
             if tags is not None:
                 __body["tags"] = tags
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4292,11 +4256,7 @@ class MlClient(NamespacedClient):
                 __body["total_definition_length"] = total_definition_length
             if total_parts is not None:
                 __body["total_parts"] = total_parts
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -4361,11 +4321,7 @@ class MlClient(NamespacedClient):
                 __body["merges"] = merges
             if scores is not None:
                 __body["scores"] = scores
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5116,11 +5072,7 @@ class MlClient(NamespacedClient):
                 __body["max_num_threads"] = max_num_threads
             if model_memory_limit is not None:
                 __body["model_memory_limit"] = model_memory_limit
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5321,11 +5273,7 @@ class MlClient(NamespacedClient):
                 __body["script_fields"] = script_fields
             if scroll_size is not None:
                 __body["scroll_size"] = scroll_size
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5387,11 +5335,7 @@ class MlClient(NamespacedClient):
                 __body["description"] = description
             if remove_items is not None:
                 __body["remove_items"] = remove_items
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5555,11 +5499,7 @@ class MlClient(NamespacedClient):
                 __body["renormalization_window_days"] = renormalization_window_days
             if results_retention_days is not None:
                 __body["results_retention_days"] = results_retention_days
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5626,11 +5566,7 @@ class MlClient(NamespacedClient):
                 __body["description"] = description
             if retain is not None:
                 __body["retain"] = retain
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5862,11 +5798,7 @@ class MlClient(NamespacedClient):
                 __body["model_snapshot_retention_days"] = model_snapshot_retention_days
             if results_index_name is not None:
                 __body["results_index_name"] = results_index_name
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

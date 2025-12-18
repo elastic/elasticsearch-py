@@ -552,11 +552,7 @@ class WatcherClient(NamespacedClient):
                 __body["transform"] = transform
             if trigger is not None:
                 __body["trigger"] = trigger
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -884,11 +880,7 @@ class WatcherClient(NamespacedClient):
                 __body["index.auto_expand_replicas"] = index_auto_expand_replicas
             if index_number_of_replicas is not None:
                 __body["index.number_of_replicas"] = index_number_of_replicas
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

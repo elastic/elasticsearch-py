@@ -194,11 +194,7 @@ class EsqlClient(NamespacedClient):
                 __body["tables"] = tables
             if wait_for_completion_timeout is not None:
                 __body["wait_for_completion_timeout"] = wait_for_completion_timeout
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -612,11 +608,7 @@ class EsqlClient(NamespacedClient):
                 __body["profile"] = profile
             if tables is not None:
                 __body["tables"] = tables
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

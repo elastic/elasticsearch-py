@@ -378,11 +378,7 @@ class TextStructureClient(NamespacedClient):
         if not __body:
             if messages is not None:
                 __body["messages"] = messages
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -660,11 +656,7 @@ class TextStructureClient(NamespacedClient):
                 __body["grok_pattern"] = grok_pattern
             if text is not None:
                 __body["text"] = text
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

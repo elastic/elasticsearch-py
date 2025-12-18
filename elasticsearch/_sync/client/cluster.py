@@ -834,11 +834,7 @@ class ClusterClient(NamespacedClient):
                 __body["_meta"] = meta
             if version is not None:
                 __body["version"] = version
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -916,11 +912,7 @@ class ClusterClient(NamespacedClient):
                 __body["persistent"] = persistent
             if transient is not None:
                 __body["transient"] = transient
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

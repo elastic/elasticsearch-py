@@ -229,11 +229,7 @@ class CcrClient(NamespacedClient):
                 __body["read_poll_timeout"] = read_poll_timeout
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -420,11 +416,7 @@ class CcrClient(NamespacedClient):
                 __body["follower_index_uuid"] = follower_index_uuid
             if leader_remote_cluster is not None:
                 __body["leader_remote_cluster"] = leader_remote_cluster
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -759,11 +751,7 @@ class CcrClient(NamespacedClient):
                 __body["read_poll_timeout"] = read_poll_timeout
             if settings is not None:
                 __body["settings"] = settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

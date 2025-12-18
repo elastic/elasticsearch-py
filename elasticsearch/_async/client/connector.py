@@ -320,11 +320,7 @@ class ConnectorClient(NamespacedClient):
                 __body["last_synced"] = last_synced
             if sync_cursor is not None:
                 __body["sync_cursor"] = sync_cursor
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -746,11 +742,7 @@ class ConnectorClient(NamespacedClient):
                 __body["worker_hostname"] = worker_hostname
             if sync_cursor is not None:
                 __body["sync_cursor"] = sync_cursor
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -860,11 +852,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if error is not None:
                 __body["error"] = error
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1058,11 +1046,7 @@ class ConnectorClient(NamespacedClient):
                 __body["job_type"] = job_type
             if trigger_method is not None:
                 __body["trigger_method"] = trigger_method
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -1165,11 +1149,7 @@ class ConnectorClient(NamespacedClient):
                 __body["metadata"] = metadata
             if total_document_count is not None:
                 __body["total_document_count"] = total_document_count
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1276,11 +1256,7 @@ class ConnectorClient(NamespacedClient):
                 __body["api_key_id"] = api_key_id
             if api_key_secret_id is not None:
                 __body["api_key_secret_id"] = api_key_secret_id
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1339,11 +1315,7 @@ class ConnectorClient(NamespacedClient):
                 __body["configuration"] = configuration
             if values is not None:
                 __body["values"] = values
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1402,11 +1374,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if error is not None:
                 __body["error"] = error
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1474,11 +1442,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if features is not None:
                 __body["features"] = features
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1543,11 +1507,7 @@ class ConnectorClient(NamespacedClient):
                 __body["filtering"] = filtering
             if rules is not None:
                 __body["rules"] = rules
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1604,11 +1564,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if validation is not None:
                 __body["validation"] = validation
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1665,11 +1621,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if index_name is not None:
                 __body["index_name"] = index_name
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1727,11 +1679,7 @@ class ConnectorClient(NamespacedClient):
                 __body["description"] = description
             if name is not None:
                 __body["name"] = name
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1787,11 +1735,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if is_native is not None:
                 __body["is_native"] = is_native
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1848,11 +1792,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if pipeline is not None:
                 __body["pipeline"] = pipeline
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1908,11 +1848,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if scheduling is not None:
                 __body["scheduling"] = scheduling
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1968,11 +1904,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if service_type is not None:
                 __body["service_type"] = service_type
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2035,11 +1967,7 @@ class ConnectorClient(NamespacedClient):
         if not __body:
             if status is not None:
                 __body["status"] = status
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

@@ -853,11 +853,7 @@ class Elasticsearch(BaseClient):
         if not __body:
             if id is not None:
                 __body["id"] = id
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -1627,11 +1623,7 @@ class Elasticsearch(BaseClient):
                 __body["slice"] = slice
             if sort is not None:
                 __body["sort"] = sort
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3118,11 +3110,7 @@ class Elasticsearch(BaseClient):
                 __body["docs"] = docs
             if ids is not None:
                 __body["ids"] = ids
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3722,11 +3710,7 @@ class Elasticsearch(BaseClient):
         if not __body:
             if script is not None:
                 __body["script"] = script
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3822,11 +3806,7 @@ class Elasticsearch(BaseClient):
                 __body["requests"] = requests
             if metric is not None:
                 __body["metric"] = metric
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3999,11 +3979,7 @@ class Elasticsearch(BaseClient):
                 __body["script"] = script
             if size is not None:
                 __body["size"] = size
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4131,11 +4107,7 @@ class Elasticsearch(BaseClient):
                 __body["params"] = params
             if source is not None:
                 __body["source"] = source
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4218,11 +4190,7 @@ class Elasticsearch(BaseClient):
                 __body["context_setup"] = context_setup
             if script is not None:
                 __body["script"] = script
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5556,11 +5524,7 @@ class Elasticsearch(BaseClient):
                 __body["profile"] = profile
             if source is not None:
                 __body["source"] = source
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5665,11 +5629,7 @@ class Elasticsearch(BaseClient):
                 __body["string"] = string
             if timeout is not None:
                 __body["timeout"] = timeout
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6031,11 +5991,7 @@ class Elasticsearch(BaseClient):
                 __body["_source"] = source
             if upsert is not None:
                 __body["upsert"] = upsert
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
