@@ -28,9 +28,8 @@ from typing import (
 
 from typing_extensions import Self
 
-from elasticsearch.exceptions import ApiError
-from elasticsearch.helpers import scan
-
+from ...exceptions import ApiError
+from ...helpers import scan
 from ..connections import get_connection
 from ..response import Response
 from ..search_base import MultiSearchBase, SearchBase
