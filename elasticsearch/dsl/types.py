@@ -948,6 +948,7 @@ class GeoDistanceSort(AttrDict[Any]):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
+        /,
         *,
         mode: Union[
             Literal["min", "max", "sum", "avg", "median"], DefaultType
@@ -3279,6 +3280,7 @@ class SortOptions(AttrDict[Any]):
         self,
         _field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         _value: Union["FieldSort", Dict[str, Any], "DefaultType"] = DEFAULT,
+        /,
         *,
         _score: Union["ScoreSort", Dict[str, Any], DefaultType] = DEFAULT,
         _doc: Union["ScoreSort", Dict[str, Any], DefaultType] = DEFAULT,
