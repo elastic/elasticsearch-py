@@ -144,14 +144,16 @@ def query_params(*es_query_params, **kwargs):
 
     def compat_mimetype(mimetypes):
         return [
-            _COMPATIBILITY_MIMETYPE
-            if mimetype
-            in (
-                "application/json",
-                "application/x-ndjson",
-                "application/vnd.mapbox-vector-tile",
+            (
+                _COMPATIBILITY_MIMETYPE
+                if mimetype
+                in (
+                    "application/json",
+                    "application/x-ndjson",
+                    "application/vnd.mapbox-vector-tile",
+                )
+                else mimetype
             )
-            else mimetype
             for mimetype in mimetypes
         ]
 

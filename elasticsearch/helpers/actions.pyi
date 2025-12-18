@@ -47,7 +47,7 @@ def _process_bulk_chunk(
     raise_on_exception: bool = ...,
     raise_on_error: bool = ...,
     *args: Any,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Generator[Tuple[bool, Any], None, None]: ...
 def streaming_bulk(
     client: Elasticsearch,
@@ -63,7 +63,7 @@ def streaming_bulk(
     yield_ok: bool = ...,
     ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Generator[Tuple[bool, Any], None, None]: ...
 def bulk(
     client: Elasticsearch,
@@ -71,7 +71,7 @@ def bulk(
     stats_only: bool = ...,
     ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Tuple[int, Union[int, List[Any]]]: ...
 def parallel_bulk(
     client: Elasticsearch,
@@ -83,7 +83,7 @@ def parallel_bulk(
     expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
     ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Generator[Tuple[bool, Any], None, None]: ...
 def scan(
     client: Elasticsearch,
@@ -95,7 +95,7 @@ def scan(
     request_timeout: Optional[Union[float, int]] = ...,
     clear_scroll: bool = ...,
     scroll_kwargs: Optional[Mapping[str, Any]] = ...,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Generator[Any, None, None]: ...
 def reindex(
     client: Elasticsearch,

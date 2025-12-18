@@ -83,7 +83,7 @@ class Connection(object):
         api_key=None,
         opaque_id=None,
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
 
         if cloud_id:
@@ -354,6 +354,6 @@ def loggable_response_body(response):
         except (AttributeError, UnicodeError):
             # Encodes unprintable characters to '\xXX' hex
             # like how is done in Python 3.x in bytes.__repr__
-            response = u"b" + repr(response).decode("utf-8")
+            response = "b" + repr(response).decode("utf-8")
 
     return response

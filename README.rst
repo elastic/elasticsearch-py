@@ -6,21 +6,6 @@
 Elasticsearch Python Client
 ===========================
 
-.. image:: https://img.shields.io/pypi/v/elasticsearch
-   :target: https://pypi.org/project/elasticsearch
-
-.. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
-   :target: https://anaconda.org/conda-forge/elasticsearch
-
-.. image:: https://pepy.tech/badge/elasticsearch
-   :target: https://pepy.tech/project/elasticsearch?versions=*
-
-.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
-   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master
-
-.. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
-   :target: https://elasticsearch-py.readthedocs.io
-
 *The official Python client for Elasticsearch.*
 
 

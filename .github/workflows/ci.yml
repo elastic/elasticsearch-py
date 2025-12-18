@@ -8,14 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v1
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: "3.12"
+
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python -m pip install --upgrade pip
+          python -m pip install nox
+
       - name: Lint the code
         run: nox -s lint
 
@@ -23,14 +27,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v1
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.7
+          python-version: "3.12"
+
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python -m pip install --upgrade pip
+          python -m pip install nox
+
       - name: Build the docs
         run: nox -s docs
 
@@ -38,25 +46,60 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
-        experimental: [false]
-        include:
-          - python-version: 3.10-dev
-            experimental: true
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
 
     runs-on: ubuntu-latest
     name: test-${{ matrix.python-version }}
-    continue-on-error: ${{ matrix.experimental }}
+
+    services:
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.16.0
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: "false"
+          ES_JAVA_OPTS: "-Xms1024m -Xmx1024m"
+          cluster.deprecation_indexing.enabled: "false"
+        ports:
+          - 9200:9200
+        options: >-
+          --health-cmd "curl -f http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
+
       - name: Set Up Python - ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Install Dependencies
         run: |
-          python -m pip install -r dev-requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install 'nox[pbs]'
+
+      - name: Wait for Elasticsearch
+        run: |
+          echo "Waiting for Elasticsearch to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:9200/_cluster/health > /dev/null; then
+              echo "Elasticsearch is ready!"
+              curl -s http://localhost:9200
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+
+      - name: Verify Elasticsearch
+        run: |
+          curl -s http://localhost:9200/_cluster/health
+
       - name: Run Tests
         run: |
-          python setup.py test
+          nox -s test-${{ matrix.python-version }}
+        env:
+          ELASTICSEARCH_URL: http://localhost:9200

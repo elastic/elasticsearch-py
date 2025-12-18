@@ -26,20 +26,20 @@ SOURCE_FILES = (
 )
 
 
-@nox.session(python=["2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9"])
+@nox.session(python=["3.10", "3.11", "3.12", "3.13", "3.14"])
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
 
-    session.run("python", "setup.py", "test")
+    session.run("pytest", "-v", "--cov=elasticsearch", "--cov-report=term-missing")
 
 
 @nox.session()
 def format(session):
-    session.install("black==21.12b0", "isort")
+    session.install("black>=23.0", "isort")
 
     session.run("isort", "--profile=black", *SOURCE_FILES)
-    session.run("black", "--target-version=py27", *SOURCE_FILES)
+    session.run("black", "--target-version=py310", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
     lint(session)
@@ -47,24 +47,19 @@ def format(session):
 
 @nox.session()
 def lint(session):
-    session.install("flake8", "black==21.12b0", "mypy", "isort", "types-requests")
+    session.install("flake8", "black>=23.0", "mypy>=1.0", "isort", "types-requests")
 
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
-    session.run("black", "--target-version=py27", "--check", *SOURCE_FILES)
+    session.run("black", "--target-version=py310", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
-    # Workaround to make '-r' to still work despite uninstalling aiohttp below.
     session.run("python", "-m", "pip", "install", "aiohttp")
 
-    # Run mypy on the package and then the type examples separately for
-    # the two different mypy use-cases, ourselves and our users.
     session.run("mypy", "--strict", "elasticsearch/")
     session.run("mypy", "--strict", "test_elasticsearch/test_types/sync_types.py")
     session.run("mypy", "--strict", "test_elasticsearch/test_types/async_types.py")
 
-    # Make sure we don't require aiohttp to be installed for users to
-    # receive type hint information from mypy.
     session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp")
     session.run("mypy", "--strict", "elasticsearch/")
     session.run("mypy", "--strict", "test_elasticsearch/test_types/sync_types.py")
@@ -74,8 +69,6 @@ def lint(session):
 def docs(session):
     session.install(".")
     session.install(
-        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints"
+        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints>=1.20.0"
     )
-    session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
-
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")

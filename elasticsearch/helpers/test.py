@@ -28,7 +28,7 @@ from elasticsearch.exceptions import ConnectionError
 if "ELASTICSEARCH_URL" in os.environ:
     ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
 else:
-    ELASTICSEARCH_URL = "https://elastic:changeme@localhost:9200"
+    ELASTICSEARCH_URL = "http://elastic:changeme@localhost:9200"
 
 CA_CERTS = join(dirname(dirname(dirname(abspath(__file__)))), ".ci/certs/ca.pem")
 
