@@ -868,7 +868,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("query",),
+        body_fields=("project_routing", "query"),
     )
     def count(
         self,
@@ -951,10 +951,10 @@ class Elasticsearch(BaseClient):
             in the result.
         :param preference: The node or shard the operation should be performed on. By
             default, it is random.
-        :param project_routing: Specifies a subset of projects to target for the search
-            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
-            queries: the _alias tag and a single value (possibly wildcarded). Examples:
-            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param q: The query in Lucene query string syntax. This parameter cannot be used
             with a request body.
         :param query: Defines the search query using Query DSL. A request body query
@@ -1007,8 +1007,6 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if q is not None:
             __query["q"] = q
         if routing is not None:
@@ -1016,6 +1014,8 @@ class Elasticsearch(BaseClient):
         if terminate_after is not None:
             __query["terminate_after"] = terminate_after
         if not __body:
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
         if not __body:
