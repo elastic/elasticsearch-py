@@ -396,7 +396,7 @@ class InferenceClient(NamespacedClient):
           <li>Amazon SageMaker (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
           <li>Anthropic (<code>completion</code>)</li>
           <li>Azure AI Studio (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
-          <li>Azure OpenAI (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Azure OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Cohere (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>DeepSeek (<code>chat_completion</code>, <code>completion</code>)</li>
           <li>Elasticsearch (<code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code> - this service is for built-in models and models uploaded through Eland)</li>
@@ -408,6 +408,7 @@ class InferenceClient(NamespacedClient):
           <li>JinaAI (<code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Llama (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Mistral (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Nvidia (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>, <code>rerank</code>)</li>
           <li>OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>OpenShift AI (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>VoyageAI (<code>rerank</code>, <code>text_embedding</code>)</li>
@@ -1029,7 +1030,9 @@ class InferenceClient(NamespacedClient):
     async def put_azureopenai(
         self,
         *,
-        task_type: t.Union[str, t.Literal["completion", "text_embedding"]],
+        task_type: t.Union[
+            str, t.Literal["chat_completion", "completion", "text_embedding"]
+        ],
         azureopenai_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["azureopenai"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1066,7 +1069,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `azureopenai` service.
         :param chunking_settings: The chunking configuration object. Applies only to
-            the `text_embedding` task type. Not applicable to the `completion` task type.
+            the `text_embedding` task type. Not applicable to the `completion` and `chat_completion`
+            task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2348,6 +2352,104 @@ class InferenceClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="inference.put_mistral",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=(
+            "service",
+            "service_settings",
+            "chunking_settings",
+            "task_settings",
+        ),
+    )
+    async def put_nvidia(
+        self,
+        *,
+        task_type: t.Union[
+            str, t.Literal["chat_completion", "completion", "rerank", "text_embedding"]
+        ],
+        nvidia_inference_id: str,
+        service: t.Optional[t.Union[str, t.Literal["nvidia"]]] = None,
+        service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        chunking_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create an Nvidia inference endpoint.</p>
+          <p>Create an inference endpoint to perform an inference task with the <code>nvidia</code> service.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-nvidia>`_
+
+        :param task_type: The type of the inference task that the model will perform.
+            NOTE: The `chat_completion` task type only supports streaming and only through
+            the _stream API.
+        :param nvidia_inference_id: The unique identifier of the inference endpoint.
+        :param service: The type of service supported for the specified task type. In
+            this case, `nvidia`.
+        :param service_settings: Settings used to install the inference model. These
+            settings are specific to the `nvidia` service.
+        :param chunking_settings: The chunking configuration object. Applies only to
+            the `text_embedding` task type. Not applicable to the `rerank`, `completion`,
+            or `chat_completion` task types.
+        :param task_settings: Settings to configure the inference task. Applies only
+            to the `text_embedding` task type. Not applicable to the `rerank`, `completion`,
+            or `chat_completion` task types. These settings are specific to the task
+            type you specified.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be created.
+        """
+        if task_type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_type'")
+        if nvidia_inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'nvidia_inference_id'")
+        if service is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if service_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'service_settings'")
+        __path_parts: t.Dict[str, str] = {
+            "task_type": _quote(task_type),
+            "nvidia_inference_id": _quote(nvidia_inference_id),
+        }
+        __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["nvidia_inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if service is not None:
+                __body["service"] = service
+            if service_settings is not None:
+                __body["service_settings"] = service_settings
+            if chunking_settings is not None:
+                __body["chunking_settings"] = chunking_settings
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_nvidia",
             path_parts=__path_parts,
         )
 

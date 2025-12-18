@@ -5382,7 +5382,9 @@ class IndicesClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("project_routing",),
+    )
     async def resolve_index(
         self,
         *,
@@ -5412,6 +5414,7 @@ class IndicesClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5449,6 +5452,7 @@ class IndicesClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"name": _quote(name)}
         __path = f'/_resolve/index/{__path_parts["name"]}'
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -5465,14 +5469,20 @@ class IndicesClient(NamespacedClient):
             __query["mode"] = mode
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
+        if not __body:
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "GET",
+            "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="indices.resolve_index",
             path_parts=__path_parts,
         )

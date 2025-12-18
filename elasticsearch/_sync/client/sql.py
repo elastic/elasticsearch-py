@@ -253,6 +253,7 @@ class SqlClient(NamespacedClient):
             "keep_on_completion",
             "page_timeout",
             "params",
+            "project_routing",
             "query",
             "request_timeout",
             "runtime_mappings",
@@ -333,10 +334,10 @@ class SqlClient(NamespacedClient):
             is no longer available. Subsequent scroll requests prolong the lifetime of
             the scroll cursor by the duration of `page_timeout` in the scroll request.
         :param params: The values for parameters in the query.
-        :param project_routing: Specifies a subset of projects to target for the search
-            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
-            queries: the _alias tag and a single value (possibly wildcarded). Examples:
-            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param query: The SQL query to run.
         :param request_timeout: The timeout before the request fails.
         :param runtime_mappings: One or more runtime fields for the search request. These
@@ -362,8 +363,6 @@ class SqlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if not __body:
             if allow_partial_search_results is not None:
                 __body["allow_partial_search_results"] = allow_partial_search_results
@@ -389,6 +388,8 @@ class SqlClient(NamespacedClient):
                 __body["page_timeout"] = page_timeout
             if params is not None:
                 __body["params"] = params
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if request_timeout is not None:

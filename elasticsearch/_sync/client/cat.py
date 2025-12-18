@@ -611,7 +611,9 @@ class CatClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("project_routing",),
+    )
     def count(
         self,
         *,
@@ -637,6 +639,7 @@ class CatClient(NamespacedClient):
             t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
         ] = None,
         v: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         .. raw:: html
@@ -667,10 +670,10 @@ class CatClient(NamespacedClient):
             wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
-        :param project_routing: Specifies a subset of projects to target for the search
-            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
-            queries: the _alias tag and a single value (possibly wildcarded). Examples:
-            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
@@ -690,6 +693,7 @@ class CatClient(NamespacedClient):
             __path_parts = {}
             __path = "/_cat/count"
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -706,20 +710,26 @@ class CatClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if s is not None:
             __query["s"] = s
         if time is not None:
             __query["time"] = time
         if v is not None:
             __query["v"] = v
+        if not __body:
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "text/plain,application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
-            "GET",
+            "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="cat.count",
             path_parts=__path_parts,
         )
