@@ -78,11 +78,7 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -338,11 +334,7 @@ class InferenceClient(NamespacedClient):
                 __body["query"] = query
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -546,11 +538,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -646,11 +634,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -752,11 +736,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -849,11 +829,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -945,11 +921,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1049,11 +1021,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1143,11 +1111,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1274,11 +1238,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1358,11 +1318,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1470,11 +1426,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1568,11 +1520,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1654,11 +1602,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1752,11 +1696,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1884,11 +1824,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -1980,11 +1916,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2066,11 +1998,7 @@ class InferenceClient(NamespacedClient):
                 __body["service_settings"] = service_settings
             if chunking_settings is not None:
                 __body["chunking_settings"] = chunking_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2164,11 +2092,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2259,11 +2183,7 @@ class InferenceClient(NamespacedClient):
                 __body["chunking_settings"] = chunking_settings
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2343,11 +2263,7 @@ class InferenceClient(NamespacedClient):
                 __body["service"] = service
             if service_settings is not None:
                 __body["service_settings"] = service_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -2420,11 +2336,7 @@ class InferenceClient(NamespacedClient):
                 __body["query"] = query
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2488,11 +2400,7 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2566,11 +2474,7 @@ class InferenceClient(NamespacedClient):
                 __body["input_type"] = input_type
             if task_settings is not None:
                 __body["task_settings"] = task_settings
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
