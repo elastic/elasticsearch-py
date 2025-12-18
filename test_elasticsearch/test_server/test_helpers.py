@@ -569,11 +569,11 @@ class TestScan(ElasticsearchTestCase):
             self.assertEqual(client_mock.scroll.call_args[1]["sort"], "asc")
 
     def test_scan_duplicate_parameters(self):
-        with patch.object(self.client, "search") as search_mock, patch.object(
-            self.client, "scroll"
-        ) as scroll_mock, patch.object(
-            self.client, "clear_scroll"
-        ) as clear_scroll_mock:
+        with (
+            patch.object(self.client, "search") as search_mock,
+            patch.object(self.client, "scroll") as scroll_mock,
+            patch.object(self.client, "clear_scroll") as clear_scroll_mock,
+        ):
             search_mock.return_value = {
                 "_scroll_id": "scroll_id",
                 "_shards": {"successful": 5, "total": 5, "skipped": 0},

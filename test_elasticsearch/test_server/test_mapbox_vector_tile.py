@@ -115,9 +115,10 @@ def test_mapbox_vector_tile_logging(mvt_setup, connection_class):
     )
 
     # Errors should still be JSON
-    with patch("elasticsearch.connection.base.logger") as logger, pytest.raises(
-        RequestError
-    ) as e:
+    with (
+        patch("elasticsearch.connection.base.logger") as logger,
+        pytest.raises(RequestError) as e,
+    ):
         client.search_mvt(
             index="museums",
             zoom=-100,

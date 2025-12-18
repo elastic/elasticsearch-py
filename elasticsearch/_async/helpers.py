@@ -62,7 +62,7 @@ async def _process_bulk_chunk(
     raise_on_error=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Send a bulk request to elasticsearch and process the output.
@@ -132,9 +132,8 @@ async def async_streaming_bulk(
     yield_ok=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -292,7 +291,7 @@ async def async_scan(
     request_timeout=None,
     clear_scroll=True,
     scroll_kwargs=None,
-    **kwargs
+    **kwargs,
 ):
     """
     Simple abstraction on top of the
@@ -422,7 +421,6 @@ async def async_reindex(
     scan_kwargs={},
     bulk_kwargs={},
 ):
-
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.

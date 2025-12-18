@@ -80,7 +80,7 @@ class RequestsHttpConnection(Connection):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
-        **kwargs
+        **kwargs,
     ):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured(
@@ -101,7 +101,7 @@ class RequestsHttpConnection(Connection):
             cloud_id=cloud_id,
             api_key=api_key,
             opaque_id=opaque_id,
-            **kwargs
+            **kwargs,
         )
 
         if not self.http_compress:

@@ -6,21 +6,6 @@
 Elasticsearch Python Client
 ===========================
 
-.. image:: https://img.shields.io/pypi/v/elasticsearch
-   :target: https://pypi.org/project/elasticsearch
-
-.. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
-   :target: https://anaconda.org/conda-forge/elasticsearch
-
-.. image:: https://pepy.tech/badge/elasticsearch
-   :target: https://pepy.tech/project/elasticsearch?versions=*
-
-.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
-   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master
-
-.. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
-   :target: https://elasticsearch-py.readthedocs.io
-
 *The official Python client for Elasticsearch.*
 
 
@@ -105,6 +90,84 @@ Quick Start
 You can read more about `configuring the client`_ in the documentation.
 
 .. _configuring the client: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
+
+
+Local Development
+=================
+
+Install ENV
+-----------
+
+After cloning the code, create a development environment:
+
+.. code:: bash
+
+   conda create -n es7-py python=3.10
+
+Install Development Dependencies
+--------------------------------
+
+.. code:: bash
+
+   pip install -r dev-requirements.txt
+
+Run Unit Tests
+--------------
+
+Start the Elasticsearch dependency before running unit tests:
+
+.. code:: bash
+
+   docker run --rm \
+     --name elasticsearch-7.16 \
+     -p 9200:9200 \
+     -e "discovery.type=single-node" \
+     -e "xpack.security.enabled=false" \
+     -e "ES_JAVA_OPTS=-Xms1024m -Xmx1024m" \
+     docker.elastic.co/elasticsearch/elasticsearch:7.16.0
+
+Run unit tests using pytest:
+
+.. code:: bash
+
+   python -m pytest
+
+Run unit tests across multiple Python environments using nox:
+
+.. code:: bash
+
+   # Example: Run tests in Python 3.11 environment (supports py 3.10 ~ 3.14)
+   python -m pip install 'nox[pbs]'
+   nox -s test-3.11
+
+Code Lint
+=========
+
+::
+
+   python -m pip install 'nox[pbs]'
+   nox -s format
+
+Build and Compile
+-----------------
+
+After completing local development, use pre-compiled builds:
+
+::
+
+   ./.ci/make.sh assemble 7.x-SNAPSHOT
+
+On successful compilation, you can find ``.tar.gz`` and ``.whl`` files
+in ``.ci/output/``.
+
+Once adjustments are confirmed, update the version number ``VERSION`` in
+``elasticsearch/_version.py`` (requires a git commit) and run below to complete the new version package build.:
+
+::
+
+   ./.ci/make.sh assemble ${VERSION}
+
+
 
 
 License

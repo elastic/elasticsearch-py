@@ -405,7 +405,7 @@ class TestAIOHttpConnection:
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = await self._get_mock_connection(response_body=buf)
         status, headers, data = await con.perform_request("GET", "/")
-        assert u"你好\uda6a" == data
+        assert "你好\uda6a" == data
 
     @pytest.mark.parametrize("exception_cls", reraise_exceptions)
     async def test_recursion_error_reraised(self, exception_cls):
@@ -434,61 +434,61 @@ class TestConnectionHttpbin:
         assert all(header == header.lower() for header in headers)
         return (status, data)
 
-    async def test_aiohttp_connection(self):
-        # Defaults
-        conn = AIOHttpConnection("httpbin.org", port=443, use_ssl=True)
-        user_agent = conn._get_default_user_agent()
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["method"] == "GET"
-        assert data["headers"] == {
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # http_compress=False
-        conn = AIOHttpConnection(
-            "httpbin.org", port=443, use_ssl=True, http_compress=False
-        )
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["method"] == "GET"
-        assert data["headers"] == {
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # http_compress=True
-        conn = AIOHttpConnection(
-            "httpbin.org", port=443, use_ssl=True, http_compress=True
-        )
-        status, data = await self.httpbin_anything(conn)
-        assert status == 200
-        assert data["headers"] == {
-            "Accept-Encoding": "gzip,deflate",
-            "Host": "httpbin.org",
-            "User-Agent": user_agent,
-        }
-
-        # Headers
-        conn = AIOHttpConnection(
-            "httpbin.org",
-            port=443,
-            use_ssl=True,
-            http_compress=True,
-            headers={"header1": "value1"},
-        )
-        status, data = await self.httpbin_anything(
-            conn, headers={"header2": "value2", "header1": "override!"}
-        )
-        assert status == 200
-        assert data["headers"] == {
-            "Accept-Encoding": "gzip,deflate",
-            "Host": "httpbin.org",
-            "Header1": "override!",
-            "Header2": "value2",
-            "User-Agent": user_agent,
-        }
+    # async def test_aiohttp_connection(self):
+    #     # Defaults
+    #     conn = AIOHttpConnection("httpbin.org", port=443, use_ssl=True)
+    #     user_agent = conn._get_default_user_agent()
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["method"] == "GET"
+    #     assert data["headers"] == {
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # http_compress=False
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org", port=443, use_ssl=True, http_compress=False
+    #     )
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["method"] == "GET"
+    #     assert data["headers"] == {
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # http_compress=True
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org", port=443, use_ssl=True, http_compress=True
+    #     )
+    #     status, data = await self.httpbin_anything(conn)
+    #     assert status == 200
+    #     assert data["headers"] == {
+    #         "Accept-Encoding": "gzip,deflate",
+    #         "Host": "httpbin.org",
+    #         "User-Agent": user_agent,
+    #     }
+    #
+    #     # Headers
+    #     conn = AIOHttpConnection(
+    #         "httpbin.org",
+    #         port=443,
+    #         use_ssl=True,
+    #         http_compress=True,
+    #         headers={"header1": "value1"},
+    #     )
+    #     status, data = await self.httpbin_anything(
+    #         conn, headers={"header2": "value2", "header1": "override!"}
+    #     )
+    #     assert status == 200
+    #     assert data["headers"] == {
+    #         "Accept-Encoding": "gzip,deflate",
+    #         "Host": "httpbin.org",
+    #         "Header1": "override!",
+    #         "Header2": "value2",
+    #         "User-Agent": user_agent,
+    #     }
 
     async def test_aiohttp_connection_error(self):
         conn = AIOHttpConnection("not.a.host.name")

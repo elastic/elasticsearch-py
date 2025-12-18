@@ -24,6 +24,7 @@ import warnings
 from datetime import datetime, timedelta, timezone
 
 import pytest
+import pytest_asyncio
 from mock import MagicMock, patch
 
 from elasticsearch import TransportError, helpers
@@ -430,7 +431,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -757,11 +758,11 @@ class TestScan(object):
                     assert async_client.scroll.call_args[1]["sort"] == "asc"
 
     async def test_scan_duplicate_parameters(self, async_client):
-        with patch.object(async_client, "search") as search_mock, patch.object(
-            async_client, "scroll"
-        ) as scroll_mock, patch.object(
-            async_client, "clear_scroll"
-        ) as clear_scroll_mock:
+        with (
+            patch.object(async_client, "search") as search_mock,
+            patch.object(async_client, "scroll") as scroll_mock,
+            patch.object(async_client, "clear_scroll") as clear_scroll_mock,
+        ):
             search_mock.return_value = MockResponse(
                 {
                     "_scroll_id": "scroll_id",
@@ -810,7 +811,7 @@ class TestScan(object):
             )
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -888,7 +889,7 @@ class TestReindex(object):
         )["_source"]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -951,7 +952,7 @@ class TestParentChildReindex:
         } == q
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_data_stream_setup(async_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []

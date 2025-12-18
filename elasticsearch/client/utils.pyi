@@ -39,7 +39,7 @@ T = TypeVar("T")
 SKIP_IN_PATH: Collection[Any]
 
 def _normalize_hosts(
-    hosts: Optional[Union[str, Collection[Union[str, Dict[str, Any]]]]]
+    hosts: Optional[Union[str, Collection[Union[str, Dict[str, Any]]]]],
 ) -> List[Dict[str, Any]]: ...
 def _escape(value: Any) -> str: ...
 def _make_path(*parts: Any) -> str: ...
@@ -52,7 +52,7 @@ def query_params(
     response_mimetypes: Optional[List[str]] = ...,
     body_params: Optional[List[str]] = ...,
     body_name: Optional[str] = ...,
-    body_required: Optional[bool] = ...
+    body_required: Optional[bool] = ...,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]: ...
 def _bulk_body(
     serializer: Serializer, body: Union[str, bytes, Mapping[str, Any], Iterable[Any]]

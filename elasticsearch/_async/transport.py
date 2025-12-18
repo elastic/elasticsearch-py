@@ -67,7 +67,7 @@ class AsyncTransport(Transport):
         retry_on_timeout=False,
         send_get_body_as="GET",
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to

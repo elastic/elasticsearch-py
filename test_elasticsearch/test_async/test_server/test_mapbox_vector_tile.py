@@ -20,6 +20,7 @@ import logging
 import re
 
 import pytest
+import pytest_asyncio
 
 from elasticsearch import AsyncElasticsearch, RequestError
 from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
@@ -27,7 +28,7 @@ from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
 pytestmark = pytest.mark.asyncio
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def mvt_setup(async_client):
     await async_client.indices.create(
         index="museums",

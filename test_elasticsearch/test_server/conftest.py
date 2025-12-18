@@ -17,6 +17,7 @@
 
 import os
 import time
+from urllib.parse import urlparse
 
 import pytest
 
@@ -40,9 +41,12 @@ def sync_client_factory():
         # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
         kw = {
             "timeout": 3,
-            "ca_certs": CA_CERTS,
+            # "ca_certs": CA_CERTS,
             "headers": {"Authorization": "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="},
         }
+        if urlparse(ELASTICSEARCH_URL).scheme == "https":
+            kw["ca_certs"] = CA_CERTS
+
         if "PYTHON_CONNECTION_CLASS" in os.environ:
             from elasticsearch import connection
 
