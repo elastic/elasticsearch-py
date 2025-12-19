@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch import AsyncElasticsearch, BadRequestError, NotFoundError
+from .... import AsyncElasticsearch, BadRequestError, NotFoundError
 
 
 async def model_must_be_deployed(client: AsyncElasticsearch, model_id: str) -> None:

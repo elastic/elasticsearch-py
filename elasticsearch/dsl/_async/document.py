@@ -31,9 +31,8 @@ from typing import (
 
 from typing_extensions import Self, dataclass_transform
 
-from elasticsearch.exceptions import NotFoundError, RequestError
-from elasticsearch.helpers import async_bulk
-
+from ...exceptions import NotFoundError, RequestError
+from ...helpers import async_bulk
 from .._async.index import AsyncIndex
 from ..async_connections import get_connection
 from ..document_base import DocumentBase, DocumentMeta, mapped_field
@@ -42,8 +41,8 @@ from ..utils import DOC_META_FIELDS, META_FIELDS, AsyncUsingType, merge
 from .search import AsyncSearch
 
 if TYPE_CHECKING:
-    from elasticsearch import AsyncElasticsearch
-    from elasticsearch.esql.esql import ESQLBase
+    from ... import AsyncElasticsearch
+    from ...esql.esql import ESQLBase
 
 
 class AsyncIndexMeta(DocumentMeta):
