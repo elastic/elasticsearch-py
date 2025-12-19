@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from elasticsearch import BadRequestError, Elasticsearch, NotFoundError
+from .... import BadRequestError, Elasticsearch, NotFoundError
 
 
 def model_must_be_deployed(client: Elasticsearch, model_id: str) -> None:

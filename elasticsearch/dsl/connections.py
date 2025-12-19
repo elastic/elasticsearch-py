@@ -17,8 +17,7 @@
 
 from typing import Any, Dict, Generic, Type, TypeVar, Union
 
-from elasticsearch import Elasticsearch, __versionstr__
-
+from .. import Elasticsearch, __versionstr__
 from .serializer import serializer
 
 _T = TypeVar("_T")

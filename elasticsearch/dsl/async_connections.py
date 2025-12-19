@@ -17,8 +17,7 @@
 
 from typing import Type
 
-from elasticsearch import AsyncElasticsearch
-
+from .. import AsyncElasticsearch
 from .connections import Connections
 
 
