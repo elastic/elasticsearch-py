@@ -23,7 +23,7 @@ from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 if t.TYPE_CHECKING:
-    from elasticsearch.esql import ESQLBase
+    from ...esql import ESQLBase
 
 
 class EsqlClient(NamespacedClient):
