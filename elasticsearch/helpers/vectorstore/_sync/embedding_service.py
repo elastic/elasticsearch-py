@@ -18,8 +18,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from elasticsearch import Elasticsearch
-from elasticsearch._version import __versionstr__ as lib_version
+from .... import Elasticsearch
+from ...._version import __versionstr__ as lib_version
 
 
 class EmbeddingService(ABC):

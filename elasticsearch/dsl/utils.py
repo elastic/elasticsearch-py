@@ -44,8 +44,7 @@ from .exceptions import UnknownDslObject, ValidationException
 if TYPE_CHECKING:
     from elastic_transport import ObjectApiResponse
 
-    from elasticsearch import AsyncElasticsearch, Elasticsearch
-
+    from .. import AsyncElasticsearch, Elasticsearch
     from .document_base import DocumentOptions
     from .field import Field
     from .index_base import IndexBase
