@@ -254,6 +254,9 @@ class {{ k.name }}({{ k.parent if k.parent else parent }}[_R]):
         {{ arg.name }}: {{ arg.type }} = DEFAULT,
                 {% endif %}
         {% endfor %}
+            {% if k.args and k.args[0].positional %}
+        /,
+            {% endif %}
             {% if k.args and not k.args[-1].positional %}
         *,
             {% endif %}
