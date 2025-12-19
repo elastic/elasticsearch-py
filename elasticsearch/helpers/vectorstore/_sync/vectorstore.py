@@ -19,14 +19,14 @@ import logging
 import uuid
 from typing import Any, Callable, Dict, List, Optional
 
-from elasticsearch import Elasticsearch
-from elasticsearch._version import __versionstr__ as lib_version
-from elasticsearch.helpers import BulkIndexError, bulk
-from elasticsearch.helpers.vectorstore import (
+from .... import Elasticsearch
+from ...._version import __versionstr__ as lib_version
+from ....helpers import BulkIndexError, bulk
+from ....helpers.vectorstore import (
     EmbeddingService,
     RetrievalStrategy,
 )
-from elasticsearch.helpers.vectorstore._utils import maximal_marginal_relevance
+from ....helpers.vectorstore._utils import maximal_marginal_relevance
 
 logger = logging.getLogger(__name__)
 

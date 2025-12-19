@@ -29,7 +29,7 @@ from .utils import (
 )
 
 if t.TYPE_CHECKING:
-    from elasticsearch.esql import ESQLBase
+    from ...esql import ESQLBase
 
 
 class EsqlClient(NamespacedClient):
