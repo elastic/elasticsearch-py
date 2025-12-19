@@ -18,9 +18,9 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
-from elasticsearch import AsyncElasticsearch
-from elasticsearch.helpers.vectorstore._async._utils import model_must_be_deployed
-from elasticsearch.helpers.vectorstore._utils import DistanceMetric
+from .... import AsyncElasticsearch
+from ....helpers.vectorstore._async._utils import model_must_be_deployed
+from ....helpers.vectorstore._utils import DistanceMetric
 
 
 class AsyncRetrievalStrategy(ABC):
