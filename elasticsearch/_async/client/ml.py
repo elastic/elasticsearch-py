@@ -4861,13 +4861,14 @@ class MlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("allow_no_match", "force", "timeout"),
+        body_fields=("allow_no_match", "close_job", "force", "timeout"),
     )
     async def stop_datafeed(
         self,
         *,
         datafeed_id: str,
         allow_no_match: t.Optional[bool] = None,
+        close_job: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
@@ -4892,6 +4893,7 @@ class MlClient(NamespacedClient):
             `*` as the identifier.
         :param allow_no_match: Refer to the description for the `allow_no_match` query
             parameter.
+        :param close_job: Refer to the description for the `close_job` query parameter.
         :param force: Refer to the description for the `force` query parameter.
         :param timeout: Refer to the description for the `timeout` query parameter.
         """
@@ -4912,6 +4914,8 @@ class MlClient(NamespacedClient):
         if not __body:
             if allow_no_match is not None:
                 __body["allow_no_match"] = allow_no_match
+            if close_job is not None:
+                __body["close_job"] = close_job
             if force is not None:
                 __body["force"] = force
             if timeout is not None:
