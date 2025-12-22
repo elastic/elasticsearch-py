@@ -1832,6 +1832,59 @@ class DoubleRange(RangeField):
         super().__init__(*args, **kwargs)
 
 
+class ExponentialHistogram(Field):
+    """
+    :arg time_series_metric:
+    :arg meta: Metadata about the field.
+    :arg properties:
+    :arg ignore_above:
+    :arg dynamic:
+    :arg fields:
+    :arg synthetic_source_keep:
+    """
+
+    name = "exponential_histogram"
+    _param_defs = {
+        "properties": {"type": "field", "hash": True},
+        "fields": {"type": "field", "hash": True},
+    }
+
+    def __init__(
+        self,
+        *args: Any,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
+        meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
+        properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        ignore_above: Union[int, "DefaultType"] = DEFAULT,
+        dynamic: Union[
+            Literal["strict", "runtime", "true", "false"], bool, "DefaultType"
+        ] = DEFAULT,
+        fields: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
+        synthetic_source_keep: Union[
+            Literal["none", "arrays", "all"], "DefaultType"
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
+        if meta is not DEFAULT:
+            kwargs["meta"] = meta
+        if properties is not DEFAULT:
+            kwargs["properties"] = properties
+        if ignore_above is not DEFAULT:
+            kwargs["ignore_above"] = ignore_above
+        if dynamic is not DEFAULT:
+            kwargs["dynamic"] = dynamic
+        if fields is not DEFAULT:
+            kwargs["fields"] = fields
+        if synthetic_source_keep is not DEFAULT:
+            kwargs["synthetic_source_keep"] = synthetic_source_keep
+        super().__init__(*args, **kwargs)
+
+
 class Flattened(Field):
     """
     :arg boost:
@@ -2301,6 +2354,7 @@ class HalfFloat(Float):
 class Histogram(Field):
     """
     :arg ignore_malformed:
+    :arg time_series_metric:
     :arg meta: Metadata about the field.
     :arg properties:
     :arg ignore_above:
@@ -2319,6 +2373,10 @@ class Histogram(Field):
         self,
         *args: Any,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
+        time_series_metric: Union[
+            Literal["gauge", "counter", "summary", "histogram", "position"],
+            "DefaultType",
+        ] = DEFAULT,
         meta: Union[Mapping[str, str], "DefaultType"] = DEFAULT,
         properties: Union[Mapping[str, Field], "DefaultType"] = DEFAULT,
         ignore_above: Union[int, "DefaultType"] = DEFAULT,
@@ -2333,6 +2391,8 @@ class Histogram(Field):
     ):
         if ignore_malformed is not DEFAULT:
             kwargs["ignore_malformed"] = ignore_malformed
+        if time_series_metric is not DEFAULT:
+            kwargs["time_series_metric"] = time_series_metric
         if meta is not DEFAULT:
             kwargs["meta"] = meta
         if properties is not DEFAULT:
