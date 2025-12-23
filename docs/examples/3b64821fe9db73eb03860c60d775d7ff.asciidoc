@@ -3,23 +3,19 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_security/cross_cluster/api_key/VuaCfGcBCdbkQm-e5aOx",
-    headers={"Content-Type": "application/json"},
-    body={
-        "access": {
-            "replication": [
-                {
-                    "names": [
-                        "archive"
-                    ]
-                }
-            ]
-        },
-        "metadata": {
-            "application": "replication"
-        }
+resp = client.security.update_cross_cluster_api_key(
+    id="VuaCfGcBCdbkQm-e5aOx",
+    access={
+        "replication": [
+            {
+                "names": [
+                    "archive"
+                ]
+            }
+        ]
+    },
+    metadata={
+        "application": "replication"
     },
 )
 print(resp)

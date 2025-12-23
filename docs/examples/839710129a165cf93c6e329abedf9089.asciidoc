@@ -3,24 +3,19 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/cross_cluster/api_key",
-    headers={"Content-Type": "application/json"},
-    body={
-        "name": "my-cross-cluster-api-key",
-        "access": {
-            "search": [
-                {
-                    "names": [
-                        "logs*"
-                    ]
-                }
-            ]
-        },
-        "metadata": {
-            "application": "search"
-        }
+resp = client.security.create_cross_cluster_api_key(
+    name="my-cross-cluster-api-key",
+    access={
+        "search": [
+            {
+                "names": [
+                    "logs*"
+                ]
+            }
+        ]
+    },
+    metadata={
+        "application": "search"
     },
 )
 print(resp)

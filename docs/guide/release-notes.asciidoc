@@ -1,6 +1,27 @@
 [[release-notes]]
 == Release notes
 
+=== 8.19.3 (2025-12-23)
+
+Enhancements
+
+- Instrument ping with OTel (https://github.com/elastic/elasticsearch-py/pull/3160[#3160])
+- Add warnings for private APIs (https://github.com/elastic/elasticsearch-py/pull/3212[#3212])
+- Make positional arguments in DSL generated classes explicit (https://github.com/elastic/elasticsearch-py/pull/3233[#3233])
+
+Bug fixes
+
+- ES|QL query builder: fix missing assignment (https://github.com/elastic/elasticsearch-py/pull/3151[#3151])
+- Use relative imports to fix `elasticsearch9` package imports (https://github.com/elastic/elasticsearch-py/pull/3232[#3232])
+
+API
+
+- Added `indices.delete_data_stream_options`, `indices.get_data_stream_options` and `indices.put_data_stream_options` APIs
+- Added `transform.get_node_stats` API
+- Added `requests_per_second` argument to `delete_by_query_rethrottle`, `reindex_rethrottle` and `update_by_query_rethrottle` APIs
+- Added `allow_closed`, `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_available` arguments to `cat.segments` API
+- Added `id` argument to `ml.stop_trained_model_deployment` API
+
 === 8.19.2 (2025-10-28)
 
 ### Enhancements

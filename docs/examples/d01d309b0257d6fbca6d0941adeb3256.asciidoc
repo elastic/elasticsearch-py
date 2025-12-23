@@ -45,6 +45,7 @@ print(resp2)
 
 resp3 = client.indices.simulate_index_template(
     name="my-index-000001",
+    index_template=None,
 )
 print(resp3)
 ----

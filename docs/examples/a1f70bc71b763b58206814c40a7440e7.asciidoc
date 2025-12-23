@@ -3,13 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_watcher/settings",
-    headers={"Content-Type": "application/json"},
-    body={
-        "index.auto_expand_replicas": "0-4"
-    },
+resp = client.watcher.update_settings(
+    index_auto_expand_replicas="0-4",
 )
 print(resp)
 ----

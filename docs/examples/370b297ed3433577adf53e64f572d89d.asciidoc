@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "DELETE",
-    "/_connector/_sync_job/my-connector-sync-job-id",
+resp = client.connector.sync_job_delete(
+    connector_sync_job_id="my-connector-sync-job-id",
 )
 print(resp)
 ----

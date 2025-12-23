@@ -3,18 +3,11 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/_query/user",
-    params={
-        "with_profile_uid": "true"
-    },
-    headers={"Content-Type": "application/json"},
-    body={
-        "query": {
-            "prefix": {
-                "roles": "other"
-            }
+resp = client.security.query_user(
+    with_profile_uid=True,
+    query={
+        "prefix": {
+            "roles": "other"
         }
     },
 )

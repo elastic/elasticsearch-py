@@ -3,13 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_watcher/settings",
-    headers={"Content-Type": "application/json"},
-    body={
-        "index.routing.allocation.include.role": "watcher"
-    },
+resp = client.watcher.update_settings(
+    index_routing_allocation_include_role="watcher",
 )
 print(resp)
 ----
