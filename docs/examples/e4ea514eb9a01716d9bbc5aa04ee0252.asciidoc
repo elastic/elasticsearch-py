@@ -3,15 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_security/_query/user",
-    headers={"Content-Type": "application/json"},
-    body={
-        "query": {
-            "prefix": {
-                "roles": "other"
-            }
+resp = client.security.query_user(
+    query={
+        "prefix": {
+            "roles": "other"
         }
     },
 )

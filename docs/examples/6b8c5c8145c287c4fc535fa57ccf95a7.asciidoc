@@ -3,12 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector/_sync_job",
-    params={
-        "status": "pending"
-    },
+resp = client.connector.sync_job_list(
+    status="pending",
 )
 print(resp)
 ----

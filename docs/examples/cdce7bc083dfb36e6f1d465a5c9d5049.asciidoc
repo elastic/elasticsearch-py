@@ -3,9 +3,6 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector/_sync_job",
-)
+resp = client.connector.sync_job_list()
 print(resp)
 ----

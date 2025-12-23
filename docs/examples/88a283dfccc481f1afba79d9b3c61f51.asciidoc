@@ -3,9 +3,6 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_security/_query/user",
-)
+resp = client.security.query_user()
 print(resp)
 ----

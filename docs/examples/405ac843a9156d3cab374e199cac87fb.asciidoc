@@ -3,15 +3,10 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_connector/_sync_job",
-    headers={"Content-Type": "application/json"},
-    body={
-        "id": "connector-id",
-        "job_type": "full",
-        "trigger_method": "on_demand"
-    },
+resp = client.connector.sync_job_post(
+    id="connector-id",
+    job_type="full",
+    trigger_method="on_demand",
 )
 print(resp)
 ----

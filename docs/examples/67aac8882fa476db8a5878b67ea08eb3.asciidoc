@@ -3,14 +3,11 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "POST",
-    "/_snapshot/my_repository/_analyze",
-    params={
-        "blob_count": "10",
-        "max_blob_size": "1mb",
-        "timeout": "120s"
-    },
+resp = client.snapshot.repository_analyze(
+    name="my_repository",
+    blob_count="10",
+    max_blob_size="1mb",
+    timeout="120s",
 )
 print(resp)
 ----

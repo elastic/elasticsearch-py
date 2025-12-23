@@ -3,20 +3,15 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_security/settings",
-    headers={"Content-Type": "application/json"},
-    body={
-        "security": {
-            "index.auto_expand_replicas": "0-all"
-        },
-        "security-tokens": {
-            "index.auto_expand_replicas": "0-all"
-        },
-        "security-profile": {
-            "index.auto_expand_replicas": "0-all"
-        }
+resp = client.security.update_settings(
+    security={
+        "index.auto_expand_replicas": "0-all"
+    },
+    security_tokens={
+        "index.auto_expand_replicas": "0-all"
+    },
+    security_profile={
+        "index.auto_expand_replicas": "0-all"
     },
 )
 print(resp)

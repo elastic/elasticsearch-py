@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "PUT",
-    "/_connector/_sync_job/my-connector-sync-job/_check_in",
+resp = client.connector.sync_job_check_in(
+    connector_sync_job_id="my-connector-sync-job",
 )
 print(resp)
 ----

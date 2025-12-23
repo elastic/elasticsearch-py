@@ -3,9 +3,8 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector/_sync_job/my-connector-sync-job",
+resp = client.connector.sync_job_get(
+    connector_sync_job_id="my-connector-sync-job",
 )
 print(resp)
 ----

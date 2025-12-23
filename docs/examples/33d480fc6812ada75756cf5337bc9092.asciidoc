@@ -3,13 +3,9 @@
 
 [source, python]
 ----
-resp = client.perform_request(
-    "GET",
-    "/_connector/_sync_job",
-    params={
-        "from": "0",
-        "size": "2"
-    },
+resp = client.connector.sync_job_list(
+    from_="0",
+    size="2",
 )
 print(resp)
 ----
