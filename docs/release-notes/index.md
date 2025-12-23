@@ -18,6 +18,33 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.2.1 (2025-12-23)
+
+Enhancements
+
+* Instrument ping with OTel ([#3160](https://github.com/elastic/elasticsearch-py/pull/3160))
+* Make positional arguments in DSL generated classes explicit  ([#3233](https://github.com/elastic/elasticsearch-py/pull/3233))
+* Add warnings for private APIs ([#3212](https://github.com/elastic/elasticsearch-py/pull/3212))
+
+Bug fixes
+
+* ES|QL query builder: fix missing assignment ([#3151](https://github.com/elastic/elasticsearch-py/pull/3151))
+* Use relative imports to fix `elasticsearch9` package imports ([#3232](https://github.com/elastic/elasticsearch-py/pull/3232))
+
+API
+
+* Added `transform.get_node_stats` API
+* Added `requests_per_second` argument to `delete_by_query_rethrottle`, `reindex_rethrottle` and `update_by_query_rethrottle` APIs
+* Added `allow_closed`, `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_available` arguments to `cat.segments` API
+* Added `chunking_settings` argument to `inference.put_watsonxai` API
+* Added `id` argument to `ml.stop_trained_model_deployment` API
+* Removed `chunking_settings` argument from `inference.put_anthropic`, `inference.put_contextualai`, `inference.put_deepseek` APIs
+
+DSL
+
+* Removed `on_disk_score` argument from `DenseVectorIndexOptions` type
+
+
 ## 9.2.0 (2025-10-28)
 
 ### Enhancements
