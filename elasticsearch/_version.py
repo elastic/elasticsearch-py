@@ -15,5 +15,5 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-__versionstr__ = "9.2.0"
-__es_specification_commit__ = "696f1cd1e6cbb75d67c67a605ad8da3d53350de8"
+__versionstr__ = "9.2.1"
+__es_specification_commit__ = "4ab58cf013706c9104d18daafae4361cf7351a55"
