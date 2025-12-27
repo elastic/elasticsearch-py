@@ -228,7 +228,7 @@ for a in Article.esql_execute(query):
     print(a.title)
 ```
 
-Review the [ES|QL Query Builder section](esql-query-builder.md) to learn more about building ES|QL queries in Python.
+Review the [ES|QL query builder section](esql-query-builder.md) to learn more about building ES|QL queries in Python.
 
 ## Migration from the standard client [_migration_from_the_standard_client]
 
