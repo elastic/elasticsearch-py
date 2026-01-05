@@ -18,6 +18,10 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.0.5 (2026-01-05)
+
+* ES|QL query builder: fix missing assignment ([#3151](https://github.com/elastic/elasticsearch-py/pull/3151))
+
 ## 9.0.4 (2025-09-11)
 
 * ES|QL query builder integration with the DSL module ([#3058](https://github.com/elastic/elasticsearch-py/pull/3058))
