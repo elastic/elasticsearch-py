@@ -470,39 +470,38 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-health>`_
 
-        :param index: Comma-separated list of data streams, indices, and index aliases
-            used to limit the request. Wildcard expressions (`*`) are supported. To target
+        :param index: A comma-separated list of data streams, indices, and index aliases
+            that limit the request. Wildcard expressions (`*`) are supported. To target
             all data streams and indices in a cluster, omit this parameter or use _all
             or `*`.
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param level: Can be one of cluster, indices or shards. Controls the details
-            level of the health information returned.
-        :param local: If true, the request retrieves information from the local node
-            only. Defaults to false, which means information is retrieved from the master
-            node.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
-        :param wait_for_active_shards: A number controlling to how many active shards
-            to wait for, all to wait for all shards in the cluster to be active, or 0
-            to not wait.
-        :param wait_for_events: Can be one of immediate, urgent, high, normal, low, languid.
-            Wait until all currently queued events with the given priority are processed.
-        :param wait_for_no_initializing_shards: A boolean value which controls whether
-            to wait (until the timeout provided) for the cluster to have no shard initializations.
-            Defaults to false, which means it will not wait for initializing shards.
-        :param wait_for_no_relocating_shards: A boolean value which controls whether
-            to wait (until the timeout provided) for the cluster to have no shard relocations.
-            Defaults to false, which means it will not wait for relocating shards.
-        :param wait_for_nodes: The request waits until the specified number N of nodes
-            is available. It also accepts >=N, <=N, >N and <N. Alternatively, it is possible
-            to use ge(N), le(N), gt(N) and lt(N) notation.
-        :param wait_for_status: One of green, yellow or red. Will wait (until the timeout
-            provided) until the status of the cluster changes to the one provided or
-            better, i.e. green > yellow > red. By default, will not wait for any status.
+        :param expand_wildcards: Expand wildcard expression to concrete indices that
+            are open, closed or both.
+        :param level: Return health information at a specific level of detail.
+        :param local: If true, retrieve information from the local node only. If false,
+            retrieve information from the master node.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        :param wait_for_active_shards: Wait for the specified number of active shards.
+            Use `all` to wait for all shards in the cluster to be active. Use `0` to
+            not wait.
+        :param wait_for_events: Wait until all currently queued events with the given
+            priority are processed.
+        :param wait_for_no_initializing_shards: Wait (until the timeout expires) for
+            the cluster to have no shard initializations. If false, the request does
+            not wait for initializing shards.
+        :param wait_for_no_relocating_shards: Wait (until the timeout expires) for the
+            cluster to have no shard relocations. If false, the request not wait for
+            relocating shards.
+        :param wait_for_nodes: Wait until the specified number (N) of nodes is available.
+            It also accepts `>=N`, `<=N`, `>N` and `<N`. Alternatively, use the notations
+            `ge(N)`, `le(N)`, `gt(N)`, and `lt(N)`.
+        :param wait_for_status: Wait (until the timeout expires) for the cluster to reach
+            a specific health status (or a better status). A green status is better than
+            yellow and yellow is better than red. By default, the request does not wait
+            for a particular status.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
