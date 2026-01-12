@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-17-13>>
 * <<rn-7-17-12>>
 * <<rn-7-17-7>>
 * <<rn-7-17-6>>
@@ -44,6 +45,11 @@
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
 
+[discrete]
+[[rn-7-17-13]]
+=== 7.17.13 (2026-01-12)
+
+* Compatibility with urllib3 2.x
 
 [discrete]
 [[rn-7-17-12]]
