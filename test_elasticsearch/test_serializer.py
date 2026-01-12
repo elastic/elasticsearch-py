@@ -99,7 +99,7 @@ class TestJSONSerializer(TestCase):
             np.float32,
             np.float64,
         ):
-            self.assertRegexpMatches(
+            self.assertRegex(
                 ser.dumps({"d": np_type(1.2)}), r'^\{"d":1\.2[\d]*}$'
             )
 

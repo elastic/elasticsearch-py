@@ -188,7 +188,7 @@ def test_mapbox_vector_tile_response(mvt_setup, connection_class):
     try:
         import mapbox_vector_tile
     except ImportError:
-        raise SkipTest("Requires the 'mapbox-vector-tile' package")
+        pytest.skip("Requires the 'mapbox-vector-tile' package")
 
     # Decode the binary as MVT
     tile = mapbox_vector_tile.decode(resp)

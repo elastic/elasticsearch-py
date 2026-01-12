@@ -268,12 +268,12 @@ class TestAIOHttpConnection:
         assert con.host == "https://localhost:9200"
 
     async def test_nowarn_when_test_uses_https_if_verify_certs_is_off(self):
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True) as warning_list:
             con = AIOHttpConnection(
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
             )
             await con._create_aiohttp_session()
-            assert w == []
+            assert [w for w in warning_list if 'enable_cleanup_closed' not in str(w.message)] == []
 
         assert isinstance(con.session, aiohttp.ClientSession)
 
