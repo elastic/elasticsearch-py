@@ -45,6 +45,10 @@ class InferenceClient(NamespacedClient):
         .. raw:: html
 
           <p>Perform completion inference on the service.</p>
+          <p>Get responses for completion tasks.
+          This API works only with the completion task type.</p>
+          <p>IMPORTANT: The inference APIs enable you to use certain services, such as built-in machine learning models (ELSER, E5), models uploaded through Eland, Cohere, OpenAI, Azure, Google AI Studio, Google Vertex AI, Anthropic, Watsonx.ai, or Hugging Face. For built-in models and models uploaded through Eland, the inference APIs offer an alternative way to use and manage trained models. However, if you do not plan to use the inference APIs to use these models or if you want to use non-NLP models, use the machine learning trained model APIs.</p>
+          <p>This API requires the <code>monitor_inference</code> cluster privilege (the built-in <code>inference_admin</code> and <code>inference_user</code> roles grant this privilege).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
@@ -2544,7 +2548,7 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("input", "query", "task_settings"),
+        body_fields=("input", "query", "return_documents", "task_settings", "top_n"),
     )
     def rerank(
         self,
@@ -2556,8 +2560,10 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        return_documents: t.Optional[bool] = None,
         task_settings: t.Optional[t.Any] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        top_n: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2569,14 +2575,14 @@ class InferenceClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
 
         :param inference_id: The unique identifier for the inference endpoint.
-        :param input: The text on which you want to perform the inference task. It can
-            be a single string or an array. > info > Inference endpoints for the `completion`
-            task type currently only support a single string as input.
+        :param input: The documents to rank.
         :param query: Query input.
+        :param return_documents: Include the document text in the response.
         :param task_settings: Task settings for the individual inference request. These
             settings are specific to the task type you specified and override the task
             settings specified when initializing the service.
         :param timeout: The amount of time to wait for the inference request to complete.
+        :param top_n: Limit the response to the top N documents.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -2603,8 +2609,12 @@ class InferenceClient(NamespacedClient):
                 __body["input"] = input
             if query is not None:
                 __body["query"] = query
+            if return_documents is not None:
+                __body["return_documents"] = return_documents
             if task_settings is not None:
                 __body["task_settings"] = task_settings
+            if top_n is not None:
+                __body["top_n"] = top_n
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",

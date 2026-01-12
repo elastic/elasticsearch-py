@@ -45,6 +45,8 @@ class ProjectClient(NamespacedClient):
           <p>Get tags.</p>
           <p>Get the tags that are defined for the project.</p>
 
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch-serverless/operation/operation-project-tags>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_project/tags"
