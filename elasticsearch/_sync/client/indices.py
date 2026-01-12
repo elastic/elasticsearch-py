@@ -2177,7 +2177,7 @@ class IndicesClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param max_num_segments: The number of segments the index should be merged into
-            (defayult: dynamic)
+            (default: dynamic)
         :param only_expunge_deletes: Specify whether the operation should only expunge
             deleted documents
         :param wait_for_completion: Should the request wait until the force merge is
@@ -4275,7 +4275,8 @@ class IndicesClient(NamespacedClient):
         :param ignore_missing_component_templates: The configuration option ignore_missing_component_templates
             can be used when an index template references a component template that might
             not exist
-        :param index_patterns: Name of the index template to create.
+        :param index_patterns: Array of wildcard (`*`) expressions used to match the
+            names of data streams and indices during creation.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
