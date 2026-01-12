@@ -271,6 +271,8 @@ def is_xpack_template(name):
         return True
     if ".transform-" in name:
         return True
+    if name.startswith(".logs-"):
+        return True
     if name in {
         ".watches",
         "logstash-index-template",
