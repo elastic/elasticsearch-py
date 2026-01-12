@@ -3,6 +3,9 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  FORCE_COLOR: 1
+
 jobs:
   lint:
     runs-on: ubuntu-latest
