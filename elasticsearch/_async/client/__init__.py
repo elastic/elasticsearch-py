@@ -64,7 +64,6 @@ from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
 from .project import ProjectClient
-from .project_routing import ProjectRoutingClient
 from .query_rules import QueryRulesClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
@@ -372,7 +371,6 @@ class AsyncElasticsearch(BaseClient):
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
         self.project = ProjectClient(self)
-        self.project_routing = ProjectRoutingClient(self)
         self.query_rules = QueryRulesClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
