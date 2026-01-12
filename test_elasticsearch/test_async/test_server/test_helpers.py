@@ -24,6 +24,7 @@ import warnings
 from datetime import datetime, timedelta, timezone
 
 import pytest
+import pytest_asyncio
 from mock import MagicMock, patch
 
 from elasticsearch import TransportError, helpers
@@ -430,7 +431,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -852,7 +853,7 @@ class TestScan(object):
             assert "from" not in search_mock.call_args[1]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -930,7 +931,7 @@ class TestReindex(object):
         )["_source"]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},

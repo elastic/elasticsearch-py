@@ -473,7 +473,8 @@ class TestTransport:
         assert 1 == len(conn_err.calls)
         assert 1 == len(conn_data.calls)
 
-    async def test_sniff_after_n_seconds(self, event_loop):
+    async def test_sniff_after_n_seconds(self):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [{"data": CLUSTER_NODES}],
             connection_class=DummyConnection,
@@ -548,7 +549,8 @@ class TestTransport:
         await t.close()
         assert all([conn.closed for conn in t.connection_pool.connections])
 
-    async def test_sniff_on_start_error_if_no_sniffed_hosts(self, event_loop):
+    async def test_sniff_on_start_error_if_no_sniffed_hosts(self):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {"data": ""},
@@ -566,7 +568,8 @@ class TestTransport:
             await t._async_call()
         assert str(e.value) == "TransportError(N/A, 'Unable to sniff hosts.')"
 
-    async def test_sniff_on_start_waits_for_sniff_to_complete(self, event_loop):
+    async def test_sniff_on_start_waits_for_sniff_to_complete(self):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {"delay": 1, "data": ""},
@@ -603,7 +606,8 @@ class TestTransport:
         # and then resolved immediately after.
         assert 1 <= duration < 2
 
-    async def test_sniff_on_start_close_unlocks_async_calls(self, event_loop):
+    async def test_sniff_on_start_close_unlocks_async_calls(self):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {"delay": 10, "data": CLUSTER_NODES},
@@ -729,7 +733,8 @@ class TestTransport:
             ),
         ]
 
-    async def test_multiple_requests_verify_elasticsearch_success(self, event_loop):
+    async def test_multiple_requests_verify_elasticsearch_success(self):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {
@@ -807,8 +812,9 @@ class TestTransport:
         ],
     )
     async def test_multiple_requests_verify_elasticsearch_product_error(
-        self, event_loop, build_flavor, tagline, product_error, error_message
+        self, build_flavor, tagline, product_error, error_message
     ):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {
@@ -866,8 +872,9 @@ class TestTransport:
 
     @pytest.mark.parametrize("error_cls", [ConnectionError, NotFoundError])
     async def test_multiple_requests_verify_elasticsearch_retry_on_errors(
-        self, event_loop, error_cls
+        self, error_cls
     ):
+        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {
