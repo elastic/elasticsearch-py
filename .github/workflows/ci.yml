@@ -15,7 +15,7 @@ jobs:
           python-version: 3.x
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
@@ -23,23 +23,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         experimental: [false]
         runs-on: ["ubuntu-latest"]
-        include:
-          - python-version: 2.7
-            experimental: false
-            runs-on: "ubuntu-20.04"
-          - python-version: 3.5
-            experimental: false
-            runs-on: "ubuntu-20.04"
-          - python-version: 3.6
-            experimental: false
-            runs-on: "ubuntu-20.04"
-
-          - python-version: 3.11
-            experimental: true
-            runs-on: "ubuntu-20.04"
 
     runs-on: ${{ matrix.runs-on }}
     name: test-${{ matrix.python-version }}
