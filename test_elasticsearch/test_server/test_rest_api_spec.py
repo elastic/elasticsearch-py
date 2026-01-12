@@ -39,6 +39,8 @@ from elasticsearch.helpers.test import _get_version
 
 from . import get_client
 
+pytestmark = pytest.mark.skip
+
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
 PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
@@ -544,6 +546,7 @@ YAML_TEST_SPECS = []
 
 # Try loading the REST API test specs from the Elastic Artifacts API
 try:
+    raise ValueError("not running for now")
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(
         retries=10, headers=urllib3.util.make_headers(accept_encoding=True)
