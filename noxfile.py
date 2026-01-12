@@ -31,7 +31,7 @@ def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
 
-    session.run("pytest")
+    session.run("pytest", *session.posargs)
 
 
 @nox.session()
