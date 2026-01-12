@@ -261,26 +261,11 @@ def wait_for_cluster_state_updates_to_finish(client, timeout=30):
 
 
 def is_xpack_template(name):
-    if ".monitoring-" in name:
-        return True
-    if ".watch" in name or ".triggered_watches" in name:
-        return True
-    if ".data-frame-" in name:
-        return True
-    if ".ml-" in name:
-        return True
-    if ".transform-" in name:
-        return True
-    if name.startswith(".logs-"):
+    if name.startswith("."):
         return True
     if name in {
-        ".watches",
         "logstash-index-template",
-        ".logstash-management",
         "security_audit_log",
-        ".slm-history",
-        ".async-search",
-        ".geoip_databases",
         "saml-service-provider",
         "ilm-history",
         "logs",
