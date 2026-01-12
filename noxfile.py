@@ -43,8 +43,7 @@ SOURCE_FILES = (
     ]
 )
 def test(session):
-    session.install(".")
-    session.install("-r", "dev-requirements.txt")
+    session.install(".", "-r", "dev-requirements.txt")
 
     session.run("pytest", *session.posargs)
 
