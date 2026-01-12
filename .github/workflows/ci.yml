@@ -34,15 +34,30 @@ jobs:
     name: test-${{ matrix.python-version }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
+      - name: Remove irrelevant software to free up disk space
+        run: |
+          df -h
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          df -h
       - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Set Up Python - ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v3
+      - name: Setup Elasticsearch
+        run: |
+          mkdir /tmp/elasticsearch
+          wget -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.29-linux-x86_64.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
+          /tmp/elasticsearch/bin/elasticsearch -E xpack.security.enabled=false -E discovery.type=single-node -d
+      - name: Setup Python - ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
         run: |
           python -m pip install -r dev-requirements.txt
       - name: Run Tests
+        env:
+          ELASTICSEARCH_URL: http://localhost:9200
         run: |
           nox -s test-${{ matrix.python-version }}

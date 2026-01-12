@@ -30,7 +30,9 @@ if "ELASTICSEARCH_URL" in os.environ:
 else:
     ELASTICSEARCH_URL = "https://elastic:changeme@localhost:9200"
 
-CA_CERTS = join(dirname(dirname(dirname(abspath(__file__)))), ".ci/certs/ca.pem")
+CA_CERTS = None
+if ELASTICSEARCH_URL.startswith("https://"):
+    CA_CERTS = join(dirname(dirname(dirname(abspath(__file__)))), ".ci/certs/ca.pem")
 
 
 def get_test_client(nowait=False, **kwargs):
