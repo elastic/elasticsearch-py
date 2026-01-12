@@ -301,8 +301,8 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/indices-component-template.html>`_
 
-        :param name: Comma-separated list of component template names used to limit the
-            request. Wildcard (`*`) expressions are supported.
+        :param name: Name of component template to retrieve. Wildcard (`*`) expressions
+            are supported.
         :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
             template
