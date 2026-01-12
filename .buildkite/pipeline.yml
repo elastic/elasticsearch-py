@@ -1,0 +1,3 @@
+steps:
+  - label: ":pipeline: Empty pipeline"
+    command: echo "Pipeline placeholder"
