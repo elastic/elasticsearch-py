@@ -52,7 +52,8 @@ packages = [
 ]
 
 install_requires = [
-    "urllib3>=1.21.1, <3",
+    "urllib3>=1.21.1, <2; python_version<'3.10'",
+    "urllib3>=1.21.1, <3; python_version>='3.10'",
     "certifi",
 ]
 tests_require = [
