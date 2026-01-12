@@ -302,8 +302,8 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-component-template>`_
 
-        :param name: Comma-separated list of component template names used to limit the
-            request. Wildcard (`*`) expressions are supported.
+        :param name: Name of component template to retrieve. Wildcard (`*`) expressions
+            are supported.
         :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
             template

@@ -5759,7 +5759,7 @@ class MlClient(NamespacedClient):
           <p>Validate an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/guide/en/machine-learning/master/ml-jobs.html>`_
+        `<https://www.elastic.co/guide/en/machine-learning/9.3/ml-jobs.html>`_
 
         :param analysis_config:
         :param analysis_limits:

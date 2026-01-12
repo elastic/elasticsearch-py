@@ -338,6 +338,7 @@ class UpdateByQueryResponse(AttrDict[Any], Generic[_R]):
     :arg retries: The number of retries attempted by update by query.
         `bulk` is the number of bulk actions retried. `search` is the
         number of search actions retried.
+    :arg slices: Status of each slice if the update by query was sliced
     :arg task:
     :arg timed_out: If true, some requests timed out during the update by
         query.
@@ -366,6 +367,7 @@ class UpdateByQueryResponse(AttrDict[Any], Generic[_R]):
     deleted: int
     requests_per_second: float
     retries: "types.Retries"
+    slices: Sequence["types.ReindexStatus"]
     task: str
     timed_out: bool
     took: Any
