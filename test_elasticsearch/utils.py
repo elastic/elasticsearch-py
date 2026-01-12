@@ -189,6 +189,14 @@ def wipe_ilm_policies(client):
             "ml-size-based-ilm-policy",
             "logs",
             "metrics",
+            "synthetics",
+            "7-days-default",
+            "30-days-default",
+            "90-days-default",
+            "180-days-default",
+            "365-days-default",
+            ".fleet-actions-results-ilm-policy",
+            ".deprecation-indexing-ilm-policy",
         }:
             client.ilm.delete_lifecycle(policy=policy)
 
