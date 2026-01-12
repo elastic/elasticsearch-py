@@ -2177,7 +2177,7 @@ class IndicesClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param max_num_segments: The number of segments the index should be merged into
-            (defayult: dynamic)
+            (default: dynamic)
         :param only_expunge_deletes: Specify whether the operation should only expunge
             deleted documents
         :param wait_for_completion: Should the request wait until the force merge is

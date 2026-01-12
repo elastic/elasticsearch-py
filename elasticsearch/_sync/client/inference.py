@@ -412,7 +412,7 @@ class InferenceClient(NamespacedClient):
           <li>OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>OpenShift AI (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>VoyageAI (<code>rerank</code>, <code>text_embedding</code>)</li>
-          <li>Watsonx inference integration (<code>text_embedding</code>)</li>
+          <li>Watsonx (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           </ul>
 
 
@@ -2748,7 +2748,7 @@ class InferenceClient(NamespacedClient):
         self,
         *,
         task_type: t.Union[
-            str, t.Literal["chat_completion", "completion", "text_embedding"]
+            str, t.Literal["chat_completion", "completion", "rerank", "text_embedding"]
         ],
         watsonx_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["watsonxai"]]] = None,
@@ -2779,8 +2779,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `watsonxai` service.
         :param chunking_settings: The chunking configuration object. Applies only to
-            the `text_embedding` task type. Not applicable to the `completion` or `chat_completion`
-            task types.
+            the `text_embedding` task type. Not applicable to the `rerank`, `completion`
+            or `chat_completion` task types.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
             to be created.
         """
