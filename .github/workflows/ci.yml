@@ -53,9 +53,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Dependencies
+      - name: Install nox
         run: |
-          python -m pip install -r dev-requirements.txt
+          python -m pip install nox
       - name: Run Tests
         env:
           ELASTICSEARCH_URL: http://localhost:9200
