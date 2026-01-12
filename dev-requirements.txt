@@ -7,6 +7,7 @@ sphinx
 sphinx-rtd-theme
 jinja2
 python-dateutil
+nox
 
 # Testing the 'search_mvt' API response
 mapbox-vector-tile; python_version!="3.4.*"
