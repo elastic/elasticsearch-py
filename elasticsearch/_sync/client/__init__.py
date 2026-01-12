@@ -4885,6 +4885,7 @@ class Elasticsearch(BaseClient):
             "grid_agg",
             "grid_precision",
             "grid_type",
+            "project_routing",
             "query",
             "runtime_mappings",
             "size",
@@ -5308,8 +5309,6 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if not __body:
             if aggs is not None:
                 __body["aggs"] = aggs
@@ -5327,6 +5326,8 @@ class Elasticsearch(BaseClient):
                 __body["grid_precision"] = grid_precision
             if grid_type is not None:
                 __body["grid_type"] = grid_type
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if runtime_mappings is not None:
@@ -5455,7 +5456,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("explain", "id", "params", "profile", "source"),
+        body_fields=("explain", "id", "params", "profile", "project_routing", "source"),
         ignore_deprecated_options={"params"},
     )
     def search_template(
@@ -5574,8 +5575,6 @@ class Elasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
         if routing is not None:
@@ -5595,6 +5594,8 @@ class Elasticsearch(BaseClient):
                 __body["params"] = params
             if profile is not None:
                 __body["profile"] = profile
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if source is not None:
                 __body["source"] = source
         __headers = {"accept": "application/json", "content-type": "application/json"}
