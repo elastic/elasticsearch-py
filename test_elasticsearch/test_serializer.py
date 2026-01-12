@@ -99,9 +99,7 @@ class TestJSONSerializer(TestCase):
             np.float32,
             np.float64,
         ):
-            self.assertRegexpMatches(
-                ser.dumps({"d": np_type(1.2)}), r'^\{"d":1\.2[\d]*}$'
-            )
+            self.assertRegex(ser.dumps({"d": np_type(1.2)}), r'^\{"d":1\.2[\d]*}$')
 
     def test_serializes_numpy_datetime(self):
         requires_numpy_and_pandas()

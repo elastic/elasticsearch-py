@@ -3,19 +3,22 @@ name: CI
 
 on: [push, pull_request]
 
+env:
+  FORCE_COLOR: 1
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Set up Python 3.7
+      - name: Set up Python 3.13
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.13
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
@@ -23,37 +26,38 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
         experimental: [false]
         runs-on: ["ubuntu-latest"]
-        include:
-          - python-version: 2.7
-            experimental: false
-            runs-on: "ubuntu-20.04"
-          - python-version: 3.5
-            experimental: false
-            runs-on: "ubuntu-20.04"
-          - python-version: 3.6
-            experimental: false
-            runs-on: "ubuntu-20.04"
-
-          - python-version: 3.11
-            experimental: true
-            runs-on: "ubuntu-20.04"
 
     runs-on: ${{ matrix.runs-on }}
     name: test-${{ matrix.python-version }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
+      - name: Remove irrelevant software to free up disk space
+        run: |
+          df -h
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/dotnet
+          df -h
       - name: Checkout Repository
-        uses: actions/checkout@v2
-      - name: Set Up Python - ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v3
+      - name: Setup Elasticsearch
+        run: |
+          mkdir /tmp/elasticsearch
+          wget -O - https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.29-linux-x86_64.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
+          /tmp/elasticsearch/bin/elasticsearch -E xpack.security.enabled=false -E discovery.type=single-node -d
+      - name: Setup Python - ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install Dependencies
+      - name: Install nox
         run: |
-          python -m pip install -r dev-requirements.txt
+          python -m pip install nox
       - name: Run Tests
+        env:
+          ELASTICSEARCH_URL: http://localhost:9200
         run: |
-          python setup.py test
+          nox -s test-${{ matrix.python-version }}

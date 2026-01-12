@@ -189,6 +189,14 @@ def wipe_ilm_policies(client):
             "ml-size-based-ilm-policy",
             "logs",
             "metrics",
+            "synthetics",
+            "7-days-default",
+            "30-days-default",
+            "90-days-default",
+            "180-days-default",
+            "365-days-default",
+            ".fleet-actions-results-ilm-policy",
+            ".deprecation-indexing-ilm-policy",
         }:
             client.ilm.delete_lifecycle(policy=policy)
 
@@ -253,24 +261,11 @@ def wait_for_cluster_state_updates_to_finish(client, timeout=30):
 
 
 def is_xpack_template(name):
-    if ".monitoring-" in name:
-        return True
-    if ".watch" in name or ".triggered_watches" in name:
-        return True
-    if ".data-frame-" in name:
-        return True
-    if ".ml-" in name:
-        return True
-    if ".transform-" in name:
+    if name.startswith("."):
         return True
     if name in {
-        ".watches",
         "logstash-index-template",
-        ".logstash-management",
         "security_audit_log",
-        ".slm-history",
-        ".async-search",
-        ".geoip_databases",
         "saml-service-provider",
         "ilm-history",
         "logs",

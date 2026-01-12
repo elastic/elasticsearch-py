@@ -24,6 +24,7 @@ import warnings
 from datetime import datetime, timedelta, timezone
 
 import pytest
+import pytest_asyncio
 from mock import MagicMock, patch
 
 from elasticsearch import TransportError, helpers
@@ -430,7 +431,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -852,7 +853,7 @@ class TestScan(object):
             assert "from" not in search_mock.call_args[1]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -930,7 +931,7 @@ class TestReindex(object):
         )["_source"]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -993,7 +994,7 @@ class TestParentChildReindex:
         } == q
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_data_stream_setup(async_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []
@@ -1022,9 +1023,8 @@ async def reindex_data_stream_setup(async_client):
 
 class TestAsyncDataStreamReindex(object):
     @pytest.mark.parametrize("op_type", [None, "create"])
-    async def test_reindex_index_datastream(
-        self, op_type, async_client, reindex_data_stream_setup
-    ):
+    @pytest.mark.usefixtures("reindex_data_stream_setup")
+    async def test_reindex_index_datastream(self, op_type, async_client):
         await helpers.async_reindex(
             async_client,
             source_index="test_index_stream",
@@ -1042,9 +1042,8 @@ class TestAsyncDataStreamReindex(object):
             ]
         )
 
-    async def test_reindex_index_datastream_op_type_index(
-        self, async_client, reindex_data_stream_setup
-    ):
+    @pytest.mark.usefixtures("reindex_data_stream_setup")
+    async def test_reindex_index_datastream_op_type_index(self, async_client):
         with pytest.raises(
             ValueError, match="Data streams must have 'op_type' set to 'create'"
         ):
