@@ -16,7 +16,6 @@
 #  under the License.
 
 import re
-from unittest import SkipTest
 
 import pytest
 from mock import patch

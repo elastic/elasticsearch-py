@@ -273,7 +273,9 @@ class TestAIOHttpConnection:
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
             )
             await con._create_aiohttp_session()
-            assert [w for w in warning_list if 'enable_cleanup_closed' not in str(w.message)] == []
+            assert [
+                w for w in warning_list if "enable_cleanup_closed" not in str(w.message)
+            ] == []
 
         assert isinstance(con.session, aiohttp.ClientSession)
 

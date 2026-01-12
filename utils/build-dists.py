@@ -42,7 +42,6 @@ def set_tmp_dir():
 
 
 def run(*argv, expect_exit_code=0):
-    global tmp_dir
     if tmp_dir is None:
         os.chdir(base_dir)
     else:

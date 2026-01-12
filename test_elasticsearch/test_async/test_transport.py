@@ -550,7 +550,6 @@ class TestTransport:
         assert all([conn.closed for conn in t.connection_pool.connections])
 
     async def test_sniff_on_start_error_if_no_sniffed_hosts(self):
-        event_loop = asyncio.get_event_loop()
         t = AsyncTransport(
             [
                 {"data": ""},

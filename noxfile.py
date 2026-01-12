@@ -26,7 +26,22 @@ SOURCE_FILES = (
 )
 
 
-@nox.session(python=["2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"])
+@nox.session(
+    python=[
+        "2.7",
+        "3.4",
+        "3.5",
+        "3.6",
+        "3.7",
+        "3.8",
+        "3.9",
+        "3.10",
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+    ]
+)
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
@@ -34,7 +49,7 @@ def test(session):
     session.run("pytest", *session.posargs)
 
 
-@nox.session()
+@nox.session(python="3.13")
 def format(session):
     session.install("black==21.12b0", "click==8.0.4", "isort")
 
@@ -45,7 +60,7 @@ def format(session):
     lint(session)
 
 
-@nox.session()
+@nox.session(python="3.13")
 def lint(session):
     session.install(
         "flake8", "black==21.12b0", "click==8.0.4", "mypy", "isort", "types-requests"
