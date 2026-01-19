@@ -4130,6 +4130,7 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Update data stream settings.</p>
+          <p>NOTE: Available in 8.19. Not available in earlier versions.</p>
           <p>This API can be used to override settings on specific data streams. These overrides will take precedence over what
           is specified in the template that the data stream matches. To prevent your data stream from getting into an invalid state,
           only certain settings are allowed. If possible, the setting change is applied to all
@@ -4275,7 +4276,8 @@ class IndicesClient(NamespacedClient):
         :param ignore_missing_component_templates: The configuration option ignore_missing_component_templates
             can be used when an index template references a component template that might
             not exist
-        :param index_patterns: Name of the index template to create.
+        :param index_patterns: Array of wildcard (`*`) expressions used to match the
+            names of data streams and indices during creation.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
