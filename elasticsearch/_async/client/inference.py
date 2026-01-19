@@ -399,7 +399,7 @@ class InferenceClient(NamespacedClient):
           <li>Mistral (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>VoyageAI (<code>rerank</code>, <code>text_embedding</code>)</li>
-          <li>Watsonx inference integration (<code>text_embedding</code>)</li>
+          <li>Watsonx (<code>rerank</code>, <code>text_embedding</code>)</li>
           </ul>
 
 
@@ -2200,7 +2200,7 @@ class InferenceClient(NamespacedClient):
     async def put_watsonx(
         self,
         *,
-        task_type: t.Union[str, t.Literal["text_embedding"]],
+        task_type: t.Union[str, t.Literal["rerank", "text_embedding"]],
         watsonx_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["watsonxai"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
