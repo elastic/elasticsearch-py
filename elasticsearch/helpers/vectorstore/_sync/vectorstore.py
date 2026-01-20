@@ -355,6 +355,7 @@ class VectorStore:
         custom_query: Optional[
             Callable[[Dict[str, Any], Optional[str]], Dict[str, Any]]
         ] = None,
+        filter: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """Return docs selected using the maximal marginal relevance.
 
@@ -372,6 +373,7 @@ class VectorStore:
             Defaults to 0.5.
         :param fields: Other fields to get from elasticsearch source. These fields
             will be added to the document metadata.
+        :param filter: Optional list of filters to apply to the search.
 
         :return: A list of Documents selected by maximal marginal relevance.
         """
@@ -403,6 +405,7 @@ class VectorStore:
             k=num_candidates,
             fields=fields,
             custom_query=custom_query,
+            filter=filter,
         )
 
         # Get the embeddings for the fetched documents
