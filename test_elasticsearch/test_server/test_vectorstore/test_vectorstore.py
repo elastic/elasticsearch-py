@@ -941,6 +941,7 @@ class TestVectorStore:
     ) -> None:
         """Test max marginal relevance search."""
         texts = ["foo", "bar", "baz"]
+        metadatas = [{"page": i} for i in range(len(texts))]
         vector_field = "vector_field"
         text_field = "text_field"
         query_embedding = [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0]
@@ -953,7 +954,7 @@ class TestVectorStore:
             text_field=text_field,
             client=sync_client,
         )
-        store.add_texts(texts)
+        store.add_texts(texts=texts, metadatas=metadatas)
 
         # search with query
         mmr_output = store.max_marginal_relevance_search(
@@ -974,6 +975,19 @@ class TestVectorStore:
         )
         sim_output = store.search(query_vector=query_embedding, k=3)
         assert mmr_output == sim_output
+
+        #  search with filter
+        filter = {"term": {"metadata.page": 1}}
+        mmr_output = store.max_marginal_relevance_search(
+            query=texts[0],
+            vector_field=vector_field,
+            k=2,
+            num_candidates=3,
+            filter=filter,
+        )
+        assert len(mmr_output) == 1
+        assert mmr_output[0]["_source"]["metadata"]["page"] == 1
+        assert mmr_output[0]["_source"]["text_field"] == texts[1]
 
         mmr_output = store.max_marginal_relevance_search(
             query=texts[0],
