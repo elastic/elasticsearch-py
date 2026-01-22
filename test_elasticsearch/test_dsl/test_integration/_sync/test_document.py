@@ -440,7 +440,7 @@ def test_get_with_tz_date(data_client: Elasticsearch) -> None:
 
 @pytest.mark.sync
 def test_save_with_tz_date(data_client: Elasticsearch) -> None:
-    tzinfo = timezone("Europe/Prague")
+    tzinfo = ZoneInfo("Europe/Prague")
     first_commit = Commit.get(
         id="3ca6e1e73a071a705b4babd2f581c91a2a3e5037", routing="elasticsearch-dsl-py"
     )

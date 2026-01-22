@@ -444,7 +444,7 @@ async def test_get_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
 
 @pytest.mark.anyio
 async def test_save_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
-    tzinfo = timezone("Europe/Prague")
+    tzinfo = ZoneInfo("Europe/Prague")
     first_commit = await Commit.get(
         id="3ca6e1e73a071a705b4babd2f581c91a2a3e5037", routing="elasticsearch-dsl-py"
     )
