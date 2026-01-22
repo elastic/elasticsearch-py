@@ -24,11 +24,11 @@
 from datetime import datetime
 from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple, Union
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import pytest
 from pytest import raises
-from pytz import timezone
 
 from elasticsearch import ConflictError, Elasticsearch, NotFoundError
 from elasticsearch.dsl import (
@@ -431,7 +431,7 @@ def test_get_with_tz_date(data_client: Elasticsearch) -> None:
     )
     assert first_commit is not None
 
-    tzinfo = timezone("Europe/Prague")
+    tzinfo = ZoneInfo("Europe/Prague")
     assert (
         tzinfo.localize(datetime(2014, 5, 2, 13, 47, 19, 123000))
         == first_commit.authored_date
