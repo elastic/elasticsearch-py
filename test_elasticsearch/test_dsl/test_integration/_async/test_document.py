@@ -437,8 +437,7 @@ async def test_get_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
 
     tzinfo = ZoneInfo("Europe/Prague")
     assert (
-        tzinfo.localize(datetime(2014, 5, 2, 13, 47, 19, 123000))
-        == first_commit.authored_date
+        datetime(2014, 5, 2, 13, 47, 19, 123000, tzinfo) == first_commit.authored_date
     )
 
 
@@ -450,9 +449,7 @@ async def test_save_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
     )
     assert first_commit is not None
 
-    first_commit.committed_date = tzinfo.localize(
-        datetime(2014, 5, 2, 13, 47, 19, 123456)
-    )
+    first_commit.committed_date = datetime(2014, 5, 2, 13, 47, 19, 123456, tzinfo)
     await first_commit.save()
 
     first_commit = await Commit.get(
@@ -461,8 +458,7 @@ async def test_save_with_tz_date(async_data_client: AsyncElasticsearch) -> None:
     assert first_commit is not None
 
     assert (
-        tzinfo.localize(datetime(2014, 5, 2, 13, 47, 19, 123456))
-        == first_commit.committed_date
+        datetime(2014, 5, 2, 13, 47, 19, 123456, tzinfo) == first_commit.committed_date
     )
 
 
