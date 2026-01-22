@@ -1,10 +1,10 @@
-# ES|QL Query Builder
+# ES|QL query builder
 
 ::::{warning}
 This functionality is in technical preview and may be changed or removed in a future release. Elastic will work to fix any issues, but features in technical preview are not subject to the support SLA of official GA features.
 ::::
 
-The ES|QL Query Builder allows you to construct ES|QL queries using Python syntax. Consider the following example:
+The ES|QL query builder allows you to construct ES|QL queries using Python syntax. Consider the following example:
 
 ```python
 >>> from elasticsearch.esql import ESQL
