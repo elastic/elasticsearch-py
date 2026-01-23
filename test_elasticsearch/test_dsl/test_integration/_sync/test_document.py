@@ -24,10 +24,10 @@
 from datetime import datetime
 from ipaddress import ip_address
 from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Tuple, Union
-from zoneinfo import ZoneInfo
 
 import pytest
 from pytest import raises
+from pytz import timezone
 
 from elasticsearch import ConflictError, Elasticsearch, NotFoundError
 from elasticsearch.dsl import (
@@ -428,21 +428,24 @@ def test_get_with_tz_date(data_client: Elasticsearch) -> None:
     )
     assert first_commit is not None
 
-    tzinfo = ZoneInfo("Europe/Prague")
+    tzinfo = timezone("Europe/Prague")
     assert (
-        datetime(2014, 5, 2, 13, 47, 19, 123000, tzinfo) == first_commit.authored_date
+        tzinfo.localize(datetime(2014, 5, 2, 13, 47, 19, 123000))
+        == first_commit.authored_date
     )
 
 
 @pytest.mark.sync
 def test_save_with_tz_date(data_client: Elasticsearch) -> None:
-    tzinfo = ZoneInfo("Europe/Prague")
+    tzinfo = timezone("Europe/Prague")
     first_commit = Commit.get(
         id="3ca6e1e73a071a705b4babd2f581c91a2a3e5037", routing="elasticsearch-dsl-py"
     )
     assert first_commit is not None
 
-    first_commit.committed_date = datetime(2014, 5, 2, 13, 47, 19, 123456, tzinfo)
+    first_commit.committed_date = tzinfo.localize(
+        datetime(2014, 5, 2, 13, 47, 19, 123456)
+    )
     first_commit.save()
 
     first_commit = Commit.get(
@@ -451,7 +454,8 @@ def test_save_with_tz_date(data_client: Elasticsearch) -> None:
     assert first_commit is not None
 
     assert (
-        datetime(2014, 5, 2, 13, 47, 19, 123456, tzinfo) == first_commit.committed_date
+        tzinfo.localize(datetime(2014, 5, 2, 13, 47, 19, 123456))
+        == first_commit.committed_date
     )
 
 
