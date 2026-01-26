@@ -20,7 +20,13 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _availability_warning,
+    _quote,
+    _rewrite_parameters,
+)
 
 
 class InferenceClient(NamespacedClient):
@@ -106,6 +112,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "embedding",
                     "rerank",
                     "sparse_embedding",
                     "text_embedding",
@@ -173,6 +180,68 @@ class InferenceClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_name="embedding",
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def embedding(
+        self,
+        *,
+        inference_id: str,
+        embedding: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Perform dense embedding inference on the service.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+
+        :param inference_id: The inference Id
+        :param embedding:
+        :param timeout: Specifies the amount of time to wait for the inference request
+            to complete.
+        """
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if embedding is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'embedding' and 'body', one of them should be set."
+            )
+        elif embedding is not None and body is not None:
+            raise ValueError("Cannot set both 'embedding' and 'body'")
+        __path_parts: t.Dict[str, str] = {"inference_id": _quote(inference_id)}
+        __path = f'/_inference/embedding/{__path_parts["inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = embedding if embedding is not None else body
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.embedding",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def get(
         self,
@@ -183,6 +252,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "embedding",
                     "rerank",
                     "sparse_embedding",
                     "text_embedding",
@@ -253,6 +323,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "embedding",
                     "rerank",
                     "sparse_embedding",
                     "text_embedding",
@@ -290,14 +361,14 @@ class InferenceClient(NamespacedClient):
             be a single string or an array. > info > Inference endpoints for the `completion`
             task type currently only support a single string as input.
         :param task_type: The type of inference task that the model performs.
-        :param input_type: Specifies the input data type for the text embedding model.
-            The `input_type` parameter only applies to Inference Endpoints with the `text_embedding`
-            task type. Possible values include: * `SEARCH` * `INGEST` * `CLASSIFICATION`
-            * `CLUSTERING` Not all services support all values. Unsupported values will
-            trigger a validation exception. Accepted values depend on the configured
-            inference service, refer to the relevant service-specific documentation for
-            more info. > info > The `input_type` parameter specified on the root level
-            of the request body will take precedence over the `input_type` parameter
+        :param input_type: Specifies the input data type for the embedding model. The
+            `input_type` parameter only applies to Inference Endpoints with the `embedding`
+            or `text_embedding` task type. Possible values include: * `SEARCH` * `INGEST`
+            * `CLASSIFICATION` * `CLUSTERING` Not all services support all values. Unsupported
+            values will trigger a validation exception. Accepted values depend on the
+            configured inference service, refer to the relevant service-specific documentation
+            for more info. > info > The `input_type` parameter specified on the root
+            level of the request body will take precedence over the `input_type` parameter
             specified in `task_settings`.
         :param query: The query input, which is required only for the `rerank` task.
             It is not required for other tasks.
@@ -369,6 +440,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "embedding",
                     "rerank",
                     "sparse_embedding",
                     "text_embedding",
@@ -392,7 +464,7 @@ class InferenceClient(NamespacedClient):
           <ul>
           <li>AI21 (<code>chat_completion</code>, <code>completion</code>)</li>
           <li>AlibabaCloud AI Search (<code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
-          <li>Amazon Bedrock (<code>completion</code>, <code>text_embedding</code>)</li>
+          <li>Amazon Bedrock (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Amazon SageMaker (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
           <li>Anthropic (<code>completion</code>)</li>
           <li>Azure AI Studio (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
@@ -405,7 +477,7 @@ class InferenceClient(NamespacedClient):
           <li>Google Vertex AI (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Groq (<code>chat_completion</code>)</li>
           <li>Hugging Face (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
-          <li>JinaAI (<code>rerank</code>, <code>text_embedding</code>)</li>
+          <li>JinaAI (<code>embedding</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Llama (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Mistral (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Nvidia (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>, <code>rerank</code>)</li>
@@ -651,7 +723,9 @@ class InferenceClient(NamespacedClient):
     async def put_amazonbedrock(
         self,
         *,
-        task_type: t.Union[str, t.Literal["completion", "text_embedding"]],
+        task_type: t.Union[
+            str, t.Literal["chat_completion", "completion", "text_embedding"]
+        ],
         amazonbedrock_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["amazonbedrock"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -684,7 +758,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `amazonbedrock` service.
         :param chunking_settings: The chunking configuration object. Applies only to
-            the `text_embedding` task type. Not applicable to the `completion` task type.
+            the `text_embedding` task type. Not applicable to the `chat_completion` and
+            `completion` task types.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -2105,7 +2180,7 @@ class InferenceClient(NamespacedClient):
     async def put_jinaai(
         self,
         *,
-        task_type: t.Union[str, t.Literal["rerank", "text_embedding"]],
+        task_type: t.Union[str, t.Literal["embedding", "rerank", "text_embedding"]],
         jinaai_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["jinaai"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2124,7 +2199,7 @@ class InferenceClient(NamespacedClient):
           <p>Create an JinaAI inference endpoint.</p>
           <p>Create an inference endpoint to perform an inference task with the <code>jinaai</code> service.</p>
           <p>To review the available <code>rerank</code> models, refer to <a href="https://jina.ai/reranker">https://jina.ai/reranker</a>.
-          To review the available <code>text_embedding</code> models, refer to the <a href="https://jina.ai/embeddings/">https://jina.ai/embeddings/</a>.</p>
+          To review the available <code>embedding</code> and <code>text_embedding</code> models, refer to <a href="https://jina.ai/embeddings/">https://jina.ai/embeddings/</a>.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-jinaai>`_
@@ -2136,7 +2211,8 @@ class InferenceClient(NamespacedClient):
         :param service_settings: Settings used to install the inference model. These
             settings are specific to the `jinaai` service.
         :param chunking_settings: The chunking configuration object. Applies only to
-            the `text_embedding` task type. Not applicable to the `rerank` task type.
+            the `embedding` and text_embedding` task types. Not applicable to the `rerank`
+            task type.
         :param task_settings: Settings to configure the inference task. These settings
             are specific to the task type you specified.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
@@ -3063,6 +3139,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "embedding",
                     "rerank",
                     "sparse_embedding",
                     "text_embedding",
