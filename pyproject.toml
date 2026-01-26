@@ -64,6 +64,7 @@ dev = [
     "coverage",
     "jinja2",
     "python-dateutil",
+    "pytz",
     "unasync",
     "pyyaml>=5.4",
     "isort",
