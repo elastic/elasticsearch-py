@@ -48,10 +48,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create of update named project routing expressions.</p>
+          <p>Create or update project routing expressions.</p>
 
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
 
         :param expressions:
         """
@@ -102,10 +100,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create of update a single named project routing expression.</p>
+          <p>Create or update a project routing expression.</p>
 
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
 
         :param name: The name of project routing expression
         :param expressions:
@@ -155,10 +151,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete named project routing expressions.</p>
+          <p>Delete a project routing expression.</p>
 
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
 
         :param name: The name of project routing expression
         """
@@ -198,10 +192,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get named project routing expressions.</p>
+          <p>Get project routing expressions.</p>
 
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_project_routing"
@@ -238,10 +230,8 @@ class ProjectClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get named project routing expressions.</p>
+          <p>Get a project routing expression.</p>
 
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
 
         :param name: The name of project routing expression
         """
@@ -277,7 +267,6 @@ class ProjectClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        project_routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -287,9 +276,6 @@ class ProjectClient(NamespacedClient):
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch-serverless/operation/operation-project-tags>`_
-
-        :param project_routing: A Lucene query using project metadata tags used to filter
-            which projects are returned in the response, such as _alias:_origin or _alias:*pr*.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_project/tags"
@@ -302,8 +288,6 @@ class ProjectClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if project_routing is not None:
-            __query["project_routing"] = project_routing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
