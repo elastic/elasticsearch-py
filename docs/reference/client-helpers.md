@@ -12,7 +12,7 @@ You can find here a collection of simple helper functions that abstract some spe
 
 There are several helpers for the bulk API since its requirement for specific formatting and other considerations can make it cumbersome if used directly.
 
-All bulk helpers accept an instance of `Elasticsearch` class and an iterable `action` (any iterable, can also be a generator, which is ideal in most cases since it allows you to index large datasets without the need of loading them into memory).
+All bulk helpers accept an instance of `Elasticsearch` or `AsyncElasticsearch` classes and an iterable `action` (any iterable, can also be a generator, which is ideal in most cases since it allows you to index large datasets without the need of loading them into memory).
 
 The items in the iterable `action` should be the documents we wish to index in several formats. The most common one is the same as returned by `search()`, for example:
 
@@ -63,10 +63,27 @@ Simple abstraction on top of the `scroll()` API - a simple iterator that yields 
 
 By default scan does not return results in any pre-determined order. To have a standard order in the returned documents (either by score or explicit sort definition) when scrolling, use `preserve_order=True`. This may be an expensive operation and will negate the performance benefits of using `scan`.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 scan(es,
     query={"query": {"match": {"title": "python"}}},
     index="orders-*"
 )
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+await scan(es,
+    query={"query": {"match": {"title": "python"}}},
+    index="orders-*"
+)
+```
+:::
+
+::::
