@@ -14,6 +14,12 @@ Breaking changes can impact your Elastic applications, potentially disrupting no
 % **Action**<br> Steps for mitigating deprecation impact.
 % ::::
 
+## 9.2.0 [elasticsearch-python-client-920-breaking-changes]
+
+::::{dropdown} DSL module is incompatible with Elasticsearch 9.0
+Due to a change in [how Elasticsearch 9.2 returns vectors](https://www.elastic.co/search-labs/blog/elasticsearch-exclude-vectors-from-source), the DSL module in the Elasticsearch Python client 9.2.0 includes the `exclude_vectors` option in all search requests executed from a `Document` or `AsyncDocument` class. Because the `exclude_vectors` option does not exist in Elasticsearch 9.0, document queries issued with 9.2.0 or newer versions of the Elasticsearch Python client require a 9.1.0 or newer Elasticsearch server.
+::::
+
 ## 9.0.0 [elasticsearch-python-client-900-breaking-changes]
 
 ::::{dropdown} Remove deprecated Elasticsearch() options
