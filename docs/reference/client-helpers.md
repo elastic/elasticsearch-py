@@ -63,10 +63,29 @@ Simple abstraction on top of the `scroll()` API - a simple iterator that yields 
 
 By default scan does not return results in any pre-determined order. To have a standard order in the returned documents (either by score or explicit sort definition) when scrolling, use `preserve_order=True`. This may be an expensive operation and will negate the performance benefits of using `scan`.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
-scan(es,
+scan(
+    es,
     query={"query": {"match": {"title": "python"}}},
     index="orders-*"
 )
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+await scan(
+    es,
+    query={"query": {"match": {"title": "python"}}},
+    index="orders-*"
+)
+```
+:::
+
+::::
