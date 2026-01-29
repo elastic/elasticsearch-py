@@ -9,8 +9,14 @@ mapped_pages:
 
 Let’s have a typical search request written directly as a `dict`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch import Elasticsearch
+
 client = Elasticsearch("https://localhost:9200")
 
 response = client.search(
@@ -40,11 +46,56 @@ for hit in response['hits']['hits']:
 for tag in response['aggregations']['per_tag']['buckets']:
     print(tag['key'], tag['max_lines']['value'])
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch("https://localhost:9200")
+
+async def example():
+    response = await client.search(
+        index="my-index",
+        body={
+          "query": {
+            "bool": {
+              "must": [{"match": {"title": "python"}}],
+              "must_not": [{"match": {"description": "beta"}}],
+              "filter": [{"term": {"category": "search"}}]
+            }
+          },
+          "aggs" : {
+            "per_tag": {
+              "terms": {"field": "tags"},
+              "aggs": {
+                "max_lines": {"max": {"field": "lines"}}
+              }
+            }
+          }
+        }
+    )
+
+    for hit in response['hits']['hits']:
+        print(hit['_score'], hit['_source']['title'])
+
+    for tag in response['aggregations']['per_tag']['buckets']:
+        print(tag['key'], tag['max_lines']['value'])
+```
+:::
+
+::::
 
 The problem with this approach is that it is very verbose, prone to syntax mistakes like incorrect nesting, hard to modify (eg. adding another filter) and definitely not fun to write.
 
 Let’s rewrite the example using the DSL module:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search, query, aggs
@@ -67,6 +118,36 @@ for hit in response:
 for tag in response.aggregations.per_tag.buckets:
     print(tag.key, tag.max_lines.value)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch import AsyncElasticsearch
+from elasticsearch.dsl import AsyncSearch, query, aggs
+
+client = AsyncElasticsearch("https://localhost:9200")
+
+async def example():
+    s = AsyncSearch(using=client, index="my-index") \
+        .query(query.Match("title", "python"))   \
+        .filter(query.Term("category", "search")) \
+        .exclude(query.Match("description", "beta"))
+
+    s.aggs.bucket('per_tag', aggs.Terms(field="tags")) \
+        .metric('max_lines', aggs.Max(field='lines'))
+
+    response = await s.execute()
+
+    for hit in response:
+        print(hit.meta.score, hit.title)
+
+    for tag in response.aggregations.per_tag.buckets:
+        print(tag.key, tag.max_lines.value)
+```
+:::
+
+::::
 
 As you see, the DSL module took care of:
 
@@ -81,6 +162,11 @@ As you see, the DSL module took care of:
 
 Let’s have a simple Python class representing an article in a blogging system:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from datetime import datetime
 from elasticsearch.dsl import Document, Date, Integer, Keyword, Text, connections, mapped_field
@@ -123,6 +209,56 @@ print(article.is_published())
 # Display cluster health
 print(connections.get_connection().cluster.health())
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from datetime import datetime
+from elasticsearch.dsl import AsyncDocument, Date, Integer, Keyword, Text, async_connections, mapped_field
+
+# Define a default Elasticsearch client
+async_connections.create_connection(hosts="https://localhost:9200")
+
+class Article(AsyncDocument):
+    title: str = mapped_field(Text(analyzer='snowball', fields={'raw': Keyword()}))
+    body: str = mapped_field(Text(analyzer='snowball'))
+    tags: list[str] = mapped_field(Keyword())
+    published_from: datetime
+    lines: int
+
+    class Index:
+        name = 'blog'
+        settings = {
+          "number_of_shards": 2,
+        }
+
+    async def save(self, **kwargs):
+        self.lines = len(self.body.split())
+        return await super(Article, self).save(** kwargs)
+
+    def is_published(self):
+        return datetime.now() > self.published_from
+
+async def example():
+    # create the mappings in elasticsearch
+    await Article.init()
+
+    # create and save and article
+    article = Article(meta={'id': 42}, title='Hello world!', tags=['test'])
+    article.body = ''' looong text '''
+    article.published_from = datetime.now()
+    await article.save()
+
+    article = await Article.get(id=42)
+    print(article.is_published())
+
+    # Display cluster health
+    print(async_connections.get_connection().cluster.health())
+```
+:::
+
+::::
 
 In this example you can see:
 
@@ -141,6 +277,11 @@ You can see more in the [persistence](dsl_how_to_guides.md#_persistence_2) chapt
 
 If you have your `Document`s defined you can very easily create a faceted search class to simplify searching and filtering.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import FacetedSearch, TermsFacet, DateHistogramFacet
 
@@ -168,6 +309,41 @@ for (tag, count, selected) in response.facets.tags:
 for (month, count, selected) in response.facets.publishing_frequency:
     print(month.strftime('%B %Y'), ' (SELECTED):' if selected else ':', count)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import AsyncFacetedSearch, TermsFacet, DateHistogramFacet
+
+class BlogSearch(AsyncFacetedSearch):
+    doc_types = [Article, ]
+    # fields that should be searched
+    fields = ['tags', 'title', 'body']
+
+    facets = {
+        # use bucket aggregations to define facets
+        'tags': TermsFacet(field='tags'),
+        'publishing_frequency': DateHistogramFacet(field='published_from', interval='month')
+    }
+
+async def example():
+    # empty search
+    bs = BlogSearch()
+    response = await bs.execute()
+
+    for hit in response:
+        print(hit.meta.score, hit.title)
+
+    for (tag, count, selected) in response.facets.tags:
+        print(tag, ' (SELECTED):' if selected else ':', count)
+
+    for (month, count, selected) in response.facets.publishing_frequency:
+        print(month.strftime('%B %Y'), ' (SELECTED):' if selected else ':', count)
+```
+:::
+
+::::
 
 You can find more details in the `faceted_search` chapter.
 
@@ -176,8 +352,14 @@ You can find more details in the `faceted_search` chapter.
 
 Let’s resume the simple example of articles on a blog, and let’s assume that each article has a number of likes. For this example, imagine we want to increment the number of likes by 1 for all articles that match a certain tag and do not match a certain description. Writing this as a `dict`, we would have the following code:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch import Elasticsearch
+
 client = Elasticsearch()
 
 response = client.update_by_query(
@@ -196,9 +378,43 @@ response = client.update_by_query(
     },
   )
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch()
+
+async def example():
+    response = await client.update_by_query(
+        index="my-index",
+        body={
+          "query": {
+            "bool": {
+              "must": [{"match": {"tag": "python"}}],
+              "must_not": [{"match": {"description": "beta"}}]
+            }
+          },
+          "script"={
+            "source": "ctx._source.likes++",
+            "lang": "painless"
+          }
+        },
+      )
+```
+:::
+
+::::
 
 Using the DSL, we can now express this query as such:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search, UpdateByQuery
@@ -212,6 +428,28 @@ ubq = UpdateByQuery(using=client, index="my-index") \
 
 response = ubq.execute()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch import AsyncElasticsearch
+from elasticsearch.dsl import AsyncSearch, AsyncUpdateByQuery
+from elasticsearch.dsl.query import Match
+
+client = AsyncElasticsearch()
+
+async def example():
+    ubq = UpdateByQuery(using=client, index="my-index") \
+          .query(Match("title", "python"))   \
+          .exclude(Match("description", "beta")) \
+          .script(source="ctx._source.likes++", lang="painless")
+
+    response = await ubq.execute()
+```
+:::
+
+::::
 
 As you can see, the `Update By Query` object provides many of the savings offered by the `Search` object, and additionally allows one to update the results of the search based on a script assigned in the same manner.
 
@@ -220,6 +458,11 @@ As you can see, the `Update By Query` object provides many of the savings offere
 
 The DSL module features an integration with the ES|QL query builder, consisting of two methods available in all `Document` sub-classes: `esql_from()` and `esql_execute()`. Using the `Article` document from above, we can search for up to ten articles that include `"world"` in their titles with the following ES|QL query:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.esql import functions
 
@@ -227,6 +470,21 @@ query = Article.esql_from().where(functions.match(Article.title, 'world')).limit
 for a in Article.esql_execute(query):
     print(a.title)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.esql import functions
+
+async def example():
+    query = Article.esql_from().where(functions.match(Article.title, 'world')).limit(10)
+    async for a in Article.esql_execute(query):
+        print(a.title)
+```
+:::
+
+::::
 
 Review the [ES|QL query builder section](esql-query-builder.md) to learn more about building ES|QL queries in Python.
 
@@ -234,6 +492,11 @@ Review the [ES|QL query builder section](esql-query-builder.md) to learn more ab
 
 You don’t have to port your entire application to get the benefits of the DSL module, you can start gradually by creating a `Search` object from your existing `dict`, modifying it using the API and serializing it back to a `dict`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 body = {...} # insert complicated query here
 
@@ -246,5 +509,23 @@ s.filter(query.Term("tags", "python"))
 # Convert back to dict to plug back into existing code
 body = s.to_dict()
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+body = {...} # insert complicated query here
+
+# Convert to Search object
+s = AsyncSearch.from_dict(body)
+
+# Add some filters, aggregations, queries, ...
+s.filter(query.Term("tags", "python"))
+
+# Convert back to dict to plug back into existing code
+body = s.to_dict()
+```
+:::
+
+::::
 

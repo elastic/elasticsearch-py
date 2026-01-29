@@ -69,7 +69,8 @@ By default scan does not return results in any pre-determined order. To have a s
 :::{tab-item} Standard Python
 :sync: sync
 ```py
-scan(es,
+scan(
+    es,
     query={"query": {"match": {"title": "python"}}},
     index="orders-*"
 )
@@ -79,7 +80,8 @@ scan(es,
 :::{tab-item} Async Python
 :sync: async
 ```py
-await scan(es,
+await scan(
+    es,
     query={"query": {"match": {"title": "python"}}},
     index="orders-*"
 )
