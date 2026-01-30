@@ -34,16 +34,46 @@ How can you figure out the namespace?
 
 Now that you know which functions to call, the next step is parameters. To avoid ambiguity, the Python Elasticsearch client mandates keyword arguments. To give an example, let's look at the ["Create an index" API](https://elasticsearch-py.readthedocs.io/en/stable/api/indices.html#elasticsearch.client.IndicesClient.create). There's only one required parameter, `index`, so the minimal form looks like this:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
+import os
 from elasticsearch import Elasticsearch
 
-client = Elasticsearch("http://localhost:9200", api_key="...")
+client = Elasticsearch("http://localhost:9200", api_key=os.environ["ELASTIC_API_KEY"])
 
 client.indices.create(index="my-index")
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+import asyncio
+import os
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch("http://localhost:9200", api_key=os.environ["ELASTIC_API_KEY"])
+
+def main():
+    await client.indices.create(index="my-index")
+
+asyncio.run(main())
+```
+:::
+
+::::
 
 You can also use other parameters, including the first level of body parameters, such as:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 resp = client.indices.create(
     index="logs",
@@ -52,6 +82,21 @@ resp = client.indices.create(
 )
 print(resp)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+resp = await client.indices.create(
+    index="logs",
+    aliases={"logs-alias": {}},
+    mappings={"name": {"type": "text"}},
+)
+print(resp)
+```
+:::
+
+::::
 
 In this case, the client will send to Elasticsearch the following JSON body:
 
@@ -67,6 +112,11 @@ PUT /logs
 
 Like other clients, the Python Elasticsearch client is generated from the [Elasticsearch specification](https://github.com/elastic/elasticsearch-specification). While we strive to keep it up to date, it is not (yet!) perfect, and sometimes body parameters are missing. In this case, you can specify the body directly, as follows:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 resp = client.indices.create(
     index="logs",
@@ -78,9 +128,32 @@ resp = client.indices.create(
 )
 print(resp)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+resp = await client.indices.create(
+    index="logs",
+    body={
+        "aliases": {"logs-alias": {}},
+        "mappings": {"name": {"type": "text"}},
+        "missing_parameter": "foo",
+    }
+)
+print(resp)
+```
+:::
+
+::::
 
 In the event where an API is missing, you need to use the low-level `perform_request` function:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 resp = client.perform_request(
     "PUT",
@@ -95,6 +168,27 @@ resp = client.perform_request(
 )
 print(resp)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+resp = await client.perform_request(
+    "PUT",
+    "/logs"
+    index="logs",
+    headers={"content-type": "application/json", "accept": "application/json"},
+    body={
+        "aliases": {"logs-alias": {}},
+        "mappings": {"name": {"type": "text"}},
+        "missing_parameter": "foo",
+    }
+)
+print(resp)
+```
+:::
+
+::::
 
 One benefit of this function is that it lets you use arbitrary headers, such as the `es-security-runas-user` header used to [impersonate users](https://www.elastic.co/guide/en/elasticsearch/reference/current/run-as-privilege.html).
 

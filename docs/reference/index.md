@@ -14,8 +14,10 @@ This documentation covers the [official Python client for {{es}}](https://github
 Here's an example of basic Python client usage:
 
 ::::{tab-set}
+:group: sync_or_async
 
 :::{tab-item} Standard Python
+:sync: sync
 ```python
 import os
 from elasticsearch import Elasticsearch
@@ -41,7 +43,9 @@ def main():
 :::
 
 :::{tab-item} Async Python
+:sync: async
 ```python
+import asyncio
 import os
 from elasticsearch import AsyncElasticsearch
 
@@ -62,6 +66,8 @@ async def main():
         },
     )
     print(resp)
+
+asyncio.run(main())
 ```
 :::
 

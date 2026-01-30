@@ -317,6 +317,11 @@ PUT employees/_bulk
 
 Use the ES|QL CSV import to convert the `employees` dataset to a Pandas dataframe object.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from io import StringIO
 from elasticsearch import Elasticsearch
@@ -332,6 +337,30 @@ response = client.esql.query(
 df = pd.read_csv(StringIO(response.body))
 print(df)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from io import StringIO
+from elasticsearch import AsyncElasticsearch
+import pandas as pd
+client = AsyncElasticsearch(
+    "https://[host].elastic-cloud.com",
+    api_key="...",
+)
+
+async def example():
+    response = await client.esql.query(
+        query="FROM employees | LIMIT 500",
+        format="csv",
+    )
+    df = pd.read_csv(StringIO(response.body))
+    print(df)
+```
+:::
+
+::::
 
 Even though the dataset contains only 100 records, a LIMIT of 500 is specified to suppress ES|QL warnings about potentially missing records. This prints the following dataframe:
 
@@ -357,6 +386,11 @@ You can now analyze the data with Pandas or you can also continue transforming t
 
 In the next example, the [STATS … BY](elasticsearch://reference/query-languages/esql/commands/processing-commands.md#esql-stats-by) command is utilized to count how many employees are speaking a given language. The results are sorted with the `languages` column using [SORT](elasticsearch://reference/query-languages/esql/commands/processing-commands.md#esql-sort):
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = client.esql.query(
     query="""
@@ -373,6 +407,30 @@ df = pd.read_csv(
 )
 print(df)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    response = await client.esql.query(
+        query="""
+        FROM employees
+        | STATS count = COUNT(emp_no) BY languages
+        | SORT languages
+        | LIMIT 500
+        """,
+        format="csv",
+    )
+    df = pd.read_csv(
+        StringIO(response.body),
+        dtype={"count": "Int64", "languages": "Int64"},
+    )
+    print(df)
+```
+:::
+
+::::
 
 Note that the `dtype` parameter of `pd.read_csv()` is useful when the type inferred by Pandas is not enough. The code prints the following response:
 
@@ -390,6 +448,11 @@ Note that the `dtype` parameter of `pd.read_csv()` is useful when the type infer
 
 Use the [built-in parameters support of the ES|QL REST API](docs-content://explore-analyze/query-filter/languages/esql-rest.md#esql-rest-params) to pass parameters to a query:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = client.esql.query(
     query="""
@@ -408,6 +471,32 @@ df = pd.read_csv(
 )
 print(df)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    response = await client.esql.query(
+        query="""
+        FROM employees
+        | STATS count = COUNT(emp_no) BY languages
+        | WHERE languages >= (?)
+        | SORT languages
+        | LIMIT 500
+        """,
+        format="csv",
+        params=[3],
+    )
+    df = pd.read_csv(
+        StringIO(response.body),
+        dtype={"count": "Int64", "languages": "Int64"},
+    )
+    print(df)
+```
+:::
+
+::::
 
 The code above outputs the following:
 
