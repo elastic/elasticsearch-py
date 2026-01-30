@@ -798,7 +798,7 @@ from elasticsearch import AsyncElasticsearch
 
 client = AsyncElasticsearch(
     ...,
-    node_class="httpx"
+    node_class="httpxasync"
 )
 ```
 :::
