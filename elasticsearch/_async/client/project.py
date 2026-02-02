@@ -258,7 +258,9 @@ class ProjectClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=("project_routing",),
+    )
     @_availability_warning(Stability.EXPERIMENTAL)
     async def tags(
         self,
@@ -267,6 +269,8 @@ class ProjectClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -276,10 +280,14 @@ class ProjectClient(NamespacedClient):
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch-serverless/operation/operation-project-tags>`_
+
+        :param project_routing: A Lucene query using project metadata tags used to filter
+            which projects are returned in the response, such as _alias:_origin or _alias:*pr*.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_project/tags"
         __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -288,12 +296,20 @@ class ProjectClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if not __body:
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
+        if not __body:
+            __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
             params=__query,
             headers=__headers,
+            body=__body,
             endpoint_id="project.tags",
             path_parts=__path_parts,
         )
