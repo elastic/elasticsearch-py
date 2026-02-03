@@ -18,6 +18,36 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.3.0 (2026-02-03)
+
+Enhancements
+
+* Add `pack_dense_vector` helper function to pack dense vectors for efficient uploading ([#3219](https://github.com/elastic/elasticsearch-py/pull/3219))
+* New and updated ES|QL functions in the ES|QL query builder for 9.3 and Serverless ([#3266](https://github.com/elastic/elasticsearch-py/pull/3266))
+
+API
+
+* Added `cat.circuit_breaker` API
+* Added experimental `esql.get_view`, `esql.put_view` and `esql.delete_view` APIs
+* Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration`, `indices.get_sample`, `indices.get_sample_stats` APIs
+* Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
+* Added `downsampling_method` argument to `indices.put_data_lifecycle` API
+* Added `return_documents` and `top_n` arguments to `inference.rerank` API
+* Added `close_job` argument to `ml.stop_datafeed` API
+* Added `certificate_identity` to `security.create_cross_cluster_api_key` and `security.update_cross_cluster_api_key` APIs
+
+Serverless-specific
+
+* Added `project_routing` argument to `project.tags` API
+
+DSL
+
+* Added `NumpyDenseVector` field, with support for dense vectors based on numpy arrays ([#3218](https://github.com/elastic/elasticsearch-py/pull/3218))
+* Added `ExponentialHistogram` field
+* Added `time_series_metric` argument to `Histogram` field
+* Added `on_disk_rescore` argument to `DenseVectorIndexOptions` type
+* Added `slices` argument to `UpdateByQueryResponse` type
+
 ## 9.2.1 (2025-12-23)
 
 Enhancements
@@ -39,11 +69,6 @@ API
 * Added `chunking_settings` argument to `inference.put_watsonxai` API
 * Added `id` argument to `ml.stop_trained_model_deployment` API
 * Removed `chunking_settings` argument from `inference.put_anthropic`, `inference.put_contextualai`, `inference.put_deepseek` APIs
-
-DSL
-
-* Removed `on_disk_score` argument from `DenseVectorIndexOptions` type
-
 
 ## 9.2.0 (2025-10-28)
 
@@ -110,7 +135,6 @@ DSL
 - Add `p_value` parameter to `SignificantTerms` aggregation
 - Add `fields` parameter to `SemanticText` field
 - Add `visit_percentage` parameter to `Knn` query
-- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
 - Add `sparse_vector` field to `SemanticTextIndexOptions` type
 - Add `index_options` to SparseVector type
 - Add `separator_group` and `separators` to ChunkingSettings type
@@ -146,7 +170,6 @@ DSL
 - Add `p_value` parameter to `SignificantTerms` aggregation
 - Add `index_options` and `fields` parameters to `SemanticText` field
 - Add `visit_percentage` parameter to `Knn` query
-- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
 
 ### Other
 
