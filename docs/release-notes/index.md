@@ -32,8 +32,6 @@ API
 * Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration` APIs
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
 * Added `transform.get_node_stats` API
-* Added `requests_per_second` argument to `delete_by_query_rethrottle`, `reindex_rethrottle` and `update_by_query_rethrottle` APIs
-* Added `allow_closed`, `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_available` arguments to `cat.segments` API
 * Added `downsampling_method` argument to `indices.put_alias` API
 * Added `chunking_settings` argument to `inference.put_watsonxai` API
 * Added `return_documents` and `top_n` arguments to `inference.rerank` API
