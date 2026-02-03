@@ -135,7 +135,6 @@ API
 - Add `p_value` parameter to `SignificantTerms` aggregation
 - Add `fields` parameter to `SemanticText` field
 - Add `visit_percentage` parameter to `Knn` query
-- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
 - Add `sparse_vector` field to `SemanticTextIndexOptions` type
 - Add `index_options` to SparseVector type
 - Add `separator_group` and `separators` to ChunkingSettings type
@@ -171,7 +170,6 @@ API
 - Add `p_value` parameter to `SignificantTerms` aggregation
 - Add `index_options` and `fields` parameters to `SemanticText` field
 - Add `visit_percentage` parameter to `Knn` query
-- Add `on_disk_rescore` field to `DenseVectorIndexOptions` type
 
 ### Other
 
