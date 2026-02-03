@@ -18,6 +18,38 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.3.0 (2026-02-03)
+
+Enhancements
+
+* Add `pack_dense_vector` helper function to pack dense vectors for efficient uploading ([#3219](https://github.com/elastic/elasticsearch-py/pull/3219))
+* Updates to ES|QL functions for 9.3 and Serverless ([#3266](https://github.com/elastic/elasticsearch-py/pull/3266))
+
+API
+
+* Added `cat.circuit_breaker` API
+* Added `esql.get_view`, `esql.put_view` and `esql.delete_view` APIs
+* Added `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration` APIs
+* Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
+* Added `transform.get_node_stats` API
+* Added `requests_per_second` argument to `delete_by_query_rethrottle`, `reindex_rethrottle` and `update_by_query_rethrottle` APIs
+* Added `allow_closed`, `allow_no_indices`, `expand_wildcards`, `ignore_throttled` and `ignore_available` arguments to `cat.segments` API
+* Added `downsampling_method` argument to `indices.put_alias` API
+* Added `chunking_settings` argument to `inference.put_watsonxai` API
+* Added `return_documents` and `top_n` arguments to `inference.rerank` API
+* Added `id` argument to `ml.stop_trained_model_deployment` API
+* Added `close_job` argument to `ml.stop_data_frame_analytics` API
+* Added `project_routing` argument to `project.tags` API
+* Added `certificate_identity` to `security.create_cross_cluster_api_key` and `security.update_cross_cluster_api_key` APIs
+* Removed `chunking_settings` argument from `inference.put_anthropic`, `inference.put_contextualai`, `inference.put_deepseek` APIs
+
+DSL
+
+* Added `NumpyDenseVector` field, with support for dense vectors based on numpy arrays ([#3218](https://github.com/elastic/elasticsearch-py/pull/3218))
+* Added `ExponentialHistogram` field
+* Added `time_series_metric` argument to `Histogram` field
+* Added `slices` argument to `UpdateByQueryResponse` type
+
 ## 9.2.1 (2025-12-23)
 
 Enhancements
