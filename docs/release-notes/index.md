@@ -33,7 +33,7 @@ API
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
 * Added `downsampling_method` argument to `indices.put_data_lifecycle` API
 * Added `return_documents` and `top_n` arguments to `inference.rerank` API
-* Added `close_job` argument to `ml.stop_data_frame_analytics` API
+* Added `close_job` argument to `ml.stop_datafeed` API
 * Added `certificate_identity` to `security.create_cross_cluster_api_key` and `security.update_cross_cluster_api_key` APIs
 
 Serverless-specific
