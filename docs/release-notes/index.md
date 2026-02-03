@@ -70,11 +70,6 @@ API
 * Added `id` argument to `ml.stop_trained_model_deployment` API
 * Removed `chunking_settings` argument from `inference.put_anthropic`, `inference.put_contextualai`, `inference.put_deepseek` APIs
 
-DSL
-
-* Removed `on_disk_score` argument from `DenseVectorIndexOptions` type
-
-
 ## 9.2.0 (2025-10-28)
 
 ### Enhancements
