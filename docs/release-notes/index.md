@@ -45,7 +45,7 @@ DSL
 * Added `NumpyDenseVector` field, with support for dense vectors based on numpy arrays ([#3218](https://github.com/elastic/elasticsearch-py/pull/3218))
 * Added `ExponentialHistogram` field
 * Added `time_series_metric` argument to `Histogram` field
-* Added `on_disk_rescore` argument from `DenseVectorIndexOptions` type
+* Added `on_disk_rescore` argument to `DenseVectorIndexOptions` type
 * Added `slices` argument to `UpdateByQueryResponse` type
 
 ## 9.2.1 (2025-12-23)
