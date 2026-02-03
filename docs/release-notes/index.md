@@ -23,28 +23,29 @@ To check for security updates, go to [Security announcements for the Elastic sta
 Enhancements
 
 * Add `pack_dense_vector` helper function to pack dense vectors for efficient uploading ([#3219](https://github.com/elastic/elasticsearch-py/pull/3219))
-* Updates to ES|QL functions for 9.3 and Serverless ([#3266](https://github.com/elastic/elasticsearch-py/pull/3266))
+* New and updated ES|QL functions in the ES|QL query builder for 9.3 and Serverless ([#3266](https://github.com/elastic/elasticsearch-py/pull/3266))
 
 API
 
 * Added `cat.circuit_breaker` API
 * Added experimental `esql.get_view`, `esql.put_view` and `esql.delete_view` APIs
-* Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration` APIs
+* Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration`, `indices.get_sample`, `indices.get_sample_stats` APIs
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
-* Added `transform.get_node_stats` API
-* Added `downsampling_method` argument to `indices.put_alias` API
+* Added `downsampling_method` argument to `indices.put_data_lifecycle` API
 * Added `return_documents` and `top_n` arguments to `inference.rerank` API
-* Added `id` argument to `ml.stop_trained_model_deployment` API
 * Added `close_job` argument to `ml.stop_data_frame_analytics` API
-* Added `project_routing` argument to `project.tags` API
 * Added `certificate_identity` to `security.create_cross_cluster_api_key` and `security.update_cross_cluster_api_key` APIs
-* Removed `chunking_settings` argument from `inference.put_anthropic`, `inference.put_contextualai`, `inference.put_deepseek` APIs
+
+Serverless-specific
+
+* Added `project_routing` argument to `project.tags` API
 
 DSL
 
 * Added `NumpyDenseVector` field, with support for dense vectors based on numpy arrays ([#3218](https://github.com/elastic/elasticsearch-py/pull/3218))
 * Added `ExponentialHistogram` field
 * Added `time_series_metric` argument to `Histogram` field
+* Added `on_disk_rescore` argument from `DenseVectorIndexOptions` type
 * Added `slices` argument to `UpdateByQueryResponse` type
 
 ## 9.2.1 (2025-12-23)
