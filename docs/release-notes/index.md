@@ -33,7 +33,6 @@ API
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
 * Added `transform.get_node_stats` API
 * Added `downsampling_method` argument to `indices.put_alias` API
-* Added `chunking_settings` argument to `inference.put_watsonxai` API
 * Added `return_documents` and `top_n` arguments to `inference.rerank` API
 * Added `id` argument to `ml.stop_trained_model_deployment` API
 * Added `close_job` argument to `ml.stop_data_frame_analytics` API
