@@ -29,7 +29,7 @@ API
 
 * Added `cat.circuit_breaker` API
 * Added experimental `esql.get_view`, `esql.put_view` and `esql.delete_view` APIs
-* Added `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration` APIs
+* Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration` APIs
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
 * Added `transform.get_node_stats` API
 * Added `requests_per_second` argument to `delete_by_query_rethrottle`, `reindex_rethrottle` and `update_by_query_rethrottle` APIs
