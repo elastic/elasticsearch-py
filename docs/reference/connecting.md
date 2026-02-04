@@ -592,7 +592,7 @@ from elasticsearch import Elasticsearch
 # Client initialization
 client = Elasticsearch(
     cloud_id="deployment-name:ABCD...",
-    api_key=os.environ["ELASTIC_API_KEY"
+    api_key=os.environ["ELASTIC_API_KEY"]
 )
 
 def main(event, context):
