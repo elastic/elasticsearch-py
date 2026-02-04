@@ -357,7 +357,8 @@ async def example():
     )
     df = pd.read_csv(StringIO(response.body))
     print(df)
-```
+
+asyncio.run(main())
 :::
 
 ::::
