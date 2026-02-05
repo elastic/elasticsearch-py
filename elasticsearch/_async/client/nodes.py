@@ -23,16 +23,16 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class NodesClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def clear_repositories_metering_archive(
         self,
         *,
@@ -46,8 +46,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the archived repositories metering.
-          Clear the archived repositories metering information in the cluster.</p>
+          <p>Clear the archived repositories metering.</p>
+          <p>Clear the archived repositories metering information in the cluster.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-clear-repositories-metering-archive>`_
@@ -86,7 +86,7 @@ class NodesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_repositories_metering_info(
         self,
         *,
@@ -99,8 +99,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster repositories metering.
-          Get repositories metering information for a cluster.
+          <p>Get cluster repositories metering.</p>
+          <p>Get repositories metering information for a cluster.
           This API exposes monotonically non-decreasing counters and it is expected that clients would durably store the information needed to compute aggregations over a period of time.
           Additionally, the information exposed by this API is volatile, meaning that it will not be present after node restarts.</p>
 
@@ -157,8 +157,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the hot threads for nodes.
-          Get a breakdown of the hot threads on each selected node in the cluster.
+          <p>Get the hot threads for nodes.</p>
+          <p>Get a breakdown of the hot threads on each selected node in the cluster.
           The output is plain text with a breakdown of the top hot threads for each node.</p>
 
 
@@ -169,7 +169,7 @@ class NodesClient(NamespacedClient):
             select, or to get a task from an empty queue) are filtered out.
         :param interval: The interval to do the second sampling of threads.
         :param snapshots: Number of samples of thread stacktrace.
-        :param sort: The sort order for 'cpu' type (default: total)
+        :param sort: The sort order for 'cpu' type
         :param threads: Specifies the number of hot threads to provide information for.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -376,8 +376,8 @@ class NodesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get node statistics.
-          Get statistics for nodes in a cluster.
+          <p>Get node statistics.</p>
+          <p>Get statistics for nodes in a cluster.
           By default, all stats are returned. You can limit the returned information by using metrics.</p>
 
 
@@ -385,7 +385,7 @@ class NodesClient(NamespacedClient):
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limits the information returned to the specific metrics.
         :param index_metric: Limit the information returned for indices metric to the
             specific index metrics. It can be used only if indices (or all) metric is
             specified.
@@ -499,8 +499,8 @@ class NodesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-nodes-usage>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
+            information. Use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes.
         :param metric: Limits the information returned to the specific metrics. A comma-separated
             list of the following options: `_all`, `rest_actions`.
         :param timeout: Period to wait for a response. If no response is received before

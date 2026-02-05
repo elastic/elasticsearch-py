@@ -23,16 +23,16 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class TasksClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def cancel(
         self,
         *,
@@ -106,7 +106,7 @@ class TasksClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get(
         self,
         *,
@@ -121,8 +121,8 @@ class TasksClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get task information.
-          Get information about a task currently running in the cluster.</p>
+          <p>Get task information.</p>
+          <p>Get information about a task currently running in the cluster.</p>
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
           <p>If the task identifier is not found, a 404 response code indicates that there are no resources that match the request.</p>
@@ -164,7 +164,7 @@ class TasksClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def list(
         self,
         *,
@@ -185,8 +185,8 @@ class TasksClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get all tasks.
-          Get information about the tasks currently running on one or more nodes in the cluster.</p>
+          <p>Get all tasks.</p>
+          <p>Get information about the tasks currently running on one or more nodes in the cluster.</p>
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
           <p><strong>Identifying running tasks</strong></p>

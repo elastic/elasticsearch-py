@@ -18,8 +18,8 @@
 import json
 from typing import Any
 
-from elasticsearch.dsl.document_base import InstrumentedExpression
-from elasticsearch.esql.esql import ESQLBase, ExpressionType
+from ..dsl.document_base import InstrumentedExpression
+from ..esql.esql import ESQLBase, ExpressionType
 
 
 def _render(v: Any) -> str:

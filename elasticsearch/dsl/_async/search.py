@@ -29,9 +29,8 @@ from typing import (
 
 from typing_extensions import Self
 
-from elasticsearch.exceptions import ApiError
-from elasticsearch.helpers import async_scan
-
+from ...exceptions import ApiError
+from ...helpers import async_scan
 from ..async_connections import get_connection
 from ..response import Response
 from ..search_base import MultiSearchBase, SearchBase

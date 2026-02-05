@@ -17,8 +17,7 @@
 
 from typing import Any
 
-from elasticsearch.serializer import JSONSerializer
-
+from ..serializer import JSONSerializer
 from .utils import AttrList
 
 

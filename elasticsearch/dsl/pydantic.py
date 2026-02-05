@@ -20,7 +20,7 @@ from typing import Any, ClassVar, Dict, List, Optional, Tuple, Type
 from pydantic import BaseModel, Field, PrivateAttr
 from typing_extensions import Annotated, Self, dataclass_transform
 
-from elasticsearch import dsl
+from .. import dsl
 
 
 class ESMeta(BaseModel):

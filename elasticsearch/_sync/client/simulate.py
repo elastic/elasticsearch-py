@@ -23,9 +23,9 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
@@ -40,7 +40,7 @@ class SimulateClient(NamespacedClient):
             "pipeline_substitutions",
         ),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def ingest(
         self,
         *,
@@ -67,8 +67,8 @@ class SimulateClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Simulate data ingestion.
-          Run ingest pipelines against a set of provided documents, optionally with substitute pipeline definitions, to simulate ingesting data into an index.</p>
+          <p>Simulate data ingestion.</p>
+          <p>Run ingest pipelines against a set of provided documents, optionally with substitute pipeline definitions, to simulate ingesting data into an index.</p>
           <p>This API is meant to be used for troubleshooting or pipeline development, as it does not actually index any data into Elasticsearch.</p>
           <p>The API runs the default and final pipeline for that index against a set of documents provided in the body of the request.
           If a pipeline contains a reroute processor, it follows that reroute processor to the new index, running that index's pipelines as well the same way that a non-simulated ingest would.

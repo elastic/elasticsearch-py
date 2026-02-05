@@ -20,7 +20,7 @@ import typing as t
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import Stability, _rewrite_parameters, _stability_warning
+from .utils import Stability, _availability_warning, _rewrite_parameters
 
 
 class FeaturesClient(NamespacedClient):
@@ -38,8 +38,8 @@ class FeaturesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the features.
-          Get a list of features that can be included in snapshots using the <code>feature_states</code> field when creating a snapshot.
+          <p>Get the features.</p>
+          <p>Get a list of features that can be included in snapshots using the <code>feature_states</code> field when creating a snapshot.
           You can use this API to determine which feature states to include when taking a snapshot.
           By default, all feature states are included in a snapshot if that snapshot includes the global state, or none if it does not.</p>
           <p>A feature state includes one or more system indices necessary for a given feature to function.
@@ -76,7 +76,7 @@ class FeaturesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def reset_features(
         self,
         *,
@@ -89,8 +89,8 @@ class FeaturesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Reset the features.
-          Clear all of the state information stored in system indices by Elasticsearch features, including the security and machine learning indices.</p>
+          <p>Reset the features.</p>
+          <p>Clear all of the state information stored in system indices by Elasticsearch features, including the security and machine learning indices.</p>
           <p>WARNING: Intended for development and testing use only. Do not reset features on a production cluster.</p>
           <p>Return a cluster to the same state as a new installation by resetting the feature state for all Elasticsearch features.
           This deletes all state information stored in system indices.</p>

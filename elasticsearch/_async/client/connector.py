@@ -23,16 +23,17 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    Visibility,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class ConnectorClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def check_in(
         self,
         *,
@@ -77,7 +78,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def delete(
         self,
         *,
@@ -134,7 +135,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def get(
         self,
         *,
@@ -199,7 +200,7 @@ class ConnectorClient(NamespacedClient):
             "sync_cursor",
         ),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL, Visibility.PRIVATE)
     async def last_sync(
         self,
         *,
@@ -333,7 +334,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def list(
         self,
         *,
@@ -416,7 +417,7 @@ class ConnectorClient(NamespacedClient):
             "service_type",
         ),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def post(
         self,
         *,
@@ -500,7 +501,7 @@ class ConnectorClient(NamespacedClient):
             "service_type",
         ),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def put(
         self,
         *,
@@ -580,7 +581,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def sync_job_cancel(
         self,
         *,
@@ -630,7 +631,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def sync_job_check_in(
         self,
         *,
@@ -643,8 +644,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check in a connector sync job.
-          Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
+          <p>Check in a connector sync job.</p>
+          <p>Check in a connector sync job and set the <code>last_seen</code> field to the current time before updating it in the internal index.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -684,7 +685,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("worker_hostname", "sync_cursor"),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def sync_job_claim(
         self,
         *,
@@ -700,8 +701,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Claim a connector sync job.
-          This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
+          <p>Claim a connector sync job.</p>
+          <p>This action updates the job status to <code>in_progress</code> and sets the <code>last_seen</code> and <code>started_at</code> timestamps to the current time.
           Additionally, it can set the <code>sync_cursor</code> property for the sync job.</p>
           <p>This API is not intended for direct connector management by users.
           It supports the implementation of services that utilize the connector protocol to communicate with Elasticsearch.</p>
@@ -753,7 +754,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def sync_job_delete(
         self,
         *,
@@ -804,7 +805,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("error",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def sync_job_error(
         self,
         *,
@@ -819,8 +820,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set a connector sync job error.
-          Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
+          <p>Set a connector sync job error.</p>
+          <p>Set the <code>error</code> field for a connector sync job and set its <code>status</code> to <code>error</code>.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
           This service runs automatically on Elastic Cloud for Elastic managed connectors.</p>
 
@@ -863,7 +864,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def sync_job_get(
         self,
         *,
@@ -911,7 +912,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def sync_job_list(
         self,
         *,
@@ -994,7 +995,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("id", "job_type", "trigger_method"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def sync_job_post(
         self,
         *,
@@ -1066,7 +1067,7 @@ class ConnectorClient(NamespacedClient):
             "total_document_count",
         ),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def sync_job_update_stats(
         self,
         *,
@@ -1086,8 +1087,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Set the connector sync job stats.
-          Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
+          <p>Set the connector sync job stats.</p>
+          <p>Stats include: <code>deleted_document_count</code>, <code>indexed_document_count</code>, <code>indexed_document_volume</code>, and <code>total_document_count</code>.
           You can also update <code>last_seen</code>.
           This API is mainly used by the connector service for updating sync job information.</p>
           <p>To sync data using self-managed connectors, you need to deploy the Elastic connector service on your own infrastructure.
@@ -1160,7 +1161,7 @@ class ConnectorClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def update_active_filtering(
         self,
         *,
@@ -1207,7 +1208,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("api_key_id", "api_key_secret_id"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_api_key_id(
         self,
         *,
@@ -1269,7 +1270,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("configuration", "values"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_configuration(
         self,
         *,
@@ -1328,7 +1329,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("error",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def update_error(
         self,
         *,
@@ -1387,7 +1388,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("features",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def update_features(
         self,
         *,
@@ -1402,8 +1403,8 @@ class ConnectorClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update the connector features.
-          Update the connector features in the connector document.
+          <p>Update the connector features.</p>
+          <p>Update the connector features in the connector document.
           This API can be used to control the following aspects of a connector:</p>
           <ul>
           <li>document-level security</li>
@@ -1455,7 +1456,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("advanced_snippet", "filtering", "rules"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_filtering(
         self,
         *,
@@ -1520,7 +1521,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("validation",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def update_filtering_validation(
         self,
         *,
@@ -1577,7 +1578,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("index_name",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_index_name(
         self,
         *,
@@ -1634,7 +1635,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("description", "name"),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_name(
         self,
         *,
@@ -1692,7 +1693,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("is_native",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_native(
         self,
         *,
@@ -1748,7 +1749,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("pipeline",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_pipeline(
         self,
         *,
@@ -1805,7 +1806,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("scheduling",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_scheduling(
         self,
         *,
@@ -1861,7 +1862,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("service_type",),
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def update_service_type(
         self,
         *,
@@ -1917,7 +1918,7 @@ class ConnectorClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("status",),
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def update_status(
         self,
         *,

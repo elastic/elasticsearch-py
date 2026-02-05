@@ -23,9 +23,9 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
@@ -46,8 +46,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clean up the snapshot repository.
-          Trigger the review of the contents of a snapshot repository and delete any stale data not referenced by existing snapshots.</p>
+          <p>Clean up the snapshot repository.</p>
+          <p>Trigger the review of the contents of a snapshot repository and delete any stale data not referenced by existing snapshots.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-cleanup-repository>`_
@@ -110,8 +110,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clone a snapshot.
-          Clone part of all of a snapshot into another snapshot in the same repository.</p>
+          <p>Clone a snapshot.</p>
+          <p>Clone part of all of a snapshot into another snapshot in the same repository.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-clone>`_
@@ -207,8 +207,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create a snapshot.
-          Take a snapshot of a cluster or of data streams and indices.</p>
+          <p>Create a snapshot.</p>
+          <p>Take a snapshot of a cluster or of data streams and indices.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-create>`_
@@ -330,8 +330,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a snapshot repository.
-          IMPORTANT: If you are migrating searchable snapshots, the repository name must be identical in the source and destination clusters.
+          <p>Create or update a snapshot repository.</p>
+          <p>IMPORTANT: If you are migrating searchable snapshots, the repository name must be identical in the source and destination clusters.
           To register a snapshot repository, the cluster's global metadata must be writeable.
           Ensure there are no cluster blocks (for example, <code>cluster.blocks.read_only</code> and <code>clsuter.blocks.read_only_allow_delete</code> settings) that prevent write access.</p>
           <p>Several options for this API can be specified using a query parameter or a request body parameter.
@@ -470,8 +470,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete snapshot repositories.
-          When a repository is unregistered, Elasticsearch removes only the reference to the location where the repository is storing the snapshots.
+          <p>Delete snapshot repositories.</p>
+          <p>When a repository is unregistered, Elasticsearch removes only the reference to the location where the repository is storing the snapshots.
           The snapshots themselves are left untouched and in place.</p>
 
 
@@ -955,7 +955,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     def repository_verify_integrity(
         self,
         *,
@@ -976,8 +976,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Verify the repository integrity.
-          Verify the integrity of the contents of a snapshot repository.</p>
+          <p>Verify the repository integrity.</p>
+          <p>Verify the integrity of the contents of a snapshot repository.</p>
           <p>This API enables you to perform a comprehensive check of the contents of a repository, looking for any anomalies in its data or metadata which might prevent you from restoring snapshots from the repository or which might cause future snapshot create or delete operations to fail.</p>
           <p>If you suspect the integrity of the contents of one of your snapshot repositories, cease all write activity to this repository immediately, set its <code>read_only</code> option to <code>true</code>, and use this API to verify its integrity.
           Until you do so:</p>
@@ -1115,8 +1115,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Restore a snapshot.
-          Restore a snapshot of a cluster or data streams and indices.</p>
+          <p>Restore a snapshot.</p>
+          <p>Restore a snapshot of a cluster or data streams and indices.</p>
           <p>You can restore a snapshot only to a running cluster with an elected master node.
           The snapshot repository must be registered and available to the cluster.
           The snapshot and cluster versions must be compatible.</p>
@@ -1264,8 +1264,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the snapshot status.
-          Get a detailed description of the current state for each shard participating in the snapshot.</p>
+          <p>Get the snapshot status.</p>
+          <p>Get a detailed description of the current state for each shard participating in the snapshot.</p>
           <p>Note that this API should be used only to obtain detailed shard-level information for ongoing snapshots.
           If this detail is not needed or you want to obtain information about one or more existing snapshots, use the get snapshot API.</p>
           <p>If you omit the <code>&lt;snapshot&gt;</code> request path parameter, the request retrieves information only for currently running snapshots.
@@ -1347,8 +1347,8 @@ class SnapshotClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Verify a snapshot repository.
-          Check for common misconfigurations in a snapshot repository.</p>
+          <p>Verify a snapshot repository.</p>
+          <p>Check for common misconfigurations in a snapshot repository.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-verify-repository>`_

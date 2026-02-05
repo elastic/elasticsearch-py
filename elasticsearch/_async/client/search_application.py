@@ -23,16 +23,16 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
 class SearchApplicationClient(NamespacedClient):
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def delete(
         self,
         *,
@@ -77,7 +77,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def delete_behavioral_analytics(
         self,
         *,
@@ -90,8 +90,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a behavioral analytics collection.
-          The associated data stream is also deleted.</p>
+          <p>Delete a behavioral analytics collection.</p>
+          <p>The associated data stream is also deleted.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-delete-behavioral-analytics>`_
@@ -122,7 +122,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def get(
         self,
         *,
@@ -166,7 +166,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_behavioral_analytics(
         self,
         *,
@@ -215,7 +215,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def list(
         self,
         *,
@@ -230,8 +230,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get search applications.
-          Get information about search applications.</p>
+          <p>Get search applications.</p>
+          <p>Get information about search applications.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get-behavioral-analytics>`_
@@ -270,7 +270,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="payload",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def post_behavioral_analytics_event(
         self,
         *,
@@ -338,7 +338,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="search_application",
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def put(
         self,
         *,
@@ -398,7 +398,7 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def put_behavioral_analytics(
         self,
         *,
@@ -445,7 +445,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def render_query(
         self,
         *,
@@ -460,8 +460,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Render a search application query.
-          Generate an Elasticsearch query using the specified query parameters and the search template associated with the search application or a default template if none is specified.
+          <p>Render a search application query.</p>
+          <p>Generate an Elasticsearch query using the specified query parameters and the search template associated with the search application or a default template if none is specified.
           If a parameter used in the search template is not specified in <code>params</code>, the parameter's default value will be used.
           The API returns the specific Elasticsearch query that would be generated and run by calling the search application search API.</p>
           <p>You must have <code>read</code> privileges on the backing alias of the search application.</p>
@@ -510,7 +510,7 @@ class SearchApplicationClient(NamespacedClient):
         body_fields=("params",),
         ignore_deprecated_options={"params"},
     )
-    @_stability_warning(Stability.BETA)
+    @_availability_warning(Stability.BETA)
     async def search(
         self,
         *,
@@ -526,8 +526,8 @@ class SearchApplicationClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Run a search application search.
-          Generate and run an Elasticsearch query that uses the specified query parameteter and the search template associated with the search application or default template.
+          <p>Run a search application search.</p>
+          <p>Generate and run an Elasticsearch query that uses the specified query parameteter and the search template associated with the search application or default template.
           Unspecified template parameters are assigned their default values if applicable.</p>
 
 

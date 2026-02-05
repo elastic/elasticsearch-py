@@ -47,8 +47,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Explain the shard allocations.
-          Get explanations for shard allocations in the cluster.
+          <p>Explain the shard allocations.</p>
+          <p>Get explanations for shard allocations in the cluster.
           This API accepts the current_node, index, primary and shard parameters in the request body or in query parameters, but not in both at the same time.
           For unassigned shards, it provides an explanation for why the shard is unassigned.
           For assigned shards, it provides an explanation for why the shard is remaining on its current node and has not moved or rebalanced to another node.
@@ -127,8 +127,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete component templates.
-          Component templates are building blocks for constructing index templates that specify index mappings, settings, and aliases.</p>
+          <p>Delete component templates.</p>
+          <p>Component templates are building blocks for constructing index templates that specify index mappings, settings, and aliases.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-component-template>`_
@@ -182,8 +182,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear cluster voting config exclusions.
-          Remove master-eligible nodes from the voting configuration exclusion list.</p>
+          <p>Clear cluster voting config exclusions.</p>
+          <p>Remove master-eligible nodes from the voting configuration exclusion list.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-post-voting-config-exclusions>`_
@@ -236,8 +236,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check component templates.
-          Returns information about whether a particular component template exists.</p>
+          <p>Check component templates.</p>
+          <p>Returns information about whether a particular component template exists.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-component-template>`_
@@ -296,17 +296,17 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get component templates.
-          Get information about component templates.</p>
+          <p>Get component templates.</p>
+          <p>Get information about component templates.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-component-template>`_
 
-        :param name: Comma-separated list of component template names used to limit the
-            request. Wildcard (`*`) expressions are supported.
+        :param name: Name of component template to retrieve. Wildcard (`*`) expressions
+            are supported.
         :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
-            template (default: false)
+            template
         :param local: If `true`, the request retrieves information from the local node
             only. If `false`, information is retrieved from the master node.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -470,39 +470,38 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-health>`_
 
-        :param index: Comma-separated list of data streams, indices, and index aliases
-            used to limit the request. Wildcard expressions (`*`) are supported. To target
+        :param index: A comma-separated list of data streams, indices, and index aliases
+            that limit the request. Wildcard expressions (`*`) are supported. To target
             all data streams and indices in a cluster, omit this parameter or use _all
             or `*`.
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param level: Can be one of cluster, indices or shards. Controls the details
-            level of the health information returned.
-        :param local: If true, the request retrieves information from the local node
-            only. Defaults to false, which means information is retrieved from the master
-            node.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
-        :param wait_for_active_shards: A number controlling to how many active shards
-            to wait for, all to wait for all shards in the cluster to be active, or 0
-            to not wait.
-        :param wait_for_events: Can be one of immediate, urgent, high, normal, low, languid.
-            Wait until all currently queued events with the given priority are processed.
-        :param wait_for_no_initializing_shards: A boolean value which controls whether
-            to wait (until the timeout provided) for the cluster to have no shard initializations.
-            Defaults to false, which means it will not wait for initializing shards.
-        :param wait_for_no_relocating_shards: A boolean value which controls whether
-            to wait (until the timeout provided) for the cluster to have no shard relocations.
-            Defaults to false, which means it will not wait for relocating shards.
-        :param wait_for_nodes: The request waits until the specified number N of nodes
-            is available. It also accepts >=N, <=N, >N and <N. Alternatively, it is possible
-            to use ge(N), le(N), gt(N) and lt(N) notation.
-        :param wait_for_status: One of green, yellow or red. Will wait (until the timeout
-            provided) until the status of the cluster changes to the one provided or
-            better, i.e. green > yellow > red. By default, will not wait for any status.
+        :param expand_wildcards: Expand wildcard expression to concrete indices that
+            are open, closed or both.
+        :param level: Return health information at a specific level of detail.
+        :param local: If true, retrieve information from the local node only. If false,
+            retrieve information from the master node.
+        :param master_timeout: The period to wait for a connection to the master node.
+            If no response is received before the timeout expires, the request fails
+            and returns an error.
+        :param timeout: The period to wait for a response. If no response is received
+            before the timeout expires, the request fails and returns an error.
+        :param wait_for_active_shards: Wait for the specified number of active shards.
+            Use `all` to wait for all shards in the cluster to be active. Use `0` to
+            not wait.
+        :param wait_for_events: Wait until all currently queued events with the given
+            priority are processed.
+        :param wait_for_no_initializing_shards: Wait (until the timeout expires) for
+            the cluster to have no shard initializations. If false, the request does
+            not wait for initializing shards.
+        :param wait_for_no_relocating_shards: Wait (until the timeout expires) for the
+            cluster to have no shard relocations. If false, the request not wait for
+            relocating shards.
+        :param wait_for_nodes: Wait until the specified number (N) of nodes is available.
+            It also accepts `>=N`, `<=N`, `>N` and `<N`. Alternatively, use the notations
+            `ge(N)`, `le(N)`, `gt(N)`, and `lt(N)`.
+        :param wait_for_status: Wait (until the timeout expires) for the cluster to reach
+            a specific health status (or a better status). A green status is better than
+            yellow and yellow is better than red. By default, the request does not wait
+            for a particular status.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -572,8 +571,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster info.
-          Returns basic information about the cluster.</p>
+          <p>Get cluster info.</p>
+          <p>Returns basic information about the cluster.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-info>`_
@@ -618,8 +617,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the pending cluster tasks.
-          Get information about cluster-level changes (such as create index, update mapping, allocate or fail shard) that have not yet taken effect.</p>
+          <p>Get the pending cluster tasks.</p>
+          <p>Get information about cluster-level changes (such as create index, update mapping, allocate or fail shard) that have not yet taken effect.</p>
           <p>NOTE: This API returns a list of any pending updates to the cluster state.
           These are distinct from the tasks reported by the task management API which include periodic tasks and tasks initiated by the user, such as node stats, search queries, or create index requests.
           However, if a user-initiated task such as a create index command causes a cluster state update, the activity of this task might be reported by both task api and pending cluster tasks API.</p>
@@ -674,8 +673,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update voting configuration exclusions.
-          Update the cluster voting config exclusions by node IDs or node names.
+          <p>Update voting configuration exclusions.</p>
+          <p>Update the cluster voting config exclusions by node IDs or node names.
           By default, if there are more than three master-eligible nodes in the cluster and you remove fewer than half of the master-eligible nodes in the cluster at once, the voting configuration automatically shrinks.
           If you want to shrink the voting configuration to contain fewer than three nodes or to remove half or more of the master-eligible nodes in the cluster at once, use this API to remove departing nodes from the voting configuration manually.
           The API adds an entry for each specified node to the cluster’s voting configuration exclusions list.
@@ -757,8 +756,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a component template.
-          Component templates are building blocks for constructing index templates that specify index mappings, settings, and aliases.</p>
+          <p>Create or update a component template.</p>
+          <p>Component templates are building blocks for constructing index templates that specify index mappings, settings, and aliases.</p>
           <p>An index template can be composed of multiple component templates.
           To use a component template, specify it in an index template’s <code>composed_of</code> list.
           Component templates are only applied to new data streams and indices as part of a matching index template.</p>
@@ -883,10 +882,10 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-put-settings>`_
 
-        :param flat_settings: Return settings in flat format (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param flat_settings: Return settings in flat format
+        :param master_timeout: The period to wait for a connection to the master node.
         :param persistent: The settings that persist after the cluster restarts.
-        :param timeout: Explicit operation timeout
+        :param timeout: The period to wait for a response.
         :param transient: The settings that do not persist after the cluster restarts.
         """
         __path_parts: t.Dict[str, str] = {}
@@ -992,8 +991,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Reroute the cluster.
-          Manually change the allocation of individual shards in the cluster.
+          <p>Reroute the cluster.</p>
+          <p>Manually change the allocation of individual shards in the cluster.
           For example, a shard can be moved from one node to another explicitly, an allocation can be canceled, and an unassigned shard can be explicitly allocated to a specific node.</p>
           <p>It is important to note that after processing any reroute commands Elasticsearch will perform rebalancing as normal (respecting the values of settings such as <code>cluster.routing.rebalance.enable</code>) in order to remain in a balanced state.
           For example, if the requested allocation includes moving a shard from node1 to node2 then this may cause a shard to be moved from node2 back to node1 to even things out.</p>
@@ -1093,8 +1092,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the cluster state.
-          Get comprehensive information about the state of the cluster.</p>
+          <p>Get the cluster state.</p>
+          <p>Get comprehensive information about the state of the cluster.</p>
           <p>The cluster state is an internal data structure which keeps track of a variety of information needed by every node, including the identity and attributes of the other nodes in the cluster; cluster-wide settings; index metadata, including the mapping and settings for each index; the location and status of every shard copy in the cluster.</p>
           <p>The elected master node ensures that every node in the cluster has a copy of the same cluster state.
           This API lets you retrieve a representation of this internal state for debugging or diagnostic purposes.
@@ -1111,19 +1110,19 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-state>`_
 
-        :param metric: Limit the information returned to the specified metrics
+        :param metric: Limit the information returned to the specified metrics.
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
             into no concrete indices. (This includes `_all` string or when no indices
             have been specified)
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param flat_settings: Return settings in flat format (default: false)
+            that are open, closed or both
+        :param flat_settings: Return settings in flat format
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param local: Return local information, do not retrieve the state from master
-            node (default: false)
+            node
         :param master_timeout: Timeout for waiting for new cluster state in case it is
             blocked
         :param wait_for_metadata_version: Wait for the metadata version to be equal or
@@ -1194,8 +1193,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster statistics.
-          Get basic index metrics (shard numbers, store size, memory usage) and information about the current nodes that form the cluster (number, roles, os, jvm versions, memory usage, cpu and installed plugins).</p>
+          <p>Get cluster statistics.</p>
+          <p>Get basic index metrics (shard numbers, store size, memory usage) and information about the current nodes that form the cluster (number, roles, os, jvm versions, memory usage, cpu and installed plugins).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-stats>`_

@@ -400,8 +400,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg rescore_vector: The rescore vector options. This is only
         applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`, `int8_hnsw`,
         `bbq_flat`, `int4_flat`, and `int8_flat` index types.
-    :arg on_disk_rescore: `true` if vector rescoring should be done on-
-        disk  Only applicable to `bbq_hnsw`
     """
 
     type: Union[
@@ -424,7 +422,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     rescore_vector: Union[
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
-    on_disk_rescore: Union[bool, DefaultType]
 
     def __init__(
         self,
@@ -449,7 +446,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         rescore_vector: Union[
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
-        on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -462,8 +458,6 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["m"] = m
         if rescore_vector is not DEFAULT:
             kwargs["rescore_vector"] = rescore_vector
-        if on_disk_rescore is not DEFAULT:
-            kwargs["on_disk_rescore"] = on_disk_rescore
         super().__init__(kwargs)
 
 
@@ -947,6 +941,7 @@ class GeoDistanceSort(AttrDict[Any]):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
+        /,
         *,
         mode: Union[
             Literal["min", "max", "sum", "avg", "median"], DefaultType
@@ -3278,6 +3273,7 @@ class SortOptions(AttrDict[Any]):
         self,
         _field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         _value: Union["FieldSort", Dict[str, Any], "DefaultType"] = DEFAULT,
+        /,
         *,
         _score: Union["ScoreSort", Dict[str, Any], DefaultType] = DEFAULT,
         _doc: Union["ScoreSort", Dict[str, Any], DefaultType] = DEFAULT,

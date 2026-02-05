@@ -411,16 +411,21 @@ class YamlRunner:
         return value
 
     def _lookup(self, path):
-        # fetch the possibly nested value from last_response
-        value = self.last_response
         if path == "$body":
-            return value
+            return self.last_response
+        if path.startswith("$"):
+            value = None
+        else:
+            value = self.last_response
         path = path.replace(r"\.", "\1")
         for step in path.split("."):
             if not step:
                 continue
             # We check body again to handle E.g. '$body.$backing_index.data_stream'
-            if step.startswith("$body"):
+            if step == "$body":
+                assert value is None
+                # fetch the possibly nested value from last_response
+                value = self.last_response
                 continue
             step = step.replace("\1", ".")
             step = self._resolve(step)
@@ -432,11 +437,15 @@ class YamlRunner:
                 step = int(step)
                 assert isinstance(value, list)
                 assert len(value) > step
+                value = value[step]
             elif step == "_arbitrary_key_":
                 return list(value.keys())[0]
-            else:
+            elif isinstance(step, string_types) and isinstance(value, dict):
                 assert step in value
-            value = value[step]
+                value = value[step]
+            else:
+                assert value is None
+                value = step
         return value
 
     def _feature_enabled(self, name):
@@ -505,10 +514,10 @@ try:
     if "ES_YAML_TESTS_BRANCH" in os.environ and os.environ["ES_YAML_TESTS_BRANCH"]:
         branch_candidates.append(os.environ["ES_YAML_TESTS_BRANCH"])
     git_branch = subprocess.getoutput("git branch --show-current")
-    if git_branch not in branch_candidates:
+    if git_branch and git_branch not in branch_candidates:
         branch_candidates.append(git_branch)
     package_version = __versionstr__.rsplit(".", 1)[0]
-    if package_version not in branch_candidates:
+    if package_version and package_version not in branch_candidates:
         branch_candidates.append(package_version)
     if "main" not in branch_candidates:
         branch_candidates.append("main")

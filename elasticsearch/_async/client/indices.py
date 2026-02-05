@@ -23,9 +23,9 @@ from ._base import NamespacedClient
 from .utils import (
     SKIP_IN_PATH,
     Stability,
+    _availability_warning,
     _quote,
     _rewrite_parameters,
-    _stability_warning,
 )
 
 
@@ -165,8 +165,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get tokens from text analysis.
-          The analyze API performs analysis on a text string and returns the resulting tokens.</p>
+          <p>Get tokens from text analysis.</p>
+          <p>The analyze API performs analysis on a text string and returns the resulting tokens.</p>
           <p>Generating excessive amount of tokens may cause a node to run out of memory.
           The <code>index.analyze.max_token_count</code> setting enables you to limit the number of tokens that can be produced.
           If more than this limit of tokens gets generated, an error occurs.
@@ -244,7 +244,6 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
     async def cancel_migrate_reindex(
         self,
         *,
@@ -315,8 +314,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the cache.
-          Clear the cache of one or more indices.
+          <p>Clear the cache.</p>
+          <p>Clear the cache of one or more indices.
           For data streams, the API clears the caches of the stream's backing indices.</p>
           <p>By default, the clear cache API clears all caches.
           To clear only specific caches, use the <code>fielddata</code>, <code>query</code>, or <code>request</code> parameters.
@@ -408,8 +407,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clone an index.
-          Clone an existing index into a new index.
+          <p>Clone an index.</p>
+          <p>Clone an existing index into a new index.
           Each original primary shard is cloned into a new primary shard in the new index.</p>
           <p>IMPORTANT: Elasticsearch does not apply index templates to the resulting index.
           The API also does not copy index metadata from the original index.
@@ -533,8 +532,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Close an index.
-          A closed index is blocked for read or write operations and does not allow all operations that opened indices allow.
+          <p>Close an index.</p>
+          <p>A closed index is blocked for read or write operations and does not allow all operations that opened indices allow.
           It is not possible to index documents or to search for documents in a closed index.
           Closed indices do not have to maintain internal data structures for indexing or searching documents, which results in a smaller overhead on the cluster.</p>
           <p>When opening or closing an index, the master node is responsible for restarting the index shards to reflect the new state of the index.
@@ -630,8 +629,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create an index.
-          You can use the create index API to add a new index to an Elasticsearch cluster.
+          <p>Create an index.</p>
+          <p>You can use the create index API to add a new index to an Elasticsearch cluster.
           When creating an index, you can specify the following:</p>
           <ul>
           <li>Settings for the index.</li>
@@ -778,7 +777,6 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="create_from",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
     async def create_from(
         self,
         *,
@@ -926,8 +924,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete indices.
-          Deleting an index deletes its documents, shards, and metadata.
+          <p>Delete indices.</p>
+          <p>Deleting an index deletes its documents, shards, and metadata.
           It does not delete related Kibana components, such as data views, visualizations, or dashboards.</p>
           <p>You cannot delete the current write index of a data stream.
           To delete the index, you must roll over the data stream so a new write index is created.
@@ -1004,8 +1002,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an alias.
-          Removes a data stream or index from an alias.</p>
+          <p>Delete an alias.</p>
+          <p>Removes a data stream or index from an alias.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-alias>`_
@@ -1072,18 +1070,18 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete data stream lifecycles.
-          Removes the data stream lifecycle from a data stream, rendering it not managed by the data stream lifecycle.</p>
+          <p>Delete data stream lifecycles.</p>
+          <p>Removes the data stream lifecycle from a data stream, rendering it not managed by the data stream lifecycle.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-lifecycle>`_
 
         :param name: A comma-separated list of data streams of which the data stream
-            lifecycle will be deleted; use `*` to get all data streams
+            lifecycle will be deleted. Use `*` to get all data streams
         :param expand_wildcards: Whether wildcard expressions should get expanded to
             open or closed indices (default: open)
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit timestamp for the document
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1136,8 +1134,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete data streams.
-          Deletes one or more data streams and their backing indices.</p>
+          <p>Delete data streams.</p>
+          <p>Deletes one or more data streams and their backing indices.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream>`_
@@ -1200,18 +1198,18 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete data stream options.
-          Removes the data stream options from a data stream.</p>
+          <p>Delete data stream options.</p>
+          <p>Removes the data stream options from a data stream.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-data-stream-options>`_
 
         :param name: A comma-separated list of data streams of which the data stream
-            options will be deleted; use `*` to get all data streams
+            options will be deleted. Use `*` to get all data streams
         :param expand_wildcards: Whether wildcard expressions should get expanded to
-            open or closed indices (default: open)
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit timestamp for the document
+            open or closed indices
+        :param master_timeout: The period to wait for a connection to the master node.
+        :param timeout: The period to wait for a response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1257,8 +1255,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete an index template.
-          The provided <!-- raw HTML omitted --> may contain multiple template names separated by a comma. If multiple template
+          <p>Delete an index template.</p>
+          <p>The provided <!-- raw HTML omitted --> may contain multiple template names separated by a comma. If multiple template
           names are specified then there is no wildcard support and the provided names should match completely with
           existing templates.</p>
 
@@ -1315,8 +1313,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete a legacy index template.
-          IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
+          <p>Delete a legacy index template.</p>
+          <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-delete-template>`_
@@ -1357,7 +1355,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def disk_usage(
         self,
         *,
@@ -1382,8 +1380,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Analyze the index disk usage.
-          Analyze the disk usage of each field of an index or data stream.
+          <p>Analyze the index disk usage.</p>
+          <p>Analyze the disk usage of each field of an index or data stream.
           This API might not support indices created in previous Elasticsearch versions.
           The result of a small index can be inaccurate as some parts of an index might not be analyzed by the API.</p>
           <p>NOTE: The total size of fields of the analyzed shards of the index in the response is usually smaller than the index <code>store_size</code> value because some small metadata files are ignored and some parts of data files might not be scanned by the API.
@@ -1450,7 +1448,7 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="config",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def downsample(
         self,
         *,
@@ -1466,8 +1464,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Downsample an index.
-          Aggregate a time series (TSDS) index and store pre-computed statistical summaries (<code>min</code>, <code>max</code>, <code>sum</code>, <code>value_count</code> and <code>avg</code>) for each metric field grouped by a configured time interval.
+          <p>Downsample an index.</p>
+          <p>Aggregate a time series (TSDS) index and store pre-computed statistical summaries (<code>min</code>, <code>max</code>, <code>sum</code>, <code>value_count</code> and <code>avg</code>) for each metric field grouped by a configured time interval.
           For example, a TSDS index that contains metrics sampled every 10 seconds can be downsampled to an hourly index.
           All documents within an hour interval are summarized and stored as a single document in the downsample index.</p>
           <p>NOTE: Only indices in a time series data stream are supported.
@@ -1543,8 +1541,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check indices.
-          Check if one or more indices, index aliases, or data streams exist.</p>
+          <p>Check indices.</p>
+          <p>Check if one or more indices, index aliases, or data streams exist.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-exists>`_
@@ -1763,8 +1761,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Check existence of index templates.
-          Get information about whether index templates exist.
+          <p>Check existence of index templates.</p>
+          <p>Get information about whether index templates exist.
           Index templates define settings, mappings, and aliases that can be applied automatically to new indices.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
@@ -1823,16 +1821,16 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the status for a data stream lifecycle.
-          Get information about an index or data stream's current data stream lifecycle status, such as time since index creation, time since rollover, the lifecycle configuration managing the index, or any errors encountered during lifecycle execution.</p>
+          <p>Get the status for a data stream lifecycle.</p>
+          <p>Get information about an index or data stream's current data stream lifecycle status, such as time since index creation, time since rollover, the lifecycle configuration managing the index, or any errors encountered during lifecycle execution.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-explain-data-lifecycle>`_
 
-        :param index: The name of the index to explain
-        :param include_defaults: indicates if the API should return the default values
+        :param index: Comma-separated list of index names to explain
+        :param include_defaults: Indicates if the API should return the default values
             the system uses for the index's lifecycle
-        :param master_timeout: Specify timeout for connection to master
+        :param master_timeout: The period to wait for a connection to the master node.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1862,7 +1860,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def field_usage_stats(
         self,
         *,
@@ -1886,8 +1884,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get field usage stats.
-          Get field usage information for each shard and field of an index.
+          <p>Get field usage stats.</p>
+          <p>Get field usage information for each shard and field of an index.
           Field usage statistics are automatically captured when queries are running on a cluster.
           A shard-level search request that accesses a given field, even if multiple times during that request, is counted as a single use.</p>
           <p>The response body reports the per-shard usage count of the data structures that back the fields in the index.
@@ -1968,8 +1966,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Flush data streams or indices.
-          Flushing a data stream or index is the process of making sure that any data that is currently only stored in the transaction log is also permanently stored in the Lucene index.
+          <p>Flush data streams or indices.</p>
+          <p>Flushing a data stream or index is the process of making sure that any data that is currently only stored in the transaction log is also permanently stored in the Lucene index.
           When restarting, Elasticsearch replays any unflushed operations from the transaction log into the Lucene index to bring it back into the state that it was in before the restart.
           Elasticsearch automatically triggers flushes as needed, using heuristics that trade off the size of the unflushed transaction log against the cost of performing each flush.</p>
           <p>After each operation has been flushed it is permanently stored in the Lucene index.
@@ -2062,8 +2060,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Force a merge.
-          Perform the force merge operation on the shards of one or more indices.
+          <p>Force a merge.</p>
+          <p>Perform the force merge operation on the shards of one or more indices.
           For data streams, the API forces a merge on the shards of the stream's backing indices.</p>
           <p>Merging reduces the number of segments in each shard by merging some of them together and also frees up the space used by deleted documents.
           Merging normally happens automatically, but sometimes it is useful to trigger a merge manually.</p>
@@ -2114,7 +2112,7 @@ class IndicesClient(NamespacedClient):
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
         :param flush: Specify whether the index should be flushed after performing the
-            operation (default: true)
+            operation
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param max_num_segments: The number of segments the index should be merged into
@@ -2122,7 +2120,7 @@ class IndicesClient(NamespacedClient):
         :param only_expunge_deletes: Specify whether the operation should only expunge
             deleted documents
         :param wait_for_completion: Should the request wait until the force merge is
-            completed.
+            completed
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -2197,8 +2195,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index information.
-          Get information about one or more indices. For data streams, the API returns information about the
+          <p>Get index information.</p>
+          <p>Get information about one or more indices. For data streams, the API returns information about the
           stream’s backing indices.</p>
 
 
@@ -2291,8 +2289,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get aliases.
-          Retrieves information for one or more data stream or index aliases.</p>
+          <p>Get aliases.</p>
+          <p>Retrieves information for one or more data stream or index aliases.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-alias>`_
@@ -2435,8 +2433,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get data stream lifecycle stats.
-          Get statistics about the data streams that are managed by a data stream lifecycle.</p>
+          <p>Get data stream lifecycle stats.</p>
+          <p>Get statistics about the data streams that are managed by a data stream lifecycle.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-data-lifecycle-stats>`_
@@ -2730,8 +2728,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get mapping definitions.
-          Retrieves mapping definitions for one or more fields.
+          <p>Get mapping definitions.</p>
+          <p>Retrieves mapping definitions for one or more fields.
           For data streams, the API retrieves field mappings for the stream’s backing indices.</p>
           <p>This API is useful if you don't need a complete mapping or if an index mapping contains a large number of fields.</p>
 
@@ -2809,14 +2807,14 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index templates.
-          Get information about one or more index templates.</p>
+          <p>Get index templates.</p>
+          <p>Get information about one or more index templates.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-index-template>`_
 
-        :param name: Comma-separated list of index template names used to limit the request.
-            Wildcard (*) expressions are supported.
+        :param name: Name of index template to retrieve. Wildcard (*) expressions are
+            supported.
         :param flat_settings: If true, returns settings in flat format.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
@@ -2886,8 +2884,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get mapping definitions.
-          For data streams, the API retrieves mappings for the stream’s backing indices.</p>
+          <p>Get mapping definitions.</p>
+          <p>For data streams, the API retrieves mappings for the stream’s backing indices.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-get-mapping>`_
@@ -2947,7 +2945,6 @@ class IndicesClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_stability_warning(Stability.EXPERIMENTAL)
     async def get_migrate_reindex_status(
         self,
         *,
@@ -3019,8 +3016,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index settings.
-          Get setting information for one or more indices.
+          <p>Get index settings.</p>
+          <p>Get setting information for one or more indices.
           For data streams, it returns setting information for the stream's backing indices.</p>
 
 
@@ -3111,8 +3108,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get legacy index templates.
-          Get information about one or more index templates.</p>
+          <p>Get legacy index templates.</p>
+          <p>Get information about one or more index templates.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
 
 
@@ -3163,7 +3160,6 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="reindex",
     )
-    @_stability_warning(Stability.EXPERIMENTAL)
     async def migrate_reindex(
         self,
         *,
@@ -3231,8 +3227,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Convert an index alias to a data stream.
-          Converts an index alias to a data stream.
+          <p>Convert an index alias to a data stream.</p>
+          <p>Converts an index alias to a data stream.
           You must have a matching index template that is data stream enabled.
           The alias must meet the following criteria:
           The alias must have a write index;
@@ -3296,8 +3292,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update data streams.
-          Performs one or more data stream modification actions in a single atomic operation.</p>
+          <p>Update data streams.</p>
+          <p>Performs one or more data stream modification actions in a single atomic operation.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-modify-data-stream>`_
@@ -3360,8 +3356,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Open a closed index.
-          For data streams, the API opens any closed backing indices.</p>
+          <p>Open a closed index.</p>
+          <p>For data streams, the API opens any closed backing indices.</p>
           <p>A closed index is blocked for read/write operations and does not allow all operations that opened indices allow.
           It is not possible to index documents or to search for documents in a closed index.
           This allows closed indices to not have to maintain internal data structures for indexing or searching documents, resulting in a smaller overhead on the cluster.</p>
@@ -3454,8 +3450,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Promote a data stream.
-          Promote a data stream from a replicated data stream managed by cross-cluster replication (CCR) to a regular data stream.</p>
+          <p>Promote a data stream.</p>
+          <p>Promote a data stream from a replicated data stream managed by cross-cluster replication (CCR) to a regular data stream.</p>
           <p>With CCR auto following, a data stream from a remote cluster can be replicated to the local cluster.
           These data streams can't be rolled over in the local cluster.
           These replicated data streams roll over only if the upstream data stream rolls over.
@@ -3467,7 +3463,7 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-promote-data-stream>`_
 
-        :param name: The name of the data stream
+        :param name: The name of the data stream to promote
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -3527,8 +3523,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an alias.
-          Adds a data stream or index to an alias.</p>
+          <p>Create or update an alias.</p>
+          <p>Adds a data stream or index to an alias.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-alias>`_
@@ -3613,7 +3609,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: t.Union[str, t.Sequence[str]],
         data_retention: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
-        downsampling: t.Optional[t.Mapping[str, t.Any]] = None,
+        downsampling: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
@@ -3634,8 +3630,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update data stream lifecycles.
-          Update the data stream lifecycle of the specified data streams.</p>
+          <p>Update data stream lifecycles.</p>
+          <p>Update the data stream lifecycle of the specified data streams.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-lifecycle>`_
@@ -3801,8 +3797,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update data stream options.
-          Update the data stream options of the specified data streams.</p>
+          <p>Update data stream options.</p>
+          <p>Update the data stream options of the specified data streams.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-data-stream-options>`_
@@ -3972,8 +3968,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an index template.
-          Index templates define settings, mappings, and aliases that can be applied automatically to new indices.</p>
+          <p>Create or update an index template.</p>
+          <p>Index templates define settings, mappings, and aliases that can be applied automatically to new indices.</p>
           <p>Elasticsearch applies templates to new indices based on an wildcard pattern that matches the index name.
           Index templates are applied during data stream or index creation.
           For data streams, these settings and mappings are applied when the stream's backing indices are created.
@@ -4004,7 +4000,7 @@ class IndicesClient(NamespacedClient):
             via `actions.auto_create_index`. If set to `false`, then indices or data
             streams matching the template must always be explicitly created, and may
             never be automatically created.
-        :param cause: User defined reason for creating/updating the index template
+        :param cause: User defined reason for creating or updating the index template
         :param composed_of: An ordered list of component template names. Component templates
             are merged in the order specified, meaning that the last component template
             specified has the highest precedence.
@@ -4019,7 +4015,8 @@ class IndicesClient(NamespacedClient):
         :param ignore_missing_component_templates: The configuration option ignore_missing_component_templates
             can be used when an index template references a component template that might
             not exist
-        :param index_patterns: Name of the index template to create.
+        :param index_patterns: Array of wildcard (`*`) expressions used to match the
+            names of data streams and indices during creation.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -4156,8 +4153,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update field mappings.
-          Add new fields to an existing data stream or index.
+          <p>Update field mappings.</p>
+          <p>Add new fields to an existing data stream or index.
           You can use the update mapping API to:</p>
           <ul>
           <li>Add a new field to an existing index</li>
@@ -4174,7 +4171,7 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-put-mapping>`_
 
         :param index: A comma-separated list of index names the mapping should be added
-            to (supports wildcards); use `_all` or omit to add the mapping on all indices.
+            to (supports wildcards). Use `_all` or omit to add the mapping on all indices.
         :param allow_no_indices: If `false`, the request returns an error if any wildcard
             expression, index alias, or `_all` value targets only missing or closed indices.
             This behavior applies even if the request targets other open indices.
@@ -4301,8 +4298,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Update index settings.
-          Changes dynamic index settings in real time.
+          <p>Update index settings.</p>
+          <p>Changes dynamic index settings in real time.
           For data streams, index setting changes are applied to all backing indices by default.</p>
           <p>To revert a setting to the default value, use a null value.
           The list of per-index settings that can be updated dynamically on live indices can be found in index settings documentation.
@@ -4455,8 +4452,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update a legacy index template.
-          Index templates define settings, mappings, and aliases that can be applied automatically to new indices.
+          <p>Create or update a legacy index template.</p>
+          <p>Index templates define settings, mappings, and aliases that can be applied automatically to new indices.
           Elasticsearch applies templates to new indices based on an index pattern that matches the index name.</p>
           <p>IMPORTANT: This documentation is about legacy index templates, which are deprecated and will be replaced by the composable templates introduced in Elasticsearch 7.8.</p>
           <p>Composable templates always take precedence over legacy templates.
@@ -4476,7 +4473,7 @@ class IndicesClient(NamespacedClient):
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
-        :param cause: User defined reason for creating/updating the index template
+        :param cause: User defined reason for creating or updating the index template
         :param create: If true, this request cannot replace or update existing index
             templates.
         :param index_patterns: Array of wildcard expressions used to match the names
@@ -4563,8 +4560,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index recovery information.
-          Get information about ongoing and completed shard recoveries for one or more indices.
+          <p>Get index recovery information.</p>
+          <p>Get information about ongoing and completed shard recoveries for one or more indices.
           For data streams, the API returns information for the stream's backing indices.</p>
           <p>All recoveries, whether ongoing or complete, are kept in the cluster state and may be reported on at any time.</p>
           <p>Shard recovery is the process of initializing a shard copy, such as restoring a primary shard from a snapshot or creating a replica shard from a primary shard.
@@ -4661,8 +4658,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Refresh an index.
-          A refresh makes recent operations performed on one or more indices available for search.
+          <p>Refresh an index.</p>
+          <p>A refresh makes recent operations performed on one or more indices available for search.
           For data streams, the API runs the refresh operation on the stream’s backing indices.</p>
           <p>By default, Elasticsearch periodically refreshes indices every second, but only on indices that have received one search request or more in the last 30 seconds.
           You can change this default interval with the <code>index.refresh_interval</code> setting.</p>
@@ -4745,8 +4742,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Reload search analyzers.
-          Reload an index's search analyzers and their resources.
+          <p>Reload search analyzers.</p>
+          <p>Reload an index's search analyzers and their resources.
           For data streams, the API reloads search analyzers and resources for the stream's backing indices.</p>
           <p>IMPORTANT: After reloading the search analyzers you should clear the request cache to make sure it doesn't contain responses derived from the previous versions of the analyzer.</p>
           <p>You can use the reload search analyzers API to pick up changes to synonym files used in the <code>synonym_graph</code> or <code>synonym</code> token filter of a search analyzer.
@@ -5071,8 +5068,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Resolve indices.
-          Resolve the names and/or index patterns for indices, aliases, and data streams.
+          <p>Resolve indices.</p>
+          <p>Resolve the names and/or index patterns for indices, aliases, and data streams.
           Multiple patterns and remote clusters are supported.</p>
 
 
@@ -5160,8 +5157,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Roll over to a new index.
-          TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
+          <p>Roll over to a new index.</p>
+          <p>TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
           <p>The rollover API creates a new index for a data stream or index alias.
           The API behavior depends on the rollover target.</p>
           <p><strong>Roll over a data stream</strong></p>
@@ -5297,8 +5294,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index segments.
-          Get low-level information about the Lucene segments in index shards.
+          <p>Get index segments.</p>
+          <p>Get low-level information about the Lucene segments in index shards.
           For data streams, the API returns information about the stream's backing indices.</p>
 
 
@@ -5378,8 +5375,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index shard stores.
-          Get store information about replica shards in one or more indices.
+          <p>Get index shard stores.</p>
+          <p>Get store information about replica shards in one or more indices.
           For data streams, the API retrieves store information for the stream's backing indices.</p>
           <p>The index shard stores API returns the following information:</p>
           <ul>
@@ -5462,8 +5459,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Shrink an index.
-          Shrink an index into a new index with fewer primary shards.</p>
+          <p>Shrink an index.</p>
+          <p>Shrink an index into a new index with fewer primary shards.</p>
           <p>Before you can shrink an index:</p>
           <ul>
           <li>The index must be read-only.</li>
@@ -5570,8 +5567,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Simulate an index.
-          Get the index configuration that would be applied to the specified index from an existing index template.</p>
+          <p>Simulate an index.</p>
+          <p>Get the index configuration that would be applied to the specified index from an existing index template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-simulate-index-template>`_
@@ -5669,8 +5666,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Simulate an index template.
-          Get the index configuration that would be applied by a particular index template.</p>
+          <p>Simulate an index template.</p>
+          <p>Get the index configuration that would be applied by a particular index template.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-simulate-template>`_
@@ -5808,8 +5805,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Split an index.
-          Split an index into a new index with more primary shards.</p>
+          <p>Split an index.</p>
+          <p>Split an index into a new index with more primary shards.</p>
           <ul>
           <li>
           <p>Before you can split an index:</p>
@@ -5933,8 +5930,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index statistics.
-          For data streams, the API retrieves statistics for the stream's backing indices.</p>
+          <p>Get index statistics.</p>
+          <p>For data streams, the API retrieves statistics for the stream's backing indices.</p>
           <p>By default, the returned statistics are index-level with <code>primaries</code> and <code>total</code> aggregations.
           <code>primaries</code> are the values for only the primary shards.
           <code>total</code> are the accumulated values for both primary and replica shards.</p>
@@ -5947,7 +5944,7 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param metric: Limit the information returned the specific metrics.
+        :param metric: Limit the information returned the specific metrics
         :param completion_fields: Comma-separated list or wildcard expressions of fields
             to include in fielddata and suggest statistics.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
@@ -6038,8 +6035,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an alias.
-          Adds a data stream or index to an alias.</p>
+          <p>Create or update an alias.</p>
+          <p>Adds a data stream or index to an alias.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-update-aliases>`_
@@ -6117,8 +6114,8 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Validate a query.
-          Validates a query without running it.</p>
+          <p>Validate a query.</p>
+          <p>Validates a query without running it.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-validate-query>`_
