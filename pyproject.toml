@@ -82,7 +82,7 @@ dev = [
     "mapbox-vector-tile",
     "jinja2",
     "tqdm",
-    "trio",
+    "anyio[trio]",
     "mypy",
     "pyright",
     "types-python-dateutil",
