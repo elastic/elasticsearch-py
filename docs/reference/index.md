@@ -7,9 +7,11 @@ mapped_pages:
 
 # {{es}} Python client [overview]
 
-This documentation covers the [official Python client for {{es}}](https://github.com/elastic/elasticsearch-py). The goal of the Python client is to provide common ground for all {{es}}-related code in Python. The client is designed to be unopinionated and extendable. 
+This documentation covers the [official Python client for {{es}}](https://github.com/elastic/elasticsearch-py). The Python client provides a comprehensive foundation for working with {{es}} in Python. The client is designed to be unopinionated and extensible. 
 
 ## Example [_example]
+
+Here's an example of basic Python client usage:
 
 ::::{tab-set}
 
@@ -26,8 +28,8 @@ def main():
 
     resp = client.search(
         index="my-index-000001",
-        from_="40",
-        size="20",
+        from_=40,
+        size=20,
         query={
             "term": {
                 "user.id": "kimchy"
@@ -51,8 +53,8 @@ async def main():
 
     resp = await client.search(
         index="my-index-000001",
-        from_="40",
-        size="20",
+        from_=40,
+        size=20,
         query={
             "term": {
                 "user.id": "kimchy"
@@ -67,19 +69,19 @@ async def main():
 
 ## Overview [_overview]
 
-This package is composed of several modules:
+The {{es}} Python client package consists of several modules: the core client, a set of bulk helper functions, an ES|QL query builder, and a DSL module.
 
-### The actual client
+### The core client
 
-This module, sometimes also called the "low-level" client, implements the support for sending requests to {{es}} servers. The client provides access to the entire surface of the {{es}} API.
+This module, also known as the low-level client, enables sending requests to {{es}} servers. The client provides access to the entire surface of the {{es}} API.
 
-* [Getting Started guide](getting-started.md)
-* [Ingest data with Python walkthrough](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md)
+* [](getting-started.md)
+* [Walkthrough: Ingest data with Python](docs-content://manage-data/ingest/ingesting-data-from-applications/ingest-data-with-python-on-elasticsearch-service.md)
 * [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/es_api.html)
 
 #### Features [_features]
 
-The client's features include:
+The core client's features include:
 
 * Translating basic Python data types to and from JSON
 * Configurable automatic discovery of cluster nodes
@@ -91,23 +93,23 @@ The client's features include:
 
 ### Bulk helpers
 
-The bulk helpers are a set of functions that simplify the ingest of large amounts of data through a high-level interface based on Python iterables.
+The bulk helpers simplify ingesting large amounts of data, by providing a high-level interface based on Python iterables.
 
-* [User guide](client-helpers.md#bulk-helpers)
+* [](client-helpers.md#bulk-helpers)
 * [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/api_helpers.html)
 
 ### ES|QL query builder
 
-This module offers an idiomatic interface to construct ES|QL queries using Python expressions.
+The ES|QL query builder offers an idiomatic interface for constructing ES|QL queries using Python expressions.
 
-* [User guide](esql-query-builder.md)
+* [](esql-query-builder.md)
 * [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/esql.html)
 
 ### DSL module
 
-The DSL module could be thought of as a "high-level" client for {{es}}. It allows applications to manipulate documents and queries using Python classes and objects instead of primitive types such as dictionaries and lists.
+The DSL module can be thought of as a high-level client for {{es}}. It allows applications to manipulate documents and queries using Python classes and objects, instead of primitive types such as dictionaries and lists.
 
-* [User guide](elasticsearch-dsl.md)
+* [](elasticsearch-dsl.md)
 * [Reference documentation](https://elasticsearch-py.readthedocs.io/en/stable/dsl.html)
 
 ## Compatibility [_compatibility]
