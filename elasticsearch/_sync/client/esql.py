@@ -47,6 +47,7 @@ class EsqlClient(NamespacedClient):
             "params",
             "profile",
             "tables",
+            "time_zone",
             "wait_for_completion_timeout",
         ),
         ignore_deprecated_options={"params"},
@@ -82,6 +83,7 @@ class EsqlClient(NamespacedClient):
         tables: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]
         ] = None,
+        time_zone: t.Optional[str] = None,
         wait_for_completion_timeout: t.Optional[
             t.Union[str, t.Literal[-1], t.Literal[0]]
         ] = None,
@@ -140,7 +142,8 @@ class EsqlClient(NamespacedClient):
             in the cluster. If false, the query and its results are stored in the cluster
             only if the request does not complete during the period set by the `wait_for_completion_timeout`
             parameter.
-        :param locale:
+        :param locale: Returns results (especially dates) formatted per the conventions
+            of the locale.
         :param params: To avoid any attempts of hacking or code injection, extract the
             values in a separate list of parameters. Use question mark placeholders (?)
             in the query string for each of the parameters.
@@ -150,6 +153,7 @@ class EsqlClient(NamespacedClient):
             some insight into the performance of each part of the query.
         :param tables: Tables to use with the LOOKUP operation. The top level key is
             the table name and the next level key is the column name.
+        :param time_zone: Sets the default timezone of the query.
         :param wait_for_completion_timeout: The period to wait for the request to finish.
             By default, the request waits for 1 second for the query results. If the
             query completes during this period, results are returned Otherwise, a query
@@ -200,6 +204,8 @@ class EsqlClient(NamespacedClient):
                 __body["profile"] = profile
             if tables is not None:
                 __body["tables"] = tables
+            if time_zone is not None:
+                __body["time_zone"] = time_zone
             if wait_for_completion_timeout is not None:
                 __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -648,6 +654,7 @@ class EsqlClient(NamespacedClient):
             "params",
             "profile",
             "tables",
+            "time_zone",
         ),
         ignore_deprecated_options={"params"},
     )
@@ -698,6 +705,7 @@ class EsqlClient(NamespacedClient):
         tables: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]
         ] = None,
+        time_zone: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -739,7 +747,8 @@ class EsqlClient(NamespacedClient):
             an extra `_clusters` object with information about the clusters that participated
             in the search along with info such as shards count. This is similar to `include_ccs_metadata`,
             but it also returns metadata when the query is not CCS/CPS
-        :param locale:
+        :param locale: Returns results (especially dates) formatted per the conventions
+            of the locale.
         :param params: To avoid any attempts of hacking or code injection, extract the
             values in a separate list of parameters. Use question mark placeholders (?)
             in the query string for each of the parameters.
@@ -749,6 +758,7 @@ class EsqlClient(NamespacedClient):
             some insight into the performance of each part of the query.
         :param tables: Tables to use with the LOOKUP operation. The top level key is
             the table name and the next level key is the column name.
+        :param time_zone: Sets the default timezone of the query.
         """
         if query is None and body is None:
             raise ValueError("Empty value passed for parameter 'query'")
@@ -791,6 +801,8 @@ class EsqlClient(NamespacedClient):
                 __body["profile"] = profile
             if tables is not None:
                 __body["tables"] = tables
+            if time_zone is not None:
+                __body["time_zone"] = time_zone
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
