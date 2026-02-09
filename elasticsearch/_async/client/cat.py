@@ -391,7 +391,7 @@ class CatClient(NamespacedClient):
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or Kibana console. They are not intended for use by applications.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cat-circuit-breaker>`_
 
         :param circuit_breaker_patterns: A comma-separated list of regular-expressions
             to filter the circuit breakers in the output
