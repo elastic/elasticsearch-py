@@ -43,7 +43,7 @@ class EnrichClient(NamespacedClient):
           <p>Deletes an existing enrich policy and its enrich index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-delete-policy>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-enrich-delete-policy>`_
 
         :param name: Enrich policy to delete.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -92,7 +92,7 @@ class EnrichClient(NamespacedClient):
           <p>Create the enrich index for an existing enrich policy.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-execute-policy>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-enrich-execute-policy>`_
 
         :param name: Enrich policy to execute.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -144,7 +144,7 @@ class EnrichClient(NamespacedClient):
           <p>Returns information about an enrich policy.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-get-policy>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-enrich-get-policy>`_
 
         :param name: Comma-separated list of enrich policy names used to limit the request.
             To return information for all enrich policies, omit this parameter.
@@ -202,7 +202,7 @@ class EnrichClient(NamespacedClient):
           <p>Creates an enrich policy.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-put-policy>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-enrich-put-policy>`_
 
         :param name: Name of the enrich policy to create or update.
         :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
@@ -263,7 +263,7 @@ class EnrichClient(NamespacedClient):
           <p>Returns enrich coordinator statistics and information about enrich policies that are currently executing.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-enrich-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-enrich-stats>`_
 
         :param master_timeout: Period to wait for a connection to the master node.
         """

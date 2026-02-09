@@ -45,7 +45,7 @@ class SlmClient(NamespacedClient):
           This operation prevents any future snapshots from being taken but does not cancel in-progress snapshots or remove previously-taken snapshots.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-delete-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-delete-lifecycle>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to remove
         :param master_timeout: The period to wait for a connection to the master node.
@@ -101,7 +101,7 @@ class SlmClient(NamespacedClient):
           The snapshot policy is normally applied according to its schedule, but you might want to manually run a policy before performing an upgrade or other maintenance.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-execute-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-execute-lifecycle>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to be executed
         :param master_timeout: The period to wait for a connection to the master node.
@@ -156,7 +156,7 @@ class SlmClient(NamespacedClient):
           The retention policy is normally applied according to its schedule.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-execute-retention>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-execute-retention>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
@@ -208,7 +208,7 @@ class SlmClient(NamespacedClient):
           <p>Get snapshot lifecycle policy definitions and information about the latest snapshot attempts.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-get-lifecycle>`_
 
         :param policy_id: A comma-separated list of snapshot lifecycle policy identifiers.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -265,7 +265,7 @@ class SlmClient(NamespacedClient):
           <p>Get global and policy-level statistics about actions taken by snapshot lifecycle management.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-get-stats>`_
 
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
@@ -315,7 +315,7 @@ class SlmClient(NamespacedClient):
           <p>Get the snapshot lifecycle management status.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-get-status>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-get-status>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
@@ -379,7 +379,7 @@ class SlmClient(NamespacedClient):
           Only the latest version of a policy is stored.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-put-lifecycle>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-put-lifecycle>`_
 
         :param policy_id: The identifier for the snapshot lifecycle policy you want to
             create or update.
@@ -461,7 +461,7 @@ class SlmClient(NamespacedClient):
           Manually starting SLM is necessary only if it has been stopped using the stop SLM API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-start>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-start>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails
@@ -519,7 +519,7 @@ class SlmClient(NamespacedClient):
           Use the get snapshot lifecycle management status API to see if SLM is running.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-slm-stop>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-slm-stop>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails

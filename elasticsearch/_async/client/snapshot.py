@@ -50,7 +50,7 @@ class SnapshotClient(NamespacedClient):
           <p>Trigger the review of the contents of a snapshot repository and delete any stale data not referenced by existing snapshots.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-cleanup-repository>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-cleanup-repository>`_
 
         :param name: The name of the snapshot repository to clean up.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -114,7 +114,7 @@ class SnapshotClient(NamespacedClient):
           <p>Clone part of all of a snapshot into another snapshot in the same repository.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-clone>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-clone>`_
 
         :param repository: The name of the snapshot repository that both source and target
             snapshot belong to.
@@ -211,7 +211,7 @@ class SnapshotClient(NamespacedClient):
           <p>Take a snapshot of a cluster or of data streams and indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-create>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-create>`_
 
         :param repository: The name of the repository for the snapshot.
         :param snapshot: The name of the snapshot. It supportes date math. It must be
@@ -338,7 +338,7 @@ class SnapshotClient(NamespacedClient):
           If both parameters are specified, only the query parameter is used.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-create-repository>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-create-repository>`_
 
         :param name: The name of the snapshot repository to register or update.
         :param repository:
@@ -411,7 +411,7 @@ class SnapshotClient(NamespacedClient):
           <p>Delete snapshots.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-delete>`_
 
         :param repository: The name of the repository to delete a snapshot from.
         :param snapshot: A comma-separated list of snapshot names to delete. It also
@@ -475,7 +475,7 @@ class SnapshotClient(NamespacedClient):
           The snapshots themselves are left untouched and in place.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-delete-repository>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-delete-repository>`_
 
         :param name: The ame of the snapshot repositories to unregister. Wildcard (`*`)
             patterns are supported.
@@ -583,7 +583,7 @@ class SnapshotClient(NamespacedClient):
           Snapshots concurrently created may be seen during an iteration.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-get>`_
 
         :param repository: A comma-separated list of snapshot repository names used to
             limit the request. Wildcard (`*`) expressions are supported.
@@ -713,7 +713,7 @@ class SnapshotClient(NamespacedClient):
           <p>Get snapshot repository information.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-get-repository>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-get-repository>`_
 
         :param name: A comma-separated list of snapshot repository names used to limit
             the request. Wildcard (`*`) expressions are supported including combining
@@ -868,7 +868,7 @@ class SnapshotClient(NamespacedClient):
           Some operations also verify the behavior on small blobs with sizes other than 8 bytes.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-repository-analyze>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-repository-analyze>`_
 
         :param name: The name of the repository.
         :param blob_count: The total number of blobs to write to the repository during
@@ -1006,7 +1006,7 @@ class SnapshotClient(NamespacedClient):
           The response body format is therefore not considered stable and may be different in newer versions.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-repository-verify-integrity>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-repository-verify-integrity>`_
 
         :param name: The name of the snapshot repository.
         :param blob_thread_pool_concurrency: If `verify_blob_contents` is `true`, this
@@ -1128,7 +1128,7 @@ class SnapshotClient(NamespacedClient):
           <p>If your snapshot contains data from App Search or Workplace Search, you must restore the Enterprise Search encryption key before you restore the snapshot.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-restore>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-restore>`_
 
         :param repository: The name of the repository to restore a snapshot from.
         :param snapshot: The name of the snapshot to restore.
@@ -1283,7 +1283,7 @@ class SnapshotClient(NamespacedClient):
           These requests can also tax machine resources and, when using cloud storage, incur high processing costs.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-status>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-status>`_
 
         :param repository: The snapshot repository name used to limit the request. It
             supports wildcards (`*`) if `<snapshot>` isn't specified.
@@ -1351,7 +1351,7 @@ class SnapshotClient(NamespacedClient):
           <p>Check for common misconfigurations in a snapshot repository.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-snapshot-verify-repository>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-snapshot-verify-repository>`_
 
         :param name: The name of the snapshot repository to verify.
         :param master_timeout: The period to wait for the master node. If the master

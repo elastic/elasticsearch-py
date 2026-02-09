@@ -49,7 +49,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Remove a search application and its associated alias. Indices attached to the search application are not removed.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-delete>`_
 
         :param name: The name of the search application to delete.
         """
@@ -94,7 +94,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>The associated data stream is also deleted.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-delete-behavioral-analytics>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-delete-behavioral-analytics>`_
 
         :param name: The name of the analytics collection to be deleted
         """
@@ -138,7 +138,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Get search application details.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-get>`_
 
         :param name: The name of the search application
         """
@@ -182,7 +182,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Get behavioral analytics collections.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get-behavioral-analytics>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-get-behavioral-analytics>`_
 
         :param name: A list of analytics collections to limit the returned information
         """
@@ -234,7 +234,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Get information about search applications.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-get-behavioral-analytics>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-get-behavioral-analytics>`_
 
         :param from_: Starting offset.
         :param q: Query in the Lucene query string syntax.
@@ -290,7 +290,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Create a behavioral analytics collection event.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-post-behavioral-analytics-event>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-post-behavioral-analytics-event>`_
 
         :param collection_name: The name of the behavioral analytics collection.
         :param event_type: The analytics event type.
@@ -357,7 +357,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Create or update a search application.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-put>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-put>`_
 
         :param name: The name of the search application to be created or updated.
         :param search_application:
@@ -414,7 +414,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>Create a behavioral analytics collection.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-put-behavioral-analytics>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-put-behavioral-analytics>`_
 
         :param name: The name of the analytics collection to be created or updated.
         """
@@ -467,7 +467,7 @@ class SearchApplicationClient(NamespacedClient):
           <p>You must have <code>read</code> privileges on the backing alias of the search application.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-render-query>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-render-query>`_
 
         :param name: The name of the search application to render teh query for.
         :param params:
@@ -531,7 +531,7 @@ class SearchApplicationClient(NamespacedClient):
           Unspecified template parameters are assigned their default values if applicable.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search-application-search>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-search-application-search>`_
 
         :param name: The name of the search application to be searched.
         :param params: Query parameters specific to this request, which will override
