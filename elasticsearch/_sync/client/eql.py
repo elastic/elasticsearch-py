@@ -43,7 +43,7 @@ class EqlClient(NamespacedClient):
           The API also deletes results for the search.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-eql-delete>`_
 
         :param id: Identifier for the search to delete. A search ID is provided in the
             EQL search API's response for an async search. A search ID is also provided
@@ -93,7 +93,7 @@ class EqlClient(NamespacedClient):
           <p>Get the current status and available results for an async EQL search or a stored synchronous EQL search.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-eql-get>`_
 
         :param id: Identifier for the search.
         :param keep_alive: Period for which the search and its results are stored on
@@ -147,7 +147,7 @@ class EqlClient(NamespacedClient):
           <p>Get the current status for an async EQL search or a stored synchronous EQL search without returning results.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-get-status>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-eql-get-status>`_
 
         :param id: Identifier for the search.
         """
@@ -249,7 +249,7 @@ class EqlClient(NamespacedClient):
           EQL assumes each document in a data stream or index corresponds to an event.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-eql-search>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-eql-search>`_
 
         :param index: Comma-separated list of index names to scope the operation
         :param query: EQL query you wish to run.

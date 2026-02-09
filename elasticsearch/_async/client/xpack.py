@@ -54,7 +54,7 @@ class XPackClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-info>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-info>`_
 
         :param accept_enterprise: If used, this otherwise ignored parameter must be set
             to true
@@ -104,7 +104,7 @@ class XPackClient(NamespacedClient):
           The API also provides some usage statistics.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-xpack>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-xpack>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If no response is received before the timeout expires, the request fails

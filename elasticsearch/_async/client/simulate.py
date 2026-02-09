@@ -82,7 +82,7 @@ class SimulateClient(NamespacedClient):
           These will be used in place of the pipeline definitions that are already in the system. This can be used to replace existing pipeline definitions or to create new ones. The pipeline substitutions are used only within this request.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-simulate-ingest>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-simulate-ingest>`_
 
         :param docs: Sample documents to test in the pipeline.
         :param index: The index to simulate ingesting into. This value can be overridden

@@ -49,7 +49,7 @@ class MonitoringClient(NamespacedClient):
           <p>This API is used by the monitoring features to send monitoring data.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/>`_
 
         :param interval: Collection interval (e.g., '10s' or '10000ms') of the payload
         :param operations:

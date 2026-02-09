@@ -43,7 +43,7 @@ class CcrClient(NamespacedClient):
           <p>Delete a collection of cross-cluster replication auto-follow patterns.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-delete-auto-follow-pattern>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-delete-auto-follow-pattern>`_
 
         :param name: The auto-follow pattern collection to delete.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -130,7 +130,7 @@ class CcrClient(NamespacedClient):
           When the API returns, the follower index exists and cross-cluster replication starts replicating operations from the leader index to the follower index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-follow>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-follow>`_
 
         :param index: The name of the follower index.
         :param leader_index: The name of the index in the leader cluster to follow.
@@ -259,7 +259,7 @@ class CcrClient(NamespacedClient):
           For example, the results include follower index names, leader index names, replication options, and whether the follower indices are active or paused.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-follow-info>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-follow-info>`_
 
         :param index: A comma-delimited list of follower index patterns.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -311,7 +311,7 @@ class CcrClient(NamespacedClient):
           The API returns shard-level stats about the &quot;following tasks&quot; associated with each shard for the specified indices.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-follow-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-follow-stats>`_
 
         :param index: A comma-delimited list of index patterns.
         :param timeout: The period to wait for a response. If no response is received
@@ -380,7 +380,7 @@ class CcrClient(NamespacedClient):
           The only purpose of this API is to handle the case of failure to remove the following retention leases after the unfollow API is invoked.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-forget-follower>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-forget-follower>`_
 
         :param index: Name of the leader index for which specified follower retention
             leases should be removed
@@ -445,7 +445,7 @@ class CcrClient(NamespacedClient):
           <p>Get cross-cluster replication auto-follow patterns.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-get-auto-follow-pattern-1>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-get-auto-follow-pattern-1>`_
 
         :param name: The auto-follow pattern collection that you want to retrieve. If
             you do not specify a name, the API returns information for all collections.
@@ -505,7 +505,7 @@ class CcrClient(NamespacedClient):
           Remote indices that were created while the pattern was paused will also be followed, unless they have been deleted or closed in the interim.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-pause-auto-follow-pattern>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-pause-auto-follow-pattern>`_
 
         :param name: The name of the auto-follow pattern to pause.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -559,7 +559,7 @@ class CcrClient(NamespacedClient):
           You can pause and resume a follower index to change the configuration of the following task.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-pause-follow>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-pause-follow>`_
 
         :param index: The name of the follower index.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -648,7 +648,7 @@ class CcrClient(NamespacedClient):
           NOTE: Follower indices that were configured automatically before updating an auto-follow pattern will remain unchanged even if they do not match against the new patterns.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-put-auto-follow-pattern>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-put-auto-follow-pattern>`_
 
         :param name: The name of the collection of auto-follow patterns.
         :param remote_cluster: The remote cluster containing the leader indices to match
@@ -782,7 +782,7 @@ class CcrClient(NamespacedClient):
           Remote indices created while the pattern was paused will also be followed unless they have been deleted or closed in the interim.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-resume-auto-follow-pattern>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-resume-auto-follow-pattern>`_
 
         :param name: The name of the auto-follow pattern to resume.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -860,7 +860,7 @@ class CcrClient(NamespacedClient):
           When this API returns, the follower index will resume fetching operations from the leader index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-resume-follow>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-resume-follow>`_
 
         :param index: Name of the follow index to resume following
         :param master_timeout: Period to wait for a connection to the master node.
@@ -951,7 +951,7 @@ class CcrClient(NamespacedClient):
           <p>This API returns stats about auto-following and the same shard-level stats as the get follower stats API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-stats>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-stats>`_
 
         :param master_timeout: The period to wait for a connection to the master node.
             If the master node is not available before the timeout expires, the request
@@ -1009,7 +1009,7 @@ class CcrClient(NamespacedClient):
           </blockquote>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-ccr-unfollow>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-ccr-unfollow>`_
 
         :param index: The name of the follower index.
         :param master_timeout: The period to wait for a connection to the master node.

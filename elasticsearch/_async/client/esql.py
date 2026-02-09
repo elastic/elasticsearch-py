@@ -95,7 +95,7 @@ class EsqlClient(NamespacedClient):
           <p>The API accepts the same parameters and request body as the synchronous query API, along with additional async related properties.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-async-query>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-async-query>`_
 
         :param query: The ES|QL query API accepts an ES|QL query string in the query
             parameter, runs it, and returns the results.
@@ -236,7 +236,7 @@ class EsqlClient(NamespacedClient):
           </ul>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-async-query-delete>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-async-query-delete>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -297,7 +297,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can retrieve the results using this API.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-async-query-get>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-async-query-get>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -367,7 +367,7 @@ class EsqlClient(NamespacedClient):
           If the Elasticsearch security features are enabled, only the user who first submitted the ES|QL query can stop it.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-async-query-stop>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-async-query-stop>`_
 
         :param id: The unique identifier of the query. A query ID is provided in the
             ES|QL async query API response for a query that does not complete in the
@@ -466,7 +466,7 @@ class EsqlClient(NamespacedClient):
           <p>Returns an object extended information about a running ES|QL query.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-get-query>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-get-query>`_
 
         :param id: The query ID
         """
@@ -558,7 +558,7 @@ class EsqlClient(NamespacedClient):
           <p>Returns an object containing IDs and other information about the running ES|QL queries.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-list-queries>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-esql-list-queries>`_
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_query/queries"
