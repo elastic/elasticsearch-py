@@ -47,6 +47,7 @@ class TextStructureClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         quote: t.Optional[str] = None,
+        should_parse_recursively: t.Optional[bool] = None,
         should_trim_fields: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         timestamp_field: t.Optional[str] = None,
@@ -120,6 +121,11 @@ class TextStructureClient(NamespacedClient):
             specified, the default value is a double quote (`"`). If your delimited text
             format does not use quoting, a workaround is to set this argument to a character
             that does not appear anywhere in the sample.
+        :param should_parse_recursively: If the format is `ndjson`, you can specify whether
+            to parse nested JSON objects recursively. The nested objects are parsed to
+            a maximum depth equal to the default value of the `index.mapping.depth.limit`
+            setting. Anything beyond that depth is parsed as an `object` type field.
+            For formats other than `ndjson`, this parameter is ignored.
         :param should_trim_fields: If the format is `delimited`, you can specify whether
             values between delimiters should have whitespace trimmed from them. If this
             parameter is not specified and the delimiter is pipe (`|`), the default value
@@ -192,6 +198,8 @@ class TextStructureClient(NamespacedClient):
             __query["pretty"] = pretty
         if quote is not None:
             __query["quote"] = quote
+        if should_parse_recursively is not None:
+            __query["should_parse_recursively"] = should_parse_recursively
         if should_trim_fields is not None:
             __query["should_trim_fields"] = should_trim_fields
         if timeout is not None:
@@ -232,6 +240,7 @@ class TextStructureClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         quote: t.Optional[str] = None,
+        should_parse_recursively: t.Optional[bool] = None,
         should_trim_fields: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         timestamp_field: t.Optional[str] = None,
@@ -302,6 +311,11 @@ class TextStructureClient(NamespacedClient):
             specified, the default value is a double quote (`"`). If your delimited text
             format does not use quoting, a workaround is to set this argument to a character
             that does not appear anywhere in the sample.
+        :param should_parse_recursively: If the format is `ndjson`, you can specify whether
+            to parse nested JSON objects recursively. The nested objects are parsed to
+            a maximum depth equal to the default value of the `index.mapping.depth.limit`
+            setting. Anything beyond that depth is parsed as an `object` type field.
+            For formats other than `ndjson`, this parameter is ignored.
         :param should_trim_fields: If the format is `delimited`, you can specify whether
             values between delimiters should have whitespace trimmed from them. If this
             parameter is not specified and the delimiter is pipe (`|`), the default value
@@ -367,6 +381,8 @@ class TextStructureClient(NamespacedClient):
             __query["pretty"] = pretty
         if quote is not None:
             __query["quote"] = quote
+        if should_parse_recursively is not None:
+            __query["should_parse_recursively"] = should_parse_recursively
         if should_trim_fields is not None:
             __query["should_trim_fields"] = should_trim_fields
         if timeout is not None:
@@ -412,6 +428,7 @@ class TextStructureClient(NamespacedClient):
         line_merge_size_limit: t.Optional[int] = None,
         lines_to_sample: t.Optional[int] = None,
         quote: t.Optional[str] = None,
+        should_parse_recursively: t.Optional[bool] = None,
         should_trim_fields: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         timestamp_field: t.Optional[str] = None,
@@ -509,6 +526,11 @@ class TextStructureClient(NamespacedClient):
             specified, the default value is a double quote (`"`). If your delimited text
             format does not use quoting, a workaround is to set this argument to a character
             that does not appear anywhere in the sample.
+        :param should_parse_recursively: If the format is `ndjson`, you can specify whether
+            to parse nested JSON objects recursively. The nested objects are parsed to
+            a maximum depth equal to the default value of the `index.mapping.depth.limit`
+            setting. Anything beyond that depth is parsed as an `object` type field.
+            For formats other than `ndjson`, this parameter is ignored.
         :param should_trim_fields: If you have set `format` to `delimited`, you can specify
             whether values between delimiters should have whitespace trimmed from them.
             If this parameter is not specified and the delimiter is pipe (`|`), the default
@@ -578,6 +600,8 @@ class TextStructureClient(NamespacedClient):
             __query["lines_to_sample"] = lines_to_sample
         if quote is not None:
             __query["quote"] = quote
+        if should_parse_recursively is not None:
+            __query["should_parse_recursively"] = should_parse_recursively
         if should_trim_fields is not None:
             __query["should_trim_fields"] = should_trim_fields
         if timeout is not None:

@@ -411,51 +411,6 @@ class EsqlClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.EXPERIMENTAL)
-    async def delete_view(
-        self,
-        *,
-        name: str,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Delete an ES|QL view.</p>
-          <p>Deletes a stored ES|QL view.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
-
-        :param name: The view name to remove.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_query/view/{__path_parts["name"]}'
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "DELETE",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="esql.delete_view",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_query(
         self,
         *,
@@ -501,54 +456,6 @@ class EsqlClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.EXPERIMENTAL)
-    async def get_view(
-        self,
-        *,
-        name: t.Optional[str] = None,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Get an ES|QL view.</p>
-          <p>Returns a stored ES|QL view.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
-
-        :param name: The comma-separated view names to retrieve.
-        """
-        __path_parts: t.Dict[str, str]
-        if name not in SKIP_IN_PATH:
-            __path_parts = {"name": _quote(name)}
-            __path = f'/_query/view/{__path_parts["name"]}'
-        else:
-            __path_parts = {}
-            __path = "/_query/view"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "GET",
-            __path,
-            params=__query,
-            headers=__headers,
-            endpoint_id="esql.get_view",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
     async def list_queries(
         self,
         *,
@@ -584,62 +491,6 @@ class EsqlClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="esql.list_queries",
-            path_parts=__path_parts,
-        )
-
-    @_rewrite_parameters(
-        body_fields=("query",),
-    )
-    @_availability_warning(Stability.EXPERIMENTAL)
-    async def put_view(
-        self,
-        *,
-        name: str,
-        query: t.Optional[t.Union[str, "ESQLBase"]] = None,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-        body: t.Optional[t.Dict[str, t.Any]] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        .. raw:: html
-
-          <p>Create or update an ES|QL view.</p>
-
-
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
-
-        :param name: The view name to create or update.
-        :param query: The ES|QL query string from which to create a view.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        if query is None and body is None:
-            raise ValueError("Empty value passed for parameter 'query'")
-        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
-        __path = f'/_query/view/{__path_parts["name"]}'
-        __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if not __body:
-            if query is not None:
-                __body["query"] = str(query)
-        __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "PUT",
-            __path,
-            params=__query,
-            headers=__headers,
-            body=__body,
-            endpoint_id="esql.put_view",
             path_parts=__path_parts,
         )
 
