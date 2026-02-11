@@ -563,7 +563,9 @@ try:
                 test_numbers_and_steps.append((test_number, test_step))
                 test_number += 1
 
-        if not requires["stack"]:
+        if not requires["stack"] or "feature_flag" in requires:
+            # we do not run serverless-only tests or tests that use features
+            # behind feature flags
             continue
 
         # Now we combine setup, teardown, and test_steps into
