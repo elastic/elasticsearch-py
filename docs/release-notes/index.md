@@ -28,8 +28,6 @@ Enhancements
 API
 
 * Added `cat.circuit_breaker` API
-* Added experimental `esql.get_view`, `esql.put_view` and `esql.delete_view` APIs
-* Added experimental `indices.get_sample_configuration`, `indices.put_sample_configuration`, `indices.delete_sample_configuration`, `indices.get_all_sample_configuration`, `indices.get_sample`, `indices.get_sample_stats` APIs
 * Added `inference.put_groq`, `inference.put_openshift_ai`, `inference.put_nvidia` APIs
 * Added `downsampling_method` argument to `indices.put_data_lifecycle` API
 * Added `return_documents` and `top_n` arguments to `inference.rerank` API
