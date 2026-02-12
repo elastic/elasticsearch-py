@@ -69,6 +69,10 @@ By default scan does not return results in any pre-determined order. To have a s
 :::{tab-item} Standard Python
 :sync: sync
 ```py
+from elasticsearch.helpers import scan
+
+es = Elasticsearch(hosts=['https://localhost:9200'])
+
 scan(
     es,
     query={"query": {"match": {"title": "python"}}},
@@ -80,11 +84,17 @@ scan(
 :::{tab-item} Async Python
 :sync: async
 ```py
-await scan(
-    es,
-    query={"query": {"match": {"title": "python"}}},
-    index="orders-*"
-)
+from elasticsearch.helpers import async_scan
+
+es = AsyncElasticsearch(hosts=['https://localhost:9200'])
+
+async def main():
+    await async_scan(
+        es,
+        query={"query": {"match": {"title": "python"}}},
+        index="orders-*"
+
+asyncio.run(main())
 ```
 :::
 

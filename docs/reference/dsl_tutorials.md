@@ -254,7 +254,7 @@ async def example():
     print(article.is_published())
 
     # Display cluster health
-    print(async_connections.get_connection().cluster.health())
+    print(await async_connections.get_connection().cluster.health())
 ```
 :::
 

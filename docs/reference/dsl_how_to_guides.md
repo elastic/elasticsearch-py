@@ -3141,7 +3141,7 @@ Use the `connections` module to manage your synchronous connections.
 ```python
 from elasticsearch.dsl import connections
 
-connections.create_connection(hosts=['localhost'], timeout=20)
+connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
 ```
 
 For asynchronous connection management, use the `async_connections` module:
@@ -3149,7 +3149,7 @@ For asynchronous connection management, use the `async_connections` module:
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['localhost'], timeout=20)
+async_connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
 ```
 
 If you're using Trio, you need to explicitly request the Async HTTP client:
@@ -3157,7 +3157,7 @@ If you're using Trio, you need to explicitly request the Async HTTP client:
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['localhost'], node_class="httpxasync")
+async_connections.create_connection(hosts=['https://localhost:9200'], node_class="httpxasync")
 ```
 
 #### How to avoid *Unclosed client session / connector* warnings on exit [_how_to_avoid_unclosed_client_session_connector_warnings_on_exit]

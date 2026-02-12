@@ -26,7 +26,7 @@ To define a default connection that can be used globally, use the `connections` 
 ```python
 from elasticsearch.dsl import connections
 
-connections.create_connection(hosts=['localhost'], timeout=20)
+connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
 ```
 :::
 
@@ -35,7 +35,7 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['localhost'], timeout=20)
+async_connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
 ```
 :::
 
@@ -53,7 +53,7 @@ You can define the `alias` or name of a connection so you can easily refer to it
 ```python
 from elasticsearch.dsl import connections
 
-connections.create_connection(alias='my_new_connection', hosts=['localhost'], timeout=60)
+connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], timeout=60)
 ```
 :::
 
@@ -62,7 +62,7 @@ connections.create_connection(alias='my_new_connection', hosts=['localhost'], ti
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(alias='my_new_connection', hosts=['localhost'], timeout=60)
+async_connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], timeout=60)
 ```
 :::
 
@@ -87,9 +87,9 @@ You can define multiple connections to multiple clusters at the same time using 
 from elasticsearch.dsl import connections
 
 connections.configure(
-    default={'hosts': 'localhost'},
+    default={'hosts': 'https://localhost:9200'},
     dev={
-        'hosts': ['esdev1.example.com:9200'],
+        'hosts': ['https://esdev1.example.com:9200'],
         'sniff_on_start': True
     }
 )
@@ -102,9 +102,9 @@ connections.configure(
 from elasticsearch.dsl import async_connections
 
 async_connections.configure(
-    default={'hosts': 'localhost'},
+    default={'hosts': 'https://localhost:9200'},
     dev={
-        'hosts': ['esdev1.example.com:9200'],
+        'hosts': ['https://esdev1.example.com:9200'],
         'sniff_on_start': True
     }
 )
@@ -185,14 +185,14 @@ If you don’t want to supply a global configuration, you can always pass in you
 :::{tab-item} Standard Python
 :sync: sync
 ```python
-s = Search(using=Elasticsearch('localhost'))
+s = Search(using=Elasticsearch('https://localhost:9200'))
 ```
 :::
 
 :::{tab-item} Async Python
 :sync: async
 ```python
-s = AsyncSearch(using=AsyncElasticsearch('localhost'))
+s = AsyncSearch(using=AsyncElasticsearch('https://localhost:9200'))
 ```
 :::
 
@@ -206,14 +206,14 @@ You can even use this approach to override any connection the object might be al
 :::{tab-item} Standard Python
 :sync: sync
 ```python
-s = s.using(Elasticsearch('otherhost:9200'))
+s = s.using(Elasticsearch('https://otherhost:9200'))
 ```
 :::
 
 :::{tab-item} Async Python
 :sync: async
 ```python
-s = s.using(AsyncElasticsearch('otherhost:9200'))
+s = s.using(AsyncElasticsearch('https://otherhost:9200'))
 ```
 :::
 
