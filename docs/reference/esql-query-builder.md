@@ -36,18 +36,25 @@ To execute this query, you can pass it to the `client.esql.query()` endpoint:
 :::{tab-item} Standard Python
 :sync: sync
 ```python
->>> from elasticsearch import Elasticsearch
->>> client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
->>> response = client.esql.query(query=query)
+from elasticsearch import Elasticsearch
+
+client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
+response = client.esql.query(query=query)
 ```
 :::
 
 :::{tab-item} Async Python
 :sync: async
 ```python
->>> from elasticsearch import AsyncElasticsearch
->>> client = AsyncElasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
->>> response = await client.esql.query(query=query)
+import asyncio
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
+
+async def main():
+    response = await client.esql.query(query=query)
+
+asyncio.run(main())
 ```
 :::
 

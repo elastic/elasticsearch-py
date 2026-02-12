@@ -326,10 +326,12 @@ Use the ES|QL CSV import to convert the `employees` dataset to a Pandas datafram
 from io import StringIO
 from elasticsearch import Elasticsearch
 import pandas as pd
+
 client = Elasticsearch(
     "https://[host].elastic-cloud.com",
     api_key="...",
 )
+
 response = client.esql.query(
     query="FROM employees | LIMIT 500",
     format="csv",
@@ -342,15 +344,17 @@ print(df)
 :::{tab-item} Async Python
 :sync: async
 ```python
+import asyncio
 from io import StringIO
 from elasticsearch import AsyncElasticsearch
 import pandas as pd
+
 client = AsyncElasticsearch(
     "https://[host].elastic-cloud.com",
     api_key="...",
 )
 
-async def example():
+async def main():
     response = await client.esql.query(
         query="FROM employees | LIMIT 500",
         format="csv",

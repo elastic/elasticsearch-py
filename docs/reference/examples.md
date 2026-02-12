@@ -43,6 +43,7 @@ print(resp['result'])
 :::{tab-item} Async Python
 :sync: async
 ```py
+import asyncio
 from datetime import datetime
 from elasticsearch import AsyncElasticsearch
 client = AsyncElasticsearch('https://localhost:9200')
@@ -53,9 +54,11 @@ doc = {
     'timestamp': datetime.now(),
 }
 
-async def example():
+async def main():
     resp = await client.index(index="test-index", id=1, document=doc)
     print(resp['result'])
+
+asyncio.run(main())
 ```
 :::
 
@@ -166,12 +169,13 @@ print(resp['result'])
 :::{tab-item} Async Python
 :sync: async
 ```py
+import asyncio
 from datetime import datetime
 from elasticsearch import AsyncElasticsearch
 
 client = AsyncElasticsearch('https://localhost:9200')
 
-async def example():
+async def main():
     doc = {
         'author': 'author_name',
         'text': 'Interesting modified content...',
@@ -179,6 +183,8 @@ async def example():
     }
     resp = await client.update(index="test-index", id=1, doc=doc)
     print(resp['result'])
+
+asyncio.run(main())
 ```
 :::
 
