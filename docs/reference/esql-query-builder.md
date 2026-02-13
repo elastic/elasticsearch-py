@@ -30,11 +30,35 @@ FROM employees
 
 To execute this query, you can pass it to the `client.esql.query()` endpoint:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
->>> from elasticsearch import Elasticsearch
->>> client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
->>> response = client.esql.query(query=query)
+from elasticsearch import Elasticsearch
+
+client = Elasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
+response = client.esql.query(query=query)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+import asyncio
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch(hosts=[os.environ['ELASTICSEARCH_URL']])
+
+async def main():
+    response = await client.esql.query(query=query)
+
+asyncio.run(main())
+```
+:::
+
+::::
 
 The response body contains a `columns` attribute with the list of columns included in the results, and a `values` attribute with the list of results for the query, each given as a list of column values. Here is a possible response body returned by the example query given above:
 
@@ -209,6 +233,11 @@ ES|QL, like most query languages, is vulnerable to [code injection attacks](http
 
 Continuing with the example above, let's assume that the application needs a `find_employee_by_name()` function that searches for the name given as an argument. If this argument is received by the application from users, then it is considered untrusted and should not be added to the query directly. Here is how to code the function in a secure manner:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 def find_employee_by_name(name):
     query = (
@@ -218,6 +247,22 @@ def find_employee_by_name(name):
     )
     return client.esql.query(query=query, params=[name])
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def find_employee_by_name(name):
+    query = (
+        ESQL.from_("employees")
+        .keep("first_name", "last_name", "height")
+        .where(E("first_name") == E("?"))
+    )
+    return await client.esql.query(query=query, params=[name])
+```
+:::
+
+::::
 
 Here the part of the query in which the untrusted data needs to be inserted is replaced with a parameter, which in ES|QL is defined by the question mark. When using Python expressions, the parameter must be given as `E("?")` so that it is treated as an expression and not as a literal string.
 

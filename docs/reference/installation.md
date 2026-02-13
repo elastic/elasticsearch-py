@@ -16,7 +16,7 @@ $ python -m pip install elasticsearch
 If your application uses async/await in Python you can install with the `async` extra:
 
 ```sh
-$ python -m pip install elasticsearch[async]
+$ python -m pip install "elasticsearch[async]"
 ```
 
 Read more about [how to use asyncio with this project](https://elasticsearch-py.readthedocs.io/en/master/async.md).
