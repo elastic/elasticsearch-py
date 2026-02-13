@@ -5,7 +5,7 @@ mapped_pages:
 
 # ES|QL and Pandas [esql-pandas]
 
-The [Elasticsearch Query Language (ES|QL)](docs-content://explore-analyze/query-filter/languages/esql.md) provides a powerful way to filter, transform, and analyze data stored in {{es}}. Designed to be easy to learn and use, it is a perfect fit for data scientists familiar with Pandas and other dataframe-based libraries. ES|QL queries produce tables with named columns, which is the definition of dataframes.
+The [Elasticsearch Query Language (ES|QL)](docs-content://explore-analyze/query-filter/languages/esql.md) provides a powerful way to filter, transform, and analyze data stored in {{es}}. Designed to be efficient to learn and use, it is a perfect fit for data scientists familiar with Pandas and other dataframe-based libraries. ES|QL queries produce tables with named columns, which is the definition of dataframes.
 
 This page shows you an example of using ES|QL and Pandas together to work with dataframes.
 
@@ -374,7 +374,7 @@ df = pd.read_csv(
 print(df)
 ```
 
-Note that the `dtype` parameter of `pd.read_csv()` is useful when the type inferred by Pandas is not enough. The code prints the following response:
+The `dtype` parameter of `pd.read_csv()` is useful when the type inferred by Pandas is not enough. The code prints the following response:
 
 ```python
    count  languages

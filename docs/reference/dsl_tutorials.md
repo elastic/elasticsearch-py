@@ -41,7 +41,7 @@ for tag in response['aggregations']['per_tag']['buckets']:
     print(tag['key'], tag['max_lines']['value'])
 ```
 
-The problem with this approach is that it is very verbose, prone to syntax mistakes like incorrect nesting, hard to modify (eg. adding another filter) and definitely not fun to write.
+The problem with this approach is that it is verbose, prone to syntax mistakes like incorrect nesting, hard to modify (for example adding another filter) and definitely not fun to write.
 
 Let’s rewrite the example using the DSL module:
 
@@ -139,7 +139,7 @@ You can see more in the [persistence](dsl_how_to_guides.md#_persistence_2) chapt
 
 ## Pre-built Faceted Search [_pre_built_faceted_search]
 
-If you have your `Document`s defined you can very easily create a faceted search class to simplify searching and filtering.
+If you have your `Document`s defined you can create a faceted search class to simplify searching and filtering.
 
 ```python
 from elasticsearch.dsl import FacetedSearch, TermsFacet, DateHistogramFacet

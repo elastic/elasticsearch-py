@@ -11,7 +11,7 @@ This page guides you through the installation process of the Python client, show
 
 ### Requirements [_requirements]
 
-* [Python](https://www.python.org/) 3.10 or newer
+* [Python](https://www.python.org/) 3.10 or later
 * [`pip`](https://pip.pypa.io/en/stable/), installed by default alongside Python
 
 
@@ -116,7 +116,7 @@ def generate_docs():
 helpers.bulk(client, generate_docs())
 ```
 
-These helpers are the recommended way to perform bulk ingestion. While it is also possible to perform bulk ingestion using `client.bulk` directly, the helpers handle retries, ingesting chunk by chunk and more. See the [*Client helpers*](/reference/client-helpers.md) page for more details.
+These helpers are the recommended way to perform bulk ingestion. While it is also possible to perform bulk ingestion using `client.bulk` directly, the helpers handle retries, ingesting chunk by chunk and more. Refer to the [*Client helpers*](/reference/client-helpers.md) page for more details.
 
 
 #### Getting documents [_getting_documents]
