@@ -26,7 +26,7 @@ To define a default connection that can be used globally, use the `connections` 
 ```python
 from elasticsearch.dsl import connections
 
-connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
+connections.create_connection(hosts=['https://localhost:9200'], request_timeout=20)
 ```
 :::
 
@@ -35,7 +35,7 @@ connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['https://localhost:9200'], timeout=20)
+async_connections.create_connection(hosts=['https://localhost:9200'], request_timeout=20)
 ```
 :::
 
@@ -53,7 +53,7 @@ You can define the `alias` or name of a connection so you can easily refer to it
 ```python
 from elasticsearch.dsl import connections
 
-connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], timeout=60)
+connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], request_timeout=60)
 ```
 :::
 
@@ -62,7 +62,7 @@ connections.create_connection(alias='my_new_connection', hosts=['https://localho
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], timeout=60)
+async_connections.create_connection(alias='my_new_connection', hosts=['https://localhost:9200'], request_timeout=60)
 ```
 :::
 
