@@ -69,6 +69,6 @@ Per default, the built-in OpenTelemetry instrumentation does not capture request
 
 ### Overhead [_overhead]
 
-The OpenTelemetry instrumentation (as any other monitoring approach) may come with a slight overhead on CPU, memory, and/or latency. The overhead may only occur when the instrumentation is enabled (default) and an OpenTelemetry SDK is active in the target application. When the instrumentation is disabled or no OpenTelemetry SDK is active within the target application, monitoring overhead is not expected when using the client.
+The OpenTelemetry instrumentation (as any other monitoring approach) may come with a slight overhead on CPU, memory, and latency. The overhead can only occur when the instrumentation is enabled (default) and an OpenTelemetry SDK is active in the target application. When the instrumentation is turned off or no OpenTelemetry SDK is active within the target application, monitoring overhead is not expected when using the client.
 
-Even in cases where the instrumentation is enabled and is actively used (by an OpenTelemetry SDK), the overhead is minimal and negligible in the vast majority of cases. In edge cases where there is a noticeable overhead, the [instrumentation can be explicitly disabled](#opentelemetry-config-enable) to eliminate any potential impact on performance.
+Even in cases where the instrumentation is enabled and is actively used (by an OpenTelemetry SDK), the overhead is minimal and negligible in the vast majority of cases. In edge cases where there is a noticeable overhead, the [instrumentation can be explicitly disabled](#opentelemetry-config-enable) to remove any potential impact on performance.

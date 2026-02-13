@@ -171,7 +171,7 @@ In the [04-multilingual.ipynb](https://github.com/elastic/elasticsearch-labs/blo
 * Use a multilingual embedding model for semantic search across languages.
 * Transform fields in the sample dataset into embeddings using the Sentence Transformer model and index them into Elasticsearch.
 * Use filtering with a `kNN` semantic search.
-* Walk through a super simple toy example that demonstrates, step by step, how multilingual search works across languages, and within non-English languages.
+* Walk through a basic example that demonstrates, step by step, how multilingual search works across languages, and within non-English languages.
 
 
 #### Query rules [_query_rules]

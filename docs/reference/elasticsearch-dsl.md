@@ -36,7 +36,7 @@ async def run_query():
 
 It also provides an optional wrapper for working with documents as Python objects: defining mappings, retrieving and saving documents, wrapping the document data in user-defined classes.
 
-To use the other Elasticsearch APIs (eg. cluster health) just use the regular client.
+For other Elasticsearch APIs such as cluster health, use the regular client.
 
 
 

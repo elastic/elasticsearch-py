@@ -39,7 +39,7 @@ client.info()
 
 By default {{es}} will start with security features like authentication and TLS enabled. To connect to the {{es}} cluster you’ll need to configure the Python {{es}} client to use HTTPS with the generated CA certificate in order to make requests successfully.
 
-If you’re just getting started with {{es}} we recommend reading the documentation on [configuring](docs-content://deploy-manage/deploy/self-managed/configure-elasticsearch.md) and [starting {{es}}](docs-content://deploy-manage/maintenance/start-stop-services/start-stop-elasticsearch.md) to ensure your cluster is running as expected.
+If you’re getting started with {{es}} we recommend reading the documentation on [configuring](docs-content://deploy-manage/deploy/self-managed/configure-elasticsearch.md) and [starting {{es}}](docs-content://deploy-manage/maintenance/start-stop-services/start-stop-elasticsearch.md) to ensure your cluster is running as expected.
 
 When you start {{es}} for the first time you’ll see a distinct block like the one below in the output from {{es}} (you may have to scroll up if it’s been a while):
 

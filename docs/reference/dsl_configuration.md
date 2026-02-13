@@ -26,7 +26,7 @@ connections.create_connection(hosts=['localhost'], timeout=20)
 
 ### Single connection with an alias [_single_connection_with_an_alias]
 
-You can define the `alias` or name of a connection so you can easily refer to it later. The default value for `alias` is `default`.
+You can define the `alias` or name of a connection so you can efficiently refer to it later. The default value for `alias` is `default`.
 
 ```python
 from elasticsearch.dsl import connections
@@ -98,7 +98,7 @@ s = s.using(Elasticsearch('otherhost:9200'))
 ```
 
 ::::{note}
-When using the `dsl` module, it is highly recommended that you use the built-in serializer (`elasticsearch.dsl.serializer.serializer`) to ensure your objects are correctly serialized into `JSON` every time. The `create_connection` method that is described here (and that the `configure` method uses under the hood) will do that automatically for you, unless you explicitly specify your own serializer. The built-in serializer also allows you to serialize your own objects - just define a `to_dict()` method on your objects and that method will be automatically called when serializing your custom objects to `JSON`.
+When using the `dsl` module, it is highly recommended that you use the built-in serializer (`elasticsearch.dsl.serializer.serializer`) to ensure your objects are correctly serialized into `JSON` every time. The `create_connection` method that is described here (and that the `configure` method uses under the hood) will do that automatically for you, unless you explicitly specify your own serializer. The built-in serializer also allows you to serialize your own objects - define a `to_dict()` method on your objects and that method will be automatically called when serializing your custom objects to `JSON`.
 
 ::::
 

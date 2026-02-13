@@ -223,7 +223,7 @@ resp = client.options(ignore_status=[400]).indices.create(
 resp.meta.status  # Can be either '2XX' or '400'
 ```
 
-When using the `ignore_status` parameter the error response will be returned serialized just like a non-error response. In these cases it can be useful to inspect the HTTP status of the response. To do this you can inspect the `resp.meta.status`.
+When using the `ignore_status` parameter the error response will be returned serialized like a non-error response. In these cases it can be useful to inspect the HTTP status of the response. To do this you can inspect the `resp.meta.status`.
 
 
 ## Sniffing for new nodes [sniffing]
@@ -319,7 +319,7 @@ client = Elasticsearch(
 
 ### Marking nodes dead and alive [_marking_nodes_dead_and_alive]
 
-Individual nodes of Elasticsearch may have transient connectivity or load issues which may make them unable to service requests. To combat this the pool of nodes will detect when a node isn’t able to service requests due to transport or API errors.
+Individual nodes of Elasticsearch can have transient connectivity or load issues which may make them unable to service requests. To combat this the pool of nodes will detect when a node isn’t able to service requests due to transport or API errors.
 
 After a node has been timed out it will be moved back to the set of "alive" nodes but only after the node returns a successful response will the node be marked as "alive" in terms of consecutive errors.
 
@@ -362,7 +362,7 @@ es = Elasticsearch(
 )
 ```
 
-orjson is particularly fast when serializing vectors as it has native numpy support. This will be the default in a future release. Note that you can install orjson with the `orjson` extra:
+orjson is particularly fast when serializing vectors as it has native numpy support. This will be the default in a future release. You can install orjson with the `orjson` extra:
 
 ```sh
 $ python -m pip install elasticsearch[orjson]

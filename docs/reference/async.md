@@ -46,7 +46,7 @@ All APIs that are available under the sync client are also available under the a
 
 [ASGI](https://asgi.readthedocs.io) (Asynchronous Server Gateway Interface) is a way to serve Python web applications making use of async I/O to achieve better performance. Some examples of ASGI frameworks include FastAPI, Django 3.0+, and Starlette. If you’re using one of these frameworks along with Elasticsearch then you should be using `~elasticsearch.AsyncElasticsearch` to avoid blocking the event loop with synchronous network calls for optimal performance.
 
-[Elastic APM](apm-agent-python://reference/index.md) also supports tracing of async Elasticsearch queries just the same as synchronous queries. For an example on how to configure `AsyncElasticsearch` with a popular ASGI framework [FastAPI](https://fastapi.tiangolo.com/) and APM tracing there is a [pre-built example](https://github.com/elastic/elasticsearch-py/tree/master/examples/fastapi-apm) in the `examples/fastapi-apm` directory.
+[Elastic APM](apm-agent-python://reference/index.md) also supports tracing of async Elasticsearch queries like synchronous queries. For an example on how to configure `AsyncElasticsearch` with a popular ASGI framework [FastAPI](https://fastapi.tiangolo.com/) and APM tracing there is a [pre-built example](https://github.com/elastic/elasticsearch-py/tree/master/examples/fastapi-apm) in the `examples/fastapi-apm` directory.
 
 See also the [Using OpenTelemetry](/reference/opentelemetry.md) page.
 
@@ -82,7 +82,7 @@ If when trying to use `AsyncElasticsearch` you receive `ValueError: You must hav
 
 ### What about the `elasticsearch-async` package? [_what_about_the_elasticsearch_async_package]
 
-Previously asyncio was supported separately via the [elasticsearch-async](https://github.com/elastic/elasticsearch-py-async) package. The `elasticsearch-async` package has been deprecated in favor of `AsyncElasticsearch` provided by the `elasticsearch` package in v7.8 and onwards.
+Previously asyncio was supported separately with the [elasticsearch-async](https://github.com/elastic/elasticsearch-py-async) package. The `elasticsearch-async` package has been deprecated in favor of `AsyncElasticsearch` provided by the `elasticsearch` package in v7.8 and onwards.
 
 
 ### Receiving *Unclosed client session / connector* warning? [_receiving_unclosed_client_session_connector_warning]
