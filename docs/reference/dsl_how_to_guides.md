@@ -27,6 +27,11 @@ The API is designed to be chainable. With the exception of the aggregations func
 
 You can pass an instance of the [elasticsearch client](https://elasticsearch-py.readthedocs.io/) when instantiating the `Search` object:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl import Search
@@ -35,6 +40,21 @@ client = Elasticsearch()
 
 s = Search(using=client)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch import AsyncElasticsearch
+from elasticsearch.dsl import AsyncSearch
+
+client = AsyncElasticsearch()
+
+s = AsyncSearch(using=client)
+```
+:::
+
+::::
 
 You can also define the client at a later time (for more options see the `configuration` chapter):
 
@@ -50,22 +70,68 @@ All methods return a *copy* of the object, making it safe to pass to outside cod
 
 The API is chainable, allowing you to combine multiple method calls in one statement:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search().using(client).query(Match("title", "python"))
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch().using(client).query(Match("title", "python"))
+```
+:::
+
+::::
 
 To send the request to Elasticsearch:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = s.execute()
 ```
+:::
 
-If you just want to iterate over the hits returned by your search you can iterate over the `Search` object:
+:::{tab-item} Async Python
+:sync: async
+```python
+response = await s.execute()
+```
+:::
 
+::::
+
+If you just want to iterate over the hits returned by your search you can iterate over the `Search` or `AsyncSearch` objects:
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 for hit in s:
     print(hit.title)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async for hit in s:
+    print(hit.title)
+```
+:::
+
+::::
 
 Search results will be cached. Subsequent calls to `execute` or trying to iterate over an already executed `Search` object will not trigger additional requests being sent to Elasticsearch. To force a new request to be issued specify `ignore_cache=True` when calling `execute`.
 
@@ -79,20 +145,52 @@ print(s.to_dict())
 
 You can delete the documents matching a search by calling `delete` on the `Search` object instead of `execute` like this:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search(index='i').query(Match("title", "python"))
 response = s.delete()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch(index='i').query(Match("title", "python"))
+response = await s.delete()
+```
+:::
+
+::::
 
 To pass [deletion parameters](https://elasticsearch-py.readthedocs.io/en/latest/api/elasticsearch.html#elasticsearch.Elasticsearch.delete_by_query)
 in your query, you can add them by calling ``params`` on the ``Search`` object before ``delete`` like this:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search(index='i').query("match", title="python")
 s = s.params(ignore_unavailable=False, wait_for_completion=True)
 response = s.delete()
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch(index='i').query("match", title="python")
+s = s.params(ignore_unavailable=False, wait_for_completion=True)
+response = await s.delete()
+```
+:::
+
+::::
 
 #### Queries [_queries]
 
@@ -143,20 +241,53 @@ s.query = Q('bool', must=[Q('match', title='python'), Q('match', body='best')])
 
 Sometimes you want to refer to a field within another field, either as a multi-field (`title.keyword`) or in a structured `json` document like `address.city`. This is not a problem when using class-based queries, but when working without classes it is often required to pass field names as keyword arguments. To make this easier, you can use `__` (double underscore) in place of a dot in a keyword argument:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 s = s.filter('term', category__keyword='Python')
 s = s.query('match', address__city='prague')
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+s = s.filter('term', category__keyword='Python')
+s = s.query('match', address__city='prague')
+```
+:::
+
+::::
 
 Alternatively you can use Python’s keyword argument unpacking:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 s = s.filter('term', **{'category.keyword': 'Python'})
 s = s.query('match', **{'address.city': 'prague'})
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+s = s.filter('term', **{'category.keyword': 'Python'})
+s = s.query('match', **{'address.city': 'prague'})
+```
+:::
+
+::::
 
 #### Query combination [_query_combination]
 
@@ -186,6 +317,11 @@ print(s.to_dict())
 
 If you want to have precise control over the query form, use the `Q` shortcut to directly construct the combined query:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 q = Q('bool',
     must=[Q('match', title='python')],
@@ -194,36 +330,102 @@ q = Q('bool',
 )
 s = Search().query(q)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+q = Q('bool',
+    must=[Q('match', title='python')],
+    should=[Q(...), Q(...)],
+    minimum_should_match=1
+)
+s = AsyncSearch().query(q)
+```
+:::
+
+::::
 
 #### Filters [_filters]
 
 If you want to add a query in a [filter context](docs-content://explore-analyze/query-filter/languages/querydsl.md) you can use the `filter()` method to make things easier:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl.query import Terms
 
 s = Search()
 s = s.filter(Terms("tags", ['search', 'python']))
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl.query import Terms
+
+s = AsyncSearch()
+s = s.filter(Terms("tags", ['search', 'python']))
+```
+:::
+
+::::
 
 Behind the scenes this will produce a `Bool` query and place the specified `terms` query into its `filter` branch, making it equivalent to:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl.query import Terms, Bool
 
 s = Search()
 s = s.query(Bool(filter=[Terms("tags", ["search", "python"])]))
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl.query import Terms, Bool
+
+s = AsyncSearch()
+s = s.query(Bool(filter=[Terms("tags", ["search", "python"])]))
+```
+:::
+
+::::
 
 If you want to use the `post_filter` element for faceted navigation, use the `.post_filter()` method.
 
 The `exclude()` method works like `filter()`, but it applies the query as negated:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 s = s.exclude(Terms("tags", ['search', 'python']))
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+s = s.exclude(Terms("tags", ['search', 'python']))
+```
+:::
+
+::::
 
 which is shorthand for:
 
@@ -270,6 +472,11 @@ a.metric("clicks_per_category", aggs.Sum(field="clicks")) \
 
 To add aggregations to the `Search` object, use the `.aggs` property, which acts as a top-level aggregation:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 a = aggs.Terms(field="category")
@@ -284,9 +491,35 @@ s.aggs.bucket("category_terms", a)
 #   }
 # }
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+a = aggs.Terms(field="category")
+s.aggs.bucket("category_terms", a)
+# {
+#   'aggs': {
+#     'category_terms': {
+#       'terms': {
+#         'field': 'category'
+#       }
+#     }
+#   }
+# }
+```
+:::
+
+::::
 
 or
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 s.aggs.bucket("articles_per_day", aggs.DateHistogram(field="publish_date", interval="day")) \
@@ -308,9 +541,42 @@ s.to_dict()
 #   }
 # }
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+s.aggs.bucket("articles_per_day", aggs.DateHistogram(field="publish_date", interval="day")) \
+    .metric("clicks_per_day", aggs.Sum(field="clicks")) \
+    .pipeline("moving_click_average", aggs.MovingAvg(buckets_path="clicks_per_day")) \
+    .bucket("tags_per_day", aggs.Terms(field="tags"))
+
+s.to_dict()
+# {
+#   "aggs": {
+#     "articles_per_day": {
+#       "date_histogram": { "interval": "day", "field": "publish_date" },
+#       "aggs": {
+#         "clicks_per_day": { "sum": { "field": "clicks" } },
+#         "moving_click_average": { "moving_avg": { "buckets_path": "clicks_per_day" } },
+#         "tags_per_day": { "terms": { "field": "tags" } }
+#       }
+#     }
+#   }
+# }
+```
+:::
+
+::::
 
 You can access an existing bucket by its name:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 
@@ -318,6 +584,20 @@ s.aggs.bucket("per_category", aggs.Terms(field="category"))
 s.aggs["per_category"].metric("clicks_per_category", aggs.Sum(field="clicks"))
 s.aggs["per_category"].bucket("tags_per_category", aggs.Terms(field="tags"))
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+
+s.aggs.bucket("per_category", aggs.Terms(field="category"))
+s.aggs["per_category"].metric("clicks_per_category", aggs.Sum(field="clicks"))
+s.aggs["per_category"].bucket("tags_per_category", aggs.Terms(field="tags"))
+```
+:::
+
+::::
 
 ::::{note}
 When chaining multiple aggregations, there is a difference between what `.bucket()` and `.metric()` methods return - `.bucket()` returns the newly defined bucket while `.metric()` returns its parent bucket to allow further chaining.
@@ -332,6 +612,11 @@ As opposed to other methods on the `Search` objects, aggregations are defined in
 
 To issue a kNN search, use the `.knn()` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 vector = get_embedding("search text")
@@ -343,6 +628,24 @@ s = s.knn(
     query_vector=vector
 )
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+vector = get_embedding("search text")
+
+s = s.knn(
+    field="embedding",
+    k=5,
+    num_candidates=10,
+    query_vector=vector
+)
+```
+:::
+
+::::
 
 The `field`, `k` and `num_candidates` arguments can be given as positional or keyword arguments and are required. In addition to these, `query_vector` or `query_vector_builder` must be given as well.
 
@@ -353,6 +656,11 @@ The `.knn()` method can be invoked multiple times to include multiple kNN search
 
 To specify sorting order, use the `.sort()` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search().sort(
     'category',
@@ -360,6 +668,20 @@ s = Search().sort(
     {"lines" : {"order" : "asc", "mode" : "avg"}}
 )
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch().sort(
+    'category',
+    '-title',
+    {"lines" : {"order" : "asc", "mode" : "avg"}}
+)
+```
+:::
+
+::::
 
 It accepts positional arguments which can be either strings or dictionaries. String value is a field name, optionally prefixed by the `-` sign to specify a descending order.
 
@@ -390,10 +712,26 @@ s = s[10:20][2:]
 
 If you want to access all the documents matched by your query you can use the `scan` method which uses the scan/scroll elasticsearch API:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 for hit in s.scan():
     print(hit.title)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async for hit in s.scan():
+    print(hit.title)
+```
+:::
+
+::::
 
 Note that in this case the results won’t be sorted.
 
@@ -416,13 +754,30 @@ s = s.highlight('title', fragment_size=50)
 
 The fragments in the response will then be available on each `Result` object as `.meta.highlight.FIELD` which will contain the list of fragments:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = s.execute()
 for hit in response:
     for fragment in hit.meta.highlight.title:
         print(fragment)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+response = await s.execute()
+for hit in response:
+    for fragment in hit.meta.highlight.title:
+        print(fragment)
+```
+:::
+
+::::
 
 #### Suggestions [_suggestions]
 
@@ -440,11 +795,28 @@ The first argument is the name of the suggestions (name under which it will be r
 
 To collapse search results use the `collapse` method on your `Search` object:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search().query(Match("message", "GET /search"))
 # collapse results by user_id
 s = s.collapse("user_id")
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch().query(Match("message", "GET /search"))
+# collapse results by user_id
+s = s.collapse("user_id")
+```
+:::
+
+::::
 
 The top hits will only include one result per `user_id`. You can also expand each collapsed top hit with the `inner_hits` parameter, `max_concurrent_group_searches` being the number of concurrent requests allowed to retrieve the inner hits per group:
 
@@ -460,6 +832,11 @@ To use Elasticsearch’s `more_like_this` functionality, you can use the MoreLik
 
 A simple example is below
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl.query import MoreLikeThis
 from elasticsearch.dsl import Search
@@ -476,7 +853,30 @@ response = s.execute()
 for hit in response:
     print(hit.title)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl.query import MoreLikeThis
+from elasticsearch.dsl import AsyncSearch
+
+async def example():
+    my_text = 'I want to find something similar'
+
+    s = AsyncSearch()
+    # We're going to match based only on two fields, in this case text and title
+    s = s.query(MoreLikeThis(like=my_text, fields=['text', 'title']))
+    # You can also exclude fields from the result to make the response quicker in the normal way
+    s = s.source(exclude=["text"])
+    response = await s.execute()
+
+    for hit in response:
+        print(hit.title)
+```
+:::
+
+::::
 
 #### Extra properties and parameters [_extra_properties_and_parameters]
 
@@ -512,23 +912,57 @@ The search object can be serialized into a dictionary by using the `.to_dict()` 
 
 You can also create a `Search` object from a `dict` using the `from_dict` class method. This will create a new `Search` object and populate it using the data from the dict:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search.from_dict({"query": {"match": {"title": "python"}}})
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch.from_dict({"query": {"match": {"title": "python"}}})
+```
+:::
+
+::::
 
 If you wish to modify an existing `Search` object, overriding it’s properties, instead use the `update_from_dict` method that alters an instance **in-place**:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search(index='i')
 s.update_from_dict({"query": {"match": {"title": "python"}}, "size": 42})
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch(index='i')
+s.update_from_dict({"query": {"match": {"title": "python"}}, "size": 42})
+```
+:::
 
+::::
 
 ### Response [_response]
 
 You can execute your search by calling the `.execute()` method that will return a `Response` object. The `Response` object allows you access to any key from the response dictionary via attribute access. It also provides some convenient helpers:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = s.execute()
 
@@ -545,6 +979,29 @@ print(response.hits.total.value)
 
 print(response.suggest.my_suggestions)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+await response = s.execute()
+
+print(response.success())
+# True
+
+print(response.took)
+# 12
+
+print(response.hits.total.relation)
+# eq
+print(response.hits.total.value)
+# 142
+
+print(response.suggest.my_suggestions)
+```
+:::
+
+::::
 
 If you want to inspect the contents of the `response` objects, just use its `to_dict` method to get access to the raw data for pretty printing.
 
@@ -552,12 +1009,30 @@ If you want to inspect the contents of the `response` objects, just use its `to_
 
 To access the hits returned by the search, use the `hits` property or just iterate over the `Response` object:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = s.execute()
 print(f"Total {response.hits.total} hits found.")
 for h in response:
     print(h.title, h.body)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+response = await s.execute()
+print(f"Total {response.hits.total} hits found.")
+for h in response:
+    print(h.title, h.body)
+```
+:::
+
+::::
 
 ::::{note}
 If you are only seeing partial results (e.g. 10000 or even 10 results), consider using the option `s.extra(track_total_hits=True)` to get a full hit count.
@@ -570,11 +1045,28 @@ If you are only seeing partial results (e.g. 10000 or even 10 results), consider
 
 The individual hits is wrapped in a convenience class that allows attribute access to the keys in the returned dictionary. All the metadata for the results are accessible via `meta` (without the leading `_`):
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = s.execute()
 h = response.hits[0]
 print(f"/{h.meta.index}/{h.meta.doc_type}/{h.meta.id} returned with score {h.meta.score}")
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+response = await s.execute()
+h = response.hits[0]
+print(f"/{h.meta.index}/{h.meta.doc_type}/{h.meta.id} returned with score {h.meta.score}")
+```
+:::
+
+::::
 
 ::::{note}
 If your document has a field called `meta` you have to access it using the get item syntax: `hit['meta']`.
@@ -598,6 +1090,11 @@ for tag in response.aggregations.per_tag.buckets:
 
 If you need to execute multiple searches at the same time you can use the `MultiSearch` class which will use the `_msearch` API:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import MultiSearch, Search
 from elasticsearch.dsl.query import Term
@@ -614,7 +1111,30 @@ for response in responses:
     for hit in response:
         print(hit.title)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import AsyncMultiSearch, AsyncSearch
+from elasticsearch.dsl.query import Term
+
+async def example():
+    ms = AsyncMultiSearch(index='blogs')
+
+    ms = ms.add(AsyncSearch().filter(Term("tags", "python")))
+    ms = ms.add(AsyncSearch().filter(Term("tags", 'elasticsearch')))
+
+    responses = await ms.execute()
+
+    for response in responses:
+        print("Results for query %r." % response._search.query)
+        for hit in response:
+            print(hit.title)
+```
+:::
+
+::::
 
 ### `EmptySearch` [_emptysearch]
 
@@ -632,6 +1152,11 @@ For more comprehensive examples have a look at the [DSL examples](https://github
 
 If you want to create a model-like wrapper around your documents, use the `Document` class (or the equivalent `AsyncDocument` for asynchronous applications). It can also be used to create all the necessary mappings and settings in Elasticsearch (see [Document life cycle](#life-cycle) below for details).
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from datetime import datetime
 from elasticsearch.dsl import Document, Date, Nested, Boolean, \
@@ -674,6 +1199,55 @@ class Post(Document):
         self.created_at = datetime.now()
         return super().save(** kwargs)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from datetime import datetime
+from elasticsearch.dsl import AsyncDocument, Date, Nested, Boolean, \
+    analyzer, InnerDoc, Completion, Keyword, Text
+
+html_strip = analyzer('html_strip',
+    tokenizer="standard",
+    filter=["standard", "lowercase", "stop", "snowball"],
+    char_filter=["html_strip"]
+)
+
+class Comment(InnerDoc):
+    author = Text(fields={'raw': Keyword()})
+    content = Text(analyzer='snowball')
+    created_at = Date()
+
+    def age(self):
+        return datetime.now() - self.created_at
+
+class Post(AsyncDocument):
+    title = Text()
+    title_suggest = Completion()
+    created_at = Date()
+    published = Boolean()
+    category = Text(
+        analyzer=html_strip,
+        fields={'raw': Keyword()}
+    )
+
+    comments = Nested(Comment)
+
+    class Index:
+        name = 'blog'
+
+    def add_comment(self, author, content):
+        self.comments.append(
+          Comment(author=author, content=content, created_at=datetime.now()))
+
+    async def save(self, ** kwargs):
+        self.created_at = datetime.now()
+        return await super().save(** kwargs)
+```
+:::
+
+::::
 
 #### Data types [_data_types]
 
@@ -681,6 +1255,11 @@ The `Document` instances use native python types such as `str` and `datetime` fo
 
 There are some specific types that were created to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import Document, DateRange, Keyword, Range
 
@@ -706,12 +1285,48 @@ rb.dates.upper # datetime(2018, 11, 17, 10, 0, 0), False
 # empty range is unbounded
 Range().lower # None, False
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import AsyncDocument, DateRange, Keyword, Range
+
+class RoomBooking(AsyncDocument):
+    room = Keyword()
+    dates = DateRange()
+
+rb = RoomBooking(
+  room='Conference Room II',
+  dates=Range(
+    gte=datetime(2018, 11, 17, 9, 0, 0),
+    lt=datetime(2018, 11, 17, 10, 0, 0)
+  )
+)
+
+# Range supports the in operator correctly:
+datetime(2018, 11, 17, 9, 30, 0) in rb.dates # True
+
+# you can also get the limits and whether they are inclusive or exclusive:
+rb.dates.lower # datetime(2018, 11, 17, 9, 0, 0), True
+rb.dates.upper # datetime(2018, 11, 17, 10, 0, 0), False
+
+# empty range is unbounded
+Range().lower # None, False
+```
+:::
+
+::::
 
 #### Python Type Hints [_python_type_hints]
 
-Document fields can be defined using standard Python type hints if desired. Here are some simple examples:
+Document fields can be defined using standard Python type hints if desired. Here are some examples:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import Optional
 
@@ -720,15 +1335,47 @@ class Post(Document):
     created_at: Optional[datetime]  # same as created_at = Date(required=False)
     published: bool                 # same as published = Boolean(required=True)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import Optional
+
+class Post(AsyncDocument):
+    title: str                      # same as title = Text(required=True)
+    created_at: Optional[datetime]  # same as created_at = Date(required=False)
+    published: bool                 # same as published = Boolean(required=True)
+```
+:::
+
+::::
 
 ::::{note}
 When using `Field` subclasses such as `Text`, `Date` and `Boolean` to define attributes, these classes must be given in the right-hand side.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class Post(Document):
     title = Text()  # correct
     subtitle: Text  # incorrect
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class Post(AsyncDocument):
+    title = Text()  # correct
+    subtitle: Text  # incorrect
+```
+:::
+
+::::
 
 Using a `Field` subclass as a Python type hint will result in errors.
 ::::
@@ -747,6 +1394,11 @@ Python types are mapped to their corresponding `Field` types according to the fo
 
 To type a field as optional, the standard `Optional` modifier from the Python `typing` package can be used. When using Python 3.10 or newer, "pipe" syntax can also be used, by adding `| None` to a type. The `List` modifier can be added to a field to convert it to an array, similar to using the `multi=True` argument on the `Field` object.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import Optional, List
 
@@ -756,9 +1408,30 @@ class MyDoc(Document):
     authors: List[str]            # same as authors = Text(multi=True, required=True)
     comments: Optional[List[str]] # same as comments = Text(multi=True)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import Optional, List
+
+class MyDoc(AsyncDocument):
+    pub_date: Optional[datetime]  # same as pub_date = Date()
+    middle_name: str | None       # same as middle_name = Text()
+    authors: List[str]            # same as authors = Text(multi=True, required=True)
+    comments: Optional[List[str]] # same as comments = Text(multi=True)
+```
+:::
+
+::::
 
 A field can also be given a type hint of an `InnerDoc` subclass, in which case it becomes an `Object` field of that class. When the `InnerDoc` subclass is wrapped with `List`, a `Nested` field is created instead.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import List
 
@@ -772,13 +1445,49 @@ class Post(Document):
     address: Address         # same as address = Object(Address, required=True)
     comments: List[Comment]  # same as comments = Nested(Comment, required=True)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import List
+
+class Address(InnerDoc):
+    ...
+
+class Comment(InnerDoc):
+    ...
+
+class Post(AsyncDocument):
+    address: Address         # same as address = Object(Address, required=True)
+    comments: List[Comment]  # same as comments = Nested(Comment, required=True)
+```
+:::
+
+::::
 
 Unfortunately it is impossible to have Python type hints that uniquely identify every possible Elasticsearch `Field` type. To choose a type that is different than the one that is assigned according to the table above, the desired `Field` instance can be added explicitly as a right-side assignment in the field declaration. The next example creates a field that is typed as `Optional[str]`, but is mapped to `Keyword` instead of `Text`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class MyDocument(Document):
     category: Optional[str] = Keyword()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class MyDocument(AsyncDocument):
+    category: Optional[str] = Keyword()
+```
+:::
+
+::::
 
 This form can also be used when additional options need to be given to initialize the field, such as when using custom analyzer settings:
 
@@ -789,6 +1498,11 @@ class Comment(InnerDoc):
 
 When using type hints as above, subclasses of `Document` and `InnerDoc` inherit some of the behaviors associated with Python dataclasses, as defined by [PEP 681](https://peps.python.org/pep-0681/) and the [dataclass_transform decorator](https://typing.readthedocs.io/en/latest/spec/dataclasses.html#dataclass-transform). To add per-field dataclass options such as `default` or `default_factory`, the `mapped_field()` wrapper can be used on the right side of a typed field declaration:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class MyDocument(Document):
     title: str = mapped_field(default="no title")
@@ -796,6 +1510,20 @@ class MyDocument(Document):
     published: bool = mapped_field(default=False)
     category: str = mapped_field(Keyword(), default="general")
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class MyDocument(AsyncDocument):
+    title: str = mapped_field(default="no title")
+    created_at: datetime = mapped_field(default_factory=datetime.now)
+    published: bool = mapped_field(default=False)
+    category: str = mapped_field(Keyword(), default="general")
+```
+:::
+
+::::
 
 The `mapped_field()` wrapper function can optionally be given an explicit field type instance as a first positional argument, as the `category` field does in the example above to be defined as `Keyword` instead of the `Text` default.
 
@@ -803,6 +1531,11 @@ Static type checkers such as [mypy](https://mypy-lang.org/) and [pyright](https:
 
 One situation in which type checkers can’t infer the correct type is when using fields as class attributes. Consider the following example:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class MyDocument(Document):
     title: str
@@ -811,9 +1544,29 @@ doc = MyDocument()
 # doc.title is typed as "str" (correct)
 # MyDocument.title is also typed as "str" (incorrect)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class MyDocument(AsyncDocument):
+    title: str
+
+doc = MyDocument()
+# doc.title is typed as "str" (correct)
+# MyDocument.title is also typed as "str" (incorrect)
+```
+:::
+
+::::
 
 To help type checkers correctly identify class attributes as such, the `M` generic must be used as a wrapper to the type hint, as shown in the next examples:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import M
 
@@ -827,6 +1580,26 @@ doc = MyDocument()
 # MyDocument.title is typed as "InstrumentedField"
 # MyDocument.created_at is typed as "InstrumentedField"
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import M
+
+class MyDocument(AsyncDocument):
+    title: M[str]
+    created_at: M[datetime] = mapped_field(default_factory=datetime.now)
+
+doc = MyDocument()
+# doc.title is typed as "str"
+# doc.created_at is typed as "datetime"
+# MyDocument.title is typed as "InstrumentedField"
+# MyDocument.created_at is typed as "InstrumentedField"
+```
+:::
+
+::::
 
 Note that the `M` type hint does not provide any runtime behavior and its use is not required, but it can be useful to eliminate spurious type errors in IDEs or type checking builds.
 
@@ -841,6 +1614,11 @@ When specifying sorting order, the `+` and `-` unary operators can be used on th
 
 Finally, it is also possible to define class attributes and request that they are ignored when building the Elasticsearch mapping. One way is to type attributes with the `ClassVar` annotation. Alternatively, the `mapped_field()` wrapper function accepts an `exclude` argument that can be set to `True`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import ClassVar
 
@@ -849,15 +1627,46 @@ class MyDoc(Document):
     my_var: ClassVar[str]  # regular class variable, ignored by Elasticsearch
     anoter_custom_var: int = mapped_field(exclude=True)  # also ignored by Elasticsearch
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import ClassVar
+
+class MyDoc(AsyncDocument):
+    title: M[str] created_at: M[datetime] = mapped_field(default_factory=datetime.now)
+    my_var: ClassVar[str]  # regular class variable, ignored by Elasticsearch
+    anoter_custom_var: int = mapped_field(exclude=True)  # also ignored by Elasticsearch
+```
+:::
+
+::::
 
 #### Note on dates [_note_on_dates]
 
 The DSL module will always respect the timezone information (or lack thereof) on the `datetime` objects passed in or stored in Elasticsearch. Elasticsearch itself interprets all datetimes with no timezone information as `UTC`. If you wish to reflect this in your python code, you can specify `default_timezone` when instantiating a `Date` field:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class Post(Document):
     created_at = Date(default_timezone='UTC')
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class Post(AsyncDocument):
+    created_at = Date(default_timezone='UTC')
+```
+:::
+
+::::
 
 In that case any `datetime` object passed in (or parsed from elasticsearch) will be treated as if it were in `UTC` timezone.
 
@@ -866,15 +1675,37 @@ In that case any `datetime` object passed in (or parsed from elasticsearch) will
 
 Before you first use the `Post` document type, you need to create the mappings in Elasticsearch. For that you can either use the `index` object or create the mappings directly by calling the `init` class method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # create the mappings in Elasticsearch
 Post.init()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # create the mappings in Elasticsearch
+    await Post.init()
+```
+:::
+
+::::
 
 This code will typically be run in the setup for your application during a code deploy, similar to running database migrations.
 
 To create a new `Post` document just instantiate the class and pass in any fields you wish to set, you can then use standard attribute setting to change/add more fields. Note that you are not limited to the fields defined explicitly:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # instantiate the document
 first = Post(title='My First Blog Post, yay!', published=True)
@@ -887,6 +1718,26 @@ first.meta.id = 47
 # save the document into the cluster
 first.save()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # instantiate the document
+    first = Post(title='My First Blog Post, yay!', published=True)
+    # assign some field values, can be values or lists of values
+    first.category = ['everything', 'nothing']
+    # every document has an id in meta
+    first.meta.id = 47
+
+
+    # save the document into the cluster
+    await first.save()
+```
+:::
+
+::::
 
 All the metadata fields (`id`, `routing`, `index`, etc.) can be accessed (and set) via a `meta` attribute or directly using the underscored variant:
 
@@ -908,6 +1759,11 @@ Having all metadata accessible through `meta` means that this name is reserved a
 
 To retrieve an existing document use the `get` class method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # retrieve the document
 first = Post.get(id=42)
@@ -916,9 +1772,30 @@ first.add_comment('me', 'This is nice!')
 # and save the changes into the cluster again
 first.save()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # retrieve the document
+    first = Post.get(id=42)
+    # now we can call methods, change fields, ...
+    first.add_comment('me', 'This is nice!')
+    # and save the changes into the cluster again
+    await first.save()
+```
+:::
+
+::::
 
 The [Update API](https://www.elastic.co/docs/api/doc/elasticsearch/v8/group/endpoint-document) can also be used via the `update` method. By default any keyword arguments, beyond the parameters of the API, will be considered fields with new values. Those fields will be updated on the local copy of the document and then sent over as partial document to be updated:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # retrieve the document
 first = Post.get(id=42)
@@ -926,9 +1803,29 @@ first = Post.get(id=42)
 # and also update the document in place
 first.update(published=True, published_by='me')
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # retrieve the document
+    first = await Post.get(id=42)
+    # you can update just individual fields which will call the update API
+    # and also update the document in place
+    await first.update(published=True, published_by='me')
+```
+:::
+
+::::
 
 In case you wish to use a `painless` script to perform the update you can pass in the script string as `script` or the `id` of a [stored script](docs-content://explore-analyze/scripting/modules-scripting-store-and-retrieve.md) via `script_id`. All additional keyword arguments to the `update` method will then be passed in as parameters of the script. The document will not be updated in place.
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # retrieve the document
 first = Post.get(id=42)
@@ -937,19 +1834,69 @@ first = Post.get(id=42)
 first.update(script='ctx._source.category.add(params.new_category)',
              new_category='testing')
 ```
+:::
 
-If the document is not found in elasticsearch an exception (`elasticsearch.NotFoundError`) will be raised. If you wish to return `None` instead just pass in `ignore=404` to suppress the exception:
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # retrieve the document
+    first = await Post.get(id=42)
+    # we execute a script in elasticsearch with additional kwargs being passed
+    # as params into the script
+    await first.update(script='ctx._source.category.add(params.new_category)',
+                       new_category='testing')
+```
+:::
 
+::::
+
+If the document is not found in elasticsearch, an exception (`elasticsearch.NotFoundError`) will be raised. If you wish to return `None` instead just pass in `ignore=404` to suppress the exception:
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 p = Post.get(id='not-in-es', ignore=404)
-p is None
+if p is None:
+    ...
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    p = await Post.get(id='not-in-es', ignore=404)
+    if p is None:
+        ...
+```
+:::
+
+::::
 
 When you wish to retrieve multiple documents at the same time by their `id` you can use the `mget` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 posts = Post.mget([42, 47, 256])
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+posts = await Post.mget([42, 47, 256])
+```
+:::
+
+::::
 
 `mget` will, by default, raise a `NotFoundError` if any of the documents wasn’t found and `RequestError` if any of the document had resulted in error. You can control this behavior by setting parameters:
 
@@ -960,16 +1907,47 @@ The index associated with the `Document` is accessible via the `_index` class pr
 
 The `_index` attribute is also home to the `load_mappings` method which will update the mapping on the `Index` from elasticsearch. This is very useful if you use dynamic mappings and want the class to be aware of those fields (for example if you wish the `Date` fields to be properly (de)serialized):
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 Post._index.load_mappings()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+await Post._index.load_mappings()
+```
+:::
+
+::::
 
 To delete a document just call its `delete` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 first = Post.get(id=42)
 first.delete()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+first = await Post.get(id=42)
+await first.delete()
+```
+:::
+
+::::
 
 #### Integration with Pydantic models
 
@@ -986,6 +1964,11 @@ models with Elasticsearch DSL annotations. To take advantage of this option, Pyd
 needs to be replaced with `BaseESModel` (or `AsyncBaseESModel` for asynchronous applications), and then the model
 can include type annotations for Pydantic and Elasticsearch both, as demonstrated in the following example:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import Annotated
 from pydantic import Field
@@ -1001,12 +1984,34 @@ class Quote(BaseESModel):
     class Index:
         name = "quotes"
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import Annotated
+from pydantic import Field
+from elasticsearch import dsl
+from elasticsearch.dsl.pydantic import AsyncBaseESModel
+
+class Quote(AsyncBaseESModel):
+    quote: str
+    author: Annotated[str, dsl.Keyword()]
+    tags: Annotated[list[str], dsl.Keyword(normalizer="lowercase")]
+    embedding: Annotated[list[float], dsl.DenseVector()] = Field(init=False, default=[])
+
+    class Index:
+        name = "quotes"
+```
+:::
+
+::::
 
 In this example, the `quote` attribute is annotated with a `str` type hint. Both Pydantic and Elasticsearch use this 
 annotation.
 
 The `author` and `tags` attributes have a Python type hint and an Elasticsearch annotation, both wrapped with
-Python's `typing.Annotated`. When using the `BaseESModel` class, the typing information intended for Elasticsearch needs
+Python's `typing.Annotated`. When using the `BaseESModel` or `AsyncBaseESModel` classes, the typing information intended for Elasticsearch needs
 to be defined inside `Annotated`.
 
 The `embedding` attribute includes a base Python type and an Elasticsearch annotation in the same format as the
@@ -1017,6 +2022,11 @@ Finally, any other items that need to be defined for the Elasticsearch document 
 
 The next example demonstrates how to define `Object` and `Nested` fields:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from typing import Annotated
 from pydantic import BaseModel, Field
@@ -1035,6 +2045,31 @@ class Person(BaseESModel):
     class Index:
         name = "people"
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from typing import Annotated
+from pydantic import BaseModel, Field
+from elasticsearch import dsl
+from elasticsearch.dsl.pydantic import AsyncBaseESModel
+
+class Phone(BaseModel):
+    type: Annotated[str, dsl.Keyword()] = Field(default="Home")
+    number: str
+
+class Person(AsyncBaseESModel):
+    name: str
+    main_phone: Phone          # same as Object(Phone)
+    other_phones: list[Phone]  # same as Nested(Phone)
+
+    class Index:
+        name = "people"
+```
+:::
+
+::::
 
 Note that inner classes do not need to be defined with a custom base class; these should be standard Pydantic model 
 classes. The attributes defined in these classes can include Elasticsearch annotations, as long as they are given
@@ -1050,6 +2085,11 @@ anywhere standard Pydantic models are used, but they have some added attributes:
 
 These are demonstrated in the examples below:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # create a Pydantic model
 quote = Quote(
@@ -1070,6 +2110,34 @@ for doc in s:
     quote = Quote.from_doc(doc)
     print(quote.meta.id, quote.meta.score, quote.quote)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # create a Pydantic model
+    quote = Quote(
+        quote="An unexamined life is not worth living.",
+        author="Socrates",
+        tags=["phillosophy"]
+    )
+
+    # save the model to the Elasticsearch index
+    await quote.to_doc().save()
+
+    # get a document from the Elasticsearch index as a Pydantic model
+    quote = Quote.from_doc(await Quote._doc.get(id=42))
+
+    # run a search and print the Pydantic models
+    s = Quote._doc.search().query(Match(Quote._doc.quote, "life"))
+    async for doc in s:
+        quote = Quote.from_doc(doc)
+        print(quote.meta.id, quote.meta.score, quote.quote)
+```
+:::
+
+::::
 
 #### Analysis [_analysis]
 
@@ -1090,12 +2158,30 @@ Each analysis object needs to have a name (`my_analyzer` and `trigram` in our ex
 
 Once you have an instance of a custom `analyzer` you can also call the [analyze API](https://www.elastic.co/docs/api/doc/elasticsearch/v8/group/endpoint-indices) on it by using the `simulate` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = my_analyzer.simulate('Hello World!')
 
 # ['hel', 'ell', 'llo', 'lo ', 'o w', ' wo', 'wor', 'orl', 'rld', 'ld!']
 tokens = [t.token for t in response.tokens]
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+response = my_analyzer.async_simulate('Hello World!')
+
+# ['hel', 'ell', 'llo', 'lo ', 'o w', ' wo', 'wor', 'orl', 'rld', 'ld!']
+tokens = [t.token for t in response.tokens]
+```
+:::
+
+::::
 
 ::::{note}
 When creating a mapping which relies on a custom analyzer the index must either not exist or be closed. To create multiple `Document`-defined mappings you can use the `index` object.
@@ -1108,12 +2194,16 @@ When creating a mapping which relies on a custom analyzer the index must either 
 
 To search for this document type, use the `search` class method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 # by calling .search we get back a standard Search object
 s = Post.search()
 # the search is already limited to the index and doc_type of our document
 s = s.filter('term', published=True).query('match', title='first')
-
 
 results = s.execute()
 
@@ -1121,18 +2211,59 @@ results = s.execute()
 for post in results:
     print(post.meta.score, post.title)
 ```
+:::
 
-Alternatively you can just take a `Search` object and restrict it to return our document type, wrapped in correct class:
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    # by calling .search we get back a standard Search object
+    s = Post.search()
+    # the search is already limited to the index and doc_type of our document
+    s = s.filter('term', published=True).query('match', title='first')
 
+    results = await s.execute()
+
+    # when you execute the search the results are wrapped in your document class (Post)
+    for post in results:
+        print(post.meta.score, post.title)
+```
+:::
+
+::::
+
+Alternatively you can just take a `Search` or `AsyncSearch` object and restrict it to return our document type, wrapped in correct class:
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Search()
 s = s.doc_type(Post)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+s = AsyncSearch()
+s = s.doc_type(Post)
+```
+:::
+
+::::
 
 You can also combine document classes with standard doc types (just strings), which will be treated as before. You can also pass in multiple `Document` subclasses and each document in the response will be wrapped in it’s class.
 
 If you want to run suggestions, just use the `suggest` method on the `Search` object:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 s = Post.search()
 s = s.suggest('title_suggestions', 'pyth', completion={'field': 'title_suggest'})
@@ -1144,16 +2275,39 @@ for result in response.suggest.title_suggestions:
     for option in result.options:
         print('  %s (%r)' % (option.text, option.payload))
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    s = Post.search()
+    s = s.suggest('title_suggestions', 'pyth', completion={'field': 'title_suggest'})
+
+    response = await s.execute()
+
+    for result in response.suggest.title_suggestions:
+        print('Suggestions for %s:' % result.text)
+        for option in result.options:
+            print('  %s (%r)' % (option.text, option.payload))
+```
+:::
+
+::::
 
 #### `class Meta` options [_class_meta_options]
 
 In the `Meta` class inside your document definition you can define various metadata for your document:
 
-* `mapping`: optional instance of `Mapping` class to use as base for the mappings created from the fields on the document class itself.
+* `mapping`: optional instance of `Mapping` or `AsyncMapping` classes to use as base for the mappings created from the fields on the document class itself.
 
 Any attributes on the `Meta` class that are instance of `MetaField` will be used to control the mapping of the meta fields (`_all`, `dynamic` etc). Just name the parameter (without the leading underscore) as the field you wish to map and pass any parameters to the `MetaField` class:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class Post(Document):
     title = Text()
@@ -1162,7 +2316,21 @@ class Post(Document):
         all = MetaField(enabled=False)
         dynamic = MetaField('strict')
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+class Post(AsyncDocument):
+    title = Text()
+
+    class Meta:
+        all = MetaField(enabled=False)
+        dynamic = MetaField('strict')
+```
+:::
+
+::::
 
 #### `class Index` options [_class_index_options]
 
@@ -1179,6 +2347,11 @@ This section of the `Document` definition can contain any information about the 
 
 You can use standard Python inheritance to extend models, this can be useful in a few scenarios. For example if you want to have a `BaseDocument` defining some common fields that several different `Document` classes should share:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 class User(InnerDoc):
     username: str = mapped_field(Text(fields={'keyword': Keyword()}))
@@ -1199,6 +2372,33 @@ class BlogPost(BaseDocument):
     class Index:
         name = 'blog'
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class User(InnerDoc):
+    username: str = mapped_field(Text(fields={'keyword': Keyword()}))
+    email: str
+
+class BaseDocument(AsyncDocument):
+    created_by: User
+    created_date: datetime
+    last_updated: datetime
+
+    async def save(**kwargs):
+        if not self.created_date:
+            self.created_date = datetime.now()
+        self.last_updated = datetime.now()
+        return await super(BaseDocument, self).save(**kwargs)
+
+class BlogPost(BaseDocument):
+    class Index:
+        name = 'blog'
+```
+:::
+
+::::
 
 Another use case would be using the [join type](elasticsearch://reference/elasticsearch/mapping-reference/parent-join.md) to have multiple different entities in a single index. You can see an [example](https://github.com/elastic/elasticsearch-py/blob/master/examples/dsl/parent_child.py) of this approach. Note that in this case, if the subclasses don’t define their own Index classes, the mappings are merged and shared between all the subclasses.
 
@@ -1210,6 +2410,11 @@ In typical scenario using `class Index` on a `Document` class is sufficient to p
 
 `Index` is a class responsible for holding all the metadata related to an index in elasticsearch - mappings and settings. It is most useful when defining your mappings since it allows for easy creation of multiple mappings at the same time. This is especially useful when setting up your elasticsearch objects in a migration:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import Index, Document, Text, analyzer
 
@@ -1250,9 +2455,62 @@ blogs.delete(ignore=404)
 # create the index in elasticsearch
 blogs.create()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import AsyncIndex, AsyncDocument, Text, analyzer
+
+blogs = AsyncIndex('blogs')
+
+# define custom settings
+blogs.settings(
+    number_of_shards=1,
+    number_of_replicas=0
+)
+
+# define aliases
+blogs.aliases(
+    old_blogs={}
+)
+
+# register a document with the index
+blogs.document(Post)
+
+# can also be used as class decorator when defining the Document
+@blogs.document
+class Post(AsyncDocument):
+    title: str
+
+# You can attach custom analyzers to the index
+
+html_strip = analyzer('html_strip',
+    tokenizer="standard",
+    filter=["standard", "lowercase", "stop", "snowball"],
+    char_filter=["html_strip"]
+)
+
+blogs.analyzer(html_strip)
+
+async def example():
+    # delete the index, ignore if it doesn't exist
+    await blogs.delete(ignore=404)
+
+    # create the index in elasticsearch
+    await blogs.create()
+```
+:::
+
+::::
 
 You can also set up a template for your indices and use the `clone` method to create specific copies:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 blogs = Index('blogs', using='production')
 blogs.settings(number_of_shards=2)
@@ -1266,6 +2524,26 @@ dev_blogs = blogs.clone('blogs', using='dev')
 # and change its settings
 dev_blogs.setting(number_of_shards=1)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+blogs = AsyncIndex('blogs', using='production')
+blogs.settings(number_of_shards=2)
+blogs.document(Post)
+
+# create a copy of the index with different name
+company_blogs = blogs.clone('company-blogs')
+
+# create a different copy on different cluster
+dev_blogs = blogs.clone('blogs', using='dev')
+# and change its settings
+dev_blogs.setting(number_of_shards=1)
+```
+:::
+
+::::
 
 #### IndexTemplate [index-template]
 
@@ -1281,6 +2559,11 @@ Once an index template is saved in Elasticsearch its contents will be automatica
 
 Potential workflow for a set of time based indices governed by a single template:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from datetime import datetime
 
@@ -1310,9 +2593,43 @@ logs.save()
 # to perform search across all logs:
 search = Log.search()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from datetime import datetime
+
+from elasticsearch.dsl import AsyncDocument, Date, Text
 
 
+class Log(AsyncDocument):
+    content: str
+    timestamp: datetime
 
+    class Index:
+        name = "logs-*"
+
+    async def save(self, **kwargs):
+        # assign now if no timestamp given
+        if not self.timestamp:
+            self.timestamp = datetime.now()
+
+        # override the index to go to the proper timeslot
+        kwargs['index'] = self.timestamp.strftime('logs-%Y%m%d')
+        return await super().save(**kwargs)
+
+async def example():
+    # once, as part of application setup, during deploy/migrations:
+    logs = Log._index.as_composable_template('logs', priority=100)
+    await logs.save()
+
+    # to perform search across all logs:
+    search = Log.search()
+```
+:::
+
+::::
 
 ## Faceted Search [faceted_search]
 
@@ -1366,6 +2683,11 @@ the response returned from the `FacetedSearch` object (by calling `.execute()`) 
 
 ### Example [_example]
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from datetime import date
 
@@ -1402,8 +2724,50 @@ for (tag, count, selected) in response.facets.tags:
 for (month, count, selected) in response.facets.publishing_frequency:
     print(month.strftime('%B %Y'), ' (SELECTED):' if selected else ':', count)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```python
+from datetime import date
 
+from elasticsearch.dsl import AsyncFacetedSearch, TermsFacet, DateHistogramFacet
+
+class BlogSearch(AsyncFacetedSearch):
+    doc_types = [Article, ]
+    # fields that should be searched
+    fields = ['tags', 'title', 'body']
+
+    facets = {
+        # use bucket aggregations to define facets
+        'tags': TermsFacet(field='tags'),
+        'publishing_frequency': DateHistogramFacet(field='published_from', interval='month')
+    }
+
+    def search(self):
+        # override methods to add custom pieces
+        s = super().search()
+        return s.filter('range', publish_from={'lte': 'now/h'})
+
+async def example():
+    bs = BlogSearch('python web', {'publishing_frequency': date(2015, 6)})
+    response = await bs.execute()
+
+    # access hits and other attributes as usual
+    total = response.hits.total
+    print('total hits', total.relation, total.value)
+    for hit in response:
+        print(hit.meta.score, hit.title)
+
+    for (tag, count, selected) in response.facets.tags:
+        print(tag, ' (SELECTED):' if selected else ':', count)
+
+    for (month, count, selected) in response.facets.publishing_frequency:
+        print(month.strftime('%B %Y'), ' (SELECTED):' if selected else ':', count)
+```
+:::
+
+::::
 
 ## Update By Query [update_by_query]
 
@@ -1449,9 +2813,24 @@ ubq = UpdateByQuery().using(client).query(Match("title", python"))
 
 To send the request to Elasticsearch:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = ubq.execute()
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+response = await ubq.execute()
+```
+:::
+
+::::
 
 It should be noted, that there are limits to the chaining using the script method: calling script multiple times will overwrite the previous value. That is, only a single script can be sent with a call. An attempt to use two scripts will result in only the second script being stored.
 
@@ -1521,6 +2900,11 @@ ubq = ubq.params(routing="42")
 
 You can execute your search by calling the `.execute()` method that will return a `Response` object. The `Response` object allows you access to any key from the response dictionary via attribute access. It also provides some convenient helpers:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 response = ubq.execute()
 
@@ -1530,6 +2914,23 @@ print(response.success())
 print(response.took)
 # 12
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async def example():
+    response = await ubq.execute()
+
+    print(response.success())
+    # True
+
+    print(response.took)
+    # 12
+```
+:::
+
+::::
 
 If you want to inspect the contents of the `response` objects, just use its `to_dict` method to get access to the raw data for pretty printing.
 
@@ -1540,6 +2941,11 @@ When working with `Document` classes, you can use the ES|QL query language to re
 
 Consider the following `Employee` document definition:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 from elasticsearch.dsl import Document, InnerDoc, M
 
@@ -1559,6 +2965,32 @@ class Employee(Document):
     class Index:
         name = 'employees'
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+from elasticsearch.dsl import AsyncDocument, InnerDoc, M
+
+class Address(InnerDoc):
+    address: M[str]
+    city: M[str]
+    zip_code: M[str]
+
+class Employee(AsyncDocument):
+    emp_no: M[int]
+    first_name: M[str]
+    last_name: M[str]
+    height: M[float]
+    still_hired: M[bool]
+    address: M[Address]
+
+    class Index:
+        name = 'employees'
+```
+:::
+
+::::
 
 The `esql_from()` method creates a base ES|QL query for the index associated with the document class. The following example creates a base query for the `Employee` class:
 
@@ -1570,10 +3002,26 @@ This query includes a `FROM` command with the index name, and a `KEEP` command t
 
 To execute this query and receive the results, you can pass the query to the `esql_execute()` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 for emp in Employee.esql_execute(query):
     print(f"{emp.name} from {emp.address.city} is {emp.height:.2f}m tall")
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async for emp in Employee.esql_execute(query):
+    print(f"{emp.name} from {emp.address.city} is {emp.height:.2f}m tall")
+```
+:::
+
+::::
 
 In this example, the `esql_execute()` class method runs the query and returns all the documents in the index, up to the maximum of 1000 results allowed by ES|QL. Here is a possible output from this example:
 
@@ -1628,10 +3076,26 @@ In this example we are adding the height in centimeters to the query, calculated
 
 By default, the `esql_execute()` method returns only document instances. To receive any additional fields that are not part of the document in the query results, the `return_additional=True` argument can be passed to it, and then the results are returned as tuples with the document as first element, and a dictionary with the additional fields as second element:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```python
 for emp, additional in Employee.esql_execute(query, return_additional=True):
     print(emp.name, additional)
 ```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+async for emp, additional in Employee.esql_execute(query, return_additional=True):
+    print(emp.name, additional)
+```
+:::
+
+::::
 
 Example output from the query given above:
 
@@ -1672,12 +3136,20 @@ $ python -m pip install "elasticsearch trio httpx"
 
 ### Connections [_connections]
 
-Use the `async_connections` module to manage your asynchronous connections.
+Use the `connections` module to manage your synchronous connections.
+
+```python
+from elasticsearch.dsl import connections
+
+connections.create_connection(hosts=['https://localhost:9200'], request_timeout=20)
+```
+
+For asynchronous connection management, use the `async_connections` module:
 
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['localhost'], timeout=20)
+async_connections.create_connection(hosts=['https://localhost:9200'], request_timeout=20)
 ```
 
 If you're using Trio, you need to explicitly request the Async HTTP client:
@@ -1685,10 +3157,8 @@ If you're using Trio, you need to explicitly request the Async HTTP client:
 ```python
 from elasticsearch.dsl import async_connections
 
-async_connections.create_connection(hosts=['localhost'], node_class="httpxasync")
+async_connections.create_connection(hosts=['https://localhost:9200'], node_class="httpxasync")
 ```
-
-All the options available in the `connections` module can be used with `async_connections`.
 
 #### How to avoid *Unclosed client session / connector* warnings on exit [_how_to_avoid_unclosed_client_session_connector_warnings_on_exit]
 
