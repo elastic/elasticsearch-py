@@ -2683,23 +2683,30 @@ class MatchQuery(AttrDict[Any]):
 
 class MultiTermLookup(AttrDict[Any]):
     """
-    :arg field: (required) A fields from which to retrieve terms.
+    :arg field: A field from which to retrieve terms. It is required if
+        `script` is not provided.
+    :arg script: A script to calculate terms to aggregate on. It is
+        required if `field` is not provided.
     :arg missing: The value to apply to documents that do not have a
         value. By default, documents without a value are ignored.
     """
 
     field: Union[str, InstrumentedField, DefaultType]
+    script: Union["Script", Dict[str, Any], DefaultType]
     missing: Union[str, int, float, bool, DefaultType]
 
     def __init__(
         self,
         *,
         field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        script: Union["Script", Dict[str, Any], DefaultType] = DEFAULT,
         missing: Union[str, int, float, bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
             kwargs["field"] = str(field)
+        if script is not DEFAULT:
+            kwargs["script"] = script
         if missing is not DEFAULT:
             kwargs["missing"] = missing
         super().__init__(kwargs)
