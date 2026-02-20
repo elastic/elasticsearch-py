@@ -192,8 +192,7 @@ class Elasticsearch(BaseClient):
 
         if server_mode not in ("stack", "serverless"):
             raise ValueError(
-                "'server_mode' must be 'stack' or 'serverless', "
-                f"not {server_mode!r}"
+                "'server_mode' must be 'stack' or 'serverless', " f"not {server_mode!r}"
             )
 
         if serializer is not None:

@@ -64,6 +64,7 @@ _COMPAT_MIMETYPE_TEMPLATE = "application/vnd.elasticsearch+%s; compatible-with="
 )
 _COMPAT_MIMETYPE_RE = re.compile(r"application/(json|x-ndjson|vnd\.mapbox-vector-tile)")
 _COMPAT_MIMETYPE_SUB = _COMPAT_MIMETYPE_TEMPLATE % (r"\g<1>",)
+_SERVERLESS_API_VERSION = "2023-10-31"
 
 
 def resolve_auth_headers(
@@ -297,7 +298,7 @@ class BaseClient:
             request_headers = self._headers
 
         if self._is_serverless:
-            request_headers["elastic-api-version"] = "2023-10-31"
+            request_headers["elastic-api-version"] = _SERVERLESS_API_VERSION
         else:
 
             def mimetype_header_to_compat(header: str) -> None:
