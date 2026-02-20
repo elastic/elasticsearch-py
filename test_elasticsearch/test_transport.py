@@ -681,3 +681,88 @@ def test_warning_header(headers):
         str(w[0].message)
         == "[xpack.monitoring.history.duration] setting was deprecated in Elasticsearch and will be removed in a future release! See the breaking changes documentation for the next major version."
     )
+
+
+class TestServerMode:
+    def test_default_stack_mode_sends_compat_headers(self):
+        client = Elasticsearch(
+            "http://localhost:9200", meta_header=False, node_class=DummyNode
+        )
+        client.info()
+
+        calls = client.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        headers = calls[0][1]["headers"]
+        assert headers["accept"] == (
+            "application/vnd.elasticsearch+json; compatible-with=9"
+        )
+        assert "elastic-api-version" not in headers
+
+    def test_serverless_mode_sends_api_version_header(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            server_mode="serverless",
+        )
+        client.info()
+
+        calls = client.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        headers = calls[0][1]["headers"]
+        assert headers["elastic-api-version"] == "2023-10-31"
+        assert headers["accept"] == "application/json"
+
+    def test_serverless_mode_does_not_send_compat_headers(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            server_mode="serverless",
+        )
+        client.search(query={"match_all": {}})
+
+        calls = client.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        headers = calls[0][1]["headers"]
+        assert headers["elastic-api-version"] == "2023-10-31"
+        assert headers["accept"] == "application/json"
+        assert headers["content-type"] == "application/json"
+        assert "compatible-with" not in headers.get("accept", "")
+        assert "compatible-with" not in headers.get("content-type", "")
+
+    def test_invalid_server_mode_raises_error(self):
+        with pytest.raises(ValueError, match="'server_mode' must be"):
+            Elasticsearch(
+                "http://localhost:9200",
+                node_class=DummyNode,
+                server_mode="invalid",
+            )
+
+    def test_serverless_mode_with_sniffing_raises_error(self):
+        with pytest.raises(
+            ValueError,
+            match="Sniffing should not be enabled when 'server_mode' is 'serverless'",
+        ):
+            Elasticsearch(
+                "http://localhost:9200",
+                node_class=DummyNode,
+                server_mode="serverless",
+                sniff_on_start=True,
+            )
+
+    def test_serverless_mode_preserved_in_options(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            server_mode="serverless",
+        )
+        client2 = client.options(request_timeout=30)
+        client2.info()
+
+        calls = client2.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        headers = calls[0][1]["headers"]
+        assert headers["elastic-api-version"] == "2023-10-31"
+        assert "compatible-with" not in headers.get("accept", "")

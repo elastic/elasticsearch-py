@@ -245,6 +245,7 @@ class BaseClient:
         self._max_retries: Union[DefaultType, int] = DEFAULT
         self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
+        self._is_serverless = False
         self._verified_elasticsearch = False
         self._otel = OpenTelemetry()
 
@@ -295,17 +296,19 @@ class BaseClient:
         else:
             request_headers = self._headers
 
-        def mimetype_header_to_compat(header: str) -> None:
-            # Converts all parts of a Accept/Content-Type headers
-            # from application/X -> application/vnd.elasticsearch+X
-            mimetype = request_headers.get(header, None)
-            if mimetype:
-                request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
-                    _COMPAT_MIMETYPE_SUB, mimetype
-                )
+        if self._is_serverless:
+            request_headers["elastic-api-version"] = "2023-10-31"
+        else:
 
-        mimetype_header_to_compat("Accept")
-        mimetype_header_to_compat("Content-Type")
+            def mimetype_header_to_compat(header: str) -> None:
+                mimetype = request_headers.get(header, None)
+                if mimetype:
+                    request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
+                        _COMPAT_MIMETYPE_SUB, mimetype
+                    )
+
+            mimetype_header_to_compat("Accept")
+            mimetype_header_to_compat("Content-Type")
 
         if params:
             target = f"{path}?{_quote_query(params)}"
