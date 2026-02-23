@@ -63,7 +63,6 @@ from ._sync.client.slm import SlmClient as SlmClient  # noqa: F401
 from ._sync.client.snapshot import SnapshotClient as SnapshotClient  # noqa: F401
 from ._sync.client.sql import SqlClient as SqlClient  # noqa: F401
 from ._sync.client.ssl import SslClient as SslClient  # noqa: F401
-from ._sync.client.streams import StreamsClient as StreamsClient  # noqa: F401
 from ._sync.client.synonyms import SynonymsClient as SynonymsClient  # noqa: F401
 from ._sync.client.tasks import TasksClient as TasksClient  # noqa: F401
 from ._sync.client.text_structure import (  # noqa: F401
@@ -118,7 +117,6 @@ __all__ = [
     "SnapshotClient",
     "SqlClient",
     "SslClient",
-    "StreamsClient",
     "TasksClient",
     "TextStructureClient",
     "TransformClient",
