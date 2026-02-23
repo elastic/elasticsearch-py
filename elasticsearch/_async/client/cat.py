@@ -649,6 +649,7 @@ class CatClient(NamespacedClient):
           The document count only includes live documents, not deleted documents which have not yet been removed by the merge process.</p>
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or Kibana console.
           They are not intended for use by applications. For application consumption, use the count API.</p>
+          <p>NOTE: Starting in Elasticsearch 9.3.0, this endpoint also supports the <code>POST</code> method. This is primarily intended for project routing in serverless environments.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cat-count>`_

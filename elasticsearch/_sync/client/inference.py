@@ -274,8 +274,10 @@ class InferenceClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-get>`_
 
-        :param task_type: The task type
-        :param inference_id: The inference Id
+        :param task_type: The task type of the endpoint to return
+        :param inference_id: The inference Id of the endpoint to return. Using `_all`
+            or `*` will return all endpoints with the specified `task_type` if one is
+            specified, or all endpoints for all task types if no `task_type` is specified
         """
         __path_parts: t.Dict[str, str]
         if task_type not in SKIP_IN_PATH and inference_id not in SKIP_IN_PATH:
@@ -284,6 +286,9 @@ class InferenceClient(NamespacedClient):
                 "inference_id": _quote(inference_id),
             }
             __path = f'/_inference/{__path_parts["task_type"]}/{__path_parts["inference_id"]}'
+        elif task_type not in SKIP_IN_PATH:
+            __path_parts = {"task_type": _quote(task_type)}
+            __path = f'/_inference/{__path_parts["task_type"]}/_all'
         elif inference_id not in SKIP_IN_PATH:
             __path_parts = {"inference_id": _quote(inference_id)}
             __path = f'/_inference/{__path_parts["inference_id"]}'

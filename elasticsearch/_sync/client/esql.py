@@ -46,6 +46,7 @@ class EsqlClient(NamespacedClient):
             "locale",
             "params",
             "profile",
+            "project_routing",
             "tables",
             "time_zone",
             "wait_for_completion_timeout",
@@ -80,6 +81,7 @@ class EsqlClient(NamespacedClient):
         params: t.Optional[t.Sequence[t.Union[None, bool, float, int, str]]] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         tables: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]
         ] = None,
@@ -151,6 +153,10 @@ class EsqlClient(NamespacedClient):
             object with information on how the query was executed. This information is
             for human debugging and its format can change at any time but it can give
             some insight into the performance of each part of the query.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param tables: Tables to use with the LOOKUP operation. The top level key is
             the table name and the next level key is the column name.
         :param time_zone: Sets the default timezone of the query.
@@ -202,6 +208,8 @@ class EsqlClient(NamespacedClient):
                 __body["params"] = params
             if profile is not None:
                 __body["profile"] = profile
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if tables is not None:
                 __body["tables"] = tables
             if time_zone is not None:
@@ -504,6 +512,7 @@ class EsqlClient(NamespacedClient):
             "locale",
             "params",
             "profile",
+            "project_routing",
             "tables",
             "time_zone",
         ),
@@ -553,6 +562,7 @@ class EsqlClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         tables: t.Optional[
             t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]]
         ] = None,
@@ -607,6 +617,10 @@ class EsqlClient(NamespacedClient):
             object with information on how the query was executed. This information is
             for human debugging and its format can change at any time but it can give
             some insight into the performance of each part of the query.
+        :param project_routing: Specifies a subset of projects to target using project
+            metadata tags in a subset of Lucene query syntax. Allowed Lucene queries:
+            the _alias tag and a single value (possibly wildcarded). Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         :param tables: Tables to use with the LOOKUP operation. The top level key is
             the table name and the next level key is the column name.
         :param time_zone: Sets the default timezone of the query.
@@ -650,6 +664,8 @@ class EsqlClient(NamespacedClient):
                 __body["params"] = params
             if profile is not None:
                 __body["profile"] = profile
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if tables is not None:
                 __body["tables"] = tables
             if time_zone is not None:

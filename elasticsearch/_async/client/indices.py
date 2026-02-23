@@ -3516,12 +3516,12 @@ class IndicesClient(NamespacedClient):
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        index_routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        index_routing: t.Optional[str] = None,
         is_write_index: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
-        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        search_routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        routing: t.Optional[str] = None,
+        search_routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -5502,6 +5502,7 @@ class IndicesClient(NamespacedClient):
           For example an index with 8 primary shards can be shrunk into 4, 2 or 1 primary shards or an index with 15 primary shards can be shrunk into 5, 3 or 1.
           If the number of shards in the index is a prime number it can only be shrunk into a single primary shard
           Before shrinking, a (primary or replica) copy of every shard in the index must be present on the same node.</p>
+          <p>IMPORTANT: If the source index already has one primary shard, configuring the shrink operation with 'index.number_of_shards: 1' will cause the request to fail. An index with one primary shard cannot be shrunk further.</p>
           <p>The current write index on a data stream cannot be shrunk. In order to shrink the current write index, the data stream must first be rolled over so that a new write index is created and then the previous write index can be shrunk.</p>
           <p>A shrink operation:</p>
           <ul>
