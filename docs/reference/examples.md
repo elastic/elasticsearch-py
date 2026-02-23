@@ -20,6 +20,11 @@ Below you can find examples of how to use the most frequently called APIs with t
 
 To index a document, you need to specify three pieces of information: `index`, `id`, and a `document`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 from datetime import datetime
 from elasticsearch import Elasticsearch
@@ -33,43 +38,118 @@ doc = {
 resp = client.index(index="test-index", id=1, document=doc)
 print(resp['result'])
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+import asyncio
+from datetime import datetime
+from elasticsearch import AsyncElasticsearch
+client = AsyncElasticsearch('https://localhost:9200')
+
+doc = {
+    'author': 'author_name',
+    'text': 'Interesting content...',
+    'timestamp': datetime.now(),
+}
+
+async def main():
+    resp = await client.index(index="test-index", id=1, document=doc)
+    print(resp['result'])
+
+asyncio.run(main())
+```
+:::
+
+::::
 
 ## Getting a document [ex-get]
 
 To get a document, you need to specify its `index` and `id`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 resp = client.get(index="test-index", id=1)
 print(resp['_source'])
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+resp = await client.get(index="test-index", id=1)
+print(resp['_source'])
+```
+:::
+
+::::
 
 ## Refreshing an index [ex-refresh]
 
 You can perform the refresh operation on an index:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 client.indices.refresh(index="test-index")
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+await client.indices.refresh(index="test-index")
+```
+:::
+
+::::
 
 ## Searching for a document [ex-search]
 
 The `search()` method returns results that are matching a query:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 resp = client.search(index="test-index", query={"match_all": {}})
 print("Got %d Hits:" % resp['hits']['total']['value'])
 for hit in resp['hits']['hits']:
     print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+resp = await client.search(index="test-index", query={"match_all": {}})
+print("Got %d Hits:" % resp['hits']['total']['value'])
+for hit in resp['hits']['hits']:
+    print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+```
+:::
+
+::::
 
 ## Updating a document [ex-update]
 
 To update a document, you need to specify three pieces of information: `index`, `id`, and a `doc`:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 from datetime import datetime
 from elasticsearch import Elasticsearch
@@ -84,16 +164,54 @@ doc = {
 resp = client.update(index="test-index", id=1, doc=doc)
 print(resp['result'])
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+import asyncio
+from datetime import datetime
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch('https://localhost:9200')
+
+async def main():
+    doc = {
+        'author': 'author_name',
+        'text': 'Interesting modified content...',
+        'timestamp': datetime.now(),
+    }
+    resp = await client.update(index="test-index", id=1, doc=doc)
+    print(resp['result'])
+
+asyncio.run(main())
+```
+:::
+
+::::
 
 ## Deleting a document [ex-delete]
 
 You can delete a document by specifying its `index`, and `id` in the `delete()` method:
 
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
 ```py
 client.delete(index="test-index", id=1)
 ```
+:::
 
+:::{tab-item} Async Python
+:sync: async
+```py
+await client.delete(index="test-index", id=1)
+```
+:::
+
+::::
 
 ## Interactive examples [ex-interactive]
 
