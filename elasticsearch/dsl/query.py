@@ -1397,7 +1397,7 @@ class MoreLikeThis(Query):
         minimum_should_match: Union[int, str, "DefaultType"] = DEFAULT,
         min_term_freq: Union[int, "DefaultType"] = DEFAULT,
         min_word_length: Union[int, "DefaultType"] = DEFAULT,
-        routing: Union[str, Sequence[str], "DefaultType"] = DEFAULT,
+        routing: Union[str, "DefaultType"] = DEFAULT,
         stop_words: Union[
             Literal[
                 "_arabic_",
@@ -1719,7 +1719,7 @@ class Percolate(Query):
         index: Union[str, "DefaultType"] = DEFAULT,
         name: Union[str, "DefaultType"] = DEFAULT,
         preference: Union[str, "DefaultType"] = DEFAULT,
-        routing: Union[str, Sequence[str], "DefaultType"] = DEFAULT,
+        routing: Union[str, "DefaultType"] = DEFAULT,
         version: Union[int, "DefaultType"] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
