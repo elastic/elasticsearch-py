@@ -609,7 +609,7 @@ class FieldLookup(AttrDict[Any]):
     id: Union[str, DefaultType]
     index: Union[str, DefaultType]
     path: Union[str, InstrumentedField, DefaultType]
-    routing: Union[str, Sequence[str], DefaultType]
+    routing: Union[str, DefaultType]
 
     def __init__(
         self,
@@ -617,7 +617,7 @@ class FieldLookup(AttrDict[Any]):
         id: Union[str, DefaultType] = DEFAULT,
         index: Union[str, DefaultType] = DEFAULT,
         path: Union[str, InstrumentedField, DefaultType] = DEFAULT,
-        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
+        routing: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if id is not DEFAULT:
@@ -3945,7 +3945,7 @@ class TermsLookup(AttrDict[Any]):
     index: Union[str, DefaultType]
     id: Union[str, DefaultType]
     path: Union[str, InstrumentedField, DefaultType]
-    routing: Union[str, Sequence[str], DefaultType]
+    routing: Union[str, DefaultType]
 
     def __init__(
         self,
@@ -3953,7 +3953,7 @@ class TermsLookup(AttrDict[Any]):
         index: Union[str, DefaultType] = DEFAULT,
         id: Union[str, DefaultType] = DEFAULT,
         path: Union[str, InstrumentedField, DefaultType] = DEFAULT,
-        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
+        routing: Union[str, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if index is not DEFAULT:
@@ -4908,7 +4908,7 @@ class CompletionSuggestOption(AttrDict[Any]):
     fields: Mapping[str, Any]
     _id: str
     _index: str
-    _routing: Union[str, Sequence[str]]
+    _routing: str
     _score: float
     _source: Any
     score: float
