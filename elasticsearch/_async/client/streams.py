@@ -15,7 +15,21 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-class C:
+import typing as t
+
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
+from ._base import NamespacedClient
+from .utils import (
+    SKIP_IN_PATH,
+    Stability,
+    _availability_warning,
+    _quote,
+    _rewrite_parameters,
+)
+
+
+class StreamsClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.EXPERIMENTAL)
