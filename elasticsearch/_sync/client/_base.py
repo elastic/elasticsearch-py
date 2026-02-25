@@ -46,7 +46,7 @@ from elastic_transport import (
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from ..._otel import OpenTelemetry
-from ..._version import __versionstr__, _SERVERLESS_API_VERSION
+from ..._version import _SERVERLESS_API_VERSION, __versionstr__
 from ...compat import warn_stacklevel
 from ...exceptions import (
     HTTP_EXCEPTIONS,
