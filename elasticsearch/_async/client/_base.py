@@ -46,7 +46,7 @@ from elastic_transport import (
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from ..._otel import OpenTelemetry
-from ..._version import __versionstr__
+from ..._version import __versionstr__, _SERVERLESS_API_VERSION
 from ...compat import warn_stacklevel
 from ...exceptions import (
     HTTP_EXCEPTIONS,
@@ -64,7 +64,6 @@ _COMPAT_MIMETYPE_TEMPLATE = "application/vnd.elasticsearch+%s; compatible-with="
 )
 _COMPAT_MIMETYPE_RE = re.compile(r"application/(json|x-ndjson|vnd\.mapbox-vector-tile)")
 _COMPAT_MIMETYPE_SUB = _COMPAT_MIMETYPE_TEMPLATE % (r"\g<1>",)
-_SERVERLESS_API_VERSION = "2023-10-31"
 
 
 def resolve_auth_headers(
@@ -411,6 +410,7 @@ class NamespacedClient(BaseClient):
     def __init__(self, client: "BaseClient") -> None:
         self._client = client
         super().__init__(self._client.transport)
+        self._is_serverless = self._client._is_serverless
 
     async def perform_request(
         self,

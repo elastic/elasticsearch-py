@@ -33,7 +33,8 @@ from elastic_transport import (
 from elastic_transport._node import NodeApiResponse
 from elastic_transport.client_utils import DEFAULT
 
-from elasticsearch import AsyncElasticsearch
+from elasticsearch import AsyncElasticsearch, __versionstr__
+from elasticsearch._version import _SERVERLESS_API_VERSION
 from elasticsearch.exceptions import (
     ApiError,
     ConnectionError,
@@ -781,13 +782,14 @@ class TestServerMode:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         headers = calls[0][1]["headers"]
+        compat_version = __versionstr__.partition(".")[0]
         assert headers["accept"] == (
-            "application/vnd.elasticsearch+json; compatible-with=9"
+            f"application/vnd.elasticsearch+json; compatible-with={compat_version}"
         )
         assert "elastic-api-version" not in headers
 
     @pytest.mark.anyio
-    async def test_serverless_mode_sends_api_version_header(self):
+    async def test_serverless_mode_sends_api_version_header_on_get(self):
         client = AsyncElasticsearch(
             "http://localhost:9200",
             meta_header=False,
@@ -799,11 +801,11 @@ class TestServerMode:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         headers = calls[0][1]["headers"]
-        assert headers["elastic-api-version"] == "2023-10-31"
+        assert headers["elastic-api-version"] == _SERVERLESS_API_VERSION
         assert headers["accept"] == "application/json"
 
     @pytest.mark.anyio
-    async def test_serverless_mode_does_not_send_compat_headers(self):
+    async def test_serverless_mode_sends_plain_headers_on_post(self):
         client = AsyncElasticsearch(
             "http://localhost:9200",
             meta_header=False,
@@ -815,7 +817,7 @@ class TestServerMode:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         headers = calls[0][1]["headers"]
-        assert headers["elastic-api-version"] == "2023-10-31"
+        assert headers["elastic-api-version"] == _SERVERLESS_API_VERSION
         assert headers["accept"] == "application/json"
         assert headers["content-type"] == "application/json"
         assert "compatible-with" not in headers.get("accept", "")
@@ -855,5 +857,16 @@ class TestServerMode:
         calls = client2.transport.node_pool.get().calls
         assert 1 == len(calls)
         headers = calls[0][1]["headers"]
-        assert headers["elastic-api-version"] == "2023-10-31"
+        assert headers["elastic-api-version"] == _SERVERLESS_API_VERSION
         assert "compatible-with" not in headers.get("accept", "")
+
+    @pytest.mark.anyio
+    async def test_serverless_mode_inherited_by_namespaces(self):
+        client = AsyncElasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            server_mode="serverless",
+        )
+        assert client._is_serverless is True
+        assert client.indices._is_serverless is True
