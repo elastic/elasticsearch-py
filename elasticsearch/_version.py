@@ -17,3 +17,4 @@
 
 __versionstr__ = "9.3.0"
 __es_specification_commit__ = "e7c19dcd3aa9fd34b15509f0453af0e4756ea080"
+_SERVERLESS_API_VERSION = "2023-10-31"
