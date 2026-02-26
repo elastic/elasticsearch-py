@@ -46,7 +46,7 @@ from elastic_transport import (
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from ..._otel import OpenTelemetry
-from ..._version import __versionstr__
+from ..._version import _SERVERLESS_API_VERSION, __versionstr__
 from ...compat import warn_stacklevel
 from ...exceptions import (
     HTTP_EXCEPTIONS,
@@ -245,6 +245,7 @@ class BaseClient:
         self._max_retries: Union[DefaultType, int] = DEFAULT
         self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
+        self._is_serverless = False
         self._verified_elasticsearch = False
         self._otel = OpenTelemetry()
 
@@ -295,17 +296,21 @@ class BaseClient:
         else:
             request_headers = self._headers
 
-        def mimetype_header_to_compat(header: str) -> None:
-            # Converts all parts of a Accept/Content-Type headers
-            # from application/X -> application/vnd.elasticsearch+X
-            mimetype = request_headers.get(header, None)
-            if mimetype:
-                request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
-                    _COMPAT_MIMETYPE_SUB, mimetype
-                )
+        if self._is_serverless:
+            request_headers["elastic-api-version"] = _SERVERLESS_API_VERSION
+        else:
 
-        mimetype_header_to_compat("Accept")
-        mimetype_header_to_compat("Content-Type")
+            def mimetype_header_to_compat(header: str) -> None:
+                # Converts all parts of a Accept/Content-Type headers
+                # from application/X -> application/vnd.elasticsearch+X
+                mimetype = request_headers.get(header, None)
+                if mimetype:
+                    request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
+                        _COMPAT_MIMETYPE_SUB, mimetype
+                    )
+
+            mimetype_header_to_compat("Accept")
+            mimetype_header_to_compat("Content-Type")
 
         if params:
             target = f"{path}?{_quote_query(params)}"
@@ -405,6 +410,7 @@ class NamespacedClient(BaseClient):
     def __init__(self, client: "BaseClient") -> None:
         self._client = client
         super().__init__(self._client.transport)
+        self._is_serverless = self._client._is_serverless
 
     def perform_request(
         self,

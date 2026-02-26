@@ -144,6 +144,7 @@ class Elasticsearch(BaseClient):
         basic_auth: t.Optional[t.Union[str, t.Tuple[str, str]]] = None,
         bearer_auth: t.Optional[str] = None,
         opaque_id: t.Optional[str] = None,
+        server_mode: str = "stack",
         # Node
         headers: t.Union[DefaultType, t.Mapping[str, str]] = DEFAULT,
         connections_per_node: t.Union[DefaultType, int] = DEFAULT,
@@ -188,6 +189,11 @@ class Elasticsearch(BaseClient):
         if hosts is None and cloud_id is None and _transport is None:
             raise ValueError("Either 'hosts' or 'cloud_id' must be specified")
 
+        if server_mode not in ("stack", "serverless"):
+            raise ValueError(
+                "'server_mode' must be 'stack' or 'serverless', " f"not {server_mode!r}"
+            )
+
         if serializer is not None:
             if serializers is not DEFAULT:
                 raise ValueError(
@@ -214,6 +220,13 @@ class Elasticsearch(BaseClient):
         ):
             raise ValueError(
                 "Sniffing should not be enabled when connecting to Elastic Cloud"
+            )
+
+        if server_mode == "serverless" and any(
+            x is not DEFAULT and x is not None for x in sniffing_options
+        ):
+            raise ValueError(
+                "Sniffing should not be enabled when 'server_mode' is 'serverless'"
             )
 
         sniff_callback = None
@@ -328,6 +341,8 @@ class Elasticsearch(BaseClient):
 
         else:
             super().__init__(_transport)
+
+        self._is_serverless = server_mode == "serverless"
 
         if headers is not DEFAULT and headers is not None:
             self._headers.update(headers)
@@ -474,6 +489,8 @@ class Elasticsearch(BaseClient):
             client._retry_on_timeout = retry_on_timeout
         else:
             client._retry_on_timeout = self._retry_on_timeout
+
+        client._is_serverless = self._is_serverless
 
         return client
 
