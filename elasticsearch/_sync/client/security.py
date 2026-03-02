@@ -2509,6 +2509,7 @@ class SecurityClient(NamespacedClient):
                         "manage_oidc",
                         "manage_own_api_key",
                         "manage_pipeline",
+                        "manage_project_routing",
                         "manage_rollup",
                         "manage_saml",
                         "manage_search_application",
@@ -2540,6 +2541,7 @@ class SecurityClient(NamespacedClient):
                         "read_fleet_secrets",
                         "read_ilm",
                         "read_pipeline",
+                        "read_project_routing",
                         "read_security",
                         "read_slm",
                         "transport_client",
@@ -3182,6 +3184,7 @@ class SecurityClient(NamespacedClient):
                         "manage_oidc",
                         "manage_own_api_key",
                         "manage_pipeline",
+                        "manage_project_routing",
                         "manage_rollup",
                         "manage_saml",
                         "manage_search_application",
@@ -3213,6 +3216,7 @@ class SecurityClient(NamespacedClient):
                         "read_fleet_secrets",
                         "read_ilm",
                         "read_pipeline",
+                        "read_project_routing",
                         "read_security",
                         "read_slm",
                         "transport_client",
@@ -3699,9 +3703,7 @@ class SecurityClient(NamespacedClient):
                 __body["sort"] = sort
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3793,9 +3795,7 @@ class SecurityClient(NamespacedClient):
                 __body["sort"] = sort
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3890,9 +3890,7 @@ class SecurityClient(NamespacedClient):
                 __body["sort"] = sort
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4382,9 +4380,7 @@ class SecurityClient(NamespacedClient):
                 __body["size"] = size
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4473,9 +4469,7 @@ class SecurityClient(NamespacedClient):
                 __body["role_descriptors"] = role_descriptors
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,

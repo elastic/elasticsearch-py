@@ -81,6 +81,7 @@ class AsyncSearchClient(NamespacedClient):
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
+        return_intermediate_results: t.Optional[bool] = None,
         typed_keys: t.Optional[bool] = None,
         wait_for_completion_timeout: t.Optional[
             t.Union[str, t.Literal[-1], t.Literal[0]]
@@ -103,6 +104,14 @@ class AsyncSearchClient(NamespacedClient):
             the value and extend the validity of the request. When this period expires,
             the search, if still running, is cancelled. If the search is completed, its
             saved results are deleted.
+        :param return_intermediate_results: Specifies whether the response should contain
+            intermediate results if the query is still running when the wait_for_completion_timeout
+            expires or if no wait_for_completion_timeout is specified. If true and the
+            search is still running, the search response will include any hits and partial
+            aggregations that are available. If false and the search is still running,
+            the search response will not include any hits (but possibly include total
+            hits) nor will include any partial aggregations. When not specified, the
+            intermediate results are returned for running queries.
         :param typed_keys: Specify whether aggregation and suggester names should be
             prefixed by their respective types in the response
         :param wait_for_completion_timeout: Specifies to wait for the search to be completed
@@ -127,6 +136,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["keep_alive"] = keep_alive
         if pretty is not None:
             __query["pretty"] = pretty
+        if return_intermediate_results is not None:
+            __query["return_intermediate_results"] = return_intermediate_results
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
         if wait_for_completion_timeout is not None:
@@ -631,9 +642,7 @@ class AsyncSearchClient(NamespacedClient):
                 __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

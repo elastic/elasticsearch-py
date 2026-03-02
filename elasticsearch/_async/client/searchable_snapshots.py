@@ -177,7 +177,9 @@ class SearchableSnapshotsClient(NamespacedClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         renamed_index: t.Optional[str] = None,
-        storage: t.Optional[str] = None,
+        storage: t.Optional[
+            t.Union[str, t.Literal["full_copy", "shared_cache"]]
+        ] = None,
         wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -206,7 +208,8 @@ class SearchableSnapshotsClient(NamespacedClient):
             node is not available before the timeout expires, the request fails and returns
             an error. To indicate that the request should never timeout, set it to `-1`.
         :param renamed_index: The name of the index that will be created.
-        :param storage: The mount option for the searchable snapshot index.
+        :param storage: The mount option for the searchable snapshot index. For further
+            information on mount options, refer to: [Mount options](https://www.elastic.co/docs/deploy-manage/tools/snapshot-and-restore/searchable-snapshots#searchable-snapshot-mount-storage-options)
         :param wait_for_completion: If true, the request blocks until the operation is
             complete.
         """
