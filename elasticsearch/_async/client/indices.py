@@ -491,9 +491,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -702,9 +700,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -825,9 +821,7 @@ class IndicesClient(NamespacedClient):
         __body = create_from if create_from is not None else body
         if not __body:
             __body = None
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3593,9 +3587,7 @@ class IndicesClient(NamespacedClient):
                 __body["search_routing"] = search_routing
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -5144,9 +5136,7 @@ class IndicesClient(NamespacedClient):
                 __body["project_routing"] = project_routing
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5286,9 +5276,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5501,6 +5489,7 @@ class IndicesClient(NamespacedClient):
           For example an index with 8 primary shards can be shrunk into 4, 2 or 1 primary shards or an index with 15 primary shards can be shrunk into 5, 3 or 1.
           If the number of shards in the index is a prime number it can only be shrunk into a single primary shard
           Before shrinking, a (primary or replica) copy of every shard in the index must be present on the same node.</p>
+          <p>IMPORTANT: If the source index already has one primary shard, configuring the shrink operation with 'index.number_of_shards: 1' will cause the request to fail. An index with one primary shard cannot be shrunk further.</p>
           <p>The current write index on a data stream cannot be shrunk. In order to shrink the current write index, the data stream must first be rolled over so that a new write index is created and then the previous write index can be shrunk.</p>
           <p>A shrink operation:</p>
           <ul>
@@ -5639,9 +5628,7 @@ class IndicesClient(NamespacedClient):
         __body = index_template if index_template is not None else body
         if not __body:
             __body = None
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5796,9 +5783,7 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6284,9 +6269,7 @@ class IndicesClient(NamespacedClient):
                 __body["query"] = query
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
