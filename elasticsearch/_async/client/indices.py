@@ -492,9 +492,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -695,9 +693,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -819,9 +815,7 @@ class IndicesClient(NamespacedClient):
         __body = create_from if create_from is not None else body
         if not __body:
             __body = None
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3536,9 +3530,7 @@ class IndicesClient(NamespacedClient):
                 __body["search_routing"] = search_routing
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -3742,6 +3734,7 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Update data stream settings.</p>
+          <p>NOTE: Available in 8.19. Not available in earlier versions.</p>
           <p>This API can be used to override settings on specific data streams. These overrides will take precedence over what
           is specified in the template that the data stream matches. To prevent your data stream from getting into an invalid state,
           only certain settings are allowed. If possible, the setting change is applied to all
@@ -5014,9 +5007,7 @@ class IndicesClient(NamespacedClient):
                 __body["settings"] = settings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5371,9 +5362,7 @@ class IndicesClient(NamespacedClient):
         __body = index_template if index_template is not None else body
         if not __body:
             __body = None
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5528,9 +5517,7 @@ class IndicesClient(NamespacedClient):
                 __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6043,9 +6030,7 @@ class IndicesClient(NamespacedClient):
                 __body["query"] = query
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
