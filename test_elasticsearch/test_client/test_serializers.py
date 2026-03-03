@@ -62,6 +62,7 @@ class TestSerializers(DummyTransportTestCase):
         assert len(calls) == 3
         assert calls[("POST", "/test2/_search")][0]["headers"] == {
             "Accept": "application/vnd.elasticsearch+json; compatible-with=9",
+            "Content-Type": "application/vnd.elasticsearch+json; compatible-with=9",
         }
 
         # Multiple mimetypes in Accept
