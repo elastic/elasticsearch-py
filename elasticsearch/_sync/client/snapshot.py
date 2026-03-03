@@ -298,9 +298,7 @@ class SnapshotClient(NamespacedClient):
                 __body["partial"] = partial
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT",
             __path,
@@ -595,7 +593,7 @@ class SnapshotClient(NamespacedClient):
             exclusive with using the after parameter. Defaults to 0.
         :param order: The sort order. Valid values are `asc` for ascending and `desc`
             for descending order. The default behavior is ascending order.
-        :param size: The maximum number of snapshots to return. The default is 0, which
+        :param size: The maximum number of snapshots to return. The default is -1, which
             means to return all that match the request without limit.
         :param slm_policy_filter: Filter snapshots by a comma-separated list of snapshot
             lifecycle management (SLM) policy names that snapshots belong to. You can
@@ -1194,9 +1192,7 @@ class SnapshotClient(NamespacedClient):
                 __body["rename_replacement"] = rename_replacement
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,

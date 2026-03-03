@@ -885,9 +885,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["scroll_id"] = scroll_id
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE",
             __path,
@@ -1099,9 +1097,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["query"] = query
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2189,9 +2185,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["query"] = query
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -2319,9 +2313,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["runtime_mappings"] = runtime_mappings
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3702,9 +3694,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["ids"] = ids
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -3834,9 +3824,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["index_filter"] = index_filter
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -4561,9 +4549,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["scroll"] = scroll
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5106,9 +5092,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -5622,9 +5606,10 @@ class AsyncElasticsearch(BaseClient):
                 __body["with_labels"] = with_labels
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/vnd.mapbox-vector-tile"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {
+            "accept": "application/vnd.mapbox-vector-tile",
+            "content-type": "application/json",
+        }
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6155,9 +6140,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
@@ -6663,9 +6646,7 @@ class AsyncElasticsearch(BaseClient):
                 __body["slice"] = slice
         if not __body:
             __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
             __path,
