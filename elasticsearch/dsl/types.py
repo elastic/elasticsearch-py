@@ -2375,6 +2375,40 @@ class LikeDocument(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class LookupQueryVectorBuilder(AttrDict[Any]):
+    """
+    :arg id: (required) The ID of the document to fetch the vector from
+    :arg index: (required) The name of the index to fetch the document
+        from
+    :arg path: (required) The name of the field containing the vector
+    :arg routing: The routing value to use when fetching the document
+    """
+
+    id: Union[str, DefaultType]
+    index: Union[str, DefaultType]
+    path: Union[str, DefaultType]
+    routing: Union[str, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        id: Union[str, DefaultType] = DEFAULT,
+        index: Union[str, DefaultType] = DEFAULT,
+        path: Union[str, DefaultType] = DEFAULT,
+        routing: Union[str, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if id is not DEFAULT:
+            kwargs["id"] = id
+        if index is not DEFAULT:
+            kwargs["index"] = index
+        if path is not DEFAULT:
+            kwargs["path"] = path
+        if routing is not DEFAULT:
+            kwargs["routing"] = routing
+        super().__init__(kwargs)
+
+
 class MatchBoolPrefixQuery(AttrDict[Any]):
     """
     :arg query: (required) Terms you wish to find in the provided field.
@@ -2891,18 +2925,26 @@ class PrefixQuery(AttrDict[Any]):
 class QueryVectorBuilder(AttrDict[Any]):
     """
     :arg text_embedding:
+    :arg lookup: Lookup a vector from an existing document. Must reference
+        a dense_vector field and a single value.
     """
 
     text_embedding: Union["TextEmbedding", Dict[str, Any], DefaultType]
+    lookup: Union["LookupQueryVectorBuilder", Dict[str, Any], DefaultType]
 
     def __init__(
         self,
         *,
         text_embedding: Union["TextEmbedding", Dict[str, Any], DefaultType] = DEFAULT,
+        lookup: Union[
+            "LookupQueryVectorBuilder", Dict[str, Any], DefaultType
+        ] = DEFAULT,
         **kwargs: Any,
     ):
         if text_embedding is not DEFAULT:
             kwargs["text_embedding"] = text_embedding
+        if lookup is not DEFAULT:
+            kwargs["lookup"] = lookup
         super().__init__(kwargs)
 
 
@@ -4078,7 +4120,8 @@ class TestPopulation(AttrDict[Any]):
 
 class TextEmbedding(AttrDict[Any]):
     """
-    :arg model_text: (required)
+    :arg model_text: (required) The text to be converted into a vector by
+        the specified model
     :arg model_id: Model ID is required for all dense_vector fields but
         may be inferred for semantic_text fields
     """
