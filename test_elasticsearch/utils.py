@@ -90,6 +90,12 @@ def es_version(client) -> Tuple[int, ...]:
     return parse_version(resp["version"]["number"])
 
 
+async def async_es_version(client) -> Tuple[int, ...]:
+    """Determines the version number and parses the number as a tuple of ints"""
+    resp = await client.info()
+    return parse_version(resp["version"]["number"])
+
+
 def parse_version(version: Optional[str]) -> Optional[Tuple[int, ...]]:
     """Parses a version number string into it's major, minor, patch as a tuple"""
     if not version:

@@ -23,6 +23,25 @@ import elasticsearch
 from ...utils import CA_CERTS, wipe_cluster
 
 
+def _create(elasticsearch_url, transport=None, node_class=None):
+    # Configure the client with certificates
+    kw = {}
+    if elasticsearch_url.startswith("https://"):
+        kw["ca_certs"] = CA_CERTS
+
+    # Optionally configure an HTTP conn class depending on
+    # 'PYTHON_CONNECTION_CLASS' env var
+    if node_class is not None and "node_class" not in kw:
+        kw["node_class"] = node_class
+
+    if transport:
+        kw["transport_class"] = transport
+
+    # We do this little dance with the URL to force
+    # Requests to respect 'headers: None' within rest API spec tests.
+    return elasticsearch.AsyncElasticsearch(elasticsearch_url, **kw)
+
+
 @pytest_asyncio.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
     kwargs = {}
@@ -33,9 +52,7 @@ async def async_client_factory(elasticsearch_url):
     # event loops (one per test!)
     client = None
     try:
-        client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, ca_certs=CA_CERTS, **kwargs
-        )
+        client = _create(elasticsearch_url, **kwargs)
         yield client
     finally:
         if client:
