@@ -40,7 +40,6 @@ class SearchableSnapshotsClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -53,7 +52,6 @@ class SearchableSnapshotsClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/operation/operation-searchable-snapshots-cache-stats>`_
 
         :param node_id: The names of the nodes in the cluster to target.
-        :param master_timeout:
         """
         __path_parts: t.Dict[str, str]
         if node_id not in SKIP_IN_PATH:
@@ -69,8 +67,6 @@ class SearchableSnapshotsClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
