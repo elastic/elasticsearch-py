@@ -5507,8 +5507,8 @@ class Elasticsearch(BaseClient):
             This behavior applies even if the request targets other open indices. For
             example, a request targeting `foo*,bar*` returns an error if an index starts
             with `foo` but no index starts with `bar`.
-        :param ccs_minimize_roundtrips: If `true`, network round-trips are minimized
-            for cross-cluster search requests.
+        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
+            be minimized as part of cross-cluster search requests execution.
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. Supports comma-separated

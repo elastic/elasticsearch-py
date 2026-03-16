@@ -5785,8 +5785,6 @@ class MlClient(NamespacedClient):
           <p>Validate an anomaly detection job.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/>`_
-
         :param detector:
         """
         if detector is None and body is None:
