@@ -4047,6 +4047,9 @@ class AsyncElasticsearch(BaseClient):
         requests_per_second: float,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        group_by: t.Optional[
+            t.Union[str, t.Literal["nodes", "none", "parents"]]
+        ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -4069,6 +4072,7 @@ class AsyncElasticsearch(BaseClient):
         :param requests_per_second: The throttle for this request in sub-requests per
             second. It can be either `-1` to turn off throttling or any decimal number
             like `1.7` or `12` to throttle to that level.
+        :param group_by:
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -4083,6 +4087,8 @@ class AsyncElasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if group_by is not None:
+            __query["group_by"] = group_by
         if human is not None:
             __query["human"] = human
         if pretty is not None:
@@ -4479,12 +4485,11 @@ class AsyncElasticsearch(BaseClient):
           To search a point in time (PIT) for an alias, you must have the <code>read</code> index privilege for the alias's data streams or indices.</p>
           <p><strong>Search slicing</strong></p>
           <p>When paging through a large number of documents, it can be helpful to split the search into multiple slices to consume them independently with the <code>slice</code> and <code>pit</code> properties.
-          By default the splitting is done first on the shards, then locally on each shard.
-          The local splitting partitions the shard into contiguous ranges based on Lucene document IDs.</p>
+          By default the splitting is done first on the shards, then locally on each shard.</p>
           <p>For instance if the number of shards is equal to 2 and you request 4 slices, the slices 0 and 2 are assigned to the first shard and the slices 1 and 3 are assigned to the second shard.</p>
           <p>IMPORTANT: The same point-in-time ID should be used for all slices.
           If different PIT IDs are used, slices can overlap and miss documents.
-          This situation can occur because the splitting criterion is based on Lucene document IDs, which are not stable across changes to the index.</p>
+          This situation can occur because, by default, the splitting criterion is based on Lucene document IDs, which are not stable across changes to the index.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-search>`_
@@ -5510,8 +5515,8 @@ class AsyncElasticsearch(BaseClient):
             This behavior applies even if the request targets other open indices. For
             example, a request targeting `foo*,bar*` returns an error if an index starts
             with `foo` but no index starts with `bar`.
-        :param ccs_minimize_roundtrips: If `true`, network round-trips are minimized
-            for cross-cluster search requests.
+        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
+            be minimized as part of cross-cluster search requests execution.
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. Supports comma-separated
