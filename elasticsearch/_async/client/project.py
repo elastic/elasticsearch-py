@@ -282,7 +282,8 @@ class ProjectClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch-serverless/operation/operation-project-tags>`_
 
         :param project_routing: A Lucene query using project metadata tags used to filter
-            which projects are returned in the response, such as _alias:_origin or _alias:*pr*.
+            which projects are returned in the response. Examples: _alias:my-project
+            _alias:_origin _alias:*pr* Supported in serverless only.
         """
         __path_parts: t.Dict[str, str] = {}
         __path = "/_project/tags"
