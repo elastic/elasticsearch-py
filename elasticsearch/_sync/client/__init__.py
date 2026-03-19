@@ -4711,7 +4711,7 @@ class Elasticsearch(BaseClient):
             __path_parts = {}
             __path = "/_search"
         __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        __body: t.Dict[str, t.Any] = body.copy() if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
         if sort is not None and (
             (isinstance(sort, str) and ":" in sort)
