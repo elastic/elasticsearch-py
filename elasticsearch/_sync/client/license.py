@@ -241,7 +241,9 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post>`_
 
-        :param acknowledge: Specifies whether you acknowledge the license changes.
+        :param acknowledge: To update a license, you must accept the acknowledge messages
+            and set this parameter to `true`. In particular, if you are upgrading or
+            downgrading a license, you must acknowlege the feature changes.
         :param license:
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
@@ -310,7 +312,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-basic>`_
 
-        :param acknowledge: Whether the user has acknowledged acknowledge messages
+        :param acknowledge: To start a basic license, you must accept the acknowledge
+            messages and set this parameter to `true`.
         :param master_timeout: Period to wait for a connection to the master node.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -366,7 +369,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-license-post-start-trial>`_
 
-        :param acknowledge: Whether the user has acknowledged acknowledge messages
+        :param acknowledge: To start a trial, you must accept the acknowledge messages
+            and set this parameter to `true`.
         :param master_timeout: Period to wait for a connection to the master node.
         :param type: The type of trial license to generate
         """
