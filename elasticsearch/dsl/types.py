@@ -155,6 +155,13 @@ class ChunkingSettings(AttrDict[Any]):
         `10` (for `word` strategy). This value should not exceed the
         window size for the associated model. Defaults to `250` if
         omitted.
+    :arg overlap: The number of overlapping words for chunks. It is
+        applicable only to a `word` chunking strategy. This value cannot
+        be higher than half the `max_chunk_size` value. Defaults to `100`
+        if omitted.
+    :arg sentence_overlap: The number of overlapping sentences for chunks.
+        It is applicable only for a `sentence` chunking strategy. It can
+        be either `1` or `0`. Defaults to `1` if omitted.
     :arg separator_group: Only applicable to the `recursive` strategy and
         required when using it.  Sets a predefined list of separators in
         the saved chunking settings based on the selected text type.
@@ -168,45 +175,38 @@ class ChunkingSettings(AttrDict[Any]):
         in the list.  After splitting, it attempts to recombine smaller
         pieces into larger chunks that stay within the `max_chunk_size`
         limit, to reduce the total number of chunks generated.
-    :arg overlap: The number of overlapping words for chunks. It is
-        applicable only to a `word` chunking strategy. This value cannot
-        be higher than half the `max_chunk_size` value. Defaults to `100`
-        if omitted.
-    :arg sentence_overlap: The number of overlapping sentences for chunks.
-        It is applicable only for a `sentence` chunking strategy. It can
-        be either `1` or `0`. Defaults to `1` if omitted.
     """
 
     strategy: Union[str, DefaultType]
     max_chunk_size: Union[int, DefaultType]
-    separator_group: Union[str, DefaultType]
-    separators: Union[Sequence[str], DefaultType]
     overlap: Union[int, DefaultType]
     sentence_overlap: Union[int, DefaultType]
+    separator_group: Union[str, DefaultType]
+    separators: Union[Sequence[str], DefaultType]
 
     def __init__(
         self,
         *,
         strategy: Union[str, DefaultType] = DEFAULT,
         max_chunk_size: Union[int, DefaultType] = DEFAULT,
-        separator_group: Union[str, DefaultType] = DEFAULT,
-        separators: Union[Sequence[str], DefaultType] = DEFAULT,
         overlap: Union[int, DefaultType] = DEFAULT,
         sentence_overlap: Union[int, DefaultType] = DEFAULT,
+        separator_group: Union[str, DefaultType] = DEFAULT,
+        separators: Union[Sequence[str], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if strategy is not DEFAULT:
             kwargs["strategy"] = strategy
         if max_chunk_size is not DEFAULT:
             kwargs["max_chunk_size"] = max_chunk_size
-        if separator_group is not DEFAULT:
-            kwargs["separator_group"] = separator_group
-        if separators is not DEFAULT:
-            kwargs["separators"] = separators
         if overlap is not DEFAULT:
             kwargs["overlap"] = overlap
         if sentence_overlap is not DEFAULT:
             kwargs["sentence_overlap"] = sentence_overlap
+        if separator_group is not DEFAULT:
+            kwargs["separator_group"] = separator_group
+        if separators is not DEFAULT:
+            kwargs["separators"] = separators
         super().__init__(kwargs)
 
 
