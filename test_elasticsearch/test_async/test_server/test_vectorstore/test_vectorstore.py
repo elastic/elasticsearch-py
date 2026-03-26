@@ -59,7 +59,7 @@ Enable them by adding the model name to the modelsDeployed list below.
 ELSER_MODEL_ID = ".elser_model_2"
 TRANSFORMER_MODEL_ID = "sentence-transformers__all-minilm-l6-v2"
 
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 
 class TestAsyncVectorStore:

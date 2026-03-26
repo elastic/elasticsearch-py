@@ -18,7 +18,6 @@
 import uuid
 
 import pytest
-import pytest_asyncio
 
 from ....utils import wipe_cluster
 from ..conftest import _create
@@ -30,7 +29,7 @@ def index() -> str:
     return f"test_{uuid.uuid4().hex}"
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def async_client_request_saving_factory(elasticsearch_url):
     client = None
 
@@ -52,7 +51,7 @@ async def async_client_request_saving_factory(elasticsearch_url):
             await client.close()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def async_client_request_saving(async_client_request_saving_factory):
     try:
         yield async_client_request_saving_factory

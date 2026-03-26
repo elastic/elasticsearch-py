@@ -29,7 +29,7 @@ from elasticsearch.helpers.vectorstore._async._utils import model_is_deployed
 MODEL_ID = os.getenv("MODEL_ID", "sentence-transformers__all-minilm-l6-v2")
 NUM_DIMENSIONS = int(os.getenv("NUM_DIMENSIONS", "384"))
 
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 
 async def test_elasticsearch_embedding_documents(

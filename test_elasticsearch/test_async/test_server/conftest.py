@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import pytest_asyncio
+import pytest
 import sniffio
 
 import elasticsearch
@@ -28,6 +28,9 @@ def _create(elasticsearch_url, transport=None, node_class=None):
     kw = {}
     if elasticsearch_url.startswith("https://"):
         kw["ca_certs"] = CA_CERTS
+
+    if sniffio.current_async_library() == "trio":
+        kw["node_class"] = "httpxasync"
 
     # Optionally configure an HTTP conn class depending on
     # 'PYTHON_CONNECTION_CLASS' env var
@@ -42,24 +45,21 @@ def _create(elasticsearch_url, transport=None, node_class=None):
     return elasticsearch.AsyncElasticsearch(elasticsearch_url, **kw)
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 async def async_client_factory(elasticsearch_url):
-    kwargs = {}
-    if sniffio.current_async_library() == "trio":
-        kwargs["node_class"] = "httpxasync"
     # Unfortunately the asyncio client needs to be rebuilt every
     # test execution due to how pytest-asyncio manages
     # event loops (one per test!)
     client = None
     try:
-        client = _create(elasticsearch_url, **kwargs)
+        client = _create(elasticsearch_url)
         yield client
     finally:
         if client:
             await client.close()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 def async_client(async_client_factory):
     try:
         yield async_client_factory
