@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import pytest_asyncio
+import pytest
 import sniffio
 
 import elasticsearch
@@ -23,26 +23,43 @@ import elasticsearch
 from ...utils import CA_CERTS, wipe_cluster
 
 
-@pytest_asyncio.fixture(scope="function")
-async def async_client_factory(elasticsearch_url):
-    kwargs = {}
+def _create(elasticsearch_url, transport=None, node_class=None):
+    # Configure the client with certificates
+    kw = {}
+    if elasticsearch_url.startswith("https://"):
+        kw["ca_certs"] = CA_CERTS
+
     if sniffio.current_async_library() == "trio":
-        kwargs["node_class"] = "httpxasync"
+        kw["node_class"] = "httpxasync"
+
+    # Optionally configure an HTTP conn class depending on
+    # 'PYTHON_CONNECTION_CLASS' env var
+    if node_class is not None and "node_class" not in kw:
+        kw["node_class"] = node_class
+
+    if transport:
+        kw["transport_class"] = transport
+
+    # We do this little dance with the URL to force
+    # Requests to respect 'headers: None' within rest API spec tests.
+    return elasticsearch.AsyncElasticsearch(elasticsearch_url, **kw)
+
+
+@pytest.fixture(scope="function")
+async def async_client_factory(elasticsearch_url):
     # Unfortunately the asyncio client needs to be rebuilt every
     # test execution due to how pytest-asyncio manages
     # event loops (one per test!)
     client = None
     try:
-        client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, ca_certs=CA_CERTS, **kwargs
-        )
+        client = _create(elasticsearch_url)
         yield client
     finally:
         if client:
             await client.close()
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest.fixture(scope="function")
 def async_client(async_client_factory):
     try:
         yield async_client_factory
