@@ -38,12 +38,16 @@ from ...test_server.test_rest_api_spec import (
 )
 from ...utils import parse_version
 
-# We're not using `pytest.mark.anyio` here because it would run the test suite twice,
-# which does not work as it does not fully clean up after itself.
-pytestmark = pytest.mark.asyncio
+pytestmark = pytest.mark.anyio
 
 XPACK_FEATURES = None
 ES_VERSION = None
+
+
+@pytest.fixture
+def anyio_backend():
+    # we want to only run the YAML tests once, no need to also do trio here
+    return "asyncio"
 
 
 async def await_if_coro(x):
