@@ -233,7 +233,9 @@ class AttrDict(Generic[_ValT]):
         # the __orig__class__ attribute has to be treated as an exception, as
         # is it added to an object when it is instantiated with type arguments
         if (
-            name in self._d_ or not hasattr(self.__class__, name)
+            name in self._d_  # set in dict if a value is already there
+            or not hasattr(self.__class__, name)  # skip declared class properties
+            or not hasattr(getattr(self.__class__, name), 'fset')  # skip properties with setters
         ) and name != "__orig_class__":
             self._d_[self.RESERVED.get(name, name)] = value
         else:
