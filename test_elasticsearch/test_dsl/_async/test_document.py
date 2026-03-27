@@ -420,6 +420,62 @@ def test_docs_with_properties() -> None:
         u.password
 
 
+def test_docs_with_name_collisions() -> None:
+    class Doc(AsyncDocument):
+        raw_data = field.Object()
+        text = field.Text()
+        items = field.Text()
+
+        @property
+        def prop(self) -> None:
+            raise AttributeError("readonly")
+
+        @prop.setter
+        def prop(self, pwd: bytes) -> None:
+            self.raw_data.custom = True
+
+        def text(self):
+            return "custom text"
+
+    doc = Doc(
+        raw_data={
+            "items": [
+                {"foo": {"items": [1, 2, 3]}},
+                {"items": [4, 5]},
+            ]
+        },
+        text="some text",
+        items="not really items",
+    )
+
+    # methods take precedence when using dot syntax
+    assert ("text", "some text") in list(iter(doc.items()))
+    assert ("items", "not really items") in list(iter(doc.items()))
+    assert (
+        "items",
+        [
+            {"foo": {"items": [1, 2, 3]}},
+            {"items": [4, 5]},
+        ],
+    ) in list(iter(doc.raw_data.items()))
+    assert doc.text() == "custom text"
+
+    # data takes precendence when using bracket syntax
+    assert doc.raw_data["items"][0].foo == {"items": [1, 2, 3]}
+    assert doc["text"] == "some text"
+    assert doc["items"] == "not really items"
+
+    # setting with bracket syntax to avoid ambiguitiy
+    doc.raw_data["items"] = "replaced"
+    doc["text"] = "new text"
+    doc["items"] = "more new text"
+    assert doc.to_dict() == {
+        "raw_data": {"items": "replaced"},
+        "text": "new text",
+        "items": "more new text",
+    }
+
+
 def test_nested_can_be_assigned_to() -> None:
     d1 = DocWithNested(comments=[Comment(title="First!")])
     d2 = DocWithNested()

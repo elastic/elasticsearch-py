@@ -235,7 +235,9 @@ class AttrDict(Generic[_ValT]):
         if (
             name in self._d_  # set in dict if a value is already there
             or not hasattr(self.__class__, name)  # skip declared class properties
-            or not hasattr(getattr(self.__class__, name), 'fset')  # skip properties with setters
+            or not hasattr(
+                getattr(self.__class__, name), "fset"
+            )  # skip properties with setters
         ) and name != "__orig_class__":
             self._d_[self.RESERVED.get(name, name)] = value
         else:
