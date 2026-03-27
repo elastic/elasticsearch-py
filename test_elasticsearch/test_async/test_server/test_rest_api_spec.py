@@ -43,10 +43,11 @@ pytestmark = pytest.mark.anyio
 XPACK_FEATURES = None
 ES_VERSION = None
 
+
 @pytest.fixture
 def anyio_backend():
     # we want to only run the YAML tests once, no need to also do trio here
-    return 'asyncio'
+    return "asyncio"
 
 
 async def await_if_coro(x):
