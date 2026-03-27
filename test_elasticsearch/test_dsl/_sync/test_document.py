@@ -434,7 +434,7 @@ def test_docs_with_name_collisions() -> None:
         def prop(self, pwd: bytes) -> None:
             self.raw_data.custom = True
 
-        def text(self):
+        def text(self):  # noqa: F811
             return "custom text"
 
     doc = Doc(
