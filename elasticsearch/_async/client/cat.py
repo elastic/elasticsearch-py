@@ -3559,11 +3559,12 @@ class CatClient(NamespacedClient):
         :param allow_closed: If true, allow closed indices to be returned in the response
             otherwise if false, keep the legacy behaviour of throwing an exception if
             index pattern matches closed indices
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or _all value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting foo*,bar* returns an error if an index starts
-            with foo but no index starts with bar.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param bytes: Sets the units for columns that contain a byte-size value. Note
             that byte-size value units work in terms of powers of 1024. For instance
             `1kb` means 1024 bytes, not 1000 bytes. If omitted, byte-size values are
@@ -3584,8 +3585,10 @@ class CatClient(NamespacedClient):
             be combined with any other query string option.
         :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
             when frozen.
-        :param ignore_unavailable: If true, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating

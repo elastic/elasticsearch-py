@@ -78,7 +78,25 @@ class EsqlClient(NamespacedClient):
         keep_alive: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         keep_on_completion: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
-        params: t.Optional[t.Sequence[t.Union[None, bool, float, int, str]]] = None,
+        params: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Mapping[
+                        str,
+                        t.Union[
+                            t.Sequence[t.Union[None, bool, float, int, str]],
+                            t.Union[None, bool, float, int, str],
+                        ],
+                    ]
+                ],
+                t.Sequence[
+                    t.Union[
+                        t.Sequence[t.Union[None, bool, float, int, str]],
+                        t.Union[None, bool, float, int, str],
+                    ]
+                ],
+            ]
+        ] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,

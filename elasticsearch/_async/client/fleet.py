@@ -149,11 +149,12 @@ class FleetClient(NamespacedClient):
         :param searches:
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or _all value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting foo*,bar* returns an error if an index starts
-            with foo but no index starts with bar.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param allow_partial_search_results: If true, returns partial results if there
             are shard request timeouts or shard failures. If false, returns an error
             with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`,
@@ -165,8 +166,10 @@ class FleetClient(NamespacedClient):
             expressions match hidden data streams.
         :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
             when frozen.
-        :param ignore_unavailable: If true, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param max_concurrent_searches: Maximum number of concurrent searches the multi
             search API can execute.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
@@ -399,7 +402,12 @@ class FleetClient(NamespacedClient):
             must resolve to a single index.
         :param aggregations:
         :param aggs:
-        :param allow_no_indices:
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param allow_partial_search_results: If true, returns partial results if there
             are shard request timeouts or shard failures. If false, returns an error
             with no partial results. Defaults to the configured cluster setting `search.default_allow_partial_results`,
@@ -425,7 +433,10 @@ class FleetClient(NamespacedClient):
             hits, use the search_after parameter.
         :param highlight:
         :param ignore_throttled:
-        :param ignore_unavailable:
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param lenient:
         :param max_concurrent_shard_requests:
