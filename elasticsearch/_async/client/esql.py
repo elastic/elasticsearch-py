@@ -69,7 +69,23 @@ class EsqlClient(NamespacedClient):
         keep_on_completion: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
         params: t.Optional[
-            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+            t.Union[
+                t.Sequence[
+                    t.Mapping[
+                        str,
+                        t.Union[
+                            t.Sequence[t.Union[None, bool, float, int, str, t.Any]],
+                            t.Union[None, bool, float, int, str, t.Any],
+                        ],
+                    ]
+                ],
+                t.Sequence[
+                    t.Union[
+                        t.Sequence[t.Union[None, bool, float, int, str, t.Any]],
+                        t.Union[None, bool, float, int, str, t.Any],
+                    ]
+                ],
+            ]
         ] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
@@ -427,7 +443,23 @@ class EsqlClient(NamespacedClient):
         include_ccs_metadata: t.Optional[bool] = None,
         locale: t.Optional[str] = None,
         params: t.Optional[
-            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
+            t.Union[
+                t.Sequence[
+                    t.Mapping[
+                        str,
+                        t.Union[
+                            t.Sequence[t.Union[None, bool, float, int, str, t.Any]],
+                            t.Union[None, bool, float, int, str, t.Any],
+                        ],
+                    ]
+                ],
+                t.Sequence[
+                    t.Union[
+                        t.Sequence[t.Union[None, bool, float, int, str, t.Any]],
+                        t.Union[None, bool, float, int, str, t.Any],
+                    ]
+                ],
+            ]
         ] = None,
         pretty: t.Optional[bool] = None,
         profile: t.Optional[bool] = None,
