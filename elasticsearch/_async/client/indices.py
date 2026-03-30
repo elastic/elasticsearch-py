@@ -6016,7 +6016,7 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param metric: Limit the information returned the specific metrics
+        :param metric: Comma-separated list of metrics used to limit the request.
         :param completion_fields: Comma-separated list or wildcard expressions of fields
             to include in fielddata and suggest statistics.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
