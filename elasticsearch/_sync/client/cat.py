@@ -503,6 +503,7 @@ class CatClient(NamespacedClient):
           The document count only includes live documents, not deleted documents which have not yet been removed by the merge process.</p>
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or Kibana console.
           They are not intended for use by applications. For application consumption, use the count API.</p>
+          <p>NOTE: Starting in Elasticsearch 9.3.0, this endpoint also supports the <code>POST</code> method. This is primarily intended for project routing in serverless environments.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cat-count>`_
@@ -573,7 +574,7 @@ class CatClient(NamespacedClient):
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "GET",
+            "POST",
             __path,
             params=__query,
             headers=__headers,
@@ -1216,6 +1217,8 @@ class CatClient(NamespacedClient):
           </ul>
           <p>These metrics are retrieved directly from Lucene, which Elasticsearch uses internally to power indexing and search. As a result, all document counts include hidden nested documents.
           To get an accurate count of Elasticsearch documents, use the cat count or count APIs.</p>
+          <p>NOTE: Storage metrics reported by this API reflect the post-compression size of the indices on disk. Because these values are calculated after Elasticsearch compresses the data and processes deletions, they are typically significantly smaller than the raw, uncompressed data volume ingested.</p>
+          <p>IMPORTANT: For Elastic Cloud Serverless, ingest billing is based on the raw, uncompressed data volume, not the post-compression metrics reported here. To learn more, refer to <a href="https://www.elastic.co/docs/deploy-manage/cloud-organization/billing/elasticsearch-billing-dimensions">Elasticsearch billing dimensions</a>.</p>
           <p>CAT APIs are only intended for human consumption using the command line or Kibana console.
           They are not intended for use by applications. For application consumption, use an index endpoint.</p>
 
