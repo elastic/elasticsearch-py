@@ -372,13 +372,15 @@ class ClusterClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-cluster-get-settings>`_
 
         :param flat_settings: If `true`, returns settings in flat format.
-        :param include_defaults: If `true`, also returns default values for all other
-            cluster settings, reflecting the values in the `elasticsearch.yml` file of
-            one of the nodes in the cluster. If the nodes in your cluster do not all
-            have the same values in their `elasticsearch.yml` config files then the values
-            returned by this API may vary from invocation to invocation and may not reflect
-            the values that Elasticsearch uses in all situations. Use the `GET _nodes/settings`
-            API to fetch the settings for each individual node in your cluster.
+        :param include_defaults: If `true`, also returns the values of all other cluster
+            settings set in the `elasticsearch.yml` file on one of the nodes in your
+            cluster, together with the default values of all other cluster settings on
+            that node. The default value of each setting may depend on the values of
+            other settings on that node. If the nodes in your cluster do not all have
+            the same configuration then the values returned by this API may vary from
+            invocation to invocation and may not reflect the values that Elasticsearch
+            uses in all situations. Use the `GET _nodes/settings` API to fetch the settings
+            for each individual node in your cluster.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -1142,14 +1144,19 @@ class ClusterClient(NamespacedClient):
         :param metric: Limit the information returned to the specified metrics.
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both
         :param flat_settings: Return settings in flat format
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param local: Return local information, do not retrieve the state from master
             node
         :param master_timeout: Timeout for waiting for new cluster state in case it is

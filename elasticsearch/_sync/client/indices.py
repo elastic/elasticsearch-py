@@ -71,17 +71,20 @@ class IndicesClient(NamespacedClient):
             setting to `false`. You can update this setting in the `elasticsearch.yml`
             file or by using the cluster update settings API.
         :param block: The block type to add to the index.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: The period to wait for the master node. If the master
             node is not available before the timeout expires, the request fails and returns
             an error. It can also be set to `-1` to indicate that the request should
@@ -327,9 +330,12 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
@@ -339,7 +345,9 @@ class IndicesClient(NamespacedClient):
         :param fields: Comma-separated list of field names used to limit the `fielddata`
             parameter.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param query: If `true`, clears the query cache.
         :param request: If `true`, clears the request cache.
         """
@@ -550,15 +558,20 @@ class IndicesClient(NamespacedClient):
 
         :param index: Comma-separated list or wildcard expression of index names used
             to limit the request.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -932,15 +945,20 @@ class IndicesClient(NamespacedClient):
             aliases. By default, this parameter does not support wildcards (`*`) or `_all`.
             To use wildcards or `_all`, set the `action.destructive_requires_name` cluster
             setting to `false`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -1390,19 +1408,22 @@ class IndicesClient(NamespacedClient):
             to limit the request. It’s recommended to execute this API with a single
             index (or the latest backing index of a data stream) as the API consumes
             resources significantly.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param flush: If `true`, the API performs a flush before analysis. If `false`,
             the response may not include uncommitted data.
-        :param ignore_unavailable: If `true`, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param run_expensive_tasks: Analyzing field disk usage is resource-intensive.
             To use the API, this parameter must be set to `true`.
         """
@@ -1548,16 +1569,21 @@ class IndicesClient(NamespacedClient):
 
         :param index: Comma-separated list of data streams, indices, and aliases. Supports
             wildcards (`*`).
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param flat_settings: If `true`, returns settings in flat format.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_defaults: If `true`, return all default settings in the response.
         :param local: If `true`, the request retrieves information from the local node
             only.
@@ -1632,15 +1658,20 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams or indices used to limit the
             request. Supports wildcards (`*`). To target all data streams and indices,
             omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
-        :param ignore_unavailable: If `false`, requests that include a missing data stream
-            or index in the target indices or data streams return an error.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -1895,19 +1926,22 @@ class IndicesClient(NamespacedClient):
 
         :param index: Comma-separated list or wildcard expression of index names used
             to limit the request.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param fields: Comma-separated list or wildcard expressions of fields to include
             in the statistics.
-        :param ignore_unavailable: If `true`, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1981,9 +2015,12 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases to flush.
             Supports wildcards (`*`). To flush all data streams and indices, omit this
             parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
@@ -1991,7 +2028,9 @@ class IndicesClient(NamespacedClient):
         :param force: If `true`, the request forces a flush even if there are no changes
             to commit to the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param wait_if_ongoing: If `true`, the flush operation blocks until execution
             when another flush operation is running. If `false`, Elasticsearch returns
             an error if you request a flush when another flush operation is running.
@@ -2105,15 +2144,20 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
         :param flush: Specify whether the index should be flushed after performing the
             operation
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param max_num_segments: The number of segments the index should be merged into
             (default: dynamic)
         :param only_expunge_deletes: Specify whether the operation should only expunge
@@ -2203,19 +2247,22 @@ class IndicesClient(NamespacedClient):
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard expressions (*) are supported.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or _all value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting foo*,bar* returns an error if an index starts
-            with foo but no index starts with bar.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard expressions can match. If
             the request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as open,hidden.
         :param features: Return only information on specified index features
         :param flat_settings: If true, returns settings in flat format.
-        :param ignore_unavailable: If false, requests that target a missing index return
-            an error.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_defaults: If true, return all default settings in the response.
         :param local: If true, the request retrieves information from the local node
             only. Defaults to false, which means information is retrieved from the master
@@ -2299,15 +2346,20 @@ class IndicesClient(NamespacedClient):
             omit this parameter or use `*` or `_all`.
         :param name: Comma-separated list of aliases to retrieve. Supports wildcards
             (`*`). To retrieve all aliases, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -2740,15 +2792,20 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_defaults: If `true`, return all default settings in the response.
         """
         if fields in SKIP_IN_PATH:
@@ -2892,15 +2949,20 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param local: If `true`, the request retrieves information from the local node
             only.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -3026,18 +3088,21 @@ class IndicesClient(NamespacedClient):
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
         :param name: Comma-separated list or wildcard expression of settings to retrieve.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with foo but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param flat_settings: If `true`, returns settings in flat format.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_defaults: If `true`, return all default settings in the response.
         :param local: If `true`, the request retrieves information from the local node
             only. If `false`, information is retrieved from the master node.
@@ -3382,15 +3447,20 @@ class IndicesClient(NamespacedClient):
             `_all`, `*`, or other wildcard expressions, change the `action.destructive_requires_name`
             setting to false. You can update this setting in the `elasticsearch.yml`
             file or using the cluster update settings API.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -4183,9 +4253,12 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names the mapping should be added
             to (supports wildcards). Use `_all` or omit to add the mapping on all indices.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param date_detection: Controls whether dynamic date detection is enabled.
         :param dynamic: Controls whether new fields are added dynamically.
         :param dynamic_date_formats: If date detection is enabled then new string fields
@@ -4198,7 +4271,9 @@ class IndicesClient(NamespacedClient):
             as `open,hidden`.
         :param field_names: Control whether field names are enabled for the index.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -4360,17 +4435,21 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param flat_settings: If `true`, returns settings in flat format.
-        :param ignore_unavailable: If `true`, returns settings in flat format.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -4598,9 +4677,12 @@ class IndicesClient(NamespacedClient):
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
         :param active_only: If `true`, the response only includes ongoing shard recoveries.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param detailed: If `true`, the response includes detailed information about
             shard recoveries.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
@@ -4608,7 +4690,9 @@ class IndicesClient(NamespacedClient):
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -4687,15 +4771,20 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -4769,13 +4858,18 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-reload-search-analyzers>`_
 
         :param index: A comma-separated list of index names to reload analyzers for
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param resource: Changed resource to reload analyzers from if applicable
         """
         if index in SKIP_IN_PATH:
@@ -4849,17 +4943,20 @@ class IndicesClient(NamespacedClient):
             setting to `false`. You can update this setting in the `elasticsearch.yml`
             file or by using the cluster update settings API.
         :param block: The block type to remove from the index.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param master_timeout: The period to wait for the master node. If the master
             node is not available before the timeout expires, the request fails and returns
             an error. It can also be set to `-1` to indicate that the request should
@@ -4980,14 +5077,15 @@ class IndicesClient(NamespacedClient):
             (e.g., `-cluster1:*`) are also supported. If no index expression is specified,
             information about all remote clusters configured on the local cluster is
             returned without doing any index matching
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`. NOTE: This option is only supported
-            when specifying an index expression. You will get an error if you specify
-            index options to the `_resolve/cluster` API endpoint that takes no index
-            expression.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result. NOTE:
+            This option is only supported when specifying an index expression. You will
+            get an error if you specify index options to the `_resolve/cluster` API endpoint
+            that takes no index expression.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
@@ -4998,8 +5096,10 @@ class IndicesClient(NamespacedClient):
             ignored when frozen. NOTE: This option is only supported when specifying
             an index expression. You will get an error if you specify index options to
             the `_resolve/cluster` API endpoint that takes no index expression.
-        :param ignore_unavailable: If false, the request returns an error if it targets
-            a missing or closed index. NOTE: This option is only supported when specifying
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored. NOTE: This option is only supported when specifying
             an index expression. You will get an error if you specify index options to
             the `_resolve/cluster` API endpoint that takes no index expression.
         :param timeout: The maximum time to wait for remote clusters to respond. If a
@@ -5092,17 +5192,20 @@ class IndicesClient(NamespacedClient):
         :param name: Comma-separated name(s) or index pattern(s) of the indices, aliases,
             and data streams to resolve. Resources on remote clusters can be specified
             using the `<cluster>`:`<name>` syntax.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param mode: Filter indices by index mode - standard, lookup, time_series, etc.
             Comma-separated list of IndexMode. Empty means no filter.
         :param project_routing: Specifies a subset of projects to target using project
@@ -5321,15 +5424,20 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -5408,14 +5516,19 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-shard-stores>`_
 
         :param index: List of data streams, indices, and aliases used to limit the request.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or _all value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams.
-        :param ignore_unavailable: If true, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param status: List of shard health statuses used to limit the request.
         """
         __path_parts: t.Dict[str, str]
@@ -6017,7 +6130,7 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
-        :param metric: Limit the information returned the specific metrics
+        :param metric: Comma-separated list of metrics used to limit the request.
         :param completion_fields: Comma-separated list or wildcard expressions of fields
             to include in fielddata and suggest statistics.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
@@ -6198,9 +6311,12 @@ class IndicesClient(NamespacedClient):
             parameter or use `*` or `_all`.
         :param all_shards: If `true`, the validation is executed on all shards instead
             of one random shard per index.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
         :param analyzer: Analyzer to use for the query string. This parameter can only
             be used when the `q` query string parameter is specified.
@@ -6216,7 +6332,9 @@ class IndicesClient(NamespacedClient):
         :param explain: If `true`, the response returns detailed information if an error
             has occurred.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param lenient: If `true`, format-based query failures (such as providing text
             to a numeric field) in the query string will be ignored.
         :param q: Query in the Lucene query string syntax.

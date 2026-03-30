@@ -3540,9 +3540,12 @@ class MlClient(NamespacedClient):
             data.
         :param aggs: If set, the datafeed performs aggregation searches. Support for
             aggregations is limited and should be used only with low cardinality data.
-        :param allow_no_indices: If true, wildcard indices expressions that resolve into
-            no concrete indices are ignored. This includes the `_all` string or when
-            no indices are specified.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param chunking_config: Datafeeds might be required to search over long time
             periods, for several months or years. This search is split into time chunks
             in order to ensure the load on Elasticsearch is managed. Chunking configuration
@@ -3568,8 +3571,10 @@ class MlClient(NamespacedClient):
         :param headers:
         :param ignore_throttled: If true, concrete, expanded, or aliased indices are
             ignored when frozen.
-        :param ignore_unavailable: If true, unavailable indices (missing or closed) are
-            ignored.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
             indices are in remote clusters, the master nodes and the machine learning
             nodes must have the `remote_cluster_client` role.
@@ -3815,9 +3820,12 @@ class MlClient(NamespacedClient):
             to true, the open anomaly detection jobs API does not return an error and
             the job waits in the opening state until sufficient machine learning node
             capacity is available.
-        :param allow_no_indices: If `true`, wildcard indices expressions that resolve
-            into no concrete indices are ignored. This includes the `_all` string or
-            when no indices are specified.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param analysis_limits: Limits can be applied for the resources required to hold
             the mathematical models in memory. These limits are approximate and can be
             set per job. They do not control the memory used by other processes, for
@@ -3847,8 +3855,10 @@ class MlClient(NamespacedClient):
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
             ignored when frozen.
-        :param ignore_unavailable: If `true`, unavailable indices (missing or closed)
-            are ignored.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param model_plot_config: This advanced configuration option stores model information
             along with the results. It provides a more detailed view into anomaly detection.
             If you enable model plot it can add considerable overhead to the performance
@@ -5113,9 +5123,12 @@ class MlClient(NamespacedClient):
         :param aggregations: If set, the datafeed performs aggregation searches. Support
             for aggregations is limited and should be used only with low cardinality
             data.
-        :param allow_no_indices: If `true`, wildcard indices expressions that resolve
-            into no concrete indices are ignored. This includes the `_all` string or
-            when no indices are specified.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param chunking_config: Datafeeds might search over long time periods, for several
             months or years. This search is split into time chunks in order to ensure
             the load on Elasticsearch is managed. Chunking configuration controls how
@@ -5140,8 +5153,10 @@ class MlClient(NamespacedClient):
             be divisible by the interval of the date histogram aggregation.
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
             ignored when frozen.
-        :param ignore_unavailable: If `true`, unavailable indices (missing or closed)
-            are ignored.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
             indices are in remote clusters, the machine learning nodes must have the
             `remote_cluster_client` role.

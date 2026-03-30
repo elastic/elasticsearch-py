@@ -936,11 +936,12 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams and indices,
             omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
@@ -958,7 +959,9 @@ class Elasticsearch(BaseClient):
         :param ignore_throttled: If `true`, concrete, expanded, or aliased indices are
             ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param lenient: If `true`, format-based query failures (such as providing text
             to a numeric field) in the query string will be ignored. This parameter can
             be used only when the `q` query string parameter is specified.
@@ -1484,11 +1487,12 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams or indices,
             omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: Analyzer to use for the query string. This parameter can be
@@ -1507,7 +1511,9 @@ class Elasticsearch(BaseClient):
             values, such as `open,hidden`.
         :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param lenient: If `true`, format-based query failures (such as providing text
             to a numeric field) in the query string will be ignored. This parameter can
             be used only when the `q` query string parameter is specified.
@@ -2180,11 +2186,12 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (*). To target all data streams
             and indices, omit this parameter or use * or _all.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with foo but no index starts with bar.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: The type of index that wildcard patterns can match.
             If the request can target data streams, this argument determines whether
             wildcard expressions match hidden data streams. Supports comma-separated
@@ -2192,8 +2199,10 @@ class Elasticsearch(BaseClient):
         :param fields: A list of fields to retrieve capabilities for. Wildcard (`*`)
             expressions are supported.
         :param filters: A comma-separated list of filters to apply to the response.
-        :param ignore_unavailable: If `true`, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_empty_fields: If false, empty fields are not included in the response.
         :param include_unmapped: If true, unmapped fields are included in the response.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
@@ -3212,11 +3221,12 @@ class Elasticsearch(BaseClient):
         :param searches:
         :param index: Comma-separated list of data streams, indices, and index aliases
             to search.
-        :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, index alias, or _all value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting foo*,bar* returns an error if an index starts
-            with foo but no index starts with bar.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param ccs_minimize_roundtrips: If true, network roundtrips between the coordinating
             node and remote clusters are minimized for cross-cluster search requests.
         :param expand_wildcards: Type of index that wildcard expressions can match. If
@@ -3224,8 +3234,10 @@ class Elasticsearch(BaseClient):
             expressions match hidden data streams.
         :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
             when frozen.
-        :param ignore_unavailable: If true, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_named_queries_score: Indicates whether hit.matched_queries should
             be rendered as a map that includes the name of the matched query associated
             with its score (true) or as an array containing the name of the matched queries
@@ -3627,7 +3639,9 @@ class Elasticsearch(BaseClient):
             wildcard expressions match hidden data streams. It supports comma-separated
             values, such as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param index_filter: Filter indices if the provided query rewrites to `match_none`
             on every shard.
         :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
@@ -3814,15 +3828,18 @@ class Elasticsearch(BaseClient):
             used to limit the request. Wildcard (`*`) expressions are supported. To target
             all data streams and indices in a cluster, omit this parameter or use `_all`
             or `*`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
-        :param ignore_unavailable: If `true`, missing or closed indices are not included
-            in the response.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
         """
@@ -4500,11 +4517,12 @@ class Elasticsearch(BaseClient):
         :param aggregations: Defines the aggregations that are run as part of the search
             request.
         :param aggs: Defines the aggregations that are run as part of the search request.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param allow_partial_search_results: If `true` and there are shard request timeouts
             or shard failures, the request returns partial results. If `false`, it returns
             an error with no partial results. To override the default behavior, you can
@@ -4552,7 +4570,9 @@ class Elasticsearch(BaseClient):
         :param ignore_throttled: If `true`, concrete, expanded or aliased indices will
             be ignored when frozen.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param include_named_queries_score: If `true`, the response includes the score
             contribution from any named queries. This functionality reruns each named
             query on every hit in a search response. Typically, this adds a small overhead
@@ -5399,17 +5419,20 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams and indices,
             omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param local: If `true`, the request retrieves information from the local node
             only.
         :param master_timeout: The period to wait for a connection to the master node.
@@ -5510,11 +5533,12 @@ class Elasticsearch(BaseClient):
 
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`).
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param ccs_minimize_roundtrips: Indicates whether network round-trips should
             be minimized as part of cross-cluster search requests execution.
         :param expand_wildcards: The type of index that wildcard patterns can match.
@@ -5529,7 +5553,9 @@ class Elasticsearch(BaseClient):
         :param ignore_throttled: If `true`, specified concrete, expanded, or aliased
             indices are not included in the response when throttled.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param params: Key-value pairs used to replace Mustache variables in the template.
             The key is the variable name. The value is the variable value.
         :param preference: The node or shard the operation should be performed on. It
@@ -6221,11 +6247,12 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams or indices,
             omit this parameter or use `*` or `_all`.
-        :param allow_no_indices: If `false`, the request returns an error if any wildcard
-            expression, index alias, or `_all` value targets only missing or closed indices.
-            This behavior applies even if the request targets other open indices. For
-            example, a request targeting `foo*,bar*` returns an error if an index starts
-            with `foo` but no index starts with `bar`.
+        :param allow_no_indices: A setting that does two separate checks on the index
+            expression. If `false`, the request returns an error (1) if any wildcard
+            expression (including `_all` and `*`) resolves to zero matching indices or
+            (2) if the complete set of resolved indices, aliases or data streams is empty
+            after all expressions are evaluated. If `true`, index expressions that resolve
+            to no indices are allowed and the request returns an empty result.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
@@ -6244,7 +6271,9 @@ class Elasticsearch(BaseClient):
             values, such as `open,hidden`.
         :param from_: Skips the specified number of documents.
         :param ignore_unavailable: If `false`, the request returns an error if it targets
-            a missing or closed index.
+            a concrete (non-wildcarded) index, alias, or data stream that is missing,
+            closed, or otherwise unavailable. If `true`, unavailable concrete targets
+            are silently ignored.
         :param lenient: If `true`, format-based query failures (such as providing text
             to a numeric field) in the query string will be ignored. This parameter can
             be used only when the `q` query string parameter is specified.
