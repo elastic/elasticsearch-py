@@ -230,18 +230,25 @@ class AttrDict(Generic[_ValT]):
         del self._d_[self.RESERVED.get(key, key)]
 
     def __setattr__(self, name: str, value: _ValT) -> None:
-        # the __orig__class__ attribute has to be treated as an exception, as
-        # is it added to an object when it is instantiated with type arguments
+        # Here we need to decide if this is a real setattr, or if this value is
+        # a dictionary set using setattr syntax. This is trciky as naming
+        # collisions are possible.
+        #
+        # We interpret this as a dictionary set if:
+        # - the dictionary already has the key in it, or
+        # - the given key is not a class property, or
+        # - the given key is a property, but it has no setter
+        # We make an exception for "__orig_class__", which is reserved for
+        # Python use.
         if (
-            name in self._d_  # set in dict if a value is already there
-            or not hasattr(self.__class__, name)  # skip declared class properties
-            or not hasattr(
-                getattr(self.__class__, name), "fset"
-            )  # skip properties with setters
+            name in self._d_
+            or not hasattr(self.__class__, name)
+            or not hasattr(getattr(self.__class__, name), "fset")
         ) and name != "__orig_class__":
+            # set in the dictionary
             self._d_[self.RESERVED.get(name, name)] = value
         else:
-            # there is an attribute on the class (could be property, ..) - don't add it as field
+            # set as an attribute
             super().__setattr__(name, value)
 
     def __iter__(self) -> Iterator[str]:
