@@ -1065,9 +1065,14 @@ class TestAsyncVectorStore:
             "dims": 10,
             "index": True,
             "index_options": {
-                "ef_construction": 100,
-                "m": 16,
-                "type": "int8_hnsw",
+                "bits": 4,
+                "cluster_size": 384,
+                "default_visit_percentage": 0.0,
+                "flat_index_threshold": -1,
+                "rescore_vector": {
+                    "oversample": 3.0,
+                },
+                "type": "bbq_disk",
             },
             "similarity": "cosine",
         }
