@@ -72,7 +72,7 @@ class TextStructureClient(NamespacedClient):
           It helps determine why the returned structure was chosen.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-text_structure>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-text_structure>`_
 
         :param field: The field that should be analyzed.
         :param index: The name of the index that contains the analyzed field.

@@ -2960,7 +2960,7 @@ class IndicesClient(NamespacedClient):
           <p>Get the status of a migration reindex attempt for a data stream or index.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-migration>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-migration>`_
 
         :param index: The index or data stream name.
         """
