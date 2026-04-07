@@ -55,7 +55,7 @@ class GraphClient(NamespacedClient):
           You can exclude vertices that have already been returned.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch/v9/group/endpoint-graph>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-graph>`_
 
         :param index: Name of the index.
         :param connections: Specifies or more fields from which you want to extract terms
