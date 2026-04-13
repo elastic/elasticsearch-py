@@ -3008,7 +3008,7 @@ class AsyncElasticsearch(BaseClient):
 
           <p>Get cluster info.</p>
           <p>Get basic build, version, and cluster information.
-          ::: In Serverless, this API is retained for backward compatibility only. Some response fields, such as the version number, should be ignored.</p>
+          ::: In Serverless, <code>version.number</code> always reports the next target Elasticsearch release version at the time of the request. Serverless does not track to a traditional release versioning model; it is continuously updated. The version number is provided to maintain compatibility with existing clients, but it is not meaningful for assessing feature availability. Clients should detect a Serverless environment by checking for <code>build_flavor: serverless</code>.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-info>`_
@@ -3934,7 +3934,7 @@ class AsyncElasticsearch(BaseClient):
           <li>If reindexing from a remote cluster, the <code>source.remote.user</code> must have the <code>monitor</code> cluster privilege and the <code>read</code> index privilege for the source data stream, index, or alias.</li>
           </ul>
           <p>If reindexing from a remote cluster into a cluster using Elastic Stack, you must explicitly allow the remote host using the <code>reindex.remote.whitelist</code> node setting on the destination cluster.
-          If reindexing from a remote cluster into an Elastic Cloud Serverless project, only remote hosts from Elastic Cloud Hosted are allowed.
+          If reindexing from a remote cluster into an Elastic Cloud Serverless project, only remote hosts from <a href="https://cloud.elastic.co/registration?page=docs&amp;placement=docs-body">Elastic Cloud Hosted</a> are allowed.
           Automatic data stream creation requires a matching index template with data stream enabled.</p>
           <p>The <code>dest</code> element can be configured like the index API to control optimistic concurrency control.
           Omitting <code>version_type</code> or setting it to <code>internal</code> causes Elasticsearch to blindly dump documents into the destination, overwriting any that happen to have the same ID.</p>
