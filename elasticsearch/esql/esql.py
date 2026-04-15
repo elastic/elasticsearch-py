@@ -27,7 +27,7 @@ IndexType = Union[Type[DocumentBase], str]
 ExpressionType = Any
 
 
-class ESQL(ABC):
+class _ESQL(ABC):
     """The static methods of the ``ESQL`` class provide access to the ES|QL source
     commands, used to create ES|QL queries.
 
@@ -35,8 +35,21 @@ class ESQL(ABC):
     the ES|QL processing commands.
     """
 
+    def __init__(self, parent: Optional["ESQL"] = None):
+        self._directives = []
+
     @staticmethod
-    def from_(*indices: IndexType) -> "From":
+    def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
+        s = str(id)  # in case it is an InstrumentedField
+        if allow_patterns and "*" in s:
+            return s  # patterns cannot be escaped
+        if re.fullmatch(r"[a-zA-Z_@][a-zA-Z0-9_\.]*", s):
+            return s
+        # this identifier needs to be escaped
+        s = s.replace("`", "``")
+        return f"`{s}`"
+
+    def from_(self, *indices: IndexType) -> "From":
         """The ``FROM`` source command returns a table with data from a data stream, index, or alias.
 
         :param indices: A list of indices, data streams or aliases. Supports wildcards and date math.
@@ -49,10 +62,11 @@ class ESQL(ABC):
             query4 = ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
             query5 = ESQL.from_("employees").metadata("_id")
         """
-        return From(*indices)
+        new_root = From(*indices)
+        new_root._directives = self._directives.copy()
+        return new_root
 
-    @staticmethod
-    def row(**params: ExpressionType) -> "Row":
+    def row(self, **params: ExpressionType) -> "Row":
         """The ``ROW`` source command produces a row with one or more columns with values that you specify.
         This can be useful for testing.
 
@@ -64,10 +78,11 @@ class ESQL(ABC):
             query2 = ESQL.row(a=[1, 2])
             query3 = ESQL.row(a=functions.round(1.23, 0))
         """
-        return Row(**params)
+        new_root = Row(**params)
+        new_root._directives = self._directives.copy()
+        return new_root
 
-    @staticmethod
-    def show(item: str) -> "Show":
+    def show(self, item: str) -> "Show":
         """The ``SHOW`` source command returns information about the deployment and its capabilities.
 
         :param item: Can only be ``INFO``.
@@ -76,10 +91,11 @@ class ESQL(ABC):
 
             query = ESQL.show("INFO")
         """
-        return Show(item)
+        new_root = Show(item)
+        new_root._directives = self._directives.copy()
+        return new_root
 
-    @staticmethod
-    def ts(*indices: IndexType) -> "TS":
+    def ts(self, *indices: IndexType) -> "TS":
         """The ``TS`` source command is similar to ``FROM``, but for time series indices.
 
         :param indices: A list of indices, data streams or aliases. Supports wildcards and date math.
@@ -92,10 +108,11 @@ class ESQL(ABC):
                 .stats("SUM(AVG_OVER_TIME(memory_usage)").by("host", "TBUCKET(1 hour)")
             )
         """
-        return TS(*indices)
+        new_root = TS(*indices)
+        new_root._directives = self._directives.copy()
+        return new_root
 
-    @staticmethod
-    def branch() -> "Branch":
+    def branch(self) -> "Branch":
         """This method can only be used inside a ``FORK`` command to create each branch.
 
         Examples::
@@ -107,6 +124,28 @@ class ESQL(ABC):
         """
         return Branch()
 
+    def set(self, **params: ExpressionType) -> "Set":
+        """The ``SET`` directive can be used to specify query settings that
+        modify the behavior of an ES|QL query.
+
+        Examples::
+
+            query1 = (
+                ESQL.set(approximation=True)
+                .from_("many_numbers")
+                .stats(sum="SUM(sv)")
+            )
+            query2 = (
+                ESQL.set(approximation={"rows": 10000})
+                .from_("many_numbers")
+                .stats(median="MEDIAN(sv)")
+            )
+        """
+        new_root = _ESQL()
+        new_root._directives = self._directives.copy()
+        new_root._directives.append(Set(**params))
+        return new_root
+
 
 class ESQLBase(ABC):
     """The methods of the ``ESQLBase`` class provide access to the ES|QL processing
@@ -115,14 +154,19 @@ class ESQLBase(ABC):
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
         self._parent = parent
+        self._directives = []
 
     def __repr__(self) -> str:
         return self.render()
 
     def render(self) -> str:
-        return (
-            self._parent.render() + "\n| " if self._parent else ""
-        ) + self._render_internal()
+        if self._parent:
+            r = self._parent.render() + "\n| "
+        else:
+            r = ";\n".join([d._render_internal() for d in self._directives])
+            if r:
+                r += ";\n"
+        return r + self._render_internal()
 
     @abstractmethod
     def _render_internal(self) -> str:
@@ -169,8 +213,7 @@ class ESQLBase(ABC):
                 ESQL.row(key=list(range(1, 26)))
                 .mv_expand("key")
                 .eval(value=functions.case("key<13", 0, 42))
-                .change_point("value")
-                .on("key")
+                .change_point("value").on("key")
                 .where("type IS NOT NULL")
             )
         """
@@ -523,6 +566,66 @@ class ESQLBase(ABC):
         """
         return LookupJoin(self, lookup_index)
 
+    def metrics_info(self):
+        """The ``METRICS_INFO`` processing command retrieves information about
+        the metrics available in time series data streams, along with their
+        applicable dimensions and other metadata.
+
+        Examples::
+
+            query1 = (
+                ESQL.ts("k8s")
+                .metrics_info()
+                .sort("metric_name")
+            )
+            query2 = (
+                ESQL.ts("k8s")
+                .where("cluster == \"prod\"")
+                .metrics_info()
+                .sort("metric_name")
+            )
+        """
+        return MetricsInfo(self)
+
+    def mmr(self, field: FieldType, query_vector: ExpressionType = None) -> "Mmr":
+        """The `MMR` command reduces the result set from a set of input rows by
+        applying a diversification strategy to the return rows.
+
+        :param query_vector: The name of the field that will use its values for
+                             the diversification process. The field must be a
+                             ``dense_vector`` type.
+
+        Examples::
+
+            query1 = (
+                ESQL.from_("mmr_text_vector_keyword")
+                .sort("keyword_field")
+                .limit(10)
+                .mmr("text_vector").limit(3)
+                .drop("text_vector", "byte_vector", "bit_vector")
+            )
+            query2 = (
+                ESQL.from_("mmr_text_vector_keyword")
+                .sort("keyword_field")
+                .limit(10)
+                .mmr("text_vector", [0.1, 0.2, 0.3]).limit(3).with_(lambda_=0.1)
+                .drop("text_vector", "byte_vector", "bit_vector")
+            )
+            query3 = (
+                ESQL.from_("dense_vector_text").metadata("_score")
+                .eval(query_embedding=functions.text_embedding("be excellent to each other", "test_dense_inference"))
+                .where(functions.knn("text_embedding_field", "query_embedding"))
+                .sort("_score DESC")
+                .limit(10)
+                .mmr(
+                    "text_embedding_field",
+                    functions.text_embedding("be excellent to each other", "test_dense_inference")
+                ).limit(3).with_(lambda_=0.2)
+                .keep("text_field", "query_embedding")
+            )
+        """
+        return Mmr(self, field, query_vector)
+
     def mv_expand(self, column: FieldType) -> "MvExpand":
         """The ``MV_EXPAND`` processing command expands multivalued columns into one row per
         value, duplicating other columns.
@@ -534,6 +637,32 @@ class ESQLBase(ABC):
             query = ESQL.row(a=[1, 2, 3], b="b", j=["a", "b"]).mv_expand("a")
         """
         return MvExpand(self, column)
+
+    def registered_domain(self, **prefix: str) -> "RegisteredDomain":
+        """The `REGISTERED_DOMAIN` processing command parses a fully qualified
+        domain name (FQDN) string and extracts its parts (domain, registered
+        domain, top-level domain, subdomain) into new columns using the public
+        suffix list.
+
+        :param prefix: A keyword argument, where the argument name is the prefix
+                       for the output columns, and the value is the string
+                       expression containing the FQDN to parse.
+
+        Examples::
+
+            query1 = (
+                ESQL.row(fqdn="www.example.co.uk")
+                .registered_domain(rd="fqdn")
+                .keep("rd.*")
+            )
+            query2 = (
+                ESQL.from_("web_logs")
+                .registered_domain(rd="domain")
+                .where("rd.registered_domain == \"elastic.co\"")
+                .stats(functions.count(E("*"))).by("rd.subdomain")
+            )
+        """
+        return RegisteredDomain(self, **prefix)
 
     def rename(self, **columns: FieldType) -> "Rename":
         """The ``RENAME`` processing command renames one or more columns.
@@ -685,10 +814,10 @@ class ESQLBase(ABC):
                 ESQL.from_("employees")
                 .eval(Ks="salary / 1000")
                 .stats(
-                    under_40K=functions.count("*").where("Ks < 40"),
-                    inbetween=functions.count("*").where("40 <= Ks AND Ks < 60"),
-                    over_60K=functions.count("*").where("60 <= Ks"),
-                    total=f.count("*")
+                    under_40K=functions.count(E("*")).where("Ks < 40"),
+                    inbetween=functions.count(E("*")).where("40 <= Ks AND Ks < 60"),
+                    over_60K=functions.count(E("*")).where("60 <= Ks"),
+                    total=f.count(E("*"))
                 )
             )
             query6 = (
@@ -706,6 +835,77 @@ class ESQLBase(ABC):
             )
         """
         return Stats(self, *expressions, **named_expressions)
+
+    def ts_info(self):
+        """The ``METRICS_INFO`` processing command retrieves information about
+        individual time series available in time series data streams, along
+        with the dimension values that identify each series.
+
+        Examples::
+
+            query1 = (
+                ESQL.ts("k8s")
+                .ts_info()
+                .sort("metric_name", "dimensions")
+            )
+            query2 = (
+                ESQL.ts("k8s")
+                .where("cluster == \"prod\"")
+                .ts_info()
+                .sort("metric_name", "dimensions")
+            )
+        """
+        return TsInfo(self)
+
+    def uri_parts(self, **prefix) -> "UriParts":
+        """The `URI_PARTS` processing command parses a Uniform Resource
+        Identifier (URI) string and extracts its components into new columns.
+
+        :param prefix: A keyword argument, where the argument name is the prefix
+                       for the output columns, and the value is the string
+                       expression containing the URI to parse.
+
+        Examples::
+
+            query1 = (
+                ESQL.row(uri="http://myusername:mypassword@www.example.com:80/foo.gif?key1=val1&key2=val2#fragment")
+                .uri_parts(parts="uri")
+                .keep("parts.*")
+            )
+            query2 = (
+                ESQL.from_("web_logs")
+                .uri_parts(p="uri")
+                .where("p.domain == \"www.example.com\"")
+                .stats(functions.count(E("*"))).by("p.path")
+            )
+        """
+        return UriParts(self, **prefix)
+
+    def user_agent(self, **prefix) -> "UserAgent":
+        """The `USER_AGENT` processing command parses a user-agent string and
+        extracts its components (name, version, OS, device) into new columns.
+
+        :param prefix: A keyword argument, where the argument name is the prefix
+                       for the output columns, and the value is the string
+                       expression containing the user agent string to parse.
+
+        Examples::
+
+            query1 = (
+                ESQL.row(input="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.149 Safari/537.36")
+                .user_agent(ua="input").with_(extract_device_type=True)
+                .keep("ua.*")
+            )
+            query2 = (
+                ESQL.row(input="Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15")
+                .user_agent(ua="input").with_(
+                    properties=["name", "version", "device"],
+                    extract_device_type=True
+                )
+                .keep("ua.*")
+            )
+        """
+        return UserAgent(self, **prefix)
 
     def where(self, *expressions: ExpressionType) -> "Where":
         """The ``WHERE`` processing command produces a table that contains all the rows
@@ -828,6 +1028,29 @@ class Branch(ESQLBase):
 
     def _render_internal(self) -> str:
         return ""
+
+
+class Set(ABC):
+    """Implementation of the ``SET`` query directive.
+
+    This class inherits from :class:`ESQL <elasticsearch.esql.esql.ESQL>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, **params: ExpressionType):
+        super().__init__()
+        self._params = {
+            _ESQL._format_id(k): (
+                json.dumps(v)
+                if not isinstance(v, InstrumentedExpression)
+                else self._format_expr(v)
+            )
+            for k, v in params.items()
+        }
+
+    def _render_internal(self) -> str:
+        return "SET " + ", ".join([f"{k} = {v}" for k, v in self._params.items()])
 
 
 class ChangePoint(ESQLBase):
@@ -1223,6 +1446,75 @@ class LookupJoin(ESQLBase):
         )
 
 
+class MetricsInfo(ESQLBase):
+    """Implementation of the ``METRICS_INFO`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase):
+        super().__init__(parent)
+
+    def _render_internal(self) -> str:
+        return "METRICS_INFO"
+
+
+class Mmr(ESQLBase):
+    """Implementation of the ``MMR`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(
+        self, parent: ESQLBase, field: FieldType, query_vector: ExpressionType
+    ):
+        super().__init__(parent)
+        self._field = field
+        self._query_vector = query_vector
+        self._limit = None
+        self._lambda = None
+
+    def limit(self, max_number_of_rows: int) -> "Mmr":
+        """Continuation of the ``MMR`` command.
+
+        :param max_number_of_rows: The maximum number of rows to return after
+                                   diversification.
+        """
+        self._max_number_of_rows = max_number_of_rows
+        return self
+
+    def with_(self, lambda_: float) -> "Mmr":
+        """Continuation of the ``MMR`` command.
+
+        :param lambda_: A value between 0.0 and 1.0 that controls how
+                        similarity is calculated during diversification.
+                        Higher values weight the similarity to the
+                        query_vector more heavily, lower values weight the
+                        diversity more heavily.
+        """
+        self._lambda = lambda_
+        return self
+
+    def _render_internal(self) -> str:
+        on = ""
+        if self._query_vector is not None:
+            on += f"{self._format_expr(self._query_vector)} "
+        on += f"ON {self._format_id(self._field)}"
+        limit = ""
+        if self._max_number_of_rows is not None:
+            limit = f" LIMIT {self._max_number_of_rows}"
+        with_ = (
+            " WITH " + json.dumps({"lambda": self._lambda})
+            if self._lambda is not None
+            else ""
+        )
+        return f"MMR {on}{limit}{with_}"
+
+
 class MvExpand(ESQLBase):
     """Implementation of the ``MV_EXPAND`` processing command.
 
@@ -1237,6 +1529,26 @@ class MvExpand(ESQLBase):
 
     def _render_internal(self) -> str:
         return f"MV_EXPAND {self._format_id(self._column)}"
+
+
+class RegisteredDomain(ESQLBase):
+    """Implementation of the ``REGISTERED_DOMAIN`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase, **prefix: str):
+        super().__init__(parent)
+        if len(prefix) != 1:
+            raise ValueError("this method requires exactly one keyword argument")
+        self._prefix = prefix
+
+    def _render_internal(self) -> str:
+        field = list(self._prefix.keys())[0]
+        expr = list(self._prefix.values())[0]
+        return f"REGISTERED_DOMAIN {self._format_id(field)} = {self._format_expr(expr)}"
 
 
 class Rename(ESQLBase):
@@ -1415,6 +1727,69 @@ class InlineStats(Stats):
     command_name = "INLINE STATS"
 
 
+class TsInfo(ESQLBase):
+    """Implementation of the ``TS_INFO`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase):
+        super().__init__(parent)
+
+    def _render_internal(self) -> str:
+        return "TS_INFO"
+
+
+class UriParts(ESQLBase):
+    """Implementation of the ``URI_PARTS`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase, **prefix: str):
+        super().__init__(parent)
+        if len(prefix) != 1:
+            raise ValueError("this method requires exactly one keyword argument")
+        self._prefix = prefix
+
+    def _render_internal(self) -> str:
+        field = list(self._prefix.keys())[0]
+        expr = list(self._prefix.values())[0]
+        return f"URI_PARTS {self._format_id(field)} = {self._format_expr(expr)}"
+
+
+class UserAgent(ESQLBase):
+    """Implementation of the ``USER_AGENT`` processing command.
+
+    This class inherits from :class:`ESQLBase <elasticsearch.esql.esql.ESQLBase>`,
+    to make it possible to chain all the commands that belong to an ES|QL query
+    in a single expression.
+    """
+
+    def __init__(self, parent: ESQLBase, **prefix: str):
+        super().__init__(parent)
+        if len(prefix) != 1:
+            raise ValueError("this method requires exactly one keyword argument")
+        self._prefix = prefix
+        self._options = None
+
+    def with_(self, **options: str) -> "UserAgent":
+        self._options = options
+        return self
+
+    def _render_internal(self) -> str:
+        field = list(self._prefix.keys())[0]
+        expr = list(self._prefix.values())[0]
+        with_ = ""
+        if self._options:
+            with_ = f" WITH {self._format_expr(self._options)}"
+        return f"USER_AGENT {self._format_id(field)} = {self._format_expr(expr)}{with_}"
+
+
 class Where(ESQLBase):
     """Implementation of the ``WHERE`` processing command.
 
@@ -1444,3 +1819,6 @@ def or_(*expressions: InstrumentedExpression) -> "InstrumentedExpression":
 def not_(expression: InstrumentedExpression) -> "InstrumentedExpression":
     """Negate an expression."""
     return InstrumentedExpression(f"NOT ({expression})")
+
+
+ESQL = _ESQL()
