@@ -35,8 +35,8 @@ class _ESQL(ABC):
     the ES|QL processing commands.
     """
 
-    def __init__(self, parent: Optional["ESQL"] = None):
-        self._directives = []
+    def __init__(self, parent: Optional["_ESQL"] = None):
+        self._directives: List[ABC] = []
 
     @staticmethod
     def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
@@ -124,7 +124,7 @@ class _ESQL(ABC):
         """
         return Branch()
 
-    def set(self, **params: ExpressionType) -> "Set":
+    def set(self, **params: ExpressionType) -> "_ESQL":
         """The ``SET`` directive can be used to specify query settings that
         modify the behavior of an ES|QL query.
 
@@ -154,7 +154,7 @@ class ESQLBase(ABC):
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
         self._parent = parent
-        self._directives = []
+        self._directives: List["_ESQL"] = []
 
     def __repr__(self) -> str:
         return self.render()
@@ -566,7 +566,7 @@ class ESQLBase(ABC):
         """
         return LookupJoin(self, lookup_index)
 
-    def metrics_info(self):
+    def metrics_info(self) -> "MetricsInfo":
         """The ``METRICS_INFO`` processing command retrieves information about
         the metrics available in time series data streams, along with their
         applicable dimensions and other metadata.
@@ -601,14 +601,14 @@ class ESQLBase(ABC):
                 ESQL.from_("mmr_text_vector_keyword")
                 .sort("keyword_field")
                 .limit(10)
-                .mmr("text_vector").limit(3)
+                .mmr("text_vector").mmr_limit(3)
                 .drop("text_vector", "byte_vector", "bit_vector")
             )
             query2 = (
                 ESQL.from_("mmr_text_vector_keyword")
                 .sort("keyword_field")
                 .limit(10)
-                .mmr("text_vector", [0.1, 0.2, 0.3]).limit(3).with_(lambda_=0.1)
+                .mmr("text_vector", [0.1, 0.2, 0.3]).mmr_limit(3).with_(lambda_=0.1)
                 .drop("text_vector", "byte_vector", "bit_vector")
             )
             query3 = (
@@ -620,7 +620,7 @@ class ESQLBase(ABC):
                 .mmr(
                     "text_embedding_field",
                     functions.text_embedding("be excellent to each other", "test_dense_inference")
-                ).limit(3).with_(lambda_=0.2)
+                ).mmr_limit(3).with_(lambda_=0.2)
                 .keep("text_field", "query_embedding")
             )
         """
@@ -638,7 +638,7 @@ class ESQLBase(ABC):
         """
         return MvExpand(self, column)
 
-    def registered_domain(self, **prefix: str) -> "RegisteredDomain":
+    def registered_domain(self, **prefix: ExpressionType) -> "RegisteredDomain":
         """The `REGISTERED_DOMAIN` processing command parses a fully qualified
         domain name (FQDN) string and extracts its parts (domain, registered
         domain, top-level domain, subdomain) into new columns using the public
@@ -836,7 +836,7 @@ class ESQLBase(ABC):
         """
         return Stats(self, *expressions, **named_expressions)
 
-    def ts_info(self):
+    def ts_info(self) -> "TsInfo":
         """The ``METRICS_INFO`` processing command retrieves information about
         individual time series available in time series data streams, along
         with the dimension values that identify each series.
@@ -857,7 +857,7 @@ class ESQLBase(ABC):
         """
         return TsInfo(self)
 
-    def uri_parts(self, **prefix) -> "UriParts":
+    def uri_parts(self, **prefix: ExpressionType) -> "UriParts":
         """The `URI_PARTS` processing command parses a Uniform Resource
         Identifier (URI) string and extracts its components into new columns.
 
@@ -881,7 +881,7 @@ class ESQLBase(ABC):
         """
         return UriParts(self, **prefix)
 
-    def user_agent(self, **prefix) -> "UserAgent":
+    def user_agent(self, **prefix: ExpressionType) -> "UserAgent":
         """The `USER_AGENT` processing command parses a user-agent string and
         extracts its components (name, version, OS, device) into new columns.
 
@@ -1044,7 +1044,7 @@ class Set(ABC):
             _ESQL._format_id(k): (
                 json.dumps(v)
                 if not isinstance(v, InstrumentedExpression)
-                else self._format_expr(v)
+                else _ESQL._format_expr(v)
             )
             for k, v in params.items()
         }
@@ -1475,10 +1475,10 @@ class Mmr(ESQLBase):
         super().__init__(parent)
         self._field = field
         self._query_vector = query_vector
-        self._limit = None
-        self._lambda = None
+        self._max_number_of_rows: Optional[int] = None
+        self._lambda: Optional[float] = None
 
-    def limit(self, max_number_of_rows: int) -> "Mmr":
+    def mmr_limit(self, max_number_of_rows: int) -> "Mmr":
         """Continuation of the ``MMR`` command.
 
         :param max_number_of_rows: The maximum number of rows to return after
@@ -1539,7 +1539,7 @@ class RegisteredDomain(ESQLBase):
     in a single expression.
     """
 
-    def __init__(self, parent: ESQLBase, **prefix: str):
+    def __init__(self, parent: ESQLBase, **prefix: ExpressionType):
         super().__init__(parent)
         if len(prefix) != 1:
             raise ValueError("this method requires exactly one keyword argument")
@@ -1750,7 +1750,7 @@ class UriParts(ESQLBase):
     in a single expression.
     """
 
-    def __init__(self, parent: ESQLBase, **prefix: str):
+    def __init__(self, parent: ESQLBase, **prefix: ExpressionType):
         super().__init__(parent)
         if len(prefix) != 1:
             raise ValueError("this method requires exactly one keyword argument")
@@ -1770,7 +1770,7 @@ class UserAgent(ESQLBase):
     in a single expression.
     """
 
-    def __init__(self, parent: ESQLBase, **prefix: str):
+    def __init__(self, parent: ESQLBase, **prefix: ExpressionType):
         super().__init__(parent)
         if len(prefix) != 1:
             raise ValueError("this method requires exactly one keyword argument")

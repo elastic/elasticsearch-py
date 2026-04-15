@@ -617,7 +617,7 @@ def test_mmr():
         .sort("keyword_field")
         .limit(10)
         .mmr("text_vector")
-        .limit(3)
+        .mmr_limit(3)
         .drop("text_vector", "byte_vector", "bit_vector")
     )
     assert (
@@ -634,7 +634,7 @@ def test_mmr():
         .sort("keyword_field")
         .limit(10)
         .mmr("text_vector", [0.1, 0.2, 0.3])
-        .limit(3)
+        .mmr_limit(3)
         .with_(lambda_=0.1)
         .drop("text_vector", "byte_vector", "bit_vector")
     )
@@ -664,7 +664,7 @@ def test_mmr():
                 "be excellent to each other", "test_dense_inference"
             ),
         )
-        .limit(3)
+        .mmr_limit(3)
         .with_(lambda_=0.2)
         .keep("text_field", "query_embedding")
     )
