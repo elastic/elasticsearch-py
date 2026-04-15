@@ -36,7 +36,10 @@ class _ESQL(ABC):
     """
 
     def __init__(self, parent: Optional["_ESQL"] = None):
-        self._directives: List[ABC] = []
+        self._directives: List[_ESQL] = []
+
+    def _render_internal(self) -> str:
+        return ""
 
     @staticmethod
     def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
@@ -154,7 +157,7 @@ class ESQLBase(ABC):
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
         self._parent = parent
-        self._directives: List["_ESQL"] = []
+        self._directives: List[_ESQL] = []
 
     def __repr__(self) -> str:
         return self.render()
@@ -1030,7 +1033,7 @@ class Branch(ESQLBase):
         return ""
 
 
-class Set(ABC):
+class Set(_ESQL):
     """Implementation of the ``SET`` query directive.
 
     This class inherits from :class:`ESQL <elasticsearch.esql.esql.ESQL>`,
@@ -1044,7 +1047,7 @@ class Set(ABC):
             _ESQL._format_id(k): (
                 json.dumps(v)
                 if not isinstance(v, InstrumentedExpression)
-                else _ESQL._format_expr(v)
+                else ESQLBase._format_expr(v)
             )
             for k, v in params.items()
         }
@@ -1775,7 +1778,7 @@ class UserAgent(ESQLBase):
         if len(prefix) != 1:
             raise ValueError("this method requires exactly one keyword argument")
         self._prefix = prefix
-        self._options = None
+        self._options: Optional[Dict[str, str]] = None
 
     def with_(self, **options: str) -> "UserAgent":
         self._options = options
