@@ -72,7 +72,7 @@ def test_ts():
 
 
 def test_set():
-    query = ESQL.set(approximation=True).from_("many_numbers").stats(sum="SUM(sv)")
+    query = ESQL.from_("many_numbers").stats(sum="SUM(sv)").set(approximation=True)
     assert (
         query.render()
         == """SET approximation = true;
@@ -81,9 +81,9 @@ FROM many_numbers
     )
 
     query = (
-        ESQL.set(approximation={"rows": 10000})
-        .from_("many_numbers")
+        ESQL.from_("many_numbers")
         .stats(median="MEDIAN(sv)")
+        .set(approximation={"rows": 10000})
     )
     assert (
         query.render()
@@ -92,11 +92,11 @@ FROM many_numbers
 | STATS median = MEDIAN(sv)"""
     )
 
-    query = ESQL.set(approximation=True).row(a=1)
+    query = ESQL.row(a=1).set(approximation=True)
     assert query.render() == "SET approximation = true;\nROW a = 1"
-    query = ESQL.set(approximation=True).show("INFO")
+    query = ESQL.show("INFO").set(approximation=True)
     assert query.render() == "SET approximation = true;\nSHOW INFO"
-    query = ESQL.set(approximation=True).ts("many_numbers")
+    query = ESQL.ts("many_numbers").set(approximation=True)
     assert query.render() == "SET approximation = true;\nTS many_numbers"
 
 

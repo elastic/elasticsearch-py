@@ -27,7 +27,7 @@ IndexType = Union[Type[DocumentBase], str]
 ExpressionType = Any
 
 
-class _ESQL(ABC):
+class ESQL(ABC):
     """The static methods of the ``ESQL`` class provide access to the ES|QL source
     commands, used to create ES|QL queries.
 
@@ -35,24 +35,8 @@ class _ESQL(ABC):
     the ES|QL processing commands.
     """
 
-    def __init__(self, parent: Optional["_ESQL"] = None):
-        self._directives: List[_ESQL] = []
-
-    def _render_internal(self) -> str:
-        return ""
-
     @staticmethod
-    def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
-        s = str(id)  # in case it is an InstrumentedField
-        if allow_patterns and "*" in s:
-            return s  # patterns cannot be escaped
-        if re.fullmatch(r"[a-zA-Z_@][a-zA-Z0-9_\.]*", s):
-            return s
-        # this identifier needs to be escaped
-        s = s.replace("`", "``")
-        return f"`{s}`"
-
-    def from_(self, *indices: IndexType) -> "From":
+    def from_(*indices: IndexType) -> "From":
         """The ``FROM`` source command returns a table with data from a data stream, index, or alias.
 
         :param indices: A list of indices, data streams or aliases. Supports wildcards and date math.
@@ -65,11 +49,10 @@ class _ESQL(ABC):
             query4 = ESQL.from_("cluster_one:employees-00001", "cluster_two:other-employees-*")
             query5 = ESQL.from_("employees").metadata("_id")
         """
-        new_root = From(*indices)
-        new_root._directives = self._directives.copy()
-        return new_root
+        return From(*indices)
 
-    def row(self, **params: ExpressionType) -> "Row":
+    @staticmethod
+    def row(**params: ExpressionType) -> "Row":
         """The ``ROW`` source command produces a row with one or more columns with values that you specify.
         This can be useful for testing.
 
@@ -81,11 +64,10 @@ class _ESQL(ABC):
             query2 = ESQL.row(a=[1, 2])
             query3 = ESQL.row(a=functions.round(1.23, 0))
         """
-        new_root = Row(**params)
-        new_root._directives = self._directives.copy()
-        return new_root
+        return Row(**params)
 
-    def show(self, item: str) -> "Show":
+    @staticmethod
+    def show(item: str) -> "Show":
         """The ``SHOW`` source command returns information about the deployment and its capabilities.
 
         :param item: Can only be ``INFO``.
@@ -94,11 +76,10 @@ class _ESQL(ABC):
 
             query = ESQL.show("INFO")
         """
-        new_root = Show(item)
-        new_root._directives = self._directives.copy()
-        return new_root
+        return Show(item)
 
-    def ts(self, *indices: IndexType) -> "TS":
+    @staticmethod
+    def ts(*indices: IndexType) -> "TS":
         """The ``TS`` source command is similar to ``FROM``, but for time series indices.
 
         :param indices: A list of indices, data streams or aliases. Supports wildcards and date math.
@@ -111,11 +92,10 @@ class _ESQL(ABC):
                 .stats("SUM(AVG_OVER_TIME(memory_usage)").by("host", "TBUCKET(1 hour)")
             )
         """
-        new_root = TS(*indices)
-        new_root._directives = self._directives.copy()
-        return new_root
+        return TS(*indices)
 
-    def branch(self) -> "Branch":
+    @staticmethod
+    def branch() -> "Branch":
         """This method can only be used inside a ``FORK`` command to create each branch.
 
         Examples::
@@ -127,28 +107,6 @@ class _ESQL(ABC):
         """
         return Branch()
 
-    def set(self, **params: ExpressionType) -> "_ESQL":
-        """The ``SET`` directive can be used to specify query settings that
-        modify the behavior of an ES|QL query.
-
-        Examples::
-
-            query1 = (
-                ESQL.set(approximation=True)
-                .from_("many_numbers")
-                .stats(sum="SUM(sv)")
-            )
-            query2 = (
-                ESQL.set(approximation={"rows": 10000})
-                .from_("many_numbers")
-                .stats(median="MEDIAN(sv)")
-            )
-        """
-        new_root = _ESQL()
-        new_root._directives = self._directives.copy()
-        new_root._directives.append(Set(**params))
-        return new_root
-
 
 class ESQLBase(ABC):
     """The methods of the ``ESQLBase`` class provide access to the ES|QL processing
@@ -157,7 +115,7 @@ class ESQLBase(ABC):
 
     def __init__(self, parent: Optional["ESQLBase"] = None):
         self._parent = parent
-        self._directives: List[_ESQL] = []
+        self._directives: List["ESQLBase"] = []
 
     def __repr__(self) -> str:
         return self.render()
@@ -204,6 +162,32 @@ class ESQLBase(ABC):
         if self._parent:
             return self._parent._is_forked()
         return False
+
+    def _add_directive(self, directive: "ESQLBase") -> None:
+        if self._parent:
+            self._parent._add_directive(directive)
+        else:
+            self._directives.append(directive)
+
+    def set(self, **params: ExpressionType) -> "ESQLBase":
+        """The ``SET`` directive can be used to specify query settings that
+        modify the behavior of an ES|QL query.
+
+        Examples::
+
+            query1 = (
+                ESQL.from_("many_numbers")
+                .stats(sum="SUM(sv)")
+                .set(approximation=True)
+            )
+            query2 = (
+                ESQL.from_("many_numbers")
+                .stats(median="MEDIAN(sv)")
+                .set(approximation={"rows": 10000})
+            )
+        """
+        self._add_directive(Set(**params))
+        return self
 
     def change_point(self, value: FieldType) -> "ChangePoint":
         """``CHANGE_POINT`` detects spikes, dips, and change points in a metric.
@@ -1033,7 +1017,7 @@ class Branch(ESQLBase):
         return ""
 
 
-class Set(_ESQL):
+class Set(ESQLBase):
     """Implementation of the ``SET`` query directive.
 
     This class inherits from :class:`ESQL <elasticsearch.esql.esql.ESQL>`,
@@ -1044,7 +1028,7 @@ class Set(_ESQL):
     def __init__(self, **params: ExpressionType):
         super().__init__()
         self._params = {
-            _ESQL._format_id(k): (
+            self._format_id(k): (
                 json.dumps(v)
                 if not isinstance(v, InstrumentedExpression)
                 else ESQLBase._format_expr(v)
@@ -1822,6 +1806,3 @@ def or_(*expressions: InstrumentedExpression) -> "InstrumentedExpression":
 def not_(expression: InstrumentedExpression) -> "InstrumentedExpression":
     """Negate an expression."""
     return InstrumentedExpression(f"NOT ({expression})")
-
-
-ESQL = _ESQL()
