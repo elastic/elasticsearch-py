@@ -99,6 +99,11 @@ FROM many_numbers
     query = ESQL.ts("many_numbers").set(approximation=True)
     assert query.render() == "SET approximation = true;\nTS many_numbers"
 
+    query = ESQL.from_("index").set(foo="bar", baz={"a": "b"}).set(qux=False)
+    assert query.render() == """SET foo = "bar", baz = {\"a\": \"b\"};
+SET qux = false;
+FROM index"""
+
 
 def test_change_point():
     query = (

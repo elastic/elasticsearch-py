@@ -575,12 +575,16 @@ class ESQLBase(ABC):
         return MetricsInfo(self)
 
     def mmr(self, field: FieldType, query_vector: ExpressionType = None) -> "Mmr":
-        """The `MMR` command reduces the result set from a set of input rows by
+        """The ``MMR`` command reduces the result set from a set of input rows by
         applying a diversification strategy to the return rows.
 
-        :param query_vector: The name of the field that will use its values for
-                             the diversification process. The field must be a
-                             ``dense_vector`` type.
+        :param field: The name of the field that will use its values for the
+                      diversification process. The field must be a dense_vector
+                      type.
+        :param query_vector: The query vector to use as part of the
+                             diversification algorithm for comparison. Must have
+                             the same number of dimensions as the vector field
+                             you are searching against.
 
         Examples::
 
@@ -626,7 +630,7 @@ class ESQLBase(ABC):
         return MvExpand(self, column)
 
     def registered_domain(self, **prefix: ExpressionType) -> "RegisteredDomain":
-        """The `REGISTERED_DOMAIN` processing command parses a fully qualified
+        """The ``REGISTERED_DOMAIN`` processing command parses a fully qualified
         domain name (FQDN) string and extracts its parts (domain, registered
         domain, top-level domain, subdomain) into new columns using the public
         suffix list.
@@ -824,7 +828,7 @@ class ESQLBase(ABC):
         return Stats(self, *expressions, **named_expressions)
 
     def ts_info(self) -> "TsInfo":
-        """The ``METRICS_INFO`` processing command retrieves information about
+        """The ``TS_INFO`` processing command retrieves information about
         individual time series available in time series data streams, along
         with the dimension values that identify each series.
 
@@ -845,7 +849,7 @@ class ESQLBase(ABC):
         return TsInfo(self)
 
     def uri_parts(self, **prefix: ExpressionType) -> "UriParts":
-        """The `URI_PARTS` processing command parses a Uniform Resource
+        """The ``URI_PARTS`` processing command parses a Uniform Resource
         Identifier (URI) string and extracts its components into new columns.
 
         :param prefix: A keyword argument, where the argument name is the prefix
@@ -869,7 +873,7 @@ class ESQLBase(ABC):
         return UriParts(self, **prefix)
 
     def user_agent(self, **prefix: ExpressionType) -> "UserAgent":
-        """The `USER_AGENT` processing command parses a user-agent string and
+        """The ``USER_AGENT`` processing command parses a user-agent string and
         extracts its components (name, version, OS, device) into new columns.
 
         :param prefix: A keyword argument, where the argument name is the prefix
