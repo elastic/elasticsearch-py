@@ -592,6 +592,7 @@ class TransformClient(NamespacedClient):
         self,
         *,
         transform_id: str,
+        defer: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -612,6 +613,9 @@ class TransformClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-transform-schedule-now-transform>`_
 
         :param transform_id: Identifier for the transform.
+        :param defer: When true, defers the scheduling by the transform's configured
+            sync delay instead of triggering immediately. The transform will process
+            new data after the delay elapses rather than right away.
         :param timeout: Controls the time to wait for the scheduling to take place
         """
         if transform_id in SKIP_IN_PATH:
@@ -619,6 +623,8 @@ class TransformClient(NamespacedClient):
         __path_parts: t.Dict[str, str] = {"transform_id": _quote(transform_id)}
         __path = f'/_transform/{__path_parts["transform_id"]}/_schedule_now'
         __query: t.Dict[str, t.Any] = {}
+        if defer is not None:
+            __query["defer"] = defer
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

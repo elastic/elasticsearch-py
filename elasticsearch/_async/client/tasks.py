@@ -113,6 +113,7 @@ class TasksClient(NamespacedClient):
         task_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        follow_relocations: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -131,6 +132,7 @@ class TasksClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks>`_
 
         :param task_id: The task identifier.
+        :param follow_relocations: Internal use only
         :param timeout: The period to wait for a response. If no response is received
             before the timeout expires, the request fails and returns an error.
         :param wait_for_completion: If `true`, the request blocks until the task has
@@ -145,6 +147,8 @@ class TasksClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if follow_relocations is not None:
+            __query["follow_relocations"] = follow_relocations
         if human is not None:
             __query["human"] = human
         if pretty is not None:
