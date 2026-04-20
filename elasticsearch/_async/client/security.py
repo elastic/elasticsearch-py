@@ -683,6 +683,89 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("api_key", "expiration", "metadata", "name"),
+        ignore_deprecated_options={"api_key"},
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def clone_api_key(
+        self,
+        *,
+        api_key: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        name: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Clone an API key.</p>
+          <p>Create a copy of an existing API key with a new ID.
+          The cloned key inherits the role descriptors of the source key.
+          This is intended for applications (such as Kibana) that need to
+          create API keys on behalf of a user using an existing API key credential,
+          since derived API keys (API keys created by API keys) are not otherwise supported.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+
+        :param api_key: The credentials of the API key to clone. This is the secret value
+            returned when the key was originally created.
+        :param expiration: The expiration time for the cloned API key. By default, API
+            keys never expire. Set to `null` to explicitly create a key with no expiration.
+        :param metadata: Arbitrary metadata to associate with the cloned API key. It
+            supports nested data structure. Within the metadata object, keys beginning
+            with `_` are reserved for system usage.
+        :param name: A name for the cloned API key. If not provided, the name of the
+            source key is used.
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if api_key is None and body is None:
+            raise ValueError("Empty value passed for parameter 'api_key'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_security/api_key/clone"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if api_key is not None:
+                __body["api_key"] = api_key
+            if expiration is not None:
+                __body["expiration"] = expiration
+            if metadata is not None:
+                __body["metadata"] = metadata
+            if name is not None:
+                __body["name"] = name
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.clone_api_key",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=("expiration", "metadata", "name", "role_descriptors"),
     )
     async def create_api_key(
