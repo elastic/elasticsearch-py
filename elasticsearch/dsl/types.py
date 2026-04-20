@@ -383,16 +383,16 @@ class DateRangeExpression(AttrDict[Any]):
     :arg to: End of the range (exclusive).
     """
 
-    from_: Union[str, float, DefaultType]
+    from_: Union[str, int, DefaultType]
     key: Union[str, DefaultType]
-    to: Union[str, float, DefaultType]
+    to: Union[str, int, DefaultType]
 
     def __init__(
         self,
         *,
-        from_: Union[str, float, DefaultType] = DEFAULT,
+        from_: Union[str, int, DefaultType] = DEFAULT,
         key: Union[str, DefaultType] = DEFAULT,
-        to: Union[str, float, DefaultType] = DEFAULT,
+        to: Union[str, int, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if from_ is not DEFAULT:
