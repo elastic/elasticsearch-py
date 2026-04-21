@@ -342,8 +342,12 @@ class DslBase(metaclass=DslMeta):
         if _expand__to_dot is None:
             _expand__to_dot = EXPAND__TO_DOT
         self._params: Dict[str, Any] = {}
+        self._renamed: Optional[str] = None
         for pname, pvalue in params.items():
             if pvalue is DEFAULT:
+                continue
+            if pname == "_rename":
+                self._renamed = pvalue
                 continue
             # expand "__" to dots
             if "__" in pname and _expand__to_dot:
@@ -612,6 +616,9 @@ class ObjectBase(AttrDict[Any]):
         for k, v in self._d_.items():
             # if this is a mapped field,
             f = self.__get_field(k)
+            name = k
+            if hasattr(f, "_renamed") and f._renamed:
+                name = f._renamed
             if f and f._coerce:
                 v = f.serialize(v, skip_empty=skip_empty)
 
@@ -634,7 +641,7 @@ class ObjectBase(AttrDict[Any]):
                     except TypeError:
                         pass
 
-            out[k] = v
+            out[name] = v
         return out
 
     def clean_fields(self, validate: bool = True) -> None:

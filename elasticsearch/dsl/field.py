@@ -106,14 +106,21 @@ class Field(DslBase):
     _coerce = False
 
     def __init__(
-        self, multi: bool = False, required: bool = False, *args: Any, **kwargs: Any
+        self,
+        multi: bool = False,
+        required: bool = False,
+        _rename: Optional[str] = None,
+        *args: Any,
+        **kwargs: Any,
     ):
         """
         :arg bool multi: specifies whether field can contain array of values
         :arg bool required: specifies whether field is required
+        :arg str _rename: use an alternative name for the field in Elasticsearch
         """
         self._multi = multi
         self._required = required
+        self._rename = _rename
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, subfield: str) -> "Field":

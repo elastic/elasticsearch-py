@@ -56,7 +56,12 @@ class Properties(DslBase):
         return name in self.properties
 
     def to_dict(self) -> Dict[str, Any]:
-        return cast(Dict[str, Field], super().to_dict()["properties"])
+        props = {}
+        for pname, field in self.properties.items():
+            if hasattr(field, "_renamed") and field._renamed:
+                pname = field._renamed
+            props[pname] = field.to_dict()
+        return {"properties": props}
 
     def field(self, name: str, *args: Any, **kwargs: Any) -> Self:
         self.properties[name] = construct_field(*args, **kwargs)
