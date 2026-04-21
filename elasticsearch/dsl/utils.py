@@ -617,7 +617,7 @@ class ObjectBase(AttrDict[Any]):
             # if this is a mapped field,
             f = self.__get_field(k)
             name = k
-            if hasattr(f, "_renamed") and f._renamed:
+            if f is not None and hasattr(f, "_renamed") and f._renamed:
                 name = f._renamed
             if f and f._coerce:
                 v = f.serialize(v, skip_empty=skip_empty)

@@ -61,7 +61,7 @@ class Properties(DslBase):
             if hasattr(field, "_renamed") and field._renamed:
                 pname = field._renamed
             props[pname] = field.to_dict()
-        return {"properties": props}
+        return {"properties": props} if props else {}
 
     def field(self, name: str, *args: Any, **kwargs: Any) -> Self:
         self.properties[name] = construct_field(*args, **kwargs)
