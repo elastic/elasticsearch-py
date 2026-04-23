@@ -569,6 +569,12 @@ class ObjectBase(AttrDict[Any]):
             return None
 
     @classmethod
+    def __get_renamed_field(cls, name: str) -> Optional[Tuple[str, "Field"]]:
+        for k, v, _ in cls.__list_fields():
+            if hasattr(v, "_rename") and v._rename == name:
+                return k, v
+
+    @classmethod
     def from_es(cls, hit: Union[Dict[str, Any], "ObjectApiResponse[Any]"]) -> Self:
         meta = hit.copy()
         data = meta.pop("_source", {})
@@ -579,8 +585,14 @@ class ObjectBase(AttrDict[Any]):
     def _from_dict(self, data: Dict[str, Any]) -> None:
         for k, v in data.items():
             f = self.__get_field(k)
+            if f is None:
+                r = self.__get_renamed_field(k)
+                if r:
+                    k, f = r
             if f and f._coerce:
                 v = f.deserialize(v)
+                if hasattr(f, "_rename") and f._rename == k:
+                    f = f
             setattr(self, k, v)
 
     def __getstate__(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:  # type: ignore[override]
@@ -617,8 +629,8 @@ class ObjectBase(AttrDict[Any]):
             # if this is a mapped field,
             f = self.__get_field(k)
             name = k
-            if f is not None and hasattr(f, "_renamed") and f._renamed:
-                name = f._renamed
+            if f is not None and hasattr(f, "_rename") and f._rename:
+                name = f._rename
             if f and f._coerce:
                 v = f.serialize(v, skip_empty=skip_empty)
 
