@@ -573,6 +573,7 @@ class ObjectBase(AttrDict[Any]):
         for k, v, _ in cls.__list_fields():
             if hasattr(v, "_rename") and v._rename == name:
                 return k, v
+        return None
 
     @classmethod
     def from_es(cls, hit: Union[Dict[str, Any], "ObjectApiResponse[Any]"]) -> Self:
