@@ -1092,22 +1092,18 @@ def test_renamed_fields() -> None:
     assert len(serialized.keys()) == 3
 
     # dict to document using Python names
-    doc = Doc.from_es({"_source": {
-        "name": "foo",
-        "timestamp": "2026-01-01T00:00:00",
-        "this": 42
-    }})
+    doc = Doc.from_es(
+        {"_source": {"name": "foo", "timestamp": "2026-01-01T00:00:00", "this": 42}}
+    )
     assert doc.name == "foo"
     assert doc.timestamp.isoformat() == "2026-01-01T00:00:00"
     assert doc.this == 42
     assert doc.to_dict() == serialized
 
     # dict to document using ES names
-    doc = Doc.from_es({"_source": {
-        "name": "foo",
-        "@timestamp": "2026-01-01T00:00:00",
-        "that": 42
-    }})
+    doc = Doc.from_es(
+        {"_source": {"name": "foo", "@timestamp": "2026-01-01T00:00:00", "that": 42}}
+    )
     assert doc.name == "foo"
     assert doc.timestamp.isoformat() == "2026-01-01T00:00:00"
     assert doc.this == 42
