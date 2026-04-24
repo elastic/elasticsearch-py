@@ -342,12 +342,12 @@ class DslBase(metaclass=DslMeta):
         if _expand__to_dot is None:
             _expand__to_dot = EXPAND__TO_DOT
         self._params: Dict[str, Any] = {}
-        self._renamed: Optional[str] = None
+        self._es_named: Optional[str] = None
         for pname, pvalue in params.items():
             if pvalue is DEFAULT:
                 continue
-            if pname == "_rename":
-                self._renamed = pvalue
+            if pname == "_es_name":
+                self._es_named = pvalue
                 continue
             # expand "__" to dots
             if "__" in pname and _expand__to_dot:
@@ -571,7 +571,7 @@ class ObjectBase(AttrDict[Any]):
     @classmethod
     def __get_renamed_field(cls, name: str) -> Optional[Tuple[str, "Field"]]:
         for k, v, _ in cls.__list_fields():
-            if hasattr(v, "_rename") and v._rename == name:
+            if hasattr(v, "_es_name") and v._es_name == name:
                 return k, v
         return None
 
@@ -592,7 +592,7 @@ class ObjectBase(AttrDict[Any]):
                     k, f = r
             if f and f._coerce:
                 v = f.deserialize(v)
-                if hasattr(f, "_rename") and f._rename == k:
+                if hasattr(f, "_es_name") and f._es_name == k:
                     f = f
             setattr(self, k, v)
 
@@ -630,8 +630,8 @@ class ObjectBase(AttrDict[Any]):
             # if this is a mapped field,
             f = self.__get_field(k)
             name = k
-            if f is not None and hasattr(f, "_rename") and f._rename:
-                name = f._rename
+            if f is not None and hasattr(f, "_es_name") and f._es_name:
+                name = f._es_name
             if f and f._coerce:
                 v = f.serialize(v, skip_empty=skip_empty)
 

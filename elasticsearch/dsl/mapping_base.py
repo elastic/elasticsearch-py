@@ -58,8 +58,8 @@ class Properties(DslBase):
     def to_dict(self) -> Dict[str, Any]:
         props = {}
         for pname, field in self.properties.items():
-            if hasattr(field, "_rename") and field._rename:
-                pname = field._rename
+            if hasattr(field, "_es_name") and field._es_name:
+                pname = field._es_name
             props[pname] = field.to_dict()
         return {"properties": props} if props else {}
 

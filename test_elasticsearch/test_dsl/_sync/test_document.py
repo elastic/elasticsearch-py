@@ -1080,8 +1080,8 @@ def test_pydantic_integration() -> None:
 def test_renamed_fields() -> None:
     class Doc(Document):
         name: str
-        timestamp: datetime = mapped_field(field.Date(_rename="@timestamp"))
-        this = field.Integer(_rename="that")
+        timestamp: datetime = mapped_field(es_name="@timestamp")
+        this = field.Integer(_es_name="that")
 
     # document to dict
     doc = Doc(name="foo", timestamp=datetime(2026, 1, 1, 0, 0, 0), this=42)
