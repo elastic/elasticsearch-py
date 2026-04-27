@@ -100,6 +100,8 @@ class ComposableIndexTemplate:
         d["index_patterns"] = [self._index._name]
         if self.priority is not None:
             d["priority"] = self.priority
+        if self._index._data_stream:
+            d["data_stream"] = {}
         return d
 
     def save(self, using: Optional[UsingType] = None) -> "ObjectApiResponse[Any]":
@@ -177,6 +179,7 @@ class Index(IndexBase):
         i._doc_types = self._doc_types[:]
         if self._mapping is not None:
             i._mapping = self._mapping._clone()
+        i._data_stream = self._data_stream
         return i
 
     def search(self, using: Optional[UsingType] = None) -> Search:

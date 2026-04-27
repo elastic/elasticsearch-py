@@ -65,7 +65,9 @@ class IndexMeta(DocumentMeta):
         return cast(IndexMeta, new_cls)
 
     @classmethod
-    def construct_index(cls, opts: Dict[str, Any], bases: Tuple[type, ...]) -> Index:
+    def construct_index(
+        cls, opts: Optional[Dict[str, Any]], bases: Tuple[type, ...]
+    ) -> Index:
         if opts is None:
             for b in bases:
                 if hasattr(b, "_index"):
@@ -79,6 +81,8 @@ class IndexMeta(DocumentMeta):
         i.aliases(**getattr(opts, "aliases", {}))
         for a in getattr(opts, "analyzers", ()):
             i.analyzer(a)
+        if getattr(opts, "data_stream", None) is not None:
+            i.data_stream(True)
         return i
 
 
@@ -509,11 +513,9 @@ class Document(DocumentBase, metaclass=IndexMeta):
                     if validate:  # pragma: no cover
                         doc.full_clean()
                     action = doc.to_dict(include_meta=True, skip_empty=skip_empty)
-                if "_index" not in action:
-                    action["_index"] = i
                 return action
 
-        return bulk(es, Generate(actions), **kwargs)
+        return bulk(es, Generate(actions), index=i, **kwargs)
 
     @classmethod
     def esql_execute(

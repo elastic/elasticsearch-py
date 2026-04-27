@@ -66,7 +66,7 @@ class AsyncIndexMeta(DocumentMeta):
 
     @classmethod
     def construct_index(
-        cls, opts: Dict[str, Any], bases: Tuple[type, ...]
+        cls, opts: Optional[Dict[str, Any]], bases: Tuple[type, ...]
     ) -> AsyncIndex:
         if opts is None:
             for b in bases:
@@ -83,6 +83,8 @@ class AsyncIndexMeta(DocumentMeta):
         i.aliases(**getattr(opts, "aliases", {}))
         for a in getattr(opts, "analyzers", ()):
             i.analyzer(a)
+        if getattr(opts, "data_stream", None) is not None:
+            i.data_stream(True)
         return i
 
 
@@ -517,11 +519,9 @@ class AsyncDocument(DocumentBase, metaclass=AsyncIndexMeta):
                     if validate:  # pragma: no cover
                         doc.full_clean()
                     action = doc.to_dict(include_meta=True, skip_empty=skip_empty)
-                if "_index" not in action:
-                    action["_index"] = i
                 return action
 
-        return await async_bulk(es, Generate(actions), **kwargs)
+        return await async_bulk(es, Generate(actions), index=i, **kwargs)
 
     @classmethod
     async def esql_execute(
