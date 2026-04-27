@@ -71,10 +71,10 @@ class IndexMeta(DocumentMeta):
         if opts is None:
             for b in bases:
                 if hasattr(b, "_index"):
-                    return b._index
+                    return cast(Index, b._index)
 
             # Set None as Index name so it will set _all while making the query
-            return Index(name=None)
+            return Index(name=None)  # type: ignore[arg-type]
 
         i = Index(getattr(opts, "name", "*"), using=getattr(opts, "using", "default"))
         i.settings(**getattr(opts, "settings", {}))

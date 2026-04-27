@@ -71,10 +71,10 @@ class AsyncIndexMeta(DocumentMeta):
         if opts is None:
             for b in bases:
                 if hasattr(b, "_index"):
-                    return b._index
+                    return cast(AsyncIndex, b._index)
 
             # Set None as Index name so it will set _all while making the query
-            return AsyncIndex(name=None)
+            return AsyncIndex(name=None)  # type: ignore[arg-type]
 
         i = AsyncIndex(
             getattr(opts, "name", "*"), using=getattr(opts, "using", "default")
