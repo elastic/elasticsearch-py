@@ -1045,7 +1045,7 @@ class TestVectorStore:
             "dims": 10,
             "index": True,
             "index_options": {
-                "mf_construction": 100,
+                "ef_construction": 100,
                 "m": 16,
                 "type": "int8_hnsw",
             },
