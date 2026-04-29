@@ -342,8 +342,12 @@ class DslBase(metaclass=DslMeta):
         if _expand__to_dot is None:
             _expand__to_dot = EXPAND__TO_DOT
         self._params: Dict[str, Any] = {}
+        self._es_named: Optional[str] = None
         for pname, pvalue in params.items():
             if pvalue is DEFAULT:
+                continue
+            if pname == "_es_name":
+                self._es_named = pvalue
                 continue
             # expand "__" to dots
             if "__" in pname and _expand__to_dot:
@@ -565,6 +569,13 @@ class ObjectBase(AttrDict[Any]):
             return None
 
     @classmethod
+    def __get_renamed_field(cls, name: str) -> Optional[Tuple[str, "Field"]]:
+        for k, v, _ in cls.__list_fields():
+            if hasattr(v, "_es_name") and v._es_name == name:
+                return k, v
+        return None
+
+    @classmethod
     def from_es(cls, hit: Union[Dict[str, Any], "ObjectApiResponse[Any]"]) -> Self:
         meta = hit.copy()
         data = meta.pop("_source", {})
@@ -575,8 +586,14 @@ class ObjectBase(AttrDict[Any]):
     def _from_dict(self, data: Dict[str, Any]) -> None:
         for k, v in data.items():
             f = self.__get_field(k)
+            if f is None:
+                r = self.__get_renamed_field(k)
+                if r:
+                    k, f = r
             if f and f._coerce:
                 v = f.deserialize(v)
+                if hasattr(f, "_es_name") and f._es_name == k:
+                    f = f
             setattr(self, k, v)
 
     def __getstate__(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:  # type: ignore[override]
@@ -612,6 +629,9 @@ class ObjectBase(AttrDict[Any]):
         for k, v in self._d_.items():
             # if this is a mapped field,
             f = self.__get_field(k)
+            name = k
+            if f is not None and hasattr(f, "_es_name") and f._es_name:
+                name = f._es_name
             if f and f._coerce:
                 v = f.serialize(v, skip_empty=skip_empty)
 
@@ -634,7 +654,7 @@ class ObjectBase(AttrDict[Any]):
                     except TypeError:
                         pass
 
-            out[k] = v
+            out[name] = v
         return out
 
     def clean_fields(self, validate: bool = True) -> None:

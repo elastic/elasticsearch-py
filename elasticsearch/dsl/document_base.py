@@ -424,6 +424,7 @@ class DocumentOptions:
                     }
                     value = field(*field_args, **field_kwargs)
 
+            attr_es_name = None
             if name in attrs:
                 # this field has a right-side value, which can be field
                 # instance on its own or wrapped with mapped_field()
@@ -436,6 +437,7 @@ class DocumentOptions:
                         # skip this field
                         continue
                     attr_value = attrs[name].get("_field")
+                    attr_es_name = attrs[name].get("_es_name")
                     default_value = attrs[name].get("default") or attrs[name].get(
                         "default_factory"
                     )
@@ -450,7 +452,8 @@ class DocumentOptions:
 
             if value is None:
                 raise TypeError(f"Cannot map field {name}")
-
+            if attr_es_name:
+                value._es_name = attr_es_name
             self.mapping.field(name, value)
             if name in attrs:
                 del attrs[name]
@@ -529,6 +532,7 @@ class _FieldMetadataDict(dict[str, Any]):
 def mapped_field(
     field: Optional[Field] = None,
     *,
+    es_name: Optional[str] = None,
     init: bool = True,
     default: Any = None,
     default_factory: Optional[Callable[[], Any]] = None,
@@ -543,6 +547,8 @@ def mapped_field(
 
     :param field: The instance of ``Field`` to use for this field. If not provided,
         an instance that is appropriate for the type given to the field is used.
+    :param es_name: A name to use for this field when serializing to Elasticsearch.
+        If this is omitted, the attribute name is used.
     :param init: a value of ``True`` adds this field to the constructor, and a
         value of ``False`` omits it from it. The default is ``True``.
     :param default: a default value to use for this field when one is not provided
@@ -555,6 +561,7 @@ def mapped_field(
     """
     return _FieldMetadataDict(
         _field=field,
+        _es_name=es_name,
         init=init,
         default=default,
         default_factory=default_factory,
