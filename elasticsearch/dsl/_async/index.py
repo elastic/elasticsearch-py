@@ -244,10 +244,17 @@ class AsyncIndex(IndexBase):
         Sync the index definition with elasticsearch, creating the index if it
         doesn't exist and updating its settings and mappings if it does.
 
+        If the index is marked as a data stream, then a template is created with
+        the name "{name}-template".
+
         Note some settings and mapping changes cannot be done on an open
         index (or at all on an existing index) and for those this method will
         fail with the underlying exception.
         """
+        if self._data_stream:
+            template = self.as_composable_template(f"{self._name}-template", self._name)
+            return await template.save(using=using)
+
         if not await self.exists(using=using):
             return await self.create(using=using)
 
