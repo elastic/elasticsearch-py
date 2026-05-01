@@ -2589,7 +2589,7 @@ dev_blogs.setting(number_of_shards=1)
 The DSL module also exposes an option to manage [index templates](docs-content://manage-data/data-store/templates.md) in elasticsearch using the `ComposableIndexTemplate` and `IndexTemplate` classes, which have a similar API to `Index`.
 
 ::::{note}
-Composable index templates should always be preferred over the legacy index templates, since the latter are deprecated.
+Composable index templates should always be preferred over the legacy index templates, which are deprecated.
 
 ::::
 
