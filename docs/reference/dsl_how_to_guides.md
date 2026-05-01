@@ -1159,8 +1159,7 @@ If you want to create a model-like wrapper around your documents, use the `Docum
 :sync: sync
 ```python
 from datetime import datetime
-from elasticsearch.dsl import Document, Date, Nested, Boolean, \
-    analyzer, InnerDoc, Completion, Keyword, Text
+from elasticsearch.dsl import AsyncDocument, Boolean, InnerDoc, Completion, Keyword, Text, analyzer
 
 html_strip = analyzer('html_strip',
     tokenizer="standard",
@@ -1169,24 +1168,23 @@ html_strip = analyzer('html_strip',
 )
 
 class Comment(InnerDoc):
-    author = Text(fields={'raw': Keyword()})
-    content = Text(analyzer='snowball')
-    created_at = Date()
+    author: str = Text(fields={'raw': Keyword()})
+    content: str = Text(analyzer='snowball')
+    created_at: datetime
 
     def age(self):
         return datetime.now() - self.created_at
 
 class Post(Document):
-    title = Text()
-    title_suggest = Completion()
-    created_at = Date()
-    published = Boolean()
-    category = Text(
+    title: str
+    title_suggest: str = Completion()
+    created_at: datetime
+    published: bool
+    category: str = Text(
         analyzer=html_strip,
         fields={'raw': Keyword()}
     )
-
-    comments = Nested(Comment)
+    comments: Comment
 
     class Index:
         name = 'blog'
@@ -1205,8 +1203,7 @@ class Post(Document):
 :sync: async
 ```python
 from datetime import datetime
-from elasticsearch.dsl import AsyncDocument, Date, Nested, Boolean, \
-    analyzer, InnerDoc, Completion, Keyword, Text
+from elasticsearch.dsl import AsyncDocument, Boolean, InnerDoc, Completion, Keyword, Text, analyzer
 
 html_strip = analyzer('html_strip',
     tokenizer="standard",
@@ -1215,24 +1212,23 @@ html_strip = analyzer('html_strip',
 )
 
 class Comment(InnerDoc):
-    author = Text(fields={'raw': Keyword()})
-    content = Text(analyzer='snowball')
-    created_at = Date()
+    author: str = Text(fields={'raw': Keyword()})
+    content: str = Text(analyzer='snowball')
+    created_at: datetime
 
     def age(self):
         return datetime.now() - self.created_at
 
 class Post(AsyncDocument):
-    title = Text()
-    title_suggest = Completion()
-    created_at = Date()
-    published = Boolean()
-    category = Text(
+    title: str
+    title_suggest: str = Completion()
+    created_at: datetime
+    published: bool
+    category: str = Text(
         analyzer=html_strip,
         fields={'raw': Keyword()}
     )
-
-    comments = Nested(Comment)
+    comments: Comment
 
     class Index:
         name = 'blog'
@@ -1251,9 +1247,9 @@ class Post(AsyncDocument):
 
 #### Data types [_data_types]
 
-The `Document` instances use native python types such as `str` and `datetime` for its attributes. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example, where we are creating an instance of the `Comment` class.
+The `Document` instances can use native python types such as `str` and `datetime` for its attributes. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example, where we are creating an instance of the `Comment` class.
 
-There are some specific types that were created to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
+There are also specific type classes that were created to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
 
 ::::{tab-set}
 :group: sync_or_async
@@ -1351,7 +1347,7 @@ class Post(AsyncDocument):
 
 ::::
 
-::::{note}
+:::::{note}
 When using `Field` subclasses such as `Text`, `Date` and `Boolean` to define attributes, these classes must be given in the right-hand side.
 
 ::::{tab-set}
@@ -1378,7 +1374,7 @@ class Post(AsyncDocument):
 ::::
 
 Using a `Field` subclass as a Python type hint will result in errors.
-::::
+:::::
 
 Python types are mapped to their corresponding `Field` types according to the following table:
 
@@ -1670,6 +1666,48 @@ class Post(AsyncDocument):
 
 In that case any `datetime` object passed in (or parsed from elasticsearch) will be treated as if it were in `UTC` timezone.
 
+
+#### Custom field names
+
+By default, the `Document` and `AsyncDocument` classes use the names given to the field attributes as the field names in the Elasticsearch index. There cases, however, where it is necessary for the names of a field in Python and Elasticsearch to be different.
+
+:::{tab-item} Standard Python
+:sync: sync
+```python
+class MyDoc(Document):
+    timestamp: datetime = mapped_field(es_name='@timestamp')
+```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class MyDoc(AsyncDocument):
+    timestamp: datetime = mapped_field(es_name='@timestamp')
+```
+:::
+
+::::
+
+If using `Field` subclasses to define attribute types, the `_es_name` argument can be passed with the desired Elasticsearch name:
+
+:::{tab-item} Standard Python
+:sync: sync
+```python
+class MyDoc(Document):
+    timestamp = Date(_es_name='@timestamp')
+```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+class MyDoc(AsyncDocument):
+    timestamp = Date(_es_name='@timestamp')
+```
+:::
+
+::::
 
 #### Document life cycle [life-cycle]
 
@@ -2341,6 +2379,7 @@ This section of the `Document` definition can contain any information about the 
 * `settings`: dictionary containing any settings for the `Index` object like `number_of_shards`.
 * `analyzers`: additional list of analyzers that should be defined on an index (see `analysis` for details).
 * `aliases`: dictionary with any aliases definitions
+* `data_stream`: set to `True` to configure a data stream instead of an index.
 
 
 #### Document Inheritance [_document_inheritance]
@@ -2550,7 +2589,7 @@ dev_blogs.setting(number_of_shards=1)
 The DSL module also exposes an option to manage [index templates](docs-content://manage-data/data-store/templates.md) in elasticsearch using the `ComposableIndexTemplate` and `IndexTemplate` classes, which have a similar API to `Index`.
 
 ::::{note}
-Composable index templates should be always be preferred over the legacy index templates, since the latter are deprecated.
+Composable index templates should always be preferred over the legacy index templates, since the latter are deprecated.
 
 ::::
 

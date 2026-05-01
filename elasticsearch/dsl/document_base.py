@@ -237,6 +237,9 @@ class InstrumentedField(InstrumentedExpression):
     """
 
     def __init__(self, name: str, field: Optional[Field]):
+        if field and hasattr(field, "_es_name") and field._es_name:
+            parts = name.split(".")
+            name = ".".join(parts[:-1] + [field._es_name])
         super().__init__(name)
         self._field = field
 
@@ -596,7 +599,11 @@ class DocumentBase(ObjectBase):
     def _matches(cls, hit: Dict[str, Any]) -> bool:
         if cls._index._name is None:
             return True
-        return fnmatch(hit.get("_index", ""), cls._index._name)
+        if cls._index._data_stream:
+            pattern = f".ds-{cls._index._name}-*"
+        else:
+            pattern = cls._index._name
+        return fnmatch(hit.get("_index", ""), pattern)
 
     @classmethod
     def _default_index(cls, index: Optional[str] = None) -> str:

@@ -1078,10 +1078,28 @@ def test_pydantic_integration() -> None:
 
 
 def test_renamed_fields() -> None:
+    class SubDoc(InnerDoc):
+        name: str
+        timestamp: datetime = mapped_field(es_name="timestamp_two")
+        this = field.Integer(_es_name="that_two")
+
     class Doc(AsyncDocument):
         name: str
         timestamp: datetime = mapped_field(es_name="@timestamp")
         this = field.Integer(_es_name="that")
+        sub1: SubDoc
+        sub2: SubDoc = mapped_field(es_name="sub_two")
+
+    # instrumented field names
+    assert str(Doc.timestamp) == "@timestamp"
+    assert str(Doc.this) == "that"
+    assert str(Doc.sub2) == "sub_two"
+    assert str(Doc.sub1.name) == "sub1.name"
+    assert str(Doc.sub1.timestamp) == "sub1.timestamp_two"
+    assert str(Doc.sub1.this) == "sub1.that_two"
+    assert str(Doc.sub2.name) == "sub_two.name"
+    assert str(Doc.sub2.timestamp) == "sub_two.timestamp_two"
+    assert str(Doc.sub2.this) == "sub_two.that_two"
 
     # document to dict
     doc = Doc(name="foo", timestamp=datetime(2026, 1, 1, 0, 0, 0), this=42)
