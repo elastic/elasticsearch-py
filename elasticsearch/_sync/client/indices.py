@@ -1442,7 +1442,6 @@ class IndicesClient(NamespacedClient):
     @_rewrite_parameters(
         body_name="config",
     )
-    @_availability_warning(Stability.EXPERIMENTAL)
     def downsample(
         self,
         *,
