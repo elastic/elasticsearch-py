@@ -104,6 +104,8 @@ class AsyncComposableIndexTemplate:
         d["index_patterns"] = [self._index._name]
         if self.priority is not None:
             d["priority"] = self.priority
+        if self._index._data_stream:
+            d["data_stream"] = {}
         return d
 
     async def save(
@@ -187,6 +189,7 @@ class AsyncIndex(IndexBase):
         i._doc_types = self._doc_types[:]
         if self._mapping is not None:
             i._mapping = self._mapping._clone()
+        i._data_stream = self._data_stream
         return i
 
     def search(self, using: Optional[AsyncUsingType] = None) -> AsyncSearch:
@@ -224,6 +227,10 @@ class AsyncIndex(IndexBase):
         Any additional keyword arguments will be passed to
         ``Elasticsearch.indices.create`` unchanged.
         """
+        if self._data_stream:
+            return await self._get_connection(using).indices.create_data_stream(
+                name=self._name, **kwargs
+            )
         return await self._get_connection(using).indices.create(
             index=self._name, body=self.to_dict(), **kwargs
         )
@@ -241,12 +248,22 @@ class AsyncIndex(IndexBase):
         Sync the index definition with elasticsearch, creating the index if it
         doesn't exist and updating its settings and mappings if it does.
 
+        If the index is marked as a data stream, then a template is created with
+        the name "{name}-template".
+
         Note some settings and mapping changes cannot be done on an open
         index (or at all on an existing index) and for those this method will
         fail with the underlying exception.
         """
+        if self._data_stream:
+            template = self.as_composable_template(f"{self._name}-template", self._name)
+            await template.save(using=using)
+
         if not await self.exists(using=using):
             return await self.create(using=using)
+
+        if self._data_stream:
+            return None  # the data stream's index template is already updated
 
         body = self.to_dict()
         settings = body.pop("settings", {})
@@ -378,6 +395,10 @@ class AsyncIndex(IndexBase):
         Any additional keyword arguments will be passed to
         ``Elasticsearch.indices.delete`` unchanged.
         """
+        if self._data_stream:
+            return await self._get_connection(using).indices.delete_data_stream(
+                name=self._name, **kwargs
+            )
         return await self._get_connection(using).indices.delete(
             index=self._name, **kwargs
         )

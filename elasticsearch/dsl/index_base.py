@@ -42,6 +42,7 @@ class IndexBase:
         self._analysis: Dict[str, Any] = {}
         self._mapping_class = mapping_class
         self._mapping: Optional["MappingBase"] = None
+        self._data_stream: bool = False
 
     def resolve_nested(
         self, field_path: str
@@ -157,6 +158,9 @@ class IndexBase:
 
         # merge the definition
         merge(self._analysis, d, True)
+
+    def data_stream(self, data_stream: bool) -> None:
+        self._data_stream = data_stream
 
     def to_dict(self) -> Dict[str, Any]:
         out = {}
