@@ -1247,7 +1247,7 @@ class Post(AsyncDocument):
 
 #### Data types [_data_types]
 
-The `Document` instances can use native python types such as `str` and `datetime` for its attributes. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example, where we are creating an instance of the `Comment` class.
+The `Document` instances can use native Python types such as `str` and `datetime` for its attributes. In case of `Object` or `Nested` fields an instance of the `InnerDoc` subclass is used, as in the `add_comment` method in the above example, where we are creating an instance of the `Comment` class.
 
 There are also specific type classes that were created to make working with some field types easier, for example the `Range` object used in any of the [range fields](elasticsearch://reference/elasticsearch/mapping-reference/range.md):
 
@@ -1664,12 +1664,14 @@ class Post(AsyncDocument):
 
 ::::
 
-In that case any `datetime` object passed in (or parsed from elasticsearch) will be treated as if it were in `UTC` timezone.
+In that case any `datetime` object passed in (or parsed from Elasticsearch) will be treated as if it were in `UTC` timezone.
 
 
 #### Custom field names
 
-By default, the `Document` and `AsyncDocument` classes use the names given to the field attributes as the field names in the Elasticsearch index. There cases, however, where it is necessary for the names of a field in Python and Elasticsearch to be different.
+By default, the `Document` and `AsyncDocument` classes use the names given to the field attributes as the field names in the Elasticsearch index. But sometimes it is necessary for the names of a field in Python and Elasticsearch to be different, such as when the Elasticsearch name is not a valid Python identifier.
+
+The following example shows how to define the Elasticsearch field `@timestamp`, used with data streams:
 
 :::{tab-item} Standard Python
 :sync: sync
@@ -1708,6 +1710,8 @@ class MyDoc(AsyncDocument):
 :::
 
 ::::
+
+The conversion between the Python and Elasticsearch names happens automatically during serialization and deserialization of `Document` and `AsyncDocument` instances. The Elasticsearch field names must be used when sending requests outside of the document classes. Likewise, responses from Elasticsearch that are not deserialized to a document class will reference the Elasticsearch field names.
 
 #### Document life cycle [life-cycle]
 
@@ -2589,7 +2593,7 @@ dev_blogs.setting(number_of_shards=1)
 The DSL module also exposes an option to manage [index templates](docs-content://manage-data/data-store/templates.md) in elasticsearch using the `ComposableIndexTemplate` and `IndexTemplate` classes, which have a similar API to `Index`.
 
 ::::{note}
-Composable index templates should always be preferred over the legacy index templates, which are deprecated.
+Composable index templates should always be preferred over the legacy index templates.
 
 ::::
 

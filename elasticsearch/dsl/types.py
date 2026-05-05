@@ -6183,9 +6183,12 @@ class PhraseSuggestOption(AttrDict[Any]):
 class Profile(AttrDict[Any]):
     """
     :arg shards: (required)
+    :arg request: When profiling is enabled, the original query source and
+        target indices from the coordinating request.
     """
 
     shards: Sequence["ShardProfile"]
+    request: "SearchRequestCoordinatorMetadata"
 
 
 class QueryBreakdown(AttrDict[Any]):
@@ -6396,6 +6399,23 @@ class SearchProfile(AttrDict[Any]):
     collector: Sequence["Collector"]
     query: Sequence["QueryProfile"]
     rewrite_time: int
+
+
+class SearchRequestCoordinatorMetadata(AttrDict[Any]):
+    """
+    Coordinator snapshot of the original search request, serialized under
+    `profile.request` when profiling is enabled. Introduced in
+    Elasticsearch 9.5; omitted when the cluster contains mixed-version
+    nodes that do not serialize this metadata.
+
+    :arg source: Original query source from the search request
+        (`SearchSourceBuilder` as JSON).
+    :arg indices: Target index expressions from the request (before index
+        resolution).
+    """
+
+    source: Dict[str, Any]
+    indices: Sequence[str]
 
 
 class ShardFailure(AttrDict[Any]):
