@@ -760,6 +760,7 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         blob_count: t.Optional[int] = None,
+        check_overwrite_protection: t.Optional[bool] = None,
         concurrency: t.Optional[int] = None,
         detailed: t.Optional[bool] = None,
         early_read_node_count: t.Optional[int] = None,
@@ -802,6 +803,10 @@ class SnapshotClient(NamespacedClient):
           This allows you to demonstrate to your storage supplier that a repository analysis failure must only be caused by an incompatibility with AWS S3 and cannot be attributed to a problem in Elasticsearch.
           Please do not report Elasticsearch issues involving third-party storage systems unless you can demonstrate that the same issue exists when analysing a repository that uses the reference implementation of the same storage protocol.
           You will need to work with the supplier of your storage system to address the incompatibilities that Elasticsearch detects.</p>
+          <p>The analysis may also report a failure if your repository experienced a service disruption while the analysis was running.
+          In practice, occasional service disruptions are inevitable, but the analysis cannot itself distinguish such disruptions from incorrect behavior so must report all deviations from the expected behavior as failures.
+          If you are certain that you can ascribe an analysis failure to such a service disruption, wait for your service provider to resolve the disruption and then re-run the analysis.
+          Elasticsearch will be unable to create or restore snapshots during repository service disruptions, so you must ensure that these events occur only very rarely.</p>
           <p>If the analysis is successful, the API returns details of the testing process, optionally including how long each operation took.
           You can use this information to determine the performance of your storage system.
           If any operation fails or returns an incorrect result, the API returns an error.
@@ -871,6 +876,8 @@ class SnapshotClient(NamespacedClient):
         :param name: The name of the repository.
         :param blob_count: The total number of blobs to write to the repository during
             the test. For realistic experiments, set this parameter to at least `2000`.
+        :param check_overwrite_protection: Whether to run the overwrite protection check.
+            For realistic experiments, leave this parameter unset.
         :param concurrency: The number of operations to run concurrently during the test.
             For realistic experiments, leave this parameter unset.
         :param detailed: Indicates whether to return detailed results, including timing
@@ -912,6 +919,8 @@ class SnapshotClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if blob_count is not None:
             __query["blob_count"] = blob_count
+        if check_overwrite_protection is not None:
+            __query["check_overwrite_protection"] = check_overwrite_protection
         if concurrency is not None:
             __query["concurrency"] = concurrency
         if detailed is not None:
