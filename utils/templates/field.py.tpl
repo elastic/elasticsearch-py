@@ -106,14 +106,19 @@ class Field(DslBase):
     _coerce = False
 
     def __init__(
-        self, multi: bool = False, required: bool = False, *args: Any, **kwargs: Any
+        self, multi: bool = False, required: bool = False, _es_name: Optional[str] = None,
+        *args: Any, **kwargs: Any
     ):
         """
         :arg bool multi: specifies whether field can contain array of values
         :arg bool required: specifies whether field is required
+        :arg str _es_name: a name to use for this field when serializing to Elasticsearch.
++           If this is omitted, the attribute name is used.
+
         """
         self._multi = multi
         self._required = required
+        self._es_name = _es_name
         super().__init__(*args, **kwargs)
 
     def __getitem__(self, subfield: str) -> "Field":
