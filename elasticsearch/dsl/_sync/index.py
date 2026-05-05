@@ -215,6 +215,10 @@ class Index(IndexBase):
         Any additional keyword arguments will be passed to
         ``Elasticsearch.indices.create`` unchanged.
         """
+        if self._data_stream:
+            return self._get_connection(using).indices.create_data_stream(
+                name=self._name, **kwargs
+            )
         return self._get_connection(using).indices.create(
             index=self._name, body=self.to_dict(), **kwargs
         )
@@ -241,10 +245,13 @@ class Index(IndexBase):
         """
         if self._data_stream:
             template = self.as_composable_template(f"{self._name}-template", self._name)
-            return template.save(using=using)
+            template.save(using=using)
 
         if not self.exists(using=using):
             return self.create(using=using)
+
+        if self._data_stream:
+            return None  # the data stream's index template is already updated
 
         body = self.to_dict()
         settings = body.pop("settings", {})
@@ -366,6 +373,10 @@ class Index(IndexBase):
         Any additional keyword arguments will be passed to
         ``Elasticsearch.indices.delete`` unchanged.
         """
+        if self._data_stream:
+            return self._get_connection(using).indices.delete_data_stream(
+                name=self._name, **kwargs
+            )
         return self._get_connection(using).indices.delete(index=self._name, **kwargs)
 
     def exists(self, using: Optional[UsingType] = None, **kwargs: Any) -> bool:

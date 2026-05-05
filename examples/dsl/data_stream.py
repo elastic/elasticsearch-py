@@ -26,7 +26,7 @@ def main() -> None:
 
     # delete a previous instance of the data stream if one exists
     if Log._index.exists():
-        client.indices.delete_data_stream(name=Log._index._name)
+        Log._index.delete()
 
     # create the data stream
     Log.init()
