@@ -18,6 +18,35 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.4.0 (2026-05-06)
+
+Enhancements
+
+* ES|QL updates for 9.4 and Serverless ([#3384](https://github.com/elastic/elasticsearch-py/pull/3384))
+* Added `server_mode` parameter to the client’s constructor
+
+API
+
+* Added `inference.embedding` API
+* Added `inference.put_fireworksai` API
+* Added `project.create_many_routing`, `project.create_routing`, `project.delete_routing`, `project.get_many_routing` and `project.get_routing` APIs
+* Added `security.clone_api_key` API
+* Added `group_by` parameter to `reindex_rethrottle` API
+* Added `return_intermediate_results` parameter to `async_search.get` API
+* Added `project_routing` and `time_zone` parameters to `esql.async_query` and `esql.query` APIs
+* Removed `master_timeout` parameter from `searchable_snapshots.cache_stats` API
+* Added `name` parameter to `streams.logs_enable` and `streams.logs_disable` APIs
+* Added `should_parse_recursively` parameter to `text_structure.find_field_structure`, `text_structure.find_message_structure` and `text_structure.find_structure` APIs
+
+DSL
+
+* Data stream support ([#3413](https://github.com/elastic/elasticsearch-py/pull/3413))
+* Handle document attributes that have a name collision with a method (#3364)
+* Added `es_name` parameter to `mapped_field` function
+* Added `_es_name` parameter to all subclasses of `Field`
+* Added `script` attribute to `MultiTermLookup` type
+* Added `lookup` attribute to `QueryVectorBuilder` type
+
 ## 9.3.0 (2026-02-03)
 
 Enhancements
