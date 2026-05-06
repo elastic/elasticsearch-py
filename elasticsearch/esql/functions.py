@@ -71,6 +71,15 @@ def acos(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"ACOS({_render(number)})")
 
 
+def acosh(number: ExpressionType) -> InstrumentedExpression:
+    """Returns the inverse hyperbolic cosine of a number.
+
+    :param number: Number greater than or equal to 1. If `null`, the function
+                   returns `null`.
+    """
+    return InstrumentedExpression(f"ACOSH({_render(number)})")
+
+
 def all_first(value: ExpressionType, sort: ExpressionType) -> InstrumentedExpression:
     """Calculates the earliest value of a field, and can operate on null values.
 
@@ -98,6 +107,14 @@ def asin(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"ASIN({_render(number)})")
 
 
+def asinh(number: ExpressionType) -> InstrumentedExpression:
+    """Returns the inverse hyperbolic sine of a number.
+
+    :param number: Numeric expression. If `null`, the function returns `null`.
+    """
+    return InstrumentedExpression(f"ASINH({_render(number)})")
+
+
 def atan(number: ExpressionType) -> InstrumentedExpression:
     """Returns the arctangent of the input numeric expression as an angle,
     expressed in radians.
@@ -119,6 +136,14 @@ def atan2(
     return InstrumentedExpression(
         f"ATAN2({_render(y_coordinate)}, {_render(x_coordinate)})"
     )
+
+
+def atanh(number: ExpressionType) -> InstrumentedExpression:
+    """Returns the inverse hyperbolic tangent of a number.
+
+    :param number: Number between -1 and 1. If `null`, the function returns `null`.
+    """
+    return InstrumentedExpression(f"ATANH({_render(number)})")
 
 
 def avg(number: ExpressionType) -> InstrumentedExpression:
@@ -186,12 +211,13 @@ def byte_length(string: ExpressionType) -> InstrumentedExpression:
 
 def case(*conditions: ExpressionType) -> InstrumentedExpression:
     """Accepts pairs of conditions and values. The function returns the value
-    that belongs to the first condition that evaluates to `true`.  If the
-    number of arguments is odd, the last argument is the default value which is
-    returned when no condition matches. If the number of arguments is even, and
-    no condition matches, the function returns `null`.
+    that belongs to the first condition that evaluates to `true`. Both the
+    conditions and the returned values can be any expression, including column
+    references.  If the number of arguments is odd, the last argument is the
+    default value which is returned when no condition matches. If the number of
+    arguments is even, and no condition matches, the function returns `null`.
 
-    :param conditions: The conditions.
+    :param conditions: The conditions and values.
     """
     return InstrumentedExpression(
         f'CASE({", ".join([_render(c) for c in conditions])})'
@@ -253,7 +279,9 @@ def chunk(
 ) -> InstrumentedExpression:
     """Use `CHUNK` to split a text field into smaller chunks.
 
-    :param field: The input to chunk.
+    :param field: The input to chunk. The input can be a single-valued or
+                  multi-valued field. In the case of a multi-valued argument,
+                  each value is chunked separately.
     :param chunking_settings: Options to customize chunking behavior. Defaults
                               to {"strategy":"sentence","max_chunk_size":300,"sentence_overlap":0}.
     """
@@ -335,8 +363,8 @@ def contains(
     """Returns a boolean that indicates whether a keyword substring is within
     another string. Returns `null` if either parameter is null.
 
-    :param string: String expression: input string to check against. If
-                   `null`, the function returns `null`.
+    :param string: String expression: input string to check against. If `null`,
+                   the function returns `null`.
     :param substring: String expression: A substring to find in the input
                       string. If `null`, the function returns `null`.
     """
@@ -484,9 +512,9 @@ def date_format(
     """Returns a string representation of a date, in the provided format.
 
     :param date: Date expression. If `null`, the function returns `null`.
-    :param date_format: Date format (optional).  If no format is specified,
-                        the `yyyy-MM-dd'T'HH:mm:ss.SSSZ` format is used. If
-                        `null`, the function returns `null`.
+    :param date_format: Date format (optional).  If no format is specified, the
+                        `yyyy-MM-dd'T'HH:mm:ss.SSSZ` format is used. If `null`,
+                        the function returns `null`.
     """
     if date_format is not None:
         return InstrumentedExpression(
@@ -527,7 +555,7 @@ def date_trunc(
 ) -> InstrumentedExpression:
     """Rounds down a date to the closest interval since epoch, which starts at `0001-01-01T00:00:00Z`.
 
-    :param interval: Interval; expressed using the timespan literal syntax.
+    :param interval: Interval; time span (DATE_PERIOD or TIME_DURATION).
     :param date: Date expression
     """
     return InstrumentedExpression(f"DATE_TRUNC({_render(interval)}, {_render(date)})")
@@ -545,7 +573,7 @@ def decay(
     value: ExpressionType,
     origin: ExpressionType,
     scale: ExpressionType,
-    options: ExpressionType,
+    options: ExpressionType = None,
 ) -> InstrumentedExpression:
     """Calculates a relevance score that decays based on the distance of a
     numeric, spatial or date type value from a target origin, using
@@ -554,11 +582,16 @@ def decay(
     :param value: The input value to apply decay scoring to.
     :param origin: Central point from which the distances are calculated.
     :param scale: Distance from the origin where the function returns the decay value.
-    :param options:
+    :param options: (Optional) Additional options such as `decay`, `offset` and `type`.
     """
-    return InstrumentedExpression(
-        f"DECAY({_render(value)}, {_render(origin)}, {_render(scale)}, {_render(options)})"
-    )
+    if options is not None:
+        return InstrumentedExpression(
+            f"DECAY({_render(value)}, {_render(origin)}, {_render(scale)}, {_render(options)})"
+        )
+    else:
+        return InstrumentedExpression(
+            f"DECAY({_render(value)}, {_render(origin)}, {_render(scale)})"
+        )
 
 
 def delta(field: ExpressionType, window: ExpressionType) -> InstrumentedExpression:
@@ -584,6 +617,15 @@ def e() -> InstrumentedExpression:
     return InstrumentedExpression("E()")
 
 
+def earliest(field: ExpressionType) -> InstrumentedExpression:
+    """An alias for `FIRST` where the sort field (the second parameter) is
+    implicit and is set to `@timestamp`.
+
+    :param field: The search field
+    """
+    return InstrumentedExpression(f"EARLIEST({_render(field)})")
+
+
 def ends_with(str: ExpressionType, suffix: ExpressionType) -> InstrumentedExpression:
     """Returns a boolean that indicates whether a keyword string ends with
     another string.
@@ -602,13 +644,19 @@ def exp(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"EXP({_render(number)})")
 
 
-def first(value: ExpressionType, sort: ExpressionType) -> InstrumentedExpression:
-    """Calculates the earliest value of a field.
+def first(field: ExpressionType, sort_field: ExpressionType) -> InstrumentedExpression:
+    """This function calculates the earliest occurrence of the search field
+    (the first parameter), where sorting order is determined by the sort field
+    (the second parameter). This sorting order is always ascending and null
+    values always sort last. Both fields support null, single-valued, and
+    multi-valued input. If the earliest sort field value appears in multiple
+    documents, this function is allowed to return any corresponding search
+    field value.
 
-    :param value: Values to return
-    :param sort: Sort key
+    :param field: The search field
+    :param sort_field: The sort field
     """
-    return InstrumentedExpression(f"FIRST({_render(value)}, {_render(sort)})")
+    return InstrumentedExpression(f"FIRST({_render(field)}, {_render(sort_field)})")
 
 
 def first_over_time(
@@ -723,6 +771,23 @@ def irate(field: ExpressionType, window: ExpressionType) -> InstrumentedExpressi
     return InstrumentedExpression(f"IRATE({_render(field)}, {_render(window)})")
 
 
+def json_extract(
+    string: ExpressionType, path: ExpressionType
+) -> InstrumentedExpression:
+    """Extracts a value from a JSON string using a subset of JSONPath syntax.
+
+    :param string: A string containing valid JSON, or the `_source` field. If
+                   `null`, the function returns `null`.
+    :param path: A path expression identifying the value to extract, using a
+                 subset of JSONPath syntax. Supports dot notation
+                 (`user.name`), bracket notation for array indices
+                 (`items[0]`), and quoted brackets for keys with special
+                 characters (`['user.name']`). The `$` prefix is optional. If
+                 `null`, the function returns `null`.
+    """
+    return InstrumentedExpression(f"JSON_EXTRACT({_render(string)}, {_render(path)})")
+
+
 def knn(
     field: ExpressionType, query: ExpressionType, options: ExpressionType = None
 ) -> InstrumentedExpression:
@@ -761,13 +826,18 @@ def kql(
         return InstrumentedExpression(f"KQL({_render(query)})")
 
 
-def last(value: ExpressionType, sort: ExpressionType) -> InstrumentedExpression:
-    """Calculates the latest value of a field.
+def last(field: ExpressionType, sort_field: ExpressionType) -> InstrumentedExpression:
+    """This function calculates the latest occurrence of the search field (the
+    first parameter), where sorting order is determined by the sort field (the
+    second parameter). This sorting order is always ascending and null values
+    always sort last. Both fields support null, single-valued, and multi-valued
+    input. If the latest sort field value appears in multiple documents, this
+    function is allowed to return any corresponding search field value.
 
-    :param value: Values to return
-    :param sort: Sort key
+    :param field: The search field
+    :param sort_field: The sort field
     """
-    return InstrumentedExpression(f"LAST({_render(value)}, {_render(sort)})")
+    return InstrumentedExpression(f"LAST({_render(field)}, {_render(sort_field)})")
 
 
 def last_over_time(
@@ -785,6 +855,15 @@ def last_over_time(
         )
     else:
         return InstrumentedExpression(f"LAST_OVER_TIME({_render(field)})")
+
+
+def latest(field: ExpressionType) -> InstrumentedExpression:
+    """An alias for `LAST` where the sort field (the second parameter) is
+    implicit and is set to `@timestamp`.
+
+    :param field: The search field
+    """
+    return InstrumentedExpression(f"LATEST({_render(field)})")
 
 
 def least(first: ExpressionType, rest: ExpressionType) -> InstrumentedExpression:
@@ -1023,7 +1102,7 @@ def mv_avg(number: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued field into a single valued field containing the
     average of all of the values.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_AVG({_render(number)})")
 
@@ -1032,7 +1111,7 @@ def mv_concat(string: ExpressionType, delim: ExpressionType) -> InstrumentedExpr
     """Converts a multivalued string expression into a single valued column
     containing the concatenation of all values separated by a delimiter.
 
-    :param string: Multivalue expression.
+    :param string: Expression that can be null, a single value, or multiple values.
     :param delim: Delimiter.
     """
     return InstrumentedExpression(f"MV_CONCAT({_render(string)}, {_render(delim)})")
@@ -1045,8 +1124,8 @@ def mv_contains(
     present in the values yielded by the first multivalue expression. Returns a
     boolean. Null values are treated as an empty set.
 
-    :param superset: Multivalue expression.
-    :param subset: Multivalue expression.
+    :param superset: Expression that can be null, a single value, or multiple values.
+    :param subset: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(
         f"MV_CONTAINS({_render(superset)}, {_render(subset)})"
@@ -1057,7 +1136,7 @@ def mv_count(field: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued expression into a single valued column containing
     a count of the number of values.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_COUNT({_render(field)})")
 
@@ -1065,9 +1144,26 @@ def mv_count(field: ExpressionType) -> InstrumentedExpression:
 def mv_dedupe(field: ExpressionType) -> InstrumentedExpression:
     """Remove duplicate values from a multivalued field.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_DEDUPE({_render(field)})")
+
+
+def mv_difference(
+    field1: ExpressionType, field2: ExpressionType
+) -> InstrumentedExpression:
+    """Returns the values that appear in the first field, except those that
+    appear in the second. Returns `null` if the first expression is null
+    (nothing to remove) or the value of the first field if the second is null.
+
+    :param field1: Expression that can be null, a single value, or multiple
+                   values. If null, the function returns null.
+    :param field2: Expression that can be null, a single value, or multiple
+                   values. If null, the function returns field1.
+    """
+    return InstrumentedExpression(
+        f"MV_DIFFERENCE({_render(field1)}, {_render(field2)})"
+    )
 
 
 def mv_first(field: ExpressionType) -> InstrumentedExpression:
@@ -1075,7 +1171,7 @@ def mv_first(field: ExpressionType) -> InstrumentedExpression:
     the first value. This is most useful when reading from a function that
     emits multivalued columns in a known order like `SPLIT`.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_FIRST({_render(field)})")
 
@@ -1086,11 +1182,28 @@ def mv_intersection(
     """Returns the values that appear in both input fields. Returns `null` if
     either field is null or if no values match.
 
-    :param field1: Multivalue expression. If null, the function returns null.
-    :param field2: Multivalue expression. If null, the function returns null.
+    :param field1: Expression that can be null, a single value, or multiple
+                   values. If null, the function returns null.
+    :param field2: Expression that can be null, a single value, or multiple
+                   values. If null, the function returns null.
     """
     return InstrumentedExpression(
         f"MV_INTERSECTION({_render(field1)}, {_render(field2)})"
+    )
+
+
+def mv_intersects(
+    field1: ExpressionType, field2: ExpressionType
+) -> InstrumentedExpression:
+    """Checks if any value yielded by the second multivalue expression is
+    present in the values yielded by the first multivalue expression. Returns a
+    boolean. Null values are treated as an empty set.
+
+    :param field1: Expression that can be null, a single value, or multiple values.
+    :param field2: Expression that can be null, a single value, or multiple values.
+    """
+    return InstrumentedExpression(
+        f"MV_INTERSECTS({_render(field1)}, {_render(field2)})"
     )
 
 
@@ -1099,7 +1212,7 @@ def mv_last(field: ExpressionType) -> InstrumentedExpression:
     the last value. This is most useful when reading from a function that emits
     multivalued columns in a known order like `SPLIT`.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_LAST({_render(field)})")
 
@@ -1108,7 +1221,7 @@ def mv_max(field: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued expression into a single valued column containing
     the maximum value.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_MAX({_render(field)})")
 
@@ -1117,7 +1230,7 @@ def mv_median(number: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued field into a single valued field containing the
     median value.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_MEDIAN({_render(number)})")
 
@@ -1128,7 +1241,7 @@ def mv_median_absolute_deviation(number: ExpressionType) -> InstrumentedExpressi
     point’s deviation from the median of the entire sample. That is, for a
     random variable `X`, the median absolute deviation is `median(|median(X) - X|)`.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_MEDIAN_ABSOLUTE_DEVIATION({_render(number)})")
 
@@ -1137,7 +1250,7 @@ def mv_min(field: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued expression into a single valued column containing
     the minimum value.
 
-    :param field: Multivalue expression.
+    :param field: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_MIN({_render(field)})")
 
@@ -1148,7 +1261,7 @@ def mv_percentile(
     """Converts a multivalued field into a single valued field containing the
     value at which a certain percentage of observed values occur.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     :param percentile: The percentile to calculate. Must be a number between 0
                        and 100. Numbers out of range will return a null instead.
     """
@@ -1164,7 +1277,7 @@ def mv_pseries_weighted_sum(
     multiplying every element on the input list by its corresponding term in
     P-Series and computing the sum.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     :param p: It is a constant number that represents the *p* parameter in the
               P-Series. It impacts every element’s contribution to the weighted sum.
     """
@@ -1177,10 +1290,11 @@ def mv_slice(
     field: ExpressionType, start: ExpressionType, end: ExpressionType = None
 ) -> InstrumentedExpression:
     """Returns a subset of the multivalued field using the start and end index
-    values. This is most useful when reading from a function that emits
-    multivalued columns in a known order like `SPLIT` or `MV_SORT`.
+    values. Indexes are 0-based. This is most useful when reading from a
+    function that emits multivalued columns in a known order like `SPLIT` or `MV_SORT`.
 
-    :param field: Multivalue expression. If `null`, the function returns `null`.
+    :param field: Expression that can be null, a single value, or multiple
+                  values. If `null`, the function returns `null`.
     :param start: Start position. If `null`, the function returns `null`. The
                   start argument can be negative. An index of -1 is used to
                   specify the last value in the list.
@@ -1199,7 +1313,8 @@ def mv_slice(
 def mv_sort(field: ExpressionType, order: ExpressionType) -> InstrumentedExpression:
     """Sorts a multivalued field in lexicographical order.
 
-    :param field: Multivalue expression. If `null`, the function returns `null`.
+    :param field: Expression that can be null, a single value, or multiple
+                  values. If `null`, the function returns `null`.
     :param order: Sort order. The valid options are ASC and DESC, the default
                   is ASC.
     """
@@ -1210,7 +1325,7 @@ def mv_sum(number: ExpressionType) -> InstrumentedExpression:
     """Converts a multivalued field into a single valued field containing the
     sum of all of the values.
 
-    :param number: Multivalue expression.
+    :param number: Expression that can be null, a single value, or multiple values.
     """
     return InstrumentedExpression(f"MV_SUM({_render(number)})")
 
@@ -1220,8 +1335,10 @@ def mv_union(field1: ExpressionType, field2: ExpressionType) -> InstrumentedExpr
     Null values are treated as empty sets; returns `null` only if both fields
     are null.
 
-    :param field1: Multivalue expression. Null values are treated as empty sets.
-    :param field2: Multivalue expression. Null values are treated as empty sets.
+    :param field1: Expression that can be null, a single value, or multiple
+                   values. Null values are treated as empty sets.
+    :param field2: Expression that can be null, a single value, or multiple
+                   values. Null values are treated as empty sets.
     """
     return InstrumentedExpression(f"MV_UNION({_render(field1)}, {_render(field2)})")
 
@@ -1232,8 +1349,8 @@ def mv_zip(
     """Combines the values from two multivalued fields with a delimiter that
     joins them together.
 
-    :param string1: Multivalue expression.
-    :param string2: Multivalue expression.
+    :param string1: Expression that can be null, a single value, or multiple values.
+    :param string2: Expression that can be null, a single value, or multiple values.
     :param delim: Delimiter. Optional; if omitted, `,` is used as a default delimiter.
     """
     if delim is not None:
@@ -1526,6 +1643,29 @@ def space(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"SPACE({_render(number)})")
 
 
+def sparkline(
+    field: ExpressionType,
+    key: ExpressionType,
+    buckets: ExpressionType,
+    from_: ExpressionType,
+    to: ExpressionType,
+) -> InstrumentedExpression:
+    """The values representing the y-axis values of a sparkline graph for a
+    given aggregation over a period of time.
+
+    :param field: Expression that calculates the y-axis value of the sparkline
+                  graph for each datapoint.
+    :param key: Date expression from which to derive buckets.
+    :param buckets: Target number of buckets, or desired bucket size if `from`
+                    and `to` parameters are omitted.
+    :param from_: Start of the range. Can be a date or a date expressed as a string.
+    :param to: End of the range. Can be a date or a date expressed as a string.
+    """
+    return InstrumentedExpression(
+        f"SPARKLINE({_render(field)}, {_render(key)}, {_render(buckets)}, {_render(from_)}, {_render(to)})"
+    )
+
+
 def split(string: ExpressionType, delim: ExpressionType) -> InstrumentedExpression:
     """Split a single valued string into multiple strings.
 
@@ -1545,11 +1685,33 @@ def sqrt(number: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"SQRT({_render(number)})")
 
 
+def st_buffer(
+    geometry: ExpressionType, distance: ExpressionType
+) -> InstrumentedExpression:
+    """Computes a buffer area around the input geometry at the specified
+    distance. The distance is in the units of the input spatial reference
+    system. Positive distances expand the geometry, negative distances shrink
+    it. Points and lines become polygons when buffered.
+
+    :param geometry: Expression of type `geo_point`, `geo_shape`,
+                     `cartesian_point` or `cartesian_shape`. If `null`, the
+                     function returns `null`.
+    :param distance: Buffer distance in the units of the input spatial
+                     reference system
+    """
+    return InstrumentedExpression(
+        f"ST_BUFFER({_render(geometry)}, {_render(distance)})"
+    )
+
+
 def st_centroid_agg(field: ExpressionType) -> InstrumentedExpression:
-    """Calculate the spatial centroid over a field with spatial point geometry type.
+    """Calculate the spatial centroid over a field with spatial geometry type.
+    Supports `geo_point` and `cartesian_point`, as well as `geo_shape` and
+    `cartesian_shape` {applies_to}`stack: preview 9.4`.
 
     :param field:
     """
+    return InstrumentedExpression(f"ST_CENTROID_AGG({_render(field)})")
     return InstrumentedExpression(f"ST_CENTROID_AGG({_render(field)})")
 
 
@@ -1569,6 +1731,19 @@ def st_contains(
                    possible to combine `geo_*` and `cartesian_*` parameters.
     """
     return InstrumentedExpression(f"ST_CONTAINS({_render(geom_a)}, {_render(geom_b)})")
+
+
+def st_dimension(geometry: ExpressionType) -> InstrumentedExpression:
+    """Returns the topological dimension of the supplied geometry. Points and
+    multi-points return `0`, lines and multi-lines return `1`, polygons and
+    multi-polygons return `2`, and geometry collections return the maximum
+    dimension of their components.
+
+    :param geometry: Expression of type `geo_point`, `geo_shape`,
+                     `cartesian_point` or `cartesian_shape`. If `null`, the
+                     function returns `null`.
+    """
+    return InstrumentedExpression(f"ST_DIMENSION({_render(geometry)})")
 
 
 def st_disjoint(
@@ -1634,10 +1809,10 @@ def st_geohash(
     geometry: ExpressionType, precision: ExpressionType, bounds: ExpressionType = None
 ) -> InstrumentedExpression:
     """Calculates the `geohash` of the supplied geo_point at the specified
-    precision. The result is long encoded. Use TO_STRING to convert the result
-    to a string, TO_LONG to convert it to a `long`, or TO_GEOSHAPE to calculate
-    the `geo_shape` bounding geometry.  These functions are related to the
-    `geo_grid` query and the `geohash_grid` aggregation.
+    precision. The result is long encoded. Use `TO_STRING` to convert the
+    result to a string, `TO_LONG` to convert it to a `long`, or `TO_GEOSHAPE`
+    to calculate the `geo_shape` bounding geometry.  These functions are
+    related to the `geo_grid` query and the `geohash_grid` aggregation.
 
     :param geometry: Expression of type `geo_point`. If `null`, the function
                      returns `null`.
@@ -1681,9 +1856,9 @@ def st_geohex(
     geometry: ExpressionType, precision: ExpressionType, bounds: ExpressionType = None
 ) -> InstrumentedExpression:
     """Calculates the `geohex`, the H3 cell-id, of the supplied geo_point at
-    the specified precision. The result is long encoded. Use TO_STRING to
-    convert the result to a string, TO_LONG to convert it to a `long`, or
-    TO_GEOSHAPE to calculate the `geo_shape` bounding geometry.  These
+    the specified precision. The result is long encoded. Use `TO_STRING` to
+    convert the result to a string, `TO_LONG` to convert it to a `long`, or
+    `TO_GEOSHAPE` to calculate the `geo_shape` bounding geometry.  These
     functions are related to the `geo_grid` query and the `geohex_grid` aggregation.
 
     :param geometry: Expression of type `geo_point`. If `null`, the function
@@ -1724,14 +1899,26 @@ def st_geohex_to_string(grid_id: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"ST_GEOHEX_TO_STRING({_render(grid_id)})")
 
 
+def st_geometrytype(geometry: ExpressionType) -> InstrumentedExpression:
+    """Returns the geometry type of the supplied geometry, as a string. For
+    example: `ST_Point`, `ST_LineString`, `ST_Polygon`, `ST_MultiPoint`,
+    `ST_MultiLineString`, `ST_MultiPolygon`, or `ST_GeometryCollection`.
+
+    :param geometry: Expression of type `geo_point`, `geo_shape`,
+                     `cartesian_point` or `cartesian_shape`. If `null`, the
+                     function returns `null`.
+    """
+    return InstrumentedExpression(f"ST_GEOMETRYTYPE({_render(geometry)})")
+
+
 def st_geotile(
     geometry: ExpressionType, precision: ExpressionType, bounds: ExpressionType = None
 ) -> InstrumentedExpression:
     """Calculates the `geotile` of the supplied geo_point at the specified
-    precision. The result is long encoded. Use TO_STRING to convert the result
-    to a string, TO_LONG to convert it to a `long`, or TO_GEOSHAPE to calculate
-    the `geo_shape` bounding geometry.  These functions are related to the
-    `geo_grid` query and the `geotile_grid` aggregation.
+    precision. The result is long encoded. Use `TO_STRING` to convert the
+    result to a string, `TO_LONG` to convert it to a `long`, or `TO_GEOSHAPE`
+    to calculate the `geo_shape` bounding geometry.  These functions are
+    related to the `geo_grid` query and the `geotile_grid` aggregation.
 
     :param geometry: Expression of type `geo_point`. If `null`, the function
                      returns `null`.
@@ -1795,6 +1982,17 @@ def st_intersects(
     )
 
 
+def st_isempty(geometry: ExpressionType) -> InstrumentedExpression:
+    """Returns true if the supplied geometry is empty. An empty geometry is one
+    that has no points, such as an empty geometry collection or an empty linestring.
+
+    :param geometry: Expression of type `geo_point`, `geo_shape`,
+                     `cartesian_point` or `cartesian_shape`. If `null`, the
+                     function returns `null`.
+    """
+    return InstrumentedExpression(f"ST_ISEMPTY({_render(geometry)})")
+
+
 def st_npoints(geometry: ExpressionType) -> InstrumentedExpression:
     """Counts the number of points in the supplied geometry.
 
@@ -1821,6 +2019,26 @@ def st_simplify(
     """
     return InstrumentedExpression(
         f"ST_SIMPLIFY({_render(geometry)}, {_render(tolerance)})"
+    )
+
+
+def st_simplifypreservetopology(
+    geometry: ExpressionType, tolerance: ExpressionType
+) -> InstrumentedExpression:
+    """Simplifies the input geometry by applying a topology-preserving variant
+    of the Douglas-Peucker algorithm with a specified tolerance. Vertices that
+    fall within the tolerance distance from the simplified shape are removed.
+    Unlike `ST_SIMPLIFY`, the resulting geometry is guaranteed to be
+    topologically valid.
+
+    :param geometry: Expression of type `geo_point`, `geo_shape`,
+                     `cartesian_point` or `cartesian_shape`. If `null`, the
+                     function returns `null`.
+    :param tolerance: Tolerance for the geometry simplification, in the units
+                      of the input SRS
+    """
+    return InstrumentedExpression(
+        f"ST_SIMPLIFYPRESERVETOPOLOGY({_render(geometry)}, {_render(tolerance)})"
     )
 
 
@@ -2004,13 +2222,30 @@ def tau() -> InstrumentedExpression:
     return InstrumentedExpression("TAU()")
 
 
-def tbucket(buckets: ExpressionType) -> InstrumentedExpression:
-    """Creates groups of values - buckets - out of a @timestamp attribute. The
-    size of the buckets must be provided directly.
+def tbucket(
+    buckets: ExpressionType, from_: ExpressionType, to: ExpressionType
+) -> InstrumentedExpression:
+    """Creates groups of values - buckets - out of a `@timestamp` attribute.
+    The size of the buckets can be provided directly as a duration or period.
+    Alternatively, the bucket size can be chosen based on a recommended count
+    and a range {applies_to}`stack: ga 9.4`.  When using ES|QL in Kibana, the
+    range can be derived automatically from the `@timestamp` filter that Kibana
+    adds to the query.
 
-    :param buckets: Desired bucket size.
+    :param buckets: Target number of buckets, or desired bucket size. When a
+                    number is provided, the actual bucket size is derived from
+                    `from`/`to` or the `@timestamp` range in the query filter
+                    {applies_to}`stack: ga 9.4`. When a duration or period is
+                    provided, it is used as the explicit bucket size.
+    :param from_: Start of the range. Required with a numeric `buckets` when no
+                  `@timestamp` range is in the query filter {applies_to}`stack:
+                  ga 9.4`.
+    :param to: End of the range. Required with a numeric `buckets` when no
+               `@timestamp` range is in the query filter {applies_to}`stack: ga 9.4`.
     """
-    return InstrumentedExpression(f"TBUCKET({_render(buckets)})")
+    return InstrumentedExpression(
+        f"TBUCKET({_render(buckets)}, {_render(from_)}, {_render(to)})"
+    )
 
 
 def term(field: ExpressionType, query: ExpressionType) -> InstrumentedExpression:
@@ -2149,6 +2384,14 @@ def to_double(field: ExpressionType) -> InstrumentedExpression:
     return InstrumentedExpression(f"TO_DOUBLE({_render(field)})")
 
 
+def to_exponential_histogram(field: ExpressionType) -> InstrumentedExpression:
+    """Converts histogram-like values to an exponential histogram.
+
+    :param field: The histogram value to be converted
+    """
+    return InstrumentedExpression(f"TO_EXPONENTIAL_HISTOGRAM({_render(field)})")
+
+
 def to_geohash(field: ExpressionType) -> InstrumentedExpression:
     """Converts an input value to a `geohash` value. A string will only be
     successfully converted if it respects the `geohash` format, as described
@@ -2213,7 +2456,8 @@ def to_integer(
     :param field: Input value. The input can be a single- or multi-valued
                   column or an expression.
     :param base: (Optional) Radix or base used to convert the input value.When
-                 a base is specified the input type must be `keyword` or `text`.
+                 a base is specified the input type must be `keyword` or
+                 `text`.{applies_to}`stack: ga 9.3`
     """
     if base is not None:
         return InstrumentedExpression(f"TO_INTEGER({_render(field)}, {_render(base)})")
@@ -2246,7 +2490,8 @@ def to_long(
     :param field: Input value. The input can be a single- or multi-valued
                   column or an expression.
     :param base: (Optional) Radix or base used to convert the input value.When
-                 a base is specified the input type must be `keyword` or `text`.
+                 a base is specified the input type must be `keyword` or
+                 `text`.{applies_to}`stack: ga 9.3`
     """
     if base is not None:
         return InstrumentedExpression(f"TO_LONG({_render(field)}, {_render(base)})")
@@ -2259,7 +2504,7 @@ def to_lower(str: ExpressionType) -> InstrumentedExpression:
 
     :param str: String expression. If `null`, the function returns `null`. The
                 input can be a single-valued column or expression, or a
-                multi-valued column or expression .
+                multi-valued column or expression {applies_to}`stack: ga 9.1.0`.
     """
     return InstrumentedExpression(f"TO_LOWER({_render(str)})")
 
@@ -2280,6 +2525,14 @@ def to_string(field: ExpressionType) -> InstrumentedExpression:
                   column or an expression.
     """
     return InstrumentedExpression(f"TO_STRING({_render(field)})")
+
+
+def to_tdigest(field: ExpressionType) -> InstrumentedExpression:
+    """Converts an untyped histogram to a TDigest, assuming the values are centroids.
+
+    :param field: The histogram value to be converted
+    """
+    return InstrumentedExpression(f"TO_TDIGEST({_render(field)})")
 
 
 def to_timeduration(field: ExpressionType) -> InstrumentedExpression:
@@ -2307,7 +2560,7 @@ def to_upper(str: ExpressionType) -> InstrumentedExpression:
 
     :param str: String expression. If `null`, the function returns `null`. The
                 input can be a single-valued column or expression, or a
-                multi-valued column or expression .
+                multi-valued column or expression {applies_to}`stack: ga 9.1.0`.
     """
     return InstrumentedExpression(f"TO_UPPER({_render(str)})")
 
@@ -2334,7 +2587,8 @@ def top(
     :param order: The order to calculate the top values. Either `asc` or
                   `desc`, and defaults to `asc` if omitted.
     :param output_field: The extra field that, if present, will be the output
-                         of the TOP call instead of `field`.
+                         of the TOP call instead of `field`.{applies_to}`stack:
+                         ga 9.3`
     """
     if output_field is None:
         return InstrumentedExpression(
@@ -2352,7 +2606,9 @@ def top_snippets(
     """Use `TOP_SNIPPETS` to extract the best snippets for a given query string
     from a text field.
 
-    :param field: The input to chunk.
+    :param field: The field to extract snippets from. The input can be a
+                  single-valued or multi-valued field. In the case of a
+                  multi-valued argument, snippets are extracted from each value separately.
     :param query: The input text containing only query terms for snippet
                   extraction. Lucene query syntax, operators, and wildcards are
                   not allowed.
@@ -2369,10 +2625,10 @@ def trange(
 ) -> InstrumentedExpression:
     """Filters data for the given time range using the @timestamp attribute.
 
-    :param start_time_or_offset: Offset from NOW for the single parameter
-                                 mode. Start time for two parameter mode.  In
-                                 two parameter mode, the start time value can
-                                 be a date string, date, date_nanos or epoch milliseconds.
+    :param start_time_or_offset: Offset from NOW for the single parameter mode.
+                                 Start time for two parameter mode.  In two
+                                 parameter mode, the start time value can be a
+                                 date string, date, date_nanos or epoch milliseconds.
     :param end_time: Explicit end time that can be a date string, date,
                      date_nanos or epoch milliseconds.
     """
@@ -2472,8 +2728,9 @@ def v_magnitude(input: ExpressionType) -> InstrumentedExpression:
 
 
 def values(field: ExpressionType) -> InstrumentedExpression:
-    """Returns unique values as a multivalued field. The order of the returned
-    values isn’t guaranteed. If you need the values returned in order use `MV_SORT`.
+    """Returns unique (deduplicated) values as a multivalued field. The order
+    of the returned values isn’t guaranteed. If you need the values returned in
+    order use `MV_SORT`.
 
     :param field:
     """
