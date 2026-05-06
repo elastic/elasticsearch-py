@@ -1075,3 +1075,54 @@ def test_pydantic_integration() -> None:
     assert u3.to_doc().name == "Unknown"
     assert u3.to_doc().address.location.country == "Unknown"
     assert u3.to_doc().phones == []
+
+
+def test_renamed_fields() -> None:
+    class SubDoc(InnerDoc):
+        name: str
+        timestamp: datetime = mapped_field(es_name="timestamp_two")
+        this = field.Integer(_es_name="that_two")
+
+    class Doc(Document):
+        name: str
+        timestamp: datetime = mapped_field(es_name="@timestamp")
+        this = field.Integer(_es_name="that")
+        sub1: SubDoc
+        sub2: SubDoc = mapped_field(es_name="sub_two")
+
+    # instrumented field names
+    assert str(Doc.timestamp) == "@timestamp"
+    assert str(Doc.this) == "that"
+    assert str(Doc.sub2) == "sub_two"
+    assert str(Doc.sub1.name) == "sub1.name"
+    assert str(Doc.sub1.timestamp) == "sub1.timestamp_two"
+    assert str(Doc.sub1.this) == "sub1.that_two"
+    assert str(Doc.sub2.name) == "sub_two.name"
+    assert str(Doc.sub2.timestamp) == "sub_two.timestamp_two"
+    assert str(Doc.sub2.this) == "sub_two.that_two"
+
+    # document to dict
+    doc = Doc(name="foo", timestamp=datetime(2026, 1, 1, 0, 0, 0), this=42)
+    serialized = doc.to_dict()
+    assert serialized["name"] == "foo"
+    assert serialized["@timestamp"].isoformat() == "2026-01-01T00:00:00"
+    assert serialized["that"] == 42
+    assert len(serialized.keys()) == 3
+
+    # dict to document using Python names
+    doc = Doc.from_es(
+        {"_source": {"name": "foo", "timestamp": "2026-01-01T00:00:00", "this": 42}}
+    )
+    assert doc.name == "foo"
+    assert doc.timestamp.isoformat() == "2026-01-01T00:00:00"
+    assert doc.this == 42
+    assert doc.to_dict() == serialized
+
+    # dict to document using ES names
+    doc = Doc.from_es(
+        {"_source": {"name": "foo", "@timestamp": "2026-01-01T00:00:00", "that": 42}}
+    )
+    assert doc.name == "foo"
+    assert doc.timestamp.isoformat() == "2026-01-01T00:00:00"
+    assert doc.this == 42
+    assert doc.to_dict() == serialized
