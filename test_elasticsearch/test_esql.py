@@ -71,6 +71,43 @@ def test_ts():
     )
 
 
+def test_set():
+    query = ESQL.from_("many_numbers").stats(sum="SUM(sv)").set(approximation=True)
+    assert (
+        query.render()
+        == """SET approximation = true;
+FROM many_numbers
+| STATS sum = SUM(sv)"""
+    )
+
+    query = (
+        ESQL.from_("many_numbers")
+        .stats(median="MEDIAN(sv)")
+        .set(approximation={"rows": 10000})
+    )
+    assert (
+        query.render()
+        == """SET approximation = {"rows": 10000};
+FROM many_numbers
+| STATS median = MEDIAN(sv)"""
+    )
+
+    query = ESQL.row(a=1).set(approximation=True)
+    assert query.render() == "SET approximation = true;\nROW a = 1"
+    query = ESQL.show("INFO").set(approximation=True)
+    assert query.render() == "SET approximation = true;\nSHOW INFO"
+    query = ESQL.ts("many_numbers").set(approximation=True)
+    assert query.render() == "SET approximation = true;\nTS many_numbers"
+
+    query = ESQL.from_("index").set(foo="bar", baz={"a": "b"}).set(qux=False)
+    assert (
+        query.render()
+        == """SET foo = "bar", baz = {\"a\": \"b\"};
+SET qux = false;
+FROM index"""
+    )
+
+
 def test_change_point():
     query = (
         ESQL.row(key=list(range(1, 26)))
@@ -563,12 +600,126 @@ def test_lookup_join():
     )
 
 
+def test_metrics_info():
+    query = ESQL.ts("k8s").metrics_info().sort("metric_name")
+    assert (
+        query.render()
+        == """TS k8s
+| METRICS_INFO
+| SORT metric_name"""
+    )
+
+    query = ESQL.ts("k8s").where('cluster == "prod"').metrics_info().sort("metric_name")
+    assert (
+        query.render()
+        == """TS k8s
+| WHERE cluster == "prod"
+| METRICS_INFO
+| SORT metric_name"""
+    )
+
+
+def test_mmr():
+    query = (
+        ESQL.from_("mmr_text_vector_keyword")
+        .sort("keyword_field")
+        .limit(10)
+        .mmr("text_vector")
+        .mmr_limit(3)
+        .drop("text_vector", "byte_vector", "bit_vector")
+    )
+    assert (
+        query.render()
+        == """FROM mmr_text_vector_keyword
+| SORT keyword_field
+| LIMIT 10
+| MMR ON text_vector LIMIT 3
+| DROP text_vector, byte_vector, bit_vector"""
+    )
+
+    query = (
+        ESQL.from_("mmr_text_vector_keyword")
+        .sort("keyword_field")
+        .limit(10)
+        .mmr("text_vector", [0.1, 0.2, 0.3])
+        .mmr_limit(3)
+        .with_(lambda_=0.1)
+        .drop("text_vector", "byte_vector", "bit_vector")
+    )
+    assert (
+        query.render()
+        == """FROM mmr_text_vector_keyword
+| SORT keyword_field
+| LIMIT 10
+| MMR [0.1, 0.2, 0.3] ON text_vector LIMIT 3 WITH {"lambda": 0.1}
+| DROP text_vector, byte_vector, bit_vector"""
+    )
+
+    query = (
+        ESQL.from_("dense_vector_text")
+        .metadata("_score")
+        .eval(
+            query_embedding=functions.text_embedding(
+                "be excellent to each other", "test_dense_inference"
+            )
+        )
+        .where(functions.knn("text_embedding_field", "query_embedding"))
+        .sort("_score DESC")
+        .limit(10)
+        .mmr(
+            "text_embedding_field",
+            functions.text_embedding(
+                "be excellent to each other", "test_dense_inference"
+            ),
+        )
+        .mmr_limit(3)
+        .with_(lambda_=0.2)
+        .keep("text_field", "query_embedding")
+    )
+    assert (
+        query.render()
+        == """FROM dense_vector_text METADATA _score
+| EVAL query_embedding = TEXT_EMBEDDING("be excellent to each other", "test_dense_inference")
+| WHERE KNN("text_embedding_field", "query_embedding")
+| SORT _score DESC
+| LIMIT 10
+| MMR TEXT_EMBEDDING("be excellent to each other", "test_dense_inference") ON text_embedding_field LIMIT 3 WITH {"lambda": 0.2}
+| KEEP text_field, query_embedding"""
+    )
+
+
 def test_mv_expand():
     query = ESQL.row(a=[1, 2, 3], b="b", j=["a", "b"]).mv_expand("a")
     assert (
         query.render()
         == """ROW a = [1, 2, 3], b = "b", j = ["a", "b"]
 | MV_EXPAND a"""
+    )
+
+
+def test_registered_domain():
+    query = ESQL.row(fqdn="www.example.co.uk").registered_domain(rd="fqdn").keep("rd.*")
+    assert (
+        query.render()
+        == """ROW fqdn = "www.example.co.uk"
+| REGISTERED_DOMAIN rd = fqdn
+| KEEP rd.*"""
+    )
+
+    query = (
+        ESQL.from_("web_logs")
+        .registered_domain(rd="domain")
+        .where('rd.registered_domain == "elastic.co"')
+        .stats(functions.count("*"))
+        .by("rd.subdomain")
+    )
+    assert (
+        query.render()
+        == """FROM web_logs
+| REGISTERED_DOMAIN rd = domain
+| WHERE rd.registered_domain == "elastic.co"
+| STATS COUNT("*")
+        BY rd.subdomain"""
     )
 
 
@@ -815,6 +966,94 @@ def test_stats():
         BY hired, languages.long
 | EVAL avg_salary = ROUND(avg_salary)
 | SORT hired, languages.long"""
+    )
+
+
+def test_ts_info():
+    query = ESQL.ts("k8s").ts_info().sort("metric_name", "dimensions")
+    assert (
+        query.render()
+        == """TS k8s
+| TS_INFO
+| SORT metric_name, dimensions"""
+    )
+
+    query = (
+        ESQL.ts("k8s")
+        .where('cluster == "prod"')
+        .ts_info()
+        .sort("metric_name", "dimensions")
+    )
+    assert (
+        query.render()
+        == """TS k8s
+| WHERE cluster == "prod"
+| TS_INFO
+| SORT metric_name, dimensions"""
+    )
+
+
+def test_uri_parts():
+    query = (
+        ESQL.row(
+            uri="http://myusername:mypassword@www.example.com:80/foo.gif?key1=val1&key2=val2#fragment"
+        )
+        .uri_parts(parts="uri")
+        .keep("parts.*")
+    )
+    assert (
+        query.render()
+        == """ROW uri = "http://myusername:mypassword@www.example.com:80/foo.gif?key1=val1&key2=val2#fragment"
+| URI_PARTS parts = uri
+| KEEP parts.*"""
+    )
+
+    query = (
+        ESQL.from_("web_logs")
+        .uri_parts(p="uri")
+        .where('p.domain == "www.example.com"')
+        .stats(functions.count(E("*")))
+        .by("p.path")
+    )
+    assert (
+        query.render()
+        == """FROM web_logs
+| URI_PARTS p = uri
+| WHERE p.domain == "www.example.com"
+| STATS COUNT(*)
+        BY p.path"""
+    )
+
+
+def test_user_agent():
+    query = (
+        ESQL.row(
+            input="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.149 Safari/537.36"
+        )
+        .user_agent(ua="input")
+        .with_(extract_device_type=True)
+        .keep("ua.*")
+    )
+    assert (
+        query.render()
+        == """ROW input = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.149 Safari/537.36"
+| USER_AGENT ua = input WITH {"extract_device_type": true}
+| KEEP ua.*"""
+    )
+
+    query = (
+        ESQL.row(
+            input="Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15"
+        )
+        .user_agent(ua="input")
+        .with_(properties=["name", "version", "device"], extract_device_type=True)
+        .keep("ua.*")
+    )
+    assert (
+        query.render()
+        == """ROW input = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15"
+| USER_AGENT ua = input WITH {"properties": ["name", "version", "device"], "extract_device_type": true}
+| KEEP ua.*"""
     )
 
 
