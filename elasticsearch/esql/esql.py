@@ -135,7 +135,10 @@ class ESQLBase(ABC):
 
     @staticmethod
     def _format_index(index: IndexType) -> str:
-        return index._index._name if hasattr(index, "_index") else str(index)
+        s = index._index._name if hasattr(index, "_index") else str(index)
+        if re.search(r"[\s,|;`]", s):
+            raise ValueError("ES|QL index names cannot contain query delimiters")
+        return s
 
     @staticmethod
     def _format_id(id: FieldType, allow_patterns: bool = False) -> str:

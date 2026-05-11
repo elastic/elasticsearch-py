@@ -15,6 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import pytest
+
 from elasticsearch.dsl import E
 from elasticsearch.esql import ESQL, and_, functions, not_, or_
 
@@ -37,6 +39,23 @@ def test_from():
 
     query = ESQL.from_("employees").metadata("_id")
     assert query.render() == "FROM employees METADATA _id"
+
+
+@pytest.mark.parametrize(
+    "index",
+    [
+        'tenant-a | EVAL tenant_id = "victim"',
+        "tenant-a, other-tenant",
+        "tenant-a;\nROW secret = true",
+        "tenant-a `escaped`",
+    ],
+)
+def test_from_rejects_query_delimiters_in_index_names(index):
+    with pytest.raises(ValueError, match="query delimiters"):
+        ESQL.from_(index).where('tenant_id == "victim"').render()
+
+    with pytest.raises(ValueError, match="query delimiters"):
+        ESQL.ts(index).render()
 
 
 def test_row():
@@ -598,6 +617,9 @@ def test_lookup_join():
 | WHERE emp_no >= 10091 AND emp_no < 10094
 | LOOKUP JOIN languages_lookup ON language_code"""
     )
+
+    with pytest.raises(ValueError, match="query delimiters"):
+        ESQL.from_("events").lookup_join("tenant-lookup | LIMIT 1").on("id").render()
 
 
 def test_metrics_info():
