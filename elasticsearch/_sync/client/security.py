@@ -1896,6 +1896,7 @@ class SecurityClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        include_implicit: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1912,6 +1913,10 @@ class SecurityClient(NamespacedClient):
         :param name: The name of the role. You can specify multiple roles as a comma-separated
             list. If you do not specify this parameter, the API returns information about
             all roles.
+        :param include_implicit: If `true`, include privileges that are implicitly granted
+            by registered `ImplicitPrivilegesProviders` alongside the explicitly configured
+            privileges. Each implicit entry in the response is annotated with `implicitly_granted:
+            true`.
         """
         __path_parts: t.Dict[str, str]
         if name not in SKIP_IN_PATH:
@@ -1927,6 +1932,8 @@ class SecurityClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if include_implicit is not None:
+            __query["include_implicit"] = include_implicit
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
