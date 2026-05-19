@@ -505,7 +505,9 @@ class TestOptions(DummyTransportTestCase):
             "http://localhost:9200", transport_class=DummyTransport, request_timeout=1.5
         )
         Elasticsearch(
-            "http://localhost:9200", transport_class=DummyTransport, request_timeout=None
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            request_timeout=None,
         )
 
         client = Elasticsearch("http://localhost:9200", transport_class=DummyTransport)
