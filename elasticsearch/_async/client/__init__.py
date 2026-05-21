@@ -333,6 +333,12 @@ class AsyncElasticsearch(BaseClient):
             super().__init__(_transport)
 
             # These are set per-request so are stored separately.
+            if request_timeout is not DEFAULT and not isinstance(
+                request_timeout, (int, float, type(None))
+            ):
+                raise TypeError(
+                    "'request_timeout' must be of type 'int', 'float', or 'None'"
+                )
             self._request_timeout = request_timeout
             self._max_retries = max_retries
             self._retry_on_timeout = retry_on_timeout
@@ -460,6 +466,10 @@ class AsyncElasticsearch(BaseClient):
             client._headers = self._headers.copy()
 
         if request_timeout is not DEFAULT:
+            if not isinstance(request_timeout, (int, float, type(None))):
+                raise TypeError(
+                    "'request_timeout' must be of type 'int', 'float', or 'None'"
+                )
             client._request_timeout = request_timeout
         else:
             client._request_timeout = self._request_timeout

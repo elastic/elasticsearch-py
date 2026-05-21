@@ -496,6 +496,37 @@ class TestOptions(DummyTransportTestCase):
             "retry_on_timeout": True,
         }
 
+    def test_request_timeout_type_validation(self):
+        # Valid types should not raise
+        Elasticsearch(
+            "http://localhost:9200", transport_class=DummyTransport, request_timeout=1
+        )
+        Elasticsearch(
+            "http://localhost:9200", transport_class=DummyTransport, request_timeout=1.5
+        )
+        Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            request_timeout=None,
+        )
+
+        client = Elasticsearch("http://localhost:9200", transport_class=DummyTransport)
+        client.options(request_timeout=1)
+        client.options(request_timeout=1.5)
+        client.options(request_timeout=None)
+
+        # String type should raise TypeError on constructor
+        with pytest.raises(TypeError, match="'request_timeout' must be of type"):
+            Elasticsearch(
+                "http://localhost:9200",
+                transport_class=DummyTransport,
+                request_timeout="1",
+            )
+
+        # String type should raise TypeError on .options()
+        with pytest.raises(TypeError, match="'request_timeout' must be of type"):
+            client.options(request_timeout="1")
+
     def test_serializer_and_serializers(self):
         with pytest.raises(ValueError) as e:
             Elasticsearch(
