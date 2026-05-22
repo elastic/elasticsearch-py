@@ -174,6 +174,8 @@ class Elasticsearch(BaseClient):
         max_retries: t.Union[DefaultType, int] = DEFAULT,
         retry_on_status: t.Union[DefaultType, int, t.Collection[int]] = DEFAULT,
         retry_on_timeout: t.Union[DefaultType, bool] = DEFAULT,
+        retry_backoff_base: t.Union[DefaultType, int] = DEFAULT,
+        retry_backoff_cap: t.Union[DefaultType, int] = DEFAULT,
         sniff_on_start: t.Union[DefaultType, bool] = DEFAULT,
         sniff_before_requests: t.Union[DefaultType, bool] = DEFAULT,
         sniff_on_node_failure: t.Union[DefaultType, bool] = DEFAULT,
@@ -339,6 +341,8 @@ class Elasticsearch(BaseClient):
             if isinstance(retry_on_status, int):
                 retry_on_status = (retry_on_status,)
             self._retry_on_status = retry_on_status
+            self._retry_backoff_base = retry_backoff_base
+            self._retry_backoff_cap = retry_backoff_cap
 
         else:
             super().__init__(_transport)
@@ -438,6 +442,8 @@ class Elasticsearch(BaseClient):
         max_retries: t.Union[DefaultType, int] = DEFAULT,
         retry_on_status: t.Union[DefaultType, int, t.Collection[int]] = DEFAULT,
         retry_on_timeout: t.Union[DefaultType, bool] = DEFAULT,
+        retry_backoff_base: t.Union[DefaultType, int] = DEFAULT,
+        retry_backoff_cap: t.Union[DefaultType, int] = DEFAULT,
     ) -> SelfType:
         client = type(self)(_transport=self.transport)
 
@@ -491,6 +497,16 @@ class Elasticsearch(BaseClient):
             client._retry_on_timeout = retry_on_timeout
         else:
             client._retry_on_timeout = self._retry_on_timeout
+
+        if retry_backoff_base is not DEFAULT:
+            client._retry_backoff_base = retry_backoff_base
+        else:
+            client._retry_backoff_base = self._retry_backoff_base
+
+        if retry_backoff_cap is not DEFAULT:
+            client._retry_backoff_cap = retry_backoff_cap
+        else:
+            client._retry_backoff_cap = self._retry_backoff_cap
 
         client._is_serverless = self._is_serverless
 
