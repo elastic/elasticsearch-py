@@ -1650,6 +1650,7 @@ class InnerHits(AttrDict[Any]):
     :arg ignore_unmapped:
     :arg script_fields:
     :arg seq_no_primary_term:
+    :arg field:
     :arg fields:
     :arg sort: How the inner hits should be sorted per `inner_hits`. By
         default, inner hits are sorted by score.
@@ -1675,7 +1676,8 @@ class InnerHits(AttrDict[Any]):
         DefaultType,
     ]
     seq_no_primary_term: Union[bool, DefaultType]
-    fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
+    field: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
+    fields: Union[Sequence["FieldAndFormat"], Sequence[Dict[str, Any]], DefaultType]
     sort: Union[
         Union[Union[str, InstrumentedField], "SortOptions"],
         Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1710,7 +1712,10 @@ class InnerHits(AttrDict[Any]):
             DefaultType,
         ] = DEFAULT,
         seq_no_primary_term: Union[bool, DefaultType] = DEFAULT,
-        fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
+        field: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
+        fields: Union[
+            Sequence["FieldAndFormat"], Sequence[Dict[str, Any]], DefaultType
+        ] = DEFAULT,
         sort: Union[
             Union[Union[str, InstrumentedField], "SortOptions"],
             Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1747,8 +1752,10 @@ class InnerHits(AttrDict[Any]):
             kwargs["script_fields"] = str(script_fields)
         if seq_no_primary_term is not DEFAULT:
             kwargs["seq_no_primary_term"] = seq_no_primary_term
+        if field is not DEFAULT:
+            kwargs["field"] = str(field)
         if fields is not DEFAULT:
-            kwargs["fields"] = str(fields)
+            kwargs["fields"] = fields
         if sort is not DEFAULT:
             kwargs["sort"] = str(sort)
         if _source is not DEFAULT:
