@@ -245,6 +245,8 @@ class BaseClient:
         self._max_retries: Union[DefaultType, int] = DEFAULT
         self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
+        self._retry_backoff_base: Union[DefaultType, float] = DEFAULT
+        self._retry_backoff_cap: Union[DefaultType, float] = DEFAULT
         self._is_serverless = False
         self._verified_elasticsearch = False
         self._otel = OpenTelemetry()
@@ -326,6 +328,8 @@ class BaseClient:
             max_retries=self._max_retries,
             retry_on_status=self._retry_on_status,
             retry_on_timeout=self._retry_on_timeout,
+            retry_backoff_base=self._retry_backoff_base,
+            retry_backoff_cap=self._retry_backoff_cap,
             client_meta=self._client_meta,
             otel_span=otel_span,
         )
