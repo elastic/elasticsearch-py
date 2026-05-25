@@ -19,6 +19,7 @@ import re
 import time
 import warnings
 from typing import Any, Dict, Optional
+from unittest import mock
 
 import pytest
 from elastic_transport import (
@@ -330,6 +331,33 @@ class TestTransport:
             client.options(max_retries=5).info()
         calls = client.transport.node_pool.get().calls
         assert 6 == len(calls)
+
+    def test_request_with_backoff_retries(self):
+        client = Elasticsearch(
+            [
+                NodeConfig(
+                    "http",
+                    "localhost",
+                    9200,
+                    _extras={
+                        "exception_factory": lambda: ConnectionError("abandon ship!")
+                    },
+                )
+            ],
+            node_class=DummyNode,
+            retry_backoff_base=1,
+            retry_backoff_cap=2,
+        )
+
+        with mock.patch("elastic_transport._transport.time.sleep") as mock_sleep:
+            with pytest.raises(ConnectionError) as e:
+                client.info()
+
+        calls = client.transport.node_pool.get().calls
+        assert 4 == len(calls)
+        assert len(e.value.errors) == 3
+        assert mock_sleep.call_count == 3
+        assert all(0 < arg[0][0] for arg in mock_sleep.call_args_list)
 
     def test_failed_connection_will_be_marked_as_dead(self):
         client = Elasticsearch(
