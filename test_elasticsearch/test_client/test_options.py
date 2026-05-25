@@ -152,6 +152,8 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("max_retries") is DEFAULT
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -171,6 +173,8 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -197,6 +201,8 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -225,6 +231,8 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("max_retries") is DEFAULT
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -244,6 +252,8 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -270,6 +280,8 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -399,6 +411,8 @@ class TestOptions(DummyTransportTestCase):
             max_retries=2,
             retry_on_status=(404,),
             retry_on_timeout=True,
+            retry_backoff_base=1,
+            retry_backoff_cap=2,
         )
 
         # timeout parameters are preserved with .options()
@@ -417,6 +431,8 @@ class TestOptions(DummyTransportTestCase):
             "max_retries": 2,
             "retry_on_status": (404,),
             "retry_on_timeout": True,
+            "retry_backoff_base": 1,
+            "retry_backoff_cap": 2,
         }
 
         client = Elasticsearch(
@@ -432,6 +448,8 @@ class TestOptions(DummyTransportTestCase):
             max_retries=3,
             retry_on_status=(400,),
             retry_on_timeout=False,
+            retry_backoff_base=1,
+            retry_backoff_cap=2,
         ).indices.get(index="test")
 
         calls = client.transport.calls
@@ -447,6 +465,8 @@ class TestOptions(DummyTransportTestCase):
             "max_retries": 3,
             "retry_on_status": (400,),
             "retry_on_timeout": False,
+            "retry_backoff_base": 1,
+            "retry_backoff_cap": 2,
         }
 
         client = Elasticsearch(
@@ -461,6 +481,8 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("max_retries") is DEFAULT
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("retry_backoff_base") is DEFAULT
+        assert call.pop("retry_backoff_cap") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
         assert isinstance(call.pop("otel_span"), OpenTelemetrySpan)
         assert call == {
@@ -479,6 +501,8 @@ class TestOptions(DummyTransportTestCase):
             max_retries=2,
             retry_on_status=(404,),
             retry_on_timeout=True,
+            retry_backoff_base=1,
+            retry_backoff_cap=2,
         ).indices.get(index="test")
 
         calls = client.transport.calls
@@ -494,6 +518,8 @@ class TestOptions(DummyTransportTestCase):
             "max_retries": 2,
             "retry_on_status": (404,),
             "retry_on_timeout": True,
+            "retry_backoff_base": 1,
+            "retry_backoff_cap": 2,
         }
 
     def test_serializer_and_serializers(self):
