@@ -20,6 +20,7 @@ import re
 import time
 import warnings
 from typing import Any, Dict, Optional
+from unittest import mock
 
 import anyio
 import pytest
@@ -314,6 +315,31 @@ class TestTransport:
             await client.options(max_retries=5).info()
         calls = client.transport.node_pool.get().calls
         assert 6 == len(calls)
+
+    async def test_request_with_backoff_retries(self):
+        client = AsyncElasticsearch(
+            [
+                NodeConfig(
+                    "http",
+                    "localhost",
+                    9200,
+                    _extras={"exception": ConnectionError("abandon ship!")},
+                )
+            ],
+            node_class=DummyNode,
+            retry_backoff_base=1,
+            retry_backoff_cap=2,
+        )
+
+        with mock.patch("elastic_transport._async_transport.asyncio.sleep") as mock_sleep:
+            with pytest.raises(ConnectionError) as e:
+                await client.info()
+
+        calls = client.transport.node_pool.get().calls
+        assert 4 == len(calls)
+        assert len(e.value.errors) == 3
+        assert mock_sleep.await_count == 3
+        assert all(0 < arg[0][0] for arg in mock_sleep.await_args_list)
 
     async def test_failed_connection_will_be_marked_as_dead(self):
         client = AsyncElasticsearch(

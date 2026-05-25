@@ -456,7 +456,7 @@ If desired, the client can be configured to use an exponential backoff strategy 
 spaces out the retries to give the server more time to recover from a transient
 failure.
 
-The exponential backoff algorithm used by the client is called "Equal Jitter". It is
+The exponential backoff algorithm used by the client is called "Equal Jitter." It is
 described in detail in the [Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) article, published in the AWS
 Architecture blog.
 
@@ -497,7 +497,7 @@ The `retry_backoff_base` and `retry_backoff_cap` arguments are of type float, an
 given in seconds. They control the starting delay configuration and the maximum
 allowed delay respectively.
 
-The default for these two arguments is 0, which effectively disables the backoff
+The default for these two arguments is 0, which effectively turns off the backoff
 strategy. Both arguments must be greater than 0 for delays between retries to be
 used.
 
@@ -510,13 +510,13 @@ The `retry_backoff_cap` argument prevents the exponential growth of
 `retry_backoff_base` from making the pauses extremely large when too many retries
 need to be attempted.
 
-In the example above, the first retry attempt is going to be issued after a pause
+In the preceding example, the first retry attempt is going to be issued after a pause
 of no more than 1 second. For a second retry attempt the pause is going to be up
 to 2 seconds. The follow up retries will be capped at 4, 8 and 16 seconds. If more
 retries are needed after that, then they'll all be 20 seconds or less, and this will
 continue until the call succeeds or the maximum number of retries is reached.
 
-For more details about the "Equal Jitter" algorithm, please consult the blog article
+For more details about the "Equal Jitter" algorithm, consult the blog article
 linked above.
 
 ### Ignoring status codes [_ignoring_status_codes]
