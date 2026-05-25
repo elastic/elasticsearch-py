@@ -5850,6 +5850,7 @@ class IndicesClient(NamespacedClient):
           <li>The target index must not exist.</li>
           <li>The source index must have fewer primary shards than the target index.</li>
           <li>The number of primary shards in the target index must be a multiple of the number of primary shards in the source index.</li>
+          <li>The number of primary shards in the target index must be a divisor of the source index's <code>index.number_of_routing_shards</code>.</li>
           <li>The node handling the split process must have sufficient free disk space to accommodate a second copy of the existing index.</li>
           </ul>
 
