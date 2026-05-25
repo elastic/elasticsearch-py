@@ -174,8 +174,8 @@ class Elasticsearch(BaseClient):
         max_retries: t.Union[DefaultType, int] = DEFAULT,
         retry_on_status: t.Union[DefaultType, int, t.Collection[int]] = DEFAULT,
         retry_on_timeout: t.Union[DefaultType, bool] = DEFAULT,
-        retry_backoff_base: t.Union[DefaultType, int] = DEFAULT,
-        retry_backoff_cap: t.Union[DefaultType, int] = DEFAULT,
+        retry_backoff_base: t.Union[DefaultType, float] = DEFAULT,
+        retry_backoff_cap: t.Union[DefaultType, float] = DEFAULT,
         sniff_on_start: t.Union[DefaultType, bool] = DEFAULT,
         sniff_before_requests: t.Union[DefaultType, bool] = DEFAULT,
         sniff_on_node_failure: t.Union[DefaultType, bool] = DEFAULT,
@@ -442,8 +442,8 @@ class Elasticsearch(BaseClient):
         max_retries: t.Union[DefaultType, int] = DEFAULT,
         retry_on_status: t.Union[DefaultType, int, t.Collection[int]] = DEFAULT,
         retry_on_timeout: t.Union[DefaultType, bool] = DEFAULT,
-        retry_backoff_base: t.Union[DefaultType, int] = DEFAULT,
-        retry_backoff_cap: t.Union[DefaultType, int] = DEFAULT,
+        retry_backoff_base: t.Union[DefaultType, float] = DEFAULT,
+        retry_backoff_cap: t.Union[DefaultType, float] = DEFAULT,
     ) -> SelfType:
         client = type(self)(_transport=self.transport)
 

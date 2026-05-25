@@ -331,7 +331,9 @@ class TestTransport:
             retry_backoff_cap=2,
         )
 
-        with mock.patch("elastic_transport._async_transport.asyncio.sleep") as mock_sleep:
+        with mock.patch(
+            "elastic_transport._async_transport.asyncio.sleep"
+        ) as mock_sleep:
             with pytest.raises(ConnectionError) as e:
                 await client.info()
 
