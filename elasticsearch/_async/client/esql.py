@@ -440,7 +440,7 @@ class EsqlClient(NamespacedClient):
     async def delete_view(
         self,
         *,
-        name: str,
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,

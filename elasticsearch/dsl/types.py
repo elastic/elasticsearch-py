@@ -403,6 +403,13 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg on_disk_rescore: `true` if vector rescoring should be done on-
         disk  Only applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`,
         `int8_hnsw`
+    :arg flat_index_threshold: The segment document count threshold below
+        which HNSW graph construction is skipped in favor of brute-force
+        flat search. `-1` (default) defers to format defaults: `300` for
+        `bbq_hnsw`, `150` for `hnsw`, `int8_hnsw`, and `int4_hnsw`. `0`
+        always builds the graph. A positive value overrides the format
+        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`, and
+        `bbq_hnsw` index types. Defaults to `-1` if omitted.
     """
 
     type: Union[
@@ -426,6 +433,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
     on_disk_rescore: Union[bool, DefaultType]
+    flat_index_threshold: Union[int, DefaultType]
 
     def __init__(
         self,
@@ -451,6 +459,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
+        flat_index_threshold: Union[int, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -465,6 +474,8 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["rescore_vector"] = rescore_vector
         if on_disk_rescore is not DEFAULT:
             kwargs["on_disk_rescore"] = on_disk_rescore
+        if flat_index_threshold is not DEFAULT:
+            kwargs["flat_index_threshold"] = flat_index_threshold
         super().__init__(kwargs)
 
 
@@ -486,6 +497,44 @@ class DenseVectorIndexOptionsRescoreVector(AttrDict[Any]):
     ):
         if oversample is not DEFAULT:
             kwargs["oversample"] = oversample
+        super().__init__(kwargs)
+
+
+class Embedding(AttrDict[Any]):
+    """
+    :arg input: (required)
+    :arg inference_id:
+    :arg timeout:
+    """
+
+    input: Union[
+        str,
+        Union["InferenceString", Sequence["InferenceString"]],
+        Sequence[Dict[str, Any]],
+        DefaultType,
+    ]
+    inference_id: Union[str, DefaultType]
+    timeout: Any
+
+    def __init__(
+        self,
+        *,
+        input: Union[
+            str,
+            Union["InferenceString", Sequence["InferenceString"]],
+            Sequence[Dict[str, Any]],
+            DefaultType,
+        ] = DEFAULT,
+        inference_id: Union[str, DefaultType] = DEFAULT,
+        timeout: Any = DEFAULT,
+        **kwargs: Any,
+    ):
+        if input is not DEFAULT:
+            kwargs["input"] = input
+        if inference_id is not DEFAULT:
+            kwargs["inference_id"] = inference_id
+        if timeout is not DEFAULT:
+            kwargs["timeout"] = timeout
         super().__init__(kwargs)
 
 
@@ -1635,6 +1684,38 @@ class InferenceConfigContainer(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class InferenceString(AttrDict[Any]):
+    """
+    :arg type: (required) The type of data that the value represents.
+    :arg value: (required) String which may be raw text, or the string
+        representation of some other data such as an image in base64.
+    :arg format: The format of the data. If null, the default data format
+        for the given type is used.
+    """
+
+    type: Union[Literal["text", "image", "audio", "video", "pdf"], DefaultType]
+    value: Union[str, DefaultType]
+    format: Union[Literal["text", "base64"], None, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        type: Union[
+            Literal["text", "image", "audio", "video", "pdf"], DefaultType
+        ] = DEFAULT,
+        value: Union[str, DefaultType] = DEFAULT,
+        format: Union[Literal["text", "base64"], None, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if type is not DEFAULT:
+            kwargs["type"] = type
+        if value is not DEFAULT:
+            kwargs["value"] = value
+        if format is not DEFAULT:
+            kwargs["format"] = format
+        super().__init__(kwargs)
+
+
 class InnerHits(AttrDict[Any]):
     """
     :arg name: The name for the particular inner hit definition in the
@@ -1650,6 +1731,7 @@ class InnerHits(AttrDict[Any]):
     :arg ignore_unmapped:
     :arg script_fields:
     :arg seq_no_primary_term:
+    :arg field:
     :arg fields:
     :arg sort: How the inner hits should be sorted per `inner_hits`. By
         default, inner hits are sorted by score.
@@ -1675,7 +1757,8 @@ class InnerHits(AttrDict[Any]):
         DefaultType,
     ]
     seq_no_primary_term: Union[bool, DefaultType]
-    fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
+    field: Union[Sequence[Union[str, InstrumentedField]], DefaultType]
+    fields: Union[Sequence["FieldAndFormat"], Sequence[Dict[str, Any]], DefaultType]
     sort: Union[
         Union[Union[str, InstrumentedField], "SortOptions"],
         Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1710,7 +1793,10 @@ class InnerHits(AttrDict[Any]):
             DefaultType,
         ] = DEFAULT,
         seq_no_primary_term: Union[bool, DefaultType] = DEFAULT,
-        fields: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
+        field: Union[Sequence[Union[str, InstrumentedField]], DefaultType] = DEFAULT,
+        fields: Union[
+            Sequence["FieldAndFormat"], Sequence[Dict[str, Any]], DefaultType
+        ] = DEFAULT,
         sort: Union[
             Union[Union[str, InstrumentedField], "SortOptions"],
             Sequence[Union[Union[str, InstrumentedField], "SortOptions"]],
@@ -1747,8 +1833,10 @@ class InnerHits(AttrDict[Any]):
             kwargs["script_fields"] = str(script_fields)
         if seq_no_primary_term is not DEFAULT:
             kwargs["seq_no_primary_term"] = seq_no_primary_term
+        if field is not DEFAULT:
+            kwargs["field"] = str(field)
         if fields is not DEFAULT:
-            kwargs["fields"] = str(fields)
+            kwargs["fields"] = fields
         if sort is not DEFAULT:
             kwargs["sort"] = str(sort)
         if _source is not DEFAULT:
@@ -2926,23 +3014,28 @@ class PrefixQuery(AttrDict[Any]):
 
 class QueryVectorBuilder(AttrDict[Any]):
     """
+    :arg embedding:
     :arg text_embedding:
     :arg lookup: Lookup a vector from an existing document. Must reference
         a dense_vector field and a single value.
     """
 
+    embedding: Union["Embedding", Dict[str, Any], DefaultType]
     text_embedding: Union["TextEmbedding", Dict[str, Any], DefaultType]
     lookup: Union["LookupQueryVectorBuilder", Dict[str, Any], DefaultType]
 
     def __init__(
         self,
         *,
+        embedding: Union["Embedding", Dict[str, Any], DefaultType] = DEFAULT,
         text_embedding: Union["TextEmbedding", Dict[str, Any], DefaultType] = DEFAULT,
         lookup: Union[
             "LookupQueryVectorBuilder", Dict[str, Any], DefaultType
         ] = DEFAULT,
         **kwargs: Any,
     ):
+        if embedding is not DEFAULT:
+            kwargs["embedding"] = embedding
         if text_embedding is not DEFAULT:
             kwargs["text_embedding"] = text_embedding
         if lookup is not DEFAULT:
