@@ -276,7 +276,9 @@ class AutoDateHistogram(Bucket[_R]):
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
         format: Union[str, "DefaultType"] = DEFAULT,
         minimum_interval: Union[
-            Literal["second", "minute", "hour", "day", "month", "year"], "DefaultType"
+            Literal["second", "minute", "hour", "day", "month", "year"],
+            None,
+            "DefaultType",
         ] = DEFAULT,
         missing: Any = DEFAULT,
         offset: Union[str, "DefaultType"] = DEFAULT,
