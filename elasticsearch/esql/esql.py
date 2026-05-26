@@ -135,7 +135,10 @@ class ESQLBase(ABC):
 
     @staticmethod
     def _format_index(index: IndexType) -> str:
-        return index._index._name if hasattr(index, "_index") else str(index)
+        name = index._index._name if hasattr(index, "_index") else str(index)
+        if "|" in name:
+            raise ValueError(f"Invalid index name: {name}")
+        return name
 
     @staticmethod
     def _format_id(id: FieldType, allow_patterns: bool = False) -> str:
