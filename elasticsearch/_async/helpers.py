@@ -97,8 +97,7 @@ async def _chunk_actions(
     data: _TYPE_BULK_ACTION_BODY
     if not flush_after_seconds:
         async for action, data in actions:
-            ret = chunker.feed(action, data)
-            if ret:
+            for ret in chunker.feed(action, data):
                 yield ret
     else:
         sender, receiver = create_memory_object_stream[
@@ -128,8 +127,7 @@ async def _chunk_actions(
 
                 if action is BulkMeta.done:
                     break
-                ret = chunker.feed(action, data)
-                if ret:
+                for ret in chunker.feed(action, data):
                     yield ret
 
     ret = chunker.flush()
