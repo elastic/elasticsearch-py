@@ -15,6 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import pytest
+
 from elasticsearch.dsl import E
 from elasticsearch.esql import ESQL, and_, functions, not_, or_
 
@@ -37,6 +39,10 @@ def test_from():
 
     query = ESQL.from_("employees").metadata("_id")
     assert query.render() == "FROM employees METADATA _id"
+
+    query = ESQL.from_('employees | WHERE name = "foo"')
+    with pytest.raises(ValueError):
+        query.render()
 
 
 def test_row():
