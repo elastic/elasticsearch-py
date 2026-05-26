@@ -2645,7 +2645,8 @@ class InferenceClient(NamespacedClient):
         self,
         *,
         task_type: t.Union[
-            str, t.Literal["chat_completion", "completion", "text_embedding"]
+            str,
+            t.Literal["chat_completion", "completion", "embedding", "text_embedding"],
         ],
         openai_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["openai"]]] = None,
