@@ -18,6 +18,19 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.4.1 (2026-05-26)
+
+Enhancements
+
+* Optional backoff delay strategy for retries (Fixes #197) ([#3430](https://github.com/elastic/elasticsearch-py/pull/3430))
+* Sanitize index names in ES|QL query builder (Fixes #3422) ([#3425](https://github.com/elastic/elasticsearch-py/pull/3425))
+
+DSL
+
+* Added `flat_index_threshold` attribute to `DenseVectorIndexOptions` type
+* Added `field` attribute to `InnerHits` type
+* Added `embedding` attribute to `QueryVectorBuilder` type
+
 ## 9.4.0 (2026-05-06)
 
 Enhancements
