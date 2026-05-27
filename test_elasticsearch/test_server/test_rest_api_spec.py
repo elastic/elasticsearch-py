@@ -75,31 +75,16 @@ FAILING_TESTS = {
     # ping has a custom implementation in Python and returns a boolean
     "ping/ping",
     # Not investigated yet
-    "cat/aliases",
-    "cat/fielddata",
-    "cluster/delete_voting_config_exclusions",
-    "cluster/voting_config_exclusions",
     "entsearch/10_basic",
-    "indices/clone",
-    "indices/data_stream_mappings[0]",
     "indices/resolve_cluster",
     "indices/settings",
-    "indices/split",
-    "indices/simulate_template_stack",
-    "logstash/10_basic",
-    "machine_learning/30_trained_model_stack",
     "machine_learning/jobs_crud",
-    "scroll/10_basic",
-    "security/10_api_key_basic",
-    "security/130_user_profile",
-    "transform/10_basic",
 }
 SKIPPED_TESTS = {
     # Timeouts
     # https://github.com/elastic/elasticsearch-serverless-python/issues/63
-    "cluster/cluster_info[0]",
     "inference/10_basic[0]",
-    "machine_learning/20_trained_model[0]",
+    "searchable_snapshots/10_basic[0]",
 }
 
 
