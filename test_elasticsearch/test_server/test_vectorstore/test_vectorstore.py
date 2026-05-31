@@ -591,6 +591,40 @@ class TestVectorStore:
         output = store.search(query="foo", k=1, custom_query=my_custom_query)
         assert [doc["_source"]["text_field"] for doc in output] == ["bar"]
 
+    def test_custom_query_debug_log_omits_query_body(
+        self,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        class FakeClient:
+            def options(self, **kwargs: Any) -> "FakeClient":
+                return self
+
+            def search(self, **kwargs: Any) -> dict:
+                return {"hits": {"hits": []}}
+
+        class FakeStrategy:
+            def es_query(self, **kwargs: Any) -> dict:
+                return {"query": {"match": {"text_field": kwargs["query"]}}}
+
+        def custom_query(query_body: dict, query: Optional[str]) -> dict:
+            return {
+                "query": {"match": {"text_field": "secret customer token"}},
+                "post_filter": {"term": {"api_key": "secret-api-key"}},
+            }
+
+        store = VectorStore(
+            index="test-index",
+            retrieval_strategy=FakeStrategy(),  # type: ignore[arg-type]
+            client=FakeClient(),  # type: ignore[arg-type]
+        )
+
+        with caplog.at_level(logging.DEBUG):
+            store.search(query="secret customer token", custom_query=custom_query)
+
+        assert "Applied custom_query to vectorstore search body" in caplog.text
+        assert "secret customer token" not in caplog.text
+        assert "secret-api-key" not in caplog.text
+
     def test_search_with_knn_infer_instack(
         self, sync_client: Elasticsearch, index: str
     ) -> None:

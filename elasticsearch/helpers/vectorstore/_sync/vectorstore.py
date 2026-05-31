@@ -279,7 +279,7 @@ class VectorStore:
 
         if custom_query is not None:
             query_body = custom_query(query_body, query)
-            logger.debug(f"Calling custom_query, Query body now: {query_body}")
+            logger.debug("Applied custom_query to vectorstore search body")
 
         response = self.client.search(
             index=self.index,
