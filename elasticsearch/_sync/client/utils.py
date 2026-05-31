@@ -260,7 +260,7 @@ def _quote(value: Any) -> str:
 
 
 def _quote_query(query: Mapping[str, Any]) -> str:
-    return "&".join([f"{k}={_quote(v)}" for k, v in query.items()])
+    return "&".join([f"{_quote(k)}={_quote(v)}" for k, v in query.items()])
 
 
 def _merge_kwargs_no_duplicates(kwargs: Dict[str, Any], values: Dict[str, Any]) -> None:
