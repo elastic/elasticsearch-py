@@ -980,6 +980,8 @@ class SecurityClient(NamespacedClient):
           <p>Create a service accounts token for access without requiring basic authentication.</p>
           <p>NOTE: Service account tokens never expire.
           You must actively delete them if they are no longer needed.</p>
+          <p>IMPORTANT: On Serverless, non-operator users can create tokens for only <code>elastic/fleet-server</code> and <code>elastic/fleet-server-remote</code>.
+          Creating tokens for any other service account requires operator privileges.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-create-service-token>`_
@@ -1303,6 +1305,8 @@ class SecurityClient(NamespacedClient):
 
           <p>Delete service account tokens.</p>
           <p>Delete service account tokens for a service in a specified namespace.</p>
+          <p>IMPORTANT: On Serverless, non-operator users can delete tokens for only <code>elastic/fleet-server</code> and <code>elastic/fleet-server-remote</code>.
+          Deleting tokens for any other service account requires operator privileges.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-delete-service-token>`_
@@ -2606,6 +2610,7 @@ class SecurityClient(NamespacedClient):
                         "manage_own_api_key",
                         "manage_pipeline",
                         "manage_project_routing",
+                        "manage_reindex",
                         "manage_rollup",
                         "manage_saml",
                         "manage_search_application",
@@ -2625,6 +2630,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_esql",
                         "monitor_inference",
                         "monitor_ml",
+                        "monitor_reindex",
                         "monitor_rollup",
                         "monitor_snapshot",
                         "monitor_stats",
@@ -3281,6 +3287,7 @@ class SecurityClient(NamespacedClient):
                         "manage_own_api_key",
                         "manage_pipeline",
                         "manage_project_routing",
+                        "manage_reindex",
                         "manage_rollup",
                         "manage_saml",
                         "manage_search_application",
@@ -3300,6 +3307,7 @@ class SecurityClient(NamespacedClient):
                         "monitor_esql",
                         "monitor_inference",
                         "monitor_ml",
+                        "monitor_reindex",
                         "monitor_rollup",
                         "monitor_snapshot",
                         "monitor_stats",
