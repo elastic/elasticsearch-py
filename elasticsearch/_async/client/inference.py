@@ -471,7 +471,7 @@ class InferenceClient(NamespacedClient):
           <li>AlibabaCloud AI Search (<code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
           <li>Amazon Bedrock (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Amazon SageMaker (<code>chat_completion</code>, <code>completion</code>, <code>rerank</code>, <code>sparse_embedding</code>, <code>text_embedding</code>)</li>
-          <li>Anthropic (<code>completion</code>)</li>
+          <li>Anthropic (<code>chat_completion</code>, <code>completion</code>)</li>
           <li>Azure AI Studio (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
           <li>Azure OpenAI (<code>chat_completion</code>, <code>completion</code>, <code>text_embedding</code>)</li>
           <li>Cohere (<code>completion</code>, <code>rerank</code>, <code>text_embedding</code>)</li>
@@ -928,7 +928,7 @@ class InferenceClient(NamespacedClient):
     async def put_anthropic(
         self,
         *,
-        task_type: t.Union[str, t.Literal["completion"]],
+        task_type: t.Union[str, t.Literal["chat_completion", "completion"]],
         anthropic_inference_id: str,
         service: t.Optional[t.Union[str, t.Literal["anthropic"]]] = None,
         service_settings: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -949,8 +949,9 @@ class InferenceClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-anthropic>`_
 
-        :param task_type: The task type. The only valid task type for the model to perform
-            is `completion`.
+        :param task_type: The task type. The valid task types for the model to perform
+            are `completion` and `chat_completion`. NOTE: The `chat_completion` task
+            type only supports streaming and only through the _stream API.
         :param anthropic_inference_id: The unique identifier of the inference endpoint.
         :param service: The type of service supported for the specified task type. In
             this case, `anthropic`.
