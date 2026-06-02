@@ -788,7 +788,10 @@ class TestScan:
         [
             {"api_key": ("name", "value")},
             {"http_auth": ("username", "password")},
+            {"basic_auth": ("username", "password")},
+            {"bearer_auth": "token"},
             {"headers": {"custom", "header"}},
+            {"opaque_id": "request-id"},
         ],
     )
     async def test_scan_auth_kwargs_forwarded(
@@ -888,8 +891,10 @@ class TestScan:
                             async_client,
                             index="test_index",
                             headers={"not scroll": "kwargs"},
+                            opaque_id="not-scroll-opaque-id",
                             scroll_kwargs={
                                 "headers": {"scroll": "kwargs"},
+                                "opaque_id": "scroll-opaque-id",
                                 "sort": "asc",
                             },
                         )
@@ -899,8 +904,15 @@ class TestScan:
 
                     # Assert that we see 'scroll_kwargs' options used instead of 'kwargs'
                     assert options.call_args_list == [
-                        call(request_timeout=None, headers={"not scroll": "kwargs"}),
-                        call(headers={"scroll": "kwargs"}),
+                        call(
+                            request_timeout=None,
+                            headers={"not scroll": "kwargs"},
+                            opaque_id="not-scroll-opaque-id",
+                        ),
+                        call(
+                            headers={"scroll": "kwargs"},
+                            opaque_id="scroll-opaque-id",
+                        ),
                         call(ignore_status=404),
                     ]
                     assert async_client.search.call_args_list == [
