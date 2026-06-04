@@ -791,6 +791,80 @@ class Elasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def cancel_reindex(
+        self,
+        *,
+        task_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Cancel an ongoing reindex task.</p>
+          <p>If <code>wait_for_completion</code> is <code>true</code> (the default), the response contains the final task state after cancellation.
+          If <code>wait_for_completion</code> is <code>false</code>, the response contains only <code>acknowledged: true</code>.</p>
+          <p>This API follows reindex tasks across node-shutdown relocations, so callers can
+          keep using the original task ID throughout the lifetime of the operation.
+          Returned task IDs and timings reflect the original task, not its relocated successor.
+          Relocated task IDs are also supported. They are followed transparently and return the task ID and timings of the original task.</p>
+          <p>When the task ID cannot be cancelled (unknown ID, non-reindex task, sliced child, finished task, or node left with no stored result), the API returns the following response with a 404 status code:</p>
+          <pre><code>{
+            &quot;error&quot;: {
+              &quot;type&quot;: &quot;resource_not_found_exception&quot;,
+              &quot;reason&quot;: &quot;reindex task [r1A2WoRbTwKZ516z6NEs5A:36619] either not found or completed&quot;
+            },
+            &quot;status&quot;: 404
+          }
+          </code></pre>
+          <p>During a brief handoff window of a node-shutdown relocation, you may receive the response below with a 503 status code.
+          Retry with the same task ID; the retry follows the relocated task transparently.</p>
+          <pre><code>{
+            &quot;error&quot;: {
+              &quot;type&quot;: &quot;status_exception&quot;,
+              &quot;reason&quot;: &quot;cannot cancel task [36619] because it is being relocated&quot;
+            },
+            &quot;status&quot;: 503
+          }
+          </code></pre>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+
+        :param task_id: The ID of the reindex task to cancel.
+        :param wait_for_completion: If `true` (the default), the request blocks until
+            the cancellation is complete and returns the final task state. If `false`,
+            the request returns immediately with `acknowledged: true`.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_id'")
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_reindex/{__path_parts["task_id"]}/_cancel'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="cancel_reindex",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=("scroll_id",),
     )
@@ -1545,8 +1619,10 @@ class Elasticsearch(BaseClient):
             `wait_for`.
         :param request_cache: If `true`, the request cache is used for this request.
             Defaults to the index-level setting.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second.
+        :param requests_per_second: The maximum number of documents to delete per second,
+            across the entire delete-by-query operation (including slices). It can be
+            either `-1` to turn off throttling or any decimal number like `1.7` or `12`
+            to throttle to that level.
         :param routing: A custom value used to route operations to a specific shard.
         :param scroll: The period to retain the search context for scrolling.
         :param scroll_size: The size of the scroll request that powers the operation.
@@ -1701,8 +1777,10 @@ class Elasticsearch(BaseClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-delete-by-query-rethrottle>`_
 
         :param task_id: The ID for the task.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second. To disable throttling, set it to `-1`.
+        :param requests_per_second: The maximum number of documents to delete per second,
+            across the entire delete-by-query operation (including slices). It can be
+            either `-1` to turn off throttling or any decimal number like `1.7` or `12`
+            to throttle to that level.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -2461,6 +2539,73 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters()
+    def get_reindex(
+        self,
+        *,
+        task_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get the status and progress of a specific reindex task.</p>
+          <p>This API follows reindex tasks across node-shutdown relocations, so callers can
+          keep using the original task ID throughout the lifetime of the operation.
+          Returned task IDs and timings reflect the original task, not its relocated successor.
+          Relocated task IDs are also supported. They are followed transparently and return the task ID and timings of the original task.</p>
+          <p>When the task ID cannot be resolved, the API returns the response below with a 404 status code.
+          This response is used whether the ID is unknown, refers to a non-reindex task, refers to a sliced child subtask, or refers to a task whose node left the cluster with no stored result (e.g. a non-graceful shutdown).</p>
+          <pre><code>{
+            &quot;error&quot;: {
+              &quot;type&quot;: &quot;resource_not_found_exception&quot;,
+              &quot;reason&quot;: &quot;Reindex operation [r1A2WoRbTwKZ516z6NEs5A:36619] not found&quot;
+            },
+            &quot;status&quot;: 404
+          }
+          </code></pre>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+
+        :param task_id: The ID of the reindex task to retrieve.
+        :param timeout: The period to wait for the reindex task to complete when `wait_for_completion`
+            is `true`.
+        :param wait_for_completion: If `true`, the request blocks until the reindex task
+            completes, then returns the result.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'task_id'")
+        __path_parts: t.Dict[str, str] = {"task_id": _quote(task_id)}
+        __path = f'/_reindex/{__path_parts["task_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="get_reindex",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
     def get_script(
         self,
         *,
@@ -3050,6 +3195,52 @@ class Elasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    def list_reindex(
+        self,
+        *,
+        detailed: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get information about all currently running reindex tasks.</p>
+          <p>Reindex tasks that are mid-relocation between nodes are reported once,
+          under their original task ID, so callers do not see duplicates across the relocation chain.</p>
+          <p>If the API returns a HTTP status of <code>200 OK</code>, but <code>node_failures</code> or <code>task_failures</code> are non-empty in the body, the listing is not a complete authoritative listing and may be missing tasks.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+
+        :param detailed: If `true`, include detailed task status information in the response.
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_reindex"
+        __query: t.Dict[str, t.Any] = {}
+        if detailed is not None:
+            __query["detailed"] = detailed
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="list_reindex",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_fields=("docs", "ids"),
         parameter_aliases={
@@ -3180,6 +3371,7 @@ class Elasticsearch(BaseClient):
 
     @_rewrite_parameters(
         body_name="searches",
+        parameter_aliases={"_slice": "slice"},
     )
     def msearch(
         self,
@@ -3213,6 +3405,7 @@ class Elasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
+        slice: t.Optional[str] = None,
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3279,9 +3472,17 @@ class Elasticsearch(BaseClient):
         :param rest_total_hits_as_int: If true, hits.total are returned as an integer
             in the response. Defaults to false, which returns an object.
         :param routing: Custom routing value used to route search operations to a specific
-            shard.
+            shard. Not allowed when `index.slice.enabled` is `true` for the target index;
+            use `_slice` instead.
         :param search_type: Indicates whether global term and document frequencies should
             be used when scoring returned documents.
+        :param slice: The slice identifier for routing the search to a specific slice.
+            When provided at the top level, all sub-searches are routed to shards matching
+            the given slice value. Use the special value `_all` to query all slices without
+            restricting to a routing value. Required when `index.slice.enabled` is `true`
+            for the target index; not allowed when `index.slice.enabled` is `false`.
+            Individual sub-search headers can also specify `_slice` to override the top-level
+            setting.
         :param typed_keys: Specifies whether aggregation and suggester names should be
             prefixed by their respective types in the response.
         """
@@ -3333,6 +3534,8 @@ class Elasticsearch(BaseClient):
             __query["routing"] = routing
         if search_type is not None:
             __query["search_type"] = search_type
+        if slice is not None:
+            __query["_slice"] = slice
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
         __body = searches if searches is not None else body
@@ -3990,13 +4193,19 @@ class Elasticsearch(BaseClient):
             in the source query.
         :param refresh: If `true`, the request refreshes affected shards to make this
             operation visible to search.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second. By default, there is no throttle.
+        :param requests_per_second: The maximum number of documents to index per second,
+            across the entire reindex operation (including slices). It can be either
+            `-1` to turn off throttling or any decimal number like `1.7` or `12` to throttle
+            to that level.
         :param require_alias: If `true`, the destination must be an index alias.
         :param script: The script to run to update the document source or metadata when
             reindexing.
         :param scroll: The period of time that a consistent view of the index should
-            be maintained for scrolled search.
+            be maintained for scrolled search. In serverless, and stack versions >= v9.5.0,
+            we use PIT rather than scroll for pagination. We only use scroll for reindexing
+            from remote clusters that are older than v7.10.0. Therefore, this parameter
+            is ignored unless you are reindexing from a remote cluster that is older
+            than v7.10.0.
         :param slices: The number of slices this task should be divided into. It defaults
             to one slice, which means the task isn't sliced into subtasks. Reindex supports
             sliced scroll to parallelize the reindexing process. This parallelization
@@ -4090,22 +4299,34 @@ class Elasticsearch(BaseClient):
         .. raw:: html
 
           <p>Throttle a reindex operation.</p>
-          <p>Change the number of requests per second for a particular reindex operation.
-          For example:</p>
+          <p>Change the maximum number of documents to index per second for a particular reindex operation.
+          For example, to unthrottle to unlimited documents per second:</p>
           <pre><code>POST _reindex/r1A2WoRbTwKZ516z6NEs5A:36619/_rethrottle?requests_per_second=-1
           </code></pre>
           <p>Rethrottling that speeds up the query takes effect immediately.
-          Rethrottling that slows down the query will take effect after completing the current batch.
+          Rethrottling that slows down the query will take effect after completing the current batch of documents.
           This behavior prevents scroll timeouts.</p>
+          <p>This API follows reindex tasks across node-shutdown relocations, so callers can keep using
+          the original task ID throughout the lifetime of the operation.
+          The relocated task ID is also accepted and is followed transparently.
+          In either case, returned task IDs and timings reflect the original task, not its relocated successor.</p>
+          <p>The rethrottle may not have been applied to any tasks if either <code>node_failures</code> or <code>task_failures</code> are non-empty, or if the response contains
+          no successfully rethrottled tasks — that is, no entries under <code>nodes</code> (returned with the default
+          <code>group_by=nodes</code> in stack) or under <code>tasks</code> (returned in serverless, or in stack with
+          <code>group_by=none</code> or <code>group_by=parents</code>).</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-reindex>`_
 
-        :param task_id: The task identifier, which can be found by using the tasks API.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second. It can be either `-1` to turn off throttling or any decimal number
-            like `1.7` or `12` to throttle to that level.
-        :param group_by:
+        :param task_id: The task identifier, returned when creating a reindex task, or
+            by listing tasks via `GET /_reindex` or `GET /_tasks`. In stack, can be either
+            the original task ID or the task ID of the relocated task.
+        :param requests_per_second: The maximum number of documents to index per second,
+            across the entire reindex operation (including slices). It can be either
+            `-1` to turn off throttling or any decimal number like `1.7` or `12` to throttle
+            to that level.
+        :param group_by: The way to group the tasks in the response. We recommend setting
+            this to `none`, which provides the cleanest response format.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -5396,7 +5617,9 @@ class Elasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        parameter_aliases={"_slice": "slice"},
+    )
     def search_shards(
         self,
         *,
@@ -5419,6 +5642,7 @@ class Elasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        slice: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5458,6 +5682,13 @@ class Elasticsearch(BaseClient):
         :param preference: The node or shard the operation should be performed on. It
             is random by default.
         :param routing: A custom value used to route operations to a specific shard.
+            Not allowed when `index.slice.enabled` is `true` for the target index; use
+            `_slice` instead.
+        :param slice: The slice identifier for routing the search to a specific slice.
+            When provided, the request is limited to shards that match the given slice
+            value. Use the special value `_all` to query all slices without restricting
+            to a routing value. Required when `index.slice.enabled` is `true` for the
+            target index; not allowed when `index.slice.enabled` is `false`.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -5489,6 +5720,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
+        if slice is not None:
+            __query["_slice"] = slice
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -6309,8 +6542,10 @@ class Elasticsearch(BaseClient):
             received the request to be refreshed.
         :param request_cache: If `true`, the request cache is used for this request.
             It defaults to the index-level setting.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second.
+        :param requests_per_second: The maximum number of documents to update per second,
+            across the entire update_by_query operation (including slices). It can be
+            either `-1` to turn off throttling or any decimal number like `1.7` or `12`
+            to throttle to that level.
         :param routing: A custom value used to route operations to a specific shard.
         :param script: The script to run to update the document source or metadata when
             updating.
@@ -6481,8 +6716,10 @@ class Elasticsearch(BaseClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-update-by-query-rethrottle>`_
 
         :param task_id: The ID for the task.
-        :param requests_per_second: The throttle for this request in sub-requests per
-            second. To turn off throttling, set it to `-1`.
+        :param requests_per_second: The maximum number of documents to update per second,
+            across the entire update_by_query operation (including slices). It can be
+            either `-1` to turn off throttling or any decimal number like `1.7` or `12`
+            to throttle to that level.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")

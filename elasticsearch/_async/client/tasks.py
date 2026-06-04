@@ -58,6 +58,9 @@ class TasksClient(NamespacedClient):
           The cancelled flag in the response indicates that the cancellation command has been processed and the task will stop as soon as possible.</p>
           <p>To troubleshoot why a cancelled task does not complete promptly, use the get task information API with the <code>?detailed</code> parameter to identify the other tasks the system is running.
           You can also use the node hot threads API to obtain detailed information about the work the system is doing instead of completing the cancelled task.</p>
+          <p>For relocatable tasks, this API transparently follows the task across graceful shutdown relocations,
+          so callers can keep using the original task ID. The returned task reports its <code>original_task_id</code> and <code>original_start_time_in_millis</code>
+          if it is continuing work from an earlier task.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks>`_
@@ -127,6 +130,9 @@ class TasksClient(NamespacedClient):
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
           <p>If the task identifier is not found, a 404 response code indicates that there are no resources that match the request.</p>
+          <p>For relocatable tasks, this API transparently follows the task across graceful shutdown relocations,
+          so callers can keep using the original task ID. The returned task reports its <code>original_task_id</code> and <code>original_start_time_in_millis</code>
+          if it is continuing work from an earlier task.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/group/endpoint-tasks>`_
@@ -193,6 +199,9 @@ class TasksClient(NamespacedClient):
           <p>Get information about the tasks currently running on one or more nodes in the cluster.</p>
           <p>WARNING: The task management API is new and should still be considered a beta feature.
           The API may change in ways that are not backwards compatible.</p>
+          <p>For relocatable tasks, this API transparently follows the task across graceful shutdown relocations,
+          so callers can keep using the original task ID. The returned task reports its <code>original_task_id</code> and <code>original_start_time_in_millis</code>
+          if it is continuing work from an earlier task.</p>
           <p><strong>Identifying running tasks</strong></p>
           <p>The <code>X-Opaque-Id header</code>, when provided on the HTTP request header, is going to be returned as a header in the response as well as in the headers field for in the task information.
           This enables you to track certain calls or associate certain tasks with the client that started them.
