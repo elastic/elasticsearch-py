@@ -797,6 +797,8 @@ class TestScan:
     async def test_scan_auth_kwargs_forwarded(
         self, async_client, scan_teardown, kwargs
     ):
+        ((key, val),) = kwargs.items()
+
         with (
             patch.object(async_client, "options", return_value=async_client) as options,
             patch.object(
@@ -840,11 +842,10 @@ class TestScan:
 
                     assert data == [{"search_data": 1}]
 
-        if "http_auth" in kwargs:
-            kwargs = {"basic_auth": kwargs.pop("http_auth")}
-
         assert options.call_args_list == [
-            call(request_timeout=None, **kwargs),
+            call(
+                request_timeout=None, **{key if key != "http_auth" else "basic_auth": val}
+            ),
             call(ignore_status=404),
         ]
 
