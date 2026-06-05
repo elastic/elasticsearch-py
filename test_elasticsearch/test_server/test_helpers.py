@@ -679,6 +679,7 @@ def test_no_scroll_id_fast_route(sync_client):
         {"basic_auth": ("username", "password")},
         {"bearer_auth": "token"},
         {"headers": {"custom", "header"}},
+        {"opaque_id": "request-id"},
     ],
 )
 @pytest.mark.usefixtures("scan_teardown")
@@ -766,8 +767,13 @@ def test_scan_auth_kwargs_favor_scroll_kwargs_option(sync_client):
             helpers.scan(
                 sync_client,
                 index="test_index",
-                scroll_kwargs={"headers": {"scroll": "kwargs"}, "sort": "asc"},
                 headers={"not scroll": "kwargs"},
+                opaque_id="not-scroll-opaque-id",
+                scroll_kwargs={
+                    "headers": {"scroll": "kwargs"},
+                    "opaque_id": "scroll-opaque-id",
+                    "sort": "asc",
+                },
             )
         )
 
@@ -775,8 +781,15 @@ def test_scan_auth_kwargs_favor_scroll_kwargs_option(sync_client):
 
         # Assert that we see 'scroll_kwargs' options used instead of 'kwargs'
         assert options_mock.call_args_list == [
-            call(request_timeout=None, headers={"not scroll": "kwargs"}),
-            call(headers={"scroll": "kwargs"}),
+            call(
+                request_timeout=None,
+                headers={"not scroll": "kwargs"},
+                opaque_id="not-scroll-opaque-id",
+            ),
+            call(
+                headers={"scroll": "kwargs"},
+                opaque_id="scroll-opaque-id",
+            ),
             call(ignore_status=404),
         ]
         search_mock.assert_called_once_with(
