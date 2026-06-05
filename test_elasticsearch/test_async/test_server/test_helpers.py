@@ -844,7 +844,8 @@ class TestScan:
 
         assert options.call_args_list == [
             call(
-                request_timeout=None, **{key if key != "http_auth" else "basic_auth": val}
+                request_timeout=None,
+                **{key if key != "http_auth" else "basic_auth": val},
             ),
             call(ignore_status=404),
         ]

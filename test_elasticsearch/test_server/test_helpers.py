@@ -772,7 +772,7 @@ def test_scan_auth_kwargs_favor_scroll_kwargs_option(sync_client):
                 scroll_kwargs={
                     "headers": {"scroll": "kwargs"},
                     "opaque_id": "scroll-opaque-id",
-                    "sort": "asc"
+                    "sort": "asc",
                 },
             )
         )
