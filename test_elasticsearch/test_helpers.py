@@ -237,3 +237,140 @@ def test_serialize_scan_error():
     assert pickled.__class__ == helpers.ScanError
     assert pickled.scroll_id == error.scroll_id
     assert pickled.args == error.args
+
+
+class TestProcessBulkChunkSuccess:
+    def test_raise_on_error_collects_all_errors_before_raising(self):
+        """Test that when raise_on_error=True, only successful items are yielded
+        and all errors are collected before raising BulkIndexError."""
+        # Simulate a response with mixed success/failure
+        resp = {
+            "items": [
+                {"index": {"_id": "1", "status": 201}},  # success
+                {"index": {"_id": "2", "status": 400, "error": "bad request"}},  # fail
+                {"index": {"_id": "3", "status": 200}},  # success
+                {"index": {"_id": "4", "status": 500, "error": "server error"}},  # fail
+            ]
+        }
+        bulk_data = [
+            ({"index": {"_id": "1"}}, {"data": 1}),
+            ({"index": {"_id": "2"}}, {"data": 2}),
+            ({"index": {"_id": "3"}}, {"data": 3}),
+            ({"index": {"_id": "4"}}, {"data": 4}),
+        ]
+
+        # With raise_on_error=True, should only yield successful items
+        results = []
+        try:
+            for ok, item in helpers.actions._process_bulk_chunk_success(
+                resp, bulk_data, ignore_status=[], raise_on_error=True
+            ):
+                results.append((ok, item))
+        except helpers.BulkIndexError as e:
+            # Should have collected 2 errors
+            assert len(e.errors) == 2
+            assert e.errors[0]["index"]["_id"] == "2"
+            assert e.errors[1]["index"]["_id"] == "4"
+        else:
+            assert False, "BulkIndexError should have been raised"
+
+        # Should have yielded only the 2 successful items
+        assert len(results) == 2
+        assert results[0][0] is True  # ok=True
+        assert results[0][1]["index"]["_id"] == "1"
+        assert results[1][0] is True  # ok=True
+        assert results[1][1]["index"]["_id"] == "3"
+
+    def test_raise_on_error_false_yields_all_items(self):
+        """Test that when raise_on_error=False, all items (success and failure) are yielded."""
+        resp = {
+            "items": [
+                {"index": {"_id": "1", "status": 201}},  # success
+                {"index": {"_id": "2", "status": 400, "error": "bad request"}},  # fail
+                {"index": {"_id": "3", "status": 200}},  # success
+            ]
+        }
+        bulk_data = [
+            ({"index": {"_id": "1"}}, {"data": 1}),
+            ({"index": {"_id": "2"}}, {"data": 2}),
+            ({"index": {"_id": "3"}}, {"data": 3}),
+        ]
+
+        # With raise_on_error=False, should yield all items
+        results = list(
+            helpers.actions._process_bulk_chunk_success(
+                resp, bulk_data, ignore_status=[], raise_on_error=False
+            )
+        )
+
+        # Should have yielded all 3 items
+        assert len(results) == 3
+        assert results[0][0] is True  # ok=True
+        assert results[1][0] is False  # ok=False (failed)
+        assert results[2][0] is True  # ok=True
+
+
+class TestMutableDefaultArguments:
+    def test_reindex_does_not_mutate_default_arguments(self):
+        """Test that reindex() doesn't share mutable default arguments across calls."""
+        client = mock.Mock(spec=Elasticsearch)
+
+        # Mock the scan function to return an empty iterator
+        with mock.patch("elasticsearch.helpers.actions.scan", return_value=iter([])):
+            # Mock the bulk function to return (0, [])
+            with mock.patch("elasticsearch.helpers.actions.bulk", return_value=(0, [])):
+                # Mock indices.get_data_stream to raise NotFoundError
+                client.indices.get_data_stream.side_effect = Exception("Not found")
+
+                # First call - don't pass scan_kwargs or bulk_kwargs
+                helpers.reindex(
+                    client, source_index="source", target_index="target"
+                )
+
+                # Second call - also don't pass scan_kwargs or bulk_kwargs
+                # If the defaults are mutable and shared, this could cause issues
+                helpers.reindex(
+                    client, source_index="source2", target_index="target2"
+                )
+
+                # Verify scan was called twice with empty dicts (not the same dict object)
+                assert client.indices.get_data_stream.call_count == 2
+
+    def test_reindex_scan_kwargs_not_shared_between_calls(self):
+        """Test that modifying scan_kwargs in one call doesn't affect another."""
+        client = mock.Mock(spec=Elasticsearch)
+
+        scan_calls = []
+
+        def mock_scan(*args, **kwargs):
+            # Capture the kwargs to verify they're not shared
+            scan_calls.append(kwargs.copy())
+            return iter([])
+
+        with mock.patch("elasticsearch.helpers.actions.scan", side_effect=mock_scan):
+            with mock.patch("elasticsearch.helpers.actions.bulk", return_value=(0, [])):
+                client.indices.get_data_stream.side_effect = Exception("Not found")
+
+                # First call with no scan_kwargs
+                helpers.reindex(
+                    client, source_index="source", target_index="target"
+                )
+
+                # Second call also with no scan_kwargs
+                helpers.reindex(
+                    client, source_index="source2", target_index="target2"
+                )
+
+                # Verify both calls got separate empty dicts
+                # (If they shared the same dict, modifications would persist)
+                assert len(scan_calls) == 2
+                assert scan_calls[0] == {
+                    "query": None,
+                    "index": "source",
+                    "scroll": "5m",
+                }
+                assert scan_calls[1] == {
+                    "query": None,
+                    "index": "source2",
+                    "scroll": "5m",
+                }

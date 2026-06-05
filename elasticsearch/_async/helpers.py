@@ -580,8 +580,8 @@ async def async_reindex(
     chunk_size: int = 500,
     scroll: str = "5m",
     op_type: Optional[str] = None,
-    scan_kwargs: MutableMapping[str, Any] = {},
-    bulk_kwargs: MutableMapping[str, Any] = {},
+    scan_kwargs: Optional[MutableMapping[str, Any]] = None,
+    bulk_kwargs: Optional[MutableMapping[str, Any]] = None,
 ) -> Tuple[int, Union[int, List[Any]]]:
     """
     Reindex all documents from one index that satisfy a given query
@@ -616,6 +616,11 @@ async def async_reindex(
     :arg bulk_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.async_bulk`
     """
+    if scan_kwargs is None:
+        scan_kwargs = {}
+    if bulk_kwargs is None:
+        bulk_kwargs = {}
+
     target_client = client if target_client is None else target_client
     docs = async_scan(
         client, query=query, index=source_index, scroll=scroll, **scan_kwargs
