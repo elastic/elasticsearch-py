@@ -473,7 +473,7 @@ async def async_scan(
     scroll_kwargs = scroll_kwargs or {}
 
     if not preserve_order:
-        query = query.copy() if query else {}
+        query = dict(query) if query else {}
         query["sort"] = "_doc"
 
     def pop_transport_kwargs(kw: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
