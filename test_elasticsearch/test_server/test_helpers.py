@@ -1116,3 +1116,40 @@ def test_reindex_index_datastream_op_type_index(sync_client):
             query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
             op_type="_index",
         )
+
+
+def test_process_bulk_chunk_success_yield_logic():
+    resp = {
+        "items": [
+            {"index": {"status": 200}},
+            {"index": {"status": 400}},  # Real failure
+            {"index": {"status": 409}},  # Ignored failure
+        ]
+    }
+    bulk_data = [
+        ({"index": {}},),
+        ({"index": {}},),
+        ({"index": {}},),
+    ]
+
+    # We expect a BulkIndexError at the end because of the 400 error.
+    # But the 409 error is in ignore_status, so it should be yielded (with ok=False),
+    # while the 200 success is yielded (with ok=True).
+    iterator = helpers.actions._process_bulk_chunk_success(
+        resp=resp,
+        bulk_data=bulk_data,
+        ignore_status=(409,),
+        raise_on_error=True,
+    )
+
+    yielded = []
+    try:
+        for ok, item in iterator:
+            yielded.append((ok, item))
+    except helpers.BulkIndexError as e:
+        assert len(e.errors) == 1
+        assert e.errors[0]["index"]["status"] == 400
+
+    assert len(yielded) == 2
+    assert yielded[0][0] is True  # 200 OK
+    assert yielded[1][0] is False  # 409 Ignored Error
