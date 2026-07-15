@@ -500,6 +500,39 @@ class DenseVectorIndexOptionsRescoreVector(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class DocValuesConfig(AttrDict[Any]):
+    """
+    Configuration object for doc values when sub-parameters are needed.
+
+    :arg multi_value: If `false`, the field is treated as single-valued,
+        enabling optimized storage. Only has an effect when columnar index
+        mode is active. Defaults to `True` if omitted.
+    :arg nullability: If `false`, every document must provide a non-null
+        value for the field: a document that omits the field, sets it to
+        `null`, or supplies only null values (an empty array or an all-
+        null array) is rejected at index time. A field that defines
+        `null_value` is always exempt, since the configured default
+        removes the absence of a value. Only has an effect when columnar
+        index mode is active. Defaults to `True` if omitted.
+    """
+
+    multi_value: Union[bool, DefaultType]
+    nullability: Union[bool, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        multi_value: Union[bool, DefaultType] = DEFAULT,
+        nullability: Union[bool, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if multi_value is not DEFAULT:
+            kwargs["multi_value"] = multi_value
+        if nullability is not DEFAULT:
+            kwargs["nullability"] = nullability
+        super().__init__(kwargs)
+
+
 class Embedding(AttrDict[Any]):
     """
     :arg input: (required)
@@ -4284,8 +4317,8 @@ class TextExpansionQuery(AttrDict[Any]):
 
 class TextIndexPrefixes(AttrDict[Any]):
     """
-    :arg max_chars: (required)
-    :arg min_chars: (required)
+    :arg max_chars:
+    :arg min_chars:
     """
 
     max_chars: Union[int, DefaultType]

@@ -54,7 +54,7 @@ try:
 
     __all__.append("PyArrowSerializer")
 except ImportError:
-    pa = None  # type: ignore[assignment]
+    pa = None
 
 
 class JsonSerializer(_JsonSerializer):
