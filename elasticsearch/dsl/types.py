@@ -4126,8 +4126,8 @@ class TextExpansionQuery(AttrDict[Any]):
 
 class TextIndexPrefixes(AttrDict[Any]):
     """
-    :arg max_chars: (required)
-    :arg min_chars: (required)
+    :arg max_chars:
+    :arg min_chars:
     """
 
     max_chars: Union[int, DefaultType]
