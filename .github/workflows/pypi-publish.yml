@@ -18,12 +18,8 @@
 name: Publish to PyPI
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: "Branch or tag to publish from (e.g. '9.3')"
-        required: true
-        type: string
+  release:
+    types: [published]
 
 permissions: {}
 
@@ -32,9 +28,18 @@ jobs:
     name: Build distributions
     runs-on: ubuntu-latest
     steps:
+      - name: Derive branch from release tag
+        id: branch
+        run: |
+          version="${{ github.event.release.tag_name }}"
+          version="${version#v}"
+          major=$(echo "$version" | cut -d '.' -f1)
+          minor=$(echo "$version" | cut -d '.' -f2)
+          echo "name=$major.$minor" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v5
         with:
-          ref: ${{ inputs.ref }}
+          ref: ${{ steps.branch.outputs.name }}
 
       - uses: actions/setup-python@v5
         with:
@@ -65,34 +70,3 @@ jobs:
           path: dist/
 
       - uses: pypa/gh-action-pypi-publish@release/v1
-
-  release:
-    name: Create GitHub release
-    needs: publish
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-    steps:
-      - name: Fetch ephemeral GitHub token
-        id: fetch-token
-        uses: elastic/ci-gh-actions/fetch-github-token@2feb1c6f5086cf8e06f61ef35e275abed3456f7b # v1.5.3
-        with:
-          vault-instance: "ci-prod"
-
-      - uses: actions/checkout@v5
-        with:
-          ref: ${{ inputs.ref }}
-          token: ${{ steps.fetch-token.outputs.token }}
-
-      - name: Get version
-        id: version
-        run: |
-          python -c "exec(open('elasticsearch/_version.py').read()); print(__versionstr__)" > VERSION
-          echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub release
-        env:
-          GH_TOKEN: ${{ steps.fetch-token.outputs.token }}
-        run: |
-          VERSION="${{ steps.version.outputs.version }}"
-          gh release create "v$VERSION" --title "$VERSION" --target "${{ inputs.ref }}" --generate-notes
