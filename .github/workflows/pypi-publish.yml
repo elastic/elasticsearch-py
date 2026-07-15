@@ -83,11 +83,9 @@ jobs:
           python -c "exec(open('elasticsearch/_version.py').read()); print(__versionstr__)" > VERSION
           echo "version=$(cat VERSION)" >> "$GITHUB_OUTPUT"
 
-      - name: Create tag and GitHub release
+      - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          git tag "v$VERSION"
-          git push origin "v$VERSION"
-          gh release create "v$VERSION" --title "$VERSION" --generate-notes
+          gh release create "v$VERSION" --title "$VERSION" --target "${{ inputs.ref }}" --generate-notes
