@@ -4032,9 +4032,8 @@ class MlClient(NamespacedClient):
             optimized for a particular processor architecture and OS combination, then
             this field specifies which. The format of the string must match the platform
             identifiers used by Elasticsearch, so one of, `linux-x86_64`, `linux-aarch64`,
-            `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
-            (those that work independent of processor architecture or OS features), leave
-            this field unset.
+            `darwin-aarch64`, or `windows-x86_64`. For portable models (those that work
+            independent of processor architecture or OS features), leave this field unset.
         :param prefix_strings: Optional prefix strings applied at inference
         :param tags: An array of tags to organize the model.
         :param wait_for_completion: Whether to wait for all child operations (e.g. model

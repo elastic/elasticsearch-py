@@ -501,7 +501,8 @@ class InferenceClient(NamespacedClient):
         :param task_type: The task type. Refer to the integration list in the API description
             for the available task types.
         :param timeout: Specifies the amount of time to wait for the inference endpoint
-            to be created.
+            to be created. The default depends on the task type: 120s for `completion`
+            and `chat_completion`, and 30s for all other task types.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -3256,6 +3257,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -3272,6 +3274,9 @@ class InferenceClient(NamespacedClient):
         :param inference_id: The unique identifier of the inference endpoint.
         :param inference_config:
         :param task_type: The type of inference task that the model performs.
+        :param timeout: Specifies the amount of time to wait for the inference endpoint
+            to be updated. The default depends on the task type: 120s for `completion`
+            and `chat_completion`, and 30s for all other task types.
         """
         if inference_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'inference_id'")
@@ -3302,6 +3307,8 @@ class InferenceClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         __body = inference_config if inference_config is not None else body
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
