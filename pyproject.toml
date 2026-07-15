@@ -144,8 +144,6 @@ exclude_lines = [
 plugins = ["pydantic.mypy"]
 ignore_missing_imports = true
 
-# annotationlib (3.14+) and pyarrow's optional-import fallbacks need
-# `type: ignore[assignment]` on some Python/mypy versions but not others.
 [[tool.mypy.overrides]]
 module = "elasticsearch.dsl.document_base"
 warn_unused_ignores = false
