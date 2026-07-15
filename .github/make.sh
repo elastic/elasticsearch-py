@@ -182,7 +182,7 @@ if [[ "$CMD" == "codegen" ]]; then
      --rm -v $repo:/code/elasticsearch-py \
      $product \
      /bin/bash -c "cd /code && python -m pip install nox && \
-     git clone https://$CLIENTS_GITHUB_TOKEN@github.com/elastic/elastic-client-generator-python.git && \
+     git clone https://x-access-token:$CLIENTS_GITHUB_TOKEN@github.com/elastic/elastic-client-generator-python.git && \
      cd /code/elastic-client-generator-python && GIT_BRANCH=$VERSION python -m nox -s generate-es && \
      cd /code/elasticsearch-py && python -m nox -s format"
 
