@@ -262,7 +262,9 @@ class Float(Field):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -372,7 +374,9 @@ class Integer(Field):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -744,7 +748,9 @@ class Binary(Field):
     def __init__(
         self,
         *args: Any,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -842,7 +848,9 @@ class Boolean(Field):
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
         on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -958,7 +966,9 @@ class Byte(Integer):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1057,7 +1067,9 @@ class Completion(Field):
         preserve_position_increments: Union[bool, "DefaultType"] = DEFAULT,
         preserve_separators: Union[bool, "DefaultType"] = DEFAULT,
         search_analyzer: Union[str, DslBase, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1260,7 +1272,9 @@ class Date(Field):
         null_value: Any = DEFAULT,
         precision_step: Union[int, "DefaultType"] = DEFAULT,
         locale: Union[str, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1392,7 +1406,9 @@ class DateNanos(Field):
         on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         null_value: Any = DEFAULT,
         precision_step: Union[int, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1482,7 +1498,9 @@ class DateRange(RangeField):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1702,7 +1720,9 @@ class Double(Float):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -1792,7 +1812,9 @@ class DoubleRange(RangeField):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2011,7 +2033,9 @@ class FloatRange(RangeField):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2105,7 +2129,9 @@ class GeoPoint(Field):
         time_series_metric: Union[
             Literal["gauge", "counter", "position"], "DefaultType"
         ] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2199,7 +2225,9 @@ class GeoShape(Field):
         index: Union[bool, "DefaultType"] = DEFAULT,
         orientation: Union[Literal["right", "left"], "DefaultType"] = DEFAULT,
         strategy: Union[Literal["recursive", "term"], "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2299,7 +2327,9 @@ class HalfFloat(Float):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2478,7 +2508,9 @@ class IcuCollationKeyword(Field):
         numeric: Union[bool, "DefaultType"] = DEFAULT,
         variable_top: Union[str, "DefaultType"] = DEFAULT,
         hiragana_quaternary_mode: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2582,7 +2614,9 @@ class IntegerRange(RangeField):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2669,7 +2703,9 @@ class Ip(Field):
         on_script_error: Union[Literal["fail", "continue"], "DefaultType"] = DEFAULT,
         script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2764,7 +2800,9 @@ class IpRange(Field):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -2919,7 +2957,9 @@ class Keyword(Field):
         similarity: Union[str, None, "DefaultType"] = DEFAULT,
         split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -3031,7 +3071,9 @@ class Long(Integer):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -3121,7 +3163,9 @@ class LongRange(RangeField):
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         index: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -3238,7 +3282,9 @@ class Murmur3(Field):
     def __init__(
         self,
         *args: Any,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -3511,7 +3557,9 @@ class Point(Field):
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
         null_value: Union[str, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -3763,7 +3811,9 @@ class ScaledFloat(Float):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4038,7 +4088,9 @@ class Shape(Field):
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
         ignore_z_value: Union[bool, "DefaultType"] = DEFAULT,
         orientation: Union[Literal["right", "left"], "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4134,7 +4186,9 @@ class Short(Integer):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4427,7 +4481,9 @@ class TokenCount(Field):
         index: Union[bool, "DefaultType"] = DEFAULT,
         null_value: Union[float, "DefaultType"] = DEFAULT,
         enable_position_increments: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4525,7 +4581,9 @@ class UnsignedLong(Field):
             "DefaultType",
         ] = DEFAULT,
         time_series_dimension: Union[bool, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4608,7 +4666,9 @@ class Version(Field):
     def __init__(
         self,
         *args: Any,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],
@@ -4675,7 +4735,9 @@ class Wildcard(Field):
         self,
         *args: Any,
         null_value: Union[str, "DefaultType"] = DEFAULT,
-        doc_values: Union[bool, "DefaultType"] = DEFAULT,
+        doc_values: Union[
+            bool, "types.DocValuesConfig", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
         copy_to: Union[
             Union[str, "InstrumentedField"],
             Sequence[Union[str, "InstrumentedField"]],

@@ -1005,6 +1005,7 @@ class AsyncElasticsearch(BaseClient):
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        stats: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         terminate_after: t.Optional[int] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1068,6 +1069,7 @@ class AsyncElasticsearch(BaseClient):
         :param query: Defines the search query using Query DSL. A request body query
             cannot be used with the `q` query string parameter.
         :param routing: A custom value used to route operations to a specific shard.
+        :param stats: Specific `tag` of the request for logging and statistical purposes.
         :param terminate_after: The maximum number of documents to collect for each shard.
             If a query reaches this limit, Elasticsearch terminates the query early.
             Elasticsearch collects documents before sorting. IMPORTANT: Use with caution.
@@ -1119,6 +1121,8 @@ class AsyncElasticsearch(BaseClient):
             __query["q"] = q
         if routing is not None:
             __query["routing"] = routing
+        if stats is not None:
+            __query["stats"] = stats
         if terminate_after is not None:
             __query["terminate_after"] = terminate_after
         if not __body:
@@ -4225,7 +4229,11 @@ class AsyncElasticsearch(BaseClient):
             up to the total number of shards in the index (`number_of_replicas+1`). The
             default value is one, which means it waits for each primary shard to be active.
         :param wait_for_completion: If `true`, the request blocks until the operation
-            is complete.
+            is complete. If your requested reindex operation is complex or time-consuming,
+            it might timeout due to transport-layer limitations. While the reindex will
+            continue to be processed by the cluster, your client will not receive updates
+            on status automatically after timeout. Set this option `true` if you anticipate
+            a long-running reindex.
         """
         if dest is None and body is None:
             raise ValueError("Empty value passed for parameter 'dest'")
@@ -5894,6 +5902,7 @@ class AsyncElasticsearch(BaseClient):
             "field",
             "case_insensitive",
             "index_filter",
+            "project_routing",
             "search_after",
             "size",
             "string",
@@ -5911,6 +5920,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         search_after: t.Optional[str] = None,
         size: t.Optional[int] = None,
         string: t.Optional[str] = None,
@@ -5940,6 +5950,10 @@ class AsyncElasticsearch(BaseClient):
             index terms without case sensitivity.
         :param index_filter: Filter an index shard if the provided query rewrites to
             `match_none`.
+        :param project_routing: Specifies a subset of projects to target for the search
+            using project metadata tags in a subset of Lucene query syntax. Allowed Lucene
+            queries: the _alias tag and a single value (possibly wildcarded). Examples:
+            _alias:my-project _alias:_origin _alias:*pr* Supported in serverless only.
         :param search_after: The string after which terms in the index should be returned.
             It allows for a form of pagination if the last result from one request is
             passed as the `search_after` parameter for a subsequent request.
@@ -5975,6 +5989,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["case_insensitive"] = case_insensitive
             if index_filter is not None:
                 __body["index_filter"] = index_filter
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if search_after is not None:
                 __body["search_after"] = search_after
             if size is not None:
