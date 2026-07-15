@@ -39,7 +39,7 @@ from typing_extensions import _AnnotatedAlias
 try:
     import annotationlib
 except ImportError:
-    annotationlib = None  # type: ignore[assignment]
+    annotationlib = None
 
 try:
     from types import UnionType
