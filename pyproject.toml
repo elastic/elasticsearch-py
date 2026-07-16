@@ -140,3 +140,11 @@ exclude_lines = [
 
 [tool.mypy]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "elasticsearch.dsl.document_base"
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = "elasticsearch.serializer"
+warn_unused_ignores = false
