@@ -2971,8 +2971,8 @@ class PrefixQuery(AttrDict[Any]):
     :arg value: (required) Beginning characters of terms you wish to find
         in the provided field.
     :arg rewrite: Method used to rewrite the query.
-    :arg case_insensitive: Allows ASCII case insensitive matching of the
-        value with the indexed field values when set to `true`. Default is
+    :arg case_insensitive: Allows case insensitive matching of the value
+        with the indexed field values when set to `true`. Default is
         `false` which means the case sensitivity of matching depends on
         the underlying field’s mapping.
     :arg boost: Floating point number used to decrease or increase the
@@ -4034,10 +4034,10 @@ class TDigest(AttrDict[Any]):
 class TermQuery(AttrDict[Any]):
     """
     :arg value: (required) Term you wish to find in the provided field.
-    :arg case_insensitive: Allows ASCII case insensitive matching of the
-        value with the indexed field values when set to `true`. When
-        `false`, the case sensitivity of matching depends on the
-        underlying field’s mapping.
+    :arg case_insensitive: Allows case insensitive matching of the value
+        with the indexed field values when set to `true`. When `false`,
+        the case sensitivity of matching depends on the underlying field’s
+        mapping.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -4284,8 +4284,8 @@ class TextExpansionQuery(AttrDict[Any]):
 
 class TextIndexPrefixes(AttrDict[Any]):
     """
-    :arg max_chars: (required)
-    :arg min_chars: (required)
+    :arg max_chars:
+    :arg min_chars:
     """
 
     max_chars: Union[int, DefaultType]
