@@ -180,6 +180,44 @@ class InferenceClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters()
+    async def delete_region_policy(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Delete the inference region policy.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-delete-region-policy>`_
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_inference/_region_policy"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="inference.delete_region_policy",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters(
         body_name="embedding",
     )
@@ -311,6 +349,44 @@ class InferenceClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="inference.get",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    async def get_region_policy(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get the inference region policy.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-get-region-policy>`_
+        """
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_inference/_region_policy"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="inference.get_region_policy",
             path_parts=__path_parts,
         )
 
@@ -2833,6 +2909,63 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("region_policy",),
+    )
+    async def put_region_policy(
+        self,
+        *,
+        region_policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create or update the inference region policy.</p>
+          <p>The region policy restricts inference to a set of allowed geographic areas or cloud service provider regions.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-put-region-policy>`_
+
+        :param region_policy: The region policy configuration.
+        :param force: If `true`, the region policy is applied even if it would deny access
+            to inference endpoints that are currently in use by ingest pipeline or indices.
+        """
+        if region_policy is None and body is None:
+            raise ValueError("Empty value passed for parameter 'region_policy'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_inference/_region_policy"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if region_policy is not None:
+                __body["region_policy"] = region_policy
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.put_region_policy",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_fields=(
             "service",
             "service_settings",
@@ -3017,8 +3150,13 @@ class InferenceClient(NamespacedClient):
         self,
         *,
         inference_id: str,
-        input: t.Optional[t.Sequence[str]] = None,
-        query: t.Optional[str] = None,
+        input: t.Optional[
+            t.Union[
+                t.Union[str, t.Sequence[str]],
+                t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]],
+            ]
+        ] = None,
+        query: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -3038,8 +3176,24 @@ class InferenceClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
 
         :param inference_id: The unique identifier for the inference endpoint.
-        :param input: The documents to rank.
-        :param query: Query input.
+        :param input: The documents to rank. The input can be specified as a single string
+            or an array of strings, or as an object or an array of objects. The object
+            form additionally allows specifying non-text inputs, such as images. > info
+            > Only the `elastic` service currently supports non-text inputs for the `rerank`
+            task. For all other services, the input must be a string or an array of strings.
+            string example: ``` "input": "some document text" ``` string array example:
+            ``` "input": ["some document text", "some more document text"] ``` object
+            example: ``` "input": { "type": "image", "format": "base64", "value": "data:image/jpeg;base64,..."
+            } ``` object array example: ``` "input": [ { "type": "text", "format": "text",
+            "value": "some document text" }, { "type": "image", "format": "base64", "value":
+            "data:image/jpeg;base64,..." } ] ```
+        :param query: Query input. The query can be specified as a single string, or
+            as an object. The object form additionally allows specifying non-text inputs,
+            such as images. > info > Only the `elastic` service currently supports non-text
+            queries for the `rerank` task. For all other services, the query must be
+            a string. string example: ``` "query": "some query text" ``` object example:
+            ``` "query": { "type": "image", "format": "base64", "value": "data:image/jpeg;base64,..."
+            } ```
         :param return_documents: Include the document text in the response.
         :param task_settings: Task settings for the individual inference request. These
             settings are specific to the task type you specified and override the task
