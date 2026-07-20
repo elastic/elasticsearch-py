@@ -6266,7 +6266,6 @@ class IndicesClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=("query",),
-        parameter_aliases={"_slice": "slice"},
     )
     def validate_query(
         self,
@@ -6296,8 +6295,8 @@ class IndicesClient(NamespacedClient):
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         rewrite: t.Optional[bool] = None,
+        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
-        slice: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -6344,13 +6343,13 @@ class IndicesClient(NamespacedClient):
         :param query: Query in the Lucene query string syntax.
         :param rewrite: If `true`, returns a more detailed explanation showing the actual
             Lucene query that will be executed.
-        :param routing: A custom value used to route operations to a specific shard.
-            Not allowed when `index.slice.enabled` is `true` for the target index; use
-            `_slice` instead.
-        :param slice: The slice identifier used to route the operation to a specific
+        :param route_slice: The slice identifier used to route the operation to a specific
             slice. Use the special value `_all` to target all slices without restricting
             to a routing value. Required when `index.slice.enabled` is `true` for the
             target index; not allowed when `index.slice.enabled` is `false`.
+        :param routing: A custom value used to route operations to a specific shard.
+            Not allowed when `index.slice.enabled` is `true` for the target index; use
+            `_slice` instead.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -6393,10 +6392,10 @@ class IndicesClient(NamespacedClient):
             __query["q"] = q
         if rewrite is not None:
             __query["rewrite"] = rewrite
+        if route_slice is not None:
+            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
-        if slice is not None:
-            __query["_slice"] = slice
         if not __body:
             if query is not None:
                 __body["query"] = query
