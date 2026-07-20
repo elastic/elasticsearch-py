@@ -15,7 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-class C:
+import typing as t
+
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import Stability, _availability_warning, _rewrite_parameters
+
+
+class EncryptionClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.EXPERIMENTAL)
