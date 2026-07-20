@@ -446,7 +446,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def delete_data_source(
         self,
         *,
@@ -461,8 +461,9 @@ class EsqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete one or more ES|QL data sources.</p>
-          <p>Fails with <code>409</code> if any dataset references one of the named data sources;
+          <p>Delete ES|QL data sources.</p>
+          <p>Deletes one or more data sources used in ES|QL data federation.
+          Fails with <code>409</code> if any dataset references one of the named data sources;
           delete the dependent datasets first.</p>
 
 
@@ -500,7 +501,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def delete_dataset(
         self,
         *,
@@ -515,7 +516,9 @@ class EsqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Delete one or more ES|QL datasets.</p>
+          <p>Delete ES|QL datasets.</p>
+          <p>Deletes one or more datasets used in ES|QL data federation.
+          If any specified dataset does not exist, the request fails and no datasets are deleted.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
@@ -597,7 +600,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def get_data_source(
         self,
         *,
@@ -611,10 +614,10 @@ class EsqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get one or more ES|QL data sources.</p>
-          <p>Returns the requested data sources. A concrete-name miss returns <code>404</code>; a
-          wildcard pattern or list-all with no match returns <code>200</code> with an empty
-          array.</p>
+          <p>Get ES|QL data sources.</p>
+          <p>Returns one or more data sources used in ES|QL data federation.
+          A concrete-name miss returns <code>404</code>; a wildcard pattern or list-all request with no match
+          returns <code>200</code> with an empty array.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
@@ -652,7 +655,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def get_dataset(
         self,
         *,
@@ -666,10 +669,10 @@ class EsqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get one or more ES|QL datasets.</p>
-          <p>Returns the requested datasets. A concrete-name miss returns <code>404</code>; a
-          wildcard pattern or list-all with no match returns <code>200</code> with an empty
-          array.</p>
+          <p>Get ES|QL datasets.</p>
+          <p>Returns one or more datasets used in ES|QL data federation.
+          A concrete-name miss returns <code>404</code>; a wildcard pattern or list-all request with no match
+          returns <code>200</code> with an empty array.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation#TODO>`_
@@ -842,7 +845,7 @@ class EsqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("type", "description", "settings"),
     )
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def put_data_source(
         self,
         *,
@@ -862,19 +865,22 @@ class EsqlClient(NamespacedClient):
         .. raw:: html
 
           <p>Create or update an ES|QL data source.</p>
-          <p>Creates or replaces a named, type-specific data source configuration that
-          datasets reference to access external data. Names must be lowercase and
-          follow index/alias naming rules.</p>
+          <p>Creates or replaces a named, type-specific data source configuration for ES|QL data federation.
+          Datasets reference data source configurations to access external data. Names must be lowercase
+          and follow index or alias naming rules.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
 
         :param name: The data source name to create or update.
-        :param type: The data source type. Must be lowercase and contain no whitespace.
+        :param type: The data source type. Currently, `s3` is supported. The value must
+            be lowercase and contain no whitespace.
         :param description: A free-text description of the data source.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param settings: Type-specific settings. The accepted keys depend on the data
-            source type's validator.
+        :param settings: Type-specific connection and authentication settings. For `s3`,
+            connection settings include `region` and `endpoint`. Authentication settings
+            include `auth` and the credentials required by the selected authentication
+            method.
         :param timeout: The time to wait for the request to be completed.
         """
         if name in SKIP_IN_PATH:
@@ -918,7 +924,7 @@ class EsqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("data_source", "resource", "description", "mappings", "settings"),
     )
-    @_availability_warning(Stability.EXPERIMENTAL)
+    @_availability_warning(Stability.TECH_PREVIEW)
     async def put_dataset(
         self,
         *,
@@ -939,10 +945,10 @@ class EsqlClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or replace an ES|QL dataset.</p>
-          <p>Creates or replaces a dataset that references a data source. Dataset
-          names participate in the index namespace and must follow index/alias naming
-          rules. Returns <code>404</code> if the referenced data source does not exist.</p>
+          <p>Create or update an ES|QL dataset.</p>
+          <p>Creates or replaces a dataset that references a data source in ES|QL data federation.
+          Dataset names participate in the index namespace and must follow index or alias naming rules.
+          Returns <code>404</code> if the referenced data source does not exist.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation#TODO>`_
@@ -951,14 +957,15 @@ class EsqlClient(NamespacedClient):
         :param data_source: The name of the referenced data source. The data source must
             already exist.
         :param resource: The URI that identifies the data to read, resolved against the
-            referenced data source, rather than only a path. For S3, it can include glob
-            patterns, for example a recursive `/**` matching `*.parquet` files under
-            a prefix such as `s3://bucket/logs`.
+            referenced data source. It can include glob patterns. For example, a recursive
+            pattern can match all Parquet files under the `s3://logs-bucket/access` prefix.
         :param description: A free-text description of the dataset.
         :param mappings: User-declared mapping on the dataset definition
         :param master_timeout: Period to wait for a connection to the master node.
         :param settings: Format and parsing-specific settings that configure how the
-            resource is read. The accepted keys depend on the format reader; compression
+            resource is read. Common keys include `format`, which explicitly selects
+            a registered format, and `partition_detection`, which accepts `auto`, `hive`,
+            `template`, or `none`. Additional keys depend on the format reader. Compression
             can be inferred from the resource URI.
         :param timeout: The time to wait for the request to be completed.
         """
