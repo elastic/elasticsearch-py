@@ -1925,6 +1925,10 @@ class Flattened(Field):
     :arg index:
     :arg index_options:
     :arg null_value:
+    :arg preserve_leaf_arrays: How leaf arrays are represented in
+        synthetic source. When set to `lossy`, leaf arrays are sorted, de-
+        nulled, and deduplicated in the returned synthetic source. When
+        set to `exact`, leaf arrays preserve order, nulls, and duplicates.
     :arg similarity:
     :arg split_queries_on_whitespace:
     :arg time_series_dimensions:
@@ -1954,6 +1958,7 @@ class Flattened(Field):
             Literal["docs", "freqs", "positions", "offsets"], "DefaultType"
         ] = DEFAULT,
         null_value: Union[str, "DefaultType"] = DEFAULT,
+        preserve_leaf_arrays: Union[Literal["lossy", "exact"], "DefaultType"] = DEFAULT,
         similarity: Union[str, "DefaultType"] = DEFAULT,
         split_queries_on_whitespace: Union[bool, "DefaultType"] = DEFAULT,
         time_series_dimensions: Union[Sequence[str], "DefaultType"] = DEFAULT,
@@ -1983,6 +1988,8 @@ class Flattened(Field):
             kwargs["index_options"] = index_options
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
+        if preserve_leaf_arrays is not DEFAULT:
+            kwargs["preserve_leaf_arrays"] = preserve_leaf_arrays
         if similarity is not DEFAULT:
             kwargs["similarity"] = similarity
         if split_queries_on_whitespace is not DEFAULT:
