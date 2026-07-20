@@ -205,6 +205,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: t.Union[str, t.Sequence[str]],
         allow_no_match: t.Optional[bool] = None,
+        basic: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
@@ -230,6 +231,11 @@ class TransformClient(NamespacedClient):
             string or no identifiers and there are no matches. 3. Contains wildcard expressions
             and there are only partial matches. If this parameter is false, the request
             returns a 404 status code when there are no matches or only partial matches.
+        :param basic: If true, the response includes `id`, `state`, `node`, `stats`,
+            `health`, and basic `checkpointing` information (the last and next checkpoint
+            numbers, and the next checkpoint's `position` and `progress`). Skips statistics
+            that require heavy computations to calculate: `operations_behind`, `changes_last_detected_at`,
+            `last_search_time`, and the checkpoint timestamps.
         :param from_: Skips the specified number of transforms.
         :param size: Specifies the maximum number of transforms to obtain.
         :param timeout: Controls the time to wait for the stats
@@ -241,6 +247,8 @@ class TransformClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
+        if basic is not None:
+            __query["basic"] = basic
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
