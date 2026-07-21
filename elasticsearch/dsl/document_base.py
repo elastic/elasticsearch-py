@@ -36,15 +36,21 @@ from typing import (
 
 from typing_extensions import _AnnotatedAlias
 
-try:
+if TYPE_CHECKING:
     import annotationlib
-except ImportError:
-    annotationlib = None  # type: ignore[assignment]
+else:
+    try:
+        import annotationlib
+    except ImportError:
+        annotationlib = None
 
-try:
+if TYPE_CHECKING:
     from types import UnionType
-except ImportError:
-    UnionType = None  # type: ignore[assignment, misc]
+else:
+    try:
+        from types import UnionType
+    except ImportError:
+        UnionType = None
 
 from typing_extensions import dataclass_transform
 

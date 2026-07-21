@@ -18,7 +18,7 @@
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, ClassVar, Dict, Tuple
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Tuple
 
 from elastic_transport import JsonSerializer as _JsonSerializer
 from elastic_transport import NdjsonSerializer as _NdjsonSerializer
@@ -49,12 +49,15 @@ except ImportError:
     _OrjsonSerializer = None  # type: ignore[assignment,misc]
 
 
-try:
+if TYPE_CHECKING:
     import pyarrow as pa
+else:
+    try:
+        import pyarrow as pa
 
-    __all__.append("PyArrowSerializer")
-except ImportError:
-    pa = None  # type: ignore[assignment]
+        __all__.append("PyArrowSerializer")
+    except ImportError:
+        pa = None
 
 
 class JsonSerializer(_JsonSerializer):
