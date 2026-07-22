@@ -24,7 +24,7 @@
 * Configurable automatic discovery of cluster nodes
 * Persistent connections
 * Load balancing (with pluggable selection strategy) across available nodes
-* Failed connection penalization (time based - failed connections won't be
+* Failed connection penalization (time-based - failed connections won't be
   retried until a timeout is reached)
 * Support for TLS and HTTP authentication
 * Thread safety across requests
