@@ -79,8 +79,7 @@ FAILING_TESTS = {
     "indices/resolve_cluster",
     "indices/settings",
     "machine_learning/jobs_crud",
-    # Async SQL query can complete before the status check, leaving no
-    # .async-search index and making sql.get_async_status return 404
+    # async query can complete before the status check, causing a 404
     "sql/10_basic[1]",
 }
 SKIPPED_TESTS = {
