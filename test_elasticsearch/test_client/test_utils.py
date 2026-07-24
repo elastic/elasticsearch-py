@@ -25,6 +25,7 @@ from elasticsearch._sync.client.utils import (
     Visibility,
     _availability_warning,
     _quote,
+    _quote_query,
 )
 from elasticsearch.exceptions import GeneralAvailabilityWarning
 
@@ -46,6 +47,15 @@ def test_handles_unicode():
 def test_handles_unicode2():
     string = "中*文,"
     assert "%E4%B8%AD*%E6%96%87," == _quote(string)
+
+
+def test_quote_query_encodes_keys_and_values():
+    query = {"filter_path&pretty": "hits.hits", "routing=user": "a&b"}
+
+    assert (
+        "filter_path%26pretty=hits.hits&routing%3Duser=a%26b"
+        == _quote_query(query)
+    )
 
 
 class TestAvailabilityWarning:
