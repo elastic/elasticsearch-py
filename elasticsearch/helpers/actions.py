@@ -888,8 +888,8 @@ def reindex(
     chunk_size: int = 500,
     scroll: str = "5m",
     op_type: Optional[str] = None,
-    scan_kwargs: MutableMapping[str, Any] = {},
-    bulk_kwargs: MutableMapping[str, Any] = {},
+    scan_kwargs: Optional[MutableMapping[str, Any]] = None,
+    bulk_kwargs: Optional[MutableMapping[str, Any]] = None,
 ) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
     """
     Reindex all documents from one index that satisfy a given query
@@ -924,6 +924,11 @@ def reindex(
     :arg bulk_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.bulk`
     """
+    if scan_kwargs is None:
+        scan_kwargs = {}
+    if bulk_kwargs is None:
+        bulk_kwargs = {}
+
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
