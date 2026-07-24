@@ -326,7 +326,7 @@ def _process_bulk_chunk_success(
                 item["data"] = data[1]
             errors.append({op_type: item})
 
-        if ok or not errors:
+        if ok or not raise_on_error:
             # if we are not just recording all errors to be able to raise
             # them all at once, yield items individually
             yield ok, {op_type: item}
