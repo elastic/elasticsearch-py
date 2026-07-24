@@ -237,3 +237,41 @@ def test_serialize_scan_error():
     assert pickled.__class__ == helpers.ScanError
     assert pickled.scroll_id == error.scroll_id
     assert pickled.args == error.args
+
+
+def test_scan_accepts_non_dict_mapping_query():
+    from collections.abc import Mapping
+
+    class ReadOnlyMapping(Mapping):
+        def __init__(self, data):
+            self._data = dict(data)
+
+        def __getitem__(self, key):
+            return self._data[key]
+
+        def __iter__(self):
+            return iter(self._data)
+
+        def __len__(self):
+            return len(self._data)
+
+    query = ReadOnlyMapping({"query": {"match_all": {}}})
+
+    client = mock.create_autospec(Elasticsearch, instance=True)
+    client.options.return_value = client
+    client.search.return_value = {
+        "_scroll_id": "scroll_id",
+        "_shards": {"successful": 1, "total": 1, "skipped": 0},
+        "hits": {"hits": [{"_id": "1"}]},
+    }
+    client.scroll.return_value = {
+        "_scroll_id": "scroll_id",
+        "_shards": {"successful": 1, "total": 1, "skipped": 0},
+        "hits": {"hits": []},
+    }
+
+    list(helpers.scan(client, query=query))
+
+    sort = client.search.call_args.kwargs["sort"]
+    assert sort == "_doc"
+    assert "sort" not in query
