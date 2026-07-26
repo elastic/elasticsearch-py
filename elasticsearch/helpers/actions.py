@@ -59,14 +59,14 @@ class BulkMeta(Enum):
 
 BULK_FLUSH = BulkMeta.flush
 
-_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any]]
+_TYPE_BULK_ACTION = Union[bytes, str, Mapping[str, Any]]
 _TYPE_BULK_ACTION_HEADER = Dict[str, Any]
 _TYPE_BULK_ACTION_BODY = Union[None, bytes, Dict[str, Any]]
 _TYPE_BULK_ACTION_HEADER_AND_BODY = Tuple[
     _TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY
 ]
 
-_TYPE_BULK_ACTION_WITH_META = Union[bytes, str, Dict[str, Any], BulkMeta]
+_TYPE_BULK_ACTION_WITH_META = Union[bytes, str, Mapping[str, Any], BulkMeta]
 _TYPE_BULK_ACTION_HEADER_WITH_META = Union[Dict[str, Any], BulkMeta]
 _TYPE_BULK_ACTION_HEADER_WITH_META_AND_BODY = Union[
     Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
@@ -85,7 +85,7 @@ def expand_action(data: _TYPE_BULK_ACTION) -> _TYPE_BULK_ACTION_HEADER_AND_BODY:
         return {"index": {}}, to_bytes(data, "utf-8")
 
     # make sure we don't alter the action
-    data = data.copy()
+    data = dict(data)
     op_type: str = data.pop("_op_type", "index")
     action: Dict[str, Any] = {op_type: {}}
 

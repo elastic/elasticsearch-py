@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, AsyncGenerator, Dict
+from typing import Any, AsyncGenerator, Dict, TypedDict
 
 from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import (
@@ -33,6 +33,12 @@ es = AsyncElasticsearch(
     retry_on_status={100, 400, 503},
     retry_on_timeout=True,
 )
+
+
+class BulkAction(TypedDict, total=False):
+    _index: str
+    _op_type: str
+    _source: Dict[str, Any]
 
 
 async def main() -> None:
@@ -83,6 +89,16 @@ async def async_bulk_types() -> None:
     _, _ = await async_bulk(es, async_gen().__aiter__())
     _, _ = await async_bulk(es, [{}])
     _, _ = await async_bulk(es, ({"key": "value"},))
+
+
+async def async_bulk_typed_dict_types() -> None:
+    action: BulkAction = {
+        "_index": "test-index",
+        "_source": {"key": "value"},
+    }
+    _, _ = await async_bulk(es, [action])
+    async for _ in async_streaming_bulk(es, [action]):
+        pass
 
 
 async def async_reindex_types() -> None:

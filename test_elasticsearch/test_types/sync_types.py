@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, Generator
+from typing import Any, Dict, Generator, TypedDict
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk, reindex, scan, streaming_bulk
@@ -36,6 +36,12 @@ es.options(request_timeout=1.0, max_retries=0, api_key="api-key-example").search
 es.options(
     request_timeout=1.0, max_retries=0, api_key="api-key-example"
 ).indices.exists(index="test-index")
+
+
+class BulkAction(TypedDict, total=False):
+    _index: str
+    _op_type: str
+    _source: Dict[str, Any]
 
 
 def sync_gen() -> Generator[Dict[Any, Any], None, None]:
@@ -76,6 +82,16 @@ def bulk_types() -> None:
     _, _ = bulk(es, sync_gen().__iter__())
     _, _ = bulk(es, [{}])
     _, _ = bulk(es, ({"key": "value"},))
+
+
+def bulk_typed_dict_types() -> None:
+    action: BulkAction = {
+        "_index": "test-index",
+        "_source": {"key": "value"},
+    }
+    _, _ = bulk(es, [action])
+    for _ in streaming_bulk(es, [action]):
+        pass
 
 
 def reindex_types() -> None:

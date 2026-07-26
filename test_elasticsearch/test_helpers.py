@@ -18,6 +18,7 @@
 import pickle
 import threading
 import time
+from types import MappingProxyType
 from typing import Optional
 from unittest import mock
 
@@ -86,6 +87,14 @@ class TestChunkActions:
     def test_expand_action(self):
         assert helpers.expand_action({}) == ({"index": {}}, {})
         assert helpers.expand_action({"key": "val"}) == ({"index": {}}, {"key": "val"})
+
+    def test_expand_action_accepts_mapping(self):
+        action = MappingProxyType({"_index": "index", "key": "val"})
+
+        assert helpers.expand_action(action) == (
+            {"index": {"_index": "index"}},
+            {"key": "val"},
+        )
 
     def test_expand_action_actions(self):
         assert helpers.expand_action(
