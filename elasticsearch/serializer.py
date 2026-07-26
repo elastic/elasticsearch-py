@@ -72,6 +72,12 @@ class JsonSerializer(_JsonSerializer):
         if isinstance(data, uuid.UUID):
             return str(data)
         elif isinstance(data, FLOAT_TYPES):
+            if (
+                isinstance(data, Decimal)
+                and data.is_finite()
+                and data == data.to_integral_value()
+            ):
+                return int(data)
             return float(data)
 
         # This is kept for backwards compatibility even

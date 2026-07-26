@@ -56,9 +56,11 @@ def test_datetime_serialization(json_serializer):
     )
 
 
-@requires_numpy_and_pandas
 def test_decimal_serialization(json_serializer):
     assert b'{"d":3.8}' == json_serializer.dumps({"d": Decimal("3.8")})
+    assert b'{"d":31124873853495702}' == json_serializer.dumps(
+        {"d": Decimal("31124873853495702")}
+    )
 
 
 def test_uuid_serialization(json_serializer):
