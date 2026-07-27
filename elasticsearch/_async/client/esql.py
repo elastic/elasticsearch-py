@@ -446,7 +446,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def delete_data_source(
         self,
         *,
@@ -501,7 +501,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def delete_dataset(
         self,
         *,
@@ -600,7 +600,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_data_source(
         self,
         *,
@@ -655,7 +655,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def get_dataset(
         self,
         *,
@@ -845,7 +845,7 @@ class EsqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("type", "description", "settings"),
     )
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def put_data_source(
         self,
         *,
@@ -924,7 +924,7 @@ class EsqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("data_source", "resource", "description", "mappings", "settings"),
     )
-    @_availability_warning(Stability.TECH_PREVIEW)
+    @_availability_warning(Stability.EXPERIMENTAL)
     async def put_dataset(
         self,
         *,
