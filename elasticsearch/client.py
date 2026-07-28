@@ -31,6 +31,7 @@ from ._sync.client.connector import ConnectorClient as ConnectorClient  # noqa: 
 from ._sync.client.dangling_indices import (  # noqa: F401
     DanglingIndicesClient as DanglingIndicesClient,
 )
+from ._sync.client.encryption import EncryptionClient as EncryptionClient  # noqa: F401
 from ._sync.client.enrich import EnrichClient as EnrichClient  # noqa: F401
 from ._sync.client.eql import EqlClient as EqlClient  # noqa: F401
 from ._sync.client.esql import EsqlClient as EsqlClient  # noqa: F401
@@ -93,6 +94,7 @@ __all__ = [
     "ConnectorClient",
     "DanglingIndicesClient",
     "Elasticsearch",
+    "EncryptionClient",
     "EnrichClient",
     "EqlClient",
     "FeaturesClient",
