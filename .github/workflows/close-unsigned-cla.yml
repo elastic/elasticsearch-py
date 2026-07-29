@@ -7,6 +7,7 @@ on:
 
 permissions:
   pull-requests: write
+  issues: write
 
 jobs:
   close-stale:
@@ -21,6 +22,16 @@ jobs:
           while read -r pr; do
             gh pr close "$pr" --repo "$GH_REPO" \
               --comment "Closing this PR as it has been marked stale with no further activity."
+          done
+      - name: Close issues with stale label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh issue list --repo "$GH_REPO" --state open --label stale --json number --jq '.[].number' |
+          while read -r issue; do
+            gh issue close "$issue" --repo "$GH_REPO" --reason "not planned" \
+              --comment "Closing this issue as it has been marked stale with no further activity."
           done
 
   close:
