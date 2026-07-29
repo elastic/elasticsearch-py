@@ -9,6 +9,20 @@ permissions:
   pull-requests: write
 
 jobs:
+  close-stale:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PRs with stale label
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh pr list --repo "$GH_REPO" --state open --label stale --json number --jq '.[].number' |
+          while read -r pr; do
+            gh pr close "$pr" --repo "$GH_REPO" \
+              --comment "Closing this PR as it has been marked stale with no further activity."
+          done
+
   close:
     runs-on: ubuntu-latest
     steps:
