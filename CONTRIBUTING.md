@@ -10,6 +10,16 @@ We enjoy working with contributors to get their code accepted. There are many
 approaches to fixing a problem and it is important to find the best approach
 before writing too much code.
 
+## The one rule
+
+Adapted from [pi's contributing philosophy](https://github.com/earendil-works/pi/blob/main/CONTRIBUTING.md#the-one-rule).
+
+**You must understand your code.** If you cannot explain what your changes do and how they interact with the rest of the codebase, the PR will be closed.
+
+Using AI to write code is fine. Submitting AI-generated code without understanding it is not.
+
+If you use an agent, run it from the repo root so it picks up `AGENTS.md` automatically. Your agent must follow the rules in that file.
+
 ## Running Elasticsearch locally
 
 We've provided a script to start an Elasticsearch cluster of a certain version
