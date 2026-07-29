@@ -1,0 +1,31 @@
+name: close-unsigned-cla
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PRs without CLA after 48h
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          CUTOFF=$(date -d '48 hours ago' --iso-8601=seconds)
+          gh pr list --repo "$GH_REPO" --state open --json number,createdAt |
+            jq -r --arg cutoff "$CUTOFF" '.[] | select(.createdAt < $cutoff) | .number' |
+          while read -r pr; do
+            SHA=$(gh pr view "$pr" --repo "$GH_REPO" --json headRefOid --jq .headRefOid)
+            CLA=$(gh api "repos/$GH_REPO/commits/$SHA/statuses" \
+              --jq '[.[] | select(.context == "CLA")] | first | .state')
+            if [ "$CLA" = "failure" ]; then
+              gh pr close "$pr" --repo "$GH_REPO" \
+                --comment "Closing this PR as the CLA was not signed within 48 hours. Please sign the [Contributor Agreement](https://www.elastic.co/contributor-agreement) and reopen to contribute."
+            fi
+          done
