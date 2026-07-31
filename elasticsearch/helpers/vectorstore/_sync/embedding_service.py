@@ -36,7 +36,7 @@ class EmbeddingService(ABC):
     def embed_query(self, query: str) -> List[float]:
         """Generate an embedding for a single query text.
 
-        :param text: The query text to generate an embedding for.
+        :param query: The query text to generate an embedding for.
 
         :return: The embedding for the input query text.
         """
