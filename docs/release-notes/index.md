@@ -18,6 +18,28 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.5.0 (2026-08-04)
+
+API
+
+* Added `encryption.reset` API
+* Added `inference.delete_region_policy`, `inference.get_region_policy` and `inference.put_region_policy` APIs
+* Added `search_after` parameter to `synonyms.get_synonym` API
+* Added `append` parameter to `synonyms.put_synonym` API
+* Added `stats` parameter to `search` API
+* Added `project_routing` parameter to `terms_enum` API
+* Added `basic` parameter to `transform.get_transform_stats` API
+* Added `routing` and `route_slice` parameters to `indices.validate_query` API
+
+DSL
+
+* Added `DocValuesConfig` type; `doc_values` now accepts a `DocValuesConfig` object on all field types
+* Added `preserve_leaf_arrays` attribute to `Flattened` field
+
+Fixes
+
+* Forward `opaque_id` in `async_scan` ([#3445](https://github.com/elastic/elasticsearch-py/pull/3445))
+
 ## 9.4.1 (2026-05-26)
 
 Enhancements

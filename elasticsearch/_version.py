@@ -15,6 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-__versionstr__ = "9.4.1"
+__versionstr__ = "9.5.0"
 __es_specification_commit__ = "7555fc9af2cc5f3cedab2f35548136eb4972f1fa"
 _SERVERLESS_API_VERSION = "2023-10-31"
