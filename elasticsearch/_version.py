@@ -16,5 +16,5 @@
 #  under the License.
 
 __versionstr__ = "9.3.0"
-__es_specification_commit__ = "b30c4748d4e9a305eb5bf0cc352d8188c0824f2e"
+__es_specification_commit__ = "f77864f3fc8d7afe94c60c8cf7be465185029eb6"
 _SERVERLESS_API_VERSION = "2023-10-31"
