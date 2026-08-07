@@ -34,15 +34,22 @@ field_py = jinja_env.get_template("field.py.tpl")
 query_py = jinja_env.get_template("query.py.tpl")
 aggs_py = jinja_env.get_template("aggs.py.tpl")
 response_init_py = jinja_env.get_template("response.__init__.py.tpl")
+retriever_py = jinja_env.get_template("retriever.py.tpl")
 types_py = jinja_env.get_template("types.py.tpl")
 
 # map with name replacements for Elasticsearch attributes
-PROP_REPLACEMENTS = {"from": "from_", "global": "global_"}
+PROP_REPLACEMENTS = {"from": "from_", "global": "global_", "lambda": "lambda_"}
 
 # map with Elasticsearch type replacements
 # keys and values are in given in "{namespace}:{name}" format
 TYPE_REPLACEMENTS = {
     "_types.query_dsl:DistanceFeatureQuery": "_types.query_dsl:DistanceFeatureQueryBase",
+}
+
+# interfaces that wrap a DSL type and so need its shortcut applied on assignment
+# keys are in "{namespace}:{name}" format
+INTERFACE_PARAMS = {
+    "_types:InnerRetriever": {"type": "retriever"},
 }
 
 # some aggregation types are complicated to determine from the schema, so they
@@ -58,8 +65,11 @@ AGG_TYPES = {
 }
 
 
+ACRONYMS = {"ip": "IP", "rrf": "RRF"}
+
+
 def property_to_class_name(name):
-    return "".join([w.title() if w != "ip" else "IP" for w in name.split("_")])
+    return "".join([ACRONYMS.get(w, w.title()) for w in name.split("_")])
 
 
 def wrapped_doc(text, width=70, initial_indent="", subsequent_indent=""):
@@ -296,25 +306,29 @@ class ElasticsearchSchema:
                     self.interfaces.append("PipeSeparatedFlags")
                 return '"types.PipeSeparatedFlags"', None
             else:
-                # generic union type
-                types = list(
-                    dict.fromkeys(  # eliminate duplicates
-                        [
-                            self.get_python_type(t, for_response=for_response)
-                            for t in schema_type["items"]
-                        ]
-                    )
-                )
+                # generic union type, eliminates duplicate types
+                types = {}
+                for t in schema_type["items"]:
+                    type_, param = self.get_python_type(t, for_response=for_response)
+                    types.setdefault(type_, param)
+
                 if len(types) == 1:
-                    return types[0]
-                return "Union[" + ", ".join([type_ for type_, _ in types]) + "]", None
+                    return next(iter(types.items()))
+
+                # NOTE: In cases of multiple types in the Union that have different
+                # `DslBase._param_defs`, None will be returned. This would break
+                # `to_dict` serialisation. Fortunately, no such cases exist in the
+                # ElasticSearch schema as it would require a wholesale refactor.
+                params = [param for param in types.values() if param]
+                param = params[0] if len(params) == 1 else None
+                return "Union[" + ", ".join(types) + "]", param
 
         elif schema_type["kind"] == "enum":
             # enums are mapped to Literal[member, ...]
             t = (
                 "Literal["
                 + ", ".join(
-                    [f"\"{member['name']}\"" for member in schema_type["members"]]
+                    [f'"{member["name"]}"' for member in schema_type["members"]]
                 )
                 + "]"
             )
@@ -327,7 +341,13 @@ class ElasticsearchSchema:
             return t, None
 
         elif schema_type["kind"] == "interface":
-            if schema_type["name"]["namespace"] == "_types.query_dsl":
+            if (
+                schema_type["name"]["namespace"] == "_types"
+                and schema_type["name"]["name"] == "RetrieverContainer"
+            ):
+                # RetrieverContainer maps to the DSL's Retriever class.
+                return "Retriever", {"type": "retriever"}
+            elif schema_type["name"]["namespace"] == "_types.query_dsl":
                 # handle specific DSL classes explicitly to map to existing
                 # Python DSL classes
                 if schema_type["name"]["name"].endswith("RangeQuery"):
@@ -338,7 +358,7 @@ class ElasticsearchSchema:
                 elif schema_type["name"]["name"].endswith("DecayFunction"):
                     return '"function.DecayFunction"', None
                 elif schema_type["name"]["name"].endswith("Function"):
-                    return f"\"function.{schema_type['name']['name']}\"", None
+                    return f'"function.{schema_type["name"]["name"]}"', None
             elif schema_type["name"]["namespace"] == "_types.analysis" and schema_type[
                 "name"
             ]["name"].endswith("Analyzer"):
@@ -357,7 +377,12 @@ class ElasticsearchSchema:
                 self.interfaces.append(schema_type["name"]["name"])
                 if for_response:
                     self.response_interfaces.append(schema_type["name"]["name"])
-            return f"\"types.{schema_type['name']['name']}\"", None
+            return (
+                f'"types.{schema_type["name"]["name"]}"',
+                INTERFACE_PARAMS.get(
+                    f"{schema_type['name']['namespace']}:{schema_type['name']['name']}"
+                ),
+            )
         elif schema_type["kind"] == "user_defined_value":
             # user_defined_value maps to Python's Any type
             return "Any", None
@@ -921,7 +946,7 @@ def generate_field_py(schema, filename):
     classes = sorted(
         classes,
         key=lambda k: (
-            f'AA{k["name"]}'
+            f"AA{k['name']}"
             if k["name"] in ["Float", "Integer", "Object"]
             else k["name"]
         ),
@@ -984,6 +1009,23 @@ def generate_response_init_py(schema, filename):
     print(f"Generated {filename}.")
 
 
+def generate_retrievers_py(schema, filename):
+    """Generate retrievers.py with all the retriever classes."""
+    classes = []
+    query_container = schema.find_type("RetrieverContainer", "_types")
+    for p in query_container["properties"]:
+        classes += schema.property_to_python_class(p)
+
+    # Avoid ambiguous names and naming conflicts, e.g. `Knn`
+    for k in classes:
+        if not k["name"].endswith("Retriever"):
+            k["name"] += "Retriever"
+
+    with open(filename, "w") as f:
+        f.write(retriever_py.render(classes=classes, parent="Retriever"))
+    print(f"Generated {filename}.")
+
+
 def generate_types_py(schema, filename):
     """Generate types.py"""
     classes = {}
@@ -1020,4 +1062,5 @@ if __name__ == "__main__":
     generate_query_py(schema, "elasticsearch/dsl/query.py")
     generate_aggs_py(schema, "elasticsearch/dsl/aggs.py")
     generate_response_init_py(schema, "elasticsearch/dsl/response/__init__.py")
+    generate_retrievers_py(schema, "elasticsearch/dsl/retriever.py")
     generate_types_py(schema, "elasticsearch/dsl/types.py")
