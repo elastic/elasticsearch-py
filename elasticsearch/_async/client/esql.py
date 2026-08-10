@@ -624,7 +624,7 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("query",),
+        body_fields=("query", "description"),
     )
     @_availability_warning(Stability.EXPERIMENTAL)
     async def put_view(
@@ -632,6 +632,7 @@ class EsqlClient(NamespacedClient):
         *,
         name: str,
         query: t.Optional[t.Union[str, "ESQLBase"]] = None,
+        description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -648,6 +649,7 @@ class EsqlClient(NamespacedClient):
 
         :param name: The view name to create or update.
         :param query: The ES|QL query string from which to create a view.
+        :param description: A free-text description of the view.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -668,6 +670,8 @@ class EsqlClient(NamespacedClient):
         if not __body:
             if query is not None:
                 __body["query"] = str(query)
+            if description is not None:
+                __body["description"] = description
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT",
