@@ -287,3 +287,15 @@ def test_search_retriever_to_dict_and_clone() -> None:
     s2 = Search.from_dict(d)
     assert isinstance(s2._retriever, retriever.StandardRetriever)
     assert s2.to_dict() == d
+
+
+def test_search_retriever_rejects_a_component() -> None:
+    # a weighted component is only valid inside the `retrievers` list of
+    # `rrf`/`linear`, never as the top-level retriever
+    component = {"retriever": {"standard": {}}, "weight": 2.0}
+
+    with raises(ValueError):
+        Search().retriever(component)
+
+    with raises(ValueError):
+        Search.from_dict({"retriever": component})
