@@ -120,6 +120,18 @@ def R(
     return Retriever.get_dsl_class(name_or_retriever)(**params)
 
 
+def _as_retriever(name_or_retriever: Union["Retriever", Dict[str, Any]]) -> "Retriever":
+    """Coerce to a `Retriever`, for positions where a component is not valid.
+
+    `R()` also returns a `RetrieverComponent` for dicts with a "retriever" key,
+    which is only legitimate inside the `retrievers` list of `rrf` and `linear`.
+    """
+    r = R(name_or_retriever)
+    if not isinstance(r, Retriever):
+        raise ValueError(f"Expected a retriever, got {r!r}")
+    return r
+
+
 class Retriever(DslBase):
     _type_name = "retriever"
     _type_shortcut = staticmethod(R)
