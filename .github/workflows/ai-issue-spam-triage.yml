@@ -103,6 +103,15 @@ jobs:
             exit 0
           fi
 
+          BASE_URL="${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}"
+          case "$BASE_URL" in
+            https://*) ;;
+            *)
+              echo "OPENROUTER_BASE_URL must be https://, refusing to send the API key to it"
+              exit 0
+              ;;
+          esac
+
           HISTORY=$(cat /tmp/history.json)
           CONTRIBUTING=$(head -c 6000 CONTRIBUTING.md 2>/dev/null || echo "")
 
@@ -122,7 +131,6 @@ jobs:
               ]
             }' > /tmp/payload.json
 
-          BASE_URL="${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}"
           HTTP_STATUS=$(curl -s -o /tmp/response.json -w '%{http_code}' \
             -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
             -H "Content-Type: application/json" \
