@@ -154,6 +154,10 @@ jobs:
           gh label create "ai-spam" --color "B60205" \
             --description "Likely mass produced / AI generated report" --force
 
-          gh issue comment "$ISSUE_NUMBER" --body "$COMMENT"
+          # COMMENT is model output (indirectly influenced by issue content);
+          # write it to a file rather than interpolating it into a shell
+          # string, so it can never be parsed as shell syntax.
+          printf '%s' "$COMMENT" > /tmp/comment.txt
+          gh issue comment "$ISSUE_NUMBER" --body-file /tmp/comment.txt
           gh issue edit "$ISSUE_NUMBER" --add-label "ai-spam"
           gh issue close "$ISSUE_NUMBER" --reason "not planned"
