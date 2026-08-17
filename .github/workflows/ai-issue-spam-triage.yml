@@ -30,11 +30,12 @@ jobs:
             --arg since "$SINCE" \
             --slurpfile s /tmp/search.json \
             '$s[0] as $r |
+             ($r.items // []) as $items |
              {
-               total_count: $r.total_count,
-               distinct_repos_recent: [$r.items[] | select(.created_at >= $since) | .repository_url | sub(".*/repos/"; "")] | unique | length,
-               recent_count: [$r.items[] | select(.created_at >= $since)] | length,
-               recent_items: [$r.items[] | select(.created_at >= $since) | {repo: (.repository_url | sub(".*/repos/"; "")), title, created_at}][:20]
+               total_count: ($r.total_count // 0),
+               distinct_repos_recent: [$items[] | select(.created_at >= $since) | .repository_url | sub(".*/repos/"; "")] | unique | length,
+               recent_count: [$items[] | select(.created_at >= $since)] | length,
+               recent_items: [$items[] | select(.created_at >= $since) | {repo: (.repository_url | sub(".*/repos/"; "")), title, created_at}][:20]
              }' > /tmp/history.json
 
       - name: Classify and act
