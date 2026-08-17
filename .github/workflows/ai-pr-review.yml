@@ -168,6 +168,28 @@ jobs:
             `__typename: "Bot"`, with no "[bot]" suffix). Do not flag a
             GraphQL author.login comparison for missing "[bot]".
 
+            Before claiming a step, file, or checkout is unused ("only
+            read elsewhere", "no purpose"), grep the ENTIRE file being
+            reviewed for where that file/value is actually consumed, not
+            just the step nearest the flagged line. A prior wrong claim
+            of this shape: that `actions/checkout@v4` in
+            ai-issue-spam-triage.yml was unused because CONTRIBUTING.md
+            is "only read in the review workflows" - CONTRIBUTING.md is
+            in fact read later in that exact same file
+            (`head -c 6000 CONTRIBUTING.md`), in the same job, which is
+            why the checkout is there. Verify usage across the whole
+            file/job before flagging something as dead code.
+
+            GitHub usernames (used as AUTHOR/user.login in this repo's
+            workflows) are restricted by GitHub itself at the platform
+            level to `[a-zA-Z0-9-]`, no colons, quotes, spaces, or other
+            characters that could alter meaning in a shell string or a
+            GitHub search query string. Do not suggest adding regex
+            validation, sanitization, or escaping for a GitHub username
+            value before using it in a shell command or a `gh api search`
+            query; the input space GitHub allows cannot produce the
+            problem such validation would guard against.
+
             If your reasoning trails off into "wait", "actually",
             "re-reading", or otherwise second-guesses a finding mid
             explanation, that finding is not settled. Resolve it silently
@@ -244,6 +266,25 @@ jobs:
             `author.login` is "github-actions" with `__typename: "Bot"`,
             no suffix. Drop any finding claiming a GraphQL author.login
             comparison is wrong for lacking "[bot]".
+
+            Before trusting a finding that a step/checkout/file is
+            "unused" or "serves no purpose", search the full file (not
+            just nearby lines) for where it's consumed. Known false
+            positive: `actions/checkout@v4` in ai-issue-spam-triage.yml
+            flagged as unused because CONTRIBUTING.md is "only read in
+            the review workflows" - it's actually read later in that
+            same file via `head -c 6000 CONTRIBUTING.md`, in the same
+            job. Drop any "unused checkout/file" finding you cannot
+            confirm by finding zero references anywhere in the file.
+
+            Known false positive: suggesting regex validation or
+            sanitization of a GitHub username (AUTHOR/user.login) before
+            using it in a shell command or gh api query. GitHub restricts
+            usernames to `[a-zA-Z0-9-]` at the platform level; no value
+            GitHub will ever produce for a username can contain a
+            character that would alter shell or query syntax. Drop any
+            finding proposing extra validation on this trusted-by-platform
+            input.
 
             Drop any finding whose own reasoning concludes it is low
             risk, unlikely, not exploitable in practice, or not a real
