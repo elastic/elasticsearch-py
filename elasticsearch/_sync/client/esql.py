@@ -447,6 +447,115 @@ class EsqlClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.EXPERIMENTAL)
+    def delete_data_source(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Delete ES|QL data sources.</p>
+          <p>Deletes one or more data sources used in ES|QL data federation.
+          Fails with <code>409</code> if any dataset references one of the named data sources;
+          delete the dependent datasets first.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-delete-data-source>`_
+
+        :param name: A comma-separated list of data source names to delete.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: The time to wait for the request to be completed.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_query/data_source/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.delete_data_source",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_availability_warning(Stability.EXPERIMENTAL)
+    def delete_dataset(
+        self,
+        *,
+        name: t.Union[str, t.Sequence[str]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Delete ES|QL datasets.</p>
+          <p>Deletes one or more datasets used in ES|QL data federation.
+          If any specified dataset does not exist, the request fails and no datasets are deleted.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-delete-dataset>`_
+
+        :param name: A comma-separated list of dataset names to delete.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: The time to wait for the request to be completed.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_query/dataset/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.delete_dataset",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_availability_warning(Stability.EXPERIMENTAL)
     def delete_view(
         self,
         *,
@@ -487,6 +596,116 @@ class EsqlClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="esql.delete_view",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_availability_warning(Stability.EXPERIMENTAL)
+    def get_data_source(
+        self,
+        *,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get ES|QL data sources.</p>
+          <p>Returns one or more data sources used in ES|QL data federation.
+          A concrete-name miss returns <code>404</code>; a wildcard pattern or list-all request with no match
+          returns <code>200</code> with an empty array.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-get-data-source>`_
+
+        :param name: A comma-separated list of data source names or wildcard patterns.
+            Omit to return all data sources.
+        :param master_timeout: Period to wait for a connection to the master node.
+        """
+        __path_parts: t.Dict[str, str]
+        if name not in SKIP_IN_PATH:
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_query/data_source/{__path_parts["name"]}'
+        else:
+            __path_parts = {}
+            __path = "/_query/data_source"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.get_data_source",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    @_availability_warning(Stability.EXPERIMENTAL)
+    def get_dataset(
+        self,
+        *,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Get ES|QL datasets.</p>
+          <p>Returns one or more datasets used in ES|QL data federation.
+          A concrete-name miss returns <code>404</code>; a wildcard pattern or list-all request with no match
+          returns <code>200</code> with an empty array.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-get-dataset>`_
+
+        :param name: A comma-separated list of dataset names or wildcard patterns. Omit
+            to return all datasets.
+        :param master_timeout: Period to wait for a connection to the master node.
+        """
+        __path_parts: t.Dict[str, str]
+        if name not in SKIP_IN_PATH:
+            __path_parts = {"name": _quote(name)}
+            __path = f'/_query/dataset/{__path_parts["name"]}'
+        else:
+            __path_parts = {}
+            __path = "/_query/dataset"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="esql.get_dataset",
             path_parts=__path_parts,
         )
 
@@ -620,6 +839,177 @@ class EsqlClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="esql.list_queries",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("type", "description", "settings"),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    def put_data_source(
+        self,
+        *,
+        name: str,
+        type: t.Optional[str] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create or update an ES|QL data source.</p>
+          <p>Creates or replaces a named, type-specific data source configuration for ES|QL data federation.
+          Datasets reference data source configurations to access external data. Names must be lowercase
+          and follow index or alias naming rules.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-put-data-source>`_
+
+        :param name: The data source name to create or update.
+        :param type: The data source type. Currently, `s3` is supported. The value must
+            be lowercase and contain no whitespace.
+        :param description: A free-text description of the data source.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param settings: Type-specific connection and authentication settings. For `s3`,
+            connection settings include `region` and `endpoint`. Authentication settings
+            include `auth` and the credentials required by the selected authentication
+            method.
+        :param timeout: The time to wait for the request to be completed.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if type is None and body is None:
+            raise ValueError("Empty value passed for parameter 'type'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_query/data_source/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if type is not None:
+                __body["type"] = type
+            if description is not None:
+                __body["description"] = description
+            if settings is not None:
+                __body["settings"] = settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="esql.put_data_source",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("data_source", "resource", "description", "mappings", "settings"),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    def put_dataset(
+        self,
+        *,
+        name: str,
+        data_source: t.Optional[str] = None,
+        resource: t.Optional[str] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create or update an ES|QL dataset.</p>
+          <p>Creates or replaces a dataset that references a data source in ES|QL data federation.
+          Dataset names participate in the index namespace and must follow index or alias naming rules.
+          Returns <code>404</code> if the referenced data source does not exist.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-put-dataset>`_
+
+        :param name: The dataset name to create or update.
+        :param data_source: The name of the referenced data source. The data source must
+            already exist.
+        :param resource: The URI that identifies the data to read, resolved against the
+            referenced data source. It can include glob patterns. For example, a recursive
+            pattern can match all Parquet files under the `s3://logs-bucket/access` prefix.
+        :param description: A free-text description of the dataset.
+        :param mappings: User-declared mapping on the dataset definition
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param settings: Format and parsing-specific settings that configure how the
+            resource is read. Common keys include `format`, which explicitly selects
+            a registered format, and `partition_detection`, which accepts `auto`, `hive`,
+            `template`, or `none`. Additional keys depend on the format reader. Compression
+            can be inferred from the resource URI.
+        :param timeout: The time to wait for the request to be completed.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if data_source is None and body is None:
+            raise ValueError("Empty value passed for parameter 'data_source'")
+        if resource is None and body is None:
+            raise ValueError("Empty value passed for parameter 'resource'")
+        __path_parts: t.Dict[str, str] = {"name": _quote(name)}
+        __path = f'/_query/dataset/{__path_parts["name"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if data_source is not None:
+                __body["data_source"] = data_source
+            if resource is not None:
+                __body["resource"] = resource
+            if description is not None:
+                __body["description"] = description
+            if mappings is not None:
+                __body["mappings"] = mappings
+            if settings is not None:
+                __body["settings"] = settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="esql.put_dataset",
             path_parts=__path_parts,
         )
 
