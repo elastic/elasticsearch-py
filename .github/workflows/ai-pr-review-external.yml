@@ -117,6 +117,14 @@ jobs:
             "redirect: error" or --max-redirs on a curl call that never
             passes -L in the first place.
 
+            Another recurring wrong claim: that GitHub's `minimizeComment`
+            GraphQL mutation cannot target a `PullRequestReview` node (e.g.
+            claiming it only works on some other type, or inventing a type
+            name like "IceCreamable"). This is false: `PullRequestReview`
+            implements the `Minimizable` interface and `minimizeComment`
+            works on it directly, verified live via GraphQL introspection
+            and by actually calling the mutation. Do not flag this pattern.
+
             If your reasoning trails off into "wait", "actually",
             "re-reading", or otherwise second-guesses a finding mid
             explanation, that finding is not settled. Resolve it silently
@@ -162,6 +170,14 @@ jobs:
             backwards. curl does NOT follow redirects unless -L or
             --location is passed. Drop any finding that claims a plain
             curl call without -L leaks credentials via a redirect.
+
+            Known false positive: claims that `minimizeComment` cannot
+            target a `PullRequestReview` node, or that it requires some
+            other type (including an invented type name). `PullRequestReview`
+            implements `Minimizable` and the mutation works on it directly;
+            this has been verified live via GraphQL introspection and by
+            calling the mutation successfully. Drop any finding claiming
+            otherwise.
 
             The diff is truncated at a byte limit and may cut off mid line
             at the very end. Drop any "syntax error" or "incomplete
