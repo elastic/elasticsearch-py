@@ -82,7 +82,10 @@ jobs:
             conclude it is actually fine, drop the finding entirely rather
             than posting a concern followed by reasoning that it is not a
             problem. Only report issues you still believe in after full
-            consideration.
+            consideration. If your own explanation of a finding concludes
+            it is low risk, unlikely, not exploitable in practice, or not
+            a real security issue, that finding is not a defect: drop it
+            entirely rather than reporting it with that caveat attached.
 
             Findings that rest on recalled facts (operator precedence,
             parsing rules, quoting/escaping, API defaults) rather than on
@@ -124,6 +127,17 @@ jobs:
             implements the `Minimizable` interface and `minimizeComment`
             works on it directly, verified live via GraphQL introspection
             and by actually calling the mutation. Do not flag this pattern.
+
+            Another recurring wrong claim: that a GitHub Actions bot's
+            GraphQL `author.login` must include the "[bot]" suffix (e.g.
+            claiming a `select(.author.login == "github-actions")` filter
+            is wrong and should be "github-actions[bot]"). The "[bot]"
+            suffix is a REST API convention for the `user.login` field
+            only. In GraphQL, the same bot's `author.login` is the bare
+            name with no suffix (verified live: querying this exact PR's
+            reviews via GraphQL returns `author.login: "github-actions"`,
+            `__typename: "Bot"`, with no "[bot]" suffix). Do not flag a
+            GraphQL author.login comparison for missing "[bot]".
 
             If your reasoning trails off into "wait", "actually",
             "re-reading", or otherwise second-guesses a finding mid
@@ -178,6 +192,19 @@ jobs:
             this has been verified live via GraphQL introspection and by
             calling the mutation successfully. Drop any finding claiming
             otherwise.
+
+            Known false positive: a GitHub Actions bot's GraphQL
+            `author.login` does NOT include a "[bot]" suffix; that suffix
+            only appears on the REST API's `user.login` field for the
+            same identity. Verified live: this exact bot's GraphQL
+            `author.login` is "github-actions" with `__typename: "Bot"`,
+            no suffix. Drop any finding claiming a GraphQL author.login
+            comparison is wrong for lacking "[bot]".
+
+            Drop any finding whose own reasoning concludes it is low
+            risk, unlikely, not exploitable in practice, or not a real
+            security issue. A finding that argues itself down to a
+            non-issue is not a defect worth reporting.
 
             The diff is truncated at a byte limit and may cut off mid line
             at the very end. Drop any "syntax error" or "incomplete
