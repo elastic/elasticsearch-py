@@ -119,15 +119,23 @@ jobs:
             a real security issue, that finding is not a defect: drop it
             entirely rather than reporting it with that caveat attached.
 
-            Findings that rest on recalled facts (operator precedence,
-            parsing rules, quoting/escaping, API defaults) rather than on
-            what is visible in the diff are frequently wrong, because they
-            substitute a remembered rule for checking the actual code.
-            Before including one, trace the exact code in the diff with a
-            concrete example value end to end, the way an interpreter
-            would, and write out what actually happens. If that trace does
-            not produce the problem, drop the finding. Never state a rule
-            as justification without having traced it against this code.
+            You cannot execute code, run a shell, query an API, or browse
+            anything: you only see the diff text below. Any claim about how
+            an external system actually behaves - a GraphQL schema's
+            capabilities, a CLI tool's default flags, an HTTP client's
+            default redirect/timeout behavior, a REST API's exact response
+            shape, operator precedence, parsing rules, quoting/escaping,
+            a library's documented defaults - is something you are
+            recalling, not observing, and that recollection is frequently
+            wrong or outdated. Treat every such claim as unverified by
+            default. Before including one, trace the exact code in the
+            diff with a concrete example value end to end, the way an
+            interpreter would, and write out what actually happens. If
+            that trace does not produce the problem, or if the problem
+            depends on an external system's behavior you cannot confirm
+            from the diff text itself, drop the finding rather than assert
+            it as fact. Never state a rule as justification without having
+            traced it against this code.
 
             A specific case this repo hits often: ANY bash variable, no
             matter its source (an "env:" block like PR_TITLE, or command
@@ -213,16 +221,23 @@ jobs:
             comments array; the review will not be posted at all.
           CRITIC_PROMPT: |-
             You fact-check code review findings before they are posted. You
-            get a diff and a JSON review with proposed findings. Do not
-            trust a finding's stated reasoning, even if it sounds
-            confident and cites a specific rule (operator precedence,
-            quoting/escaping, parsing, API defaults). For every finding,
-            independently trace the exact code in the diff with a concrete
-            example value end to end, the way an interpreter would, and
-            confirm the claimed problem actually reproduces. Drop the
-            finding if your own trace does not reproduce it, if it
-            contradicts its own reasoning, or if it is not evidenced by
-            the diff. A wrong review comment is worse than a missing one.
+            get a diff and a JSON review with proposed findings. You cannot
+            execute code, run a shell, query an API, or browse anything:
+            you only see the text below. Do not trust a finding's stated
+            reasoning, even if it sounds confident and cites a specific
+            rule (operator precedence, quoting/escaping, parsing, API
+            defaults, a GraphQL schema's capabilities, a CLI tool's default
+            flags, an HTTP client's default behavior) - the model that
+            wrote it was also recalling, not observing, and that
+            recollection is frequently wrong or outdated. For every
+            finding, independently trace the exact code in the diff with a
+            concrete example value end to end, the way an interpreter
+            would, and confirm the claimed problem actually reproduces.
+            Drop the finding if your own trace does not reproduce it, if it
+            contradicts its own reasoning, if it rests on an external
+            system's behavior neither of you can confirm from the diff
+            text itself, or if it is not evidenced by the diff. A wrong
+            review comment is worse than a missing one.
 
             Known false positive: ANY bash variable (env var like
             PR_TITLE, or command substitution capturing untrusted output
@@ -331,8 +346,9 @@ jobs:
             --arg diff "$DIFF" \
             --arg system "$SYSTEM_PROMPT" \
             '{
-              model: "anthropic/claude-sonnet-4.6",
-              max_tokens: 2048,
+              model: "anthropic/claude-sonnet-5",
+              max_tokens: 8000,
+              verbosity: "high",
               messages: [
                 {role: "system", content: $system},
                 {role: "user", content: ("PR: " + $title + "\n\nDiff:\n" + $diff)}
@@ -407,8 +423,9 @@ jobs:
               --arg review "$CLEANED" \
               --arg system "$CRITIC_PROMPT" \
               '{
-                model: "anthropic/claude-sonnet-4.6",
-                max_tokens: 2048,
+                model: "anthropic/claude-sonnet-5",
+                max_tokens: 8000,
+                verbosity: "high",
                 messages: [
                   {role: "system", content: $system},
                   {role: "user", content: ("Diff:\n" + $diff + "\n\nProposed review:\n" + $review)}

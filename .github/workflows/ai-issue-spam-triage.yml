@@ -132,8 +132,9 @@ jobs:
             --arg contributing "$CONTRIBUTING" \
             --arg system "$SYSTEM_PROMPT" \
             '{
-              model: "anthropic/claude-sonnet-4.6",
-              max_tokens: 512,
+              model: "anthropic/claude-sonnet-5",
+              max_tokens: 2000,
+              verbosity: "high",
               messages: [
                 {role: "system", content: $system},
                 {role: "user", content: ("Author: " + $author + "\n\nIssue title: " + $title + "\n\nIssue body:\n" + $body + "\n\nAuthor activity last 7 days:\n" + ($history | tojson) + "\n\nCONTRIBUTING.md:\n" + $contributing)}
