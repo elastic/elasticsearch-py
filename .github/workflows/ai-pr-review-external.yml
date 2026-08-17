@@ -399,8 +399,14 @@ jobs:
           # Existing inline comments from this bot are left alone (not
           # wiped every run), so drop any new finding that already has a
           # comment at the same path+line rather than posting a duplicate.
+          # --paginate runs --jq once per page and concatenates the raw
+          # output, so a filter wrapped in [...] here would produce one
+          # array literal per page (invalid as a single JSON value) rather
+          # than one merged array. Emit bare objects per page and merge
+          # them with jq -s instead.
           EXISTING=$(gh api "repos/${GH_REPO}/pulls/${PR_NUMBER}/comments" --paginate \
-            --jq '[.[] | select(.user.login == "github-actions[bot]") | {path, line}]' 2>/dev/null || echo '[]')
+            --jq '.[] | select(.user.login == "github-actions[bot]") | {path, line}' 2>/dev/null \
+            | jq -s -c '.' 2>/dev/null || echo '[]')
           COMMENTS=$(jq -c --argjson existing "$EXISTING" \
             '[.[] | select(. as $c | ($existing | any(.path == $c.path and .line == $c.line)) | not)]' \
             <<<"$COMMENTS" 2>/dev/null || echo "$COMMENTS")
