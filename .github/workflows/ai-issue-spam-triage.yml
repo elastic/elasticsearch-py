@@ -1,0 +1,159 @@
+name: AI Issue Spam Triage
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  issues: write
+
+jobs:
+  triage:
+    name: Triage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Gather author history
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AUTHOR: ${{ github.event.issue.user.login }}
+        run: |
+          set -euo pipefail
+
+          gh api search/issues -f q="author:${AUTHOR}" -f sort=created -f order=desc -f per_page=50 \
+            > /tmp/search.json || echo '{"total_count":0,"items":[]}' > /tmp/search.json
+
+          SINCE=$(date -u -d '-7 days' +%Y-%m-%dT%H:%M:%SZ)
+
+          jq -n \
+            --arg since "$SINCE" \
+            --slurpfile s /tmp/search.json \
+            '$s[0] as $r |
+             {
+               total_count: $r.total_count,
+               distinct_repos_recent: [$r.items[] | select(.created_at >= $since) | .repository_url | sub(".*/repos/"; "")] | unique | length,
+               recent_count: [$r.items[] | select(.created_at >= $since)] | length,
+               recent_items: [$r.items[] | select(.created_at >= $since) | {repo: (.repository_url | sub(".*/repos/"; "")), title, created_at}][:20]
+             }' > /tmp/history.json
+
+      - name: Classify and act
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          OPENROUTER_BASE_URL: ${{ secrets.OPENROUTER_BASE_URL }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          AUTHOR: ${{ github.event.issue.user.login }}
+          SYSTEM_PROMPT: |-
+            You triage new issues on elastic/elasticsearch-py for mass produced,
+            AI generated spam. This is a real moderation action: you will close
+            issues and label them publicly, so only flag issues backed by clear
+            evidence, not vibes.
+
+            You get: the issue title and body, the CONTRIBUTING.md for this
+            repo, and a summary of the author's issue/PR activity across
+            GitHub in the last 7 days (total_count, distinct_repos_recent,
+            recent_count, recent_items).
+
+            Mark is_spam true only if multiple of these hold:
+            - recent_count or distinct_repos_recent is high (roughly 5+ items
+              across 3+ unrelated repos in 7 days is far beyond what a human
+              contributor does).
+            - recent_items shows the same narrow bug shape repeated across
+              unrelated, unconnected codebases (a recurring theme like
+              "Windows: symlink/path" filed against totally different
+              languages and ecosystems is a tell; a person who actually works
+              across those stacks daily is not who files this).
+            - The report is disproportionately polished for what it describes:
+              detailed root cause and multiple ranked fix options for a
+              problem whose real world fix is a trivial one time toggle or
+              workaround the reporter could have just done themselves,
+              suggesting no one actually hit this and got stuck.
+            - Nothing in the issue or the author's account (age, bio, other
+              contributions) supports that this specific report was manually
+              verified on real hardware.
+
+            Do not mark is_spam true from text style alone (structured
+            formatting, headers, checklists) or a single matching signal.
+            A real contributor can write a well organized issue. Fail toward
+            is_spam false when evidence is mixed or thin.
+
+            If is_spam is true, write "comment": the exact text to post when
+            closing the issue. Voice: all lowercase, no em dashes, plain and
+            direct, senior engineer talking to another engineer, no filler
+            ("just", "simply", "actually"), no invitation to reopen or
+            discuss further, this is a final close. State the specific
+            evidence from recent_items (counts, repos) and, if applicable,
+            why the underlying problem is not worth fixing on its own merits
+            (e.g. a trivial user side workaround exists). Keep it under 80
+            words.
+
+            If is_spam is false, "comment" must be an empty string.
+
+            Respond with ONLY a single JSON object, no markdown fences, no
+            other text: {"is_spam": boolean, "comment": string}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+            echo "OPENROUTER_API_KEY not available, skipping triage"
+            exit 0
+          fi
+
+          HISTORY=$(cat /tmp/history.json)
+          CONTRIBUTING=$(head -c 6000 CONTRIBUTING.md 2>/dev/null || echo "")
+
+          jq -n \
+            --arg title "$ISSUE_TITLE" \
+            --arg body "$ISSUE_BODY" \
+            --arg author "$AUTHOR" \
+            --argjson history "$HISTORY" \
+            --arg contributing "$CONTRIBUTING" \
+            --arg system "$SYSTEM_PROMPT" \
+            '{
+              model: "anthropic/claude-sonnet-4.6",
+              max_tokens: 512,
+              messages: [
+                {role: "system", content: $system},
+                {role: "user", content: ("Author: " + $author + "\n\nIssue title: " + $title + "\n\nIssue body:\n" + $body + "\n\nAuthor activity last 7 days:\n" + ($history | tojson) + "\n\nCONTRIBUTING.md:\n" + $contributing)}
+              ]
+            }' > /tmp/payload.json
+
+          BASE_URL="${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}"
+          HTTP_STATUS=$(curl -s -o /tmp/response.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${OPENROUTER_API_KEY}" \
+            -H "Content-Type: application/json" \
+            "${BASE_URL%/}/chat/completions" \
+            -d @/tmp/payload.json)
+
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "OpenRouter request failed with HTTP $HTTP_STATUS, skipping triage"
+            head -c 500 /tmp/response.json
+            exit 0
+          fi
+
+          CONTENT=$(jq -r '.choices[0].message.content // empty' /tmp/response.json)
+
+          if [ -z "$CONTENT" ]; then
+            echo "Empty response from model, skipping triage"
+            exit 0
+          fi
+
+          CLEANED=$(sed '/^```/d' <<<"$CONTENT")
+          IS_SPAM=$(jq -r '.is_spam // false' <<<"$CLEANED" 2>/dev/null || echo "false")
+          COMMENT=$(jq -r '.comment // empty' <<<"$CLEANED" 2>/dev/null || echo "")
+
+          if [ "$IS_SPAM" != "true" ] || [ -z "$COMMENT" ]; then
+            echo "Not flagged as spam, leaving open"
+            exit 0
+          fi
+
+          gh label create "ai-spam" --color "B60205" \
+            --description "Likely mass produced / AI generated report" --force
+
+          gh issue comment "$ISSUE_NUMBER" --body "$COMMENT"
+          gh issue edit "$ISSUE_NUMBER" --add-label "ai-spam"
+          gh issue close "$ISSUE_NUMBER" --reason "not planned"
