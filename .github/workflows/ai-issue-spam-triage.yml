@@ -24,6 +24,11 @@ jobs:
           gh api search/issues -f q="author:${AUTHOR}" -f sort=created -f order=desc -f per_page=50 \
             > /tmp/search.json || echo '{"total_count":0,"items":[]}' > /tmp/search.json
 
+          # gh api exits 0 only on a genuine HTTP success, but guard
+          # against a truncated/corrupt write anyway since the jq step
+          # below has no fallback of its own for invalid JSON input.
+          jq empty /tmp/search.json 2>/dev/null || echo '{"total_count":0,"items":[]}' > /tmp/search.json
+
           SINCE=$(date -u -d '-7 days' +%Y-%m-%dT%H:%M:%SZ)
 
           jq -n \
