@@ -44,16 +44,48 @@ jobs:
             things when they appear earlier in the diff, away from the
             cutoff.
 
-            Repo-specific context: elasticsearch/_sync/client/ and
-            elasticsearch/_async/client/ are auto-generated from the
-            Elasticsearch specification (_async is generated from
-            _sync). Flag manual edits there as a bug to fix upstream in
-            elastic/elasticsearch-specification, not as normal review
-            feedback. elasticsearch/dsl/ and elasticsearch/esql/ are
-            hand-maintained and should get full review. Contributors
-            are expected to have run `nox -rs format` and
-            `nox -rs test` before submitting; flag obvious formatting
-            or lint issues a pre-commit run would have caught.
+            Repo-specific context: within elasticsearch/_sync/client/ and
+            elasticsearch/_async/client/, the per-namespace API method
+            files (__init__.py's methods below the
+            "AUTO-GENERATED-API-DEFINITIONS" marker, and files like
+            security.py, indices.py, cat.py, etc.) are auto-generated
+            from the Elasticsearch specification (_async is generated
+            from _sync). Flag manual edits there as a bug to fix
+            upstream in elastic/elasticsearch-specification, not as
+            normal review feedback; do not flag their huge keyword-only
+            parameter lists as something to refactor into a dataclass
+            or TypedDict, that shape is dictated by the spec generator.
+            _base.py and utils.py in those same directories are
+            hand-maintained client infrastructure (transport wiring,
+            the _rewrite_parameters decorator, auth header resolution)
+            and should get full review like any other hand-written code.
+            elasticsearch/dsl/ and elasticsearch/esql/ are hand-maintained
+            and should get full review. Contributors are expected to have
+            run `nox -rs format` and `nox -rs test` before submitting;
+            flag obvious formatting or lint issues a pre-commit run
+            would have caught.
+
+            More repo-specific context, to avoid flagging intentional
+            design as bugs: API methods reject positional arguments
+            (`if len(args) >= 2: raise TypeError(...)`) by design, forcing
+            keyword-only calls; this is not a bug. Many parameters default
+            to the `DEFAULT` sentinel from elastic_transport.client_utils
+            rather than `None`, specifically to distinguish "unset" from
+            "explicitly passed as None"; do not suggest replacing `DEFAULT`
+            with `None` as a default value. The `ignore_status`/`ignore`
+            parameters intentionally suppress raising for specific,
+            caller-chosen HTTP status codes (e.g. treating 404 as a normal
+            "not found" result); this is documented behavior, not silent
+            error swallowing. elasticsearch/dsl/ uses metaclasses and
+            descriptors (DocumentMeta, Field descriptors) deliberately, to
+            mirror an ORM-style declarative API; do not flag this as
+            unnecessary complexity or suggest replacing it with plain
+            classes/dicts. Response objects (ObjectApiResponse,
+            ListApiResponse, etc. from elastic_transport) support both
+            dict/list-like access (`response["field"]`) and `.body`/`.meta`
+            attributes for the raw body vs. response metadata (headers,
+            status, HTTP version); using both in the same file is not
+            redundant, they expose different things.
 
             Apply ponytail discipline: flag over-engineering, unnecessary
             abstractions, new dependencies that a few lines would replace,
@@ -181,6 +213,21 @@ jobs:
             backwards. curl does NOT follow redirects unless -L or
             --location is passed. Drop any finding that claims a plain
             curl call without -L leaks credentials via a redirect.
+
+            Known false positives specific to this repo's Python client
+            code: (1) rejecting positional args in API methods
+            (`len(args) >= 2: raise TypeError`) is intentional, not a bug;
+            (2) parameters defaulting to the `DEFAULT` sentinel instead of
+            `None` is intentional (distinguishes unset from explicit None),
+            do not suggest changing it to `None`; (3) `ignore_status`/
+            `ignore` suppressing a raise for a caller-specified HTTP status
+            is documented behavior, not silent error swallowing; (4)
+            metaclasses/descriptors in elasticsearch/dsl/ (DocumentMeta,
+            Field) are the library's intentional ORM-style design, not
+            over-engineering; (5) a file using both dict/list-style access
+            and `.body`/`.meta` on the same ApiResponse object is not
+            redundant, they return different things. Drop findings that
+            flag any of these five as a defect.
 
             Known false positive: claims that `minimizeComment` cannot
             target a `PullRequestReview` node, or that it requires some
