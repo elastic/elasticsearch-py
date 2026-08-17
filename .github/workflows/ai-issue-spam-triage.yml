@@ -21,7 +21,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          gh api search/issues -f q="author:${AUTHOR}" -f sort=created -f order=desc -f per_page=50 \
+          # gh api defaults to POST when -f/-F fields are present unless
+          # -X is explicit, and POST to search/issues 404s; -X GET is
+          # required for these fields to become query parameters.
+          gh api -X GET search/issues -f q="author:${AUTHOR}" -f sort=created -f order=desc -f per_page=50 \
             > /tmp/search.json || echo '{"total_count":0,"items":[]}' > /tmp/search.json
 
           # gh api exits 0 only on a genuine HTTP success, but guard
