@@ -371,6 +371,8 @@ jobs:
 
           if [ -z "$CONTENT" ]; then
             echo "Empty response from model, skipping review"
+            jq -c '{finish_reason: .choices[0].finish_reason, usage}' /tmp/response.json 2>/dev/null || true
+            head -c 800 /tmp/response.json
             exit 0
           fi
 
@@ -448,9 +450,12 @@ jobs:
                   <<<"$CRITIC" 2>/dev/null || echo "$COMMENTS")
               else
                 echo "Critic output unparseable, keeping original findings"
+                jq -c '{finish_reason: .choices[0].finish_reason, usage}' /tmp/critic-response.json 2>/dev/null || true
+                head -c 800 /tmp/critic-response.json
               fi
             else
               echo "Critic request failed with HTTP $CRITIC_STATUS, keeping original findings"
+              head -c 500 /tmp/critic-response.json
             fi
           fi
 

@@ -157,6 +157,8 @@ jobs:
 
           if [ -z "$CONTENT" ]; then
             echo "Empty response from model, skipping triage"
+            jq -c '{finish_reason: .choices[0].finish_reason, usage}' /tmp/response.json 2>/dev/null || true
+            head -c 800 /tmp/response.json
             exit 0
           fi
 
