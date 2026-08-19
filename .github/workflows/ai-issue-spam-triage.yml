@@ -93,8 +93,10 @@ jobs:
 
             If is_spam is true, write "comment": the text to post alongside
             the ai-spam label, addressed to a maintainer deciding whether to
-            close this. Voice: all lowercase, no em dashes, plain and direct,
-            senior engineer talking to another engineer, no filler ("just",
+            close this. The issue stays open, so do not write as though it
+            is already closed or resolved ("closing this", "resolved").
+            Voice: all lowercase, no em dashes, plain and direct, senior
+            engineer talking to another engineer, no filler ("just",
             "simply", "actually"). State the specific evidence from
             recent_items (counts, repos) and, if applicable, why the
             underlying problem is not worth fixing on its own merits (e.g. a
