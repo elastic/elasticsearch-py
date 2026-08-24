@@ -5055,6 +5055,7 @@ class MlClient(NamespacedClient):
             "aggregations",
             "chunking_config",
             "delayed_data_check_config",
+            "force_rekeying",
             "frequency",
             "indexes",
             "indices",
@@ -5067,6 +5068,7 @@ class MlClient(NamespacedClient):
             "script_fields",
             "scroll_size",
         ),
+        parameter_aliases={"_force_rekeying": "force_rekeying"},
     )
     async def update_datafeed(
         self,
@@ -5086,6 +5088,7 @@ class MlClient(NamespacedClient):
             ]
         ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_rekeying: t.Optional[bool] = None,
         frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
@@ -5143,6 +5146,11 @@ class MlClient(NamespacedClient):
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values.
+        :param force_rekeying: When true, force reminting of the datafeed's internal
+            cloud API key from the caller's cloud credential without requiring other
+            configuration changes. Requires a cloud-authenticated caller and an environment
+            that supports cross-project calls. Rejected with 400 otherwise. The datafeed
+            must be stopped.
         :param frequency: The interval at which scheduled queries are made while the
             datafeed runs in real time. The default value is either the bucket span for
             short bucket spans, or, for longer bucket spans, a sensible fraction of the
@@ -5223,6 +5231,8 @@ class MlClient(NamespacedClient):
                 __body["chunking_config"] = chunking_config
             if delayed_data_check_config is not None:
                 __body["delayed_data_check_config"] = delayed_data_check_config
+            if force_rekeying is not None:
+                __body["_force_rekeying"] = force_rekeying
             if frequency is not None:
                 __body["frequency"] = frequency
             if indexes is not None:
