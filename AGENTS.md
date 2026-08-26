@@ -41,3 +41,5 @@ All API methods on the client are auto-generated from the Elasticsearch specific
 ## Adding new agent instructions
 
 If something you learned will be useful to any contributor, update `AGENTS.md`. Keep instructions concise.
+
+Task-specific agent skills belong in `.claude/skills/`.
