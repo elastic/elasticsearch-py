@@ -865,6 +865,7 @@ class TransformClient(NamespacedClient):
         body_fields=(
             "description",
             "dest",
+            "force_rekeying",
             "frequency",
             "meta",
             "retention_policy",
@@ -872,7 +873,7 @@ class TransformClient(NamespacedClient):
             "source",
             "sync",
         ),
-        parameter_aliases={"_meta": "meta"},
+        parameter_aliases={"_force_rekeying": "force_rekeying", "_meta": "meta"},
     )
     def update_transform(
         self,
@@ -883,6 +884,7 @@ class TransformClient(NamespacedClient):
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force_rekeying: t.Optional[bool] = None,
         frequency: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -914,6 +916,10 @@ class TransformClient(NamespacedClient):
             transform is created.
         :param description: Free text description of the transform.
         :param dest: The destination for the transform.
+        :param force_rekeying: When true, force reminting of the transform's internal
+            cloud API key from the caller's cloud credential without requiring other
+            configuration changes. Requires a cloud-authenticated caller and an environment
+            that supports cross-project calls. Rejected with 400 otherwise.
         :param frequency: The interval between checks for changes in the source indices
             when the transform is running continuously. Also determines the retry interval
             in the event of transient failures while the transform is searching or indexing.
@@ -950,6 +956,8 @@ class TransformClient(NamespacedClient):
                 __body["description"] = description
             if dest is not None:
                 __body["dest"] = dest
+            if force_rekeying is not None:
+                __body["_force_rekeying"] = force_rekeying
             if frequency is not None:
                 __body["frequency"] = frequency
             if meta is not None:

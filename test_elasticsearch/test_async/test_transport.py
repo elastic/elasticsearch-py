@@ -47,7 +47,7 @@ from elasticsearch.exceptions import (
 class DummyNode(BaseAsyncNode):
     def __init__(self, config: NodeConfig):
         self.resp_status = config._extras.pop("status", 200)
-        self.resp_error = config._extras.pop("exception", None)
+        self.resp_error = config._extras.pop("exception_factory", None)
         self.resp_data = config._extras.pop("data", b"{}")
         self.resp_headers = config._extras.pop(
             "headers", {"X-elastic-product": "Elasticsearch"}
@@ -60,7 +60,7 @@ class DummyNode(BaseAsyncNode):
     async def perform_request(self, *args, **kwargs):
         self.calls.append((args, kwargs))
         if self.resp_error:
-            raise self.resp_error
+            raise self.resp_error()
         return NodeApiResponse(
             ApiResponseMeta(
                 status=self.resp_status,
@@ -298,7 +298,9 @@ class TestTransport:
                     "http",
                     "localhost",
                     9200,
-                    _extras={"exception": ConnectionError("abandon ship!")},
+                    _extras={
+                        "exception_factory": lambda: ConnectionError("abandon ship!")
+                    },
                 )
             ],
             node_class=DummyNode,
@@ -323,7 +325,9 @@ class TestTransport:
                     "http",
                     "localhost",
                     9200,
-                    _extras={"exception": ConnectionError("abandon ship!")},
+                    _extras={
+                        "exception_factory": lambda: ConnectionError("abandon ship!")
+                    },
                 )
             ],
             node_class=DummyNode,
@@ -350,13 +354,17 @@ class TestTransport:
                     "http",
                     "localhost",
                     9200,
-                    _extras={"exception": ConnectionError("abandon ship!")},
+                    _extras={
+                        "exception_factory": lambda: ConnectionError("abandon ship!")
+                    },
                 ),
                 NodeConfig(
                     "http",
                     "localhost",
                     9201,
-                    _extras={"exception": ConnectionError("abandon ship!")},
+                    _extras={
+                        "exception_factory": lambda: ConnectionError("abandon ship!")
+                    },
                 ),
             ],
             node_class=DummyNode,
@@ -533,7 +541,10 @@ class TestSniffing:
 
     @pytest.mark.parametrize(
         ["extra_key", "extra_value"],
-        [("exception", ConnectionError("Abandon ship!")), ("status", 500)],
+        [
+            ("exception_factory", lambda: ConnectionError("Abandon ship!")),
+            ("status", 500),
+        ],
     )
     async def test_sniff_on_node_failure_triggers(self, extra_key, extra_value):
         client = AsyncElasticsearch(
