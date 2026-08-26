@@ -26,7 +26,7 @@ Integration tests require a running Elasticsearch instance. If one is not availa
 - **elasticsearch/_async/** - Async client code (generated from sync)
 - **elasticsearch/dsl/** - High-level DSL and document mapping
 - **elasticsearch/esql/** - ES|QL query builder
-- **tests/** - Unit and integration tests
+- **test_elasticsearch/** - Unit and integration tests
 
 ## API Code Generation
 
