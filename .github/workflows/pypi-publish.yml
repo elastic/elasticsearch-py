@@ -23,7 +23,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to publish (e.g. 9.5.1). Checks out the matching major.minor branch."
+        description: "Existing release tag to publish (e.g. 9.5.1 or v9.5.1). The tag must already exist."
         required: true
         type: string
 
@@ -34,8 +34,8 @@ jobs:
     name: Build distributions
     runs-on: ubuntu-latest
     steps:
-      - name: Derive branch from version
-        id: branch
+      - name: Derive release tag
+        id: tag
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             version="${{ github.event.inputs.version }}"
@@ -43,13 +43,21 @@ jobs:
             version="${{ github.event.release.tag_name }}"
           fi
           version="${version#v}"
-          major=$(echo "$version" | cut -d '.' -f1)
-          minor=$(echo "$version" | cut -d '.' -f2)
-          echo "name=$major.$minor" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "name=v$version" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v5
         with:
-          ref: ${{ steps.branch.outputs.name }}
+          ref: ${{ steps.tag.outputs.name }}
+
+      - name: Verify package version matches tag
+        run: |
+          actual=$(sed -n 's/^__versionstr__ = "\(.*\)"/\1/p' elasticsearch/_version.py)
+          expected="${{ steps.tag.outputs.version }}"
+          if [ "$actual" != "$expected" ]; then
+            echo "elasticsearch/_version.py is $actual, tag is $expected"
+            exit 1
+          fi
 
       - uses: actions/setup-python@v5
         with:
