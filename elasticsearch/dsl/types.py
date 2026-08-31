@@ -408,8 +408,32 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         flat search. `-1` (default) defers to format defaults: `300` for
         `bbq_hnsw`, `150` for `hnsw`, `int8_hnsw`, and `int4_hnsw`. `0`
         always builds the graph. A positive value overrides the format
-        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`, and
-        `bbq_hnsw` index types. Defaults to `-1` if omitted.
+        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`,
+        `bbq_hnsw`, and `bbq_disk` index types. Defaults to `-1` if
+        omitted.
+    :arg cluster_size: Only applicable to `bbq_disk`. The number of
+        vectors per cluster. Must be between 64 and 65536. Defaults to
+        `384` if omitted.
+    :arg default_visit_percentage: Only applicable to `bbq_disk`. The
+        percentage of clusters to visit during search. Must be between 0
+        and 100. A value of 0 defaults to using `num_candidates` for
+        calculating the visit percentage.
+    :arg bits: Only applicable to `bbq_disk`. The number of bits per
+        dimension for quantization encoding. Valid values are `1`, `2`,
+        `4`, or `7`. When no `rescore_vector` is explicitly set, the
+        default oversampling is automatically adjusted based on the bits
+        value. This setting can be changed without reindexing. Defaults to
+        `1` if omitted.
+    :arg precondition: Only applicable to `bbq_disk`. When `true`,
+        transforms indexed vectors using a random orthogonal projection
+        before quantization, which can improve accuracy when vector
+        components are not normally distributed. Cannot be changed after
+        the field is created.
+    :arg auto_calibrate: Only applicable to `bbq_disk`. When `true`,
+        Elasticsearch automatically selects the optimal quantization
+        encoding, oversampling factor, and preconditioning for each merged
+        segment based on estimated recall characteristics. Cannot be
+        changed after the field is created.
     """
 
     type: Union[
@@ -434,6 +458,11 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     ]
     on_disk_rescore: Union[bool, DefaultType]
     flat_index_threshold: Union[int, DefaultType]
+    cluster_size: Union[int, DefaultType]
+    default_visit_percentage: Union[float, DefaultType]
+    bits: Union[int, DefaultType]
+    precondition: Union[bool, DefaultType]
+    auto_calibrate: Union[bool, DefaultType]
 
     def __init__(
         self,
@@ -460,6 +489,11 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
         flat_index_threshold: Union[int, DefaultType] = DEFAULT,
+        cluster_size: Union[int, DefaultType] = DEFAULT,
+        default_visit_percentage: Union[float, DefaultType] = DEFAULT,
+        bits: Union[int, DefaultType] = DEFAULT,
+        precondition: Union[bool, DefaultType] = DEFAULT,
+        auto_calibrate: Union[bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -476,6 +510,16 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["on_disk_rescore"] = on_disk_rescore
         if flat_index_threshold is not DEFAULT:
             kwargs["flat_index_threshold"] = flat_index_threshold
+        if cluster_size is not DEFAULT:
+            kwargs["cluster_size"] = cluster_size
+        if default_visit_percentage is not DEFAULT:
+            kwargs["default_visit_percentage"] = default_visit_percentage
+        if bits is not DEFAULT:
+            kwargs["bits"] = bits
+        if precondition is not DEFAULT:
+            kwargs["precondition"] = precondition
+        if auto_calibrate is not DEFAULT:
+            kwargs["auto_calibrate"] = auto_calibrate
         super().__init__(kwargs)
 
 
