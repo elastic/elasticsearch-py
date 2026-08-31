@@ -20,6 +20,12 @@ name: Publish to PyPI
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (e.g. 9.5.1). Checks out the matching major.minor branch."
+        required: true
+        type: string
 
 permissions: {}
 
@@ -28,10 +34,14 @@ jobs:
     name: Build distributions
     runs-on: ubuntu-latest
     steps:
-      - name: Derive branch from release tag
+      - name: Derive branch from version
         id: branch
         run: |
-          version="${{ github.event.release.tag_name }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ github.event.inputs.version }}"
+          else
+            version="${{ github.event.release.tag_name }}"
+          fi
           version="${version#v}"
           major=$(echo "$version" | cut -d '.' -f1)
           minor=$(echo "$version" | cut -d '.' -f2)
