@@ -18,6 +18,21 @@ To check for security updates, go to [Security announcements for the Elastic sta
 % *
 
 % ### Fixes [elasticsearch-python-client-next-fixes]
+## 9.5.1 (2026-08-31)
+
+API
+
+* Added `esql.delete_data_source`, `esql.get_data_source`, and `esql.put_data_source` APIs
+
+DSL
+
+* Updated `SemanticText.inference_id` default from `.elser-2-elasticsearch` to `.jina-embeddings-v5-text-small` when the Elastic Inference Service is available
+
+Fixes
+
+* Fixed `DenseVectorIndexOptions` to include missing `bbq_disk` properties: `cluster_size`, `default_visit_percentage`, `bits`, `precondition`, and `auto_calibrate`
+* `confidence_interval` on `DenseVectorIndexOptions` is now deprecated (Lucene 10.4 computes it automatically)
+
 ## 9.5.0 (2026-08-04)
 
 API
