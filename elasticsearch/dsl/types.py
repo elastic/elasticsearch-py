@@ -403,6 +403,21 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg on_disk_rescore: `true` if vector rescoring should be done on-
         disk  Only applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`,
         `int8_hnsw`
+    :arg flat_index_threshold: The segment document count threshold below
+        which HNSW graph construction is skipped in favor of brute-force
+        flat search. `-1` (default) defers to format defaults: `300` for
+        `bbq_hnsw`, `150` for `hnsw`, `int8_hnsw`, and `int4_hnsw`. `0`
+        always builds the graph. A positive value overrides the format
+        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`,
+        `bbq_hnsw`, and `bbq_disk` index types. Defaults to `-1` if
+        omitted.
+    :arg cluster_size: Only applicable to `bbq_disk`. The number of
+        vectors per cluster. Must be between 64 and 65536. Defaults to
+        `384` if omitted.
+    :arg default_visit_percentage: Only applicable to `bbq_disk`. The
+        percentage of clusters to visit during search. Must be between 0
+        and 100. A value of 0 defaults to using `num_candidates` for
+        calculating the visit percentage.
     """
 
     type: Union[
@@ -426,6 +441,9 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
     on_disk_rescore: Union[bool, DefaultType]
+    flat_index_threshold: Union[int, DefaultType]
+    cluster_size: Union[int, DefaultType]
+    default_visit_percentage: Union[float, DefaultType]
 
     def __init__(
         self,
@@ -451,6 +469,9 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
+        flat_index_threshold: Union[int, DefaultType] = DEFAULT,
+        cluster_size: Union[int, DefaultType] = DEFAULT,
+        default_visit_percentage: Union[float, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -465,6 +486,12 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["rescore_vector"] = rescore_vector
         if on_disk_rescore is not DEFAULT:
             kwargs["on_disk_rescore"] = on_disk_rescore
+        if flat_index_threshold is not DEFAULT:
+            kwargs["flat_index_threshold"] = flat_index_threshold
+        if cluster_size is not DEFAULT:
+            kwargs["cluster_size"] = cluster_size
+        if default_visit_percentage is not DEFAULT:
+            kwargs["default_visit_percentage"] = default_visit_percentage
         super().__init__(kwargs)
 
 
