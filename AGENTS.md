@@ -26,7 +26,7 @@ Integration tests require a running Elasticsearch instance. If one is not availa
 - **elasticsearch/_async/** - Async client code (generated from sync)
 - **elasticsearch/dsl/** - High-level DSL and document mapping
 - **elasticsearch/esql/** - ES|QL query builder
-- **tests/** - Unit and integration tests
+- **test_elasticsearch/** - Unit and integration tests
 
 ## API Code Generation
 
@@ -41,3 +41,5 @@ All API methods on the client are auto-generated from the Elasticsearch specific
 ## Adding new agent instructions
 
 If something you learned will be useful to any contributor, update `AGENTS.md`. Keep instructions concise.
+
+Task-specific agent skills belong in `.claude/skills/`.
