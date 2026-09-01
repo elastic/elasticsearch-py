@@ -214,12 +214,12 @@ class KnnRetriever(Retriever):
 
     :arg field: (required) The name of the vector field to search against.
     :arg k: (required) Number of nearest neighbors to return as top hits.
-    :arg num_candidates: (required) Number of nearest neighbor candidates
-        to consider per shard.
     :arg query_vector: Query vector. Must have the same number of
         dimensions as the vector field you are searching against. You must
         provide a query_vector_builder or query_vector, but not both.
     :arg query_vector_builder: Defines a model to build a query vector.
+    :arg num_candidates: Number of nearest neighbor candidates to consider
+        per shard.
     :arg visit_percentage: The percentage of vectors to explore per shard
         while doing knn search with bbq_disk
     :arg similarity: The minimum similarity required for a document to be
@@ -242,11 +242,11 @@ class KnnRetriever(Retriever):
         *,
         field: Union[str, "DefaultType"] = DEFAULT,
         k: Union[int, "DefaultType"] = DEFAULT,
-        num_candidates: Union[int, "DefaultType"] = DEFAULT,
         query_vector: Union[Sequence[float], "DefaultType"] = DEFAULT,
         query_vector_builder: Union[
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
+        num_candidates: Union[int, "DefaultType"] = DEFAULT,
         visit_percentage: Union[float, "DefaultType"] = DEFAULT,
         similarity: Union[float, "DefaultType"] = DEFAULT,
         rescore_vector: Union[
@@ -260,9 +260,9 @@ class KnnRetriever(Retriever):
         super().__init__(
             field=field,
             k=k,
-            num_candidates=num_candidates,
             query_vector=query_vector,
             query_vector_builder=query_vector_builder,
+            num_candidates=num_candidates,
             visit_percentage=visit_percentage,
             similarity=similarity,
             rescore_vector=rescore_vector,
