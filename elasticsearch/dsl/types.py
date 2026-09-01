@@ -21,6 +21,7 @@ from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from . import Query
 from .document_base import InstrumentedField
+from .retriever import Retriever
 from .utils import AttrDict
 
 PipeSeparatedFlags = str
@@ -139,6 +140,102 @@ class ChiSquareHeuristic(AttrDict[Any]):
             kwargs["background_is_superset"] = background_is_superset
         if include_negatives is not DEFAULT:
             kwargs["include_negatives"] = include_negatives
+        super().__init__(kwargs)
+
+
+class ChunkRescorer(AttrDict[Any]):
+    """
+    :arg size: The number of chunks per document to evaluate for
+        reranking.
+    :arg chunking_settings: Chunking settings to apply
+    """
+
+    size: Union[int, DefaultType]
+    chunking_settings: Union[
+        "ChunkRescorerChunkingSettings", Dict[str, Any], DefaultType
+    ]
+
+    def __init__(
+        self,
+        *,
+        size: Union[int, DefaultType] = DEFAULT,
+        chunking_settings: Union[
+            "ChunkRescorerChunkingSettings", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if size is not DEFAULT:
+            kwargs["size"] = size
+        if chunking_settings is not DEFAULT:
+            kwargs["chunking_settings"] = chunking_settings
+        super().__init__(kwargs)
+
+
+class ChunkRescorerChunkingSettings(AttrDict[Any]):
+    """
+    :arg max_chunk_size: (required) The maximum size of a chunk in words.
+        This value cannot be lower than `20` (for `sentence` strategy) or
+        `10` (for `word` strategy). This value should not exceed the
+        window size for the associated model. Defaults to `250` if
+        omitted.
+    :arg overlap: The number of overlapping words for chunks. It is
+        applicable only to a `word` chunking strategy. This value cannot
+        be higher than half the `max_chunk_size` value. Defaults to `100`
+        if omitted.
+    :arg sentence_overlap: The number of overlapping sentences for chunks.
+        It is applicable only for a `sentence` chunking strategy. It can
+        be either `1` or `0`. Defaults to `1` if omitted.
+    :arg separator_group: Only applicable to the `recursive` strategy and
+        required when using it.  Sets a predefined list of separators in
+        the saved chunking settings based on the selected text type.
+        Values can be `markdown` or `plaintext`.  Using this parameter is
+        an alternative to manually specifying a custom `separators` list.
+    :arg separators: Only applicable to the `recursive` strategy and
+        required when using it.  A list of strings used as possible split
+        points when chunking text.  Each string can be a plain string or a
+        regular expression (regex) pattern. The system tries each
+        separator in order to split the text, starting from the first item
+        in the list.  After splitting, it attempts to recombine smaller
+        pieces into larger chunks that stay within the `max_chunk_size`
+        limit, to reduce the total number of chunks generated.
+    :arg strategy: The chunking strategy: `sentence`, `word`, `none` or
+        `recursive`.   * If `strategy` is set to `recursive`, you must
+        also specify:  - `max_chunk_size` - either `separators`
+        or`separator_group`  Learn more about different chunking
+        strategies in the linked documentation. Defaults to `sentence` if
+        omitted.
+    """
+
+    max_chunk_size: Union[int, DefaultType]
+    overlap: Union[int, DefaultType]
+    sentence_overlap: Union[int, DefaultType]
+    separator_group: Union[str, DefaultType]
+    separators: Union[Sequence[str], DefaultType]
+    strategy: Union[str, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        max_chunk_size: Union[int, DefaultType] = DEFAULT,
+        overlap: Union[int, DefaultType] = DEFAULT,
+        sentence_overlap: Union[int, DefaultType] = DEFAULT,
+        separator_group: Union[str, DefaultType] = DEFAULT,
+        separators: Union[Sequence[str], DefaultType] = DEFAULT,
+        strategy: Union[str, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if max_chunk_size is not DEFAULT:
+            kwargs["max_chunk_size"] = max_chunk_size
+        if overlap is not DEFAULT:
+            kwargs["overlap"] = overlap
+        if sentence_overlap is not DEFAULT:
+            kwargs["sentence_overlap"] = sentence_overlap
+        if separator_group is not DEFAULT:
+            kwargs["separator_group"] = separator_group
+        if separators is not DEFAULT:
+            kwargs["separators"] = separators
+        if strategy is not DEFAULT:
+            kwargs["strategy"] = strategy
         super().__init__(kwargs)
 
 
@@ -408,8 +505,32 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         flat search. `-1` (default) defers to format defaults: `300` for
         `bbq_hnsw`, `150` for `hnsw`, `int8_hnsw`, and `int4_hnsw`. `0`
         always builds the graph. A positive value overrides the format
-        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`, and
-        `bbq_hnsw` index types. Defaults to `-1` if omitted.
+        default.  Only applicable to `hnsw`, `int8_hnsw`, `int4_hnsw`,
+        `bbq_hnsw`, and `bbq_disk` index types. Defaults to `-1` if
+        omitted.
+    :arg cluster_size: Only applicable to `bbq_disk`. The number of
+        vectors per cluster. Must be between 64 and 65536. Defaults to
+        `384` if omitted.
+    :arg default_visit_percentage: Only applicable to `bbq_disk`. The
+        percentage of clusters to visit during search. Must be between 0
+        and 100. A value of 0 defaults to using `num_candidates` for
+        calculating the visit percentage.
+    :arg bits: Only applicable to `bbq_disk`. The number of bits per
+        dimension for quantization encoding. Valid values are `1`, `2`,
+        `4`, or `7`. When no `rescore_vector` is explicitly set, the
+        default oversampling is automatically adjusted based on the bits
+        value. This setting can be changed without reindexing. Defaults to
+        `1` if omitted.
+    :arg precondition: Only applicable to `bbq_disk`. When `true`,
+        transforms indexed vectors using a random orthogonal projection
+        before quantization, which can improve accuracy when vector
+        components are not normally distributed. Cannot be changed after
+        the field is created.
+    :arg auto_calibrate: Only applicable to `bbq_disk`. When `true`,
+        Elasticsearch automatically selects the optimal quantization
+        encoding, oversampling factor, and preconditioning for each merged
+        segment based on estimated recall characteristics. Cannot be
+        changed after the field is created.
     """
 
     type: Union[
@@ -434,6 +555,11 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     ]
     on_disk_rescore: Union[bool, DefaultType]
     flat_index_threshold: Union[int, DefaultType]
+    cluster_size: Union[int, DefaultType]
+    default_visit_percentage: Union[float, DefaultType]
+    bits: Union[int, DefaultType]
+    precondition: Union[bool, DefaultType]
+    auto_calibrate: Union[bool, DefaultType]
 
     def __init__(
         self,
@@ -460,6 +586,11 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
         flat_index_threshold: Union[int, DefaultType] = DEFAULT,
+        cluster_size: Union[int, DefaultType] = DEFAULT,
+        default_visit_percentage: Union[float, DefaultType] = DEFAULT,
+        bits: Union[int, DefaultType] = DEFAULT,
+        precondition: Union[bool, DefaultType] = DEFAULT,
+        auto_calibrate: Union[bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -476,6 +607,16 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["on_disk_rescore"] = on_disk_rescore
         if flat_index_threshold is not DEFAULT:
             kwargs["flat_index_threshold"] = flat_index_threshold
+        if cluster_size is not DEFAULT:
+            kwargs["cluster_size"] = cluster_size
+        if default_visit_percentage is not DEFAULT:
+            kwargs["default_visit_percentage"] = default_visit_percentage
+        if bits is not DEFAULT:
+            kwargs["bits"] = bits
+        if precondition is not DEFAULT:
+            kwargs["precondition"] = precondition
+        if auto_calibrate is not DEFAULT:
+            kwargs["auto_calibrate"] = auto_calibrate
         super().__init__(kwargs)
 
 
@@ -1883,6 +2024,39 @@ class InnerHits(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class InnerRetriever(AttrDict[Any]):
+    """
+    :arg retriever: (required) The nested retriever configuration.
+    :arg weight: Weight multiplier for this retriever's contribution to
+        the linear combination. Must be non-negative. Defaults to `1` if
+        omitted.
+    :arg normalizer: Score normalizer to apply to this retriever's results
+        before weighting. Falls back to the top-level `normalizer` on the
+        linear retriever if unset, then to `none` (identity) if neither is
+        set. Defaults to `none` if omitted.
+    """
+
+    retriever: Union[Retriever, DefaultType]
+    weight: Union[float, DefaultType]
+    normalizer: Union[Literal["none", "minmax", "l2_norm"], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        retriever: Union[Retriever, DefaultType] = DEFAULT,
+        weight: Union[float, DefaultType] = DEFAULT,
+        normalizer: Union[Literal["none", "minmax", "l2_norm"], DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if retriever is not DEFAULT:
+            kwargs["retriever"] = retriever
+        if weight is not DEFAULT:
+            kwargs["weight"] = weight
+        if normalizer is not DEFAULT:
+            kwargs["normalizer"] = normalizer
+        super().__init__(kwargs)
+
+
 class IntervalsAllOf(AttrDict[Any]):
     """
     :arg intervals: (required) An array of rules to combine. All rules
@@ -2438,6 +2612,31 @@ class LatLonGeoLocation(AttrDict[Any]):
             kwargs["lat"] = lat
         if lon is not DEFAULT:
             kwargs["lon"] = lon
+        super().__init__(kwargs)
+
+
+class LearningToRank(AttrDict[Any]):
+    """
+    :arg model_id: (required) The unique identifier of the trained model
+        uploaded to Elasticsearch
+    :arg params: Named parameters to be passed to the query templates used
+        for feature
+    """
+
+    model_id: Union[str, DefaultType]
+    params: Union[Mapping[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        model_id: Union[str, DefaultType] = DEFAULT,
+        params: Union[Mapping[str, Any], DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if model_id is not DEFAULT:
+            kwargs["model_id"] = model_id
+        if params is not DEFAULT:
+            kwargs["params"] = params
         super().__init__(kwargs)
 
 
@@ -3076,6 +3275,34 @@ class QueryVectorBuilder(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class RRFRetrieverComponent(AttrDict[Any]):
+    """
+    Wraps a retriever with an optional weight for RRF scoring.
+
+    :arg retriever: (required) The nested retriever configuration.
+    :arg weight: Weight multiplier for this retriever's contribution to
+        the RRF score. Higher values increase influence. Defaults to 1.0
+        if not specified. Must be non-negative. Defaults to `1` if
+        omitted.
+    """
+
+    retriever: Union[Retriever, DefaultType]
+    weight: Union[float, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        retriever: Union[Retriever, DefaultType] = DEFAULT,
+        weight: Union[float, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if retriever is not DEFAULT:
+            kwargs["retriever"] = retriever
+        if weight is not DEFAULT:
+            kwargs["weight"] = weight
+        super().__init__(kwargs)
+
+
 class RankFeatureFunctionLinear(AttrDict[Any]):
     pass
 
@@ -3217,6 +3444,81 @@ class RegressionInferenceOptions(AttrDict[Any]):
         super().__init__(kwargs)
 
 
+class Rescore(AttrDict[Any]):
+    """
+    :arg window_size:
+    :arg query:
+    :arg learning_to_rank:
+    :arg script:
+    """
+
+    window_size: Union[int, DefaultType]
+    query: Union["RescoreQuery", Dict[str, Any], DefaultType]
+    learning_to_rank: Union["LearningToRank", Dict[str, Any], DefaultType]
+    script: Union["ScriptRescore", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        window_size: Union[int, DefaultType] = DEFAULT,
+        query: Union["RescoreQuery", Dict[str, Any], DefaultType] = DEFAULT,
+        learning_to_rank: Union[
+            "LearningToRank", Dict[str, Any], DefaultType
+        ] = DEFAULT,
+        script: Union["ScriptRescore", Dict[str, Any], DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if window_size is not DEFAULT:
+            kwargs["window_size"] = window_size
+        if query is not DEFAULT:
+            kwargs["query"] = query
+        if learning_to_rank is not DEFAULT:
+            kwargs["learning_to_rank"] = learning_to_rank
+        if script is not DEFAULT:
+            kwargs["script"] = script
+        super().__init__(kwargs)
+
+
+class RescoreQuery(AttrDict[Any]):
+    """
+    :arg rescore_query: (required) The query to use for rescoring. This
+        query is only run on the Top-K results returned by the `query` and
+        `post_filter` phases.
+    :arg query_weight: Relative importance of the original query versus
+        the rescore query. Defaults to `1` if omitted.
+    :arg rescore_query_weight: Relative importance of the rescore query
+        versus the original query. Defaults to `1` if omitted.
+    :arg score_mode: Determines how scores are combined. Defaults to
+        `total` if omitted.
+    """
+
+    rescore_query: Union[Query, DefaultType]
+    query_weight: Union[float, DefaultType]
+    rescore_query_weight: Union[float, DefaultType]
+    score_mode: Union[Literal["avg", "max", "min", "multiply", "total"], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        rescore_query: Union[Query, DefaultType] = DEFAULT,
+        query_weight: Union[float, DefaultType] = DEFAULT,
+        rescore_query_weight: Union[float, DefaultType] = DEFAULT,
+        score_mode: Union[
+            Literal["avg", "max", "min", "multiply", "total"], DefaultType
+        ] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if rescore_query is not DEFAULT:
+            kwargs["rescore_query"] = rescore_query
+        if query_weight is not DEFAULT:
+            kwargs["query_weight"] = query_weight
+        if rescore_query_weight is not DEFAULT:
+            kwargs["rescore_query_weight"] = rescore_query_weight
+        if score_mode is not DEFAULT:
+            kwargs["score_mode"] = score_mode
+        super().__init__(kwargs)
+
+
 class RescoreVector(AttrDict[Any]):
     """
     :arg oversample: (required) Applies the specified oversample factor to
@@ -3314,6 +3616,24 @@ class ScriptField(AttrDict[Any]):
             kwargs["script"] = script
         if ignore_failure is not DEFAULT:
             kwargs["ignore_failure"] = ignore_failure
+        super().__init__(kwargs)
+
+
+class ScriptRescore(AttrDict[Any]):
+    """
+    :arg script: (required)
+    """
+
+    script: Union["Script", Dict[str, Any], DefaultType]
+
+    def __init__(
+        self,
+        *,
+        script: Union["Script", Dict[str, Any], DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if script is not DEFAULT:
+            kwargs["script"] = script
         super().__init__(kwargs)
 
 
@@ -3996,6 +4316,29 @@ class SparseVectorIndexOptions(AttrDict[Any]):
             kwargs["prune"] = prune
         if pruning_config is not DEFAULT:
             kwargs["pruning_config"] = pruning_config
+        super().__init__(kwargs)
+
+
+class SpecifiedDocument(AttrDict[Any]):
+    """
+    :arg id: (required)
+    :arg index:
+    """
+
+    id: Union[str, DefaultType]
+    index: Union[str, DefaultType]
+
+    def __init__(
+        self,
+        *,
+        id: Union[str, DefaultType] = DEFAULT,
+        index: Union[str, DefaultType] = DEFAULT,
+        **kwargs: Any,
+    ):
+        if id is not DEFAULT:
+            kwargs["id"] = id
+        if index is not DEFAULT:
+            kwargs["index"] = index
         super().__init__(kwargs)
 
 

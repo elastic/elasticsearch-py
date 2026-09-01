@@ -41,6 +41,7 @@ from .document_base import InstrumentedField
 from .exceptions import IllegalOperation
 from .query import Bool, Q, Query
 from .response import Hit, Response
+from .retriever import Retriever, _as_retriever
 from .utils import _R, AnyUsingType, AttrDict, DslBase, recursive_to_dict
 
 if TYPE_CHECKING:
@@ -378,6 +379,7 @@ class SearchBase(Request[_R]):
         self._sort: List[Union[str, Dict[str, Dict[str, str]]]] = []
         self._knn: List[Dict[str, Any]] = []
         self._rank: Dict[str, Any] = {}
+        self._retriever: Optional[Retriever] = None
         self._collapse: Dict[str, Any] = {}
         self._source: Optional[Union[bool, List[str], Dict[str, List[str]]]] = None
         self._highlight: Dict[str, Any] = {}
@@ -482,6 +484,7 @@ class SearchBase(Request[_R]):
         s._response_class = self._response_class
         s._knn = [knn.copy() for knn in self._knn]
         s._rank = self._rank.copy()
+        s._retriever = self._retriever
         s._collapse = self._collapse.copy()
         s._sort = self._sort[:]
         s._source = copy.copy(self._source) if self._source is not None else None
@@ -527,6 +530,8 @@ class SearchBase(Request[_R]):
                 self._knn = [self._knn]
         if "rank" in d:
             self._rank = d.pop("rank")
+        if "retriever" in d:
+            self._retriever = _as_retriever(d.pop("retriever"))
         if "collapse" in d:
             self._collapse = d.pop("collapse")
         if "sort" in d:
@@ -658,6 +663,28 @@ class SearchBase(Request[_R]):
         s._rank = {}
         if rrf is not None and rrf is not False:
             s._rank["rrf"] = {} if rrf is True else rrf
+        return s
+
+    def retriever(self, retriever: Union[Retriever, Dict[str, Any]]) -> Self:
+        """
+        Set a retriever for the search. A retriever is a specification to describe top
+        documents returned from a search. A retriever replaces other elements of the
+        search API that also return top documents such as query and knn. A retriever
+        may have child retrievers where a retriever with two or more children is
+        considered a compound retriever. This allows for complex behavior to be depicted
+        in a tree-like structure, called the retriever tree, which clarifies the order
+        of operations that occur during a search.
+
+        :arg retriever: An instance of a retriever
+            (e.g., StandardRetriever, KnnRetriever, RRFRetriever).
+
+        Example::
+
+            s = Search()
+            s = s.retriever(StandardRetriever(query=Match(text="search text")))
+        """
+        s = self._clone()
+        s._retriever = _as_retriever(retriever)
         return s
 
     def source(
@@ -976,6 +1003,9 @@ class SearchBase(Request[_R]):
 
         if self._rank:
             d["rank"] = self._rank
+
+        if self._retriever:
+            d["retriever"] = recursive_to_dict(self._retriever)
 
         # count request doesn't care for sorting and other things
         if not count:
