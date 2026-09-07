@@ -3469,6 +3469,7 @@ class MlClient(NamespacedClient):
             "indices_options",
             "job_id",
             "max_empty_searches",
+            "project_routing",
             "query",
             "query_delay",
             "runtime_mappings",
@@ -3507,6 +3508,7 @@ class MlClient(NamespacedClient):
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -3590,6 +3592,10 @@ class MlClient(NamespacedClient):
             other words, it stops after `frequency` times `max_empty_searches` of real-time
             operation. If not set, a datafeed with no end time that sees no data remains
             started until it is explicitly stopped. By default, it is not set.
+        :param project_routing: A Lucene-style expression that limits which linked projects
+            the datafeed searches when cross-project search is enabled. Examples: `_alias:_origin`,
+            `_alias:prod-*`. If omitted, searches all linked projects within the cross-project
+            search scope. Rejected when CPS is not enabled for datafeeds.
         :param query: The Elasticsearch query domain-specific language (DSL). This value
             corresponds to the query object in an Elasticsearch search POST body. All
             the options that are supported by Elasticsearch can be used, as this object
@@ -3652,6 +3658,8 @@ class MlClient(NamespacedClient):
                 __body["job_id"] = job_id
             if max_empty_searches is not None:
                 __body["max_empty_searches"] = max_empty_searches
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if query_delay is not None:
@@ -5062,6 +5070,7 @@ class MlClient(NamespacedClient):
             "indices_options",
             "job_id",
             "max_empty_searches",
+            "project_routing",
             "query",
             "query_delay",
             "runtime_mappings",
@@ -5099,6 +5108,7 @@ class MlClient(NamespacedClient):
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        project_routing: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         query_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -5179,6 +5189,10 @@ class MlClient(NamespacedClient):
             other words, it stops after `frequency` times `max_empty_searches` of real-time
             operation. If not set, a datafeed with no end time that sees no data remains
             started until it is explicitly stopped. By default, it is not set.
+        :param project_routing: A Lucene-style expression that limits which linked projects
+            the datafeed searches when cross-project search is enabled. Examples: `_alias:_origin`,
+            `_alias:prod-*`. If omitted, searches all linked projects within the cross-project
+            search scope. Rejected when CPS is not enabled for datafeeds.
         :param query: The Elasticsearch query domain-specific language (DSL). This value
             corresponds to the query object in an Elasticsearch search POST body. All
             the options that are supported by Elasticsearch can be used, as this object
@@ -5245,6 +5259,8 @@ class MlClient(NamespacedClient):
                 __body["job_id"] = job_id
             if max_empty_searches is not None:
                 __body["max_empty_searches"] = max_empty_searches
+            if project_routing is not None:
+                __body["project_routing"] = project_routing
             if query is not None:
                 __body["query"] = query
             if query_delay is not None:
