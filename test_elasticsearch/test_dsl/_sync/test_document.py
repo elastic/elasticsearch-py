@@ -882,6 +882,24 @@ def test_doc_with_type_hints() -> None:
         assert d["sort"] == ["st", {"dt": {"order": "desc"}}, "ob.st"]
 
 
+def test_future_annotations_optional_is_not_required() -> None:
+    ns: Dict[str, Any] = {}
+    exec(
+        """
+from __future__ import annotations
+from elasticsearch.dsl import Document, Keyword, mapped_field
+
+class MyDoc(Document):
+    name: str = mapped_field(Keyword(required=True))
+    note: str | None = mapped_field(Keyword())
+""",
+        ns,
+    )
+    mapping = ns["MyDoc"]._doc_type.mapping
+    assert mapping["name"]._required is True
+    assert mapping["note"]._required is False
+
+
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="requires Python 3.10")
 def test_doc_with_pipe_type_hints() -> None:
     with pytest.raises(TypeError):

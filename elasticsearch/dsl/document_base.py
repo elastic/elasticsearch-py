@@ -16,6 +16,7 @@
 #  under the License.
 
 import json
+import sys
 from datetime import date, datetime
 from fnmatch import fnmatch
 from typing import (
@@ -276,6 +277,20 @@ class InstrumentedField(InstrumentedExpression):
         return f"InstrumentedField[{self._expr}]"
 
 
+def _evaluate_annotation(type_: Any, globalns: Dict[str, Any], localns: Dict[str, Any]) -> Any:
+    """Resolve PEP 563 string annotations so Optional/UnionType checks can run.
+
+    ``from __future__ import annotations`` stores hints like ``'str | None'``.
+    Without evaluating them, every field is treated as required.
+    """
+    if not isinstance(type_, str):
+        return type_
+    try:
+        return eval(type_, globalns, localns)
+    except Exception:
+        return type_
+
+
 class DocumentMeta(type):
     _doc_type: "DocumentOptions"
     _index: "IndexBase"
@@ -355,6 +370,9 @@ class DocumentOptions:
         fields = {n for n in attrs if isinstance(attrs[n], Field)}
         fields.update(annotations.keys())
         field_defaults = {}
+        module = sys.modules.get(attrs.get("__module__", ""))
+        globalns = getattr(module, "__dict__", {}) if module is not None else {}
+        localns = dict(attrs)
         for name in fields:
             value: Any = None
             required = None
@@ -362,7 +380,7 @@ class DocumentOptions:
             if name in annotations:
                 # the field has a type annotation, so next we try to figure out
                 # what field type we can use
-                type_ = annotations[name]
+                type_ = _evaluate_annotation(annotations[name], globalns, localns)
                 type_metadata = []
                 if isinstance(type_, _AnnotatedAlias):
                     type_metadata = type_.__metadata__
