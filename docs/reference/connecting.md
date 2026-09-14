@@ -624,3 +624,48 @@ Resources used to assess these recommendations:
 * [Best practices for working with AWS Lambda functions](https://docs.aws.amazon.com/lambda/latest/dg/best-practices.html)
 * [Azure Functions Python developer guide](https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference-python?tabs=azurecli-linux%2Capplication-level#global-variables)
 * [AWS Lambda: Comparing the effect of global scope](https://docs.aws.amazon.com/lambda/latest/operatorguide/global-scope.html)
+
+## Closing the client [close-client]
+
+The client keeps a pool of open HTTP connections to {{es}}. When an `Elasticsearch` or `AsyncElasticsearch` instance is garbage collected, that pool is discarded without being closed first, which leaks the underlying sockets. Because the leak happens two layers below the client (client, then HTTP library, then socket), it usually surfaces as a confusing `ResourceWarning: unclosed <ssl.SSLSocket ...>` attributed to whatever code happened to trigger garbage collection.
+
+Always call `close()` when you are done with a client:
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
+
+```python
+from contextlib import closing
+from elasticsearch import Elasticsearch
+
+with closing(Elasticsearch("https://localhost:9200")) as client:
+    client.info()
+```
+
+:::
+
+:::{tab-item} Async Python
+:sync: async
+
+```python
+import asyncio
+from elasticsearch import AsyncElasticsearch
+
+async def main():
+    client = AsyncElasticsearch("https://localhost:9200")
+    try:
+        await client.info()
+    finally:
+        await client.close()
+
+asyncio.run(main())
+```
+
+:::
+
+::::
+
+In long-lived applications, create a single client at startup and close it during shutdown instead of creating one per request. The [Using with asyncio](async.md) page shows an example using the FastAPI lifespan hook.
