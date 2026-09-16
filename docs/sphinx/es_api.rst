@@ -4,8 +4,22 @@ Elasticsearch API
 =================
 
 All the API calls map the raw REST API as closely as possible, including the
-distinction between required and optional arguments to the calls. Keyword
-arguments are required for all calls.
+distinction between required and optional arguments to the calls.
+
+.. note::
+
+   All API methods accept keyword arguments only, including the arguments that
+   appear first in the signature, such as the ``name`` of an ILM policy.
+   Calling a method with positional arguments raises a ``TypeError``:
+
+   .. code-block:: python
+
+      # TypeError: Positional arguments can't be used with Elasticsearch API
+      # methods. Instead only use keyword arguments.
+      client.ilm.put_lifecycle("my-policy", policy={"phases": {}})
+
+      # correct
+      client.ilm.put_lifecycle(name="my-policy", policy={"phases": {}})
 
 .. note::
 
