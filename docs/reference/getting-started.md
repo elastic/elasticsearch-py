@@ -83,6 +83,41 @@ You can generate an API key on the **Management** page under Security.
 
 ![Create API key](images/create-api-key.png)
 
+You can also connect to a self-managed cluster, for example one that runs on your own machine. The following example uses the default local endpoint and an API key:
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
+```py
+import os
+from elasticsearch import Elasticsearch
+
+client = Elasticsearch(
+    "http://localhost:9200",
+    api_key=os.environ["ELASTIC_API_KEY"],
+)
+```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```py
+import os
+from elasticsearch import AsyncElasticsearch
+
+client = AsyncElasticsearch(
+    "http://localhost:9200",
+    api_key=os.environ["ELASTIC_API_KEY"],
+)
+```
+:::
+
+::::
+
+If security is enabled on the local cluster, the endpoint is `https://localhost:9200` and the client also needs the certificate authority that Elasticsearch generated on the first start. The [*Connecting*](/reference/connecting.md) section describes the `ca_certs`, `basic_auth` and `verify_certs` options for that case.
+
 For other connection options, refer to the [*Connecting*](/reference/connecting.md) section.
 
 
