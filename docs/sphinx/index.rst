@@ -14,6 +14,7 @@ High-level documentation for this client is `also available <https://www.elastic
    esql
    dsl
    api_helpers
+   vectorstore
    exceptions
 
 .. toctree::
@@ -23,6 +24,7 @@ High-level documentation for this client is `also available <https://www.elastic
    async_es_api
    async_dsl
    async_api_helpers
+   async_vectorstore
 
 
 License
