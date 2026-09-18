@@ -108,6 +108,7 @@ from .index import (
 from .mapping import AsyncMapping, Mapping
 from .query import Q, Query
 from .response import AggResponse, Response, UpdateByQueryResponse
+from .retriever import R, Retriever
 from .search import (
     AsyncEmptySearch,
     AsyncMultiSearch,
@@ -199,6 +200,7 @@ __all__ = [
     "Point",
     "Q",
     "Query",
+    "R",
     "Range",
     "RangeFacet",
     "RangeField",
@@ -206,6 +208,7 @@ __all__ = [
     "RankFeatures",
     "RankVectors",
     "Response",
+    "Retriever",
     "SF",
     "ScaledFloat",
     "Search",
