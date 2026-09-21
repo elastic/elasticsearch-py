@@ -16,6 +16,7 @@
 #  under the License.
 
 import json
+import sys
 from datetime import date, datetime
 from fnmatch import fnmatch
 from typing import (
@@ -24,6 +25,7 @@ from typing import (
     Callable,
     ClassVar,
     Dict,
+    ForwardRef,
     Generic,
     List,
     Optional,
@@ -52,6 +54,33 @@ from .exceptions import ValidationException
 from .field import Binary, Boolean, Date, Field, Float, Integer, Nested, Object, Text
 from .mapping import Mapping
 from .utils import DOC_META_FIELDS, ObjectBase
+
+
+def _resolve_annotation(
+    type_: Any, globalns: Dict[str, Any], localns: Dict[str, Any]
+) -> Any:
+    """Evaluate a PEP 563 postponed annotation when it is still a string.
+
+    ``from __future__ import annotations`` stores hints such as ``'str | None'``.
+    Live typing objects are returned unchanged. If evaluation fails, the original
+    string is returned so callers can keep any explicit Field ``required``/``multi``
+    settings instead of treating the field as required.
+    """
+    if not isinstance(type_, str):
+        return type_
+    try:
+        ref = ForwardRef(type_, is_argument=False)
+        try:
+            resolved = ref._evaluate(
+                globalns, localns, type_params=(), recursive_guard=frozenset()
+            )
+        except TypeError:
+            # Python < 3.13 does not accept type_params.
+            resolved = ref._evaluate(globalns, localns, recursive_guard=frozenset())
+    except Exception:
+        return type_
+    return type_ if resolved is None else resolved
+
 
 if TYPE_CHECKING:
     from elastic_transport import ObjectApiResponse
@@ -355,6 +384,9 @@ class DocumentOptions:
         fields = {n for n in attrs if isinstance(attrs[n], Field)}
         fields.update(annotations.keys())
         field_defaults = {}
+        module = sys.modules.get(attrs.get("__module__", ""))
+        globalns = getattr(module, "__dict__", {}) if module is not None else {}
+        localns = dict(attrs)
         for name in fields:
             value: Any = None
             required = None
@@ -362,70 +394,75 @@ class DocumentOptions:
             if name in annotations:
                 # the field has a type annotation, so next we try to figure out
                 # what field type we can use
-                type_ = annotations[name]
+                type_ = _resolve_annotation(annotations[name], globalns, localns)
                 type_metadata = []
-                if isinstance(type_, _AnnotatedAlias):
-                    type_metadata = type_.__metadata__
-                    type_ = type_.__origin__
                 skip = False
-                required = True
-                multi = False
-                while hasattr(type_, "__origin__"):
-                    if type_.__origin__ == ClassVar:
-                        skip = True
-                        break
-                    elif type_.__origin__ == Mapped:
-                        # M[type] -> extract the wrapped type
-                        type_ = type_.__args__[0]
-                    elif type_.__origin__ == Union:
-                        if len(type_.__args__) == 2 and type_.__args__[1] is type(None):
-                            # Optional[type] -> mark instance as optional
+                field = None
+                field_args: List[Any] = []
+                field_kwargs: Dict[str, Any] = {}
+                # Unresolved postponed annotations leave required/multi unset so
+                # an explicit Field keeps the settings passed to its constructor.
+                if not isinstance(type_, str):
+                    if isinstance(type_, _AnnotatedAlias):
+                        type_metadata = type_.__metadata__
+                        type_ = type_.__origin__
+                    required = True
+                    multi = False
+                    while hasattr(type_, "__origin__"):
+                        if type_.__origin__ == ClassVar:
+                            skip = True
+                            break
+                        elif type_.__origin__ == Mapped:
+                            # M[type] -> extract the wrapped type
+                            type_ = type_.__args__[0]
+                        elif type_.__origin__ == Union:
+                            if len(type_.__args__) == 2 and type_.__args__[1] is type(
+                                None
+                            ):
+                                # Optional[type] -> mark instance as optional
+                                required = False
+                                type_ = type_.__args__[0]
+                            else:
+                                raise TypeError("Unsupported union")
+                        elif type_.__origin__ in [list, List]:
+                            # List[type] -> mark instance as multi
+                            multi = True
+                            required = False
+                            type_ = type_.__args__[0]
+                        else:
+                            break
+                    if skip or type_ == ClassVar:
+                        # skip ClassVar attributes
+                        continue
+                    if type(type_) is UnionType:
+                        # a union given with the pipe syntax
+                        args = get_args(type_)
+                        if len(args) == 2 and args[1] is type(None):
                             required = False
                             type_ = type_.__args__[0]
                         else:
                             raise TypeError("Unsupported union")
-                    elif type_.__origin__ in [list, List]:
-                        # List[type] -> mark instance as multi
-                        multi = True
-                        required = False
-                        type_ = type_.__args__[0]
-                    else:
-                        break
-                if skip or type_ == ClassVar:
-                    # skip ClassVar attributes
-                    continue
-                if type(type_) is UnionType:
-                    # a union given with the pipe syntax
-                    args = get_args(type_)
-                    if len(args) == 2 and args[1] is type(None):
-                        required = False
-                        type_ = type_.__args__[0]
-                    else:
-                        raise TypeError("Unsupported union")
-                field = None
-                field_args: List[Any] = []
-                field_kwargs: Dict[str, Any] = {}
-                if isinstance(type_, type) and issubclass(type_, InnerDoc):
-                    # object or nested field
-                    field = Nested if multi else Object
-                    field_args = [type_]
-                elif type_ in self.type_annotation_map:
-                    # use best field type for the type hint provided
-                    field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]
+                    if isinstance(type_, type) and issubclass(type_, InnerDoc):
+                        # object or nested field
+                        field = Nested if multi else Object
+                        field_args = [type_]
+                    elif type_ in self.type_annotation_map:
+                        # use best field type for the type hint provided
+                        field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]
 
-                # if this field does not have a right-hand value, we look in the metadata
-                # of the annotation to see if we find it there
-                for md in type_metadata:
-                    if isinstance(md, (_FieldMetadataDict, Field)):
-                        attrs[name] = md
+                    # if this field does not have a right-hand value, we look in the metadata
+                    # of the annotation to see if we find it there
+                    for md in type_metadata:
+                        if isinstance(md, (_FieldMetadataDict, Field)):
+                            attrs[name] = md
 
-                if field:
-                    field_kwargs = {
-                        "multi": multi,
-                        "required": required,
-                        **field_kwargs,
-                    }
-                    value = field(*field_args, **field_kwargs)
+                    if field:
+                        field_kwargs = {
+                            "multi": multi,
+                            "required": required,
+                            **field_kwargs,
+                        }
+                        value = field(*field_args, **field_kwargs)
 
             attr_es_name = None
             if name in attrs:

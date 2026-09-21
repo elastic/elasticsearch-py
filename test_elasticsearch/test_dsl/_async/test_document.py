@@ -912,6 +912,102 @@ def test_doc_with_pipe_type_hints() -> None:
     doc.full_clean()
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires Python 3.10")
+def test_future_annotations_optional_is_not_required() -> None:
+    ns: Dict[str, Any] = {
+        "__name__": "test_future_annotations_optional",
+        "Document": AsyncDocument,
+        "Keyword": Keyword,
+        "mapped_field": mapped_field,
+    }
+    exec(
+        """
+from __future__ import annotations
+
+class MyDoc(Document):
+    name: str = mapped_field(Keyword(required=True))
+    note: str | None = mapped_field(Keyword())
+    explicit: str | None = mapped_field(Keyword(required=False))
+""",
+        ns,
+    )
+    mapping = ns["MyDoc"]._doc_type.mapping
+    assert mapping["name"]._required is True
+    assert mapping["note"]._required is False
+    assert mapping["explicit"]._required is False
+
+    doc = ns["MyDoc"]()
+    doc.name = "n"
+    doc.full_clean()
+
+
+@pytest.mark.skipif(sys.version_info < (3, 10), reason="requires Python 3.10")
+def test_future_annotations_optional_without_field() -> None:
+    ns: Dict[str, Any] = {
+        "__name__": "test_future_annotations_optional_no_field",
+        "Document": AsyncDocument,
+    }
+    exec(
+        """
+from __future__ import annotations
+
+class MyDoc(Document):
+    name: str
+    note: str | None
+""",
+        ns,
+    )
+    mapping = ns["MyDoc"]._doc_type.mapping
+    assert mapping["name"]._required is True
+    assert mapping["note"]._required is False
+
+    doc = ns["MyDoc"]()
+    with raises(ValidationException) as exc_info:
+        doc.full_clean()
+    assert set(exc_info.value.args[0].keys()) == {"name"}
+    doc.name = "n"
+    doc.full_clean()
+
+
+def test_unresolved_annotation_keeps_explicit_field_required() -> None:
+    ns: Dict[str, Any] = {
+        "__name__": "test_unresolved_annotation_keeps_field",
+        "Document": AsyncDocument,
+        "Keyword": Keyword,
+        "mapped_field": mapped_field,
+    }
+    exec(
+        """
+from __future__ import annotations
+
+class MyDoc(Document):
+    tag: UnresolvedType = mapped_field(Keyword(required=False))
+    needed: UnresolvedType = mapped_field(Keyword(required=True))
+""",
+        ns,
+    )
+    mapping = ns["MyDoc"]._doc_type.mapping
+    assert mapping["tag"]._required is False
+    assert mapping["needed"]._required is True
+
+
+def test_unresolved_annotation_without_field_raises() -> None:
+    ns: Dict[str, Any] = {
+        "__name__": "test_unresolved_annotation_no_field",
+        "Document": AsyncDocument,
+    }
+    with pytest.raises(TypeError, match="Cannot map field tag"):
+        exec(
+            """
+from __future__ import annotations
+
+class MyDoc(Document):
+    tag: UnresolvedType
+""",
+            ns,
+        )
+
+
 def test_instrumented_field() -> None:
     class Child(InnerDoc):
         st: M[str]
