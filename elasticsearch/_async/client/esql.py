@@ -1261,3 +1261,67 @@ class EsqlClient(NamespacedClient):
             endpoint_id="esql.query",
             path_parts=__path_parts,
         )
+
+    @_rewrite_parameters(
+        body_fields=("type", "settings"),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def test_data_source_connection(
+        self,
+        *,
+        type: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Test an ES|QL data source connection.</p>
+          <p>Tests whether the supplied data source configuration can establish a live connection.
+          The data source does not need to exist in cluster state: this endpoint is intended for
+          validating a new configuration before saving it.
+          The request body accepts the same <code>type</code> and <code>settings</code> fields as the create or update data
+          source API.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-data-source-test-connection>`_
+
+        :param type: The data source type to test. Must be a known, registered type such
+            as `s3`, `gcs`, or `azure`. Unknown types return a `400` error.
+        :param settings: Type-specific connection and authentication settings to test.
+            Uses the same structure as the `settings` field in the create or update data
+            source API.
+        """
+        if type is None and body is None:
+            raise ValueError("Empty value passed for parameter 'type'")
+        __path_parts: t.Dict[str, str] = {}
+        __path = "/_query/data_source/_test"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            if type is not None:
+                __body["type"] = type
+            if settings is not None:
+                __body["settings"] = settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="esql.test_data_source_connection",
+            path_parts=__path_parts,
+        )

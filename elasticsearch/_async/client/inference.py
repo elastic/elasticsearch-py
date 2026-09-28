@@ -507,6 +507,90 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_name="chat_completion_request",
+    )
+    async def non_streaming_chat_completion(
+        self,
+        *,
+        inference_id: str,
+        chat_completion_request: t.Optional[t.Mapping[str, t.Any]] = None,
+        body: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Perform non-streaming chat completion inference on the service.</p>
+          <p>The chat completion inference API enables rich responses for chat completion tasks.
+          It only works with the <code>chat_completion</code> task type.</p>
+          <p>NOTE: The <code>chat_completion</code> task type supports both streaming and non-streaming.
+          The Chat completion inference API provides more comprehensive customization options through more fields and function calling support.
+          To determine whether a given inference service supports this task type, please see the page for that service.</p>
+          <p>These services support non-streaming chat completion inference:</p>
+          <ul>
+          <li>AI21</li>
+          <li>Azure OpenAI</li>
+          <li>Deepseek</li>
+          <li>Elastic</li>
+          <li>FireworksAI</li>
+          <li>Groq</li>
+          <li>Huggingface</li>
+          <li>IBMWatsonX</li>
+          <li>Llama</li>
+          <li>Mistral</li>
+          <li>NVIDIA</li>
+          <li>OpenAI</li>
+          <li>OpenShiftAI</li>
+          </ul>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-non-streaming-chat-completion>`_
+
+        :param inference_id: The inference Id
+        :param chat_completion_request:
+        :param timeout: Specifies the amount of time to wait for the inference request
+            to complete.
+        """
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if chat_completion_request is None and body is None:
+            raise ValueError(
+                "Empty value passed for parameters 'chat_completion_request' and 'body', one of them should be set."
+            )
+        elif chat_completion_request is not None and body is not None:
+            raise ValueError("Cannot set both 'chat_completion_request' and 'body'")
+        __path_parts: t.Dict[str, str] = {"inference_id": _quote(inference_id)}
+        __path = f'/_inference/chat_completion/{__path_parts["inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = (
+            chat_completion_request if chat_completion_request is not None else body
+        )
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.non_streaming_chat_completion",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_name="inference_config",
     )
     async def put(
