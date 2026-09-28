@@ -15,8 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import typing as t
 
-class C:
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import (
+    Stability,
+    Visibility,
+    _availability_warning,
+    _rewrite_parameters,
+)
+
+
+class DataRecoveryClient(NamespacedClient):
 
     @_rewrite_parameters()
     @_availability_warning(Stability.STABLE, Visibility.PRIVATE)

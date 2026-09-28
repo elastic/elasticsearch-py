@@ -47,6 +47,7 @@ from .ccr import CcrClient
 from .cluster import ClusterClient
 from .connector import ConnectorClient
 from .dangling_indices import DanglingIndicesClient
+from .data_recovery import DataRecoveryClient
 from .encryption import EncryptionClient
 from .enrich import EnrichClient
 from .eql import EqlClient
@@ -380,6 +381,7 @@ class AsyncElasticsearch(BaseClient):
         self.xpack = XPackClient(self)
         self.ccr = CcrClient(self)
         self.dangling_indices = DanglingIndicesClient(self)
+        self.data_recovery = DataRecoveryClient(self)
         self.encryption = EncryptionClient(self)
         self.enrich = EnrichClient(self)
         self.eql = EqlClient(self)
