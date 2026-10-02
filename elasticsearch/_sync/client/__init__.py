@@ -950,7 +950,13 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-open-point-in-time>`_
 
-        :param id: The ID of the point-in-time.
+        :param id: The ID of the point-in-time. IMPORTANT: Each search request against
+            a PIT returns in its response a `pit_id` field which may be different from
+            the identifier you originally supplied. Always use the most recently-received
+            PIT identifier for the next request. If you make concurrent search requests
+            against the same PIT, Elasticsearch can return several different `pit_id`
+            values in its responses. In that case, use any of these values for later
+            requests, preferring more recently-received values whenever possible.
         """
         if id is None and body is None:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -3908,7 +3914,10 @@ class Elasticsearch(BaseClient):
           <p>A subsequent search request with the <code>pit</code> parameter must not specify <code>index</code>, <code>routing</code>, or <code>preference</code> values as these parameters are copied from the point in time.</p>
           <p>Just like regular searches, you can use <code>from</code> and <code>size</code> to page through point in time search results, up to the first 10,000 hits.
           If you want to retrieve more hits, use PIT with <code>search_after</code>.</p>
-          <p>IMPORTANT: The open point in time request and each subsequent search request can return different identifiers; always use the most recently received ID for the next search request.</p>
+          <p>IMPORTANT: Each search request against a PIT returns in its response a <code>pit_id</code> field which may be different from the identifier you originally supplied.
+          Always use the most recently-received PIT identifier for the next request.
+          If you make concurrent search requests against the same PIT, Elasticsearch can return several different <code>pit_id</code> values in its responses.
+          In that case, use any of these values for later requests, preferring more recently-received values whenever possible.</p>
           <p>When a PIT that contains shard failures is used in a search request, the missing are always reported in the search response as a <code>NoShardAvailableActionException</code> exception.
           To get rid of these exceptions, a new PIT needs to be created so that shards missing from the previous PIT can be handled, assuming they become available in the meantime.</p>
           <p><strong>Keeping point in time alive</strong></p>

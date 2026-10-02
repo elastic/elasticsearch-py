@@ -2586,6 +2586,7 @@ class SecurityClient(NamespacedClient):
                     t.Literal[
                         "all",
                         "cancel_task",
+                        "clone_api_key",
                         "create_snapshot",
                         "cross_cluster_replication",
                         "cross_cluster_search",
@@ -3263,6 +3264,7 @@ class SecurityClient(NamespacedClient):
                     t.Literal[
                         "all",
                         "cancel_task",
+                        "clone_api_key",
                         "create_snapshot",
                         "cross_cluster_replication",
                         "cross_cluster_search",

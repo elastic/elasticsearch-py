@@ -4674,7 +4674,8 @@ class IndicesClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param active_only: If `true`, the response only includes ongoing shard recoveries.
+        :param active_only: If `true`, the response only includes shard recoveries that
+            have not yet completed (excludes `DONE` stage).
         :param allow_no_indices: A setting that does two separate checks on the index
             expression. If `false`, the request returns an error (1) if any wildcard
             expression (including `_all` and `*`) resolves to zero matching indices or

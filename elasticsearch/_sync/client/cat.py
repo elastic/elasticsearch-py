@@ -3213,6 +3213,7 @@ class CatClient(NamespacedClient):
                             "files_recovered",
                             "files_total",
                             "index",
+                            "local_retries",
                             "priority",
                             "repository",
                             "shard",
@@ -3246,6 +3247,7 @@ class CatClient(NamespacedClient):
                         "files_recovered",
                         "files_total",
                         "index",
+                        "local_retries",
                         "priority",
                         "repository",
                         "shard",
@@ -3292,7 +3294,8 @@ class CatClient(NamespacedClient):
         :param index: A comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (`*`). To target all data streams
             and indices, omit this parameter or use `*` or `_all`.
-        :param active_only: If `true`, the response only includes ongoing shard recoveries.
+        :param active_only: If `true`, the response only includes shard recoveries that
+            have not yet completed (excludes `done` stage).
         :param bytes: Sets the units for columns that contain a byte-size value. Note
             that byte-size value units work in terms of powers of 1024. For instance
             `1kb` means 1024 bytes, not 1000 bytes. If omitted, byte-size values are
