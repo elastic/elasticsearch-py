@@ -712,6 +712,82 @@ def test_nested_and_object_inner_doc() -> None:
     }
 
 
+def test_quoted_type_hints() -> None:
+    class Article(AsyncDocument):
+        note: "Optional[str]" = field.Keyword(required=True)
+        reference: Optional["str"] = field.Keyword(required=True)
+        tags: List["str"] = field.Keyword(required=True)
+
+    assert Article().note is None
+    assert Article().reference is None
+    assert Article().tags == []
+    Article().full_clean()
+
+
+def test_live_wrappers_preserve_inference_with_unresolved_contents() -> None:
+    class Article(AsyncDocument):
+        reference: Optional["Missing"] = field.Keyword(required=True)  # noqa: F821
+        tags: List["Missing"] = field.Keyword(required=True)  # noqa: F821
+
+    assert Article().reference is None
+    assert Article().tags == []
+    Article().full_clean()
+
+
+def test_live_wrapper_without_field_still_raises() -> None:
+    with raises(TypeError, match="Cannot map field related") as exc:
+
+        class Article(AsyncDocument):
+            related: List["Missing"]  # noqa: F821
+
+    assert isinstance(exc.value.__cause__, NameError)
+
+
+def test_live_unsupported_union_with_field_still_raises() -> None:
+    with raises(TypeError, match="Unsupported union"):
+
+        class Article(AsyncDocument):
+            value: int | str = field.Keyword()
+
+
+@pytest.mark.parametrize(
+    "annotation, required, multi",
+    [(Optional["str | int"], False, False), (M["List"], True, False)],
+)
+def test_live_wrapper_with_unsupported_quoted_type(
+    annotation: Any, required: bool, multi: bool
+) -> None:
+    explicit = field.Keyword(required=not required, multi=not multi)
+
+    class Article(AsyncDocument):
+        __annotations__ = {"value": annotation}
+        value = explicit
+
+    assert Article._doc_type.mapping["value"] is explicit
+    assert (explicit._required, explicit._multi) == (required, multi)
+
+
+def test_live_unhashable_annotation_with_field_still_raises() -> None:
+    with raises(TypeError):
+
+        class Article(AsyncDocument):
+            __annotations__ = {"value": []}
+            value = field.Keyword()
+
+
+def test_live_nullable_list_infers_multiple_values() -> None:
+    class Article(AsyncDocument):
+        tags: list[str] | None
+
+    tags = Article._doc_type.mapping["tags"]
+    assert (tags._required, tags._multi) == (False, True)
+    article = Article()
+    assert article.tags == []
+    article.tags.append("tag")
+    assert article.to_dict() == {"tags": ["tag"]}
+    article.full_clean()
+
+
 def test_doc_with_type_hints() -> None:
     class TypedInnerDoc(InnerDoc):
         st: M[str]
@@ -971,6 +1047,34 @@ def test_instrumented_field() -> None:
         Doc.ns.something
     with raises(AttributeError):
         Doc.ns.st.something
+
+
+def test_live_annotated_field_takes_precedence_over_right_hand_field() -> None:
+    class Article(AsyncDocument):
+        title: Annotated[str, field.Keyword()] = field.Text()
+
+    assert Article._doc_type.mapping.to_dict() == {
+        "properties": {"title": {"type": "keyword"}}
+    }
+
+
+def test_live_annotated_es_name_takes_precedence_over_right_hand_options() -> None:
+    class Article(AsyncDocument):
+        nick: Annotated[str, mapped_field(field.Keyword(), es_name="alias")] = (
+            mapped_field(default="x")
+        )
+
+    assert Article._doc_type.mapping.to_dict() == {
+        "properties": {"alias": {"type": "keyword"}}
+    }
+    assert Article(nick="value").to_dict() == {"alias": "value"}
+
+
+def test_live_annotated_exclusion_takes_precedence_over_right_hand_options() -> None:
+    class Article(AsyncDocument):
+        api_token: Annotated[str, mapped_field(exclude=True)] = mapped_field(default="")
+
+    assert Article._doc_type.mapping.to_dict() == {}
 
 
 def test_pydantic_integration() -> None:
