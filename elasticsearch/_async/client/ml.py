@@ -3468,6 +3468,7 @@ class MlClient(NamespacedClient):
             "indices",
             "indices_options",
             "job_id",
+            "max_consecutive_extraction_failures",
             "max_empty_searches",
             "project_routing",
             "query",
@@ -3506,6 +3507,7 @@ class MlClient(NamespacedClient):
         indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
+        max_consecutive_extraction_failures: t.Optional[int] = None,
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
@@ -3586,6 +3588,13 @@ class MlClient(NamespacedClient):
         :param indices_options: Specifies index expansion options that are used during
             search
         :param job_id: Identifier for the anomaly detection job.
+        :param max_consecutive_extraction_failures: The maximum number of consecutive
+            real-time data extraction failures the datafeed tolerates before it automatically
+            stops itself, leaving the associated job open. The consecutive-failure counter
+            resets on any cycle that extracts successfully, including empty-data cycles.
+            If not set, the threshold defaults to roughly one day's worth of searches
+            based on the datafeed `frequency` (floored at 1). Set to `-1` to disable
+            auto-stop and retry indefinitely. Values of `0` or less than `-1` are rejected.
         :param max_empty_searches: If a real-time datafeed has never seen any data (including
             during any initial training period), it automatically stops and closes the
             associated job after this many real-time searches return no documents. In
@@ -3656,6 +3665,10 @@ class MlClient(NamespacedClient):
                 __body["indices_options"] = indices_options
             if job_id is not None:
                 __body["job_id"] = job_id
+            if max_consecutive_extraction_failures is not None:
+                __body["max_consecutive_extraction_failures"] = (
+                    max_consecutive_extraction_failures
+                )
             if max_empty_searches is not None:
                 __body["max_empty_searches"] = max_empty_searches
             if project_routing is not None:
@@ -5069,6 +5082,7 @@ class MlClient(NamespacedClient):
             "indices",
             "indices_options",
             "job_id",
+            "max_consecutive_extraction_failures",
             "max_empty_searches",
             "project_routing",
             "query",
@@ -5106,6 +5120,7 @@ class MlClient(NamespacedClient):
         indices: t.Optional[t.Sequence[str]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
+        max_consecutive_extraction_failures: t.Optional[int] = None,
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
@@ -5183,6 +5198,13 @@ class MlClient(NamespacedClient):
         :param indices_options: Specifies index expansion options that are used during
             search.
         :param job_id:
+        :param max_consecutive_extraction_failures: The maximum number of consecutive
+            real-time data extraction failures the datafeed tolerates before it automatically
+            stops itself, leaving the associated job open. The consecutive-failure counter
+            resets on any cycle that extracts successfully, including empty-data cycles.
+            If not set, the threshold defaults to roughly one day's worth of searches
+            based on the datafeed `frequency` (floored at 1). Set to `-1` to disable
+            auto-stop and retry indefinitely. Values of `0` or less than `-1` are rejected.
         :param max_empty_searches: If a real-time datafeed has never seen any data (including
             during any initial training period), it automatically stops and closes the
             associated job after this many real-time searches return no documents. In
@@ -5257,6 +5279,10 @@ class MlClient(NamespacedClient):
                 __body["indices_options"] = indices_options
             if job_id is not None:
                 __body["job_id"] = job_id
+            if max_consecutive_extraction_failures is not None:
+                __body["max_consecutive_extraction_failures"] = (
+                    max_consecutive_extraction_failures
+                )
             if max_empty_searches is not None:
                 __body["max_empty_searches"] = max_empty_searches
             if project_routing is not None:
