@@ -1764,15 +1764,16 @@ class InferenceConfigContainer(AttrDict[Any]):
 class InferenceString(AttrDict[Any]):
     """
     :arg type: (required) The type of data that the value represents.
-    :arg value: (required) String which may be raw text, or the string
-        representation of some other data such as an image in base64.
+    :arg value: (required) String which may be raw text, the string
+        representation of some other data such as an image in base64, or a
+        URL that points to the data.
     :arg format: The format of the data. If null, the default data format
         for the given type is used.
     """
 
     type: Union[Literal["text", "image", "audio", "video", "pdf"], DefaultType]
     value: Union[str, DefaultType]
-    format: Union[Literal["text", "base64"], None, DefaultType]
+    format: Union[Literal["text", "base64", "url"], None, DefaultType]
 
     def __init__(
         self,
@@ -1781,7 +1782,7 @@ class InferenceString(AttrDict[Any]):
             Literal["text", "image", "audio", "video", "pdf"], DefaultType
         ] = DEFAULT,
         value: Union[str, DefaultType] = DEFAULT,
-        format: Union[Literal["text", "base64"], None, DefaultType] = DEFAULT,
+        format: Union[Literal["text", "base64", "url"], None, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
