@@ -1144,6 +1144,53 @@ class Knn(Query):
         )
 
 
+class Kql(Query):
+    """
+    Returns documents matching a provided Kibana Query Language (KQL)
+    expression. The expression is parsed and rewritten into standard Query
+    DSL.
+
+    :arg query: (required) The KQL expression to parse.
+    :arg case_insensitive: If `true`, performs case-insensitive matching
+        for field names and keyword or text terms.
+    :arg default_field: Default field, or field pattern with wildcards, to
+        target when a bare term does not specify a field. Defaults to the
+        `index.query.default_field` index setting, which has a default
+        value of `*`.
+    :arg time_zone: Coordinated Universal Time (UTC) offset or IANA time
+        zone used to interpret date literals in the expression.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "kql"
+
+    def __init__(
+        self,
+        *,
+        query: Union[str, "DefaultType"] = DEFAULT,
+        case_insensitive: Union[bool, "DefaultType"] = DEFAULT,
+        default_field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        time_zone: Union[str, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            query=query,
+            case_insensitive=case_insensitive,
+            default_field=default_field,
+            time_zone=time_zone,
+            boost=boost,
+            _name=_name,
+            **kwargs,
+        )
+
+
 class Match(Query):
     """
     Returns documents that match a provided text, number, date or boolean

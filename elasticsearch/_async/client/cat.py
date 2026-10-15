@@ -3204,6 +3204,7 @@ class CatClient(NamespacedClient):
                     t.Union[
                         str,
                         t.Literal[
+                            "blocked_for_millis",
                             "bytes",
                             "bytes_percent",
                             "bytes_recovered",
@@ -3212,6 +3213,7 @@ class CatClient(NamespacedClient):
                             "files_percent",
                             "files_recovered",
                             "files_total",
+                            "gate",
                             "index",
                             "local_retries",
                             "priority",
@@ -3238,6 +3240,7 @@ class CatClient(NamespacedClient):
                 t.Union[
                     str,
                     t.Literal[
+                        "blocked_for_millis",
                         "bytes",
                         "bytes_percent",
                         "bytes_recovered",
@@ -3246,6 +3249,7 @@ class CatClient(NamespacedClient):
                         "files_percent",
                         "files_recovered",
                         "files_total",
+                        "gate",
                         "index",
                         "local_retries",
                         "priority",
