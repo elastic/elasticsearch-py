@@ -20,6 +20,7 @@ import re
 from functools import partial
 from typing import Any, List, Optional, Union
 
+import anyio
 import pytest
 
 from elasticsearch import AsyncElasticsearch, NotFoundError
@@ -1160,3 +1161,47 @@ class TestAsyncVectorStore:
         )
         with pytest.raises(ValueError, match="Conflicting settings"):
             await store.add_texts(texts=["some text"])
+
+
+async def test_concurrent_first_uploads(async_client, index, monkeypatch):
+    stores = [
+        AsyncVectorStore(
+            async_client,
+            index=index,
+            retrieval_strategy=AsyncDenseVectorStrategy(),
+            num_dimensions=2,
+        )
+        for _ in range(2)
+    ]
+    exists = async_client.indices.exists
+    both_checked = anyio.Event()
+    checked = 0
+
+    async def concurrent_exists(**kwargs):
+        nonlocal checked
+        response = await exists(**kwargs)
+        assert response.meta.status == 404
+        checked += 1
+        if checked == 2:
+            both_checked.set()
+        # Both real HEAD requests must finish before either PUT can start.
+        with anyio.fail_after(10):
+            await both_checked.wait()
+        return response
+
+    for store in stores:
+        monkeypatch.setattr(store.client.indices, "exists", concurrent_exists)
+
+    async def upload(i, store):
+        assert await store.add_texts(
+            [f"document {i}"], ids=[str(i)], vectors=[[1.0, float(i)]]
+        ) == [str(i)]
+
+    async with anyio.create_task_group() as group:
+        for i, store in enumerate(stores):
+            group.start_soon(upload, i, store)
+
+    hits = (await async_client.search(index=index, query={"match_all": {}}))["hits"][
+        "hits"
+    ]
+    assert sorted(hit["_id"] for hit in hits) == ["0", "1"]

@@ -19,7 +19,7 @@ import logging
 import uuid
 from typing import Any, Callable, Dict, List, Optional
 
-from .... import Elasticsearch
+from .... import BadRequestError, Elasticsearch
 from ...._version import __versionstr__ as lib_version
 from ....helpers import BulkIndexError, bulk
 from ....helpers.vectorstore import (
@@ -337,9 +337,16 @@ class VectorStore:
             text_field=self.text_field,
             vector_field=self.vector_field,
         )
-        self.client.indices.create(
-            index=self.index, mappings=mappings, settings=settings
-        )
+        try:
+            self.client.indices.create(
+                index=self.index, mappings=mappings, settings=settings
+            )
+        except BadRequestError as e:
+            if e.message != "resource_already_exists_exception":
+                raise
+            logger.debug(
+                f"Index {self.index} was created concurrently. Skipping creation."
+            )
 
     def max_marginal_relevance_search(
         self,

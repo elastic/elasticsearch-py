@@ -17,7 +17,9 @@
 
 import logging
 import re
+from concurrent.futures import ThreadPoolExecutor
 from functools import partial
+from threading import Barrier
 from typing import Any, List, Optional, Union
 
 import pytest
@@ -1140,3 +1142,42 @@ class TestVectorStore:
         )
         with pytest.raises(ValueError, match="Conflicting settings"):
             store.add_texts(texts=["some text"])
+
+
+def test_concurrent_first_uploads(sync_client, index, monkeypatch):
+    stores = [
+        VectorStore(
+            sync_client,
+            index=index,
+            retrieval_strategy=DenseVectorStrategy(),
+            num_dimensions=2,
+        )
+        for _ in range(2)
+    ]
+    exists = sync_client.indices.exists
+    barrier = Barrier(2, timeout=10)
+
+    def concurrent_exists(**kwargs):
+        response = exists(**kwargs)
+        assert response.meta.status == 404
+        # Both real HEAD requests must finish before either PUT can start.
+        barrier.wait()
+        return response
+
+    for store in stores:
+        monkeypatch.setattr(store.client.indices, "exists", concurrent_exists)
+
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        uploads = [
+            executor.submit(
+                store.add_texts,
+                [f"document {i}"],
+                ids=[str(i)],
+                vectors=[[1.0, float(i)]],
+            )
+            for i, store in enumerate(stores)
+        ]
+        assert [upload.result(timeout=30) for upload in uploads] == [["0"], ["1"]]
+
+    hits = sync_client.search(index=index, query={"match_all": {}})["hits"]["hits"]
+    assert sorted(hit["_id"] for hit in hits) == ["0", "1"]
