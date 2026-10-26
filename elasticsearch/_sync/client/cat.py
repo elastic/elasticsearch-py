@@ -91,7 +91,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get aliases.</p>
+          <p>Get a compact list of aliases.</p>
           <p>Get the cluster's index aliases, including filter and routing information.
           This API does not return data stream aliases.</p>
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or the Kibana console. They are not intended for use by applications. For application consumption, use the aliases API.</p>
@@ -383,7 +383,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get component templates.</p>
+          <p>Get a compact list of component templates.</p>
           <p>Get information about component templates in a cluster.
           Component templates are building blocks for constructing index templates that specify index mappings, settings, and aliases.</p>
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or Kibana console.
@@ -704,7 +704,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get the cluster health status.</p>
+          <p>Get a compact cluster health summary.</p>
           <p>IMPORTANT: CAT APIs are only intended for human consumption using the command line or Kibana console.
           They are not intended for use by applications. For application consumption, use the cluster health API.
           This API is often used to check malfunctioning clusters.
@@ -842,7 +842,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get index information.</p>
+          <p>Get a compact list of indices.</p>
           <p>Get high-level information about indices in a cluster, including backing indices for data streams.</p>
           <p>Use this request to get the following information for each index in a cluster:</p>
           <ul>
@@ -2331,7 +2331,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get node information.</p>
+          <p>Get a compact list of nodes.</p>
           <p>Get information about the nodes in a cluster.
           IMPORTANT: cat APIs are only intended for human consumption using the command line or Kibana console. They are not intended for use by applications. For application consumption, use the nodes info API.</p>
 
@@ -2815,7 +2815,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get snapshot repository information.</p>
+          <p>Get a compact list of snapshot repositories.</p>
           <p>Get a list of snapshot repositories for a cluster.
           IMPORTANT: cat APIs are only intended for human consumption using the command line or Kibana console. They are not intended for use by applications. For application consumption, use the get snapshot repository API.</p>
 
@@ -3409,7 +3409,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get snapshot information.</p>
+          <p>Get a compact list of snapshots.</p>
           <p>Get information about the snapshots stored in one or more repositories.
           A snapshot is a backup of an index or running Elasticsearch cluster.
           IMPORTANT: cat APIs are only intended for human consumption using the command line or Kibana console. They are not intended for use by applications. For application consumption, use the get snapshot API.</p>
@@ -3522,7 +3522,7 @@ class CatClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get task information.</p>
+          <p>Get a compact list of running tasks.</p>
           <p>Get information about tasks currently running in the cluster.
           IMPORTANT: cat APIs are only intended for human consumption using the command line or Kibana console. They are not intended for use by applications. For application consumption, use the task management API.</p>
 
