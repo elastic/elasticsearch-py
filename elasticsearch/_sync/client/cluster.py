@@ -571,7 +571,7 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster info.</p>
+          <p>Get cluster subsystem info.</p>
           <p>Returns basic information about the cluster.</p>
 
 
