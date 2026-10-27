@@ -2777,7 +2777,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get mapping definitions.</p>
+          <p>Get field mapping definitions.</p>
           <p>Retrieves mapping definitions for one or more fields.
           For data streams, the API retrieves field mappings for the stream’s backing indices.</p>
           <p>This API is useful if you don't need a complete mapping or if an index mapping contains a large number of fields.</p>
@@ -5279,7 +5279,8 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Roll over to a new index.</p>
-          <p>TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
+          <p>TIP: To automate rollovers, use index lifecycle management (ILM) in deployments that support it.
+          Serverless does not support ILM. For data streams in Serverless, use data stream lifecycle instead.</p>
           <p>The rollover API creates a new index for a data stream or index alias.
           The API behavior depends on the rollover target.</p>
           <p><strong>Roll over a data stream</strong></p>
@@ -6221,7 +6222,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an alias.</p>
+          <p>Update aliases and delete indices atomically.</p>
           <p>Adds a data stream or index to an alias.</p>
 
 
