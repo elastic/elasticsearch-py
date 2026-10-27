@@ -569,8 +569,8 @@ class ClusterClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get cluster info.
-          Returns basic information about the cluster.</p>
+          <p>Get cluster subsystem info.</p>
+          <p>Returns basic information about the cluster.</p>
 
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.19/cluster-info.html>`_
