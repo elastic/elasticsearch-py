@@ -112,6 +112,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "document_extraction",
                     "embedding",
                     "rerank",
                     "sparse_embedding",
@@ -219,6 +220,81 @@ class InferenceClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
+        body_fields=("input", "task_settings"),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def document_extraction(
+        self,
+        *,
+        inference_id: str,
+        input: t.Optional[
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Any] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Perform document extraction inference on the service.</p>
+          <p>Extract the content of documents, such as PDFs or images of documents, into a textual format.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+
+        :param inference_id: The unique identifier for the inference endpoint.
+        :param input: The documents to extract the content from. Either a `content` object
+            or an array of `content` objects. `content` object example: ``` "input":
+            { "content": { "type": "pdf", "format": "base64", "value": "data:application/pdf;base64,..."
+            } } ``` `content` object array example: ``` "input": [ { "content": { "type":
+            "pdf", "format": "base64", "value": "data:application/pdf;base64,..." } },
+            { "content": { "type": "image", "format": "url", "value": "https://example.com/scanned-page.png"
+            } } ] ```
+        :param task_settings: Task settings for the individual inference request. These
+            settings are specific to the task type you specified and override the task
+            settings specified when initializing the service.
+        :param timeout: The amount of time to wait for the inference request to complete.
+        """
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if input is None and body is None:
+            raise ValueError("Empty value passed for parameter 'input'")
+        __path_parts: t.Dict[str, str] = {"inference_id": _quote(inference_id)}
+        __path = f'/_inference/document_extraction/{__path_parts["inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if input is not None:
+                __body["input"] = input
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.document_extraction",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
         body_name="embedding",
     )
     @_availability_warning(Stability.EXPERIMENTAL)
@@ -290,6 +366,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "document_extraction",
                     "embedding",
                     "rerank",
                     "sparse_embedding",
@@ -404,6 +481,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "document_extraction",
                     "embedding",
                     "rerank",
                     "sparse_embedding",
@@ -605,6 +683,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "document_extraction",
                     "embedding",
                     "rerank",
                     "sparse_embedding",
@@ -3488,6 +3567,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "document_extraction",
                     "embedding",
                     "rerank",
                     "sparse_embedding",

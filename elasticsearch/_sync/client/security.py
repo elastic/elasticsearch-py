@@ -2098,6 +2098,7 @@ class SecurityClient(NamespacedClient):
                 t.Union[str, t.Literal["built_in", "user_managed"]],
             ]
         ] = None,
+        with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -2119,6 +2120,10 @@ class SecurityClient(NamespacedClient):
         :param type: A comma-separated list of the kinds of service account to return.
             If it is omitted, it defaults to `built_in` when no namespace is given and
             to `built_in,user_managed` otherwise.
+        :param with_profile_uid: If `true`, each user-managed service account also includes
+            the profile UIDs of the users who created and last replaced it, under the
+            `created_by_profile_uid` and `updated_by_profile_uid` fields. A profile UID
+            is included only for a user who has an activated user profile.
         """
         __path_parts: t.Dict[str, str]
         if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
@@ -2141,6 +2146,8 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         if type is not None:
             __query["type"] = type
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -2566,8 +2573,10 @@ class SecurityClient(NamespacedClient):
             "api_key",
             "grant_type",
             "access_token",
+            "client_authentication",
             "password",
             "run_as",
+            "service_account_token",
             "username",
         ),
         ignore_deprecated_options={"api_key"},
@@ -2577,9 +2586,13 @@ class SecurityClient(NamespacedClient):
         *,
         api_key: t.Optional[t.Mapping[str, t.Any]] = None,
         grant_type: t.Optional[
-            t.Union[str, t.Literal["access_token", "password"]]
+            t.Union[
+                str,
+                t.Literal["_user_managed_service_account", "access_token", "password"],
+            ]
         ] = None,
         access_token: t.Optional[str] = None,
+        client_authentication: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -2589,6 +2602,7 @@ class SecurityClient(NamespacedClient):
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         run_as: t.Optional[str] = None,
+        service_account_token: t.Optional[str] = None,
         username: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2605,9 +2619,11 @@ class SecurityClient(NamespacedClient):
           <li>username and password</li>
           <li>Elasticsearch access tokens</li>
           <li>JWTs</li>
+          <li>service account tokens of user-managed service accounts</li>
           </ul>
           <p>The user, for whom the authentication credentials is provided, can optionally &quot;run as&quot; (impersonate) another user.
-          In this case, the API key will be created on behalf of the impersonated user.</p>
+          In this case, the API key will be created on behalf of the impersonated user.
+          Run as is not supported with the <code>_user_managed_service_account</code> grant type.</p>
           <p>This API is intended be used by applications that need to create and manage API keys for end users, but cannot guarantee that those users have permission to create API keys on their own behalf.
           The API keys are created by the Elasticsearch API key service, which is automatically enabled.</p>
           <p>A successful grant API key API call returns a JSON structure that contains the API key, its unique id, and its name.
@@ -2619,16 +2635,25 @@ class SecurityClient(NamespacedClient):
 
         :param api_key: The API key.
         :param grant_type: The type of grant. Supported grant types are: `access_token`,
-            `password`.
+            `password`, and `_user_managed_service_account`.
         :param access_token: The user's access token. If you specify the `access_token`
             grant type, this parameter is required. It is not valid with other grant
             types.
+        :param client_authentication: The client authentication for a JWT that requires
+            it, which is what is normally sent in the `ES-Client-Authentication` request
+            header. It is valid only with the `access_token` grant type, when the access
+            token is a JWT.
         :param password: The user's password. If you specify the `password` grant type,
             this parameter is required. It is not valid with other grant types.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
             this operation visible to search. If 'wait_for', it waits for a refresh to
             make this operation visible to search. If 'false', nothing is done with refreshes.
-        :param run_as: The name of the user to be impersonated.
+        :param run_as: The name of the user to be impersonated. It is not valid with
+            the `_user_managed_service_account` grant type.
+        :param service_account_token: The service account token of a user-managed service
+            account, as returned by the create service account token API. If you specify
+            the `_user_managed_service_account` grant type, this parameter is required.
+            It is not valid with other grant types.
         :param username: The user name that identifies the user. If you specify the `password`
             grant type, this parameter is required. It is not valid with other grant
             types.
@@ -2658,10 +2683,14 @@ class SecurityClient(NamespacedClient):
                 __body["grant_type"] = grant_type
             if access_token is not None:
                 __body["access_token"] = access_token
+            if client_authentication is not None:
+                __body["client_authentication"] = client_authentication
             if password is not None:
                 __body["password"] = password
             if run_as is not None:
                 __body["run_as"] = run_as
+            if service_account_token is not None:
+                __body["service_account_token"] = service_account_token
             if username is not None:
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}

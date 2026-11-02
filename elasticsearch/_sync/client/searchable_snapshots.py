@@ -103,7 +103,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Clear the cache.</p>
+          <p>Clear the searchable snapshots shared cache.</p>
           <p>Clear indices and data streams from the shared cache for partially mounted indices.</p>
 
 

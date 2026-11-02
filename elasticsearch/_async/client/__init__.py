@@ -6480,7 +6480,14 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("conflicts", "max_docs", "query", "script", "slice"),
+        body_fields=(
+            "conflicts",
+            "max_docs",
+            "query",
+            "runtime_mappings",
+            "script",
+            "slice",
+        ),
         parameter_aliases={"from": "from_"},
     )
     async def update_by_query(
@@ -6518,6 +6525,7 @@ class AsyncElasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
         route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
@@ -6671,6 +6679,8 @@ class AsyncElasticsearch(BaseClient):
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
+        :param runtime_mappings: One or more runtime fields in the search request. These
+            fields take precedence over mapped fields with the same name.
         :param script: The script to run to update the document source or metadata when
             updating.
         :param scroll: The period to retain the search context for scrolling.
@@ -6805,6 +6815,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if query is not None:
                 __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
             if script is not None:
                 __body["script"] = script
             if slice is not None:

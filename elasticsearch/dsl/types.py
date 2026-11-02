@@ -6085,6 +6085,51 @@ class KnnQueryProfileResult(AttrDict[Any]):
     children: Sequence["KnnQueryProfileResult"]
 
 
+class LearningToRankRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required)
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "LearningToRankRescoreProfileBreakdown"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
+
+
+class LearningToRankRescoreProfileBreakdown(AttrDict[Any]):
+    """
+    :arg build_feature_extractors: (required) The time spent turning the
+        feature queries of the model into queries that can score
+        documents.
+    :arg build_feature_extractors_count: (required)
+    :arg feature_extraction: (required) The time spent extracting the
+        features of the top documents.
+    :arg feature_extraction_count: (required)
+    :arg inference: (required) The time spent running the model on the
+        extracted features.
+    :arg inference_count: (required)
+    """
+
+    build_feature_extractors: int
+    build_feature_extractors_count: int
+    feature_extraction: int
+    feature_extraction_count: int
+    inference: int
+    inference_count: int
+
+
 class LongRareTermsAggregate(AttrDict[Any]):
     """
     Result of the `rare_terms` aggregation when the field is some kind of
@@ -6414,6 +6459,9 @@ class QueryProfile(AttrDict[Any]):
     :arg description: (required)
     :arg time_in_nanos: (required)
     :arg type: (required)
+    :arg debug: Extra details about the query.  Queries run by a rescorer
+        include a `rescorer` key with the position of that rescorer in the
+        shard's `rescore` array.
     :arg children:
     """
 
@@ -6421,7 +6469,32 @@ class QueryProfile(AttrDict[Any]):
     description: str
     time_in_nanos: Any
     type: str
+    debug: Mapping[str, Any]
     children: Sequence["QueryProfile"]
+
+
+class QueryRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required) The `query` rescorer does not report any
+        steps.
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "EmptyObject"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
 
 
 class RangeAggregate(AttrDict[Any]):
@@ -6550,6 +6623,30 @@ class SamplerAggregate(AttrDict[Any]):
     meta: Mapping[str, Any]
 
 
+class ScriptRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required) The `script` rescorer does not report any
+        steps.
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "EmptyObject"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
+
+
 class ScriptedMetricAggregate(AttrDict[Any]):
     """
     :arg value: (required)
@@ -6618,6 +6715,8 @@ class ShardProfile(AttrDict[Any]):
     :arg shard_id: (required)
     :arg dfs:
     :arg fetch:
+    :arg rescore: One entry per rescorer, in the order they ran. Omitted
+        when the request has no rescorer.
     """
 
     aggregations: Sequence["AggregationProfile"]
@@ -6629,6 +6728,13 @@ class ShardProfile(AttrDict[Any]):
     shard_id: int
     dfs: "DfsProfile"
     fetch: "FetchProfile"
+    rescore: Sequence[
+        Union[
+            "QueryRescoreProfile",
+            "ScriptRescoreProfile",
+            "LearningToRankRescoreProfile",
+        ]
+    ]
 
 
 class ShardStatistics(AttrDict[Any]):
