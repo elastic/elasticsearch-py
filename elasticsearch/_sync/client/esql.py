@@ -555,7 +555,6 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
     def delete_view(
         self,
         *,
@@ -569,10 +568,10 @@ class EsqlClient(NamespacedClient):
         .. raw:: html
 
           <p>Delete an ES|QL view.</p>
-          <p>Deletes a stored ES|QL view.</p>
+          <p>Deletes a stored ES|QL view. Deleting a reserved view fails.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-delete-view>`_
 
         :param name: The view name to remove.
         """
@@ -755,7 +754,6 @@ class EsqlClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    @_availability_warning(Stability.EXPERIMENTAL)
     def get_view(
         self,
         *,
@@ -769,10 +767,10 @@ class EsqlClient(NamespacedClient):
         .. raw:: html
 
           <p>Get an ES|QL view.</p>
-          <p>Returns a stored ES|QL view.</p>
+          <p>Returns one or more stored views. A reserved view includes <code>reserved</code> set to <code>true</code>.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-get-view>`_
 
         :param name: The comma-separated view names to retrieve.
         """
@@ -1016,7 +1014,6 @@ class EsqlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=("query", "description"),
     )
-    @_availability_warning(Stability.EXPERIMENTAL)
     def put_view(
         self,
         *,
@@ -1027,19 +1024,28 @@ class EsqlClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        validate: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
           <p>Create or update an ES|QL view.</p>
+          <p>Stores an ES|QL query that runs whenever the view is referenced.
+          A query that cannot be parsed is rejected. Replacing a reserved view fails.</p>
 
 
-        `<https://www.elastic.co/docs/api/doc/elasticsearch#TODO>`_
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-esql-put-view>`_
 
         :param name: The view name to create or update.
-        :param query: The ES|QL query string from which to create a view.
+        :param query: The ES|QL query string that defines the view. A query that cannot
+            be parsed is rejected.
         :param description: A free-text description of the view.
+        :param validate: Whether to analyze the view query and return a warning when
+            validation fails. Validation reports an unknown index or column, including
+            an index the caller cannot read. The view is saved even when validation reports
+            a problem. Failures unrelated to the query, such as an overloaded cluster,
+            produce no warning.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1057,6 +1063,8 @@ class EsqlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if validate is not None:
+            __query["validate"] = validate
         if not __body:
             if query is not None:
                 __body["query"] = str(query)
