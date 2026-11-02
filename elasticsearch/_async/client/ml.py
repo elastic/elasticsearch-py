@@ -5376,7 +5376,9 @@ class MlClient(NamespacedClient):
         custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
         description: t.Optional[str] = None,
-        detectors: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        detectors: t.Optional[
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         groups: t.Optional[t.Sequence[str]] = None,
@@ -5431,7 +5433,7 @@ class MlClient(NamespacedClient):
             recent snapshot for this job. Valid values range from 0 to `model_snapshot_retention_days`.
             For jobs created before version 7.8.0, the default value matches `model_snapshot_retention_days`.
         :param description: A description of the job.
-        :param detectors: An array of detector update objects.
+        :param detectors: A detector update object or an array of detector update objects.
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param model_plot_config:
         :param model_prune_window:
