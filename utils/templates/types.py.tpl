@@ -21,6 +21,7 @@ from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from . import Query
 from .document_base import InstrumentedField
+from .retriever import Retriever
 from .utils import AttrDict
 
 PipeSeparatedFlags = str

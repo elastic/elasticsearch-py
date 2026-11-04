@@ -165,7 +165,7 @@ class AttrDict(Generic[_ValT]):
     """
 
     _d_: Dict[str, _ValT]
-    RESERVED: Dict[str, str] = {"from_": "from"}
+    RESERVED: Dict[str, str] = {"from_": "from", "lambda_": "lambda"}
 
     def __init__(self, d: Dict[str, _ValT]):
         # assign the inner dict manually to prevent __setattr__ from firing
