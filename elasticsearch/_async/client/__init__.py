@@ -578,6 +578,7 @@ class AsyncElasticsearch(BaseClient):
         operations: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         index: t.Optional[str] = None,
+        route_slice: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -590,7 +591,6 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -692,6 +692,8 @@ class AsyncElasticsearch(BaseClient):
         :param operations:
         :param index: The name of the data stream, index, or index alias to perform bulk
             actions on.
+        :param route_slice: The default slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), applied to the items that do not specify their own `_slice`.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
         :param list_executed_pipelines: If `true`, the response will include the ingest
@@ -708,10 +710,6 @@ class AsyncElasticsearch(BaseClient):
         :param require_alias: If `true`, the request's actions must target an index alias.
         :param require_data_stream: If `true`, the request's actions must target a data
             stream (existing or to be created).
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value that is used to route operations to a specific
             shard. Not allowed when `index.slice.enabled` is `true` for the target index;
             use `_slice` instead.
@@ -743,7 +741,10 @@ class AsyncElasticsearch(BaseClient):
         elif operations is not None and body is not None:
             raise ValueError("Cannot set both 'operations' and 'body'")
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_bulk'
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_bulk'
         else:
@@ -770,8 +771,6 @@ class AsyncElasticsearch(BaseClient):
             __query["require_alias"] = require_alias
         if require_data_stream is not None:
             __query["require_data_stream"] = require_data_stream
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
@@ -993,6 +992,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
@@ -1018,7 +1018,6 @@ class AsyncElasticsearch(BaseClient):
         project_routing: t.Optional[str] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         stats: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         terminate_after: t.Optional[int] = None,
@@ -1042,6 +1041,10 @@ class AsyncElasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams and indices,
             omit this parameter or use `*` or `_all`.
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices. When omitted, all slices are targeted. Indices
+            that are not slice-enabled match no documents when a slice is specified.
         :param allow_no_indices: A setting that does two separate checks on the index
             expression. If `false`, the request returns an error (1) if any wildcard
             expression (including `_all` and `*`) resolves to zero matching indices or
@@ -1083,10 +1086,6 @@ class AsyncElasticsearch(BaseClient):
             with a request body.
         :param query: Defines the search query using Query DSL. A request body query
             cannot be used with the `q` query string parameter.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -1100,7 +1099,10 @@ class AsyncElasticsearch(BaseClient):
             backing indices across multiple data tiers.
         """
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_count'
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_count'
         else:
@@ -1140,8 +1142,6 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if q is not None:
             __query["q"] = q
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if stats is not None:
@@ -1176,6 +1176,7 @@ class AsyncElasticsearch(BaseClient):
         id: str,
         document: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Mapping[str, t.Any]] = None,
+        route_slice: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -1264,6 +1265,10 @@ class AsyncElasticsearch(BaseClient):
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format.
         :param document:
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param include_source_on_error: True or false if to include the document source
             in the error message in case of parsing errors.
         :param pipeline: The ID of the pipeline to use to preprocess incoming documents.
@@ -1278,7 +1283,8 @@ class AsyncElasticsearch(BaseClient):
         :param require_data_stream: If `true`, the request's actions must target a data
             stream (existing or to be created).
         :param routing: A custom value that is used to route operations to a specific
-            shard.
+            shard. Not allowed when `index.slice.enabled` is `true` for the target index;
+            use `_slice` instead.
         :param timeout: The period the request waits for the following operations: automatic
             index creation, dynamic mapping updates, waiting for active shards. Elasticsearch
             waits for at least the specified timeout period before failing. The actual
@@ -1308,8 +1314,23 @@ class AsyncElasticsearch(BaseClient):
             )
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_create/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_create/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_create/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1357,6 +1378,7 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        route_slice: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -1366,7 +1388,6 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -1410,6 +1431,10 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: The name of the target index.
         :param id: A unique identifier for the document.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
@@ -1417,10 +1442,6 @@ class AsyncElasticsearch(BaseClient):
         :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
             this operation visible to search. If `wait_for`, it waits for a refresh to
             make this operation visible to search. If `false`, it does nothing with refreshes.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -1443,8 +1464,23 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_doc/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1460,8 +1496,6 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if refresh is not None:
             __query["refresh"] = refresh
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -1483,13 +1517,14 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("max_docs", "query", "slice", "sort"),
+        body_fields=("max_docs", "query", "runtime_mappings", "slice", "sort"),
         parameter_aliases={"from": "from_"},
     )
     async def delete_by_query(
         self,
         *,
         index: t.Union[str, t.Sequence[str]],
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
@@ -1518,8 +1553,8 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1614,6 +1649,9 @@ class AsyncElasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams or indices,
             omit this parameter or use `*` or `_all`.
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices.
         :param allow_no_indices: A setting that does two separate checks on the index
             expression. If `false`, the request returns an error (1) if any wildcard
             expression (including `_all` and `*`) resolves to zero matching indices or
@@ -1660,13 +1698,11 @@ class AsyncElasticsearch(BaseClient):
             across the entire delete-by-query operation (including slices). It can be
             either `-1` to turn off throttling or any decimal number like `1.7` or `12`
             to throttle to that level.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
+        :param runtime_mappings: One or more runtime fields in the search request. These
+            fields take precedence over mapped fields with the same name.
         :param scroll: The period to retain the search context for scrolling.
         :param scroll_size: The size of the scroll request that powers the operation.
         :param search_timeout: The explicit timeout for each search request. It defaults
@@ -1701,8 +1737,17 @@ class AsyncElasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
-        __path = f'/{__path_parts["index"]}/_delete_by_query'
+        __path_parts: t.Dict[str, str]
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = (
+                f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_delete_by_query'
+            )
+        elif index not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_delete_by_query'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -1754,8 +1799,6 @@ class AsyncElasticsearch(BaseClient):
             __query["request_cache"] = request_cache
         if requests_per_second is not None:
             __query["requests_per_second"] = requests_per_second
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if scroll is not None:
@@ -1785,6 +1828,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if query is not None:
                 __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
             if slice is not None:
                 __body["slice"] = slice
             if sort is not None:
@@ -1923,6 +1968,7 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        route_slice: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -1962,6 +2008,10 @@ class AsyncElasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases. It
             supports wildcards (`*`).
         :param id: A unique document identifier.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param preference: The node or shard the operation should be performed on. By
             default, the operation is randomized between the shard replicas. If it is
             set to `_local`, the operation will prefer to be run on a local allocated
@@ -1976,6 +2026,8 @@ class AsyncElasticsearch(BaseClient):
             verification that this does not cause a heavy load on the system (and slow
             down indexing).
         :param routing: A custom value used to route operations to a specific shard.
+            Not allowed when `index.slice.enabled` is `true` for the target index; use
+            `_slice` instead.
         :param source: Indicates whether to return the `_source` field (`true` or `false`)
             or lists the fields to return.
         :param source_excludes: A comma-separated list of source fields to exclude from
@@ -2000,8 +2052,23 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_doc/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2159,6 +2226,7 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        route_slice: t.Optional[str] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
         default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
@@ -2171,7 +2239,6 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2192,6 +2259,10 @@ class AsyncElasticsearch(BaseClient):
         :param index: Index names that are used to limit the request. Only a single index
             name can be provided to this parameter.
         :param id: The document identifier.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
             This parameter can be used only when the `q` query string parameter is specified.
         :param analyzer: The analyzer to use for the query string. This parameter can
@@ -2209,10 +2280,6 @@ class AsyncElasticsearch(BaseClient):
             is random by default.
         :param q: The query in the Lucene query string syntax.
         :param query: Defines the search definition using the Query DSL.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -2234,8 +2301,23 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_explain/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_explain/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_explain/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if analyze_wildcard is not None:
@@ -2260,8 +2342,6 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if q is not None:
             __query["q"] = q
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
@@ -2440,6 +2520,7 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        route_slice: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force_synthetic_source: t.Optional[bool] = None,
@@ -2448,7 +2529,6 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_exclude_vectors: t.Optional[bool] = None,
@@ -2505,6 +2585,10 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: The name of the index that contains the document.
         :param id: A unique document identifier.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param force_synthetic_source: Indicates whether the request forces synthetic
             `_source`. Use this parameter to test if the mapping supports synthetic `_source`
             and to get a sense of the worst case performance. Fetches with this parameter
@@ -2522,10 +2606,6 @@ class AsyncElasticsearch(BaseClient):
             the document. Setting it to `true` should be done after careful thought and
             verification that this does not cause a heavy load on the system (and slow
             down indexing).
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -2554,8 +2634,23 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_doc/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -2573,8 +2668,6 @@ class AsyncElasticsearch(BaseClient):
             __query["realtime"] = realtime
         if refresh is not None:
             __query["refresh"] = refresh
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
@@ -2983,6 +3076,7 @@ class AsyncElasticsearch(BaseClient):
         index: str,
         document: t.Optional[t.Mapping[str, t.Any]] = None,
         body: t.Optional[t.Mapping[str, t.Any]] = None,
+        route_slice: t.Optional[str] = None,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -2998,7 +3092,6 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         require_data_stream: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         version: t.Optional[int] = None,
@@ -3108,6 +3201,10 @@ class AsyncElasticsearch(BaseClient):
             creates the index. You can check for existing targets with the resolve index
             API.
         :param document:
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param id: A unique identifier for the document. To automatically generate a
             document ID, use the `POST /<target>/_doc/` request format and omit this
             parameter.
@@ -3134,10 +3231,6 @@ class AsyncElasticsearch(BaseClient):
         :param require_alias: If `true`, the destination must be an index alias.
         :param require_data_stream: If `true`, the request's actions must target a data
             stream (existing or to be created).
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value that is used to route operations to a specific
             shard. Not allowed when `index.slice.enabled` is `true` for the target index;
             use `_slice` instead.
@@ -3167,7 +3260,23 @@ class AsyncElasticsearch(BaseClient):
         elif document is not None and body is not None:
             raise ValueError("Cannot set both 'document' and 'body'")
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_doc/{__path_parts["id"]}'
+            __method = "PUT"
+        elif index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_doc'
+            __method = "POST"
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index), "id": _quote(id)}
             __path = f'/{__path_parts["index"]}/_doc/{__path_parts["id"]}'
             __method = "PUT"
@@ -3202,8 +3311,6 @@ class AsyncElasticsearch(BaseClient):
             __query["require_alias"] = require_alias
         if require_data_stream is not None:
             __query["require_data_stream"] = require_data_stream
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if timeout is not None:
@@ -3266,6 +3373,141 @@ class AsyncElasticsearch(BaseClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=(
+            "field",
+            "k",
+            "knn_settings",
+            "query_source",
+            "allow_exact_baseline",
+            "baseline",
+        ),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def knn_eval(
+        self,
+        *,
+        index: t.Union[str, t.Sequence[str]],
+        field: t.Optional[str] = None,
+        k: t.Optional[int] = None,
+        knn_settings: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        query_source: t.Optional[t.Mapping[str, t.Any]] = None,
+        allow_exact_baseline: t.Optional[bool] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        baseline: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Evaluate kNN search settings.</p>
+          <p>Estimate the recall and cost of approximate kNN search configurations on a <code>dense_vector</code> field against a more thorough baseline.
+          The field must use the <code>bbq_disk</code> index type, and must not be inside a nested object.</p>
+          <p>Each <code>knn_settings</code> entry reports the mean recall of the baseline's top <code>k</code>, not of relevance judgments, plus included and excluded query counts and cost totals.
+          A query is excluded from the mean recall when the candidate finds a document scoring above the baseline's lowest top <code>k</code> score.
+          A baseline returning fewer than <code>k</code> hits fails that query, because recall at <code>k</code> is undefined.
+          All configurations run against one point in time.</p>
+          <p>The default baseline uses a <code>visit_percentage</code> of 20 and a <code>rescore_vector.oversample</code> of 100.
+          An exact full-precision baseline must be requested explicitly with <code>allow_exact_baseline</code>, and is limited to 100 million vector-by-query comparisons.</p>
+          <p>The request is refused when the <code>search.knn_eval.enabled</code> cluster setting or the <code>index.knn_eval.enabled</code> index setting is <code>false</code>.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-knn-eval>`_
+
+        :param index: A comma-separated list of index names to search.
+        :param field: The `dense_vector` field to evaluate.
+        :param k: The number of nearest neighbors to compute the recall for, from 1 to
+            1000.
+        :param knn_settings: The kNN search settings to evaluate, from 1 to 32 unique
+            entries.
+        :param query_source: The source of the query vectors.
+        :param allow_exact_baseline: If `true`, the `baseline` can be `exact`. An exact
+            baseline compares every vector at full precision, and can severely slow down
+            other searches.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices.
+        :param baseline: The settings of the search that the `knn_settings` entries are
+            compared with. If not specified, it uses a `visit_percentage` of 20 and a
+            `rescore_vector.oversample` of 100.
+        :param expand_wildcards: The type of index that wildcard patterns can match.
+            It supports comma-separated values, such as `open,hidden`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param wait_for_completion: If `true`, the request waits for the evaluation to
+            complete. A large evaluation can run for minutes, and closing the connection,
+            for example because of a client or proxy timeout, cancels it. If `false`,
+            the request returns a task identifier, and stores the completed response
+            for retrieval through the task management API.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if field is None and body is None:
+            raise ValueError("Empty value passed for parameter 'field'")
+        if k is None and body is None:
+            raise ValueError("Empty value passed for parameter 'k'")
+        if knn_settings is None and body is None:
+            raise ValueError("Empty value passed for parameter 'knn_settings'")
+        if query_source is None and body is None:
+            raise ValueError("Empty value passed for parameter 'query_source'")
+        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
+        __path = f'/{__path_parts["index"]}/_knn_eval'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if not __body:
+            if field is not None:
+                __body["field"] = field
+            if k is not None:
+                __body["k"] = k
+            if knn_settings is not None:
+                __body["knn_settings"] = knn_settings
+            if query_source is not None:
+                __body["query_source"] = query_source
+            if allow_exact_baseline is not None:
+                __body["allow_exact_baseline"] = allow_exact_baseline
+            if baseline is not None:
+                __body["baseline"] = baseline
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="knn_eval",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def list_reindex(
         self,
@@ -3324,6 +3566,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Optional[str] = None,
+        route_slice: t.Optional[str] = None,
         docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3334,7 +3577,6 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         source: t.Optional[t.Union[bool, t.Union[str, t.Sequence[str]]]] = None,
         source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
@@ -3363,6 +3605,8 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: Name of the index to retrieve documents from when `ids` are specified,
             or when a document in the `docs` array does not specify an index.
+        :param route_slice: The default slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), applied to the items that do not specify their own `_slice`.
         :param docs: The documents you want to retrieve. Required if no index is specified
             in the request URI.
         :param force_synthetic_source: Should this request force synthetic _source? Use
@@ -3376,10 +3620,6 @@ class AsyncElasticsearch(BaseClient):
         :param realtime: If `true`, the request is real-time as opposed to near-real-time.
         :param refresh: If `true`, the request refreshes relevant shards before retrieving
             documents.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: Custom value used to route operations to a specific shard. Not
             allowed when `index.slice.enabled` is `true` for the target index; use `_slice`
             instead.
@@ -3397,7 +3637,10 @@ class AsyncElasticsearch(BaseClient):
             index rather than the document `_source`.
         """
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_mget'
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_mget'
         else:
@@ -3421,8 +3664,6 @@ class AsyncElasticsearch(BaseClient):
             __query["realtime"] = realtime
         if refresh is not None:
             __query["refresh"] = refresh
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if source is not None:
@@ -3480,7 +3721,7 @@ class AsyncElasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
@@ -3553,9 +3794,8 @@ class AsyncElasticsearch(BaseClient):
         :param route_slice: The slice identifier for routing the search to a specific
             slice. When provided at the top level, all sub-searches are routed to shards
             matching the given slice value. Use the special value `_all` to query all
-            slices without restricting to a routing value. Required when `index.slice.enabled`
-            is `true` for the target index; not allowed when `index.slice.enabled` is
-            `false`. Individual sub-search headers can also specify `_slice` to override
+            slices without restricting to a routing value. When omitted, all slices are
+            targeted. Individual sub-search headers can also specify `_slice` to override
             the top-level setting.
         :param routing: Custom routing value used to route search operations to a specific
             shard. Not allowed when `index.slice.enabled` is `true` for the target index;
@@ -3747,6 +3987,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Optional[str] = None,
+        route_slice: t.Optional[str] = None,
         docs: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         field_statistics: t.Optional[bool] = None,
@@ -3760,7 +4001,6 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
@@ -3786,6 +4026,8 @@ class AsyncElasticsearch(BaseClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-mtermvectors>`_
 
         :param index: The name of the index that contains the documents.
+        :param route_slice: The default slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), applied to the items that do not specify their own `_slice`.
         :param docs: An array of existing or artificial documents.
         :param field_statistics: If `true`, the response includes the document count,
             sum of document frequencies, and sum of total term frequencies.
@@ -3800,10 +4042,6 @@ class AsyncElasticsearch(BaseClient):
         :param preference: The node or shard the operation should be performed on. It
             is random by default.
         :param realtime: If true, the request is real-time as opposed to near-real-time.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -3813,7 +4051,10 @@ class AsyncElasticsearch(BaseClient):
         :param version_type: The version type.
         """
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_mtermvectors'
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_mtermvectors'
         else:
@@ -3843,8 +4084,6 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if term_statistics is not None:
@@ -3897,6 +4136,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         project_routing: t.Optional[str] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3963,8 +4203,12 @@ class AsyncElasticsearch(BaseClient):
             Lucene queries: the _alias tag and a single value (possibly wildcarded).
             Examples: _alias:my-project _alias:_origin _alias:*pr* Supported in serverless
             only.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the point in time to that slice. When omitted,
+            the point in time covers all slices.
         :param routing: A custom value that is used to route operations to a specific
-            shard.
+            shard. Not allowed when `index.slice.enabled` is `true` for the target index;
+            use `_slice` instead.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3994,6 +4238,8 @@ class AsyncElasticsearch(BaseClient):
             __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if route_slice is not None:
+            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if not __body:
@@ -4096,7 +4342,7 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("requests", "metric"),
+        body_fields=("requests", "metric", "templates"),
     )
     async def rank_eval(
         self,
@@ -4121,6 +4367,7 @@ class AsyncElasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
+        templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4152,6 +4399,9 @@ class AsyncElasticsearch(BaseClient):
             are silently ignored.
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
+        :param templates: Query templates that the rated requests can refer to by their
+            `template_id`. This way, queries that differ only in their parameters don't
+            have to be repeated in `requests`.
         """
         if requests is None and body is None:
             raise ValueError("Empty value passed for parameter 'requests'")
@@ -4185,6 +4435,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["requests"] = requests
             if metric is not None:
                 __body["metric"] = metric
+            if templates is not None:
+                __body["templates"] = templates
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST",
@@ -4728,6 +4980,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         allow_no_indices: t.Optional[bool] = None,
@@ -4783,7 +5036,6 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         retriever: t.Optional[t.Mapping[str, t.Any]] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
@@ -4847,6 +5099,10 @@ class AsyncElasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams and indices,
             omit this parameter or use `*` or `_all`.
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices. When omitted, all slices are targeted. Indices
+            that are not slice-enabled match no documents when a slice is specified.
         :param aggregations: Defines the aggregations that are run as part of the search
             request.
         :param aggs: Defines the aggregations that are run as part of the search request.
@@ -4980,10 +5236,6 @@ class AsyncElasticsearch(BaseClient):
         :param retriever: A retriever is a specification to describe top documents returned
             from a search. A retriever replaces other elements of the search API that
             also return top documents such as `query` and `knn`.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value that is used to route operations to a specific
             shard. Not allowed when `index.slice.enabled` is `true` for the target index;
             use `_slice` instead.
@@ -5062,7 +5314,10 @@ class AsyncElasticsearch(BaseClient):
             a hit.
         """
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_search'
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_search'
         else:
@@ -5129,8 +5384,6 @@ class AsyncElasticsearch(BaseClient):
             __query["request_cache"] = request_cache
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if scroll is not None:
@@ -5742,7 +5995,7 @@ class AsyncElasticsearch(BaseClient):
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -5785,8 +6038,7 @@ class AsyncElasticsearch(BaseClient):
         :param route_slice: The slice identifier for routing the search to a specific
             slice. When provided, the request is limited to shards that match the given
             slice value. Use the special value `_all` to query all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
+            to a routing value. When omitted, all slices are targeted.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -5841,6 +6093,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -5883,6 +6136,10 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`).
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices. When omitted, all slices are targeted. Indices
+            that are not slice-enabled match no documents when a slice is specified.
         :param allow_no_indices: A setting that does two separate checks on the index
             expression. If `false`, the request returns an error (1) if any wildcard
             expression (including `_all` and `*`) resolves to zero matching indices or
@@ -5918,6 +6175,8 @@ class AsyncElasticsearch(BaseClient):
         :param rest_total_hits_as_int: If `true`, `hits.total` is rendered as an integer
             in the response. If `false`, it is rendered as an object.
         :param routing: A custom value used to route operations to a specific shard.
+            Not allowed when `index.slice.enabled` is `true` for the target index; use
+            `_slice` instead.
         :param scroll: Specifies how long a consistent view of the index should be maintained
             for scrolled search.
         :param search_type: The type of the search operation.
@@ -5928,7 +6187,12 @@ class AsyncElasticsearch(BaseClient):
             names with their respective types.
         """
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = (
+                f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_search/template'
+            )
+        elif index not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index)}
             __path = f'/{__path_parts["index"]}/_search/template'
         else:
@@ -6123,6 +6387,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: str,
+        route_slice: t.Optional[str] = None,
         id: t.Optional[str] = None,
         doc: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
@@ -6138,7 +6403,6 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
@@ -6188,6 +6452,10 @@ class AsyncElasticsearch(BaseClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-termvectors>`_
 
         :param index: The name of the index that contains the document.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param id: A unique identifier for the document.
         :param doc: An artificial document (a document not present in the index) for
             which you want to retrieve term vectors.
@@ -6212,10 +6480,6 @@ class AsyncElasticsearch(BaseClient):
         :param preference: The node or shard the operation should be performed on. It
             is random by default.
         :param realtime: If true, the request is real-time as opposed to near-real-time.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value that is used to route operations to a specific
             shard.
         :param term_statistics: If `true`, the response includes: * The total term frequency
@@ -6228,7 +6492,21 @@ class AsyncElasticsearch(BaseClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path_parts: t.Dict[str, str]
-        if index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_termvectors/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_termvectors'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
             __path_parts = {"index": _quote(index), "id": _quote(id)}
             __path = f'/{__path_parts["index"]}/_termvectors/{__path_parts["id"]}'
         elif index not in SKIP_IN_PATH:
@@ -6250,8 +6528,6 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if not __body:
             if doc is not None:
                 __body["doc"] = doc
@@ -6311,6 +6587,7 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        route_slice: t.Optional[str] = None,
         detect_noop: t.Optional[bool] = None,
         doc: t.Optional[t.Mapping[str, t.Any]] = None,
         doc_as_upsert: t.Optional[bool] = None,
@@ -6327,7 +6604,6 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         retry_on_conflict: t.Optional[int] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scripted_upsert: t.Optional[bool] = None,
@@ -6367,6 +6643,10 @@ class AsyncElasticsearch(BaseClient):
         :param index: The name of the target index. By default, the index is created
             automatically if it doesn't exist.
         :param id: A unique identifier for the document to be updated.
+        :param route_slice: The slice identifier for a slice-enabled index (`index.slice.enabled`
+            set to `true`), which scopes the operation to that slice. Required when `index.slice.enabled`
+            is `true` for the target index; not allowed when `index.slice.enabled` is
+            `false`.
         :param detect_noop: If `true`, the `result` in the response is set to `noop`
             (no operation) when there are no changes to the document.
         :param doc: A partial update to an existing document. If both `doc` and `script`
@@ -6386,10 +6666,6 @@ class AsyncElasticsearch(BaseClient):
         :param require_alias: If `true`, the destination must be an index alias.
         :param retry_on_conflict: The number of times the operation should be retried
             when a conflict occurs.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
@@ -6415,8 +6691,23 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index), "id": _quote(id)}
-        __path = f'/{__path_parts["index"]}/_update/{__path_parts["id"]}'
+        __path_parts: t.Dict[str, str]
+        if (
+            index not in SKIP_IN_PATH
+            and route_slice not in SKIP_IN_PATH
+            and id not in SKIP_IN_PATH
+        ):
+            __path_parts = {
+                "index": _quote(index),
+                "_slice": _quote(route_slice),
+                "id": _quote(id),
+            }
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_update/{__path_parts["id"]}'
+        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "id": _quote(id)}
+            __path = f'/{__path_parts["index"]}/_update/{__path_parts["id"]}'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         if error_trace is not None:
@@ -6441,8 +6732,6 @@ class AsyncElasticsearch(BaseClient):
             __query["require_alias"] = require_alias
         if retry_on_conflict is not None:
             __query["retry_on_conflict"] = retry_on_conflict
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if source_excludes is not None:
@@ -6480,13 +6769,21 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("conflicts", "max_docs", "query", "script", "slice"),
+        body_fields=(
+            "conflicts",
+            "max_docs",
+            "query",
+            "runtime_mappings",
+            "script",
+            "slice",
+        ),
         parameter_aliases={"from": "from_"},
     )
     async def update_by_query(
         self,
         *,
         index: t.Union[str, t.Sequence[str]],
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
@@ -6516,8 +6813,8 @@ class AsyncElasticsearch(BaseClient):
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
@@ -6614,6 +6911,9 @@ class AsyncElasticsearch(BaseClient):
         :param index: A comma-separated list of data streams, indices, and aliases to
             search. It supports wildcards (`*`). To search all data streams or indices,
             omit this parameter or use `*` or `_all`.
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices.
         :param allow_no_indices: A setting that does two separate checks on the index
             expression. If `false`, the request returns an error (1) if any wildcard
             expression (including `_all` and `*`) resolves to zero matching indices or
@@ -6664,13 +6964,11 @@ class AsyncElasticsearch(BaseClient):
             across the entire update_by_query operation (including slices). It can be
             either `-1` to turn off throttling or any decimal number like `1.7` or `12`
             to throttle to that level.
-        :param route_slice: The slice identifier used to route the operation to a specific
-            slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
+        :param runtime_mappings: One or more runtime fields in the search request. These
+            fields take precedence over mapped fields with the same name.
         :param script: The script to run to update the document source or metadata when
             updating.
         :param scroll: The period to retain the search context for scrolling.
@@ -6715,8 +7013,17 @@ class AsyncElasticsearch(BaseClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
-        __path = f'/{__path_parts["index"]}/_update_by_query'
+        __path_parts: t.Dict[str, str]
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = (
+                f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_update_by_query'
+            )
+        elif index not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_update_by_query'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
@@ -6768,8 +7075,6 @@ class AsyncElasticsearch(BaseClient):
             __query["request_cache"] = request_cache
         if requests_per_second is not None:
             __query["requests_per_second"] = requests_per_second
-        if route_slice is not None:
-            __query["_slice"] = route_slice
         if routing is not None:
             __query["routing"] = routing
         if scroll is not None:
@@ -6805,6 +7110,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if query is not None:
                 __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
             if script is not None:
                 __body["script"] = script
             if slice is not None:

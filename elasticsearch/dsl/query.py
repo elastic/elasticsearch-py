@@ -470,6 +470,72 @@ class ConstantScore(Query):
         super().__init__(filter=filter, boost=boost, _name=_name, **kwargs)
 
 
+class DenseVector(Query):
+    """
+    Scores every document that has a value for a `dense_vector` field,
+    with the exact similarity between its vector and a query vector.
+    Unlike the `knn` query, it doesn't use an index structure, or a cutoff
+    based on `k` or `num_candidates`.
+
+    :arg field: (required) The name of the `dense_vector` field to search
+        against. The field can be indexed, or not indexed (`index:
+        false`).
+    :arg query_vector: The query vector. It must have the same number of
+        dimensions as the field. You must provide either `query_vector` or
+        `query_vector_builder`, but not both.
+    :arg query_vector_builder: The configuration to build the query
+        vector, for example by running a text embedding model. You must
+        provide either `query_vector` or `query_vector_builder`, but not
+        both.
+    :arg similarity_function: The similarity used for scoring, which
+        overrides the similarity of the field for this query. It defaults
+        to the similarity of the field, or to `cosine` for a field that is
+        not indexed. For `bit` fields, only `l2_norm` is supported. It
+        can't be combined with `quantized: true`.
+    :arg quantized: If `false`, the documents are scored with the full-
+        precision vectors, regardless of the index options of the field.
+        If `true`, the documents are scored with the quantized vectors of
+        a quantized field, which is faster but less accurate. For a field
+        that is not quantized, `true` has no effect.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "dense_vector"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
+        query_vector_builder: Union[
+            "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        similarity_function: Union[
+            Literal["cosine", "dot_product", "l2_norm", "max_inner_product"],
+            "DefaultType",
+        ] = DEFAULT,
+        quantized: Union[bool, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            field=field,
+            query_vector=query_vector,
+            query_vector_builder=query_vector_builder,
+            similarity_function=similarity_function,
+            quantized=quantized,
+            boost=boost,
+            _name=_name,
+            **kwargs,
+        )
+
+
 class DisMax(Query):
     """
     Returns documents matching one or more wrapped queries, called query
@@ -1112,7 +1178,7 @@ class Knn(Query):
         self,
         *,
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
-        query_vector: Union[Sequence[float], "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
         query_vector_builder: Union[
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
@@ -1138,6 +1204,53 @@ class Knn(Query):
             filter=filter,
             similarity=similarity,
             rescore_vector=rescore_vector,
+            boost=boost,
+            _name=_name,
+            **kwargs,
+        )
+
+
+class Kql(Query):
+    """
+    Returns documents matching a provided Kibana Query Language (KQL)
+    expression. The expression is parsed and rewritten into standard Query
+    DSL.
+
+    :arg query: (required) The KQL expression to parse.
+    :arg case_insensitive: If `true`, performs case-insensitive matching
+        for field names and keyword or text terms.
+    :arg default_field: Default field, or field pattern with wildcards, to
+        target when a bare term does not specify a field. Defaults to the
+        `index.query.default_field` index setting, which has a default
+        value of `*`.
+    :arg time_zone: Coordinated Universal Time (UTC) offset or IANA time
+        zone used to interpret date literals in the expression.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "kql"
+
+    def __init__(
+        self,
+        *,
+        query: Union[str, "DefaultType"] = DEFAULT,
+        case_insensitive: Union[bool, "DefaultType"] = DEFAULT,
+        default_field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        time_zone: Union[str, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            query=query,
+            case_insensitive=case_insensitive,
+            default_field=default_field,
+            time_zone=time_zone,
             boost=boost,
             _name=_name,
             **kwargs,

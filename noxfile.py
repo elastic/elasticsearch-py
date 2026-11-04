@@ -75,8 +75,8 @@ def format(session):
     session.run("python", "utils/dsl-generator.py", env={"PYTHONPATH": "./"})
     session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("flynt", *SOURCE_FILES)
-    session.run("black", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
+    session.run("black", *SOURCE_FILES)
 
 
 @nox.session()

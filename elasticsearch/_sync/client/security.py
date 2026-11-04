@@ -772,17 +772,17 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("expiration", "metadata", "name", "role_descriptors"),
+        body_fields=("name", "expiration", "metadata", "role_descriptors"),
     )
     def create_api_key(
         self,
         *,
+        name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
-        name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
@@ -806,12 +806,13 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-create-api-key>`_
 
+        :param name: A name for the API key. It is required, and it cannot be longer
+            than 256 characters, begin or end with whitespace, or begin with an underscore.
         :param expiration: The expiration time for the API key. By default, API keys
             never expire.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
             It supports nested data structure. Within the metadata object, keys beginning
             with `_` are reserved for system usage.
-        :param name: A name for the API key.
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
@@ -829,6 +830,8 @@ class SecurityClient(NamespacedClient):
             The derived API key can be used for authentication; it will not have authority
             to call Elasticsearch APIs.
         """
+        if name is None and body is None:
+            raise ValueError("Empty value passed for parameter 'name'")
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
@@ -844,12 +847,12 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         if not __body:
+            if name is not None:
+                __body["name"] = name
             if expiration is not None:
                 __body["expiration"] = expiration
             if metadata is not None:
                 __body["metadata"] = metadata
-            if name is not None:
-                __body["name"] = name
             if role_descriptors is not None:
                 __body["role_descriptors"] = role_descriptors
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -977,7 +980,8 @@ class SecurityClient(NamespacedClient):
         .. raw:: html
 
           <p>Create a service account token.</p>
-          <p>Create a service accounts token for access without requiring basic authentication.</p>
+          <p>Create a service accounts token for access without requiring basic authentication.
+          This route serves both kinds of service account, but the privileges differ: <code>manage_service_account</code> authorizes tokens of built-in accounts in the <code>elastic</code> namespace only, and tokens of a user-managed account require <code>manage_security</code>.</p>
           <p>NOTE: Service account tokens never expire.
           You must actively delete them if they are no longer needed.</p>
           <p>IMPORTANT: On Serverless, non-operator users can create tokens for only <code>elastic/fleet-server</code> and <code>elastic/fleet-server-remote</code>.
@@ -1304,7 +1308,8 @@ class SecurityClient(NamespacedClient):
         .. raw:: html
 
           <p>Delete service account tokens.</p>
-          <p>Delete service account tokens for a service in a specified namespace.</p>
+          <p>Delete service account tokens for a service in a specified namespace.
+          This route serves both kinds of service account, but the privileges differ: <code>manage_service_account</code> authorizes tokens of built-in accounts in the <code>elastic</code> namespace only, and tokens of a user-managed account require <code>manage_security</code>.</p>
           <p>IMPORTANT: On Serverless, non-operator users can delete tokens for only <code>elastic/fleet-server</code> and <code>elastic/fleet-server-remote</code>.
           Deleting tokens for any other service account requires operator privileges.</p>
 
@@ -1400,6 +1405,83 @@ class SecurityClient(NamespacedClient):
             params=__query,
             headers=__headers,
             endpoint_id="security.delete_user",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters()
+    def delete_user_managed_service_account(
+        self,
+        *,
+        namespace: str,
+        service: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Delete user-managed service accounts.</p>
+          <p>Delete a service account from a namespace of your own.</p>
+          <p>Deleting an account that still has service tokens is rejected unless <code>force</code> is <code>true</code>.
+          A forced delete leaves the tokens behind: they cannot authenticate while no account of that name exists, and recreating the account is rejected until they are deleted.</p>
+          <p>NOTE: The <code>elastic</code> namespace is reserved for the built-in service accounts that ship with Elasticsearch.
+          A name that no user-managed service account could have is rejected rather than reported as not found.
+          The <code>manage_service_account</code> privilege does not authorize this API.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-delete-user-managed-service-account>`_
+
+        :param namespace: The namespace, which is a top-level grouping of service accounts.
+            It must start with a letter or digit and can contain only letters, digits,
+            hyphens, and underscores, up to a maximum of 128 characters. It cannot be
+            `elastic`, which is reserved for built-in service accounts.
+        :param service: The service name. It must start with a letter or digit and can
+            contain only letters, digits, hyphens, and underscores, up to a maximum of
+            128 characters.
+        :param force: If `false` (the default), deleting a service account that still
+            has service tokens is rejected. If `true`, the account is deleted and its
+            tokens are left in place.
+        :param refresh: If `wait_for` (the default) then wait for a refresh to make this
+            operation visible to search, if `true` then refresh the affected shards to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+        }
+        __path = (
+            f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE",
+            __path,
+            params=__query,
+            headers=__headers,
+            endpoint_id="security.delete_user_managed_service_account",
             path_parts=__path_parts,
         )
 
@@ -2013,13 +2095,22 @@ class SecurityClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        type: t.Optional[
+            t.Union[
+                t.Sequence[t.Union[str, t.Literal["built_in", "user_managed"]]],
+                t.Union[str, t.Literal["built_in", "user_managed"]],
+            ]
+        ] = None,
+        with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
 
           <p>Get service accounts.</p>
-          <p>Get a list of service accounts that match the provided path parameters.</p>
-          <p>NOTE: Currently, only the <code>elastic/fleet-server</code> service account is available.</p>
+          <p>Get a list of service accounts that match the provided path parameters.
+          Built-in service accounts ship with Elasticsearch in the <code>elastic</code> namespace; user-managed service accounts are created with the put user-managed service account API.</p>
+          <p>NOTE: When <code>type</code> is omitted, a request without a namespace reports built-in accounts only, which preserves the response of a whole-cluster listing.
+          A request scoped to a namespace reports both kinds, so an account you created is found without naming its kind.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-get-service-accounts>`_
@@ -2029,6 +2120,13 @@ class SecurityClient(NamespacedClient):
             also omit the `service` parameter.
         :param service: The service name. Omit this parameter to retrieve information
             about all service accounts that belong to the specified `namespace`.
+        :param type: A comma-separated list of the kinds of service account to return.
+            If it is omitted, it defaults to `built_in` when no namespace is given and
+            to `built_in,user_managed` otherwise.
+        :param with_profile_uid: If `true`, each user-managed service account also includes
+            the profile UIDs of the users who created and last replaced it, under the
+            `created_by_profile_uid` and `updated_by_profile_uid` fields. A profile UID
+            is included only for a user who has an activated user profile.
         """
         __path_parts: t.Dict[str, str]
         if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
@@ -2049,6 +2147,10 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if type is not None:
+            __query["type"] = type
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -2211,6 +2313,7 @@ class SecurityClient(NamespacedClient):
             "password",
             "refresh_token",
             "scope",
+            "service_account_token",
             "username",
         ),
     )
@@ -2223,7 +2326,11 @@ class SecurityClient(NamespacedClient):
             t.Union[
                 str,
                 t.Literal[
-                    "_kerberos", "client_credentials", "password", "refresh_token"
+                    "_kerberos",
+                    "_user_managed_service_account",
+                    "client_credentials",
+                    "password",
+                    "refresh_token",
                 ],
             ]
         ] = None,
@@ -2233,6 +2340,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         refresh_token: t.Optional[str] = None,
         scope: t.Optional[str] = None,
+        service_account_token: t.Optional[str] = None,
         username: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2254,7 +2362,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-get-token>`_
 
         :param grant_type: The type of grant. Supported grant types are: `password`,
-            `_kerberos`, `client_credentials`, and `refresh_token`.
+            `_kerberos`, `client_credentials`, `refresh_token`, and `_user_managed_service_account`.
         :param kerberos_ticket: The base64 encoded kerberos ticket. If you specify the
             `_kerberos` grant type, this parameter is required. This parameter is not
             valid with any other supported grant type.
@@ -2267,6 +2375,10 @@ class SecurityClient(NamespacedClient):
             any other supported grant type.
         :param scope: The scope of the token. Currently tokens are only issued for a
             scope of FULL regardless of the value sent with the request.
+        :param service_account_token: The service account token of a user-managed service
+            account, as returned by the create service account token API. If you specify
+            the `_user_managed_service_account` grant type, this parameter is required.
+            This parameter is not valid with any other supported grant type.
         :param username: The username that identifies the user. If you specify the `password`
             grant type, this parameter is required. This parameter is not valid with
             any other supported grant type.
@@ -2294,6 +2406,8 @@ class SecurityClient(NamespacedClient):
                 __body["refresh_token"] = refresh_token
             if scope is not None:
                 __body["scope"] = scope
+            if service_account_token is not None:
+                __body["service_account_token"] = service_account_token
             if username is not None:
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -2462,8 +2576,10 @@ class SecurityClient(NamespacedClient):
             "api_key",
             "grant_type",
             "access_token",
+            "client_authentication",
             "password",
             "run_as",
+            "service_account_token",
             "username",
         ),
         ignore_deprecated_options={"api_key"},
@@ -2473,9 +2589,13 @@ class SecurityClient(NamespacedClient):
         *,
         api_key: t.Optional[t.Mapping[str, t.Any]] = None,
         grant_type: t.Optional[
-            t.Union[str, t.Literal["access_token", "password"]]
+            t.Union[
+                str,
+                t.Literal["_user_managed_service_account", "access_token", "password"],
+            ]
         ] = None,
         access_token: t.Optional[str] = None,
+        client_authentication: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
@@ -2485,6 +2605,7 @@ class SecurityClient(NamespacedClient):
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
         ] = None,
         run_as: t.Optional[str] = None,
+        service_account_token: t.Optional[str] = None,
         username: t.Optional[str] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2501,9 +2622,11 @@ class SecurityClient(NamespacedClient):
           <li>username and password</li>
           <li>Elasticsearch access tokens</li>
           <li>JWTs</li>
+          <li>service account tokens of user-managed service accounts</li>
           </ul>
           <p>The user, for whom the authentication credentials is provided, can optionally &quot;run as&quot; (impersonate) another user.
-          In this case, the API key will be created on behalf of the impersonated user.</p>
+          In this case, the API key will be created on behalf of the impersonated user.
+          Run as is not supported with the <code>_user_managed_service_account</code> grant type.</p>
           <p>This API is intended be used by applications that need to create and manage API keys for end users, but cannot guarantee that those users have permission to create API keys on their own behalf.
           The API keys are created by the Elasticsearch API key service, which is automatically enabled.</p>
           <p>A successful grant API key API call returns a JSON structure that contains the API key, its unique id, and its name.
@@ -2515,16 +2638,25 @@ class SecurityClient(NamespacedClient):
 
         :param api_key: The API key.
         :param grant_type: The type of grant. Supported grant types are: `access_token`,
-            `password`.
+            `password`, and `_user_managed_service_account`.
         :param access_token: The user's access token. If you specify the `access_token`
             grant type, this parameter is required. It is not valid with other grant
             types.
+        :param client_authentication: The client authentication for a JWT that requires
+            it, which is what is normally sent in the `ES-Client-Authentication` request
+            header. It is valid only with the `access_token` grant type, when the access
+            token is a JWT.
         :param password: The user's password. If you specify the `password` grant type,
             this parameter is required. It is not valid with other grant types.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
             this operation visible to search. If 'wait_for', it waits for a refresh to
             make this operation visible to search. If 'false', nothing is done with refreshes.
-        :param run_as: The name of the user to be impersonated.
+        :param run_as: The name of the user to be impersonated. It is not valid with
+            the `_user_managed_service_account` grant type.
+        :param service_account_token: The service account token of a user-managed service
+            account, as returned by the create service account token API. If you specify
+            the `_user_managed_service_account` grant type, this parameter is required.
+            It is not valid with other grant types.
         :param username: The user name that identifies the user. If you specify the `password`
             grant type, this parameter is required. It is not valid with other grant
             types.
@@ -2554,10 +2686,14 @@ class SecurityClient(NamespacedClient):
                 __body["grant_type"] = grant_type
             if access_token is not None:
                 __body["access_token"] = access_token
+            if client_authentication is not None:
+                __body["client_authentication"] = client_authentication
             if password is not None:
                 __body["password"] = password
             if run_as is not None:
                 __body["run_as"] = run_as
+            if service_account_token is not None:
+                __body["service_account_token"] = service_account_token
             if username is not None:
                 __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -3662,6 +3798,102 @@ class SecurityClient(NamespacedClient):
             headers=__headers,
             body=__body,
             endpoint_id="security.put_user",
+            path_parts=__path_parts,
+        )
+
+    @_rewrite_parameters(
+        body_fields=("roles", "description", "enabled"),
+    )
+    def put_user_managed_service_account(
+        self,
+        *,
+        namespace: str,
+        service: str,
+        roles: t.Optional[t.Sequence[str]] = None,
+        description: t.Optional[str] = None,
+        enabled: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+        ] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Create user-managed service accounts.</p>
+          <p>Create a service account in a namespace of your own, or replace one that already exists.
+          A replacement is not a partial update: every write applies the defaults, so an account that was disabled and is then written again without <code>enabled</code> comes back enabled.</p>
+          <p>Creating an account whose name still has leftover service tokens is rejected.
+          Delete those tokens first.</p>
+          <p>NOTE: The <code>elastic</code> namespace is reserved for the built-in service accounts that ship with Elasticsearch.
+          The <code>manage_service_account</code> privilege does not authorize this API.</p>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-put-user-managed-service-account>`_
+
+        :param namespace: The namespace, which is a top-level grouping of service accounts.
+            It must start with a letter or digit and can contain only letters, digits,
+            hyphens, and underscores, up to a maximum of 128 characters. It cannot be
+            `elastic`, which is reserved for built-in service accounts.
+        :param service: The service name. It must start with a letter or digit and can
+            contain only letters, digits, hyphens, and underscores, up to a maximum of
+            128 characters.
+        :param roles: The names of the roles to grant to the service account, up to a
+            maximum of 1000. The roles are resolved when the account authenticates, so
+            they do not have to exist yet.
+        :param description: A free-text description of the account, as sent on the last
+            PUT of the account. It has no meaning to Elasticsearch. Absent when the account
+            has no description.
+        :param enabled: Whether the account can authenticate. Tokens can still be created
+            for a disabled account; they just cannot be used until the account is enabled.
+        :param refresh: If `wait_for` (the default) then wait for a refresh to make this
+            operation visible to search, if `true` then refresh the affected shards to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if roles is None and body is None:
+            raise ValueError("Empty value passed for parameter 'roles'")
+        __path_parts: t.Dict[str, str] = {
+            "namespace": _quote(namespace),
+            "service": _quote(service),
+        }
+        __path = (
+            f'/_security/service/{__path_parts["namespace"]}/{__path_parts["service"]}'
+        )
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if not __body:
+            if roles is not None:
+                __body["roles"] = roles
+            if description is not None:
+                __body["description"] = description
+            if enabled is not None:
+                __body["enabled"] = enabled
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="security.put_user_managed_service_account",
             path_parts=__path_parts,
         )
 

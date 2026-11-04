@@ -692,7 +692,6 @@ class FieldCollapse(AttrDict[Any]):
     :arg inner_hits: The number of inner hits and their sort order
     :arg max_concurrent_group_searches: The number of concurrent requests
         allowed to retrieve the inner_hits per group
-    :arg collapse:
     """
 
     field: Union[str, InstrumentedField, DefaultType]
@@ -700,7 +699,6 @@ class FieldCollapse(AttrDict[Any]):
         "InnerHits", Sequence["InnerHits"], Sequence[Dict[str, Any]], DefaultType
     ]
     max_concurrent_group_searches: Union[int, DefaultType]
-    collapse: Union["FieldCollapse", Dict[str, Any], DefaultType]
 
     def __init__(
         self,
@@ -710,7 +708,6 @@ class FieldCollapse(AttrDict[Any]):
             "InnerHits", Sequence["InnerHits"], Sequence[Dict[str, Any]], DefaultType
         ] = DEFAULT,
         max_concurrent_group_searches: Union[int, DefaultType] = DEFAULT,
-        collapse: Union["FieldCollapse", Dict[str, Any], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
@@ -719,8 +716,6 @@ class FieldCollapse(AttrDict[Any]):
             kwargs["inner_hits"] = inner_hits
         if max_concurrent_group_searches is not DEFAULT:
             kwargs["max_concurrent_group_searches"] = max_concurrent_group_searches
-        if collapse is not DEFAULT:
-            kwargs["collapse"] = collapse
         super().__init__(kwargs)
 
 
@@ -1764,15 +1759,16 @@ class InferenceConfigContainer(AttrDict[Any]):
 class InferenceString(AttrDict[Any]):
     """
     :arg type: (required) The type of data that the value represents.
-    :arg value: (required) String which may be raw text, or the string
-        representation of some other data such as an image in base64.
+    :arg value: (required) String which may be raw text, the string
+        representation of some other data such as an image in base64, or a
+        URL that points to the data.
     :arg format: The format of the data. If null, the default data format
         for the given type is used.
     """
 
     type: Union[Literal["text", "image", "audio", "video", "pdf"], DefaultType]
     value: Union[str, DefaultType]
-    format: Union[Literal["text", "base64"], None, DefaultType]
+    format: Union[Literal["text", "base64", "url"], None, DefaultType]
 
     def __init__(
         self,
@@ -1781,7 +1777,7 @@ class InferenceString(AttrDict[Any]):
             Literal["text", "image", "audio", "video", "pdf"], DefaultType
         ] = DEFAULT,
         value: Union[str, DefaultType] = DEFAULT,
-        format: Union[Literal["text", "base64"], None, DefaultType] = DEFAULT,
+        format: Union[Literal["text", "base64", "url"], None, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if type is not DEFAULT:
@@ -4470,18 +4466,25 @@ class TopLeftBottomRightGeoBounds(AttrDict[Any]):
 class TopMetricsValue(AttrDict[Any]):
     """
     :arg field: (required) A field to return as a metric.
+    :arg missing: The value to treat a document as having when it has no
+        value for the field. By default, a document that is missing any of
+        the metrics or the sort value is ignored.
     """
 
     field: Union[str, InstrumentedField, DefaultType]
+    missing: Union[str, int, float, bool, DefaultType]
 
     def __init__(
         self,
         *,
         field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        missing: Union[str, int, float, bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
             kwargs["field"] = str(field)
+        if missing is not DEFAULT:
+            kwargs["missing"] = missing
         super().__init__(kwargs)
 
 
@@ -5835,6 +5838,8 @@ class Hit(AttrDict[Any]):
     :arg shard:
     :arg node:
     :arg routing:
+    :arg slice: The slice the document belongs to, for a slice-enabled
+        index (`index.slice.enabled` set to `true`).
     :arg source:
     :arg rank:
     :arg seq_no:
@@ -5857,6 +5862,7 @@ class Hit(AttrDict[Any]):
     shard: str
     node: str
     routing: str
+    slice: str
     source: Any
     rank: int
     seq_no: int
@@ -6082,6 +6088,51 @@ class KnnQueryProfileResult(AttrDict[Any]):
     time: Any
     debug: Mapping[str, Any]
     children: Sequence["KnnQueryProfileResult"]
+
+
+class LearningToRankRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required)
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "LearningToRankRescoreProfileBreakdown"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
+
+
+class LearningToRankRescoreProfileBreakdown(AttrDict[Any]):
+    """
+    :arg build_feature_extractors: (required) The time spent turning the
+        feature queries of the model into queries that can score
+        documents.
+    :arg build_feature_extractors_count: (required)
+    :arg feature_extraction: (required) The time spent extracting the
+        features of the top documents.
+    :arg feature_extraction_count: (required)
+    :arg inference: (required) The time spent running the model on the
+        extracted features.
+    :arg inference_count: (required)
+    """
+
+    build_feature_extractors: int
+    build_feature_extractors_count: int
+    feature_extraction: int
+    feature_extraction_count: int
+    inference: int
+    inference_count: int
 
 
 class LongRareTermsAggregate(AttrDict[Any]):
@@ -6369,6 +6420,8 @@ class QueryBreakdown(AttrDict[Any]):
     :arg build_scorer_count: (required)
     :arg create_weight: (required)
     :arg create_weight_count: (required)
+    :arg into_bit_set: (required)
+    :arg into_bit_set_count: (required)
     :arg match: (required)
     :arg match_count: (required)
     :arg shallow_advance: (required)
@@ -6391,6 +6444,8 @@ class QueryBreakdown(AttrDict[Any]):
     build_scorer_count: int
     create_weight: int
     create_weight_count: int
+    into_bit_set: int
+    into_bit_set_count: int
     match: int
     match_count: int
     shallow_advance: int
@@ -6413,6 +6468,9 @@ class QueryProfile(AttrDict[Any]):
     :arg description: (required)
     :arg time_in_nanos: (required)
     :arg type: (required)
+    :arg debug: Extra details about the query.  Queries run by a rescorer
+        include a `rescorer` key with the position of that rescorer in the
+        shard's `rescore` array.
     :arg children:
     """
 
@@ -6420,7 +6478,32 @@ class QueryProfile(AttrDict[Any]):
     description: str
     time_in_nanos: Any
     type: str
+    debug: Mapping[str, Any]
     children: Sequence["QueryProfile"]
+
+
+class QueryRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required) The `query` rescorer does not report any
+        steps.
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "EmptyObject"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
 
 
 class RangeAggregate(AttrDict[Any]):
@@ -6549,6 +6632,30 @@ class SamplerAggregate(AttrDict[Any]):
     meta: Mapping[str, Any]
 
 
+class ScriptRescoreProfile(AttrDict[Any]):
+    """
+    :arg type: (required)
+    :arg breakdown: (required) The `script` rescorer does not report any
+        steps.
+    :arg description: (required) What the rescorer runs.
+    :arg time_in_nanos: (required) The total time spent in the rescorer,
+        including the time spent running its queries.
+    :arg time: The time spent in the rescorer, in human-readable units.
+        Only returned when `human` is `true`.
+    :arg debug: Extra details about the rescorer.  Every rescorer reports
+        `window_size`, the number of top documents it was configured to
+        rescore. `timed_out` is set to `true` if the search timed out
+        while the rescorer was running. Rescorers can add their own keys.
+    """
+
+    type: Any
+    breakdown: "EmptyObject"
+    description: str
+    time_in_nanos: Any
+    time: Any
+    debug: Mapping[str, Any]
+
+
 class ScriptedMetricAggregate(AttrDict[Any]):
     """
     :arg value: (required)
@@ -6617,6 +6724,8 @@ class ShardProfile(AttrDict[Any]):
     :arg shard_id: (required)
     :arg dfs:
     :arg fetch:
+    :arg rescore: One entry per rescorer, in the order they ran. Omitted
+        when the request has no rescorer.
     """
 
     aggregations: Sequence["AggregationProfile"]
@@ -6628,6 +6737,13 @@ class ShardProfile(AttrDict[Any]):
     shard_id: int
     dfs: "DfsProfile"
     fetch: "FetchProfile"
+    rescore: Sequence[
+        Union[
+            "QueryRescoreProfile",
+            "ScriptRescoreProfile",
+            "LearningToRankRescoreProfile",
+        ]
+    ]
 
 
 class ShardStatistics(AttrDict[Any]):
