@@ -370,7 +370,7 @@ class UpdateByQueryResponse(AttrDict[Any], Generic[_R]):
     _search: "UpdateByQueryBase[_R]"
 
     batches: int
-    failures: Sequence["types.BulkIndexByScrollFailure"]
+    failures: Sequence[Union["types.BulkIndexByScrollFailure", "types.ShardFailure"]]
     noops: int
     deleted: int
     requests_per_second: float

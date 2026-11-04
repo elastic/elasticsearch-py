@@ -2777,7 +2777,7 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Get mapping definitions.</p>
+          <p>Get field mapping definitions.</p>
           <p>Retrieves mapping definitions for one or more fields.
           For data streams, the API retrieves field mappings for the stream’s backing indices.</p>
           <p>This API is useful if you don't need a complete mapping or if an index mapping contains a large number of fields.</p>
@@ -5279,7 +5279,8 @@ class IndicesClient(NamespacedClient):
         .. raw:: html
 
           <p>Roll over to a new index.</p>
-          <p>TIP: We recommend using the index lifecycle rollover action to automate rollovers. However, Serverless does not support Index Lifecycle Management (ILM), so don't use this approach in the Serverless context.</p>
+          <p>TIP: To automate rollovers, use index lifecycle management (ILM) in deployments that support it.
+          Serverless does not support ILM. For data streams in Serverless, use data stream lifecycle instead.</p>
           <p>The rollover API creates a new index for a data stream or index alias.
           The API behavior depends on the rollover target.</p>
           <p><strong>Roll over a data stream</strong></p>
@@ -5408,7 +5409,9 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_auto_calibration: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        vector_formats: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5437,6 +5440,10 @@ class IndicesClient(NamespacedClient):
             a concrete (non-wildcarded) index, alias, or data stream that is missing,
             closed, or otherwise unavailable. If `true`, unavailable concrete targets
             are silently ignored.
+        :param include_auto_calibration: If `true`, the response includes the auto-calibration
+            information of each segment, for the `dense_vector` fields that support auto-calibration.
+        :param vector_formats: If `true`, the response includes the vector formats used
+            by the fields of each segment, in `attributes`.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -5458,8 +5465,12 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_auto_calibration is not None:
+            __query["include_auto_calibration"] = include_auto_calibration
         if pretty is not None:
             __query["pretty"] = pretty
+        if vector_formats is not None:
+            __query["vector_formats"] = vector_formats
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -6221,8 +6232,15 @@ class IndicesClient(NamespacedClient):
         """
         .. raw:: html
 
-          <p>Create or update an alias.</p>
-          <p>Adds a data stream or index to an alias.</p>
+          <p>Update aliases and delete indices atomically.</p>
+          <p>Applies one or more actions in a single request:</p>
+          <ul>
+          <li>Add a data stream or index to an alias.</li>
+          <li>Remove a data stream or index from an alias.</li>
+          <li>Delete an index in that same request, so the deletion and the alias changes are applied together.</li>
+          </ul>
+          <p>For example, you can replace an index with an alias of the same name.</p>
+          <p>NOTE: Every <code>remove_index</code> action in the request runs first, before any <code>add</code> or <code>remove</code> actions, no matter where it sits in the <code>actions</code> array.</p>
 
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-indices-update-aliases>`_
@@ -6295,7 +6313,7 @@ class IndicesClient(NamespacedClient):
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         rewrite: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6345,8 +6363,7 @@ class IndicesClient(NamespacedClient):
             Lucene query that will be executed.
         :param route_slice: The slice identifier used to route the operation to a specific
             slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
+            to a routing value. When omitted, all slices are targeted.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
