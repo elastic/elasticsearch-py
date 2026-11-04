@@ -1416,7 +1416,7 @@ class AsyncElasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("max_docs", "query", "slice", "sort"),
+        body_fields=("max_docs", "query", "runtime_mappings", "slice", "sort"),
         parameter_aliases={"from": "from_"},
     )
     async def delete_by_query(
@@ -1452,6 +1452,7 @@ class AsyncElasticsearch(BaseClient):
         request_cache: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1588,6 +1589,8 @@ class AsyncElasticsearch(BaseClient):
         :param requests_per_second: The throttle for this request in sub-requests per
             second.
         :param routing: A custom value used to route operations to a specific shard.
+        :param runtime_mappings: One or more runtime fields in the search request. These
+            fields take precedence over mapped fields with the same name.
         :param scroll: The period to retain the search context for scrolling.
         :param scroll_size: The size of the scroll request that powers the operation.
         :param search_timeout: The explicit timeout for each search request. It defaults
@@ -1704,6 +1707,8 @@ class AsyncElasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if query is not None:
                 __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
             if slice is not None:
                 __body["slice"] = slice
             if sort is not None:
