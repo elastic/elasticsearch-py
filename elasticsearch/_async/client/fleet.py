@@ -301,6 +301,7 @@ class FleetClient(NamespacedClient):
         self,
         *,
         index: str,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         allow_no_indices: t.Optional[bool] = None,
@@ -400,6 +401,10 @@ class FleetClient(NamespacedClient):
 
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
+        :param route_slice: The slice identifiers for a slice-enabled index (`index.slice.enabled`
+            set to `true`): a single slice, a comma-separated list such as `tenant-a,tenant-b`,
+            or `_all` to target all slices. When omitted, all slices are targeted. Indices
+            that are not slice-enabled match no documents when a slice is specified.
         :param aggregations:
         :param aggs:
         :param allow_no_indices: A setting that does two separate checks on the index
@@ -453,7 +458,9 @@ class FleetClient(NamespacedClient):
         :param request_cache:
         :param rescore:
         :param rest_total_hits_as_int:
-        :param routing:
+        :param routing: A custom value used to route operations to a specific shard.
+            Not allowed when `index.slice.enabled` is `true` for the target index; use
+            `_slice` instead.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
         :param script_fields: Retrieve a script evaluation (based on different fields)
@@ -507,8 +514,15 @@ class FleetClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path_parts: t.Dict[str, str] = {"index": _quote(index)}
-        __path = f'/{__path_parts["index"]}/_fleet/_fleet_search'
+        __path_parts: t.Dict[str, str]
+        if index not in SKIP_IN_PATH and route_slice not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index), "_slice": _quote(route_slice)}
+            __path = f'/{__path_parts["index"]}/{__path_parts["_slice"]}/_fleet/_fleet_search'
+        elif index not in SKIP_IN_PATH:
+            __path_parts = {"index": _quote(index)}
+            __path = f'/{__path_parts["index"]}/_fleet/_fleet_search'
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = body if body is not None else {}
         # The 'sort' parameter with a colon can't be encoded to the body.
