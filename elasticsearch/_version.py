@@ -16,4 +16,4 @@
 #  under the License.
 
 __versionstr__ = "8.19.3"
-__es_specification_commit__ = "999270bc713df0a9718ddb6981f65e44addd578b"
+__es_specification_commit__ = "051fbaf082c5edd57d23ee379b21bd03d4a7d937"

@@ -872,6 +872,9 @@ class CatClient(NamespacedClient):
             suffix, representing the value of the column in the chosen unit. Values that
             are not an exact multiple of the chosen unit are rounded down.
         :param expand_wildcards: The type of index that wildcard patterns can match.
+            Note that `closed` also matches non-hidden data streams, so their open backing
+            indices are returned as well. It does not restrict the response to closed
+            indices only.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.

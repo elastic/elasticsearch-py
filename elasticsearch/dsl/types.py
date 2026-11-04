@@ -4235,18 +4235,25 @@ class TopLeftBottomRightGeoBounds(AttrDict[Any]):
 class TopMetricsValue(AttrDict[Any]):
     """
     :arg field: (required) A field to return as a metric.
+    :arg missing: The value to treat a document as having when it has no
+        value for the field. By default, a document that is missing any of
+        the metrics or the sort value is ignored.
     """
 
     field: Union[str, InstrumentedField, DefaultType]
+    missing: Union[str, int, float, bool, DefaultType]
 
     def __init__(
         self,
         *,
         field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        missing: Union[str, int, float, bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
             kwargs["field"] = str(field)
+        if missing is not DEFAULT:
+            kwargs["missing"] = missing
         super().__init__(kwargs)
 
 
