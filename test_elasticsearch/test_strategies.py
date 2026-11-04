@@ -20,7 +20,11 @@ import pytest
 from elasticsearch.helpers.vectorstore import (
     DenseVectorScriptScoreStrategy,
     DenseVectorStrategy,
+    DistanceMetric,
     SparseVectorStrategy,
+)
+from elasticsearch.helpers.vectorstore._async.strategies import (
+    AsyncDenseVectorScriptScoreStrategy,
 )
 
 
@@ -88,3 +92,41 @@ def test_dense_vector_script_score_strategy_raises_error():
             num_candidates=20,
             filter=[],
         )
+
+
+@pytest.mark.parametrize(
+    "strategy_class",
+    [DenseVectorScriptScoreStrategy, AsyncDenseVectorScriptScoreStrategy],
+)
+@pytest.mark.parametrize("filters", [[], [{"term": {"category": "books"}}]])
+def test_max_inner_product_script_score(strategy_class, filters):
+    strategy = strategy_class(distance=DistanceMetric.MAX_INNER_PRODUCT)
+    body = strategy.es_query(
+        query=None,
+        query_vector=[1.0, -2.0],
+        text_field="text",
+        vector_field="embedding",
+        k=3,
+        num_candidates=10,
+        filter=filters,
+    )
+
+    assert body == {
+        "query": {
+            "script_score": {
+                "query": (
+                    {"bool": {"filter": filters}} if filters else {"match_all": {}}
+                ),
+                "script": {
+                    "source": """
+            double value = dotProduct(params.query_vector, 'embedding');
+            if (value < 0) {
+                return 1 / (1 + -1 * value);
+            }
+            return value + 1;
+            """,
+                    "params": {"query_vector": [1.0, -2.0]},
+                },
+            }
+        }
+    }

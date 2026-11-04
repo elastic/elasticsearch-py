@@ -369,10 +369,10 @@ class DenseVectorScriptScoreStrategy(RetrievalStrategy):
         elif self.distance is DistanceMetric.MAX_INNER_PRODUCT:
             similarity_algo = f"""
             double value = dotProduct(params.query_vector, '{vector_field}');
-            if (dotProduct < 0) {{
-                return 1 / (1 + -1 * dotProduct);
+            if (value < 0) {{
+                return 1 / (1 + -1 * value);
             }}
-            return dotProduct + 1;
+            return value + 1;
             """
         else:
             raise ValueError(f"Similarity {self.distance} not supported.")
