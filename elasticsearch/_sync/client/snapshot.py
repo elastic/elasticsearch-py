@@ -1107,6 +1107,7 @@ class SnapshotClient(NamespacedClient):
             "partial",
             "rename_pattern",
             "rename_replacement",
+            "restore_over_existing",
         ),
     )
     def restore(
@@ -1129,6 +1130,7 @@ class SnapshotClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         rename_pattern: t.Optional[str] = None,
         rename_replacement: t.Optional[str] = None,
+        restore_over_existing: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1203,6 +1205,12 @@ class SnapshotClient(NamespacedClient):
             to the `appendReplacement` logic.
         :param rename_replacement: The rename replacement string that is used with the
             `rename_pattern`.
+        :param restore_over_existing: If `true`, the request can restore over destination
+            indices and data streams that already exist, without closing or deleting
+            them first. An open destination index is closed and restored over in a single
+            step. A destination data stream is deleted, together with its backing and
+            failure store indices, and recreated from the snapshot. It can't be combined
+            with `rename_pattern`, `rename_replacement`, `include_global_state`, or `partial`.
         :param wait_for_completion: If `true`, the request returns a response when the
             restore operation completes. The operation is complete when it finishes all
             attempts to recover primary shards for restored indices. This applies even
@@ -1253,6 +1261,8 @@ class SnapshotClient(NamespacedClient):
                 __body["rename_pattern"] = rename_pattern
             if rename_replacement is not None:
                 __body["rename_replacement"] = rename_replacement
+            if restore_over_existing is not None:
+                __body["restore_over_existing"] = restore_over_existing
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json", "content-type": "application/json"}

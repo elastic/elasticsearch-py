@@ -4471,18 +4471,25 @@ class TopLeftBottomRightGeoBounds(AttrDict[Any]):
 class TopMetricsValue(AttrDict[Any]):
     """
     :arg field: (required) A field to return as a metric.
+    :arg missing: The value to treat a document as having when it has no
+        value for the field. By default, a document that is missing any of
+        the metrics or the sort value is ignored.
     """
 
     field: Union[str, InstrumentedField, DefaultType]
+    missing: Union[str, int, float, bool, DefaultType]
 
     def __init__(
         self,
         *,
         field: Union[str, InstrumentedField, DefaultType] = DEFAULT,
+        missing: Union[str, int, float, bool, DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
             kwargs["field"] = str(field)
+        if missing is not DEFAULT:
+            kwargs["missing"] = missing
         super().__init__(kwargs)
 
 
@@ -5836,6 +5843,8 @@ class Hit(AttrDict[Any]):
     :arg shard:
     :arg node:
     :arg routing:
+    :arg slice: The slice the document belongs to, for a slice-enabled
+        index (`index.slice.enabled` set to `true`).
     :arg source:
     :arg rank:
     :arg seq_no:
@@ -5858,6 +5867,7 @@ class Hit(AttrDict[Any]):
     shard: str
     node: str
     routing: str
+    slice: str
     source: Any
     rank: int
     seq_no: int
@@ -6415,6 +6425,8 @@ class QueryBreakdown(AttrDict[Any]):
     :arg build_scorer_count: (required)
     :arg create_weight: (required)
     :arg create_weight_count: (required)
+    :arg into_bit_set: (required)
+    :arg into_bit_set_count: (required)
     :arg match: (required)
     :arg match_count: (required)
     :arg shallow_advance: (required)
@@ -6437,6 +6449,8 @@ class QueryBreakdown(AttrDict[Any]):
     build_scorer_count: int
     create_weight: int
     create_weight_count: int
+    into_bit_set: int
+    into_bit_set_count: int
     match: int
     match_count: int
     shallow_advance: int

@@ -724,6 +724,7 @@ class TransformClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[str] = None,
         human: t.Optional[bool] = None,
+        initial_delay: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -752,6 +753,10 @@ class TransformClient(NamespacedClient):
         :param from_: Restricts the set of transformed entities to those changed after
             this time. Relative times like now-30d are supported. Only applicable for
             continuous transforms.
+        :param initial_delay: A one-time, reduced sync delay that applies until the transform
+            has processed its first document. It then reverts to the `sync.time.delay`
+            of the transform. Only applicable for continuous transforms, and it can't
+            be greater than `sync.time.delay`.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
@@ -768,6 +773,8 @@ class TransformClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
+        if initial_delay is not None:
+            __query["initial_delay"] = initial_delay
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
