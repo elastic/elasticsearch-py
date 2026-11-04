@@ -759,7 +759,7 @@ class EsqlClient(NamespacedClient):
     async def get_view(
         self,
         *,
-        name: t.Optional[str] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,

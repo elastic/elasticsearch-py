@@ -1479,7 +1479,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("max_docs", "query", "slice", "sort"),
+        body_fields=("max_docs", "query", "runtime_mappings", "slice", "sort"),
         parameter_aliases={"from": "from_"},
     )
     def delete_by_query(
@@ -1516,6 +1516,7 @@ class Elasticsearch(BaseClient):
         requests_per_second: t.Optional[float] = None,
         route_slice: t.Optional[str] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -1663,6 +1664,8 @@ class Elasticsearch(BaseClient):
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
+        :param runtime_mappings: One or more runtime fields in the search request. These
+            fields take precedence over mapped fields with the same name.
         :param scroll: The period to retain the search context for scrolling.
         :param scroll_size: The size of the scroll request that powers the operation.
         :param search_timeout: The explicit timeout for each search request. It defaults
@@ -1781,6 +1784,8 @@ class Elasticsearch(BaseClient):
                 __body["max_docs"] = max_docs
             if query is not None:
                 __body["query"] = query
+            if runtime_mappings is not None:
+                __body["runtime_mappings"] = runtime_mappings
             if slice is not None:
                 __body["slice"] = slice
             if sort is not None:
@@ -4089,7 +4094,7 @@ class Elasticsearch(BaseClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("requests", "metric"),
+        body_fields=("requests", "metric", "templates"),
     )
     def rank_eval(
         self,
@@ -4114,6 +4119,7 @@ class Elasticsearch(BaseClient):
         search_type: t.Optional[
             t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
         ] = None,
+        templates: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4145,6 +4151,9 @@ class Elasticsearch(BaseClient):
             are silently ignored.
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
+        :param templates: Query templates that the rated requests can refer to by their
+            `template_id`. This way, queries that differ only in their parameters don't
+            have to be repeated in `requests`.
         """
         if requests is None and body is None:
             raise ValueError("Empty value passed for parameter 'requests'")
@@ -4178,6 +4187,8 @@ class Elasticsearch(BaseClient):
                 __body["requests"] = requests
             if metric is not None:
                 __body["metric"] = metric
+            if templates is not None:
+                __body["templates"] = templates
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST",
