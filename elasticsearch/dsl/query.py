@@ -470,6 +470,72 @@ class ConstantScore(Query):
         super().__init__(filter=filter, boost=boost, _name=_name, **kwargs)
 
 
+class DenseVector(Query):
+    """
+    Scores every document that has a value for a `dense_vector` field,
+    with the exact similarity between its vector and a query vector.
+    Unlike the `knn` query, it doesn't use an index structure, or a cutoff
+    based on `k` or `num_candidates`.
+
+    :arg field: (required) The name of the `dense_vector` field to search
+        against. The field can be indexed, or not indexed (`index:
+        false`).
+    :arg query_vector: The query vector. It must have the same number of
+        dimensions as the field. You must provide either `query_vector` or
+        `query_vector_builder`, but not both.
+    :arg query_vector_builder: The configuration to build the query
+        vector, for example by running a text embedding model. You must
+        provide either `query_vector` or `query_vector_builder`, but not
+        both.
+    :arg similarity_function: The similarity used for scoring, which
+        overrides the similarity of the field for this query. It defaults
+        to the similarity of the field, or to `cosine` for a field that is
+        not indexed. For `bit` fields, only `l2_norm` is supported. It
+        can't be combined with `quantized: true`.
+    :arg quantized: If `false`, the documents are scored with the full-
+        precision vectors, regardless of the index options of the field.
+        If `true`, the documents are scored with the quantized vectors of
+        a quantized field, which is faster but less accurate. For a field
+        that is not quantized, `true` has no effect.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "dense_vector"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
+        query_vector_builder: Union[
+            "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
+        ] = DEFAULT,
+        similarity_function: Union[
+            Literal["cosine", "dot_product", "l2_norm", "max_inner_product"],
+            "DefaultType",
+        ] = DEFAULT,
+        quantized: Union[bool, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(
+            field=field,
+            query_vector=query_vector,
+            query_vector_builder=query_vector_builder,
+            similarity_function=similarity_function,
+            quantized=quantized,
+            boost=boost,
+            _name=_name,
+            **kwargs,
+        )
+
+
 class DisMax(Query):
     """
     Returns documents matching one or more wrapped queries, called query
@@ -1112,7 +1178,7 @@ class Knn(Query):
         self,
         *,
         field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
-        query_vector: Union[Sequence[float], "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
         query_vector_builder: Union[
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
