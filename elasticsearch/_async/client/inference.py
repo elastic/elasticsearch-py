@@ -101,6 +101,82 @@ class InferenceClient(NamespacedClient):
             path_parts=__path_parts,
         )
 
+    @_rewrite_parameters(
+        body_fields=("input", "task_settings"),
+    )
+    @_availability_warning(Stability.EXPERIMENTAL)
+    async def decision(
+        self,
+        *,
+        inference_id: str,
+        input: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
+        body: t.Optional[t.Dict[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        .. raw:: html
+
+          <p>Perform decision inference on the service.</p>
+          <p>Answer a set of named questions about an input, such as whether a customer is complaining, which team should handle a request, or how angry a customer is.
+          The questions are defined in the task settings of the inference endpoint, and can be replaced for a single request through <code>task_settings</code>.</p>
+          <blockquote>
+          <p>info
+          Only the <code>elastic</code> service currently supports the <code>decision</code> task.</p>
+          </blockquote>
+
+
+        `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-inference-inference>`_
+
+        :param inference_id: The unique identifier for the inference endpoint.
+        :param input: The input to answer the questions about. It can be specified as
+            a string, or as an object. The object form additionally allows specifying
+            images. string example: ``` "input": "I was charged twice for my order and
+            nobody answers my emails." ``` object example: ``` "input": { "type": "image",
+            "format": "base64", "value": "data:image/jpeg;base64,..." } ```
+        :param task_settings: Task settings for the individual inference request. These
+            settings override the task settings specified when creating the inference
+            endpoint.
+        :param timeout: The amount of time to wait for the inference request to complete.
+        """
+        if inference_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'inference_id'")
+        if input is None and body is None:
+            raise ValueError("Empty value passed for parameter 'input'")
+        __path_parts: t.Dict[str, str] = {"inference_id": _quote(inference_id)}
+        __path = f'/_inference/decision/{__path_parts["inference_id"]}'
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = body if body is not None else {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            if input is not None:
+                __body["input"] = input
+            if task_settings is not None:
+                __body["task_settings"] = task_settings
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST",
+            __path,
+            params=__query,
+            headers=__headers,
+            body=__body,
+            endpoint_id="inference.decision",
+            path_parts=__path_parts,
+        )
+
     @_rewrite_parameters()
     async def delete(
         self,
@@ -112,6 +188,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "decision",
                     "document_extraction",
                     "embedding",
                     "rerank",
@@ -234,7 +311,7 @@ class InferenceClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        task_settings: t.Optional[t.Any] = None,
+        task_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -366,6 +443,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "decision",
                     "document_extraction",
                     "embedding",
                     "rerank",
@@ -481,6 +559,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "decision",
                     "document_extraction",
                     "embedding",
                     "rerank",
@@ -683,6 +762,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "decision",
                     "document_extraction",
                     "embedding",
                     "rerank",
@@ -3567,6 +3647,7 @@ class InferenceClient(NamespacedClient):
                 t.Literal[
                     "chat_completion",
                     "completion",
+                    "decision",
                     "document_extraction",
                     "embedding",
                     "rerank",

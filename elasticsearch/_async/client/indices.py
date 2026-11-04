@@ -5409,7 +5409,9 @@ class IndicesClient(NamespacedClient):
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        include_auto_calibration: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        vector_formats: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         .. raw:: html
@@ -5438,6 +5440,10 @@ class IndicesClient(NamespacedClient):
             a concrete (non-wildcarded) index, alias, or data stream that is missing,
             closed, or otherwise unavailable. If `true`, unavailable concrete targets
             are silently ignored.
+        :param include_auto_calibration: If `true`, the response includes the auto-calibration
+            information of each segment, for the `dense_vector` fields that support auto-calibration.
+        :param vector_formats: If `true`, the response includes the vector formats used
+            by the fields of each segment, in `attributes`.
         """
         __path_parts: t.Dict[str, str]
         if index not in SKIP_IN_PATH:
@@ -5459,8 +5465,12 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if include_auto_calibration is not None:
+            __query["include_auto_calibration"] = include_auto_calibration
         if pretty is not None:
             __query["pretty"] = pretty
+        if vector_formats is not None:
+            __query["vector_formats"] = vector_formats
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET",
@@ -6303,7 +6313,7 @@ class IndicesClient(NamespacedClient):
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         rewrite: t.Optional[bool] = None,
-        route_slice: t.Optional[str] = None,
+        route_slice: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -6353,8 +6363,7 @@ class IndicesClient(NamespacedClient):
             Lucene query that will be executed.
         :param route_slice: The slice identifier used to route the operation to a specific
             slice. Use the special value `_all` to target all slices without restricting
-            to a routing value. Required when `index.slice.enabled` is `true` for the
-            target index; not allowed when `index.slice.enabled` is `false`.
+            to a routing value. When omitted, all slices are targeted.
         :param routing: A custom value used to route operations to a specific shard.
             Not allowed when `index.slice.enabled` is `true` for the target index; use
             `_slice` instead.
