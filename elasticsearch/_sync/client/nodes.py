@@ -145,9 +145,7 @@ class NodesClient(NamespacedClient):
         interval: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
         snapshots: t.Optional[int] = None,
-        sort: t.Optional[
-            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
-        ] = None,
+        sort: t.Optional[t.Union[str, t.Literal["cpu", "total"]]] = None,
         threads: t.Optional[int] = None,
         timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         type: t.Optional[

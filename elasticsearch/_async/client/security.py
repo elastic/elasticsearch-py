@@ -772,17 +772,17 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=("expiration", "metadata", "name", "role_descriptors"),
+        body_fields=("name", "expiration", "metadata", "role_descriptors"),
     )
     async def create_api_key(
         self,
         *,
+        name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expiration: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
-        name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
@@ -806,12 +806,13 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/docs/api/doc/elasticsearch/operation/operation-security-create-api-key>`_
 
+        :param name: A name for the API key. It is required, and it cannot be longer
+            than 256 characters, begin or end with whitespace, or begin with an underscore.
         :param expiration: The expiration time for the API key. By default, API keys
             never expire.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
             It supports nested data structure. Within the metadata object, keys beginning
             with `_` are reserved for system usage.
-        :param name: A name for the API key.
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
@@ -829,6 +830,8 @@ class SecurityClient(NamespacedClient):
             The derived API key can be used for authentication; it will not have authority
             to call Elasticsearch APIs.
         """
+        if name is None and body is None:
+            raise ValueError("Empty value passed for parameter 'name'")
         __path_parts: t.Dict[str, str] = {}
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
@@ -844,12 +847,12 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         if not __body:
+            if name is not None:
+                __body["name"] = name
             if expiration is not None:
                 __body["expiration"] = expiration
             if metadata is not None:
                 __body["metadata"] = metadata
-            if name is not None:
-                __body["name"] = name
             if role_descriptors is not None:
                 __body["role_descriptors"] = role_descriptors
         __headers = {"accept": "application/json", "content-type": "application/json"}
