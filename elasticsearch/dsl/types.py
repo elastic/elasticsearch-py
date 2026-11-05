@@ -692,7 +692,6 @@ class FieldCollapse(AttrDict[Any]):
     :arg inner_hits: The number of inner hits and their sort order
     :arg max_concurrent_group_searches: The number of concurrent requests
         allowed to retrieve the inner_hits per group
-    :arg collapse:
     """
 
     field: Union[str, InstrumentedField, DefaultType]
@@ -700,7 +699,6 @@ class FieldCollapse(AttrDict[Any]):
         "InnerHits", Sequence["InnerHits"], Sequence[Dict[str, Any]], DefaultType
     ]
     max_concurrent_group_searches: Union[int, DefaultType]
-    collapse: Union["FieldCollapse", Dict[str, Any], DefaultType]
 
     def __init__(
         self,
@@ -710,7 +708,6 @@ class FieldCollapse(AttrDict[Any]):
             "InnerHits", Sequence["InnerHits"], Sequence[Dict[str, Any]], DefaultType
         ] = DEFAULT,
         max_concurrent_group_searches: Union[int, DefaultType] = DEFAULT,
-        collapse: Union["FieldCollapse", Dict[str, Any], DefaultType] = DEFAULT,
         **kwargs: Any,
     ):
         if field is not DEFAULT:
@@ -719,8 +716,6 @@ class FieldCollapse(AttrDict[Any]):
             kwargs["inner_hits"] = inner_hits
         if max_concurrent_group_searches is not DEFAULT:
             kwargs["max_concurrent_group_searches"] = max_concurrent_group_searches
-        if collapse is not DEFAULT:
-            kwargs["collapse"] = collapse
         super().__init__(kwargs)
 
 
