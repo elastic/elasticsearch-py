@@ -62,12 +62,17 @@ class ApiError(_ApiError):
                 if isinstance(self.body["error"], dict):
                     root_cause = self.body["error"]["root_cause"][0]
                     caused_by = self.body["error"].get("caused_by", {})
+
+                    resource_id = root_cause.get("resource.id")
+                    if isinstance(resource_id, list):
+                        resource_id = ", ".join(str(r) for r in resource_id)
+
                     cause = ", ".join(
                         filter(
                             None,
                             [
                                 repr(root_cause["reason"]),
-                                root_cause.get("resource.id"),
+                                resource_id,
                                 root_cause.get("resource.type"),
                                 caused_by.get("reason"),
                             ],
