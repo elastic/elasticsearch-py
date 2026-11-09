@@ -1388,6 +1388,28 @@ Python types are mapped to their corresponding `Field` types according to the fo
 | `datetime` | `Date(required=True)` |
 | `date` | `Date(format="yyyy-MM-dd", required=True)` |
 
+::::{note}
+String annotations, including those produced by `from __future__ import annotations`, are resolved when the document class is created. Names must be available at runtime in the module or class namespace for field inference to work; names local to an enclosing function are not visible.
+
+If an annotation uses a name that is not defined at runtime, or a circular alias, an explicitly supplied field keeps its own `required` and `multi` settings, without a warning. Wrappers around the undefined name still apply, so `List["Missing"]` makes the field multi-valued and `Optional["Missing"]` makes it optional. For example, `Date()` remains optional; use `Date(required=True)` if the field must be required even when its type is imported only for type checking:
+
+```python
+from __future__ import annotations
+from typing import TYPE_CHECKING
+from elasticsearch.dsl import Date, Document
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
+class Post(Document):
+    created: datetime = Date(required=True)
+```
+
+Here, `Post().full_clean()` raises a validation error for the missing `created` field. Without a usable explicit mapping, an unresolved annotation raises `TypeError` during class creation, with the resolution error as its cause.
+
+Other problems raise even when an explicit field is supplied. An unsupported union such as `int | str` or a bare `List` without an element type raises `TypeError`, as it does without the future import, and any other error raised while evaluating an annotation propagates unchanged.
+::::
+
 To type a field as optional, the standard `Optional` modifier from the Python `typing` package can be used. When using Python 3.10 or newer, "pipe" syntax can also be used, by adding `| None` to a type. The `List` modifier can be added to a field to convert it to an array, similar to using the `multi=True` argument on the `Field` object.
 
 ::::{tab-set}
@@ -1401,7 +1423,7 @@ from typing import Optional, List
 class MyDoc(Document):
     pub_date: Optional[datetime]  # same as pub_date = Date()
     middle_name: str | None       # same as middle_name = Text()
-    authors: List[str]            # same as authors = Text(multi=True, required=True)
+    authors: List[str]            # same as authors = Text(multi=True)
     comments: Optional[List[str]] # same as comments = Text(multi=True)
 ```
 :::
@@ -1414,7 +1436,7 @@ from typing import Optional, List
 class MyDoc(AsyncDocument):
     pub_date: Optional[datetime]  # same as pub_date = Date()
     middle_name: str | None       # same as middle_name = Text()
-    authors: List[str]            # same as authors = Text(multi=True, required=True)
+    authors: List[str]            # same as authors = Text(multi=True)
     comments: Optional[List[str]] # same as comments = Text(multi=True)
 ```
 :::
@@ -1439,7 +1461,7 @@ class Comment(InnerDoc):
 
 class Post(Document):
     address: Address         # same as address = Object(Address, required=True)
-    comments: List[Comment]  # same as comments = Nested(Comment, required=True)
+    comments: List[Comment]  # same as comments = Nested(Comment)
 ```
 :::
 
@@ -1456,7 +1478,7 @@ class Comment(InnerDoc):
 
 class Post(AsyncDocument):
     address: Address         # same as address = Object(Address, required=True)
-    comments: List[Comment]  # same as comments = Nested(Comment, required=True)
+    comments: List[Comment]  # same as comments = Nested(Comment)
 ```
 :::
 
