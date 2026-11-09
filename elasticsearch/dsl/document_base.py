@@ -17,7 +17,6 @@
 
 import json
 import sys
-from collections.abc import Hashable
 from datetime import date, datetime
 from fnmatch import fnmatch
 from types import FunctionType
@@ -281,19 +280,23 @@ class InstrumentedField(InstrumentedExpression):
         return f"InstrumentedField[{self._expr}]"
 
 
+class _CircularAnnotationError(TypeError):
+    """An annotation contains a circular alias."""
+
+
 def _resolve_annotation(
     type_: Any, globalns: Dict[str, Any], localns: Dict[str, Any], seen: set[str]
 ) -> Any:
     """Resolve strings and forward references, recording evaluated strings in seen.
 
-    Propagate evaluation and cycle errors; callers use seen to distinguish
-    live types from types obtained by evaluating a quoted annotation.
+    Errors raised by ``eval`` propagate, and a string evaluated twice raises
+    ``_CircularAnnotationError``.
     """
     while isinstance(type_, (str, ForwardRef)):
         if isinstance(type_, ForwardRef):
             type_ = type_.__forward_arg__
         if type_ in seen:
-            raise TypeError(f"Circular annotation: {type_}")
+            raise _CircularAnnotationError(f"Circular annotation: {type_}")
         seen.add(type_)
         type_ = eval(type_, globalns, localns)
     return type_
@@ -415,22 +418,16 @@ class DocumentOptions:
                 field_args: List[Any] = []
                 field_kwargs: Dict[str, Any] = {}
                 seen: set[str] = set()
-                required = True
-                multi = False
-                fallback_settings: Tuple[Optional[bool], Optional[bool]] = (None, None)
                 top_level = True
                 while True:
-                    if not seen and not isinstance(annotations[name], str):
-                        # remember what live wrappers inferred before evaluating
-                        # any quoted part, in case that part cannot be mapped
-                        fallback_settings = (required, multi)
                     try:
                         type_ = _resolve_annotation(type_, globalns, localns, seen)
-                    except Exception as exc:
+                    except (NameError, _CircularAnnotationError) as exc:
+                        # an undefined name or circular alias falls back to an
+                        # explicit field, which keeps any setting the resolved
+                        # outer wrappers did not make (List["Missing"] still
+                        # makes it a list)
                         annotation_error = exc
-                        # whole-string annotations use the explicit field as
-                        # given; live wrappers keep what they inferred
-                        required, multi = fallback_settings
                         break
                     if top_level and isinstance(type_, _AnnotatedAlias):
                         type_metadata.extend(type_.__metadata__)
@@ -438,12 +435,6 @@ class DocumentOptions:
                         top_level = False
                         continue
                     top_level = False
-                    if seen and isinstance(type_, _AnnotatedAlias):
-                        annotation_error = TypeError(
-                            f"Nested Annotated is not supported for field {name}"
-                        )
-                        required, multi = fallback_settings
-                        break
                     origin = get_origin(type_)
                     if origin == Mapped:
                         # M[type] -> extract the wrapped type
@@ -452,27 +443,15 @@ class DocumentOptions:
                         # Optional[type], type | None or None | type
                         args = get_args(type_)
                         if len(args) != 2 or type(None) not in args:
-                            annotation_error = TypeError(
-                                f"Unsupported union for field {name}"
-                            )
-                            # live annotations still raise; string annotations
-                            # fall back to an explicit field if there is one
-                            if not seen:
-                                raise annotation_error
-                            required, multi = fallback_settings
-                            break
+                            raise TypeError(f"Unsupported union for field {name}")
                         required = False
                         type_ = next(arg for arg in args if arg is not type(None))
                     elif origin in (list, List):
                         args = get_args(type_)
                         if not args:
-                            annotation_error = TypeError(
+                            raise TypeError(
                                 f"Missing list element type for field {name}"
                             )
-                            if not seen:
-                                raise annotation_error
-                            required, multi = fallback_settings
-                            break
                         # List[type] -> mark instance as multi
                         multi = True
                         required = False
@@ -483,17 +462,16 @@ class DocumentOptions:
                     if origin == ClassVar or type_ == ClassVar:
                         # skip ClassVar attributes
                         continue
+                    # a resolved type is required and single-valued unless a
+                    # wrapper such as Optional or List said otherwise
+                    if required is None:
+                        required = True
+                    if multi is None:
+                        multi = False
                     if isinstance(type_, type) and issubclass(type_, InnerDoc):
                         # object or nested field
                         field = Nested if multi else Object
                         field_args = [type_]
-                    elif seen and not isinstance(type_, Hashable):
-                        # string annotations that evaluate to non-types such as
-                        # "[str]" fall back to an explicit field like the rest
-                        annotation_error = TypeError(
-                            f"Unsupported annotation for field {name}"
-                        )
-                        required, multi = fallback_settings
                     elif type_ in self.type_annotation_map:
                         # use best field type for the type hint provided
                         field, field_kwargs = self.type_annotation_map[type_]  # type: ignore[assignment]

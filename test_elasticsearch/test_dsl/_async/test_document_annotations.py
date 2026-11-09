@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+import warnings
 from datetime import date
 from typing import TYPE_CHECKING, Annotated, ClassVar, List, Optional
 
@@ -215,22 +216,36 @@ def test_type_checking_only_annotation_uses_field_as_given(required: bool) -> No
         Article().full_clean()
 
 
-@pytest.mark.parametrize(
-    "annotation",
-    [
-        "Missing",
-        "Optional[Missing]",
-        'List["Missing"]',
-        "str | int",
-        "List",
-        "List[Annotated[str, 'doc']]",
-        "List[int, str]",
-        "[str]",
-    ],
-)
+@pytest.mark.parametrize("annotation", ["Missing", "Optional[Missing]"])
 @pytest.mark.parametrize("required, multi", [(True, True), (False, False)])
 def test_unusable_annotation_uses_field_as_given(
     annotation: str, required: bool, multi: bool
+) -> None:
+    explicit = Keyword(required=required, multi=multi)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+
+        class Article(AsyncDocument):
+            __annotations__ = {"value": annotation}
+            value = explicit
+
+    assert Article._doc_type.mapping["value"] is explicit
+    assert (explicit._required, explicit._multi) == (required, multi)
+
+
+@pytest.mark.parametrize(
+    "annotation, implied",
+    [
+        ('List["Missing"]', {"required": False, "multi": True}),
+        ('Optional["Missing"]', {"required": False}),
+        ('M["Missing"]', {}),
+        ("RecursiveAlias", {"required": False, "multi": True}),
+    ],
+)
+@pytest.mark.parametrize("required, multi", [(True, True), (False, False)])
+def test_unresolved_inner_name_keeps_outer_wrappers(
+    annotation: str, implied: dict[str, bool], required: bool, multi: bool
 ) -> None:
     explicit = Keyword(required=required, multi=multi)
 
@@ -238,27 +253,116 @@ def test_unusable_annotation_uses_field_as_given(
         __annotations__ = {"value": annotation}
         value = explicit
 
+    expected = {"required": required, "multi": multi, **implied}
     assert Article._doc_type.mapping["value"] is explicit
-    assert (explicit._required, explicit._multi) == (required, multi)
+    assert (explicit._required, explicit._multi) == (
+        expected["required"],
+        expected["multi"],
+    )
 
 
-@pytest.mark.parametrize(
-    "annotation, cause",
-    [
-        ("Optional[Missing]", NameError),
-        ("str | int", TypeError),
-        ("[str]", TypeError),
-    ],
-)
-def test_unusable_annotation_without_field_raises(
-    annotation: str, cause: type[Exception]
-) -> None:
+@pytest.mark.parametrize("annotation", ["Optional[Missing]", 'List["Missing"]'])
+def test_unusable_annotation_without_field_raises(annotation: str) -> None:
     with pytest.raises(TypeError, match="Cannot map field value") as exc:
 
         class Article(AsyncDocument):
             __annotations__ = {"value": annotation}
 
-    assert isinstance(exc.value.__cause__, cause)
+    assert isinstance(exc.value.__cause__, NameError)
+
+
+@pytest.mark.parametrize(
+    "annotation", ["List[Annotated[str, 'doc']]", List[Annotated[str, "doc"]]]
+)
+def test_nested_annotated_matches_unquoted_annotation(annotation: object) -> None:
+    explicit = Keyword(required=True, multi=False)
+
+    class Article(AsyncDocument):
+        __annotations__ = {"value": annotation}
+        value = explicit
+
+    assert Article._doc_type.mapping["value"] is explicit
+    assert (explicit._required, explicit._multi) == (False, True)
+    with pytest.raises(TypeError, match="Cannot map field value") as exc:
+
+        class Unmapped(AsyncDocument):
+            __annotations__ = {"value": annotation}
+
+    assert exc.value.__cause__ is None
+
+
+@pytest.mark.parametrize(
+    "annotation, message",
+    [
+        ("str | int", "Unsupported union for field value"),
+        ('Optional["str | int"]', "Unsupported union for field value"),
+        ("List", "Missing list element type for field value"),
+        ('M["List"]', "Missing list element type for field value"),
+        ("[str]", "unhashable type"),
+    ],
+)
+@pytest.mark.parametrize("field_kind", ["none", "field", "mapped_field"])
+def test_unsupported_annotation_raises(
+    annotation: str, message: str, field_kind: str
+) -> None:
+    with pytest.raises(TypeError, match=message):
+
+        class Article(AsyncDocument):
+            __annotations__ = {"value": annotation}
+            if field_kind == "field":
+                value = Keyword()
+            elif field_kind == "mapped_field":
+                value = mapped_field(Keyword())
+
+
+@pytest.mark.parametrize(
+    "annotation, error_type",
+    [
+        ("List[int, str]", TypeError),
+        ("str |", SyntaxError),
+        ("str.missing", AttributeError),
+    ],
+)
+@pytest.mark.parametrize("field_kind", ["none", "field", "mapped_field"])
+def test_annotation_evaluation_error_propagates(
+    annotation: str, error_type: type[Exception], field_kind: str
+) -> None:
+    with pytest.raises(error_type) as exc:
+
+        class Article(AsyncDocument):
+            __annotations__ = {"value": annotation}
+            if field_kind == "field":
+                value = Keyword()
+            elif field_kind == "mapped_field":
+                value = mapped_field(Keyword())
+
+    assert exc.value.__cause__ is None
+
+
+@pytest.mark.parametrize("error_type", [TypeError, ValueError, RuntimeError])
+@pytest.mark.parametrize("field_kind", ["none", "field", "mapped_field"])
+def test_user_annotation_error_propagates(
+    monkeypatch: pytest.MonkeyPatch, error_type: type[Exception], field_kind: str
+) -> None:
+    error = error_type("annotation failure")
+    evaluations = []
+
+    def fail_annotation() -> None:
+        evaluations.append(None)
+        raise error
+
+    monkeypatch.setitem(globals(), "fail_annotation", fail_annotation)
+    with pytest.raises(error_type) as exc:
+
+        class Article(AsyncDocument):
+            value: fail_annotation()
+            if field_kind == "field":
+                value = Keyword()
+            elif field_kind == "mapped_field":
+                value = mapped_field(Keyword())
+
+    assert exc.value is error
+    assert len(evaluations) == 1
 
 
 def test_unresolved_annotation_keeps_mapped_field_options() -> None:
@@ -303,3 +407,14 @@ def test_circular_alias_uses_field_as_given(annotation: str) -> None:
         value = Keyword(multi=True)
 
     assert Article().value == []
+
+
+@pytest.mark.parametrize("annotation", ["CircularAlias", "RecursiveAlias"])
+def test_circular_alias_without_field_raises(annotation: str) -> None:
+    with pytest.raises(TypeError, match="Cannot map field value") as exc:
+
+        class Article(AsyncDocument):
+            __annotations__ = {"value": annotation}
+
+    assert isinstance(exc.value.__cause__, TypeError)
+    assert "Circular annotation" in str(exc.value.__cause__)

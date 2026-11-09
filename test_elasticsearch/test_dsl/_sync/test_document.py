@@ -728,6 +728,7 @@ def test_live_wrappers_preserve_inference_with_unresolved_contents() -> None:
     class Article(Document):
         reference: Optional["Missing"] = field.Keyword(required=True)  # noqa: F821
         tags: List["Missing"] = field.Keyword(required=True)  # noqa: F821
+        note: M["Missing"] = mapped_field(field.Keyword())  # noqa: F821
 
     assert Article().reference is None
     assert Article().tags == []
@@ -751,20 +752,24 @@ def test_live_unsupported_union_with_field_still_raises() -> None:
 
 
 @pytest.mark.parametrize(
-    "annotation, required, multi",
-    [(Optional["str | int"], False, False), (M["List"], True, False)],
+    "annotation, message",
+    [
+        (Optional["str | int"], "Unsupported union for field value"),
+        (M["List"], "Missing list element type for field value"),
+    ],
 )
+@pytest.mark.parametrize("field_kind", ["none", "field", "mapped_field"])
 def test_live_wrapper_with_unsupported_quoted_type(
-    annotation: Any, required: bool, multi: bool
+    annotation: Any, message: str, field_kind: str
 ) -> None:
-    explicit = field.Keyword(required=not required, multi=not multi)
+    with raises(TypeError, match=message):
 
-    class Article(Document):
-        __annotations__ = {"value": annotation}
-        value = explicit
-
-    assert Article._doc_type.mapping["value"] is explicit
-    assert (explicit._required, explicit._multi) == (required, multi)
+        class Article(Document):
+            __annotations__ = {"value": annotation}
+            if field_kind == "field":
+                value = field.Keyword()
+            elif field_kind == "mapped_field":
+                value = mapped_field(field.Keyword())
 
 
 def test_live_unhashable_annotation_with_field_still_raises() -> None:
