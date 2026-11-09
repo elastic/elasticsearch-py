@@ -3697,10 +3697,6 @@ class TopMetrics(Agg[_R]):
     :arg size: The number of top documents from which to return metrics.
         Defaults to `1` if omitted.
     :arg sort: The sort order of the documents.
-    :arg field: The field on which to run the aggregation.
-    :arg missing: The value to apply to documents that do not have a
-        value. By default, documents without a value are ignored.
-    :arg script:
     """
 
     name = "top_metrics"
@@ -3721,20 +3717,9 @@ class TopMetrics(Agg[_R]):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
-        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
-        missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
-        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
-        super().__init__(
-            metrics=metrics,
-            size=size,
-            sort=sort,
-            field=field,
-            missing=missing,
-            script=script,
-            **kwargs,
-        )
+        super().__init__(metrics=metrics, size=size, sort=sort, **kwargs)
 
 
 class ValueCount(Agg[_R]):

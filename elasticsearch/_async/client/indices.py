@@ -6117,6 +6117,7 @@ class IndicesClient(NamespacedClient):
         forbid_closed_indices: t.Optional[bool] = None,
         groups: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        include_auto_calibration: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
@@ -6156,6 +6157,9 @@ class IndicesClient(NamespacedClient):
             indices.
         :param groups: Comma-separated list of search groups to include in the search
             statistics.
+        :param include_auto_calibration: If `true`, the response includes the auto-calibration
+            information of each `dense_vector` field that supports auto-calibration.
+            Only applies at the `indices` and `shards` levels.
         :param include_segment_file_sizes: If true, the call reports the aggregated disk
             usage of each one of the Lucene index files (only applies if segment stats
             are requested).
@@ -6196,6 +6200,8 @@ class IndicesClient(NamespacedClient):
             __query["groups"] = groups
         if human is not None:
             __query["human"] = human
+        if include_auto_calibration is not None:
+            __query["include_auto_calibration"] = include_auto_calibration
         if include_segment_file_sizes is not None:
             __query["include_segment_file_sizes"] = include_segment_file_sizes
         if include_unloaded_segments is not None:
