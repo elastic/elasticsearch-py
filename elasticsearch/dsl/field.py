@@ -19,7 +19,7 @@ import base64
 import collections.abc
 import ipaddress
 from copy import deepcopy
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -1363,7 +1363,7 @@ class Date(Field):
             return data
         if isinstance(data, int):
             # Divide by a float to preserve milliseconds on the datetime.
-            return datetime.utcfromtimestamp(data / 1000.0)
+            return datetime.fromtimestamp(data / 1000.0, timezone.utc).replace(tzinfo=None)
 
         raise ValidationException(f"Could not parse date from the value ({data!r})")
 
