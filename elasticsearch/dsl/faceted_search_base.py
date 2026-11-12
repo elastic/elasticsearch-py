@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -243,7 +243,7 @@ class DateHistogramFacet(Facet[_R]):
             if bucket["key"] is None:
                 bucket["key"] = 0
             # Preserve milliseconds in the datetime
-            return datetime.utcfromtimestamp(int(cast(int, bucket["key"])) / 1000.0)
+            return datetime.fromtimestamp(int(cast(int, bucket["key"])) / 1000.0, timezone.utc).replace(tzinfo=None)
         else:
             return bucket["key"]
 
