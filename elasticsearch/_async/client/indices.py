@@ -2854,6 +2854,7 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
+        include_managed_fields: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
         pretty: t.Optional[bool] = None,
@@ -2872,6 +2873,8 @@ class IndicesClient(NamespacedClient):
         :param flat_settings: If true, returns settings in flat format.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
+        :param include_managed_fields: If true, the response includes internally managed
+            fields, such as `registry_installed`, that are hidden by default.
         :param local: If true, the request retrieves information from the local node
             only. Defaults to false, which means information is retrieved from the master
             node.
@@ -2897,6 +2900,8 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
+        if include_managed_fields is not None:
+            __query["include_managed_fields"] = include_managed_fields
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -6117,6 +6122,7 @@ class IndicesClient(NamespacedClient):
         forbid_closed_indices: t.Optional[bool] = None,
         groups: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
+        include_auto_calibration: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
@@ -6156,6 +6162,9 @@ class IndicesClient(NamespacedClient):
             indices.
         :param groups: Comma-separated list of search groups to include in the search
             statistics.
+        :param include_auto_calibration: If `true`, the response includes the auto-calibration
+            information of each `dense_vector` field that supports auto-calibration.
+            Only applies at the `indices` and `shards` levels.
         :param include_segment_file_sizes: If true, the call reports the aggregated disk
             usage of each one of the Lucene index files (only applies if segment stats
             are requested).
@@ -6196,6 +6205,8 @@ class IndicesClient(NamespacedClient):
             __query["groups"] = groups
         if human is not None:
             __query["human"] = human
+        if include_auto_calibration is not None:
+            __query["include_auto_calibration"] = include_auto_calibration
         if include_segment_file_sizes is not None:
             __query["include_segment_file_sizes"] = include_segment_file_sizes
         if include_unloaded_segments is not None:

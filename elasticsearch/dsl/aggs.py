@@ -2877,6 +2877,35 @@ class Rate(Agg[_R]):
         )
 
 
+class RoaringBitmap(Agg[_R]):
+    """
+    Returns the exact distinct values of an `integer` or `long` field
+    across the matching documents, as a base64-encoded portable roaring
+    bitmap. The result can be passed to the `bitmap_terms` query. It can't
+    be placed inside an aggregation that produces more than one bucket,
+    such as `terms` or `histogram`.
+
+    :arg field: (required) The `integer` or `long` field from which to
+        collect the distinct values. Scripts are not supported, so the
+        field must be mapped.
+    :arg missing: The value to use for documents that do not have a value
+        for the field. It must be non-negative and fit the `integer` or
+        `long` type of the field. By default, documents without a value
+        are ignored.
+    """
+
+    name = "roaring_bitmap"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        missing: Union[int, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(field=field, missing=missing, **kwargs)
+
+
 class ReverseNested(Bucket[_R]):
     """
     A special single bucket aggregation that enables aggregating on parent
@@ -3697,10 +3726,6 @@ class TopMetrics(Agg[_R]):
     :arg size: The number of top documents from which to return metrics.
         Defaults to `1` if omitted.
     :arg sort: The sort order of the documents.
-    :arg field: The field on which to run the aggregation.
-    :arg missing: The value to apply to documents that do not have a
-        value. By default, documents without a value are ignored.
-    :arg script:
     """
 
     name = "top_metrics"
@@ -3721,20 +3746,9 @@ class TopMetrics(Agg[_R]):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
-        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
-        missing: Union[str, int, float, bool, "DefaultType"] = DEFAULT,
-        script: Union["types.Script", Dict[str, Any], "DefaultType"] = DEFAULT,
         **kwargs: Any,
     ):
-        super().__init__(
-            metrics=metrics,
-            size=size,
-            sort=sort,
-            field=field,
-            missing=missing,
-            script=script,
-            **kwargs,
-        )
+        super().__init__(metrics=metrics, size=size, sort=sort, **kwargs)
 
 
 class ValueCount(Agg[_R]):
