@@ -387,6 +387,9 @@ class FleetClient(NamespacedClient):
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
         wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
+        wait_for_checkpoints_timeout: t.Optional[
+            t.Union[str, t.Literal[-1], t.Literal[0]]
+        ] = None,
         body: t.Optional[t.Dict[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -511,6 +514,8 @@ class FleetClient(NamespacedClient):
             the search API will only be executed on a shard after the relevant checkpoint
             has become visible for search. Defaults to an empty list which will cause
             Elasticsearch to immediately execute the search.
+        :param wait_for_checkpoints_timeout: The maximum time to wait for the checkpoints
+            specified in `wait_for_checkpoints` to become visible for search.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -602,6 +607,8 @@ class FleetClient(NamespacedClient):
             __query["typed_keys"] = typed_keys
         if wait_for_checkpoints is not None:
             __query["wait_for_checkpoints"] = wait_for_checkpoints
+        if wait_for_checkpoints_timeout is not None:
+            __query["wait_for_checkpoints_timeout"] = wait_for_checkpoints_timeout
         if not __body:
             if aggregations is not None:
                 __body["aggregations"] = aggregations
