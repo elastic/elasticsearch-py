@@ -165,10 +165,10 @@ If you don’t specify `ca_certs` or `ssl_assert_fingerprint` then the [certifi 
 
 
 
-### Verifying HTTPS with certificate fingerprints (Python 3.10 or later) [_verifying_https_with_certificate_fingerprints_python_3_10_or_later]
+### Verifying HTTPS with certificate fingerprints [_verifying_https_with_certificate_fingerprints_python_3_10_or_later]
 
 ::::{note}
-Using this method **requires using Python 3.10 or later** and isn’t available when using the `aiohttp` HTTP client library so can’t be used with `AsyncElasticsearch`.
+The matching certificate is the only trust anchor. Signature and expiry stay checked. `AsyncElasticsearch` can use this option. A hostname string for `ssl_assert_hostname` is accepted on the sync client. On the default async node (`aiohttp`), that option accepts `True` or `False`, and a hostname string raises `ValueError`.
 ::::
 
 

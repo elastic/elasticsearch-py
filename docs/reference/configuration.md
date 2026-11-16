@@ -45,9 +45,7 @@ client = AsyncElasticsearch(
 
 ::::
 
-If using a generated certificate or certificate with a known fingerprint you can use the `ssl_assert_fingerprint` to specify the fingerprint which tries to match the server’s leaf certificate during the TLS handshake. If there is any matching certificate the connection is verified, otherwise a `TlsError` is raised.
-
-In Python 3.9 and earlier only the leaf certificate will be verified but in Python 3.10+ private APIs are used to verify any certificate in the certificate chain. This helps when using certificates that are generated on a multi-node cluster.
+`ssl_assert_fingerprint` pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is set. `Urllib3HttpNode` and `RequestsHttpNode` accept `True` or a hostname. `AiohttpHttpNode`, the default for `AsyncElasticsearch`, accepts `True` or `False`, and a hostname string raises `ValueError`. Pin the CA fingerprint Elasticsearch prints at startup. The pin is taken on the first request and kept, so restart the client when a pinned leaf rotates. `verify_certs=False` and `ca_certs` raise `ValueError` with this option. `HttpxHttpNode` and `HttpxAsyncHttpNode` refuse the option.
 
 ::::{tab-set}
 :group: sync_or_async
@@ -78,7 +76,7 @@ client = AsyncElasticsearch(
 
 ::::
 
-To disable certificate verification use the `verify_certs=False` parameter. This option should be avoided in production, instead use the other options to verify the clusters' certificate.
+To disable certificate verification use the `verify_certs=False` parameter. This option should be avoided in production, instead use the other options to verify the clusters' certificate. It raises `ValueError` when combined with `ssl_assert_fingerprint`.
 
 ::::{tab-set}
 :group: sync_or_async
@@ -171,7 +169,7 @@ client = AsyncElasticsearch(
 
 ### Using an SSLContext [_using_an_sslcontext]
 
-For advanced users an `ssl.SSLContext` object can be used for configuring TLS via the `ssl_context` parameter. The `ssl_context` parameter can’t be combined with any other TLS options except for the `ssl_assert_fingerprint` parameter.
+For advanced users an `ssl.SSLContext` object can be used for configuring TLS via the `ssl_context` parameter. The `ssl_context` parameter can’t be combined with any other TLS options. With `ssl_assert_fingerprint`, pass `client_cert`, `client_key`, and `ssl_version` instead.
 
 ::::{tab-set}
 :group: sync_or_async
