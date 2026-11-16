@@ -403,6 +403,10 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg on_disk_rescore: `true` if vector rescoring should be done on-
         disk  Only applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`,
         `int8_hnsw`
+    :arg on_disk_merge: If `true`, direct I/O is used where possible while
+        merging the vector data of the field, so that a merge does not
+        displace what searches keep in memory. It can be changed with a
+        mapping update, which applies to later merges.
     :arg flat_index_threshold: The segment document count threshold below
         which HNSW graph construction is skipped in favor of brute-force
         flat search. `-1` (default) defers to format defaults: `300` for
@@ -457,6 +461,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
     on_disk_rescore: Union[bool, DefaultType]
+    on_disk_merge: Union[bool, DefaultType]
     flat_index_threshold: Union[int, DefaultType]
     cluster_size: Union[int, DefaultType]
     default_visit_percentage: Union[float, DefaultType]
@@ -488,6 +493,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
+        on_disk_merge: Union[bool, DefaultType] = DEFAULT,
         flat_index_threshold: Union[int, DefaultType] = DEFAULT,
         cluster_size: Union[int, DefaultType] = DEFAULT,
         default_visit_percentage: Union[float, DefaultType] = DEFAULT,
@@ -508,6 +514,8 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["rescore_vector"] = rescore_vector
         if on_disk_rescore is not DEFAULT:
             kwargs["on_disk_rescore"] = on_disk_rescore
+        if on_disk_merge is not DEFAULT:
+            kwargs["on_disk_merge"] = on_disk_merge
         if flat_index_threshold is not DEFAULT:
             kwargs["flat_index_threshold"] = flat_index_threshold
         if cluster_size is not DEFAULT:
@@ -1390,7 +1398,7 @@ class Highlight(AttrDict[Any]):
     no_match_size: Union[int, DefaultType]
     number_of_fragments: Union[int, DefaultType]
     options: Union[Mapping[str, Any], DefaultType]
-    order: Union[Literal["score"], DefaultType]
+    order: Union[Literal["none", "score"], DefaultType]
     phrase_limit: Union[int, DefaultType]
     post_tags: Union[Sequence[str], DefaultType]
     pre_tags: Union[Sequence[str], DefaultType]
@@ -1424,7 +1432,7 @@ class Highlight(AttrDict[Any]):
         no_match_size: Union[int, DefaultType] = DEFAULT,
         number_of_fragments: Union[int, DefaultType] = DEFAULT,
         options: Union[Mapping[str, Any], DefaultType] = DEFAULT,
-        order: Union[Literal["score"], DefaultType] = DEFAULT,
+        order: Union[Literal["none", "score"], DefaultType] = DEFAULT,
         phrase_limit: Union[int, DefaultType] = DEFAULT,
         post_tags: Union[Sequence[str], DefaultType] = DEFAULT,
         pre_tags: Union[Sequence[str], DefaultType] = DEFAULT,
@@ -1573,7 +1581,7 @@ class HighlightField(AttrDict[Any]):
     no_match_size: Union[int, DefaultType]
     number_of_fragments: Union[int, DefaultType]
     options: Union[Mapping[str, Any], DefaultType]
-    order: Union[Literal["score"], DefaultType]
+    order: Union[Literal["none", "score"], DefaultType]
     phrase_limit: Union[int, DefaultType]
     post_tags: Union[Sequence[str], DefaultType]
     pre_tags: Union[Sequence[str], DefaultType]
@@ -1606,7 +1614,7 @@ class HighlightField(AttrDict[Any]):
         no_match_size: Union[int, DefaultType] = DEFAULT,
         number_of_fragments: Union[int, DefaultType] = DEFAULT,
         options: Union[Mapping[str, Any], DefaultType] = DEFAULT,
-        order: Union[Literal["score"], DefaultType] = DEFAULT,
+        order: Union[Literal["none", "score"], DefaultType] = DEFAULT,
         phrase_limit: Union[int, DefaultType] = DEFAULT,
         post_tags: Union[Sequence[str], DefaultType] = DEFAULT,
         pre_tags: Union[Sequence[str], DefaultType] = DEFAULT,
@@ -2490,7 +2498,7 @@ class LikeDocument(AttrDict[Any]):
     :arg per_field_analyzer: Overrides the default analyzer.
     :arg routing:
     :arg version:
-    :arg version_type:  Defaults to `'internal'` if omitted.
+    :arg version_type:  Defaults to `internal` if omitted.
     """
 
     doc: Any
@@ -2498,7 +2506,7 @@ class LikeDocument(AttrDict[Any]):
     _id: Union[str, DefaultType]
     _index: Union[str, DefaultType]
     per_field_analyzer: Union[Mapping[Union[str, InstrumentedField], str], DefaultType]
-    routing: Union[str, Sequence[str], DefaultType]
+    routing: Union[str, DefaultType]
     version: Union[int, DefaultType]
     version_type: Union[Literal["internal", "external", "external_gte"], DefaultType]
 
@@ -2512,7 +2520,7 @@ class LikeDocument(AttrDict[Any]):
         per_field_analyzer: Union[
             Mapping[Union[str, InstrumentedField], str], DefaultType
         ] = DEFAULT,
-        routing: Union[str, Sequence[str], DefaultType] = DEFAULT,
+        routing: Union[str, DefaultType] = DEFAULT,
         version: Union[int, DefaultType] = DEFAULT,
         version_type: Union[
             Literal["internal", "external", "external_gte"], DefaultType
@@ -2595,8 +2603,8 @@ class MatchBoolPrefixQuery(AttrDict[Any]):
         for a document to be returned. Applied to the constructed bool
         query.
     :arg operator: Boolean logic used to interpret text in the query
-        value. Applied to the constructed bool query. Defaults to `'or'`
-        if omitted.
+        value. Applied to the constructed bool query. Defaults to `or` if
+        omitted.
     :arg prefix_length: Number of beginning characters left unchanged for
         fuzzy matching. Can be applied to the term subqueries constructed
         for all terms but the final term.
@@ -2729,7 +2737,7 @@ class MatchPhraseQuery(AttrDict[Any]):
         tokens.
     :arg zero_terms_query: Indicates whether no documents are returned if
         the `analyzer` removes all tokens, such as when using a `stop`
-        filter. Defaults to `'none'` if omitted.
+        filter. Defaults to `none` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -2793,12 +2801,12 @@ class MatchQuery(AttrDict[Any]):
     :arg minimum_should_match: Minimum number of clauses that must match
         for a document to be returned.
     :arg operator: Boolean logic used to interpret text in the query
-        value. Defaults to `'or'` if omitted.
+        value. Defaults to `or` if omitted.
     :arg prefix_length: Number of beginning characters left unchanged for
         fuzzy matching.
     :arg zero_terms_query: Indicates whether no documents are returned if
         the `analyzer` removes all tokens, such as when using a `stop`
-        filter. Defaults to `'none'` if omitted.
+        filter. Defaults to `none` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -6036,6 +6044,8 @@ class KnnQueryProfileBreakdown(AttrDict[Any]):
     :arg count_weight_count: (required)
     :arg create_weight: (required)
     :arg create_weight_count: (required)
+    :arg into_bit_set: (required)
+    :arg into_bit_set_count: (required)
     :arg match: (required)
     :arg match_count: (required)
     :arg next_doc: (required)
@@ -6058,6 +6068,8 @@ class KnnQueryProfileBreakdown(AttrDict[Any]):
     count_weight_count: int
     create_weight: int
     create_weight_count: int
+    into_bit_set: int
+    into_bit_set_count: int
     match: int
     match_count: int
     next_doc: int
@@ -6619,6 +6631,20 @@ class ReverseNestedAggregate(AttrDict[Any]):
     """
 
     doc_count: int
+    meta: Mapping[str, Any]
+
+
+class RoaringBitmapAggregate(AttrDict[Any]):
+    """
+    Result of the `roaring_bitmap` aggregation.
+
+    :arg value: (required) The distinct values of the field, as a
+        base64-encoded portable roaring bitmap. It is `null` if the field
+        is unmapped.
+    :arg meta:
+    """
+
+    value: Union[str, None]
     meta: Mapping[str, Any]
 
 

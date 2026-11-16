@@ -295,6 +295,7 @@ AggregateResponseType = Union[
     "types.TopMetricsAggregate",
     "types.TTestAggregate",
     "types.RateAggregate",
+    "types.RoaringBitmapAggregate",
     "types.CumulativeCardinalityAggregate",
     "types.MatrixStatsAggregate",
     "types.GeoLineAggregate",
