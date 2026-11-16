@@ -147,6 +147,44 @@ class Query(DslBase):
         return Bool(must=[self, other])
 
 
+class BitmapTerms(Query):
+    """
+    Returns documents whose `integer` or `long` field value is contained
+    in a roaring bitmap that is provided as a base64-encoded string. It is
+    the counterpart of the `terms` query for very large sets of numeric
+    values.
+
+    :arg field: (required) The name of the field to search against. It
+        must be an `integer` or a `long` field with `index` enabled.
+    :arg value: (required) The values to match, as a base64-encoded
+        serialized roaring bitmap in little-endian byte order. The type of
+        the field determines the expected format: an `integer` field
+        expects a 32-bit roaring bitmap, and a `long` field expects a
+        64-bit roaring bitmap in the portable format. The bitmap can only
+        contain non-negative values: from `0` to `2^31 - 1` for an
+        `integer` field and from `0` to `2^63 - 1` for a `long` field.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "bitmap_terms"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        value: Union[str, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(field=field, value=value, boost=boost, _name=_name, **kwargs)
+
+
 class Bool(Query):
     """
     matches documents matching boolean combinations of other queries.
@@ -750,7 +788,7 @@ class GeoBoundingBox(Query):
     :arg type:
     :arg validation_method: Set to `IGNORE_MALFORMED` to accept geo points
         with invalid latitude or longitude. Set to `COERCE` to also try to
-        infer correct latitude or longitude. Defaults to `'strict'` if
+        infer correct latitude or longitude. Defaults to `strict` if
         omitted.
     :arg ignore_unmapped: Set to `true` to ignore an unmapped field and
         not match any documents for this query. Set to `false` to throw an
@@ -811,10 +849,10 @@ class GeoDistance(Query):
         considered to be matches.
     :arg distance_type: How to compute the distance. Set to `plane` for a
         faster calculation that's inaccurate on long distances and close
-        to the poles. Defaults to `'arc'` if omitted.
+        to the poles. Defaults to `arc` if omitted.
     :arg validation_method: Set to `IGNORE_MALFORMED` to accept geo points
         with invalid latitude or longitude. Set to `COERCE` to also try to
-        infer correct latitude or longitude. Defaults to `'strict'` if
+        infer correct latitude or longitude. Defaults to `strict` if
         omitted.
     :arg ignore_unmapped: Set to `true` to ignore an unmapped field and
         not match any documents for this query. Set to `false` to throw an
@@ -892,7 +930,7 @@ class GeoPolygon(Query):
     """
     :arg _field: The field to use in this query.
     :arg _value: The query value for the field.
-    :arg validation_method:  Defaults to `'strict'` if omitted.
+    :arg validation_method:  Defaults to `strict` if omitted.
     :arg ignore_unmapped:
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
@@ -994,7 +1032,7 @@ class HasChild(Query):
         from the search results.
     :arg score_mode: Indicates how scores for matching child documents
         affect the root parent document’s relevance score. Defaults to
-        `'none'` if omitted.
+        `none` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1470,13 +1508,10 @@ class MoreLikeThis(Query):
         are ignored from the input document. Defaults to `2` if omitted.
     :arg min_word_length: The minimum word length below which the terms
         are ignored.
-    :arg routing:
     :arg stop_words: An array of stop words. Any word in this set is
         ignored.
     :arg unlike: Used in combination with `like` to exclude documents that
         match a set of terms.
-    :arg version:
-    :arg version_type:  Defaults to `'internal'` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1510,7 +1545,6 @@ class MoreLikeThis(Query):
         minimum_should_match: Union[int, str, "DefaultType"] = DEFAULT,
         min_term_freq: Union[int, "DefaultType"] = DEFAULT,
         min_word_length: Union[int, "DefaultType"] = DEFAULT,
-        routing: Union[str, "DefaultType"] = DEFAULT,
         stop_words: Union[
             Literal[
                 "_arabic_",
@@ -1560,10 +1594,6 @@ class MoreLikeThis(Query):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
-        version: Union[int, "DefaultType"] = DEFAULT,
-        version_type: Union[
-            Literal["internal", "external", "external_gte"], "DefaultType"
-        ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
@@ -1582,11 +1612,8 @@ class MoreLikeThis(Query):
             minimum_should_match=minimum_should_match,
             min_term_freq=min_term_freq,
             min_word_length=min_word_length,
-            routing=routing,
             stop_words=stop_words,
             unlike=unlike,
-            version=version,
-            version_type=version_type,
             boost=boost,
             _name=_name,
             **kwargs,
@@ -1623,7 +1650,7 @@ class MultiMatch(Query):
     :arg minimum_should_match: Minimum number of clauses that must match
         for a document to be returned.
     :arg operator: Boolean logic used to interpret text in the query
-        value. Defaults to `'or'` if omitted.
+        value. Defaults to `or` if omitted.
     :arg prefix_length: Number of beginning characters left unchanged for
         fuzzy matching.
     :arg slop: Maximum number of positions allowed between matching
@@ -1631,10 +1658,10 @@ class MultiMatch(Query):
     :arg tie_breaker: Determines how scores for each per-term blended
         query and scores across groups are combined.
     :arg type: How `the` multi_match query is executed internally.
-        Defaults to `'best_fields'` if omitted.
+        Defaults to `best_fields` if omitted.
     :arg zero_terms_query: Indicates whether no documents are returned if
         the `analyzer` removes all tokens, such as when using a `stop`
-        filter. Defaults to `'none'` if omitted.
+        filter. Defaults to `none` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1719,7 +1746,7 @@ class Nested(Query):
         not return any documents instead of an error.
     :arg inner_hits: If defined, each search hit will contain inner hits.
     :arg score_mode: How scores for matching child objects affect the root
-        parent document’s relevance score. Defaults to `'avg'` if omitted.
+        parent document’s relevance score. Defaults to `avg` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1939,7 +1966,7 @@ class QueryString(Query):
         `index.query.default_field` index setting, which has a default
         value of `*`.
     :arg default_operator: Default boolean logic used to interpret text in
-        the query string if no operators are specified. Defaults to `'or'`
+        the query string if no operators are specified. Defaults to `or`
         if omitted.
     :arg enable_position_increments: If `true`, enable position increments
         in queries constructed from a `query_string` search. Defaults to
@@ -1975,7 +2002,7 @@ class QueryString(Query):
     :arg time_zone: Coordinated Universal Time (UTC) offset or IANA time
         zone used to convert date values in the query string to UTC.
     :arg type: Determines how the query matches and scores documents.
-        Defaults to `'best_fields'` if omitted.
+        Defaults to `best_fields` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -2355,7 +2382,7 @@ class SimpleQueryString(Query):
         creates a match_phrase query for each multi-position token.
         Defaults to `True` if omitted.
     :arg default_operator: Default boolean logic used to interpret text in
-        the query string if no operators are specified. Defaults to `'or'`
+        the query string if no operators are specified. Defaults to `or`
         if omitted.
     :arg fields: Array of fields you wish to search. Accepts wildcard
         expressions. You also can boost relevance scores for matches to

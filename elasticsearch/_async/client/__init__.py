@@ -6403,7 +6403,7 @@ class AsyncElasticsearch(BaseClient):
         preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
-        routing: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        routing: t.Optional[str] = None,
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
