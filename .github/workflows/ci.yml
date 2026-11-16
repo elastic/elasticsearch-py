@@ -42,7 +42,8 @@ jobs:
         nox-session: [""]
         runs-on: ["ubuntu-latest"]
 
-    runs-on: ${{ matrix.runs-on }}
+    # 3.8 and 3.9 have no setup-python builds for ubuntu-latest (26.04).
+    runs-on: ${{ (matrix.python-version == '3.8' || matrix.python-version == '3.9') && 'ubuntu-24.04' || matrix.runs-on }}
     name: test-${{ matrix.python-version }}
     continue-on-error: false
     steps:
