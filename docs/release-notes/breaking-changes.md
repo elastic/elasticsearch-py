@@ -14,7 +14,7 @@ Breaking changes can impact your Elastic applications, potentially disrupting no
 % **Action**<br> Steps for mitigating deprecation impact.
 % ::::
 
-## Next version [elasticsearch-python-client-nextversion-breaking-changes]
+## 9.6.0 [elasticsearch-python-client-960-breaking-changes]
 
 ::::{dropdown} `ssl_assert_fingerprint` pins the matching certificate
 `elastic-transport` 9.4.3 pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is set. `Urllib3HttpNode` and `RequestsHttpNode` accept `True` or a hostname. `AiohttpHttpNode` accepts `True` or `False`. `verify_certs=False`, `ca_certs`, and `ssl_context` raise `ValueError`.
