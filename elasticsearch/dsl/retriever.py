@@ -242,7 +242,7 @@ class KnnRetriever(Retriever):
         *,
         field: Union[str, "DefaultType"] = DEFAULT,
         k: Union[int, "DefaultType"] = DEFAULT,
-        query_vector: Union[Sequence[float], "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
         query_vector_builder: Union[
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
@@ -621,7 +621,7 @@ class DiversifyRetriever(Retriever):
         retriever: Union[Retriever, "DefaultType"] = DEFAULT,
         size: Union[int, "DefaultType"] = DEFAULT,
         rank_window_size: Union[int, "DefaultType"] = DEFAULT,
-        query_vector: Union[Sequence[float], "DefaultType"] = DEFAULT,
+        query_vector: Union[Sequence[float], str, "DefaultType"] = DEFAULT,
         query_vector_builder: Union[
             "types.QueryVectorBuilder", Dict[str, Any], "DefaultType"
         ] = DEFAULT,
