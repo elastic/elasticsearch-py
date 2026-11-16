@@ -86,6 +86,14 @@ class IlmClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Sequence[
+                    t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]]
+                ],
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+            ]
+        ] = None,
         filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[str, t.Literal[-1], t.Literal[0]]] = None,
@@ -107,6 +115,10 @@ class IlmClient(NamespacedClient):
         :param index: Comma-separated list of data streams, indices, and aliases to target.
             Supports wildcards (`*`). To target all data streams and indices, use `*`
             or `_all`.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -123,6 +135,8 @@ class IlmClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:

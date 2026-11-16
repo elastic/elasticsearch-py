@@ -403,6 +403,10 @@ class DenseVectorIndexOptions(AttrDict[Any]):
     :arg on_disk_rescore: `true` if vector rescoring should be done on-
         disk  Only applicable to `bbq_disk`, `bbq_hnsw`, `int4_hnsw`,
         `int8_hnsw`
+    :arg on_disk_merge: If `true`, direct I/O is used where possible while
+        merging the vector data of the field, so that a merge does not
+        displace what searches keep in memory. It can be changed with a
+        mapping update, which applies to later merges.
     :arg flat_index_threshold: The segment document count threshold below
         which HNSW graph construction is skipped in favor of brute-force
         flat search. `-1` (default) defers to format defaults: `300` for
@@ -457,6 +461,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
         "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
     ]
     on_disk_rescore: Union[bool, DefaultType]
+    on_disk_merge: Union[bool, DefaultType]
     flat_index_threshold: Union[int, DefaultType]
     cluster_size: Union[int, DefaultType]
     default_visit_percentage: Union[float, DefaultType]
@@ -488,6 +493,7 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             "DenseVectorIndexOptionsRescoreVector", Dict[str, Any], DefaultType
         ] = DEFAULT,
         on_disk_rescore: Union[bool, DefaultType] = DEFAULT,
+        on_disk_merge: Union[bool, DefaultType] = DEFAULT,
         flat_index_threshold: Union[int, DefaultType] = DEFAULT,
         cluster_size: Union[int, DefaultType] = DEFAULT,
         default_visit_percentage: Union[float, DefaultType] = DEFAULT,
@@ -508,6 +514,8 @@ class DenseVectorIndexOptions(AttrDict[Any]):
             kwargs["rescore_vector"] = rescore_vector
         if on_disk_rescore is not DEFAULT:
             kwargs["on_disk_rescore"] = on_disk_rescore
+        if on_disk_merge is not DEFAULT:
+            kwargs["on_disk_merge"] = on_disk_merge
         if flat_index_threshold is not DEFAULT:
             kwargs["flat_index_threshold"] = flat_index_threshold
         if cluster_size is not DEFAULT:
@@ -6036,6 +6044,8 @@ class KnnQueryProfileBreakdown(AttrDict[Any]):
     :arg count_weight_count: (required)
     :arg create_weight: (required)
     :arg create_weight_count: (required)
+    :arg into_bit_set: (required)
+    :arg into_bit_set_count: (required)
     :arg match: (required)
     :arg match_count: (required)
     :arg next_doc: (required)
@@ -6058,6 +6068,8 @@ class KnnQueryProfileBreakdown(AttrDict[Any]):
     count_weight_count: int
     create_weight: int
     create_weight_count: int
+    into_bit_set: int
+    into_bit_set_count: int
     match: int
     match_count: int
     next_doc: int
@@ -6619,6 +6631,20 @@ class ReverseNestedAggregate(AttrDict[Any]):
     """
 
     doc_count: int
+    meta: Mapping[str, Any]
+
+
+class RoaringBitmapAggregate(AttrDict[Any]):
+    """
+    Result of the `roaring_bitmap` aggregation.
+
+    :arg value: (required) The distinct values of the field, as a
+        base64-encoded portable roaring bitmap. It is `null` if the field
+        is unmapped.
+    :arg meta:
+    """
+
+    value: Union[str, None]
     meta: Mapping[str, Any]
 
 

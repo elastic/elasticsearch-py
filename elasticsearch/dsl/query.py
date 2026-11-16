@@ -147,6 +147,44 @@ class Query(DslBase):
         return Bool(must=[self, other])
 
 
+class BitmapTerms(Query):
+    """
+    Returns documents whose `integer` or `long` field value is contained
+    in a roaring bitmap that is provided as a base64-encoded string. It is
+    the counterpart of the `terms` query for very large sets of numeric
+    values.
+
+    :arg field: (required) The name of the field to search against. It
+        must be an `integer` or a `long` field with `index` enabled.
+    :arg value: (required) The values to match, as a base64-encoded
+        serialized roaring bitmap in little-endian byte order. The type of
+        the field determines the expected format: an `integer` field
+        expects a 32-bit roaring bitmap, and a `long` field expects a
+        64-bit roaring bitmap in the portable format. The bitmap can only
+        contain non-negative values: from `0` to `2^31 - 1` for an
+        `integer` field and from `0` to `2^63 - 1` for a `long` field.
+    :arg boost: Floating point number used to decrease or increase the
+        relevance scores of the query. Boost values are relative to the
+        default value of 1.0. A boost value between 0 and 1.0 decreases
+        the relevance score. A value greater than 1.0 increases the
+        relevance score. Defaults to `1` if omitted.
+    :arg _name:
+    """
+
+    name = "bitmap_terms"
+
+    def __init__(
+        self,
+        *,
+        field: Union[str, "InstrumentedField", "DefaultType"] = DEFAULT,
+        value: Union[str, "DefaultType"] = DEFAULT,
+        boost: Union[float, "DefaultType"] = DEFAULT,
+        _name: Union[str, "DefaultType"] = DEFAULT,
+        **kwargs: Any,
+    ):
+        super().__init__(field=field, value=value, boost=boost, _name=_name, **kwargs)
+
+
 class Bool(Query):
     """
     matches documents matching boolean combinations of other queries.
@@ -1470,13 +1508,10 @@ class MoreLikeThis(Query):
         are ignored from the input document. Defaults to `2` if omitted.
     :arg min_word_length: The minimum word length below which the terms
         are ignored.
-    :arg routing:
     :arg stop_words: An array of stop words. Any word in this set is
         ignored.
     :arg unlike: Used in combination with `like` to exclude documents that
         match a set of terms.
-    :arg version:
-    :arg version_type:  Defaults to `'internal'` if omitted.
     :arg boost: Floating point number used to decrease or increase the
         relevance scores of the query. Boost values are relative to the
         default value of 1.0. A boost value between 0 and 1.0 decreases
@@ -1510,7 +1545,6 @@ class MoreLikeThis(Query):
         minimum_should_match: Union[int, str, "DefaultType"] = DEFAULT,
         min_term_freq: Union[int, "DefaultType"] = DEFAULT,
         min_word_length: Union[int, "DefaultType"] = DEFAULT,
-        routing: Union[str, "DefaultType"] = DEFAULT,
         stop_words: Union[
             Literal[
                 "_arabic_",
@@ -1560,10 +1594,6 @@ class MoreLikeThis(Query):
             Dict[str, Any],
             "DefaultType",
         ] = DEFAULT,
-        version: Union[int, "DefaultType"] = DEFAULT,
-        version_type: Union[
-            Literal["internal", "external", "external_gte"], "DefaultType"
-        ] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         _name: Union[str, "DefaultType"] = DEFAULT,
         **kwargs: Any,
@@ -1582,11 +1612,8 @@ class MoreLikeThis(Query):
             minimum_should_match=minimum_should_match,
             min_term_freq=min_term_freq,
             min_word_length=min_word_length,
-            routing=routing,
             stop_words=stop_words,
             unlike=unlike,
-            version=version,
-            version_type=version_type,
             boost=boost,
             _name=_name,
             **kwargs,
