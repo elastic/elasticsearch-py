@@ -331,6 +331,11 @@ class Float(Field):
 class Integer(Field):
     """
     :arg null_value:
+    :arg index_terms: If `true`, the field's values are indexed in an
+        inverted index instead of a BKD tree. This speeds up queries that
+        match a field against many values, such as `terms` queries, but
+        wide range queries are typically slower than on a BKD tree.
+        Requires `index` to be `true`.
     :arg boost:
     :arg coerce:
     :arg ignore_malformed:
@@ -363,6 +368,7 @@ class Integer(Field):
         self,
         *args: Any,
         null_value: Union[int, "DefaultType"] = DEFAULT,
+        index_terms: Union[bool, "DefaultType"] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
@@ -397,6 +403,8 @@ class Integer(Field):
     ):
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
+        if index_terms is not DEFAULT:
+            kwargs["index_terms"] = index_terms
         if boost is not DEFAULT:
             kwargs["boost"] = boost
         if coerce is not DEFAULT:
@@ -3036,6 +3044,11 @@ class Keyword(Field):
 class Long(Integer):
     """
     :arg null_value:
+    :arg index_terms: If `true`, the field's values are indexed in an
+        inverted index instead of a BKD tree. This speeds up queries that
+        match a field against many values, such as `terms` queries, but
+        wide range queries are typically slower than on a BKD tree.
+        Requires `index` to be `true`.
     :arg boost:
     :arg coerce:
     :arg ignore_malformed:
@@ -3067,6 +3080,7 @@ class Long(Integer):
         self,
         *args: Any,
         null_value: Union[int, "DefaultType"] = DEFAULT,
+        index_terms: Union[bool, "DefaultType"] = DEFAULT,
         boost: Union[float, "DefaultType"] = DEFAULT,
         coerce: Union[bool, "DefaultType"] = DEFAULT,
         ignore_malformed: Union[bool, "DefaultType"] = DEFAULT,
@@ -3101,6 +3115,8 @@ class Long(Integer):
     ):
         if null_value is not DEFAULT:
             kwargs["null_value"] = null_value
+        if index_terms is not DEFAULT:
+            kwargs["index_terms"] = index_terms
         if boost is not DEFAULT:
             kwargs["boost"] = boost
         if coerce is not DEFAULT:
