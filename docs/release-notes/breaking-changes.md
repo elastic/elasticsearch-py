@@ -17,9 +17,9 @@ Breaking changes can impact your Elastic applications, potentially disrupting no
 ## Next version [elasticsearch-python-client-nextversion-breaking-changes]
 
 ::::{dropdown} `ssl_assert_fingerprint` pins the matching certificate
-`elastic-transport` 9.4.3 pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is `True` or a hostname. `verify_certs=False`, `ca_certs`, and `ssl_context` raise `ValueError`.
+`elastic-transport` 9.4.3 pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is set. `Urllib3HttpNode` and `RequestsHttpNode` accept `True` or a hostname. `AiohttpHttpNode` accepts `True` or `False`. `verify_certs=False`, `ca_certs`, and `ssl_context` raise `ValueError`.
 
-**Impact**<br> A pinned certificate that fails signature or expiry checks raises `TlsError`. `AiohttpHttpNode` rejects a string `ssl_assert_hostname` with this option. `HttpxHttpNode` and `HttpxAsyncHttpNode` refuse the option.
+**Impact**<br> A pinned certificate that fails signature or expiry checks raises `TlsError`. A hostname string for `ssl_assert_hostname` raises `ValueError` on `AiohttpHttpNode`. `HttpxHttpNode` and `HttpxAsyncHttpNode` refuse the option.
 
 **Action**<br> Pin the CA fingerprint Elasticsearch prints at startup. Restart the client when a pinned leaf rotates. Pass client certificates with `client_cert` and `client_key`, and the TLS version with `ssl_version`.
 ::::

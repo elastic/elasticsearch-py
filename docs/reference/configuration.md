@@ -45,7 +45,7 @@ client = AsyncElasticsearch(
 
 ::::
 
-`ssl_assert_fingerprint` pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is `True` or a hostname. Pin the CA fingerprint Elasticsearch prints at startup. The pin is taken on the first request and kept, so restart the client when a pinned leaf rotates. `verify_certs=False` and `ca_certs` raise `ValueError` with this option. `AiohttpHttpNode` accepts `True` or `False` for `ssl_assert_hostname` here, and a hostname string raises `ValueError`. `HttpxHttpNode` and `HttpxAsyncHttpNode` refuse the option.
+`ssl_assert_fingerprint` pins the matching certificate as the only trust anchor. Signature and expiry stay checked. Hostname checks stay off unless `ssl_assert_hostname` is set. `Urllib3HttpNode` and `RequestsHttpNode` accept `True` or a hostname. `AiohttpHttpNode`, the default for `AsyncElasticsearch`, accepts `True` or `False`, and a hostname string raises `ValueError`. Pin the CA fingerprint Elasticsearch prints at startup. The pin is taken on the first request and kept, so restart the client when a pinned leaf rotates. `verify_certs=False` and `ca_certs` raise `ValueError` with this option. `HttpxHttpNode` and `HttpxAsyncHttpNode` refuse the option.
 
 ::::{tab-set}
 :group: sync_or_async
