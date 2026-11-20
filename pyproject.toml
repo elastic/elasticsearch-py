@@ -41,7 +41,10 @@ keywords = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "elastic-transport>=9.4.3,<10",
+    # TODO: before marking this PR ready for review, switch back to a released
+    # elastic-transport that includes http_compress_level and remove
+    # 'allow-direct-references' below.
+    "elastic-transport @ git+https://github.com/elastic/elastic-transport-python@main",
     "python-dateutil",
     "typing-extensions",
     "sniffio",
@@ -103,6 +106,11 @@ Homepage = "https://github.com/elastic/elasticsearch-py"
 [tool.hatch.version]
 path = "elasticsearch/_version.py"
 pattern = "__versionstr__ = \"(?P<version>[^']+?)\""
+
+# TODO: remove before marking this PR ready for review, along with the
+# elastic-transport git dependency above.
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.sdist]
 include = [
