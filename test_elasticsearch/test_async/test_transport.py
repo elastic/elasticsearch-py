@@ -291,6 +291,19 @@ class TestTransport:
         assert 1 == len(client.transport.node_pool)
         assert isinstance(client.transport.node_pool.all()[0], MyConnection)
 
+    def test_http_compress_level(self):
+        client = AsyncElasticsearch(
+            "http://localhost:9200", http_compress=True, http_compress_level=1
+        )
+        node_config = client.transport.node_pool.all()[0].config
+        assert node_config.http_compress is True
+        assert node_config.http_compress_level == 1
+
+    def test_http_compress_level_default(self):
+        client = AsyncElasticsearch("http://localhost:9200", http_compress=True)
+        node_config = client.transport.node_pool.all()[0].config
+        assert node_config.http_compress_level is None
+
     async def test_request_will_fail_after_x_retries(self):
         client = AsyncElasticsearch(
             [

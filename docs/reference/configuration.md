@@ -239,6 +239,35 @@ client = AsyncElasticsearch(
 
 HTTP compression is recommended to be enabled when requests are traversing the network. Compression is automatically enabled when connecting to Elastic Cloud.
 
+Request bodies are compressed at gzip's default level, 9. Set `http_compress_level` to an integer from 0 to 9 to change it: lower levels use less CPU but produce larger bodies. It only applies when `http_compress` is enabled.
+
+::::{tab-set}
+:group: sync_or_async
+
+:::{tab-item} Standard Python
+:sync: sync
+```python
+client = Elasticsearch(
+    ...,
+    http_compress=True,
+    http_compress_level=1  # Fastest compression
+)
+```
+:::
+
+:::{tab-item} Async Python
+:sync: async
+```python
+client = AsyncElasticsearch(
+    ...,
+    http_compress=True,
+    http_compress_level=1  # Fastest compression
+)
+```
+:::
+
+::::
+
 
 ## Request timeouts [timeouts]
 
