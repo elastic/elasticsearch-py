@@ -76,3 +76,85 @@ class TestTransformError:
             "Accept version must be either version 8 or 7, but found 9. "
             "Accept=application/vnd.elasticsearch+json; compatible-with=9)"
         )
+
+    def test_transform_error_with_string_resource_id(self):
+        not_found_meta = ApiResponseMeta(
+            status=404, http_version="1.1", headers={}, duration=0.0, node=None
+        )
+        e = ApiError(
+            message="NotFoundError",
+            meta=not_found_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "index_not_found_exception",
+                            "reason": "no such index [idx1]",
+                            "resource.type": "index_or_alias",
+                            "resource.id": "idx1",
+                        }
+                    ]
+                }
+            },
+        )
+
+        assert (
+            str(e)
+            == "ApiError(404, 'NotFoundError', 'no such index [idx1]', idx1, index_or_alias)"
+        )
+
+    def test_transform_error_with_list_resource_id(self):
+        not_found_meta = ApiResponseMeta(
+            status=404, http_version="1.1", headers={}, duration=0.0, node=None
+        )
+        e = ApiError(
+            message="NotFoundError",
+            meta=not_found_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "index_not_found_exception",
+                            "reason": "no such index [idx1,idx2]",
+                            "resource.type": "index_or_alias",
+                            "resource.id": ["idx1", "idx2"],
+                        }
+                    ]
+                }
+            },
+        )
+
+        assert (
+            str(e)
+            == "ApiError(404, 'NotFoundError', 'no such index [idx1,idx2]', idx1, idx2, index_or_alias)"
+        )
+
+    def test_transform_error_with_empty_and_non_string_fields(self):
+        e = ApiError(
+            message="InternalServerError",
+            meta=error_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "error",
+                            "reason": "error reason",
+                            "resource.id": [],
+                            "resource.type": 42,
+                        }
+                    ],
+                    "caused_by": None,
+                }
+            },
+        )
+
+        assert str(e) == "ApiError(500, 'InternalServerError', 'error reason', 42)"
+
+    def test_transform_error_with_null_root_cause(self):
+        e = ApiError(
+            message="InternalServerError",
+            meta=error_meta,
+            body={"error": {"root_cause": None}},
+        )
+
+        assert str(e) == "ApiError(500, 'InternalServerError')"
