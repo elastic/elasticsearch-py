@@ -39,6 +39,19 @@ __all__ = [
 ]
 
 
+def _format_cause_part(value: Any) -> str:
+    """Format an error metadata field into a joinable string."""
+    if value is None or value == "":
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, (list, tuple)):
+        return ", ".join(
+            part for part in (_format_cause_part(item) for item in value) if part
+        )
+    return str(value)
+
+
 class ApiError(_ApiError):
     @property
     def status_code(self) -> int:
@@ -59,23 +72,35 @@ class ApiError(_ApiError):
         cause = ""
         try:
             if self.body and isinstance(self.body, dict) and "error" in self.body:
-                if isinstance(self.body["error"], dict):
-                    root_cause = self.body["error"]["root_cause"][0]
-                    caused_by = self.body["error"].get("caused_by", {})
-                    cause = ", ".join(
-                        filter(
-                            None,
-                            [
-                                repr(root_cause["reason"]),
-                                root_cause.get("resource.id"),
-                                root_cause.get("resource.type"),
-                                caused_by.get("reason"),
-                            ],
+                error = self.body["error"]
+                if isinstance(error, dict):
+                    root_causes = error.get("root_cause")
+                    if (
+                        isinstance(root_causes, list)
+                        and root_causes
+                        and isinstance(root_causes[0], dict)
+                    ):
+                        root_cause = root_causes[0]
+                        caused_by = error.get("caused_by")
+                        caused_by_reason = (
+                            caused_by.get("reason")
+                            if isinstance(caused_by, dict)
+                            else caused_by
                         )
-                    )
+                        cause = ", ".join(
+                            filter(
+                                None,
+                                [
+                                    repr(root_cause["reason"]),
+                                    _format_cause_part(root_cause.get("resource.id")),
+                                    _format_cause_part(root_cause.get("resource.type")),
+                                    _format_cause_part(caused_by_reason),
+                                ],
+                            )
+                        )
 
                 else:
-                    cause = repr(self.body["error"])
+                    cause = repr(error)
         except LookupError:
             pass
         msg = ", ".join(filter(None, [str(self.status_code), repr(self.error), cause]))
