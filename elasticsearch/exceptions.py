@@ -62,21 +62,40 @@ class ApiError(_ApiError):
                 if isinstance(self.body["error"], dict):
                     root_cause = self.body["error"]["root_cause"][0]
                     caused_by = self.body["error"].get("caused_by", {})
+                    if not isinstance(caused_by, dict):
+                        caused_by = {}
+
+                    resource_id = root_cause.get("resource.id")
+                    if isinstance(resource_id, (list, tuple)):
+                        resource_id = ", ".join(str(r) for r in resource_id)
+                    elif resource_id is not None and not isinstance(resource_id, str):
+                        resource_id = str(resource_id)
+
+                    resource_type = root_cause.get("resource.type")
+                    if isinstance(resource_type, (list, tuple)):
+                        resource_type = ", ".join(str(r) for r in resource_type)
+                    elif resource_type is not None and not isinstance(resource_type, str):
+                        resource_type = str(resource_type)
+
+                    caused_by_reason = caused_by.get("reason")
+                    if caused_by_reason is not None and not isinstance(caused_by_reason, str):
+                        caused_by_reason = str(caused_by_reason)
+
                     cause = ", ".join(
                         filter(
                             None,
                             [
                                 repr(root_cause["reason"]),
-                                root_cause.get("resource.id"),
-                                root_cause.get("resource.type"),
-                                caused_by.get("reason"),
+                                resource_id,
+                                resource_type,
+                                caused_by_reason,
                             ],
                         )
                     )
 
                 else:
                     cause = repr(self.body["error"])
-        except LookupError:
+        except (LookupError, ValueError, TypeError, AttributeError):
             pass
         msg = ", ".join(filter(None, [str(self.status_code), repr(self.error), cause]))
         return f"{self.__class__.__name__}({msg})"
