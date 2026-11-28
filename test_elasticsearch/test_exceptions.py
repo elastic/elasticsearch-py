@@ -76,3 +76,61 @@ class TestTransformError:
             "Accept version must be either version 8 or 7, but found 9. "
             "Accept=application/vnd.elasticsearch+json; compatible-with=9)"
         )
+
+    def test_transform_error_with_list_resource_id(self):
+        e = ApiError(
+            message="NotFoundError",
+            meta=error_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "index_not_found_exception",
+                            "reason": "no such index [test-1, test-2]",
+                            "resource.type": "index_or_alias",
+                            "resource.id": ["test-1", "test-2"],
+                        }
+                    ]
+                }
+            },
+        )
+        assert (
+            str(e)
+            == "ApiError(500, 'NotFoundError', 'no such index [test-1, test-2]', test-1, test-2, index_or_alias)"
+        )
+
+    def test_transform_error_with_non_string_resource_fields(self):
+        e = ApiError(
+            message="NotFoundError",
+            meta=error_meta,
+            body={
+                "error": {
+                    "root_cause": [
+                        {
+                            "type": "error",
+                            "reason": "missing",
+                            "resource.id": 12345,
+                            "resource.type": ["type1", "type2"],
+                        }
+                    ],
+                    "caused_by": {"reason": 999},
+                }
+            },
+        )
+        assert (
+            str(e)
+            == "ApiError(500, 'NotFoundError', 'missing', 12345, type1, type2, 999)"
+        )
+
+    def test_transform_error_with_non_dict_caused_by(self):
+        e = ApiError(
+            message="InternalServerError",
+            meta=error_meta,
+            body={
+                "error": {
+                    "root_cause": [{"type": "error", "reason": "failure"}],
+                    "caused_by": "not a dict",
+                }
+            },
+        )
+        assert str(e) == "ApiError(500, 'InternalServerError', 'failure')"
